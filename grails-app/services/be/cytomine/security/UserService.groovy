@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
 import be.cytomine.processing.Job
+import be.cytomine.ontology.Ontology
 
 class UserService extends ModelService {
 
@@ -29,6 +30,7 @@ class UserService extends ModelService {
     def domainService
     def userGroupService
     def projectService
+    def securityService
 
 
     def get(def id) {
@@ -57,6 +59,41 @@ class UserService extends ModelService {
 
     def list(Project project, List ids) {
         SecUser.findAllByIdInList(ids)
+    }
+
+    //TODO:: secure!
+    def listCreator(Project project) {
+        securityService.getCreator(project)
+    }
+
+    def listAdmins(Project project) {
+        securityService.getAdminList(project)
+    }
+
+    def listUsers(Project project) {
+        securityService.getUserList(project)
+    }
+
+    def listUsers(Ontology ontology) {
+        //TODO:: Not optim code a single SQL request will be very faster
+        def users = []
+        def projects = Project.findAllByOntology(ontology)
+        projects.each { project ->
+            users.addAll(project.users())
+        }
+        users.unique()
+    }
+
+    def listLayers(Project project) {
+        Collection<SecUser> users = securityService.getUserList(project)
+        SecUser currentUser = cytomineService.getCurrentUser()
+        if (project.privateLayer && users.contains(currentUser)) {
+            return [currentUser]
+        } else if (!project.privateLayer) {
+            return  users
+        } else { //should no arrive but possible if user is admin and not in project
+            []
+        }
     }
 
 
@@ -227,7 +264,7 @@ class UserService extends ModelService {
             if (email)
                 ilike('email', "%${email}%")
 
-            order(sortIndex, sortOrder).ignoreCase()
+            order(sortIndex, sortOrder)
         }
         return users
     }

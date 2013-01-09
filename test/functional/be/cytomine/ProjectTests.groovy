@@ -5,7 +5,7 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
@@ -14,6 +14,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -104,7 +105,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddProjectCorrect() {
         def projectToAdd = BasicInstance.getBasicProjectNotExist()
-        def result = ProjectAPI.create(projectToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -121,14 +122,15 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditProjectCorrect() {
         Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
-        def result = ProjectAPI.update(projectToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(projectToAdd)
+        def result = ProjectAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
         def showResult = ProjectAPI.show(idProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareProject(result.mapNew, json)
+        BasicInstance.compareProject(data.mapNew, json)
     }
 
     void testEditProjectWithBadName() {

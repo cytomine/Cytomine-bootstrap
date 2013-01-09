@@ -1,15 +1,15 @@
 package be.cytomine
 
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.TermAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.project.Project
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -114,7 +114,8 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
  
    void testUpdateTermCorrect() {
        Term termToAdd = BasicInstance.createOrGetBasicTerm()
-       def result = TermAPI.update(termToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def data = UpdateData.createUpdateSet(termToAdd)
+       def result = TermAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assertEquals(200, result.code)
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject
@@ -122,17 +123,17 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
  
        def showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compareTerm(result.mapNew, json)
+       BasicInstance.compareTerm(data.mapNew, json)
  
        showResult = TermAPI.undo()
        assertEquals(200, result.code)
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareTerm(result.mapOld, JSON.parse(showResult.data))
+       BasicInstance.compareTerm(data.mapOld, JSON.parse(showResult.data))
  
        showResult = TermAPI.redo()
        assertEquals(200, result.code)
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareTerm(result.mapNew, JSON.parse(showResult.data))
+       BasicInstance.compareTerm(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateTermNotExist() {

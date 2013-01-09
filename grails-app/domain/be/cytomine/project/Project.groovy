@@ -114,6 +114,7 @@ class Project extends CytomineDomain implements Serializable {
         projectGroup.collect { it.group }
     }
 
+    //TODO:: remove (move in userService)
     def userLayers() {
         Collection<SecUser> users = securityService.getUserList(this)
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -161,14 +162,17 @@ class Project extends CytomineDomain implements Serializable {
         return project;
     }
 
+    //TODO:: remove (move in userService)
     def creator() {
         securityService.getCreator(this)
     }
 
+    //TODO:: remove (move in userService)
     def admins() {
         securityService.getAdminList(this)
     }
 
+    //TODO:: remove (move in userService)
     def users() {
         securityService.getUserList(this)
     }

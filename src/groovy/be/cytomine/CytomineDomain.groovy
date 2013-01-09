@@ -12,7 +12,7 @@ import static org.springframework.security.acls.domain.BasePermission.*
  * CytomineDomain is the parent class for all domain.
  * It allow to give an id to each instance of a domain, to get a created date,...
  */
-abstract class CytomineDomain {
+abstract class CytomineDomain  implements Comparable{
 
     def springSecurityService
     def cytomineService
@@ -150,6 +150,11 @@ abstract class CytomineDomain {
             e.printStackTrace()
         }
         return false
+    }
+
+
+    int compareTo(obj) {
+        created.compareTo(obj.created)
     }
 
 }

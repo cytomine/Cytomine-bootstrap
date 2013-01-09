@@ -6,14 +6,33 @@ import be.cytomine.security.SecUser
 import org.apache.log4j.Logger
 import grails.converters.JSON
 
+/**
+ * A task provide info about a command.
+ * The main info is the progress status
+ */
 class Task extends CytomineDomain{
 
+    /**
+     * Request progress between 0 and 100
+     */
     int progress
 
+    /**
+     * Project updated by the command task
+     */
     Project project
+
+    /**
+     * User that ask the task
+     */
     SecUser user
 
+    /**
+     * Task order comments
+     * It can be something like this: ["start request","adding annotation",..]
+     */
     List comments
+
     static hasMany = [comments:String]
 
     static constraints = {
@@ -30,16 +49,11 @@ class Task extends CytomineDomain{
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['progress'] = it.progress
-            //println "marshaller:"+ it.comments
             returnArray['comments'] = it.comments
-
             returnArray['project'] = it.project.id
-
             returnArray['user'] = it.user.id
-
             returnArray['created'] = it.created
             returnArray['updated'] = it.updated
-
             return returnArray
         }
     }

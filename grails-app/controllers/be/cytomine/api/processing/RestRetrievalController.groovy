@@ -6,6 +6,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.Exception.CytomineException
 
 /**
  * Controller that handle Retrieval request
@@ -33,7 +34,10 @@ class RestRetrievalController extends RestController {
                response.status = 200
                responseSuccess(data)
             }
-        } catch (java.net.ConnectException ex) {
+        } catch (CytomineException e) {
+                log.error(e)
+                response([success: false, errors: e.msg], e.code)
+         }catch (java.net.ConnectException ex) {
             response.status = 500
             log.error "Retrieval connexion: " + ex.toString()
         }

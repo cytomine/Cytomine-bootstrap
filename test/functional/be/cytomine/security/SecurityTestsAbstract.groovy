@@ -1,6 +1,6 @@
 package be.cytomine.security
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 
 /**
  * Created by IntelliJ IDEA.

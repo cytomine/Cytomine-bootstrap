@@ -1,12 +1,13 @@
 package be.cytomine
 
 import be.cytomine.ontology.Ontology
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.OntologyAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,7 +74,8 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
   
     void testUpdateOntologyCorrect() {
         Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-        def result = OntologyAPI.update(ontologyToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(ontologyToAdd)
+        def result = OntologyAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -81,17 +83,17 @@ class OntologyTests extends functionaltestplugin.FunctionalTestCase {
   
         def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareOntology(result.mapNew, json)
+        BasicInstance.compareOntology(data.mapNew, json)
   
         showResult = OntologyAPI.undo()
         assertEquals(200, result.code)
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareOntology(result.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compareOntology(data.mapOld, JSON.parse(showResult.data))
   
         showResult = OntologyAPI.redo()
         assertEquals(200, result.code)
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareOntology(result.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compareOntology(data.mapNew, JSON.parse(showResult.data))
     }
   
     void testUpdateOntologyNotExist() {

@@ -1,12 +1,13 @@
 package be.cytomine
 
 import be.cytomine.processing.SoftwareParameter
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareParameterAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,7 +54,8 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
 
       void testUpdateSoftwareParameterCorrect() {
           SoftwareParameter softwareparameterToAdd = BasicInstance.createOrGetBasicSoftwareParameter()
-          def result = SoftwareParameterAPI.update(softwareparameterToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def data = UpdateData.createUpdateSet(softwareparameterToAdd)
+          def result = SoftwareParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assertEquals(200, result.code)
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject

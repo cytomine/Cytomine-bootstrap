@@ -1,12 +1,13 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.GroupAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.security.Group
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +29,6 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
         def result = GroupAPI.grid(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
     }
 
   void testShowGroup() {
@@ -59,7 +59,8 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
 
   void testUpdateGroupCorrect() {
       Group groupToAdd = BasicInstance.createOrGetBasicGroup()
-      def result = GroupAPI.update(groupToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def data = UpdateData.createUpdateSet(groupToAdd)
+      def result = GroupAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -91,17 +92,6 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
       def result = GroupAPI.update(groupToEdit.id, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(409, result.code)
   }
-    
-    void testEditGroupWithBadName() {
-        Group groupToAdd = BasicInstance.createOrGetBasicGroup()
-        Group groupToEdit = Group.get(groupToAdd.id)
-        def jsonGroup = groupToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonGroup)
-        jsonUpdate.name = null
-        jsonGroup = jsonUpdate.encodeAsJSON()
-        def result = GroupAPI.update(groupToAdd.id, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
-    }
 
   void testDeleteGroup() {
       def groupToDelete = BasicInstance.getBasicGroupNotExist()

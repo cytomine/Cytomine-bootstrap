@@ -29,6 +29,7 @@ class Ontology extends CytomineDomain implements Serializable {
         }
     }
 
+    //TODO:: remove (move in userService)
     def users() {
         def users = []
         def projects = Project.findAllByOntology(this)

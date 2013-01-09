@@ -2,13 +2,13 @@ package be.cytomine
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
+
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.AlgoAnnotationAPI
@@ -17,6 +17,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.test.http.AnnotationDomainAPI
 import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -292,8 +293,8 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
         try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
-
-        def result = AlgoAnnotationAPI.update(annotationToAdd, user.username, 'PasswordUserJob')
+        def data = UpdateData.createUpdateSet(annotationToAdd)
+        def result = AlgoAnnotationAPI.update(data.oldData.id, data.newData,user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -301,17 +302,17 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(result.mapNew, json)
+        BasicInstance.compareAnnotation(data.mapNew, json)
 
         showResult = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compareAnnotation(result.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compareAnnotation(result.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAlgoAnnotationNotExist() {

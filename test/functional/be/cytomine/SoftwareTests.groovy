@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.Software
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareAPI
 import be.cytomine.test.http.SoftwareParameterAPI
@@ -9,6 +9,7 @@ import be.cytomine.test.http.SoftwareProjectAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -68,7 +69,8 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
  
    void testUpdateSoftwareCorrect() {
        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-       def resultBase = SoftwareAPI.update(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def data = UpdateData.createUpdateSet(softwareToAdd)
+       def resultBase = SoftwareAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assertEquals(200, resultBase.code)
        def json = JSON.parse(resultBase.data)
        assert json instanceof JSONObject
@@ -76,7 +78,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
  
        def showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compareSoftware(resultBase.mapNew, json)
+       BasicInstance.compareSoftware(data.mapNew, json)
 
        def result = SoftwareAPI.undo()
        assertEquals(200, result.code)
@@ -85,12 +87,12 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        System.out.println("toto="+showResult.data);
        System.out.println("toto="+JSON.parse(showResult.data));
        System.out.println("toto="+JSON.parse(showResult.data).name);
-       BasicInstance.compareSoftware(resultBase.mapOld, JSON.parse(showResult.data))
+       BasicInstance.compareSoftware(data.mapOld, JSON.parse(showResult.data))
 
        result = SoftwareAPI.redo()
        assertEquals(200, result.code)
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareSoftware(resultBase.mapNew, JSON.parse(showResult.data))
+       BasicInstance.compareSoftware(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateSoftwareNotExist() {
@@ -196,7 +198,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
          * test add software
          */
         Software softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
-        def result = SoftwareAPI.create(softwareToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         int idSoftware = result.data.id
 

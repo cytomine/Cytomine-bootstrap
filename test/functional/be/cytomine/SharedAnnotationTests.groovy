@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationCommentAPI
 import grails.converters.JSON

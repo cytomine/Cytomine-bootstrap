@@ -2,7 +2,7 @@ package be.cytomine.security
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
@@ -27,7 +27,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -35,14 +35,14 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
       image.project = project
       //check if admin user can access/update/delete
-      result = ImageInstanceAPI.create(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
+      result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
       assertEquals(200, result.code)
       image = result.data
       assertEquals(200, ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
       result = ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
       assertEquals(200, result.code)
       assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
-      assertEquals(200, ImageInstanceAPI.update(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assertEquals(200, ImageInstanceAPI.update(image.id,image.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
       assertEquals(200, ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
   }
 
@@ -56,7 +56,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
       def resAddUser = ProjectAPI.addUserProject(project.id,user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
@@ -66,7 +66,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
       image.project = project
       //check if admin user can access/update/delete
-      result = ImageInstanceAPI.create(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
+      result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(200, result.code)
       image = result.data
       assertEquals(200, ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
@@ -87,14 +87,14 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
       //Add image instance to project
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
       image.project = project
       //check if admin user can access/update/delete
-      result = ImageInstanceAPI.create(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
+      result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(403, result.code)
       image = result.data
 

@@ -4,7 +4,7 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import com.vividsolutions.jts.io.WKTReader
@@ -25,31 +25,13 @@ class TaskAPI extends DomainAPI {
     private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
-        log.info "show annotation " + id
         String URL = Infos.CYTOMINEURL + "api/task/" + id + ".json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doGET(URL, username, password)
     }
 
-    static def create(Project project, String username, String password) {
-        log.info("post task:" + project)
+    static def create(Long idProject, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/task.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, username, password)
-        client.post("{project:${project.id}}")
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-        log.info("check response")
-        def json = JSON.parse(response)
-        Long idTask = json?.id
-        Task task = Task.read(idTask)
-        return [data: response, code: code]
+        def result = doPOST(URL,"{project:${idProject}}",username,password)
+        return result
     }
 }

@@ -1,7 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.http.ProjectAPI
 
 /**
@@ -26,7 +26,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -50,7 +50,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -77,7 +77,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -107,7 +107,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User user3 = getUser3()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -129,7 +129,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       User user2 = getUser2()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 

@@ -3,6 +3,7 @@ package be.cytomine.test.http
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import org.apache.commons.logging.LogFactory
+import be.cytomine.CytomineDomain
 
 /**
  * User: lrollus
@@ -93,6 +94,62 @@ class DomainAPI {
         int code = client.getResponseCode()
         String response = client.getResponseData()
         println "redo = " + response
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+
+    static def doGET(String URL,String username,String password) {
+        log.info("GET:"+URL)
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.get()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def doPOST(String URL,def data,String username,String password) {
+        log.info("POST:"+URL)
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.post(data)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def doPUT(String URL,String data,String username,String password) {
+        log.info("PUT:"+URL)
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.put(data)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def doPUT(String URL,byte[] data,String username,String password) {
+        log.info("PUT:"+URL)
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.put(data)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+    static def doDELETE(String URL,String username,String password) {
+        log.info("DELETE:"+URL)
+        HttpClient client = new HttpClient();
+        client.connect(URL, username, password);
+        client.delete()
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
         client.disconnect();
         return [data: response, code: code]
     }

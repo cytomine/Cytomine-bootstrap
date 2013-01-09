@@ -8,7 +8,7 @@ import be.cytomine.security.User
  * @author ULG-GIGA Cytomine Team
  * The RedoStackItem class allow to store command on a redo stack so that a command or a group of command can be redo
  */
-class RedoStackItem extends CytomineDomain implements Comparable {
+class RedoStackItem extends CytomineDomain {
 
     /**
      * User who launch command
@@ -30,9 +30,5 @@ class RedoStackItem extends CytomineDomain implements Comparable {
 
     static constraints = {
         transaction(nullable: true)
-    }
-
-    int compareTo(obj) {
-        created.compareTo(obj.created)
     }
 }

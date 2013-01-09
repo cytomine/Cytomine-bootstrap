@@ -1,27 +1,24 @@
 package be.cytomine
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.Ontology
-import be.cytomine.project.Project
+
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AlgoAnnotationAPI
-import be.cytomine.test.http.DomainAPI
+
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.test.http.AnnotationDomainAPI
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.test.http.UserAnnotationAPI
+
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.processing.Job
-import be.cytomine.ontology.Annotation
-import be.cytomine.test.http.ReviewedAnnotationAPI
+
 import com.vividsolutions.jts.io.WKTReader
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -254,8 +251,8 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
         try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
-
-        def result = AnnotationDomainAPI.update(annotationToAdd, user.username, Infos.GOODPASSWORDUSERJOB)
+        def data = UpdateData.createUpdateSet(annotationToAdd)
+        def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,user.username, Infos.GOODPASSWORDUSERJOB)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -263,22 +260,23 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(result.mapNew, json)
+        BasicInstance.compareAnnotation(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo(user.username, Infos.GOODPASSWORDUSERJOB)
         assertEquals(200, result.code)
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compareAnnotation(result.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo(user.username, Infos.GOODPASSWORDUSERJOB)
         assertEquals(200, result.code)
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compareAnnotation(result.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAnnotationWithGenericCallForUser() {
         UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
-        def result = AnnotationDomainAPI.update(annotationToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(annotationToAdd)
+        def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -286,17 +284,17 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(result.mapNew, json)
+        BasicInstance.compareAnnotation(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo()
         assertEquals(200, result.code)
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(result.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo()
         assertEquals(200, result.code)
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(result.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testDeleteAnnotationForAlgo() {

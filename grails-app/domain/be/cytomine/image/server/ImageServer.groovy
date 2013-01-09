@@ -3,6 +3,9 @@ package be.cytomine.image.server
 import be.cytomine.CytomineDomain
 import be.cytomine.image.Mime
 
+/**
+ * Server that provide images data
+ */
 class ImageServer extends CytomineDomain {
 
     String name
@@ -24,10 +27,6 @@ class ImageServer extends CytomineDomain {
 
     String toString() {
         name
-    }
-
-    def mimes() {
-        return mis.collect {it.Mime}
     }
 
     def getBaseUrl() {

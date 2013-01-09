@@ -8,5 +8,5 @@ import be.cytomine.CytomineDomain
  * Its a long number generated with sequence (thread-safe)
  */
 class Transaction extends CytomineDomain {
-
+    //A transaction is just an id (provide by cytomine domain)
 }

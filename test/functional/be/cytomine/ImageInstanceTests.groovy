@@ -1,14 +1,14 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.project.Project
-import be.cytomine.ontology.AlgoAnnotation
+
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,7 +36,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddImageInstanceCorrect() {
 
-        def result = ImageInstanceAPI.create(BasicInstance.getBasicImageInstanceNotExist(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(BasicInstance.getBasicImageInstanceNotExist().encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         ImageInstance image = result.data
         Long idImage = image.id
@@ -60,8 +60,8 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddImageInstanceAlreadyExist() {
         def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
-        def result = ImageInstanceAPI.create(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result = ImageInstanceAPI.create(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(409, result.code)
     }
 
@@ -87,14 +87,15 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditImageInstance() {
         ImageInstance imageInstanceToAdd = BasicInstance.createOrGetBasicImageInstance()
-        def result = ImageInstanceAPI.update(imageInstanceToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(imageInstanceToAdd)
+        def result = ImageInstanceAPI.update(data.oldData.id, data.newData.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idImageInstance = json.imageinstance.id
         def showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareImageInstance(result.mapNew, json)
+        BasicInstance.compareImageInstance(data.mapNew, json)
 
         showResult = ImageInstanceAPI.undo()
         assertEquals(200, showResult.code)
@@ -102,14 +103,14 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
 
-        BasicInstance.compareImageInstance(result.mapOld, json)
+        BasicInstance.compareImageInstance(data.mapOld, json)
 
         showResult = ImageInstanceAPI.redo()
         assertEquals(200, showResult.code)
 
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareImageInstance(result.mapNew, json)
+        BasicInstance.compareImageInstance(data.mapNew, json)
     }
 
     void testEditImageInstanceWithBadProject() {

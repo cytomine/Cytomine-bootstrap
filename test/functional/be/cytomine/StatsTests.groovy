@@ -1,10 +1,10 @@
 package be.cytomine
 
 import be.cytomine.processing.Job
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import grails.converters.JSON
+
 import be.cytomine.ontology.Term
 
 /**

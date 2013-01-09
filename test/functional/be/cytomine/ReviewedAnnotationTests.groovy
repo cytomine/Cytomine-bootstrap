@@ -1,29 +1,26 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Ontology
+
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.project.Project
-import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AnnotationDomainAPI
-import be.cytomine.test.http.DomainAPI
-import be.cytomine.test.http.UserAnnotationAPI
+
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.processing.Job
+
 import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
+
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.security.SecUser
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -278,7 +275,8 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditReviewedAnnotation() {
         ReviewedAnnotation annotationToAdd = BasicInstance.createOrGetBasicReviewedAnnotation()
-        def result = ReviewedAnnotationAPI.update(annotationToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(annotationToAdd)
+        def result = ReviewedAnnotationAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -286,17 +284,17 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareReviewedAnnotation(result.mapNew, json)
+        BasicInstance.compareReviewedAnnotation(data.mapNew, json)
 
         showResult = ReviewedAnnotationAPI.undo()
         assertEquals(200, showResult.code)
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareReviewedAnnotation(result.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compareReviewedAnnotation(data.mapOld, JSON.parse(showResult.data))
 
         showResult = ReviewedAnnotationAPI.redo()
         assertEquals(200, showResult.code)
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareReviewedAnnotation(result.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compareReviewedAnnotation(data.mapNew, JSON.parse(showResult.data))
     }
 
 

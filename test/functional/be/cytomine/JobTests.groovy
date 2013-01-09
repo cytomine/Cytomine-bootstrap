@@ -1,19 +1,20 @@
 package be.cytomine
 
 import be.cytomine.processing.Job
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.processing.SoftwareProject
+
 import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.processing.JobData
-import be.cytomine.processing.JobDataBinaryValue
+
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -94,7 +95,8 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
 
     void testUpdateJobCorrect() {
         Job jobToAdd = BasicInstance.createOrGetBasicJob()
-        def result = JobAPI.update(jobToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(jobToAdd)
+        def result = JobAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

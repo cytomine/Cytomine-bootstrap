@@ -9,10 +9,10 @@ class UserUrlMappings {
     static mappings = {
         /* User */
         "/api/user"(controller:"restUser"){
-            action = [GET:"list", POST:"add"]
+            action = [GET:"list",POST:"add"]
         }
         "/api/user/$id"(controller:"restUser"){
-            action = [GET:"show", PUT:"update", DELETE:"delete"]
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
         "/api/user/grid"(controller:"restUser"){
             action = [GET:"grid"]
@@ -23,10 +23,10 @@ class UserUrlMappings {
         "/api/user/$id/friends"(controller:"restUser"){
             action = [GET:"listFriends"]
         }
-        "/api/userJob"(controller:"restUser"){
-            action = [POST:"addChild"]
+        "/api/userJob"(controller:"restUserJob"){
+            action = [POST:"createUserJob"]
         }
-        "/api/userJob/$id"(controller:"restUser"){
+        "/api/userJob/$id"(controller:"restUserJob"){
             action = [GET:"showUserJob"]
         }
         "/api/project/$id/user"(controller: "restUser"){
@@ -39,12 +39,12 @@ class UserUrlMappings {
             action = [GET:"showCreatorByProject"]
         }
         "/api/project/$id/user/$idUser"(controller: "restUser"){
-            action = [DELETE:"deleteUser",POST:"addUser"]
+            action = [DELETE:"deleteUserFromProject",POST:"addUserToProject"]
         }
         "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
-            action = [DELETE:"deleteUserAdmin",POST:"addUserAdmin"]
+            action = [DELETE:"deleteUserAdminFromProject",POST:"addUserAdminToProject"]
         }
-        "/api/project/$id/userjob"(controller: "restUser"){
+        "/api/project/$id/userjob"(controller: "restUserJob"){
             action = [GET:"listUserJobByProject"]
         }
         "/api/ontology/$id/user"(controller: "restUser"){

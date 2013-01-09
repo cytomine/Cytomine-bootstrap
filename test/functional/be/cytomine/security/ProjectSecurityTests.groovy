@@ -1,7 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
@@ -38,7 +38,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
        Infos.printRight(project)
@@ -47,7 +47,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       //check if admin user can access/update/delete
       assertEquals(200, ProjectAPI.show(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
       assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, ProjectAPI.update(project,USERNAMEADMIN,PASSWORDADMIN).code)
+      assertEquals(200, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
       assertEquals(200, ProjectAPI.delete(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
@@ -57,14 +57,14 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
       //check if user 1 can access/update/delete
       assertEquals(200, ProjectAPI.show(project.id,USERNAME1,PASSWORD1).code)
       assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME1,PASSWORD1).data)))
-      assertEquals(200, ProjectAPI.update(project,USERNAME1,PASSWORD1).code)
+      assertEquals(200, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME1,PASSWORD1).code)
       assertEquals(200, ProjectAPI.delete(project.id,USERNAME1,PASSWORD1).code)
   }
 
@@ -76,7 +76,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
 
@@ -89,7 +89,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       //check if user 2 can access/update/delete
       assertEquals(200, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
       assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, ProjectAPI.update(project,USERNAME2,PASSWORD2).code)
+      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
       assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
 
 
@@ -101,7 +101,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       //check if user 2 cannot access/update/delete
       assertEquals(403, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
       assertFalse(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, ProjectAPI.update(project,USERNAME2,PASSWORD2).code)
+      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
       assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
   }
 
@@ -113,7 +113,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
       Infos.printRight(project)
@@ -121,7 +121,7 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(403, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
       assertFalse(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
       Infos.printRight(project)
-      assertEquals(403, ProjectAPI.update(project,USERNAME2,PASSWORD2).code)
+      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
       assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
 
   }
@@ -132,14 +132,14 @@ class ProjectSecurityTests extends functionaltestplugin.FunctionalTestCase {
       User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
       Infos.printRight(project)
       //check if user 2 cannot access/update/delete
       assertEquals(401, ProjectAPI.show(project.id,USERNAMEBAD,PASSWORDBAD).code)
       assertEquals(401, ProjectAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, ProjectAPI.update(project,USERNAMEBAD,PASSWORDBAD).code)
+      assertEquals(401, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
       assertEquals(401, ProjectAPI.delete(project.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 

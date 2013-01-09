@@ -1,13 +1,16 @@
 package be.cytomine
 
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+
+import be.cytomine.test.http.ProjectAPI
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,19 +27,136 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
+
+    void testListUserGrid() {
+        def result = UserAPI.grid(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testListUserWithKey() {
+        def result = UserAPI.list(BasicInstance.newUser.publicKey,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        println json
+        assert json.id==BasicInstance.newUser.id
+    }
   
     void testListUserWithoutCredential() {
         def result = UserAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
         assertEquals(401, result.code)
     }
-  
+
+
+    void testListFriends() {
+        def user = BasicInstance.newUser
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.listFriends(user.id,false,project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = UserAPI.listFriends(user.id,true,project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = UserAPI.listFriends(user.id,false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+
+        result = UserAPI.listFriends(user.id,true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testListOnlineFriendsWithOpenedImages() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.listOnline(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
     void testShowUserWithCredential() {
         def result = UserAPI.show(BasicInstance.createOrGetBasicUser().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
-  
+
+    void testShowCurrentUser() {
+        def result = UserAPI.showCurrent(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
+
+
+
+    void testListProjectUser() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.id,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(project.id,"project","user",true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListProjectAdmin() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.id,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListProjectCreator() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.id,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListOntologyUser() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.ontology.id,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListOntologyCreator() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.ontology.id,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListProjectLayer() {
+        def project = BasicInstance.createOrGetBasicProject()
+        def result = UserAPI.list(project.id,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+
+        result = UserAPI.list(-99,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
     void testAddUserCorrect() {
         User userToAdd = BasicInstance.getBasicUserNotExist()
         def jsonUser = new JSONObject(userToAdd.encodeAsJSON()).put("password", "password").toString()
@@ -74,7 +194,8 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
 
     void testUpdateUserCorrect() {
         User userToAdd = BasicInstance.createOrGetBasicUser()
-        def result = UserAPI.update(userToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(userToAdd)
+        def result = UserAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -82,7 +203,7 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
   
         def showResult = UserAPI.show(idUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareUser(result.mapNew, json)
+        BasicInstance.compareUser(data.mapNew, json)
     }
   
     void testUpdateUserNotExist() {
@@ -142,6 +263,60 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(400, result.code)
     }
 
+    void testAddDeleteUserToProject() {
+        def project = BasicInstance.getBasicProjectNotExist()
+        BasicInstance.saveDomain(project)
+
+        //Add project right for user 2
+        def resAddUser = ProjectAPI.addUserProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, resAddUser.code)
+
+        resAddUser = ProjectAPI.deleteUserProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, resAddUser.code)
+    }
+
+    void testAddDeleteAdminToProject() {
+        def project = BasicInstance.getBasicProjectNotExist()
+        BasicInstance.saveDomain(project)
+
+        //Add project right for user 2
+        def resAddUser = ProjectAPI.addAdminProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, resAddUser.code)
+
+        resAddUser = ProjectAPI.deleteAdminProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, resAddUser.code)
+    }
+
+    /*
+          SHOW USER JOB
+     */
+
+    void testShowUserJob() {
+        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def result = UserAPI.showUserJob(userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        result = UserAPI.showUserJob(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testListUserJob() {
+        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def result = UserAPI.listUserJob(userJob.job.project.id,false,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+    void testListUserJobTree() {
+        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def result = UserAPI.listUserJob(userJob.job.project.id,true,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+    void testListUserJobByImages() {
+        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def result = UserAPI.listUserJob(userJob.job.project.id,false,BasicInstance.createOrGetBasicImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+
+
     void testAddUserChildCorrect() {
        log.info("create user")
        def parent = User.findByUsername(Infos.GOODLOGIN);
@@ -161,7 +336,9 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
        assertEquals(200,code)
        json = JSON.parse(response)
        assert json instanceof JSONObject
-       int idUser = json.userJob.id
-
      }
+
+
+
+
 }

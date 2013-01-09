@@ -2,12 +2,13 @@ package be.cytomine
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -99,14 +100,15 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
   void testEditImage() {
       AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
-      def result = AbstractImageAPI.update(imageToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def data = UpdateData.createUpdateSet(imageToAdd)
+      def result = AbstractImageAPI.update(data.oldData.id,data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int id = json.abstractimage.id
       def showResult = AbstractImageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareAbstractImage(result.mapNew, json)
+      BasicInstance.compareAbstractImage(data.mapNew, json)
   }
 
   void testDeleteImage()  {

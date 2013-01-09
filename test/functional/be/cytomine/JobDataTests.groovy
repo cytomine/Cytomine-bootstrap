@@ -1,13 +1,14 @@
 package be.cytomine
 
 import be.cytomine.processing.JobData
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobDataAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,7 +55,7 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddJobDataCorrect() {
         def jobdataToAdd = BasicInstance.getBasicJobDataNotExist()
-        def result = JobDataAPI.create(jobdataToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.create(jobdataToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         JobData jobdata = result.data
         result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -63,14 +64,17 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
 
     void testEditJobDataCorrect() {
         JobData jobdataToAdd = BasicInstance.createOrGetBasicJobData()
-        def result = JobDataAPI.update(jobdataToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(jobdataToAdd)
+        def result = JobDataAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idJobData = json.jobdata.id
         def showResult = JobDataAPI.show(idJobData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareJobData(result.mapNew, json)
+        println "data.mapNew="+data.mapNew
+        println "json="+json
+        BasicInstance.compareJobData(data.mapNew, json)
     }
 
     void testEditJobDataWithBadKey() {

@@ -18,103 +18,39 @@ class SoftwareProjectAPI extends DomainAPI {
     private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
-        log.info "show softwareproject $id"
         String URL = Infos.CYTOMINEURL + "api/softwareproject/" + id + ".json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doGET(URL, username, password)
     }
 
     static def list(String username, String password) {
-        log.info "list softwareproject"
         String URL = Infos.CYTOMINEURL + "api/softwareproject.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doGET(URL, username, password)
     }
 
-
     static def listBySoftware(Long id, String username, String password) {
-        log.info "list softwareproject by software $id"
         String URL = Infos.CYTOMINEURL + "api/software/$id/project.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doGET(URL, username, password)
     }
 
     static def listByProject(Long id, String username, String password) {
-        log.info "list softwareproject by project $id"
         String URL = Infos.CYTOMINEURL + "api/project/$id/software.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doGET(URL, username, password)
     }
 
     static def stats(Long idProject, Long idSoftware, String username, String password) {
-        log.info "list softwareproject by project/soft $idProject/$idSoftware"
         String URL = Infos.CYTOMINEURL + "api/project/$idProject/software/$idSoftware/stats.json"
-        HttpClient client = new HttpClient();
-        client.connect(URL, username, password);
-        client.get()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
-    }
-
-    static def create(SoftwareProject softwareprojectToAdd, User user) {
-       create(softwareprojectToAdd.encodeAsJSON(),user.username,user.password)
-    }
-
-
-    static def create(SoftwareProject softwareprojectToAdd, String username, String password) {
-        return create(softwareprojectToAdd.encodeAsJSON(), username, password)
-    }
-
-    static def create(String json, User user) {
-        create(json,user.username,user.password)
+        return doGET(URL, username, password)
     }
 
     static def create(String json, String username, String password) {
-        log.info "create softwareproject"
         String URL = Infos.CYTOMINEURL + "api/softwareproject.json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, username, password)
-        client.post(json)
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        println response
-        client.disconnect();
-        def jsonResponse = JSON.parse(response)
-        Long idSoftwareProject = jsonResponse?.softwareproject?.id
-        return [data: SoftwareProject.get(idSoftwareProject), code: code]
+        def result = doPOST(URL,json,username,password)
+        result.data = SoftwareProject.get(JSON.parse(result.data)?.softwareproject?.id)
+        return result
     }
 
     static def delete(def id, String username, String password) {
-        log.info "delete softwareproject"
         String URL = Infos.CYTOMINEURL + "api/softwareproject/" + id + ".json"
-        HttpClient client = new HttpClient()
-        client.connect(URL, username, password)
-        client.delete()
-        int code = client.getResponseCode()
-        String response = client.getResponseData()
-        client.disconnect();
-        return [data: response, code: code]
+        return doDELETE(URL,username,password)
     }
 }

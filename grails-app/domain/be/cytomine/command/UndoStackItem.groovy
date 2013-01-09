@@ -8,7 +8,7 @@ import be.cytomine.security.User
  * @author ULG-GIGA Cytomine Team
  * The UndoStackItem class allow to store command on a undo stack so that a command or a group of command can be undo
  */
-class UndoStackItem extends CytomineDomain implements Comparable {
+class UndoStackItem extends CytomineDomain {
 
     /**
      * User who launch command
@@ -36,13 +36,12 @@ class UndoStackItem extends CytomineDomain implements Comparable {
         user index: 'undostackitem_user_index'
     }
 
-    int compareTo(obj) {
-        created.compareTo(obj.created)
-    }
 
     static constraints = {
         transaction(nullable: true)
     }
 
-    String toString() { return "|user=" + user.id + " command=" + command + " transaction=" + transaction + " isFromRedo=" + isFromRedo}
+    String toString() {
+        return "|user=" + user.id + " command=" + command + " transaction=" + transaction + " isFromRedo=" + isFromRedo
+    }
 }

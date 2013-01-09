@@ -18,7 +18,6 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.social.UserPosition
-import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Polygon
@@ -251,8 +250,6 @@ class BootStrap {
 
         if(env == BootStrap.test) {
             createRelation(BootStrapData.relationSamples)
-            Project project = BasicInstance.createOrGetBasicProject()
-            Infos.addUserRight(Infos.GOODLOGIN,project)
 
 
             println "************************************************ MOCK"

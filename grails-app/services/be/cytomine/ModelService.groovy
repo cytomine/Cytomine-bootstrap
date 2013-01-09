@@ -29,7 +29,11 @@ abstract class ModelService {
 //    abstract def edit(Annotation domain, boolean printMessage)
 //    abstract def retrieve(JSONObject json)
 
-
+    /**
+     * Add command info for the new domain concerned by the command
+     * @param newObject New domain
+     * @param message Message build for the command
+     */
     protected def fillDomainWithData(def object, def json) {
         def domain = object.get(json.id)
         domain = object.getFromData(domain, json)

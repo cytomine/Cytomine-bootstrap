@@ -1,27 +1,22 @@
 package be.cytomine
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.processing.Software
-import be.cytomine.project.Discipline
+
 import be.cytomine.project.Project
-import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
-import be.cytomine.test.http.ProjectAPI
+
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
+
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.processing.JobData
+
 import be.cytomine.test.http.JobAPI
 import be.cytomine.command.Task
 import be.cytomine.test.http.TaskAPI
-import be.cytomine.security.SecUser
 
 /**
  * Created by IntelliJ IDEA.
@@ -77,15 +72,20 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddTask() {
         Project project = BasicInstance.createOrGetBasicProject()
-        def result = TaskAPI.create(project, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
 
         assert json instanceof JSONObject
         println "task.json="+json
-        assert json.progress == 0
+        assert json.task.progress == 0
         //assert json.comments.size()==1
-        assert json.project == project.id
+        assert json.task.project == project.id
+    }
+
+    void testAddTaskProjectNotFound() {
+        def result = TaskAPI.create(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
     void testConcreteTask() {
@@ -109,16 +109,16 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
         Infos.addUserRight(userJob.user,job.project)
 
-        def result = TaskAPI.create(job.project, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(job.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def jsonTask = JSON.parse(result.data)
 
 
         //delete all job data
-        result = JobAPI.deleteAllJobData(job.id, jsonTask.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobAPI.deleteAllJobData(job.id, jsonTask.task.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
 
-        def task = Task.read(jsonTask.id)
+        def task = Task.read(jsonTask.task.id)
         task.refresh()
         assert task.progress==100
     }

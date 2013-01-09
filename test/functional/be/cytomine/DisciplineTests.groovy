@@ -1,12 +1,13 @@
 package be.cytomine
 
 import be.cytomine.project.Discipline
-import be.cytomine.test.BasicInstance
+import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DisciplineAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.
@@ -66,7 +67,9 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
 
   void testUpdateDisciplineCorrect() {
       Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-      def result = DisciplineAPI.update(disciplineToAdd, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+      def data = UpdateData.createUpdateSet(disciplineToAdd)
+      def result = DisciplineAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -74,17 +77,17 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
 
       def showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareDiscipline(result.mapNew, json)
+      BasicInstance.compareDiscipline(data.mapNew, json)
 
       showResult = DisciplineAPI.undo()
       assertEquals(200, result.code)
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareDiscipline(result.mapOld, JSON.parse(showResult.data))
+      BasicInstance.compareDiscipline(data.mapOld, JSON.parse(showResult.data))
 
       showResult = DisciplineAPI.redo()
       assertEquals(200, result.code)
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareDiscipline(result.mapNew, JSON.parse(showResult.data))
+      BasicInstance.compareDiscipline(data.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateDisciplineNotExist() {

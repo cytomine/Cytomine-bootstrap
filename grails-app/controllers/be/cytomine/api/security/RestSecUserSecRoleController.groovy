@@ -6,6 +6,7 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
+import be.cytomine.security.SecUser
 
 /**
  * Controller to manage user role
