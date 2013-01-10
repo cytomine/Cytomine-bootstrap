@@ -2,6 +2,9 @@ package be.cytomine.image.server
 
 import be.cytomine.image.Mime
 
+/**
+ * Association between mime and image server
+ */
 class MimeImageServer {
 
     ImageServer imageServer

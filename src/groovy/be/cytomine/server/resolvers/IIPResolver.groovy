@@ -67,7 +67,7 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight, int desiredWidth, int desiredHeight) {
+    public String getCropURL(String baseUrl, String imagePath, Integer topLeftX, Integer topLeftY, Integer width, Integer height, Integer baseImageWidth, Integer baseImageHeight, Integer desiredWidth, Integer desiredHeight) {
         /*
     #Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
     #X is the right inset value (positive) from 0 on the x axis at the max image resolution.

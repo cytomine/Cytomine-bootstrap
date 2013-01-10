@@ -349,6 +349,12 @@ class RestController {
         }
     }
 
+    /**
+     * Get user/algo/reviewed annotation with id
+     * Check the correct type and return it
+     * @param id Annotation id
+     * @return Annotation
+     */
     protected AnnotationDomain getAnnotationDomain(String id) {
         try {
             getAnnotationDomain(Long.parseLong(id))
@@ -357,6 +363,12 @@ class RestController {
         }
     }
 
+    /**
+     * Get user/algo/reviewed annotation with id
+     * Check the correct type and return it
+     * @param id Annotation id
+     * @return Annotation
+     */
     protected AnnotationDomain getAnnotationDomain(long id) {
         AnnotationDomain basedAnnotation = UserAnnotation.read(id)
         if (!basedAnnotation)

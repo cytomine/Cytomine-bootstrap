@@ -7,6 +7,8 @@ import be.cytomine.CytomineDomain
  * User: stevben
  * Date: 27/01/11
  * Time: 15:21
+ * Retrieval server provide similar images to an images.
+ * It can be used to suggest class for images (=> terms for annotation)
  */
 class RetrievalServer extends CytomineDomain {
 
@@ -18,11 +20,11 @@ class RetrievalServer extends CytomineDomain {
 
 
     def beforeInsert() {
-      super.beforeInsert()
+        super.beforeInsert()
     }
 
-  def beforeValidate() {
-    super.beforeValidate()
-  }
+    def beforeValidate() {
+        super.beforeValidate()
+    }
 
 }

@@ -36,6 +36,7 @@ import be.cytomine.ontology.ReviewedAnnotation
  * Date: 18/05/11
  * Controller that handle request for project images.
  * TODO:: doc/test/coverage this controller!
+ * TODOSTEVBEN: clean unused method + doc method
  */
 class RestImageInstanceController extends RestController {
 

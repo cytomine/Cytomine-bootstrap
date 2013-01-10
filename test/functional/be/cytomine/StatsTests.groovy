@@ -6,6 +6,7 @@ import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 
 import be.cytomine.ontology.Term
+import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.
@@ -101,4 +102,58 @@ class StatsTests extends functionaltestplugin.FunctionalTestCase {
         URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm?job=-99&term=${Term.findByOntology(job.project.ontology).id}"
          doGET(URL,404)
     }
+
+
+
+    void testStatTerm() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/term"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/term"
+         doGET(URL,404)
+    }
+
+    void testStatUser() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/user"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/user"
+         doGET(URL,404)
+    }
+
+
+    void testStatsTermslide() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/termslide"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/termslide"
+         doGET(URL,404)
+    }
+
+    void testStatsUserAnnotation() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userannotations"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userannotations"
+        doGET(URL,404)
+    }
+
+    void testStatsUserSlide() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userslide"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userslide"
+        doGET(URL,404)
+    }
+
+    void testStatsEvolution() {
+        Project project = BasicInstance.createOrGetBasicProject()
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution?term=${project.ontology.leafTerms().first()}"
+        doGET(URL,200)
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/annotationevolution"
+        doGET(URL,404)
+    }
+
 }

@@ -9,6 +9,13 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.utils.UpdateData
+import be.cytomine.image.server.ImageProperty
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.AbstractImageService
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
+import cytomine.web.ImagePropertiesService
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +26,38 @@ import be.cytomine.utils.UpdateData
  */
 class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
-  void testListImagesWithCredential() {
+
+    def oldMethod1
+    def oldMethod2
+    def oldMethod3
+
+    void setUp()  {
+        oldMethod1 = AbstractImage.metaClass.getImageServers
+        AbstractImage.metaClass.getImageServers  = {->
+            ImageServer bidon = BasicInstance.createOrGetBasicImageServer()
+            return [bidon]
+        }
+        oldMethod2 = AbstractImageService.metaClass.metadata
+        AbstractImageService.metaClass.metadata = { def id ->
+           return "metdatatext"
+        }
+        oldMethod3 = ImagePropertiesService.metaClass.extractUseful
+        ImagePropertiesService.metaClass.extractUseful = { AbstractImage img ->
+        }
+
+
+
+
+    }
+
+    void tearDown() {
+        AbstractImage.metaClass.getImageServers = oldMethod1
+        AbstractImage.metaClass.metadata = oldMethod2
+        ImagePropertiesService.metaClass.extractUseful = oldMethod3
+    }
+
+
+  void testListImages() {
       BasicInstance.createOrGetBasicAbstractImage()
       def result = AbstractImageAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
@@ -27,23 +65,28 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       assert json instanceof JSONArray
   }
 
+    void testListImagesDatatable() {
+        BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageAPI.list(true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
   void testListImagesWithoutCredential() {
       BasicInstance.createOrGetBasicAbstractImage()
       def result = AbstractImageAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
       assertEquals(401, result.code)
   }
 
-  void testListAnnotationsByUserWithCredential() {
+  void testListAnnotationsByProject() {
       BasicInstance.createOrGetBasicAbstractImage()
-      User user = BasicInstance.createOrGetBasicUser()
-      def result = AbstractImageAPI.listByUser(user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AbstractImageAPI.listByProject(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
-  void testListAnnotationsByUserNoExistWithCredential() {
-      def result = AbstractImageAPI.listByUser(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+  void testListAnnotationsByProjectNoExistWithCredential() {
+      def result = AbstractImageAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(404, result.code)
   }
 
@@ -54,6 +97,95 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
+
+
+  void testGetMetadata() {
+      AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+      def result = AbstractImageAPI.getMetadata(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assertEquals(200, result.code)
+      def json = JSON.parse(result.data)
+  }
+
+    void testGetImageProperties() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        if(image.imageProperties==null || image.imageProperties.isEmpty()) {
+            ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
+            BasicInstance.saveDomain(imageProperty)
+            image.addToImageProperties(imageProperty)
+            BasicInstance.saveDomain(image)
+        }
+        def result = AbstractImageAPI.getInfo(image.id,"property",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+        assert json.size()>0
+        assert json[0].key.equals(image.imageProperties.first().key)
+    }
+
+    void testGetImageProperty() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        if(image.imageProperties==null || image.imageProperties.isEmpty()) {
+            ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
+            BasicInstance.saveDomain(imageProperty)
+            image.addToImageProperties(imageProperty)
+            BasicInstance.saveDomain(image)
+        }
+        println "==>"+ImageProperty.list().collect{it.id}
+        def result = AbstractImageAPI.getInfo(image.id,"property/${image.imageProperties.first().id}",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.key.equals(image.imageProperties.first().key)
+    }
+
+    void testGetImagePropertyNotFound() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageAPI.getInfo(image.id,"property/-99",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testGetImageServers() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageAPI.getInfo(image.id,"imageservers",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+
+    void testGetThumb() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageAPI.getInfo(image.id,"thumb",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testGetPreview() {
+        AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageAPI.getInfo(image.id,"preview",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testGetAnnotationCrop() {
+        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        def result = AbstractImageAPI.getCrop(annotation.id,"annotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testGetUserAnnotationCrop() {
+        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        def result = AbstractImageAPI.getCrop(annotation.id,"userannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testGetAlgoAnnotationCrop() {
+        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def result = AbstractImageAPI.getCrop(annotation.id,"algoannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testGetReviewedAnnotationCrop() {
+        ReviewedAnnotation annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def result = AbstractImageAPI.getCrop(annotation.id,"reviewedannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
 
   void testAddImageCorrect() {
       def imageToAdd = BasicInstance.getBasicAbstractImageNotExist()

@@ -21,6 +21,7 @@ abstract class Resolver {
         Map<String, Object> resolvers = new HashMap<String,Object>()
         resolvers.put("DjatokaResolver", new DjatokaResolver())
         resolvers.put("IIPResolver", new IIPResolver())
+        resolvers.put("Sample", new SampleResolver())
         return (Resolver) resolvers.get(className)
 
     }
@@ -29,6 +30,6 @@ abstract class Resolver {
     public abstract String getMetaDataURL(String baseUrl, String imagePath)
     public abstract String getPropertiesURL(String baseUrl, String imagePath)
     public abstract String getPreviewUrl(String baseUrl, String imagePath)
-    public abstract String getCropURL(String baseUrl, String imagePath, int topLeftX, int topLeftY, int width, int height, int baseImageWidth, int baseImageHeight, int desiredWidth, int desiredHeight)
+    public abstract String getCropURL(String baseUrl, String imagePath, Integer topLeftX, Integer topLeftY, Integer width, Integer height, Integer baseImageWidth, Integer baseImageHeight, Integer desiredWidth, Integer desiredHeight)
     public abstract Object getZoomLevels  (String baseUrl, String imagePath, int width, int height)
 }

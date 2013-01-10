@@ -5,20 +5,31 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
 import be.cytomine.social.UserPosition
 import org.joda.time.DateTime
+import be.cytomine.project.Project
 
+/**
+ * Controller for user position
+ * Position of the user (x,y) on an image for a time
+ */
 class RestUserPositionController extends RestController {
 
     def cytomineService
     def imageInstanceService
     def userService
     def dataSource
+    def projectService
 
+    /**
+     * Add new position for user
+     */
     def add = {
         synchronized (this.getClass()) {
             SecUser user = cytomineService.getCurrentUser()
+
             //check if user has moved its position. If not, only update the date
-            DateTime tenSecondsAgo = new DateTime()
-            tenSecondsAgo = tenSecondsAgo.minusSeconds(10)
+            DateTime tenSecondsAgo = new DateTime().minusSeconds(10)
+
+            //Get the last user position ONLY if user has not moved
             def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc", max : 1) {
                 eq("image.id", Long.parseLong(request.JSON.image+""))
                 eq("user.id", user.id)
@@ -31,7 +42,7 @@ class RestUserPositionController extends RestController {
             }
 
             def userPosition
-            //user is online but don't move
+            //user is online but don't move, just update the date
             if (userPositions.size() == 1) {
                 userPositions[0].setUpdated(new Date())
                 userPositions[0].save(flush : true)
@@ -49,16 +60,14 @@ class RestUserPositionController extends RestController {
                         project : image.project
                 )
                 userPosition.save(flush: true)
-//                def sql = new Sql(dataSource)
-//                long nexId = sequenceService.generateID(user)
-//                String req = "insert into user_position (id , version, user_id, longitude , latitude, zoom,image_id) values( ${nexId},0,${user.id},${request.JSON.lon}, ${request.JSON.lat},${request.JSON.zoom},${request.JSON.image})"
-//                sql.execute(req)
-
             }
             responseSuccess(userPosition)
         }
     }
 
+    /**
+     * Get the last position for a user and an image
+     */
     def lastPositionByUser = {
         ImageInstance image = imageInstanceService.read(params.id)
         SecUser user = userService.read(params.user)
@@ -70,10 +79,12 @@ class RestUserPositionController extends RestController {
         responseSuccess(result)
     }
 
+    /**
+     * Get users that have opened an image now
+     */
     def listOnlineUsersByImage = {
         ImageInstance image = imageInstanceService.read(params.id)
-        DateTime thirtySecondsAgo = new DateTime()
-        thirtySecondsAgo = thirtySecondsAgo.minusSeconds(30)
+        DateTime thirtySecondsAgo = new DateTime().minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc") {
             eq("image", image)
             or {
@@ -85,15 +96,17 @@ class RestUserPositionController extends RestController {
         responseSuccess(result)
     }
 
+    /**
+     * Get online users
+     */
     def listLastUserPositionsByProject = {
-        DateTime thirtySecondsAgo = new DateTime()
-        thirtySecondsAgo = thirtySecondsAgo.minusSeconds(30)
+        DateTime thirtySecondsAgo = new DateTime().minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list() {
+            eq("project", projectService.read(params.id, new Project()))
             or {
                 gt("created", thirtySecondsAgo.toDate())
                 gt("updated", thirtySecondsAgo.toDate())
             }
-
             projections {
                 groupProperty("image.id")
                 groupProperty("user.id")

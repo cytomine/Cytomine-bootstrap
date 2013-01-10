@@ -23,6 +23,8 @@ import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.test.http.ReviewedAnnotationAPI
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.Storage
 
 /**
  * Created by IntelliJ IDEA.
@@ -987,6 +989,45 @@ class BasicInstance {
         assert group != null
         group
     }
+
+
+    static ImageServer createOrGetBasicImageServer() {
+        log.debug "createOrGetBasicImageServer()"
+        def bidon = ImageServer.findByName("bidon")
+        if (!bidon) {
+            bidon = new ImageServer()
+            bidon.name ="bidon"
+            bidon.url = "http://bidon.server.com/"
+            bidon.service = "service"
+            bidon.className = "Sample"
+            bidon.available = true
+            bidon.storage = createOrGetBasicStorage()
+            BasicInstance.saveDomain(bidon)
+        }
+        bidon
+    }
+
+    static Storage createOrGetBasicStorage() {
+        def bidon = Storage.findByName("bidon")
+        if(!bidon) {
+            bidon = new Storage()
+            bidon.name = "bidon"
+            bidon.basePath = "storagepath"
+            bidon.serviceUrl = "http://storage.url.com"
+            bidon.ip = "192.168.0.0"
+            bidon.username = "toto"
+            bidon.password = "pass"
+            bidon.port = 123
+            BasicInstance.saveDomain(bidon)
+        }
+        return bidon
+    }
+
+
+
+
+
+
 
     static Group getBasicGroupNotExist() {
 

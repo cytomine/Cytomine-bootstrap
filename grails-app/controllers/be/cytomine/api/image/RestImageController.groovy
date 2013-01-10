@@ -12,64 +12,82 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.CytomineDomain
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.ReviewedAnnotation
+import grails.plugins.springsecurity.Secured
 
 /**
- * TODO: a refactorer, documenter et tester
+ * Controller for abstract image
+ * An abstract image can be add in n projects
  */
 class RestImageController extends RestController {
 
     def imagePropertiesService
-    def storageService
     def abstractImageService
     def cytomineService
 
-//    def index = {
-//        redirect(controller: "image")
-//    }
+    /**
+     * List all abstract image available on cytomine
+     */
     def list = {
-        response(abstractImageService.list())
+        SecUser user = cytomineService.getCurrentUser()
+        if(params.getBoolean('datatable')) {
+            responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
+        } else {
+            response(abstractImageService.list(user))
+        }
     }
 
-    def listByUser = {
-        SecUser user = null
-        if (params.id != null) user = User.read(params.id)
-        else user = cytomineService.getCurrentUser()
-        if (user != null) responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
-        else responseNotFound("User", params.id)
-    }
-
-    def listByGroup = {
-        Group group = Group.read(params.idgroup)
-        if (group) responseSuccess(abstractImageService.list(group))
-        else responseNotFound("AbstractImageGroup", "Group", params.idgroup)
-    }
-
-
-    def show = {
-        AbstractImage image = abstractImageService.read(params.long('id'))
-        if (image) responseSuccess(image)
-        else responseNotFound("Image", params.id)
-    }
-
-
+    /**
+     * List all abstract images for a project
+     */
     def listByProject = {
         Project project = Project.read(params.id)
-        if (project) responseSuccess(abstractImageService.list(project))
-        else responseNotFound("Image", "Project", params.id)
+        if (project) {
+            responseSuccess(abstractImageService.list(project))
+        } else {
+            responseNotFound("Image", "Project", params.id)
+        }
     }
 
+    /**
+     * Get a single image
+     */
+    def show = {
+        AbstractImage image = abstractImageService.read(params.long('id'))
+        if (image) {
+            responseSuccess(image)
+        } else {
+            responseNotFound("Image", params.id)
+        }
+    }
+
+    /**
+     * Add a new image
+     * TODO:: how to manage security here?
+     */
     def add = {
         add(abstractImageService, request.JSON)
     }
 
+    /**
+     * Update a new image
+     * TODO:: how to manage security here?
+     */
     def update = {
         update(abstractImageService, request.JSON)
     }
 
+    /**
+     * Delete a new image
+     * TODO:: how to manage security here?
+     */
     def delete = {
         delete(abstractImageService, JSON.parse("{id : $params.id}"))
     }
 
+    /**
+     * Get metadata URL for an images
+     * If extract, populate data from metadata table into image object
+     */
     def metadata = {
         def idImage = params.long('id')
         def extract = params.boolean('extract')
@@ -83,16 +101,28 @@ class RestImageController extends RestController {
         response(responseData)
     }
 
+    /**
+     * Extract image properties from file
+     */
     def imageProperties = {
         response(abstractImageService.imageProperties(params.long('id')))
     }
 
+    /**
+     * Get an image property
+     */
     def imageProperty = {
-        def imageProperty = abstractImageService.imageProperty(params.long('id'))
-        if (imageProperty) responseSuccess(imageProperty)
-        else responseNotFound("ImageProperty", params.imageproperty)
+        def imageProperty = abstractImageService.imageProperty(params.long('imageproperty'))
+        if (imageProperty) {
+            responseSuccess(imageProperty)
+        } else {
+            responseNotFound("ImageProperty", params.imageproperty)
+        }
     }
 
+    /**
+     * Get all image servers URL for an image
+     */
     def imageservers = {
         AbstractImage image = abstractImageService.read(params.long('id'))
         def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
@@ -101,6 +131,9 @@ class RestImageController extends RestController {
         response(result)
     }
 
+    /**
+     * Get image thumb URL
+     */
     def thumb = {
         AbstractImage image = AbstractImage.read(params.long('id'))
         try {
@@ -112,6 +145,9 @@ class RestImageController extends RestController {
         }
     }
 
+    /**
+     * Get image preview URL
+     */
     def preview = {
         AbstractImage image = AbstractImage.read(params.long('id'))
         try {
@@ -123,11 +159,29 @@ class RestImageController extends RestController {
         }
     }
 
+    /**
+     * Get annotation crop (image area that frame annotation)
+     * This work for all kinds of annotations
+     */
+    def cropAnnotation = {
+        try {
+            def annotation = getAnnotationDomain(params.id)
+            def cropURL = cropAnnotation(annotation,params)
+            if(cropURL!=null) responseImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    /**
+     * Get annotation crop (image area that frame annotation)
+     * Force the size for crop annotation
+     * This work for all kinds of annotations
+     */
     def cropAnnotationMin = {
         try {
             params.max_size = "256"
-            def annotation = UserAnnotation.read(params.id)
-            if(!annotation) annotation = AlgoAnnotation.read(params.id)
+            def annotation = getAnnotationDomain(params.id)
             def cropURL = cropAnnotation(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {
@@ -135,29 +189,24 @@ class RestImageController extends RestController {
         }
     }
 
-    def cropAnnotation = {
-        try {
-            def annotation = UserAnnotation.read(params.id)
-            if(!annotation) annotation = AlgoAnnotation.read(params.id)
-            def cropURL = cropAnnotation(annotation,params)
-            if(cropURL!=null) responseImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
+    /**
+     * Get annotation user crop (image area that frame annotation)
+     * (Use this service if you know the annotation type)
+     */
     def cropUserAnnotation = {
         try {
-            long start = System.currentTimeMillis()
             def annotation = UserAnnotation.read(params.id)
             def cropURL = cropAnnotation(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
-            println "TIME TOTAL="+(System.currentTimeMillis()-start)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
     }
 
+    /**
+     * Get annotation algo crop (image area that frame annotation)
+     * (Use this service if you know the annotation type)
+     */
     def cropAlgoAnnotation = {
         try {
             def annotation = AlgoAnnotation.read(params.id)
@@ -168,6 +217,10 @@ class RestImageController extends RestController {
         }
     }
 
+    /**
+     * Get annotation review crop (image area that frame annotation)
+     * (Use this service if you know the annotation type)
+     */
     def cropReviewedAnnotation = {
         try {
             def annotation = ReviewedAnnotation.read(params.id)
@@ -178,31 +231,39 @@ class RestImageController extends RestController {
         }
     }
 
+    /**
+     * Get crop annotation URL
+     * @param annotation Annotation
+     * @param params Params
+     * @return Crop Annotation URL
+     */
     private def cropAnnotation(AnnotationDomain annotation, def params) {
-        println "cropAnnotation:"+annotation
-
-        long start = System.currentTimeMillis()
         Integer zoom = 0
         Integer maxSize = -1
-        if (params.max_size != null) maxSize =  Integer.parseInt(params.max_size)
-        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        if (annotation == null)
+        if (params.max_size != null) {
+            maxSize =  Integer.parseInt(params.max_size)
+        }
+        if (params.zoom != null) {
+            zoom = Integer.parseInt(params.zoom)
+        }
+
+        if (annotation == null) {
             responseNotFound("Crop", "Annotation", params.id)
-        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
+        } else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max)) {
             responseNotFound("Crop", "Zoom", zoom)
-//        else if (annotation.location.numPoints<3)
-//            responseNotFound("Crop", "Annotation size", annotation.location.numPoints)
-        else {
+        } else {
             try {
-                String cropURL = null
+                String cropURL
                 if (maxSize != -1) {
                     cropURL = abstractImageService.cropWithMaxSize(annotation, maxSize)
                 } else {
                     cropURL = abstractImageService.crop(annotation, zoom)
                 }
 
-                if (cropURL == null) cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
-                println "TIME="+(System.currentTimeMillis()-start)
+                if (cropURL == null) {
+                    //no crop available, add lambda image
+                    cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+                }
                 return cropURL
             } catch (Exception e) {
                 e.printStackTrace()
@@ -212,31 +273,19 @@ class RestImageController extends RestController {
         }
     }
 
-
+    /**
+     * TODOSTEVBEN: doc
+     */
     def slidingWindow = {
         int width = params.width != null ? Integer.parseInt(params.width) : 1000
         int height = params.height != null ? Integer.parseInt(params.width) : 1000
         float overlapX = params.overlapX != null ? Float.parseFloat(params.overlapX) : 0
         float overlapY = params.overlapY != null ? Float.parseFloat(params.overlapY) : 0
         AbstractImage image = abstractImageService.read(params.long('id'))
-        if (image) responseSuccess(abstractImageService.slidingWindow(image, [ width : width, height : height, overlapX : overlapX, overlapY : overlapY]))
-    }
-
-    def retrieval = {
-        UserAnnotation annotation = UserAnnotation.read(params.idannotation)
-        int zoom = (params.zoom != null) ? Integer.parseInt(params.zoom) : annotation.getImage().getZoomLevels().middle
-
-        if (annotation == null)
-            responseNotFound("Crop", "Annotation", params.id)
-        else if (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max)
-            responseNotFound("Crop", "Zoom", zoom)
-        else {
-
-            int maxSimilarPictures = Integer.parseInt(params.maxsimilarpictures)
-            responseSuccess(abstractImageService.retrieval(annotation, zoom, maxSimilarPictures))
+        if (image) {
+            responseSuccess(abstractImageService.slidingWindow(image, [ width : width, height : height, overlapX : overlapX, overlapY : overlapY]))
         }
     }
-
 }
 
 

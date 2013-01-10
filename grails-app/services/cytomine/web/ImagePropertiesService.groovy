@@ -84,7 +84,7 @@ class ImagePropertiesService implements Serializable{
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         def imageServer = imageServers.get(index)
         log.info "imageServer="+imageServer
-        log.info "imageServerclassName="+imageServer.className
+         log.info "imageServerclassName="+imageServer.className
         Resolver resolver = Resolver.getResolver(imageServer.className)
         log.info "resolver="+resolver
         log.info "storage="+imageServer.getStorage()

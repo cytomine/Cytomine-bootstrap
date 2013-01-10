@@ -16,6 +16,7 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.security.User
 
 
 class AbstractImageService extends ModelService {
@@ -41,12 +42,28 @@ class AbstractImageService extends ModelService {
         return AbstractImage.get(id)
     }
 
+    //TODO: secure!
     def list(Project project) {
         project.abstractimages()
     }
 
+    //TODO: secure!
     def list(Group group) {
         group.abstractimages()
+    }
+
+    def list(User user) {
+        if(user.admin) {
+            return AbstractImage.list()
+        } else {
+            def allImages = []
+            def groups = user.groups()
+            groups.each { group ->
+                allImages.addAll(group.abstractimages())
+
+            }
+            return allImages
+        }
     }
 
     def list(SecUser user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {
@@ -94,6 +111,7 @@ class AbstractImageService extends ModelService {
     }
 
 
+    //TODO:: how to manage security here?
     def add(def json) throws CytomineException {
         transactionService.start()
 
@@ -118,6 +136,7 @@ class AbstractImageService extends ModelService {
 
     }
 
+    //TODO:: how to manage security here?
     def update(def domain,def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -138,6 +157,7 @@ class AbstractImageService extends ModelService {
         return res
     }
 
+    //TODO:: how to manage security here?
     def delete(def domain,def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -162,6 +182,11 @@ class AbstractImageService extends ModelService {
         return url.text
     }
 
+    /**
+     * Extract image properties from file for a specific image
+     * @param id
+     * @return
+     */
     def imageProperties(def id) {
         AbstractImage image = AbstractImage.read(id)
         if (image.imageProperties.isEmpty()) {
@@ -209,11 +234,6 @@ class AbstractImageService extends ModelService {
         } else {
             return annotation.toCropURL()
         }
-    }
-
-    def retrieval(AnnotationDomain annotation, int zoom, int maxSimilarPictures) {
-        def retrievalServers = RetrievalServer.findAll()
-        return retrievalServers.get(0).search(annotation.toCropURL(zoom), maxSimilarPictures)
     }
 
     def slidingWindow(AbstractImage abstractImage, parameters) {

@@ -15,16 +15,22 @@ class StatsController extends RestController {
      * Compute for each user, the number of annotation of each term
      */
     def statUserAnnotations = {
+
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //Get project
         Project project = Project.read(params.id)
-        if (project == null)
+        if (project == null) {
             responseNotFound("Project", params.id)
+            return
+        }
+
+        //Get project terms
         def terms = Term.findAllByOntology(project.getOntology())
         if(terms.isEmpty()) {
             responseSuccess([])
             return
         }
-
-        Map<Long, Object> result = new HashMap<Long, Object>()
 
         //compute number of annotation for each user and each term
         def nbAnnotationsByUserAndTerms = AnnotationTerm.createCriteria().list {
@@ -71,15 +77,18 @@ class StatsController extends RestController {
     }
 
     /**
-     *
+     * Compute number of annotation for each user
      */
     def statUser = {
 
-        Project project = Project.read(params.id)
-        if (project == null) {
-            responseNotFound("Project", params.id)
-        }
         Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //Get project
+        Project project = Project.read(params.id)
+        if (!project) {
+            responseNotFound("Project", params.id)
+            return
+        }
 
         //compute number of annotation for each user
         def userAnnotations = UserAnnotation.createCriteria().list {
@@ -114,10 +123,17 @@ class StatsController extends RestController {
      */
     def statTerm = {
 
+        //Get project
         Project project = Project.read(params.id)
-        if (project == null) responseNotFound("Project", params.id)
+        if (project == null) {
+            responseNotFound("Project", params.id)
+            return
+        }
+
+        //Get leaf term (parent term cannot be map with annotation)
         def terms = project.ontology.leafTerms()
 
+        //Get the number of annotation for each term
         def numberOfAnnotationForEachTerm = UserAnnotation.executeQuery('select t.term.id, count(t) from AnnotationTerm as t, UserAnnotation as b where b.id=t.userAnnotation.id and b.project = ? group by t.term.id', [project])
 
         def stats = [:]
@@ -144,7 +160,6 @@ class StatsController extends RestController {
         stats.each {
             list << ["id": ids.get(it.key), "key": it.key, "value": it.value, "color": color.get(it.key)]
         }
-
         responseSuccess(list)
     }
 
@@ -153,17 +168,25 @@ class StatsController extends RestController {
      */
     def statTermSlide = {
 
+        Map<Long, Object> result = new HashMap<Long, Object>()
+
+        //Get project
         Project project = Project.read(params.id)
-        if (project == null) responseNotFound("Project", params.id)
+        if (project == null) {
+            responseNotFound("Project", params.id)
+            return
+        }
+
+        //Get project term
         def terms = Term.findAllByOntology(project.getOntology())
+
+        //Check if there are user layers
         def userLayers = project.userLayers()
         if(terms.isEmpty() || userLayers.isEmpty()) {
             responseSuccess([])
             return
         }
-        Map<Long, Object> result = new HashMap<Long, Object>()
 
-        //annotationsNumber[0] = image id, annotationsNumber[1] = term id, annotationsNumber[2]= number of annotation
         def annotationsNumber = AnnotationTerm.createCriteria().list {
             inList("term", terms)
             inList("user", userLayers)
@@ -247,7 +270,11 @@ class StatsController extends RestController {
     def statAnnotationEvolution = {
 
         Project project = Project.read(params.id)
-        if (project == null) responseNotFound("Project", params.id)
+        if (project == null) {
+            responseNotFound("Project", params.id)
+            return
+        }
+
         int daysRange = params.daysRange!=null ? params.getInt('daysRange') : 1
         Term term = Term.read(params.getLong('term'))
 

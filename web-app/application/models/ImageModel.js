@@ -52,7 +52,7 @@ var ImageCollection = Backbone.Collection.extend({
         if (this.project != undefined) {
             return "api/project/" + this.project + "/image.json";
         } else {
-            return "api/currentuser/image.json";
+            return "api/image.json?datatable=true";
         }
     },
     initialize:function (options) {

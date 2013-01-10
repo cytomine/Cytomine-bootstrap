@@ -13,6 +13,9 @@ import ij.process.ImageConverter
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
+/**
+ * TODOSTEVBEN: clean unused method + doc
+ */
 class ProcessingController extends RestController {
 
     def imageProcessingService

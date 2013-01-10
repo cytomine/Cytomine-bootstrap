@@ -31,13 +31,13 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(404, result.code)
   }
 
-    void testListAbstractImageGroupByGroupWithCredential() {
-      Group group = BasicInstance.createOrGetBasicGroup()
-      def result = AbstractImageGroupAPI.listByGroup(group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
-      def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
-    }
+//    void testListAbstractImageGroupByGroupWithCredential() {
+//      Group group = BasicInstance.createOrGetBasicGroup()
+//      def result = AbstractImageGroupAPI.listByGroup(group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//      assertEquals(200, result.code)
+//      def json = JSON.parse(result.data)
+//      assert json instanceof JSONArray
+//    }
 
     void testListAbstractImageGroupByGroupWithGroupNotExist() {
       def result = AbstractImageGroupAPI.listByGroup(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
