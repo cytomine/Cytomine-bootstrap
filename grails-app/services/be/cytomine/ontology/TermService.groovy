@@ -50,11 +50,6 @@ class TermService extends ModelService {
         return project?.ontology?.terms()
     }
 
-    def list(ImageInstance image) {
-        return image?.terms()
-    }
-
-
     def list(UserAnnotation annotation, User user) {
         return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
     }

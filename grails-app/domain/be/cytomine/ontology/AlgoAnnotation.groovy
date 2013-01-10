@@ -25,12 +25,19 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
          wktLocation(type: 'text')
       }
 
+    def beforeInsert() {
+        super.beforeInsert()
+    }
+
+    def beforeUpdate() {
+        super.beforeUpdate()
+    }
+
     /**
      * Get all terms map with the annotation
      * @return list of terms
      */
     def terms() {
-
         def criteria = AlgoAnnotationTerm.withCriteria() {
               eq('annotationIdent', id)
               projections {
@@ -40,20 +47,16 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
         return criteria
     }
 
+    /**
+     * Get all terms id map with annotation
+     * @return list of terms id
+     */
     def termsId() {
         terms().collect{it.id}
     }
 
     def getCropUrl(String cytomineUrl) {
         UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineUrl,id)
-    }
-
-    def beforeInsert() {
-        super.beforeInsert()
-    }
-
-    def beforeUpdate() {
-        super.beforeUpdate()
     }
 
     boolean isAlgoAnnotation() {

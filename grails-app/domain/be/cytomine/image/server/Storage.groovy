@@ -1,5 +1,8 @@
 package be.cytomine.image.server
 
+/**
+ * TODOSTEVBEN: doc
+ */
 class Storage {
 
     String name

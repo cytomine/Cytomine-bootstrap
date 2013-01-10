@@ -24,6 +24,15 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
     def sessionFactory
     def springSecurityService
 
+    void testUIViewPortToXMLConversion() {
+        try{
+            ViewPortToBuildXML.process()
+        } catch(Exception e) {
+            log.error e
+            fail()
+        }
+    }
+
     void testCommandMaxSizeOK() {
         log.info("create image")
         String jsonImage = "{\"text\" : \"*************************************************************************"

@@ -16,7 +16,7 @@ import be.cytomine.ontology.UserAnnotation
  * User: lrollus
  * Date: 18/05/11
  * Time: 8:33
- * To change this template use File | Settings | File Templates.
+ * An ImageInstance is an image map with a project
  */
 class ImageInstance extends CytomineDomain implements Serializable {
 
@@ -60,19 +60,10 @@ class ImageInstance extends CytomineDomain implements Serializable {
     void checkAlreadyExist() {
         ImageInstance.withNewSession {
             ImageInstance imageAlreadyExist=ImageInstance.findByBaseImageAndProject(baseImage, project)
-            if(imageAlreadyExist!=null && (imageAlreadyExist.id!=id))  throw new AlreadyExistException("Image " + baseImage?.filename + " already map with project " + project.name)
-        }
-    }
-
-    def terms() {
-        def terms = []
-        def anntotations = UserAnnotation.findAllByImage(this)
-        anntotations.each { annotation ->
-            annotation.terms().each { term ->
-                terms << term
+            if(imageAlreadyExist!=null && (imageAlreadyExist.id!=id))  {
+                throw new AlreadyExistException("Image " + baseImage?.filename + " already map with project " + project.name)
             }
         }
-        terms
     }
 
     static ImageInstance createFromDataWithId(json) {
@@ -87,44 +78,16 @@ class ImageInstance extends CytomineDomain implements Serializable {
     }
 
     static ImageInstance getFromData(image, jsonImage) {
-        image.created = (!jsonImage.created.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.created)) : null
-        image.updated = (!jsonImage.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.updated)) : null
-
-        String userId = jsonImage.user.toString()
-        if (!userId.equals("null")) {
-            image.user = User.get(Long.parseLong(userId))
-            if (image.user == null) throw new WrongArgumentException("User was not found with id:" + userId)
-        }
-        else image.user = null
-
-        String baseImageId = jsonImage.baseImage.toString()
-        if (!baseImageId.equals("null")) {
-            image.baseImage = AbstractImage.get(Long.parseLong(baseImageId))
-            if (image.baseImage == null) throw new WrongArgumentException("BaseImage was not found with id:" + baseImageId)
-        }
-        else image.baseImage = null
-
-        String projectId = jsonImage.project.toString()
-        if (!projectId.equals("null")) {
-            image.project = Project.get(Long.parseLong(projectId))
-            if (image.project == null) throw new WrongArgumentException("Project was not found with id:" + projectId)
-        }
-        else image.project = null
-
-        try {image.countImageAnnotations = Long.parseLong(jsonImage.numberOfAnnotations.toString()) } catch (Exception e) {
-            image.countImageAnnotations = 0
-        }
-
-        image.reviewStart = (!jsonImage.reviewStart.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.reviewStart)) : null
-        image.reviewStop = (!jsonImage.reviewStop.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.reviewStop)) : null
-
-        String reviewUserId = jsonImage.reviewUser.toString()
-        if (!reviewUserId.equals("null")) {
-            image.reviewUser = User.get(Long.parseLong(reviewUserId))
-            if (image.reviewUser == null) throw new WrongArgumentException("User was not found with id:" + reviewUserId)
-        }
-        else image.reviewUser = null
-
+        image.created = getJSONAttrDate(jsonImage,"created")
+        image.updated = getJSONAttrDate(jsonImage,"updated")
+        image.user = getJSONAttrDomain(jsonImage,"user",new User(),false)
+        image.baseImage = getJSONAttrDomain(jsonImage,"baseImage",new AbstractImage(),false)
+        image.project = getJSONAttrDomain(jsonImage,"project",new Project(),false)
+        image.countImageAnnotations = getJSONAttrLong(jsonImage,"numberOfAnnotations",0)
+        image.reviewStart = getJSONAttrDate(jsonImage,"reviewStart")
+        image.reviewStop = getJSONAttrDate(jsonImage,"reviewStop")
+        image.reviewUser = getJSONAttrDomain(jsonImage,"reviewUser",new User(),false)
+        //Check review constraint
         if ((image.reviewUser==null && image.reviewStart!=null) ||(image.reviewUser!=null && image.reviewStart==null) || (image.reviewStart==null && image.reviewStop!=null))
             throw new WrongArgumentException("Review data are not valid: user=${image.reviewUser} start=${image.reviewStart} stop=${image.reviewStop}")
 
@@ -137,63 +100,31 @@ class ImageInstance extends CytomineDomain implements Serializable {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
         JSON.registerObjectMarshaller(ImageInstance) {
             def returnArray = [:]
-
-
-
             returnArray['class'] = it.class
-
             returnArray['id'] = it.id
             returnArray['baseImage'] = it.baseImage?.id
             returnArray['project'] = it.project?.id
             returnArray['user'] = it.user?.id
-
-
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-
-            
-            returnArray['filename'] = it.baseImage ? it.baseImage.filename : null
-            returnArray['originalFilename'] = it.baseImage ? it.baseImage.originalFilename : null
-
-            returnArray['sample'] = it.baseImage ? it.baseImage.sample : null
-
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
+            returnArray['filename'] = it.baseImage.filename
+            returnArray['originalFilename'] = it.baseImage.originalFilename
+            returnArray['sample'] = it.baseImage.sample?.id
             returnArray['path'] = it.baseImage.path
-            returnArray['mime'] = it.baseImage?.mime?.extension
-
+            returnArray['mime'] = it.baseImage.mime?.extension
             returnArray['width'] = it.baseImage.width
             returnArray['height'] = it.baseImage.height
             returnArray['resolution'] = it.baseImage.resolution
             returnArray['magnification'] = it.baseImage.magnification
             returnArray['depth'] = it.baseImage.getZoomLevels()?.max
-            /*returnArray['scale'] = it.baseImage.scale
-
-            returnArray['roi'] = it.baseImage.roi.toString()*/
-
-            //returnArray['info'] = it.baseImage.sample?.name
-            //returnArray['annotations'] = it.annotations
-            // returnArray['thumb'] = it.baseImage.getThumbURL()
-            //returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null
 			try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
-
-            //returnArray['thumb'] = UrlApi.getPreviewURLWithImageId(cytomineBaseUrl, it.baseImage.id)
             try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
-
-            //returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.baseImage.id)
-
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
             try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
             try {returnArray['numberOfReviewedAnnotations'] = it.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
-
-
-            //returnArray['browse'] = ConfigurationHolder.config.grails.serverURL + "/image/browse/" + it.id
-
-            //returnArray['imageServerBaseURL'] = it.baseImage.getMime().imageServers().collect { it.getZoomifyUrl() }
-            //returnArray['imageServerBaseURL'] = UrlApi.getImageServerInfosWithImageId(it.id)
-
             returnArray['reviewStart'] = it.reviewStart ? it.reviewStart.time.toString() : null
             returnArray['reviewStop'] = it.reviewStop ? it.reviewStop.time.toString() : null
             returnArray['reviewUser'] = it.reviewUser?.id
-
             returnArray['reviewed'] = it.isReviewed()
             returnArray['inReview'] = it.isInReviewMode()
 
@@ -201,15 +132,27 @@ class ImageInstance extends CytomineDomain implements Serializable {
         }
     }
 
+    /**
+     * Flag to control if image is beeing review, and not yet validated
+     * @return True if image is review but not validate, otherwise false
+     */
     public boolean isInReviewMode() {
         return (reviewStart!=null && reviewUser!=null)
     }
 
+    /**
+     * Flag to control if image is validated
+     * @return True if review user has validate this image
+     */
     public boolean isReviewed() {
         return (reviewStop!=null)
     }
 
-     public Project projectDomain() {
+    /**
+     * Get the project link with this domain type
+     * @return Project of this domain
+     */
+    public Project projectDomain() {
         return project;
     }
 

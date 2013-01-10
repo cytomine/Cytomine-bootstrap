@@ -15,6 +15,10 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 import be.cytomine.laboratory.Sample
 
+/**
+ * An abstract image is an image that can be map with projects.
+ * When an "AbstractImage" is add to a project, a "ImageInstance" is created.
+ */
 class AbstractImage extends CytomineDomain implements Serializable {
 
     def imagePropertiesService
@@ -30,12 +34,24 @@ class AbstractImage extends CytomineDomain implements Serializable {
     Integer magnification
     Double resolution
 
-    /*
-    * If you modify/add an attribute, don't forget to:
-    * -Update getXXXXFromData
-    * -Update registerMarshaller
-    * -Update functionnal test (add/edit test)
-    */
+    static belongsTo = Sample
+
+    static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
+
+    static transients = ["zoomLevels", "thumbURL"]
+
+    static constraints = {
+        originalFilename(nullable: true, blank: false, unique: false)
+        filename(blank: false, unique: true)
+        scanner(nullable: true)
+        sample(nullable: true)
+        path(nullable: false)
+        mime(nullable: false)
+        width(nullable: true)
+        height(nullable: true)
+        resolution(nullable: true)
+        magnification(nullable: true)
+    }
 
     public beforeInsert() {
         super.beforeInsert()
@@ -46,35 +62,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
             if (filename.lastIndexOf("/") != -1 && filename.lastIndexOf("/") != filename.size())
                 filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
             originalFilename = filename
-        }
-    }
-
-    static belongsTo = Sample
-
-    static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
-
-    static transients = ["zoomLevels", "thumbURL"]
-
-    static constraints = {
-        originalFilename(nullable: true, blank: false, unique: false)
-        filename(blank: false, unique: true)
-
-        scanner(nullable: true)
-        sample(nullable: true)
-
-        path(nullable: false)
-        mime(nullable: false)
-
-        width(nullable: true)
-        height(nullable: true)
-        resolution(nullable: true)
-        magnification(nullable: true)
-    }
-
-
-    def groups() {
-        return abstractimagegroup.collect {
-            it.group
         }
     }
 
@@ -90,39 +77,19 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     static AbstractImage getFromData(image, jsonImage) throws CytomineException {
-        image.filename = jsonImage.filename
-        image.path = jsonImage.path
+        image.filename = getJSONAttrStr(jsonImage,'filename')
+        image.path = getJSONAttrStr(jsonImage,'path')
+        image.height = getJSONAttrInteger(jsonImage,'height',-1)
+        image.width = getJSONAttrInteger(jsonImage,'width',-1)
+        image.created = getJSONAttrDate(jsonImage,'created')
+        image.updated = getJSONAttrDate(jsonImage,'updated')
+        image.scanner = getJSONAttrDomain(jsonImage,"scanner",new Instrument(),false)
+        image.sample = getJSONAttrDomain(jsonImage,"sample",new Sample(),false)
+        image.mime = getJSONAttrDomain(jsonImage,"mime",new Mime(),'extension','String',true)
 
-        image.height = (!jsonImage.height.toString().equals("null")) ? ((String) jsonImage.height).toInteger() : -1
-        image.width = (!jsonImage.width.toString().equals("null")) ? ((String) jsonImage.width).toInteger() : -1
-        //image.scale = (!jsonImage.scale.toString().equals("null"))  ? ((String)jsonImage.scale).toDouble() : -1
-
-        image.created = (!jsonImage.created.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.created)) : null
-        image.updated = (!jsonImage.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonImage.updated)) : null
-
-        String scannerId = jsonImage.scanner.toString()
-        if (!scannerId.equals("null")) {
-            image.scanner = Instrument.get(scannerId)
-            if (image.scanner == null) throw new WrongArgumentException("Scanner was not found with id:" + scannerId)
+        if (image.mime.imageServers().size() == 0) {
+            throw new WrongArgumentException("Mime with id:${jsonImage.mime} has not image server")
         }
-        else image.scanner = null
-
-        String sampleId = jsonImage.sample.toString()
-        if (!sampleId.equals("null")) {
-            image.sample = Sample.get(sampleId)
-            if (image.sample == null) throw new WrongArgumentException("Sample was not found with id:" + sampleId)
-        }
-        else image.sample = null
-
-        String mimeId = jsonImage.mime.toString()
-        image.mime = Mime.findByExtension(mimeId)
-        if (image.mime == null) {
-            throw new WrongArgumentException("Mime was not found with id:" + mimeId)
-        }
-        else if (image.mime.imageServers().size() == 0) {
-            throw new WrongArgumentException("Mime with id:" + mimeId + " has not image server")
-        }
-
         return image;
     }
 
@@ -139,8 +106,8 @@ class AbstractImage extends CytomineDomain implements Serializable {
             returnArray['sample'] = it.sample?.id
             returnArray['path'] = it.path
             returnArray['mime'] = it.mime.extension
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
             returnArray['width'] = it.width
             returnArray['height'] = it.height
             returnArray['depth'] = it.getZoomLevels()?.max
@@ -181,17 +148,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
-        return url
-    }
-
-    def getPropertiesURL() {
-        def imageServers = getImageServers()
-        if (imageServers == null || imageServers.size() == 0) {
-            return [] as JSON
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getPropertiesURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
         return url
     }
 

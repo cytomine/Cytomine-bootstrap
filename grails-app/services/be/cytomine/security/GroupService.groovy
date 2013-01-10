@@ -29,7 +29,9 @@ class GroupService extends ModelService {
     }
 
     def list(AbstractImage abstractimage) {
-        return abstractimage.groups()
+        return abstractimage.abstractimagegroup.collect {
+            it.group
+        }
     }
 
     def read(def id) {

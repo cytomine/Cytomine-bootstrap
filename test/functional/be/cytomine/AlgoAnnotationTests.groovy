@@ -65,6 +65,13 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONArray
     }
 
+    void testListAlgoAnnotationByProjectWithOffset() {
+        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def result = AlgoAnnotationAPI.listByProject(annotation.project.id,true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+    }
+
     void testListAlgoAnnotationByProjectNotExistWithCredential() {
         def result = AlgoAnnotationAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
@@ -83,6 +90,10 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAlgoAnnotationByImageAndUserWithCredential() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationWith2Term = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotationTerm aat = BasicInstance.createAlgoAnnotationTerm(annotationWith2Term.user.job,annotationWith2Term,annotationWith2Term.user)
+
+
         def result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -99,6 +110,11 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
 
@@ -119,6 +135,8 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
+        result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, -99, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assertEquals(404, result.code)
     }
 
     void testListAlgoAnnotationByProjectAndTermAndUserAndImageWithCredential() {
@@ -135,7 +153,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def result = AlgoAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
     }
     
     void testDownloadAlgoAnnotationDocument() {
@@ -492,6 +509,17 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
+    }
+
+    void testUnionAlgoAnnotationWithNotFound() {
+        def a1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        def result
+        result = AlgoAnnotationAPI.union(-99,a1.retrieveAnnotationDomain().user.id,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,-99,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,a1.retrieveAnnotationDomain().user.id,-99,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
     void testUnionAlgoAnnotationByProjectWithCredential() {

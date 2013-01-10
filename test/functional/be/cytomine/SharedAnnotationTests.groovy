@@ -31,6 +31,9 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
 
     void testAddAnnotationComments() {

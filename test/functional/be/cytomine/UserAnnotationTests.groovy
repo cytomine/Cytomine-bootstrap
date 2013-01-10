@@ -60,6 +60,11 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = UserAnnotationAPI.listByProject(annotation.project.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+       json = JSON.parse(result.data)
+        assert json instanceof JSONArray
     }
 
     void testListUserAnnotationByProjectNotExistWithCredential() {
@@ -84,14 +89,30 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = UserAnnotationAPI.listByImageAndUser(-99, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, -99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
+
+
+
+
+
+
     void testListUserAnnotationByProjectAndTermAndUserWithCredential() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
         Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.userAnnotation.project)
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+
+        result = UserAnnotationAPI.listByProjectAndTerm(-99, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+
+        result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, -99, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
     
     void testListUserAnnotationByProjectAndTermWithUserNullWithCredential() {
@@ -124,6 +145,9 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = UserAnnotationAPI.listByTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
     
     void testDownloadUserAnnotationDocument() {

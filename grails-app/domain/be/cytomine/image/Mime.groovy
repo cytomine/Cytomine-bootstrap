@@ -3,6 +3,9 @@ package be.cytomine.image
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 
+/**
+ * Image Extension
+ */
 class Mime implements Serializable {
 
     String extension

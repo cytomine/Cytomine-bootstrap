@@ -5,6 +5,10 @@ import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
+/**
+ * A sample is a source of image
+ * This is a real thing: blood, a mouse lung,...
+ */
 class Sample extends CytomineDomain implements Serializable{
 
     String name
@@ -27,9 +31,9 @@ class Sample extends CytomineDomain implements Serializable{
     }
 
     static Sample getFromData(Sample sample, jsonSample) {
-        sample.created = (!jsonSample.created.toString().equals("null")) ? new Date(Long.parseLong(jsonSample.created)) : null
-        sample.updated = (!jsonSample.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonSample.updated)) : null
-        sample.name = jsonSample.name
+        sample.name = getJSONAttrStr(jsonSample,'name')
+        sample.created = getJSONAttrDate(jsonSample,'created')
+        sample.updated = getJSONAttrDate(jsonSample,'created')
         return sample;
     }
 

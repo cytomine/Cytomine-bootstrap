@@ -2,6 +2,9 @@ package be.cytomine.image.server
 
 import be.cytomine.image.AbstractImage
 
+/**
+ * TODOSTEVBEN: doc
+ */
 class StorageAbstractImage {
     Storage storage
     AbstractImage abstractImage
@@ -20,7 +23,6 @@ class StorageAbstractImage {
             abstractImage.refresh()
             storageAbstractImage.save(flush: true)
         }
-
     }
 
     static StorageAbstractImage unlink(Storage storage, AbstractImage abstractImage) {

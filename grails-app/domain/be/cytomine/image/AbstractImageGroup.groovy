@@ -7,6 +7,10 @@ import be.cytomine.security.Group
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
+/**
+ * Association between Image and Group.
+ * All groups that have credential to access an image (view, add to project,...)
+ */
 class AbstractImageGroup extends CytomineDomain implements Serializable {
 
     AbstractImage abstractimage
@@ -16,15 +20,17 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
-    String toString() {
-        "[" + this.id + " <" + abstractimage + "," + group + ">]"
-    }
-
     static AbstractImageGroup link(AbstractImage abstractimage, Group group) {
-        if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
-        if (!group) throw new WrongArgumentException("Group cannot be null")
+
+        if (!abstractimage) {
+            throw new WrongArgumentException("AbstractImage cannot be null")
+        }
+        if (!group) {
+            throw new WrongArgumentException("Group cannot be null")
+        }
+
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (abstractimageGroup) throw new AlreadyExistException("AbstractImage - group already exist")
+
         if (!abstractimageGroup) {
             abstractimageGroup = new AbstractImageGroup()
             abstractimage?.addToAbstractimagegroup(abstractimageGroup)
@@ -32,16 +38,23 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
             abstractimage.refresh()
             group.refresh()
             abstractimageGroup.save(flush: true)
-        } else throw new WrongArgumentException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
+        } else {
+            throw new AlreadyExistException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
+        }
         return abstractimageGroup
     }
 
     static void unlink(AbstractImage abstractimage, Group group) {
 
-        if (!abstractimage) throw new WrongArgumentException("AbstractImage cannot be null")
-        if (!group) throw new WrongArgumentException("Group cannot be null")
+        if (!abstractimage) {
+            throw new WrongArgumentException("AbstractImage cannot be null")
+        }
+
+        if (!group) {
+            throw new WrongArgumentException("Group cannot be null")
+        }
+
         def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        if (!abstractimageGroup) return
 
         if (abstractimageGroup) {
             abstractimage?.removeFromAbstractimagegroup(abstractimageGroup)
@@ -64,7 +77,6 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
     }
 
     static AbstractImageGroup getFromData(abstractimageGroup, jsonAbstractImageGroup) {
-        Logger.getLogger(this).info("jsonAbstractImageGroup from getAbstractImageGroupFromData = " + jsonAbstractImageGroup)
         abstractimageGroup.abstractimage = AbstractImage.get(jsonAbstractImageGroup.abstractimage.toString())
         abstractimageGroup.group = Group.get(jsonAbstractImageGroup.group.toString())
         return abstractimageGroup;

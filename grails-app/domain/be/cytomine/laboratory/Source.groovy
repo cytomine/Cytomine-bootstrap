@@ -2,9 +2,15 @@ package be.cytomine.laboratory
 
 import be.cytomine.CytomineDomain
 
+/**
+ * A source is a real thing that provide sample.
+ * E.g. a patient, a mouse,...
+ * It is defined to connect cytomine to "outside".
+ */
 class Source extends CytomineDomain {
 
     String name
+    //TODO: change with has Many
     Sample sample
 
     static constraints = {

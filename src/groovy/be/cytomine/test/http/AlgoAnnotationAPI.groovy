@@ -40,7 +40,11 @@ class AlgoAnnotationAPI extends DomainAPI {
     }
 
     static def listByProject(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/$id/algoannotation.json"
+        listByProject(id,false,username,password)
+    }
+
+    static def listByProject(Long id, boolean offset, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$id/algoannotation.json" + (offset? "?offset=0&max=3":"")
         return doGET(URL, username, password)
     }
 
