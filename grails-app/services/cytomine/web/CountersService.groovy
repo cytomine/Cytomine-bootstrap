@@ -1,10 +1,10 @@
 package cytomine.web
 
-import be.cytomine.social.SharedAnnotation
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.image.ImageInstance
+import be.cytomine.social.SharedAnnotation
 
 /**
  * Cytomine @ GIGA-ULG

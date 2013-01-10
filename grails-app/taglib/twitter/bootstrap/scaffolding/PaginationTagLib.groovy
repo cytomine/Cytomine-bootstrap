@@ -1,7 +1,5 @@
 package twitter.bootstrap.scaffolding
 
-import org.springframework.validation.Errors
-import org.springframework.validation.FieldError
 import org.springframework.web.servlet.support.RequestContextUtils as RCU
 
 class PaginationTagLib {

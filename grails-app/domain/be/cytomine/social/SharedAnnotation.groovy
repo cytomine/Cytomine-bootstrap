@@ -1,11 +1,11 @@
 package be.cytomine.social
 
 import be.cytomine.CytomineDomain
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.apache.log4j.Logger
-import be.cytomine.ontology.UserAnnotation
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class SharedAnnotation extends CytomineDomain {
 

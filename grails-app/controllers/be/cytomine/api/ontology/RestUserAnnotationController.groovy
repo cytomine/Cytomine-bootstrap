@@ -5,28 +5,21 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
-
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.utils.GeometryUtils
+import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
-import be.cytomine.ontology.UserAnnotation
-
-import com.vividsolutions.jts.geom.Geometry
-
-import groovy.sql.Sql
-
-import be.cytomine.security.UserJob
-
-import be.cytomine.utils.GeometryUtils
 
 /**
  * Controller for annotation created by user

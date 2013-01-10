@@ -2,23 +2,12 @@ package be.cytomine.api.security
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
-import be.cytomine.processing.Job
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
-import be.cytomine.security.UserJob
-import be.cytomine.social.UserPosition
 import be.cytomine.utils.Utils
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
-
-import java.text.SimpleDateFormat
-import org.omg.PortableServer.POAPackage.ObjectNotActive
-import javassist.tools.rmi.ObjectNotFoundException
-import be.cytomine.ontology.AlgoAnnotation
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.

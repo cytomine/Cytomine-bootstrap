@@ -1,10 +1,10 @@
 package be.cytomine.api.stats
 
+import be.cytomine.api.RestController
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
-import be.cytomine.project.Project
-import be.cytomine.api.RestController
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.project.Project
 
 class StatsController extends RestController {
 

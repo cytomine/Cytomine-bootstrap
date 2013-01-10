@@ -6,15 +6,15 @@ import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.security.User
-import be.cytomine.security.SecUserSecRole
 
 class JobService extends ModelService {
 

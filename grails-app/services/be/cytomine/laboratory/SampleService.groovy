@@ -5,7 +5,6 @@ import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
-
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList

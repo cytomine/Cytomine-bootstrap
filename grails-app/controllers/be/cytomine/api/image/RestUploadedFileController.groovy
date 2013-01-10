@@ -4,8 +4,8 @@ import be.cytomine.api.RestController
 import be.cytomine.image.UploadedFile
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import grails.converters.JSON
 import be.cytomine.utils.FilesUtils
+import grails.converters.JSON
 
 /**
  * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)

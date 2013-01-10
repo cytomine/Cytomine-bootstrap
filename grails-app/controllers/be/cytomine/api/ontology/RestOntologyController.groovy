@@ -2,8 +2,6 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.Term
-import be.cytomine.security.SecUser
 import grails.converters.JSON
 
 /**

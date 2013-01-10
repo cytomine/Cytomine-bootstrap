@@ -1,5 +1,6 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
@@ -15,7 +16,6 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 import java.util.TreeMap.Entry
-import be.cytomine.AnnotationDomain
 
 class AlgoAnnotationTermService extends ModelService {
 

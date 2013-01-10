@@ -1,29 +1,21 @@
 package be.cytomine.processing
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ServerException
-import be.cytomine.api.UrlApi
 import be.cytomine.image.server.RetrievalServer
+import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.test.HttpClient
+import be.cytomine.utils.RetrievalHttpUtils
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
+import groovy.sql.Sql
 import groovyx.gpars.Asynchronizer
-import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder
+import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
-
-
-import static groovyx.net.http.Method.DELETE
-import static groovyx.net.http.Method.POST
-import org.apache.log4j.Logger
-
-import be.cytomine.AnnotationDomain
-import be.cytomine.ontology.UserAnnotation
-import groovy.sql.Sql
-import be.cytomine.ontology.Ontology
-import be.cytomine.utils.RetrievalHttpUtils
 
 class RetrievalService {
 

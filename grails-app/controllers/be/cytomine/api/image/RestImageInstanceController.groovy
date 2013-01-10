@@ -1,14 +1,12 @@
 package be.cytomine.api.image
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-import be.cytomine.test.Infos
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
@@ -25,10 +23,8 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import be.cytomine.AnnotationDomain
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
+
+import be.cytomine.ontology.*
 
 /**
  * Created by IntelliJ IDEA.

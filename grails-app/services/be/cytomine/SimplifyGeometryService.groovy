@@ -1,13 +1,10 @@
 package be.cytomine
 
-import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
+import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 
 class SimplifyGeometryService {
 

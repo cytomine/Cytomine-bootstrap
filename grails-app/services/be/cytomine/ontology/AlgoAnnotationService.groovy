@@ -1,5 +1,6 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
@@ -7,29 +8,20 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
 import be.cytomine.image.ImageInstance
-
+import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-
+import be.cytomine.security.UserJob
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTWriter
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
-
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.AnnotationDomain
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.GeometryFactory
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
-import be.cytomine.processing.Job
-import be.cytomine.security.UserJob
+import org.springframework.security.access.prepost.PreAuthorize
 
 class AlgoAnnotationService extends ModelService {
 

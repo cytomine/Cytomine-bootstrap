@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -14,24 +15,13 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import grails.converters.JSON
+import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
-import org.hibernate.FetchMode
-import org.hibernate.criterion.Restrictions
-import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.utils.GeometryUtils
-import groovy.sql.Sql
-import be.cytomine.api.UrlApi
 
 class UserAnnotationService extends ModelService {
 

@@ -4,12 +4,10 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
-
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.

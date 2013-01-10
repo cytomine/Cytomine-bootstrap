@@ -1,13 +1,13 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
+import be.cytomine.image.ImageInstance
 import be.cytomine.security.UserJob
 import com.vividsolutions.jts.io.WKTReader
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.image.ImageInstance
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.api.UrlApi
 
 class AlgoAnnotation extends AnnotationDomain implements Serializable {
 

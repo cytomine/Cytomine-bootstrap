@@ -1,23 +1,8 @@
 package be.cytomine
 
-import be.cytomine.Exception.ForbiddenException
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.command.AddCommand
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
+import be.cytomine.command.Task
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
-import be.cytomine.social.LastConnection
-import be.cytomine.utils.Utils
-import org.apache.commons.collections.ListUtils
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PreAuthorize
-
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.READ
-import be.cytomine.command.Task
 
 class TaskService {
 

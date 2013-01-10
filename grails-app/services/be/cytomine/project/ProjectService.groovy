@@ -9,6 +9,8 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.social.LastConnection
+import be.cytomine.social.UserPosition
 import be.cytomine.test.Infos
 import org.apache.commons.collections.CollectionUtils
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -18,8 +20,6 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
-import be.cytomine.social.LastConnection
-import be.cytomine.social.UserPosition
 
 class ProjectService extends ModelService {
 

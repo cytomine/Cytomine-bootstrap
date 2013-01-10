@@ -1,4 +1,3 @@
-import be.cytomine.processing.ProcessingServer
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 import be.cytomine.ViewPortToBuildXML
@@ -7,17 +6,17 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
+import be.cytomine.laboratory.Sample
 import be.cytomine.processing.ImageFilter
 import be.cytomine.processing.Job
+import be.cytomine.processing.ProcessingServer
 import be.cytomine.processing.Software
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
-import be.cytomine.laboratory.Sample
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
-import be.cytomine.social.UserPosition
 import be.cytomine.test.Infos
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Polygon
@@ -36,11 +35,6 @@ import be.cytomine.image.server.*
 import be.cytomine.ontology.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import be.cytomine.security.SecUser
-import be.cytomine.processing.RetrievalService
-import be.cytomine.utils.RetrievalHttpUtils
-
-import be.cytomine.AnnotationDomain
 
 class BootStrap {
     def springSecurityService

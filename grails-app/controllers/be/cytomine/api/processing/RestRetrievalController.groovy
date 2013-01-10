@@ -1,12 +1,8 @@
 package be.cytomine.api.processing
 
-import be.cytomine.api.RestController
-import be.cytomine.security.SecUser
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.AnnotationDomain
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.Exception.CytomineException
+import be.cytomine.api.RestController
 
 /**
  * Controller that handle Retrieval request
