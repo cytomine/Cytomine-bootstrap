@@ -17,36 +17,17 @@ class RestSampleController extends RestController {
     def cytomineService
 
     def list = {
-        responseSuccess(sampleService.list())
-    }
-
-    def listByUser = {
-        SecUser user
-        if (params.id != null) {
-            user = userService.read(params.long('id'))
-        } else {
-            user = cytomineService.getCurrentUser()
-        }
-
-        if (user != null) {
-            String page = params.page
-            String limit = params.rows
-            String sortedRow = params.sidx
-            String sord = params.sord
-            if (page || limit || sortedRow || sord)
-                responseSuccess(sampleService.list(user, page, limit, sortedRow, sord))
-            else
-                responseSuccess(sampleService.list(user))
-
-        }
-        else responseNotFound("User", params.id)
+        responseSuccess(sampleService.list(cytomineService.getCurrentUser()))
     }
 
 
     def show = {
         Sample sample = sampleService.read(params.long('id'))
-        if (sample) responseSuccess(sample)
-        else responseNotFound("Sample", params.id)
+        if (sample) {
+            responseSuccess(sample)
+        } else {
+            responseNotFound("Sample", params.id)
+        }
     }
 
     def add = {

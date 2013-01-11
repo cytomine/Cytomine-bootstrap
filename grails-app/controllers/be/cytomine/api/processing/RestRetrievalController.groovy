@@ -21,7 +21,7 @@ class RestRetrievalController extends RestController {
         log.info "List with id userannotation:" + params.idannotation
         try {
 
-            AnnotationDomain annotation = getAnnotationDomain(params.idannotation)
+            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.idannotation)
 
             if(!annotation) {
                 responseNotFound("AnnotationDomain",params.idannotation)

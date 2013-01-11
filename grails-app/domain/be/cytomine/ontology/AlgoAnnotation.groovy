@@ -8,10 +8,24 @@ import be.cytomine.security.UserJob
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.project.Project
+import be.cytomine.utils.JSONUtils
 
+/**
+ * Annotation added by a job (software)
+ * Extend AnnotationDomain that provide generic Annotation properties (location,...)
+ */
 class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
+    /**
+     * Virtual user that create annotation
+     */
     UserJob user
+
+    /**
+     * Number of reviewed annotation
+     * Rem: With UI client, it can only be 0 or 1
+     */
     Integer countReviewedAnnotations = 0
 
     static constraints = {
@@ -49,6 +63,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
     /**
      * Get all terms id map with annotation
+     * TODO: could be optim with single SQL request
      * @return list of terms id
      */
     def termsId() {
@@ -59,77 +74,96 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
         UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineUrl,id)
     }
 
+    /**
+     * Check if annotation is an algo annotation
+     */
     boolean isAlgoAnnotation() {
         return true
     }
 
+    /**
+     * Check if annotation is a reviewed annotation
+     * Rem: Even if this annotation is review, this is still algo annotation
+     */
     boolean isReviewedAnnotation() {
         return false
     }
 
+    /**
+     * Get all terms to map with annotation if automatic review.
+     * For AlgoAnnotation, we take AlgoAnnotationTerm created by this user
+     * @return Term List
+     */
     List<Term> termsForReview() {
         AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id,user).collect{it.term}.unique()
     }
 
+    /**
+     * Check if annotation has been reviewed
+     * @return True if annotation has at least 1 reviewed annotation, otherwise false
+     */
     boolean hasReviewedAnnotation() {
         return countReviewedAnnotations>0
     }
 
-
-    static AlgoAnnotation createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws be.cytomine.Exception.CytomineException Error during domain creation
+     */
+    static AlgoAnnotation createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
     /**
-     * Create a new Annotation with jsonAnnotation attributes
-     * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-     * @param jsonAnnotation JSON
-     * @return Annotation
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
      */
-    static AlgoAnnotation createFromData(jsonAnnotation) {
+    static AlgoAnnotation createFromData(def json) {
         def annotation = new AlgoAnnotation()
-        getFromData(annotation, jsonAnnotation)
+        insertDataIntoDomain(annotation, json)
     }
 
     /**
-     * Fill annotation with data attributes
-     * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-     * @param annotation Annotation Source
-     * @param jsonAnnotation JSON
-     * @return annotation with json attributes
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
      */
-    static AlgoAnnotation getFromData(AlgoAnnotation annotation, jsonAnnotation) {
+    static AlgoAnnotation insertDataIntoDomain(def domain, def json) {
         try {
-            annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
-            annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
-            annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+            domain.geometryCompression = JSONUtils.getJSONAttrDouble(json,'geometryCompression',0)
+            domain.created = JSONUtils.getJSONAttrDate(json,'created')
+            domain.updated = JSONUtils.getJSONAttrDate(json,'created')
+            domain.location = new WKTReader().read(json.location)
+            domain.image = JSONUtils.getJSONAttrDomain(json,"image",new ImageInstance(),true)
+            domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),true)
+            domain.user = JSONUtils.getJSONAttrDomain(json,"user",new UserJob(),true)
 
-            //location
-            annotation.location = new WKTReader().read(jsonAnnotation.location)
-            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
-            //if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
-            if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
-            //image
-            annotation.image = ImageInstance.get(jsonAnnotation.image);
-            if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
-            //project
-            annotation.project = be.cytomine.project.Project.get(jsonAnnotation.project);
-            if (!annotation.project) throw new WrongArgumentException("Project $jsonAnnotation.project not found!")
-            //user
-            annotation.user = UserJob.get(jsonAnnotation.user);
-            if (!annotation.user) throw new WrongArgumentException("User $jsonAnnotation.user not found!")
+            if (!domain.location) {
+                throw new WrongArgumentException("Geo is null: 0 points")
+            }
+            if (domain.location.getNumPoints() < 1) {
+                throw new WrongArgumentException("Geometry is empty:" + domain.location.getNumPoints() + " points")
+            }
 
         } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }
-        return annotation;
+        return domain;
     }
 
-
-
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AlgoAnnotation.class)
         JSON.registerObjectMarshaller(AlgoAnnotation) { AlgoAnnotation annotation ->
@@ -139,9 +173,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['id'] = annotation.id
             returnArray['location'] = annotation.location.toString()
             returnArray['image'] = annotation.image?.id
-
             returnArray['geometryCompression'] = annotation.geometryCompression
-
             returnArray['project'] = annotation.project.id
             returnArray['container'] = annotation.project.id
             returnArray['user'] = annotation.user?.id
@@ -149,22 +181,18 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['area'] = annotation.computeArea()
             returnArray['perimeter'] = annotation.computePerimeter()
             returnArray['centroid'] = annotation.getCentroid()
-            returnArray['created'] = annotation.created ? annotation.created.time.toString() : null
-            returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
+            returnArray['created'] = annotation.created?.time?.toString()
+            returnArray['updated'] = annotation.updated?.time?.toString()
             returnArray['term'] = annotation.termsId()
-
-            try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['rate'] = annotation.rate} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['idTerm'] = annotation.idTerm} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['idExpectedTerm'] = annotation.idExpectedTerm} catch (Exception e) {}
-
+            returnArray['similarity'] = annotation.similarity
+            returnArray['rate'] = annotation.rate
+            returnArray['idTerm'] = annotation.idTerm
+            returnArray['idExpectedTerm'] = annotation.idExpectedTerm
             returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
             returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
-
             returnArray['reviewed'] = annotation.hasReviewedAnnotation()
-
             return returnArray
         }
     }

@@ -68,6 +68,11 @@ class UserJob extends SecUser {
         user.samples(max,first,col,order)
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + UserJob.class)
         JSON.registerObjectMarshaller(UserJob) {

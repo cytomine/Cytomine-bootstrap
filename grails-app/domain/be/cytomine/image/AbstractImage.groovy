@@ -13,6 +13,7 @@ import be.cytomine.laboratory.Sample
 import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
 /**
  * An abstract image is an image that can be map with projects.
@@ -64,34 +65,60 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
     }
 
-    static AbstractImage createFromDataWithId(json) throws CytomineException {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws CytomineException Error during domain creation
+     */
+    static AbstractImage createFromDataWithId(def json) throws CytomineException {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static AbstractImage createFromData(jsonImage) throws CytomineException {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws CytomineException Error during domain creation
+     */
+    static AbstractImage createFromData(def json) throws CytomineException {
         def image = new AbstractImage()
-        getFromData(image, jsonImage)
+        insertDataIntoDomain(image, json)
     }
 
-    static AbstractImage getFromData(image, jsonImage) throws CytomineException {
-        image.filename = getJSONAttrStr(jsonImage,'filename')
-        image.path = getJSONAttrStr(jsonImage,'path')
-        image.height = getJSONAttrInteger(jsonImage,'height',-1)
-        image.width = getJSONAttrInteger(jsonImage,'width',-1)
-        image.created = getJSONAttrDate(jsonImage,'created')
-        image.updated = getJSONAttrDate(jsonImage,'updated')
-        image.scanner = getJSONAttrDomain(jsonImage,"scanner",new Instrument(),false)
-        image.sample = getJSONAttrDomain(jsonImage,"sample",new Sample(),false)
-        image.mime = getJSONAttrDomain(jsonImage,"mime",new Mime(),'extension','String',true)
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     * @throws CytomineException Error during properties copy (wrong argument,...)
+     */
+    static AbstractImage insertDataIntoDomain(def domain, def json) throws CytomineException {
+        domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
+        domain.path = JSONUtils.getJSONAttrStr(json,'path')
+        domain.height = JSONUtils.getJSONAttrInteger(json,'height',-1)
+        domain.width = JSONUtils.getJSONAttrInteger(json,'width',-1)
+        domain.created = JSONUtils.getJSONAttrDate(json,'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
+        domain.scanner = JSONUtils.getJSONAttrDomain(json,"scanner",new Instrument(),false)
+        domain.sample = JSONUtils.getJSONAttrDomain(json,"sample",new Sample(),false)
+        domain.mime = JSONUtils.getJSONAttrDomain(json,"mime",new Mime(),'extension','String',true)
 
-        if (image.mime.imageServers().size() == 0) {
-            throw new WrongArgumentException("Mime with id:${jsonImage.mime} has not image server")
+        if (domain.mime.imageServers().size() == 0) {
+            throw new WrongArgumentException("Mime with id:${json.mime} has not image server")
         }
-        return image;
+        return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
 
         Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)

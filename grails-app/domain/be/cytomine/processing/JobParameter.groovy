@@ -27,6 +27,11 @@ class JobParameter  extends CytomineDomain implements Comparable{
         }
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
         JSON.registerObjectMarshaller(JobParameter) {
@@ -46,27 +51,45 @@ class JobParameter  extends CytomineDomain implements Comparable{
         }
     }
 
-    static JobParameter createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static JobParameter createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static JobParameter createFromData(jsonJobParameter) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static JobParameter createFromData(def json) {
         def jobParameter = new JobParameter()
-        getFromData(jobParameter, jsonJobParameter)
+        insertDataIntoDomain(jobParameter, json)
     }
 
-    static JobParameter getFromData(jobParameter, jsonJobParameter) {
-        if (!jsonJobParameter.value.toString().equals("null"))
-            jobParameter.value = jsonJobParameter.value
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static JobParameter insertDataIntoDomain(def domain, def json) {
+        if (!json.value.toString().equals("null"))
+            domain.value = json.value
 
-        jobParameter.job = Job.get(jsonJobParameter.job.toString())
-        jobParameter.softwareParameter = SoftwareParameter.get(jsonJobParameter.softwareParameter.toString())
+        domain.job = Job.get(json.job.toString())
+        domain.softwareParameter = SoftwareParameter.get(json.softwareParameter.toString())
 
-        if(!jobParameter.job) throw new WrongArgumentException("Job ${jsonJobParameter.job.toString()} doesn't exist!")
-        if(!jobParameter.softwareParameter) throw new WrongArgumentException("SoftwareParameter ${jsonJobParameter.softwareParameter.toString()} doesn't exist!")
-        return jobParameter;
+        if(!domain.job) throw new WrongArgumentException("Job ${json.job.toString()} doesn't exist!")
+        if(!domain.softwareParameter) throw new WrongArgumentException("SoftwareParameter ${json.softwareParameter.toString()} doesn't exist!")
+        return domain;
     }
 
     int compareTo(Object t) {

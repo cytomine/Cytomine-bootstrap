@@ -57,29 +57,47 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         }
     }
 
-    static AnnotationTerm createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static AnnotationTerm createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static AnnotationTerm createFromData(jsonAnnotationTerm) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static AnnotationTerm createFromData(def json) {
         def annotationTerm = new AnnotationTerm()
-        getFromData(annotationTerm, jsonAnnotationTerm)
+        insertDataIntoDomain(annotationTerm, json)
     }
 
-    static AnnotationTerm getFromData(annotationTerm, jsonAnnotationTerm) {
-        println jsonAnnotationTerm
-        try{annotationTerm.userAnnotation = UserAnnotation.get(Long.parseLong(jsonAnnotationTerm.userannotation.toString()))}
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static AnnotationTerm insertDataIntoDomain(def domain, def json) {
+        println json
+        try{domain.userAnnotation = UserAnnotation.get(Long.parseLong(json.userannotation.toString()))}
         catch(Exception e) {
            println e
         }
-        annotationTerm.term = Term.get(jsonAnnotationTerm.term.toString())
-        annotationTerm.user = SecUser.get(jsonAnnotationTerm.user.toString())
-        if (!annotationTerm.userAnnotation) throw new WrongArgumentException("Annotation ${jsonAnnotationTerm.userannotation.toString()} doesn't exist!")
-        if (!annotationTerm.term) throw new WrongArgumentException("Term ${jsonAnnotationTerm.term.toString()} doesn't exist!")
-        if (!annotationTerm.user) throw new WrongArgumentException("User ${jsonAnnotationTerm.user.toString()} doesn't exist!")
-        return annotationTerm;
+        domain.term = Term.get(json.term.toString())
+        domain.user = SecUser.get(json.user.toString())
+        if (!domain.userAnnotation) throw new WrongArgumentException("Annotation ${json.userannotation.toString()} doesn't exist!")
+        if (!domain.term) throw new WrongArgumentException("Term ${json.term.toString()} doesn't exist!")
+        if (!domain.user) throw new WrongArgumentException("User ${json.user.toString()} doesn't exist!")
+        return domain;
     }
 
     def getCallBack() {
@@ -89,6 +107,11 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
                 imageID : this.userAnnotation.image.id]
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationTerm.class)
         JSON.registerObjectMarshaller(AnnotationTerm) {

@@ -64,7 +64,6 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         result = UserAnnotationAPI.listByProject(annotation.project.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
        json = JSON.parse(result.data)
-        assert json instanceof JSONArray
     }
 
     void testListUserAnnotationByProjectNotExistWithCredential() {

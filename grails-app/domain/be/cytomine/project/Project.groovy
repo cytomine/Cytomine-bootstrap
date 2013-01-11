@@ -127,39 +127,57 @@ class Project extends CytomineDomain implements Serializable {
         }
     }
 
-    static Project createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Project createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static Project createFromData(jsonProject) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Project createFromData(def json) {
         def project = new Project()
-        getFromData(project, jsonProject)
+        insertDataIntoDomain(project, json)
     }
 
-    static Project getFromData(project, jsonProject) {
-        String name = jsonProject.name.toString()
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */           
+    static Project insertDataIntoDomain(def domain, def json) {
+        String name = json.name.toString()
         if (!name.equals("null"))
-            project.name = jsonProject.name.toUpperCase()
+            domain.name = json.name.toUpperCase()
         else throw new WrongArgumentException("Project name cannot be null")
 
-        if (jsonProject.ontology)
-            project.ontology = Ontology.read(jsonProject.ontology)
+        if (json.ontology)
+            domain.ontology = Ontology.read(json.ontology)
 
-        if (!jsonProject.discipline.toString().equals("null"))
-            project.discipline = Discipline.read(jsonProject.discipline)
+        if (!json.discipline.toString().equals("null"))
+            domain.discipline = Discipline.read(json.discipline)
 
-        try {project.countAnnotations = Long.parseLong(jsonProject.numberOfAnnotations.toString()) } catch (Exception e) {
-            project.countAnnotations = 0
+        try {domain.countAnnotations = Long.parseLong(json.numberOfAnnotations.toString()) } catch (Exception e) {
+            domain.countAnnotations = 0
         }
-        try {project.countImages = Long.parseLong(jsonProject.numberOfImages.toString()) } catch (Exception e) {
-            project.countImages = 0
+        try {domain.countImages = Long.parseLong(json.numberOfImages.toString()) } catch (Exception e) {
+            domain.countImages = 0
         }
-        if(!jsonProject.retrievalDisable.toString().equals("null")) project.retrievalDisable = Boolean.parseBoolean(jsonProject.retrievalDisable.toString())
-        if(!jsonProject.retrievalAllOntology.toString().equals("null")) project.retrievalAllOntology = Boolean.parseBoolean(jsonProject.retrievalAllOntology.toString())
+        if(!json.retrievalDisable.toString().equals("null")) domain.retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
+        if(!json.retrievalAllOntology.toString().equals("null")) domain.retrievalAllOntology = Boolean.parseBoolean(json.retrievalAllOntology.toString())
 
-        return project;
+        return domain;
     }
 
     //TODO:: remove (move in userService)
@@ -177,6 +195,12 @@ class Project extends CytomineDomain implements Serializable {
         securityService.getUserList(this)
     }
 
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Project.class)
         JSON.registerObjectMarshaller(Project) { project ->

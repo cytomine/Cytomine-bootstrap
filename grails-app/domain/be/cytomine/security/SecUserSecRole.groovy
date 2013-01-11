@@ -39,22 +39,48 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         executeUpdate 'DELETE FROM SecUserSecRole WHERE secRole=:secRole', [secRole: secRole]
     }
 
-    static SecUserSecRole getFromData(SecUserSecRole secRole, jsonSecRole) {
-        secRole.secUser = SecUser.read(jsonSecRole.user)
-        secRole.secRole = SecRole.read(jsonSecRole.role)
-        return secRole;
-    }
 
-    static SecUserSecRole createFromDataWithId(json) {
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static SecUserSecRole createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static SecUserSecRole createFromData(data) {
-        getFromData(new SecUserSecRole(), data)
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static SecUserSecRole createFromData(def json) {
+        insertDataIntoDomain(new SecUserSecRole(), json)
     }
 
+
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static SecUserSecRole insertDataIntoDomain(def domain, def json) {
+        domain.secUser = SecUser.read(json.user)
+        domain.secRole = SecRole.read(json.role)
+        return domain;
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + SecUserSecRole.class)
         JSON.registerObjectMarshaller(SecUserSecRole) {

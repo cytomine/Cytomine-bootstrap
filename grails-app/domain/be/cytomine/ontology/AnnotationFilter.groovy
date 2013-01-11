@@ -7,6 +7,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
 //TO DO : move this Domain to another package (utilities ? preferences ?)
 class AnnotationFilter extends CytomineDomain implements Serializable {
@@ -22,37 +23,60 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
         project (nullable: false)
     }
 
-    static AnnotationFilter createFromDataWithId(json) throws CytomineException {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws CytomineException Error during domain creation
+     */
+    static AnnotationFilter createFromDataWithId(def json) throws CytomineException {
         def annotationFilter = createFromData(json)
         try {annotationFilter.id = json.id} catch (Exception e) {}
         return annotationFilter
     }
 
-    static AnnotationFilter createFromData(jsonTerm) throws CytomineException {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static AnnotationFilter createFromData(def json) throws CytomineException {
         def term = new AnnotationFilter()
-        getFromData(term, jsonTerm)
+        insertDataIntoDomain(term, json)
     }
 
-    static AnnotationFilter getFromData(AnnotationFilter annotationFilter, json) throws CytomineException {
-        annotationFilter.name = json.name
-        annotationFilter.project = Project.read(json.project)
-        annotationFilter.user = SecUser.read(json.user)
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static AnnotationFilter insertDataIntoDomain(def domain, def json) throws CytomineException {
+        domain.name = JSONUtils.getJSONAttrStr(json,'name')
+        domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),false)
+        domain.user = JSONUtils.getJSONAttrDomain(json,"user",new User(),false)
         json.users?.each { userID ->
             SecUser user = SecUser.read(userID)
-            if (user) annotationFilter.addToUsers(user)
+            if (user) domain.addToUsers(user)
         }
         json.terms?.each { termID ->
             Term term = Term.read(termID)
-            if (term) annotationFilter.addToTerms(term)
+            if (term) domain.addToTerms(term)
         }
-        return annotationFilter;
+        return domain;
     }
 
     def getCallBack() {
         return [annotationFilterID: this?.id] //not sure...here
     }
 
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationFilter.class)
         JSON.registerObjectMarshaller(AnnotationFilter) {

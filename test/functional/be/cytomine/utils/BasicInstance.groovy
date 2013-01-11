@@ -558,6 +558,32 @@ class BasicInstance {
         checkDomain(discipline)
         discipline
     }
+    
+    
+    static Sample createOrGetBasicSample() {
+        log.debug "createOrGetBasicSample()"
+        def sample = Sample.findByName("BASICSAMPLE")
+        if (!sample) {
+            sample = new Sample(name: "BASICSAMPLE")
+        }
+        checkDomain(sample)
+        saveDomain(sample)
+        sample
+    }
+
+    static Sample getBasicSampleNotExist() {
+        log.debug "createOrGetBasicSampleNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def sample = Sample.findByName(randomInt + "")
+        while (sample) {
+            randomInt = random.nextInt()
+            sample = Sample.findByName(randomInt + "")
+        }
+        sample = new Sample(name: randomInt + "")
+        checkDomain(sample)
+        sample
+    }    
 
     static ImageInstance createOrGetBasicImageInstance() {
         log.info "createOrGetBasicImageInstance()"
@@ -1339,6 +1365,16 @@ class BasicInstance {
     }
 
     /**
+     * Compare Sample expected data (in map) to Sample new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
+    static void compareSample(map, json) {
+        assert map.name.equals(json.name)
+    }
+
+    /**
      * Compare term expected data (in map) to term new data (json)
      * This method is used in update test method to check if data are well changed
      * @param map Excpected data
@@ -1413,7 +1449,7 @@ class BasicInstance {
 
     static Integer toLong(String s) {
         if (s == null && s.equals("null")) return null
-        else return Integer.parseLong(s)
+        else return Integer.parseInt(s)
     }
 
     static Integer toLong(Long s) {

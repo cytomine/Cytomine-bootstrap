@@ -57,7 +57,11 @@ class Job extends CytomineDomain  {
         else number = 1;
     }
 
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
         JSON.registerObjectMarshaller(Job) {
@@ -90,52 +94,70 @@ class Job extends CytomineDomain  {
         }
     }
 
-    static Job createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Job createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static Job createFromData(jsonJob) {
-        getFromData(new Job(), jsonJob)
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Job createFromData(def json) {
+        insertDataIntoDomain(new Job(), json)
     }
 
-    static def getFromData(Job job, jsonJob) {
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */    
+    static def insertDataIntoDomain(def domain, def json) {
         try {
-            if (!jsonJob.status.toString().equals("null"))
-                job.status = Integer.parseInt(jsonJob.status.toString())
-            if (!jsonJob.progress.toString().equals("null"))
-                job.progress = Integer.parseInt(jsonJob.progress.toString())
+            if (!json.status.toString().equals("null"))
+                domain.status = Integer.parseInt(json.status.toString())
+            if (!json.progress.toString().equals("null"))
+                domain.progress = Integer.parseInt(json.progress.toString())
 
-            if (!jsonJob.statusComment.toString().equals("null"))
-                job.statusComment = jsonJob.statusComment.toString()
+            if (!json.statusComment.toString().equals("null"))
+                domain.statusComment = json.statusComment.toString()
             else
-                job.statusComment = ""
+                domain.statusComment = ""
 
-            String projectId = jsonJob.project.toString()
+            String projectId = json.project.toString()
             if (!projectId.equals("null")) {
-                job.project = Project.read(projectId)
-                if (!job.project) throw new WrongArgumentException("Project was not found with id:" + projectId)
+                domain.project = Project.read(projectId)
+                if (!domain.project) throw new WrongArgumentException("Project was not found with id:" + projectId)
             } else {
-                job.project = null
+                domain.project = null
             }
 
-            String softwareId = jsonJob.software.toString()
+            String softwareId = json.software.toString()
             if (!softwareId.equals("null")) {
-                job.software = Software.read(softwareId)
-                if (!job.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
-            } else job.software = null
+                domain.software = Software.read(softwareId)
+                if (!domain.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
+            } else domain.software = null
 
-            job.rate = (!jsonJob.rate.toString().equals("null")) ? Double.parseDouble(jsonJob.rate.toString()) : -1
+            domain.rate = (!json.rate.toString().equals("null")) ? Double.parseDouble(json.rate.toString()) : -1
 
-            if (!jsonJob.dataDeleted.toString().equals("null"))
-                job.dataDeleted = Boolean.parseBoolean(jsonJob.progress.toString())
+            if (!json.dataDeleted.toString().equals("null"))
+                domain.dataDeleted = Boolean.parseBoolean(json.progress.toString())
 
-            job.created = (!jsonJob.created.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.created.toString())) : null
-            job.updated = (!jsonJob.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonJob.updated.toString())) : null
+            domain.created = (!json.created.toString().equals("null")) ? new Date(Long.parseLong(json.created.toString())) : null
+            domain.updated = (!json.updated.toString().equals("null")) ? new Date(Long.parseLong(json.updated.toString())) : null
         }catch(Exception e) {
             throw new WrongArgumentException(e.toString())
         }
-        return job;
+        return domain;
     }
 }

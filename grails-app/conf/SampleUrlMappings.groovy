@@ -14,8 +14,5 @@ class SampleUrlMappings {
         "/api/sample/$id"(controller: "restSample"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/currentuser/sample"(controller: "restSample"){
-            action = [GET:"listByUser"]
-        }
     }
 }

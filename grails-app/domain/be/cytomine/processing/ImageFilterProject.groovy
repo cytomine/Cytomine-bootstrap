@@ -49,32 +49,54 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
         }
     }
 
-    static ImageFilterProject createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static ImageFilterProject createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static ImageFilterProject createFromData(jsonSoftwareParameter) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static ImageFilterProject createFromData(def json) {
         def imageFilterProject = new ImageFilterProject()
-        getFromData(imageFilterProject, jsonSoftwareParameter)
+        insertDataIntoDomain(imageFilterProject, json)
     }
 
-    static ImageFilterProject getFromData(ImageFilterProject imageFilterProject, jsonSoftwareParameter) {
-        Logger.getLogger(this).info("jsonSoftwareParameter=" + jsonSoftwareParameter.toString())
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static ImageFilterProject insertDataIntoDomain(def domain, def json) {
         try {
-            imageFilterProject.imageFilter = ImageFilter.get(jsonSoftwareParameter.imageFilter.id)
-            imageFilterProject.project = Project.get(jsonSoftwareParameter.project.id)
+            domain.imageFilter = ImageFilter.get(json.imageFilter.id)
+            domain.project = Project.get(json.project.id)
         }
         catch (Exception e) {
-            imageFilterProject.imageFilter = ImageFilter.get(jsonSoftwareParameter.imageFilter)
-            imageFilterProject.project = Project.get(jsonSoftwareParameter.project)
+            domain.imageFilter = ImageFilter.get(json.imageFilter)
+            domain.project = Project.get(json.project)
         }
-        if (!imageFilterProject.imageFilter) throw new WrongArgumentException("Software ${jsonSoftwareParameter.imageFilter.toString()} doesn't exist!")
-        if (!imageFilterProject.project) throw new WrongArgumentException("Project ${jsonSoftwareParameter.project.toString()} doesn't exist!")
-        return imageFilterProject;
+        if (!domain.imageFilter) throw new WrongArgumentException("Software ${json.imageFilter.toString()} doesn't exist!")
+        if (!domain.project) throw new WrongArgumentException("Project ${json.project.toString()} doesn't exist!")
+        return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilterProject.class)
         JSON.registerObjectMarshaller(ImageFilterProject) {

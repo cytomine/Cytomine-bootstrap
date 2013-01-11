@@ -204,6 +204,25 @@ class UpdateData {
          jsonDiscipline = jsonUpdate.encodeAsJSON()
         return ['oldData':discipline,'newData':jsonDiscipline,'mapOld':mapOld,'mapNew':mapNew]
     }
+    
+    static def createUpdateSet(Sample sample) {
+        log.info "update sample"
+        String oldName = "NAME1"
+         String newName = "NAME2"
+         def mapNew = ["name":newName]
+         def mapOld = ["name":oldName]
+         /* Create a Name1 sample */
+         Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
+         sampleToAdd.name = oldName
+         assert (sampleToAdd.save(flush:true) != null)
+         /* Encode a niew sample Name2*/
+         Sample sampleToEdit = Sample.get(sampleToAdd.id)
+         def jsonSample = sampleToEdit.encodeAsJSON()
+         def jsonUpdate = JSON.parse(jsonSample)
+         jsonUpdate.name = newName
+         jsonSample = jsonUpdate.encodeAsJSON()
+        return ['oldData':sample,'newData':jsonSample,'mapOld':mapOld,'mapNew':mapNew]
+    }    
 
 
     static def createUpdateSet(Group group) {

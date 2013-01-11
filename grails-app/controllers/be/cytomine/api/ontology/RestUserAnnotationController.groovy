@@ -124,32 +124,37 @@ class RestUserAnnotationController extends RestController {
         Integer offset = params.offset != null ? params.getInt('offset') : 0
         Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
-        List<Long> userList = paramsService.getParamsUserList(params.users, project)
-        List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
-
-        if (term == null) responseNotFound("Term", params.idterm)
-        else if (project == null) responseNotFound("Project", params.idproject)
-        else if (!params.suggestTerm) {
-            def list
-            if (userList.isEmpty() || imageInstanceList.isEmpty()) {
-                list = []
-            } else {
-                list = userAnnotationService.list(project, term, userList, imageInstanceList)
-            }
-            if (params.offset != null) {
-                responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-            } else {
-                responseSuccess(list)
-            }
+        if (term == null) {
+            responseNotFound("Term", params.idterm)
+        } else if (project == null) {
+            responseNotFound("Project", params.idproject)
         }
         else {
-            Term suggestedTerm = termService.read(params.suggestTerm)
-            //TODO:: improve this with a single SQL request
-            def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-            if (params.offset != null) {
-                responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-            } else {
-                responseSuccess(list)
+            List<Long> userList = paramsService.getParamsUserList(params.users, project)
+            List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
+
+            if (!params.suggestTerm) {
+                def list
+                if (userList.isEmpty() || imageInstanceList.isEmpty()) {
+                    list = []
+                } else {
+                    list = userAnnotationService.list(project, term, userList, imageInstanceList)
+                }
+                if (params.offset != null) {
+                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+                } else {
+                    responseSuccess(list)
+                }
+            }
+            else {
+                Term suggestedTerm = termService.read(params.suggestTerm)
+                //TODO:: improve this with a single SQL request
+                def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
+                if (params.offset != null) {
+                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+                } else {
+                    responseSuccess(list)
+                }
             }
         }
     }

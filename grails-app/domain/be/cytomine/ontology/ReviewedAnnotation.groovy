@@ -85,103 +85,113 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
         term
     }
 
-     static ReviewedAnnotation createFromDataWithId(json) {
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+     static ReviewedAnnotation createFromDataWithId(def json) {
          def domain = createFromData(json)
          try {domain.id = json.id} catch (Exception e) {}
          return domain
      }
 
-     /**
-      * Create a new Annotation with jsonAnnotation attributes
-      * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-      * @param jsonAnnotation JSON
-      * @return Annotation
-      */
-     static ReviewedAnnotation createFromData(jsonAnnotation) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+     static ReviewedAnnotation createFromData(def json) {
          def annotation = new ReviewedAnnotation()
-         getFromData(annotation, jsonAnnotation)
+         insertDataIntoDomain(annotation, json)
      }
 
 
-
-     /**
-      * Fill annotation with data attributes
-      * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-      * @param annotation Annotation Source
-      * @param jsonAnnotation JSON
-      * @return annotation with json attributes
-      */
-     static ReviewedAnnotation getFromData(ReviewedAnnotation annotation, def jsonAnnotation) {
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */     
+     static ReviewedAnnotation insertDataIntoDomain(def domain, def json) {
          try {
-             println jsonAnnotation
+             println json
              //TODO:: refactore this to share common code (userannotation, algoannotation,...)
-             annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
-             annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
-             annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+             domain.geometryCompression = (!json.geometryCompression.toString().equals("null")) ? ((String) json.geometryCompression).toDouble() : 0
+             domain.created = (!json.created.toString().equals("null")) ? new Date(Long.parseLong(json.created)) : null
+             domain.updated = (!json.updated.toString().equals("null")) ? new Date(Long.parseLong(json.updated)) : null
 
              //location
-             annotation.location = new WKTReader().read(jsonAnnotation.location)
-             if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
+             domain.location = new WKTReader().read(json.location)
+             if (domain.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + domain.location.getNumPoints() + " points")
              //if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
-             if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
+             if (!domain.location) throw new WrongArgumentException("Geo is null: 0 points")
              //image
              try {
-                 annotation.image = ImageInstance.read(Long.parseLong(jsonAnnotation.image.toString()));
-                 if (!annotation.image) throw new Exception()
-             }catch(Exception e) {throw new WrongArgumentException("Image $jsonAnnotation.image not found!:"+e)}
+                 domain.image = ImageInstance.read(Long.parseLong(json.image.toString()));
+                 if (!domain.image) throw new Exception()
+             }catch(Exception e) {throw new WrongArgumentException("Image $json.image not found!:"+e)}
 
              //project
              try {
-                 annotation.project = be.cytomine.project.Project.read(Long.parseLong(jsonAnnotation.project.toString()));
-                 if (!annotation.project) throw new Exception()
-             }catch(Exception e) {throw new WrongArgumentException("Project $jsonAnnotation.project not found!:"+e)}
+                 domain.project = be.cytomine.project.Project.read(Long.parseLong(json.project.toString()));
+                 if (!domain.project) throw new Exception()
+             }catch(Exception e) {throw new WrongArgumentException("Project $json.project not found!:"+e)}
 
              //user
              try {
-                 annotation.user = SecUser.read(Long.parseLong(jsonAnnotation.user.toString()));
-                 if (!annotation.user) throw new Exception()
-             }catch(Exception e) {throw new WrongArgumentException("User $jsonAnnotation.user not found!:"+e)}
+                 domain.user = SecUser.read(Long.parseLong(json.user.toString()));
+                 if (!domain.user) throw new Exception()
+             }catch(Exception e) {throw new WrongArgumentException("User $json.user not found!:"+e)}
 
              //review user
              try {
-                 annotation.reviewUser = SecUser.read(Long.parseLong(jsonAnnotation.reviewUser.toString()));
-                 if (!annotation.reviewUser) throw new Exception()
-             }catch(Exception e) {throw new WrongArgumentException("User $jsonAnnotation.reviewUser not found!:"+e)}
+                 domain.reviewUser = SecUser.read(Long.parseLong(json.reviewUser.toString()));
+                 if (!domain.reviewUser) throw new Exception()
+             }catch(Exception e) {throw new WrongArgumentException("User $json.reviewUser not found!:"+e)}
 
              //annotation parent
-             String annotationParentId = jsonAnnotation.parentIdent?.toString()
+             String annotationParentId = json.parentIdent?.toString()
              if(annotationParentId==null || annotationParentId.equals("") || annotationParentId.equals("null"))
-                 annotationParentId = jsonAnnotation.annotation?.toString()
+                 annotationParentId = json.annotation?.toString()
              def annotationParent = UserAnnotation.read(annotationParentId)
              if(!annotationParent){
                  annotationParent = AlgoAnnotation.read(annotationParentId)
              }
              if (annotationParent == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationParent)
-             annotation.parentClassName = annotationParent.class.getName()
-             annotation.parentIdent = annotationParent.id
+             domain.parentClassName = annotationParent.class.getName()
+             domain.parentIdent = annotationParent.id
 
              //status
              try {
-                 annotation.status = Long.parseLong(jsonAnnotation.status.toString())
-             }catch(Exception e) {throw new WrongArgumentException("Status $jsonAnnotation.status invalid!:"+e)}
+                 domain.status = Long.parseLong(json.status.toString())
+             }catch(Exception e) {throw new WrongArgumentException("Status $json.status invalid!:"+e)}
 
              //term
-             println "jsonAnnotation.term="+jsonAnnotation.term
-             if(annotation.term) annotation.term.clear()
-             if (jsonAnnotation.term == null || jsonAnnotation.term.equals("null")) throw new WrongArgumentException("Term list was not found")
-             jsonAnnotation.term.each {
-                 annotation.addToTerm(Term.read(it))
+             println "json.term="+json.term
+             if(domain.term) domain.term.clear()
+             if (json.term == null || json.term.equals("null")) throw new WrongArgumentException("Term list was not found")
+             json.term.each {
+                 domain.addToTerm(Term.read(it))
              }
-             println "annotation.term="+annotation.term
-             //if (!annotation.term || annotation.term.isEmpty()) throw new WrongArgumentException("Term list cannot be empty: json.term = "+jsonAnnotation.term+" annotation.term="+annotation.term)
+             println "annotation.term="+domain.term
+             //if (!annotation.term || annotation.term.isEmpty()) throw new WrongArgumentException("Term list cannot be empty: json.term = "+json.term+" annotation.term="+annotation.term)
 
 
          } catch (com.vividsolutions.jts.io.ParseException ex) {
              throw new WrongArgumentException(ex.toString())
          }
-         return annotation;
+         return domain;
      }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
      static void registerMarshaller(String cytomineBaseUrl) {
          Logger.getLogger(this).info("Register custom JSON renderer for " + ReviewedAnnotation.class)
          JSON.registerObjectMarshaller(ReviewedAnnotation) { ReviewedAnnotation annotation ->

@@ -14,6 +14,12 @@ class MimeImageServer {
         version false
     }
 
+    /**
+     * Add a link between the imageServer and the mime
+     * @param imageServer Image server to link with this mime
+     * @param mime Mime to link with this image server
+     * @return Relation between Image server and mime
+     */
     static MimeImageServer link(ImageServer imageServer, Mime mime) {
         def mis = MimeImageServer.findByImageServerAndMime(imageServer, mime)
         if (!mis) {
@@ -25,6 +31,11 @@ class MimeImageServer {
         return mis
     }
 
+    /**
+     * Remove the link between the imageServer and the mime
+     * @param imageServer Image server that will not support mime
+     * @param mime Mime to remove from image server
+     */
     static void unlink(ImageServer imageServer, Mime mime) {
         def mis = MimeImageServer.findByImageServerAndMime(imageServer, mime)
         if (mis) {

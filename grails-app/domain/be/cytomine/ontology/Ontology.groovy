@@ -119,6 +119,11 @@ class Ontology extends CytomineDomain implements Serializable {
 
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Ontology.class)
         JSON.registerObjectMarshaller(Ontology) {
@@ -141,25 +146,43 @@ class Ontology extends CytomineDomain implements Serializable {
         }
     }
 
-    static Ontology createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Ontology createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static Ontology createFromData(jsonOntology) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Ontology createFromData(def json) {
         def ontology = new Ontology()
-        getFromData(ontology, jsonOntology)
+        insertDataIntoDomain(ontology, json)
     }
 
-    static Ontology getFromData(ontology, jsonOntology) {
-        if (!jsonOntology.name.toString().equals("null"))
-            ontology.name = jsonOntology.name
-        else throw new WrongArgumentException("Ontology name cannot be null")
-        ontology.user = User.get(jsonOntology.user);
-        Logger.getLogger(this).info("jsonOntology.name=" + jsonOntology.name)
-        Logger.getLogger(this).info("ontology.name=" + ontology.name)
-        return ontology;
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static Ontology insertDataIntoDomain(def domain, def json) {
+        if (!json.name.toString().equals("null")) {
+            domain.name = json.name
+        } else {
+            throw new WrongArgumentException("Ontology name cannot be null")
+        }
+        domain.user = User.get(json.user);
+        return domain;
     }
 
 }

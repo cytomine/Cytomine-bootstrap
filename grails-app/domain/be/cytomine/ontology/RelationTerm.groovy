@@ -58,35 +58,58 @@ class RelationTerm extends CytomineDomain implements Serializable {
 
     }
 
-    static RelationTerm createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain on
+     */
+    static RelationTerm createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static RelationTerm createFromData(jsonRelationTerm) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static RelationTerm createFromData(def json) {
         def relationTerm = new RelationTerm()
-        getFromData(relationTerm, jsonRelationTerm)
+        insertDataIntoDomain(relationTerm, json)
     }
 
-    static RelationTerm getFromData(relationTerm, jsonRelationTerm) {
-        Logger.getLogger(this).info("jsonRelationTerm=" + jsonRelationTerm.toString())
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static RelationTerm insertDataIntoDomain(def domain, def json) {
+        Logger.getLogger(this).info("jsonRelationTerm=" + json.toString())
         try {
-            relationTerm.relation = Relation.get(jsonRelationTerm.relation.id)
-            relationTerm.term1 = Term.get(jsonRelationTerm.term1.id)
-            relationTerm.term2 = Term.get(jsonRelationTerm.term2.id)
+            domain.relation = Relation.get(json.relation.id)
+            domain.term1 = Term.get(json.term1.id)
+            domain.term2 = Term.get(json.term2.id)
         }
         catch (Exception e) {
-            relationTerm.relation = Relation.get(jsonRelationTerm.relation)
-            relationTerm.term1 = Term.get(jsonRelationTerm.term1)
-            relationTerm.term2 = Term.get(jsonRelationTerm.term2)
+            domain.relation = Relation.get(json.relation)
+            domain.term1 = Term.get(json.term1)
+            domain.term2 = Term.get(json.term2)
         }
-        if (!relationTerm.relation) throw new WrongArgumentException("Relation ${jsonRelationTerm.relation.toString()} doesn't exist!")
-        if (!relationTerm.term1) throw new WrongArgumentException("Term ${jsonRelationTerm.term1.toString()} doesn't exist!")
-        if (!relationTerm.term2) throw new WrongArgumentException("Term ${jsonRelationTerm.term2.toString()} doesn't exist!")
-        return relationTerm;
+        if (!domain.relation) throw new WrongArgumentException("Relation ${json.relation.toString()} doesn't exist!")
+        if (!domain.term1) throw new WrongArgumentException("Term ${json.term1.toString()} doesn't exist!")
+        if (!domain.term2) throw new WrongArgumentException("Term ${json.term2.toString()} doesn't exist!")
+        return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + RelationTerm.class)
         JSON.registerObjectMarshaller(RelationTerm) {

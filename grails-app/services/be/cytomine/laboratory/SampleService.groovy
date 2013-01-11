@@ -10,6 +10,8 @@ import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.image.AbstractImage
+import be.cytomine.image.AbstractImageGroup
 
 class SampleService extends ModelService {
 
@@ -17,13 +19,28 @@ class SampleService extends ModelService {
 
     def domainService
     def cytomineService
+    def groupService
+    def abstractImageService
+
+    boolean saveOnUndoRedoStack = true
 
     def list() {
         Sample.list()
     }
 
     def list(User user) {
-        user.samples()
+        def abstractImageAvailable = abstractImageService.list(user)
+        if(abstractImageAvailable.isEmpty()) {
+            return []
+        } else {
+            AbstractImage.createCriteria().list {
+                inList("id", abstractImageAvailable.collect{it.id})
+                projections {
+                    groupProperty('sample')
+                }
+            }
+        }
+
     }
 
     PagedResultList list(SecUser user, def page, def limit, def sortedRow, def sord) {
@@ -86,7 +103,7 @@ class SampleService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.name, domain.index], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
     /**
      * Destroy domain which was previously added
@@ -102,7 +119,7 @@ class SampleService extends ModelService {
 
     def destroy(Sample domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,  [domain.id, domain.name, domain.index], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,  [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
         return response
@@ -121,7 +138,7 @@ class SampleService extends ModelService {
 
     def edit(Sample domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain,  [domain.id, domain.name, domain.index], printMessage, "Edit", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain,  [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
         domainService.saveDomain(domain)
         return response

@@ -52,6 +52,11 @@ class SoftwareParameter extends CytomineDomain {
         return (this as JSON).toString()
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
      static void registerMarshaller(String cytomineBaseUrl) {
          Logger.getLogger(this).info("Register custom JSON renderer for " + SoftwareParameter.class)
         JSON.registerObjectMarshaller(SoftwareParameter) {
@@ -71,43 +76,61 @@ class SoftwareParameter extends CytomineDomain {
         }
     }
 
-    static SoftwareParameter createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static SoftwareParameter createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static SoftwareParameter createFromData(jsonSoftwareParameter) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static SoftwareParameter createFromData(def json) {
         def softwareParameter = new SoftwareParameter()
-        getFromData(softwareParameter, jsonSoftwareParameter)
+        insertDataIntoDomain(softwareParameter, json)
     }
 
-    static SoftwareParameter getFromData(softwareParameter, jsonSoftwareParameter) {
-        if (!jsonSoftwareParameter.name.toString().equals("null"))
-            softwareParameter.name = jsonSoftwareParameter.name
-        else throw new WrongArgumentException("SoftwareParameter name cannot be null")
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */    
+    static SoftwareParameter insertDataIntoDomain(def domain, def json) {
+        if (!json.name.toString().equals("null"))
+            domain.name = json.name
+        else throw new WrongArgumentException("domain name cannot be null")
 
-        if (!jsonSoftwareParameter.software.toString().equals("null"))
-            softwareParameter.software = Software.read(jsonSoftwareParameter.software)
-        if(!softwareParameter.software) throw new WrongArgumentException("SoftwareParameter software cannot be null:"+jsonSoftwareParameter.software)
+        if (!json.software.toString().equals("null"))
+            domain.software = Software.read(json.software)
+        if(!domain.software) throw new WrongArgumentException("domain software cannot be null:"+json.software)
 
-        if (!jsonSoftwareParameter.type.toString().equals("null"))
-            softwareParameter.type = jsonSoftwareParameter.type
-        else throw new WrongArgumentException("SoftwareParameter type cannot be null")
+        if (!json.type.toString().equals("null"))
+            domain.type = json.type
+        else throw new WrongArgumentException("domain type cannot be null")
 
-        if (!jsonSoftwareParameter.defaultValue.toString().equals("null"))
-            softwareParameter.defaultValue = jsonSoftwareParameter.defaultValue
+        if (!json.defaultValue.toString().equals("null"))
+            domain.defaultValue = json.defaultValue
 
-        if (!jsonSoftwareParameter.required.toString().equals("null"))
-            softwareParameter.required = Boolean.parseBoolean(jsonSoftwareParameter.required.toString())
+        if (!json.required.toString().equals("null"))
+            domain.required = Boolean.parseBoolean(json.required.toString())
 
-        if (!jsonSoftwareParameter.index.toString().equals("null"))
-            softwareParameter.index = Integer.parseInt(jsonSoftwareParameter.index.toString())
+        if (!json.index.toString().equals("null"))
+            domain.index = Integer.parseInt(json.index.toString())
 
-        softwareParameter.uri = jsonSoftwareParameter.uri
-        softwareParameter.uriPrintAttribut = jsonSoftwareParameter.uriPrintAttribut
-        softwareParameter.uriSortAttribut = jsonSoftwareParameter.uriSortAttribut
+        domain.uri = json.uri
+        domain.uriPrintAttribut = json.uriPrintAttribut
+        domain.uriSortAttribut = json.uriSortAttribut
 
-        return softwareParameter;
+        return domain;
     }
 }

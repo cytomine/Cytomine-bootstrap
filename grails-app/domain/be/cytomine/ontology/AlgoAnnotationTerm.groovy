@@ -7,16 +7,49 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * Term added to an annotation by a job
+ * Annotation can be:
+ * -algo annotation (create by a job)
+ * -user annotation (create by a real user)
+ */
 class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
+    /**
+     * Term can be add to user or algo annotation
+     * Rem: 'AnnotationDomain annotation' diden't work because user and algo annotation
+     * are store in different table
+     * So we store annotation type and annotation id
+     */
     String annotationClassName
     Long annotationIdent
 
+    /**
+     * Predicted term
+     */
     Term term
+
+    /**
+     * Real term (added by user)
+     */
     Term expectedTerm
+
+    /**
+     * Certainty rate
+     */
     Double rate
+
+    /**
+     * Virtual user that made the prediction
+     */
     UserJob userJob
+
+    /**
+     * Project for the prediction
+     * rem: redundance for optim (we should get it with retrieveAnnotationDomain().project)
+     */
     Project project
 
     static constraints = {
@@ -43,6 +76,10 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         if(project==null) project = retrieveAnnotationDomain()?.image?.project;
     }
 
+    /**
+     * Get annotation thanks to annotationClassName and annotationIdent
+     * @return Annotation concerned with this prediction
+     */
     public AnnotationDomain retrieveAnnotationDomain() {
         Class.forName(annotationClassName, false, Thread.currentThread().contextClassLoader).read(annotationIdent)
     }
@@ -55,67 +92,62 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
     }
 
-    static AlgoAnnotationTerm createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws be.cytomine.Exception.CytomineException Error during domain creation
+     */
+    static AlgoAnnotationTerm createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static AlgoAnnotationTerm createFromData(jsonAlgoAnnotationTerm) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static AlgoAnnotationTerm createFromData(def json) {
         def algoAnnotationTerm = new AlgoAnnotationTerm()
-        getFromData(algoAnnotationTerm, jsonAlgoAnnotationTerm)
+        insertDataIntoDomain(algoAnnotationTerm, json)
     }
 
-    public boolean suggestionCorrect() {
-        return term==expectedTerm
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static AlgoAnnotationTerm insertDataIntoDomain(def domain, def json) {
+        //Extract and read the correct annotation
+        Long annotationId = JSONUtils.getJSONAttrLong(json,'annotationIdent',-1)
+        if(annotationId==-1) {
+            annotationId = JSONUtils.getJSONAttrLong(json,'annotation',-1)
+        }
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
+        domain.annotationClassName = annotation.class.getName()
+        domain.annotationIdent = annotation.id
+        domain.term = JSONUtils.getJSONAttrDomain(json,"term",new Term(),false)
+        domain.expectedTerm = JSONUtils.getJSONAttrDomain(json,"expectedTerm",new Term(),false)
+        domain.userJob = JSONUtils.getJSONAttrDomain(json,"user",new UserJob(),false)
+        domain.rate = JSONUtils.getJSONAttrDouble(json,'rate',0)
+        return domain;
     }
 
-    static AlgoAnnotationTerm getFromData(AlgoAnnotationTerm algoAnnotationTerm, jsonAlgoAnnotationTerm) {
-
-        String annotationId = jsonAlgoAnnotationTerm.annotationIdent?.toString()
-        if(annotationId==null || annotationId.equals("") || annotationId.equals("null"))
-            annotationId = jsonAlgoAnnotationTerm.annotation?.toString()
-        def annotation = UserAnnotation.read(annotationId)
-        if(!annotation){
-            annotation = AlgoAnnotation.read(annotationId)
-        }
-        if (annotation == null) throw new WrongArgumentException("Annotation was not found with id:" + annotationId)
-        algoAnnotationTerm.annotationClassName = annotation.class.getName()
-        algoAnnotationTerm.annotationIdent = annotation.id
-
-        String termId = jsonAlgoAnnotationTerm.term.toString()
-        if (!termId.equals("null")) {
-            algoAnnotationTerm.term = Term.read(termId)
-            if (algoAnnotationTerm.term == null) throw new WrongArgumentException("Term was not found with id:" + termId)
-        }
-        else algoAnnotationTerm.term = null
-
-        String expectedTermId = jsonAlgoAnnotationTerm.expectedTerm.toString()
-        if (!expectedTermId.equals("null")) {
-            algoAnnotationTerm.expectedTerm = Term.read(expectedTermId)
-            if (algoAnnotationTerm.expectedTerm == null) throw new WrongArgumentException("Expected Term was not found with id:" + termId)
-        }
-        else algoAnnotationTerm.expectedTerm = null
-
-
-        String userJobId = jsonAlgoAnnotationTerm.user.toString()
-        if (!userJobId.equals("null")) {
-            algoAnnotationTerm.userJob = UserJob.read(userJobId)
-            if (algoAnnotationTerm.userJob == null) throw new WrongArgumentException("UserJob was not found with id:" + userJobId)
-        }
-        else algoAnnotationTerm.userJob = null
-
-        if (!jsonAlgoAnnotationTerm.rate) jsonAlgoAnnotationTerm.rate = 0
-        algoAnnotationTerm.rate = Double.parseDouble(jsonAlgoAnnotationTerm.rate + "")
-        return algoAnnotationTerm;
-    }
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AlgoAnnotationTerm.class)
         JSON.registerObjectMarshaller(AlgoAnnotationTerm) {
             def returnArray = [:]
             returnArray['id'] = it.id
-
             returnArray['annotationIdent'] = it.annotationIdent
             returnArray['annotationClassName'] = it.annotationClassName
             returnArray['annotation'] = it.annotationIdent

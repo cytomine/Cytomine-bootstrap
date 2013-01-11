@@ -310,7 +310,7 @@ class RestReviewedAnnotationController extends RestController {
      */
     def addAnnotationReview = {
         try {
-            AnnotationDomain basedAnnotation = getAnnotationDomain(params.long('id'))
+            AnnotationDomain basedAnnotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
             if(!basedAnnotation.image.isInReviewMode()) {
                 throw new WrongArgumentException("Cannot accept annotation, enable image review mode!")
             }
@@ -335,7 +335,7 @@ class RestReviewedAnnotationController extends RestController {
      */
     def deleteAnnotationReview = {
         try {
-            AnnotationDomain annotation = getAnnotationDomain(params.long('id'))
+            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
             ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.findByParentIdent(annotation.id)
 
             if(!reviewedAnnotation) {

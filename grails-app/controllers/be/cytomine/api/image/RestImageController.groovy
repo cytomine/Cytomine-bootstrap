@@ -161,7 +161,7 @@ class RestImageController extends RestController {
      */
     def cropAnnotation = {
         try {
-            def annotation = getAnnotationDomain(params.id)
+            def annotation = AnnotationDomain.getAnnotationDomain(params.id)
             def cropURL = cropAnnotation(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {
@@ -177,7 +177,7 @@ class RestImageController extends RestController {
     def cropAnnotationMin = {
         try {
             params.max_size = "256"
-            def annotation = getAnnotationDomain(params.id)
+            def annotation = AnnotationDomain.getAnnotationDomain(params.id)
             def cropURL = cropAnnotation(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {

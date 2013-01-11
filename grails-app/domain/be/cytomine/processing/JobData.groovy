@@ -27,31 +27,54 @@ class JobData extends CytomineDomain {
         id generator: "assigned"
     }
 
-    static JobData createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static JobData createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static JobData createFromData(jsonJobData) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static JobData createFromData(def json) {
         def jobdata = new JobData()
-        getFromData(jobdata, jsonJobData)
+        insertDataIntoDomain(jobdata, json)
     }
 
-    static JobData getFromData(jobData, jsonJobData) {
-        String key = jsonJobData.key.toString()
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static JobData insertDataIntoDomain(def domain, def json) {
+        String key = json.key.toString()
         if (!key.equals("null"))
-            jobData.key = jsonJobData.key
+            domain.key = json.key
         else throw new WrongArgumentException("Key name cannot be null")
 
-        jobData.filename = jsonJobData.filename
+        domain.filename = json.filename
 
-        if (!jsonJobData.job.toString().equals("null"))
-            jobData.job = Job.read(jsonJobData.job)
+        if (!json.job.toString().equals("null"))
+            domain.job = Job.read(json.job)
 
-        return jobData;
+        return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + JobData.class)
         JSON.registerObjectMarshaller(JobData) { jobData ->

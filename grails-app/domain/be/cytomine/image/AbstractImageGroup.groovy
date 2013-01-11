@@ -20,6 +20,12 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Add credential to group to access abstractimage
+     * @param abstractimage Image that will be available for group
+     * @param group Group that will have access to image
+     * @return Relation between group and image
+     */
     static AbstractImageGroup link(AbstractImage abstractimage, Group group) {
 
         if (!abstractimage) {
@@ -44,6 +50,12 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         return abstractimageGroup
     }
 
+
+    /**
+     * Remove credential from a  group to access abstractimage
+     * @param abstractimage Image not longer available for group
+     * @param group Group to remoe from image credential
+     */
     static void unlink(AbstractImage abstractimage, Group group) {
 
         if (!abstractimage) {
@@ -65,23 +77,46 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         }
     }
 
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
     static AbstractImageGroup createFromDataWithId(json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static AbstractImageGroup createFromData(jsonAbstractImageGroup) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static AbstractImageGroup createFromData(def json) {
         def abstractimageGroup = new AbstractImageGroup()
-        getFromData(abstractimageGroup, jsonAbstractImageGroup)
+        insertDataIntoDomain(abstractimageGroup, json)
     }
 
-    static AbstractImageGroup getFromData(abstractimageGroup, jsonAbstractImageGroup) {
-        abstractimageGroup.abstractimage = AbstractImage.get(jsonAbstractImageGroup.abstractimage.toString())
-        abstractimageGroup.group = Group.get(jsonAbstractImageGroup.group.toString())
-        return abstractimageGroup;
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static AbstractImageGroup insertDataIntoDomain(def domain, def json) {
+        domain.abstractimage = AbstractImage.get(json.abstractimage.toString())
+        domain.group = Group.get(json.group.toString())
+        return domain;
     }
 
+    /**
+     * Create callback metadata
+     * Callback will be send whith request response when add/update/delete on this send
+     * @return Callback for this domain
+     */
     def getCallBack() {
         HashMap<String, Object> callback = new HashMap<String, Object>();
         callback.put("abstractimageID", this.abstractimage.id)
@@ -90,6 +125,11 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
         return callback
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImageGroup.class)
         JSON.registerObjectMarshaller(AbstractImageGroup) {

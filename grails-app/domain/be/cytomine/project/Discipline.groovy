@@ -17,6 +17,11 @@ class Discipline extends CytomineDomain implements Serializable{
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Discipline.class)
         JSON.registerObjectMarshaller(Discipline) {
@@ -35,22 +40,40 @@ class Discipline extends CytomineDomain implements Serializable{
         }
     }
 
-    static Discipline createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Discipline createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static Discipline createFromData(jsonDiscipline) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Discipline createFromData(def json) {
         def discipline = new Discipline()
-        getFromData(discipline, jsonDiscipline)
+        insertDataIntoDomain(discipline, json)
     }
 
-    static Discipline getFromData(discipline, jsonDiscipline) {
-        String name = jsonDiscipline.name.toString()
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static Discipline insertDataIntoDomain(def domain, def json) {
+        String name = json.name.toString()
         if (!name.equals("null"))
-            discipline.name = jsonDiscipline.name.toUpperCase()
+            domain.name = json.name.toUpperCase()
         else throw new WrongArgumentException("Discipline name cannot be null")
-        return discipline;
+        return domain;
     }
 }

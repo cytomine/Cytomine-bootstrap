@@ -71,38 +71,63 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return isChild
     }
 
-    static Term createFromDataWithId(jsonTerm) throws CytomineException {
-        def term = createFromData(jsonTerm)
-        try {term.id = jsonTerm.id} catch (Exception e) {}
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     * @throws CytomineException Error during domain creation
+     */
+    static Term createFromDataWithId(def json) throws CytomineException {
+        def term = createFromData(json)
+        try {term.id = json.id} catch (Exception e) {}
         return term
     }
 
-    static Term createFromData(jsonTerm) throws CytomineException {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Term createFromData(def json) throws CytomineException {
         def term = new Term()
-        getFromData(term, jsonTerm)
+        insertDataIntoDomain(term, json)
     }
 
-    static Term getFromData(term, jsonTerm) throws CytomineException {
-        if (!jsonTerm.name.toString().equals("null"))
-            term.name = jsonTerm.name
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static Term insertDataIntoDomain(def domain, def json) throws CytomineException {
+        if (!json.name.toString().equals("null"))
+            domain.name = json.name
         else throw new WrongArgumentException("Term name cannot be null")
-        term.comment = jsonTerm.comment
+        domain.comment = json.comment
 
-        String ontologyId = jsonTerm.ontology.toString()
+        String ontologyId = json.ontology.toString()
         if (!ontologyId.equals("null")) {
-            term.ontology = Ontology.get(ontologyId)
-            if (term.ontology == null) throw new WrongArgumentException("Ontology was not found with id:" + ontologyId)
+            domain.ontology = Ontology.get(ontologyId)
+            if (domain.ontology == null) throw new WrongArgumentException("Ontology was not found with id:" + ontologyId)
         }
-        else term.ontology = null
+        else domain.ontology = null
 
-        term.color = jsonTerm.color
-        return term;
+        domain.color = json.color
+        return domain;
     }
 
     def getCallBack() {
         return [ontologyID: this?.ontology?.id]
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
         JSON.registerObjectMarshaller(Term) {

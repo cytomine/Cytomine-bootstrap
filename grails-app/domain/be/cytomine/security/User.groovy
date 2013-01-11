@@ -111,6 +111,7 @@ class User extends SecUser {
 
     }
 
+    //TODO: ro remove!
     def samples() {
         def userGroup = userGroups()
         AbstractImage.createCriteria().list {
@@ -145,38 +146,65 @@ class User extends SecUser {
         return false
     }
 
-    static User getFromData(User user, jsonUser) {
-        user.username = jsonUser.username
-        user.firstname = jsonUser.firstname
-        user.lastname = jsonUser.lastname
-        user.email = jsonUser.email
-        user.color = jsonUser.color
-        user.skypeAccount = jsonUser.skypeAccount != null ? jsonUser.skypeAccount : null
-        user.sipAccount = jsonUser.sipAccount != null ? jsonUser.sipAccount : null
-        if (jsonUser.password && user.password != null) {
-            user.newPassword = jsonUser.password //user updated
-        } else if (jsonUser.password) {
-            user.password = jsonUser.password //user created
-        }
-        user.enabled = true
-        if (user.getPublicKey() == null || user.getPrivateKey() == null || jsonUser.publicKey == "" || jsonUser.privateKey == "") {
-            user.generateKeys()
-        }
-        user.created = (!jsonUser.created.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.created.toString())) : null
-        user.updated = (!jsonUser.updated.toString().equals("null"))  ? new Date(Long.parseLong(jsonUser.updated.toString())) : null
-        return user;
-    }
 
-    static User createFromData(data) {
-        getFromData(new User(), data)
-    }
 
-    static User createFromDataWithId(json) {
+
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static User createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static User createFromData(def json) {
+        insertDataIntoDomain(new User(), json)
+    }
+    
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */         
+    static User insertDataIntoDomain(def domain, def json) {
+        domain.username = json.username
+        domain.firstname = json.firstname
+        domain.lastname = json.lastname
+        domain.email = json.email
+        domain.color = json.color
+        domain.skypeAccount = json.skypeAccount != null ? json.skypeAccount : null
+        domain.sipAccount = json.sipAccount != null ? json.sipAccount : null
+        if (json.password && domain.password != null) {
+            domain.newPassword = json.password //user updated
+        } else if (json.password) {
+            domain.password = json.password //user created
+        }
+        domain.enabled = true
+        if (domain.getPublicKey() == null || domain.getPrivateKey() == null || json.publicKey == "" || json.privateKey == "") {
+            domain.generateKeys()
+        }
+        domain.created = (!json.created.toString().equals("null"))  ? new Date(Long.parseLong(json.created.toString())) : null
+        domain.updated = (!json.updated.toString().equals("null"))  ? new Date(Long.parseLong(json.updated.toString())) : null
+        return domain;
+    }    
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + User.class)
         JSON.registerObjectMarshaller(User) {

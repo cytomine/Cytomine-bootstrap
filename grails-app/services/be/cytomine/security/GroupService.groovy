@@ -34,6 +34,10 @@ class GroupService extends ModelService {
         }
     }
 
+    def list(User user) {
+        UserGroup.findByUser(user).collect{it.group}
+    }
+
     def read(def id) {
         return Group.read(id)
     }

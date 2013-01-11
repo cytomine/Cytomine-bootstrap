@@ -89,60 +89,67 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         super.beforeUpdate()
     }
 
-    static UserAnnotation createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static UserAnnotation createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
     /**
-     * Create a new Annotation with jsonAnnotation attributes
-     * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-     * @param jsonAnnotation JSON
-     * @return Annotation
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
      */
-    static UserAnnotation createFromData(jsonAnnotation) {
+    static UserAnnotation createFromData(def json) {
         def annotation = new UserAnnotation()
-        getFromData(annotation, jsonAnnotation)
+        insertDataIntoDomain(annotation, json)
     }
 
     /**
-     * Fill annotation with data attributes
-     * So, jsonAnnotation must have jsonAnnotation.location, jsonAnnotation.name, ...
-     * @param annotation Annotation Source
-     * @param jsonAnnotation JSON
-     * @return annotation with json attributes
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
      */
-    static UserAnnotation getFromData(annotation, jsonAnnotation) {
+    static UserAnnotation insertDataIntoDomain(def domain, json) {
         try {
-            annotation.geometryCompression = (!jsonAnnotation.geometryCompression.toString().equals("null")) ? ((String) jsonAnnotation.geometryCompression).toDouble() : 0
-            annotation.created = (!jsonAnnotation.created.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.created)) : null
-            annotation.updated = (!jsonAnnotation.updated.toString().equals("null")) ? new Date(Long.parseLong(jsonAnnotation.updated)) : null
+            domain.geometryCompression = (!json.geometryCompression.toString().equals("null")) ? ((String) json.geometryCompression).toDouble() : 0
+            domain.created = (!json.created.toString().equals("null")) ? new Date(Long.parseLong(json.created)) : null
+            domain.updated = (!json.updated.toString().equals("null")) ? new Date(Long.parseLong(json.updated)) : null
 
             //location
-            annotation.location = new WKTReader().read(jsonAnnotation.location)
-            if (annotation.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + annotation.location.getNumPoints() + " points")
-            //if (annotation.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + annotation.location.getNumPoints() + " points")
-            if (!annotation.location) throw new WrongArgumentException("Geo is null: 0 points")
+            domain.location = new WKTReader().read(json.location)
+            if (domain.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + domain.location.getNumPoints() + " points")
+            //if (domain.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + domain.location.getNumPoints() + " points")
+            if (!domain.location) throw new WrongArgumentException("Geo is null: 0 points")
             //image
-            annotation.image = ImageInstance.get(jsonAnnotation.image);
-            if (!annotation.image) throw new WrongArgumentException("Image $jsonAnnotation.image not found!")
+            domain.image = ImageInstance.get(json.image);
+            if (!domain.image) throw new WrongArgumentException("Image $json.image not found!")
             //project
-            annotation.project = be.cytomine.project.Project.get(jsonAnnotation.project);
-            if (!annotation.project) throw new WrongArgumentException("Project $jsonAnnotation.project not found!")
+            domain.project = be.cytomine.project.Project.get(json.project);
+            if (!domain.project) throw new WrongArgumentException("Project $json.project not found!")
             //user
-            annotation.user = User.get(jsonAnnotation.user);
-            if (!annotation.user) throw new WrongArgumentException("User $jsonAnnotation.user not found!")
+            domain.user = User.get(json.user);
+            if (!domain.user) throw new WrongArgumentException("User $json.user not found!")
 
         } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }
-        return annotation;
+        return domain;
     }
 
-
-
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + UserAnnotation.class)
         JSON.registerObjectMarshaller(UserAnnotation) { annotation ->

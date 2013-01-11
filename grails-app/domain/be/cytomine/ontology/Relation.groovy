@@ -22,7 +22,13 @@ class Relation extends CytomineDomain implements Serializable {
         return name
     }
 
-    static Relation createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Relation createFromDataWithId(def json) {
         def domain = createRelationFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
@@ -40,6 +46,11 @@ class Relation extends CytomineDomain implements Serializable {
         return relation;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Relation.class)
         JSON.registerObjectMarshaller(Relation) {

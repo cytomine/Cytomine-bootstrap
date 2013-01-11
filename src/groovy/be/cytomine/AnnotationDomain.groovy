@@ -13,6 +13,10 @@ import org.apache.log4j.Logger
 import grails.converters.JSON
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Term
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 
 /**
  * User: lrollus
@@ -162,6 +166,38 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     def getCallBack() {
         return [annotationID: this.id, imageID: this.image.id]
+
+    }
+
+
+    /**
+     * Get user/algo/reviewed annotation with id
+     * Check the correct type and return it
+     * @param id Annotation id
+     * @return Annotation
+     */
+    public static AnnotationDomain getAnnotationDomain(String id) {
+        try {
+            getAnnotationDomain(Long.parseLong(id))
+        } catch(NumberFormatException e) {
+            throw new ObjectNotFoundException("Annotation ${id} not found")
+        }
+    }
+
+    /**
+     * Get user/algo/reviewed annotation with id
+     * Check the correct type and return it
+     * @param id Annotation id
+     * @return Annotation
+     */
+    public static AnnotationDomain getAnnotationDomain(long id) {
+        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = AlgoAnnotation.read(id)
+        if (!basedAnnotation)
+            basedAnnotation = ReviewedAnnotation.read(id)
+        if (basedAnnotation) return basedAnnotation
+        else throw new ObjectNotFoundException("Annotation ${id} not found")
 
     }
 

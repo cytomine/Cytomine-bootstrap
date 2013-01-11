@@ -8,6 +8,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
 /**
  * Created by IntelliJ IDEA.
@@ -64,36 +65,58 @@ class ImageInstance extends CytomineDomain implements Serializable {
         }
     }
 
-    static ImageInstance createFromDataWithId(json) {
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static ImageInstance createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static ImageInstance createFromData(jsonImage) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static ImageInstance createFromData(def json) {
         def image = new ImageInstance()
-        getFromData(image, jsonImage)
+        insertDataIntoDomain(image, json)
     }
 
-    static ImageInstance getFromData(image, jsonImage) {
-        image.created = getJSONAttrDate(jsonImage,"created")
-        image.updated = getJSONAttrDate(jsonImage,"updated")
-        image.user = getJSONAttrDomain(jsonImage,"user",new User(),false)
-        image.baseImage = getJSONAttrDomain(jsonImage,"baseImage",new AbstractImage(),false)
-        image.project = getJSONAttrDomain(jsonImage,"project",new Project(),false)
-        image.countImageAnnotations = getJSONAttrLong(jsonImage,"numberOfAnnotations",0)
-        image.reviewStart = getJSONAttrDate(jsonImage,"reviewStart")
-        image.reviewStop = getJSONAttrDate(jsonImage,"reviewStop")
-        image.reviewUser = getJSONAttrDomain(jsonImage,"reviewUser",new User(),false)
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static ImageInstance insertDataIntoDomain(def domain, def json) {
+        domain.created = JSONUtils.getJSONAttrDate(json,"created")
+        domain.updated = JSONUtils.getJSONAttrDate(json,"updated")
+        domain.user = JSONUtils.getJSONAttrDomain(json,"user",new User(),false)
+        domain.baseImage = JSONUtils.getJSONAttrDomain(json,"baseImage",new AbstractImage(),false)
+        domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),false)
+        domain.countImageAnnotations = JSONUtils.getJSONAttrLong(json,"numberOfAnnotations",0)
+        domain.reviewStart = JSONUtils.getJSONAttrDate(json,"reviewStart")
+        domain.reviewStop = JSONUtils.getJSONAttrDate(json,"reviewStop")
+        domain.reviewUser = JSONUtils.getJSONAttrDomain(json,"reviewUser",new User(),false)
         //Check review constraint
-        if ((image.reviewUser==null && image.reviewStart!=null) ||(image.reviewUser!=null && image.reviewStart==null) || (image.reviewStart==null && image.reviewStop!=null))
-            throw new WrongArgumentException("Review data are not valid: user=${image.reviewUser} start=${image.reviewStart} stop=${image.reviewStop}")
+        if ((domain.reviewUser==null && domain.reviewStart!=null) ||(domain.reviewUser!=null && domain.reviewStart==null) || (domain.reviewStart==null && domain.reviewStop!=null))
+            throw new WrongArgumentException("Review data are not valid: user=${domain.reviewUser} start=${domain.reviewStart} stop=${domain.reviewStop}")
 
-        return image;
+        return domain;
     }
 
 
-
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
         JSON.registerObjectMarshaller(ImageInstance) {

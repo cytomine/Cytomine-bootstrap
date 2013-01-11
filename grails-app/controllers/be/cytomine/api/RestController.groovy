@@ -348,36 +348,6 @@ class RestController {
         }
     }
 
-    /**
-     * Get user/algo/reviewed annotation with id
-     * Check the correct type and return it
-     * @param id Annotation id
-     * @return Annotation
-     */
-    protected AnnotationDomain getAnnotationDomain(String id) {
-        try {
-            getAnnotationDomain(Long.parseLong(id))
-        } catch(NumberFormatException e) {
-            throw new ObjectNotFoundException("Annotation ${id} not found")
-        }
-    }
-
-    /**
-     * Get user/algo/reviewed annotation with id
-     * Check the correct type and return it
-     * @param id Annotation id
-     * @return Annotation
-     */
-    protected AnnotationDomain getAnnotationDomain(long id) {
-        AnnotationDomain basedAnnotation = UserAnnotation.read(id)
-        if (!basedAnnotation)
-            basedAnnotation = AlgoAnnotation.read(id)
-        if (!basedAnnotation)
-            basedAnnotation = ReviewedAnnotation.read(id)
-        if (basedAnnotation) return basedAnnotation
-        else throw new ObjectNotFoundException("Annotation ${id} not found")
-
-    }
 
     /**
      * Substract the collection with offset (min) and max

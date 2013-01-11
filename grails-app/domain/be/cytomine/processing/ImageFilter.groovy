@@ -17,6 +17,11 @@ class ImageFilter {
         processingServer (nullable: true)
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilter.class)
         JSON.registerObjectMarshaller(ImageFilter) {

@@ -45,33 +45,55 @@ class SoftwareProject extends CytomineDomain implements Serializable{
             Logger.getLogger(this).info("no link between " + software + " " + project)
         }
     }
-    
-   static SoftwareProject createFromDataWithId(json) {
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+   static SoftwareProject createFromDataWithId(def json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static SoftwareProject createFromData(jsonSoftwareParameter) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static SoftwareProject createFromData(def json) {
         def softwareProject = new SoftwareProject()
-        getFromData(softwareProject, jsonSoftwareParameter)
+        insertDataIntoDomain(softwareProject, json)
     }
 
-    static SoftwareProject getFromData(SoftwareProject softwareProject, jsonSoftwareParameter) {
-        Logger.getLogger(this).info("jsonSoftwareParameter=" + jsonSoftwareParameter.toString())
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static SoftwareProject insertDataIntoDomain(def domain, def json) {
         try {
-            softwareProject.software = Software.get(jsonSoftwareParameter.software.id)
-            softwareProject.project = Project.get(jsonSoftwareParameter.project.id)
+            domain.software = Software.get(json.software.id)
+            domain.project = Project.get(json.project.id)
         }
         catch (Exception e) {
-            softwareProject.software = Software.get(jsonSoftwareParameter.software)
-            softwareProject.project = Project.get(jsonSoftwareParameter.project)
+            domain.software = Software.get(json.software)
+            domain.project = Project.get(json.project)
         }
-        if (!softwareProject.software) throw new WrongArgumentException("Software ${jsonSoftwareParameter.software.toString()} doesn't exist!")
-        if (!softwareProject.project) throw new WrongArgumentException("Project ${jsonSoftwareParameter.project.toString()} doesn't exist!")
-        return softwareProject;
+        if (!domain.software) throw new WrongArgumentException("Software ${json.software.toString()} doesn't exist!")
+        if (!domain.project) throw new WrongArgumentException("Project ${json.project.toString()} doesn't exist!")
+        return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + SoftwareProject.class)
         JSON.registerObjectMarshaller(SoftwareProject) {

@@ -6,9 +6,6 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
-/**
- * TDODO:: doc
- */
 class UploadedFile extends CytomineDomain implements Serializable{
 
     public static allowedMime = ["vms", "mrxs", "svs", "opt", "jp2"]
@@ -36,6 +33,11 @@ class UploadedFile extends CytomineDomain implements Serializable{
         convertedExt (nullable: true)
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
      static void registerMarshaller(String cytomineBaseUrl) {
          Logger.getLogger(this).info("Register custom JSON renderer for " + UploadedFile.class)
         JSON.registerObjectMarshaller(UploadedFile) {

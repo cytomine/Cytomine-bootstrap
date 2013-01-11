@@ -23,8 +23,8 @@ class Instrument extends CytomineDomain {
         brand + "-" + model
     }
 
-  def beforeInsert() {
-      super.beforeInsert()
-  }
+    def beforeInsert() {
+        super.beforeInsert()
+    }
 
 }

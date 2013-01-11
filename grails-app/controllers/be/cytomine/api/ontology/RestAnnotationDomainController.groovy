@@ -227,7 +227,7 @@ class RestAnnotationDomainController extends RestController {
     def fillAnnotation = {
         log.info "fillAnnotation"
         try {
-            AnnotationDomain annotation = getAnnotationDomain(params.long('id'))
+            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
             if (!annotation) {
                 throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
             }

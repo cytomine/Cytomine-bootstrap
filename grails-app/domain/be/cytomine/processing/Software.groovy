@@ -41,6 +41,11 @@ class Software extends CytomineDomain {
         }
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
     static void registerMarshaller(String cytomineBaseUrl) {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Software.class)
         JSON.registerObjectMarshaller(Software) {
@@ -73,37 +78,55 @@ class Software extends CytomineDomain {
         name
     }
 
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
     static Software createFromDataWithId(json) {
         def domain = createFromData(json)
         try {domain.id = json.id} catch (Exception e) {}
         return domain
     }
 
-    static Software createFromData(jsonSoftware) {
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Software createFromData(def json) {
         def software = new Software()
-        getFromData(software, jsonSoftware)
+        insertDataIntoDomain(software, json)
     }
 
-    static Software getFromData(software, jsonSoftware) {
-        if (!jsonSoftware.name.toString().equals("null"))
-            software.name = jsonSoftware.name
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static Software insertDataIntoDomain(def domain, def json) {
+        if (!json.name.toString().equals("null"))
+            domain.name = json.name
         else throw new WrongArgumentException("Software name cannot be null")
-        if (!jsonSoftware.description.toString().equals("null"))
-            software.description = jsonSoftware.description
-        if (!jsonSoftware.serviceName.toString().equals("null"))
-            software.serviceName = jsonSoftware.serviceName
+        if (!json.description.toString().equals("null"))
+            domain.description = json.description
+        if (!json.serviceName.toString().equals("null"))
+            domain.serviceName = json.serviceName
         else throw new WrongArgumentException("Software service-name cannot be null")
 
-        software.resultName = jsonSoftware.resultName
+        domain.resultName = json.resultName
         //try to loard service if exist
         def service
         try {
-            service = grailsApplication.getMainContext().getBean(jsonSoftware.serviceName)
+            service = grailsApplication.getMainContext().getBean(json.serviceName)
         } catch(Exception e) {
            throw new WrongArgumentException("Software service-name cannot be launch:"+e)
         }
-        if(!service)  throw new WrongArgumentException("Software service-name cannot be found with name:"+jsonSoftware.serviceName)
+        if(!service)  throw new WrongArgumentException("Software service-name cannot be found with name:"+json.serviceName)
 
-        return software;
+        return domain;
     }
 }
