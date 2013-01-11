@@ -69,7 +69,7 @@ class RestUserJobController extends RestController {
                 }
 
                 //create user job
-                UserJob userJob = createUserJob(user, job, json)
+                UserJob userJob = addUserJob(user, job, json)
 
                 response([userJob: userJob], 200)
             } catch (CytomineException e) {
@@ -211,7 +211,7 @@ class RestUserJobController extends RestController {
      * @param json JSON extra info
      * @return User job created
      */
-    private UserJob createUserJob(def user, def job, def json) {
+    private UserJob addUserJob(def user, def job, def json) {
         //create user job
         log.debug "Create userJob"
         UserJob userJob = new UserJob()

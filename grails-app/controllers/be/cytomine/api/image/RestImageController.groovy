@@ -233,7 +233,7 @@ class RestImageController extends RestController {
      * @param params Params
      * @return Crop Annotation URL
      */
-    private def cropAnnotation(AnnotationDomain annotation, def params) {
+    private def getCropAnnotationURL(AnnotationDomain annotation, def params) {
         Integer zoom = 0
         Integer maxSize = -1
         if (params.max_size != null) {

@@ -34,7 +34,7 @@ grails.project.dependency.resolution = {
     }
     plugins {
 
-   	}
+    }
 }
 coverage {
 	exclusions = [
