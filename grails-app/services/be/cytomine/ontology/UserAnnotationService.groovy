@@ -53,7 +53,13 @@ class UserAnnotationService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ')")
     def list(Term term) {
-        term.annotations()
+        //TODO:: very heavy (postFilter + term.annotationTerm may be very big)
+        def annotations = []
+        term.annotationTerm.each {
+            if (!annotations.contains(it.userAnnotation))
+                annotations << it.userAnnotation
+        }
+        annotations
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")

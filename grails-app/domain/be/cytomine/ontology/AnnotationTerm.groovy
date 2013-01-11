@@ -7,7 +7,13 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
+import be.cytomine.security.UserJob
 
+/**
+ * Term added to an annotation by a real user (not a job!)
+ * Many user can add a term to a single annotation (not only the user that created this annotation)
+ */
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
     UserAnnotation userAnnotation
@@ -21,13 +27,23 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         "[" + this.id + " <" + userAnnotation + "," + term + "," + user + ">]"
     }
 
+    /**
+     * Add a term to an annotation
+     */
     static AnnotationTerm link(UserAnnotation annotation, Term term,SecUser user) {
-        if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
-        if (!term) throw new WrongArgumentException("Term cannot be null")
-        if (!user) throw new WrongArgumentException("User cannot be null")
+
+        if (!annotation) {
+            throw new WrongArgumentException("Annotation cannot be null")
+        }
+        if (!term) {
+            throw new WrongArgumentException("Term cannot be null")
+        }
+        if (!user) {
+            throw new WrongArgumentException("User cannot be null")
+        }
+
         def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term,'user': user)
-        if (annotationTerm) throw new AlreadyExistException("Annotation - term already exist")
-        //Annotation.withTransaction {
+
         if (!annotationTerm) {
             annotationTerm = new AnnotationTerm(user: user)
             annotation?.addToAnnotationTerm(annotationTerm)
@@ -35,18 +51,29 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             annotation.refresh()
             term.refresh()
             annotationTerm.save(flush: true)
-        } else throw new WrongArgumentException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
-        //}
+        } else {
+            throw new AlreadyExistException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
+        }
+
         return annotationTerm
     }
 
+    /**
+     * Remove a term from an annotation
+     */
     static void unlink(UserAnnotation annotation, Term term,SecUser user) {
 
-        if (!annotation) throw new WrongArgumentException("Annotation cannot be null")
-        if (!term) throw new WrongArgumentException("Term cannot be null")
-        if (!user) throw new WrongArgumentException("User cannot be null")
+        if (!annotation) {
+            throw new WrongArgumentException("Annotation cannot be null")
+        }
+        if (!term) {
+            throw new WrongArgumentException("Term cannot be null")
+        }
+        if (!user) {
+            throw new WrongArgumentException("User cannot be null")
+        }
+
         def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
-        if (!annotationTerm) throw new WrongArgumentException("Annotation - term - user not exist")
 
         if (annotationTerm) {
             annotation?.removeFromAnnotationTerm(annotationTerm)
@@ -54,6 +81,8 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             annotation.refresh()
             term.refresh()
             annotationTerm.delete(flush: true)
+        } else {
+            throw new WrongArgumentException("Annotation - term - user not exist")
         }
     }
 
@@ -87,24 +116,29 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static AnnotationTerm insertDataIntoDomain(def domain, def json) {
-        println json
-        try{domain.userAnnotation = UserAnnotation.get(Long.parseLong(json.userannotation.toString()))}
-        catch(Exception e) {
-           println e
-        }
-        domain.term = Term.get(json.term.toString())
-        domain.user = SecUser.get(json.user.toString())
-        if (!domain.userAnnotation) throw new WrongArgumentException("Annotation ${json.userannotation.toString()} doesn't exist!")
-        if (!domain.term) throw new WrongArgumentException("Term ${json.term.toString()} doesn't exist!")
-        if (!domain.user) throw new WrongArgumentException("User ${json.user.toString()} doesn't exist!")
+        domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
+        domain.userAnnotation = JSONUtils.getJSONAttrDomain(json, "userannotation", new UserAnnotation(), true)
+        domain.term = JSONUtils.getJSONAttrDomain(json, "term", new Term(), true)
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
         return domain;
     }
 
+    /**
+     * Create callback metadata
+     * Callback will be send whith request response when add/update/delete on this send
+     * @return Callback for this domain
+     */
     def getCallBack() {
-        return [
-                annotationID: this.userAnnotation.id,
-                termID : this.term.id,
-                imageID : this.userAnnotation.image.id]
+        return [annotationID: this.userAnnotation.id,termID : this.term.id,imageID : this.userAnnotation.image.id]
+    }
+
+    /**
+     * Get the project link with this domain type
+     * @return Project of this domain
+     */
+     public Project projectDomain() {
+        return userAnnotation.image.project
     }
 
     /**
@@ -123,9 +157,5 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
             returnArray['user'] = it.user?.id
             return returnArray
         }
-    }
-
-     public Project projectDomain() {
-        return userAnnotation.image.project
     }
 }

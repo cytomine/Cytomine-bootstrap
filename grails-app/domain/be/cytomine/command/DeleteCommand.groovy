@@ -3,9 +3,9 @@ package be.cytomine.command
 import grails.converters.JSON
 
 /**
- * @author ULG-GIGA Cytomine Team
  * The DeleteCommand class is a command that delete a domain
  * It provide an execute method that delete domain from command, an undo method that re-build domain and an redo method that delete domain
+ * @author ULG-GIGA Cytomine Team
  */
 class DeleteCommand extends Command {
 

@@ -35,7 +35,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
     Date reviewStop
     SecUser reviewUser
 
-
     static belongsTo = [AbstractImage, Project, User]
 
     static constraints = {
@@ -45,10 +44,10 @@ class ImageInstance extends CytomineDomain implements Serializable {
         //stack stuff
         stack(nullable: true)
         zIndex(nullable: true) //order in z-stack referenced by stack
-        channel(nullable : true)  //e.g. fluo channel
-        reviewStart nullable:true
-        reviewStop nullable:true
-        reviewUser nullable:true
+        channel(nullable: true)  //e.g. fluo channel
+        reviewStart nullable: true
+        reviewStop nullable: true
+        reviewUser nullable: true
     }
 
     static mapping = {
@@ -56,10 +55,13 @@ class ImageInstance extends CytomineDomain implements Serializable {
         baseImage fetch: 'join'
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         ImageInstance.withNewSession {
-            ImageInstance imageAlreadyExist=ImageInstance.findByBaseImageAndProject(baseImage, project)
-            if(imageAlreadyExist!=null && (imageAlreadyExist.id!=id))  {
+            ImageInstance imageAlreadyExist = ImageInstance.findByBaseImageAndProject(baseImage, project)
+            if (imageAlreadyExist != null && (imageAlreadyExist.id != id)) {
                 throw new AlreadyExistException("Image " + baseImage?.filename + " already map with project " + project.name)
             }
         }
@@ -95,22 +97,21 @@ class ImageInstance extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static ImageInstance insertDataIntoDomain(def domain, def json) {
-        domain.created = JSONUtils.getJSONAttrDate(json,"created")
-        domain.updated = JSONUtils.getJSONAttrDate(json,"updated")
-        domain.user = JSONUtils.getJSONAttrDomain(json,"user",new User(),false)
-        domain.baseImage = JSONUtils.getJSONAttrDomain(json,"baseImage",new AbstractImage(),false)
-        domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),false)
-        domain.countImageAnnotations = JSONUtils.getJSONAttrLong(json,"numberOfAnnotations",0)
-        domain.reviewStart = JSONUtils.getJSONAttrDate(json,"reviewStart")
-        domain.reviewStop = JSONUtils.getJSONAttrDate(json,"reviewStop")
-        domain.reviewUser = JSONUtils.getJSONAttrDomain(json,"reviewUser",new User(),false)
+        domain.created = JSONUtils.getJSONAttrDate(json, "created")
+        domain.updated = JSONUtils.getJSONAttrDate(json, "updated")
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), false)
+        domain.baseImage = JSONUtils.getJSONAttrDomain(json, "baseImage", new AbstractImage(), false)
+        domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), false)
+        domain.countImageAnnotations = JSONUtils.getJSONAttrLong(json, "numberOfAnnotations", 0)
+        domain.reviewStart = JSONUtils.getJSONAttrDate(json, "reviewStart")
+        domain.reviewStop = JSONUtils.getJSONAttrDate(json, "reviewStop")
+        domain.reviewUser = JSONUtils.getJSONAttrDomain(json, "reviewUser", new User(), false)
         //Check review constraint
-        if ((domain.reviewUser==null && domain.reviewStart!=null) ||(domain.reviewUser!=null && domain.reviewStart==null) || (domain.reviewStart==null && domain.reviewStop!=null))
+        if ((domain.reviewUser == null && domain.reviewStart != null) || (domain.reviewUser != null && domain.reviewStart == null) || (domain.reviewStart == null && domain.reviewStop != null))
             throw new WrongArgumentException("Review data are not valid: user=${domain.reviewUser} start=${domain.reviewStart} stop=${domain.reviewStop}")
 
         return domain;
     }
-
 
     /**
      * Define fields available for JSON response
@@ -138,7 +139,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
             returnArray['resolution'] = it.baseImage.resolution
             returnArray['magnification'] = it.baseImage.magnification
             returnArray['depth'] = it.baseImage.getZoomLevels()?.max
-			try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
+            try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
             try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
             try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
             try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
@@ -158,7 +159,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
      * @return True if image is review but not validate, otherwise false
      */
     public boolean isInReviewMode() {
-        return (reviewStart!=null && reviewUser!=null)
+        return (reviewStart != null && reviewUser != null)
     }
 
     /**
@@ -166,7 +167,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
      * @return True if review user has validate this image
      */
     public boolean isReviewed() {
-        return (reviewStop!=null)
+        return (reviewStop != null)
     }
 
     /**

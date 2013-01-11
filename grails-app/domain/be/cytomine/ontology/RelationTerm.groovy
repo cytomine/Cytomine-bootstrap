@@ -5,7 +5,11 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * Relation between a term 1 and a term 2
+ */
 class RelationTerm extends CytomineDomain implements Serializable {
 
     static names = [PARENT: "parent", SYNONYM: "synonyme"]
@@ -13,6 +17,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
     Relation relation
     Term term1
     Term term2
+
     static mapping = {
         id(generator: 'assigned', unique: true)
     }
@@ -21,16 +26,33 @@ class RelationTerm extends CytomineDomain implements Serializable {
         "[" + this.id + " <" + relation + '(' + relation?.name + ')' + ":[" + term1 + '(' + term1?.name + ')' + "," + term2 + '(' + term2?.name + ')' + "]>]"
     }
 
-    static RelationTerm link(long id, Relation relation, Term term1, Term term2) {
-        if (!relation) throw new WrongArgumentException("Relation cannot be null");
-        if (!term1) throw new WrongArgumentException("Term 1 cannot be null");
-        if (!term2) throw new WrongArgumentException("Term 2 cannot be null");
+    /**
+     * Add a new relation for term1 and term2
+     */
+    static RelationTerm link(Relation relation, Term term1, Term term2) {
+        link(-1, relation, term1, term2)
+    }
 
-        Logger.getLogger(this).info("Link Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id)
+    /**
+     * Add a new relation for term1 and term2
+     */
+    static RelationTerm link(long id, Relation relation, Term term1, Term term2) {
+        if (!relation) {
+            throw new WrongArgumentException("Relation cannot be null")
+        }
+        if (!term1) {
+            throw new WrongArgumentException("Term 1 cannot be null")
+        }
+        if (!term2) {
+            throw new WrongArgumentException("Term 2 cannot be null")
+        }
+
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (!relationTerm) {
             relationTerm = new RelationTerm()
-            if (id != -1) relationTerm.id = id
+            if (id != -1) {
+                relationTerm.id = id
+            }
             term1?.addToRelationTerm1(relationTerm)
             term2?.addToRelationTerm2(relationTerm)
             relation?.addToRelationTerm(relationTerm)
@@ -38,16 +60,16 @@ class RelationTerm extends CytomineDomain implements Serializable {
             term2.refresh()
             relation.refresh()
             relationTerm.save(flush: true)
-        } else throw new AlreadyExistException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
+        } else {
+            throw new AlreadyExistException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
+        }
         return relationTerm
     }
 
-    static RelationTerm link(Relation relation, Term term1, Term term2) {
-        link(-1, relation, term1, term2)
-    }
-
+    /**
+     * Remove a relation between term1 and term2
+     */
     static void unlink(Relation relation, Term term1, Term term2) {
-        Logger.getLogger(this).info("Unlink Term " + term1.id + " with Term " + term2.id + " with relation " + relation.id)
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (relationTerm) {
             term1?.removeFromRelationTerm1(relationTerm)
@@ -55,7 +77,6 @@ class RelationTerm extends CytomineDomain implements Serializable {
             relation?.removeFromRelationTerm(relationTerm)
             relationTerm.delete(flush: true)
         }
-
     }
 
     /**
@@ -88,20 +109,24 @@ class RelationTerm extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static RelationTerm insertDataIntoDomain(def domain, def json) {
-        Logger.getLogger(this).info("jsonRelationTerm=" + json.toString())
+        boolean isNested = false
         try {
-            domain.relation = Relation.get(json.relation.id)
-            domain.term1 = Term.get(json.term1.id)
-            domain.term2 = Term.get(json.term2.id)
+            json.relation.id
+            isNested = true
+        } catch(Exception e) {
+            isNested = false
         }
-        catch (Exception e) {
-            domain.relation = Relation.get(json.relation)
-            domain.term1 = Term.get(json.term1)
-            domain.term2 = Term.get(json.term2)
+
+
+        if(!isNested) {
+            domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
+            domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
+            domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)
+        } else {
+            domain.relation = JSONUtils.getJSONAttrDomain(json.relation, "id", new Relation(), true)
+            domain.term1 = JSONUtils.getJSONAttrDomain(json.term1, "id", new Term(), true)
+            domain.term2 = JSONUtils.getJSONAttrDomain(json.term2, "id", new Term(), true)
         }
-        if (!domain.relation) throw new WrongArgumentException("Relation ${json.relation.toString()} doesn't exist!")
-        if (!domain.term1) throw new WrongArgumentException("Term ${json.term1.toString()} doesn't exist!")
-        if (!domain.term2) throw new WrongArgumentException("Term ${json.term2.toString()} doesn't exist!")
         return domain;
     }
 

@@ -53,7 +53,7 @@ class Sample extends CytomineDomain implements Serializable{
     static Sample insertDataIntoDomain(def domain, def json) {
         domain.name = JSONUtils.getJSONAttrStr(json,'name')
         domain.created = JSONUtils.getJSONAttrDate(json,'created')
-        domain.updated = JSONUtils.getJSONAttrDate(json,'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
         return domain;
     }
 
@@ -73,6 +73,9 @@ class Sample extends CytomineDomain implements Serializable{
         }
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Sample.withNewSession {
             if(name) {

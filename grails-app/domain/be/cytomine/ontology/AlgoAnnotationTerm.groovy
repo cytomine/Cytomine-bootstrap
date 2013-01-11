@@ -62,18 +62,23 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         project nullable: true
     }
 
+    public beforeInsert() {
+        super.beforeInsert()
+        if (project == null) project = retrieveAnnotationDomain()?.image?.project;
+    }
+
     public String toString() {
         return annotationClassName + " " + annotationIdent + " with term " + term + " from userjob " + userJob + " and  project " + project
     }
 
-    public def setAnnotation(AnnotationDomain annotation) {
+    /**
+     * Set annotation (storing class + id)
+     * With groovy, you can do: this.annotation = ...
+     * @param annotation Annotation to add
+     */
+    public void setAnnotation(AnnotationDomain annotation) {
         annotationClassName = annotation.class.getName()
         annotationIdent = annotation.id
-    }
-
-    public beforeInsert() {
-        super.beforeInsert()
-        if(project==null) project = retrieveAnnotationDomain()?.image?.project;
     }
 
     /**
@@ -124,17 +129,17 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
      */
     static AlgoAnnotationTerm insertDataIntoDomain(def domain, def json) {
         //Extract and read the correct annotation
-        Long annotationId = JSONUtils.getJSONAttrLong(json,'annotationIdent',-1)
-        if(annotationId==-1) {
-            annotationId = JSONUtils.getJSONAttrLong(json,'annotation',-1)
+        Long annotationId = JSONUtils.getJSONAttrLong(json, 'annotationIdent', -1)
+        if (annotationId == -1) {
+            annotationId = JSONUtils.getJSONAttrLong(json, 'annotation', -1)
         }
         AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
         domain.annotationClassName = annotation.class.getName()
         domain.annotationIdent = annotation.id
-        domain.term = JSONUtils.getJSONAttrDomain(json,"term",new Term(),false)
-        domain.expectedTerm = JSONUtils.getJSONAttrDomain(json,"expectedTerm",new Term(),false)
-        domain.userJob = JSONUtils.getJSONAttrDomain(json,"user",new UserJob(),false)
-        domain.rate = JSONUtils.getJSONAttrDouble(json,'rate',0)
+        domain.term = JSONUtils.getJSONAttrDomain(json, "term", new Term(), false)
+        domain.expectedTerm = JSONUtils.getJSONAttrDomain(json, "expectedTerm", new Term(), false)
+        domain.userJob = JSONUtils.getJSONAttrDomain(json, "user", new UserJob(), false)
+        domain.rate = JSONUtils.getJSONAttrDouble(json, 'rate', 0)
         return domain;
     }
 

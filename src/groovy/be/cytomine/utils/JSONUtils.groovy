@@ -11,6 +11,9 @@ import be.cytomine.Exception.ServerException
  */
 class JSONUtils {
 
+
+
+
     static public String getJSONAttrStr(def json, String attr) {
            println "get attr $attr"
           if(json[attr]!=null && !json[attr].toString().equals("null")) {

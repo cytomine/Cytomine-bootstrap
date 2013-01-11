@@ -19,11 +19,16 @@ class Mime implements Serializable {
         mimeType(blank: false, unique: false)
     }
 
+    /**
+     * Get list of image server that support this mime
+     * @return Image server list
+     */
     def imageServers() {
-        if (mis != null)
+        if (mis) {
             return mis.collect {it.imageServer}
-        else
+        } else {
             return []
+        }
     }
 
     String toString() {

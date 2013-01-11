@@ -6,9 +6,9 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 
 /**
- * @author ULG-GIGA Cytomine Team
  * The CommandHistory class define a history item for a project.
  * It contains the command that was launch for a project and its method (undo/redo/nothing)
+ * @author ULG-GIGA Cytomine Team
  */
 class CommandHistory extends CytomineDomain {
 

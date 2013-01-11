@@ -32,12 +32,12 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
     }
 
     static mapping = {
-          id generator: "assigned"
-          columns {
-              location type: org.hibernatespatial.GeometryUserType
-          }
-         wktLocation(type: 'text')
-      }
+        id generator: "assigned"
+        columns {
+            location type: org.hibernatespatial.GeometryUserType
+        }
+        wktLocation(type: 'text')
+    }
 
     def beforeInsert() {
         super.beforeInsert()
@@ -53,10 +53,10 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      */
     def terms() {
         def criteria = AlgoAnnotationTerm.withCriteria() {
-              eq('annotationIdent', id)
-              projections {
-                  groupProperty("term")
-              }
+            eq('annotationIdent', id)
+            projections {
+                groupProperty("term")
+            }
         }
         return criteria
     }
@@ -67,11 +67,11 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      * @return list of terms id
      */
     def termsId() {
-        terms().collect{it.id}
+        terms().collect {it.id}
     }
 
     def getCropUrl(String cytomineUrl) {
-        UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineUrl,id)
+        UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineUrl, id)
     }
 
     /**
@@ -95,7 +95,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      * @return Term List
      */
     List<Term> termsForReview() {
-        AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id,user).collect{it.term}.unique()
+        AlgoAnnotationTerm.findAllByAnnotationIdentAndUserJob(id, user).collect {it.term}.unique()
     }
 
     /**
@@ -103,7 +103,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      * @return True if annotation has at least 1 reviewed annotation, otherwise false
      */
     boolean hasReviewedAnnotation() {
-        return countReviewedAnnotations>0
+        return countReviewedAnnotations > 0
     }
 
     /**
@@ -138,13 +138,13 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      */
     static AlgoAnnotation insertDataIntoDomain(def domain, def json) {
         try {
-            domain.geometryCompression = JSONUtils.getJSONAttrDouble(json,'geometryCompression',0)
-            domain.created = JSONUtils.getJSONAttrDate(json,'created')
-            domain.updated = JSONUtils.getJSONAttrDate(json,'created')
+            domain.geometryCompression = JSONUtils.getJSONAttrDouble(json, 'geometryCompression', 0)
+            domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+            domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
             domain.location = new WKTReader().read(json.location)
-            domain.image = JSONUtils.getJSONAttrDomain(json,"image",new ImageInstance(),true)
-            domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),true)
-            domain.user = JSONUtils.getJSONAttrDomain(json,"user",new UserJob(),true)
+            domain.image = JSONUtils.getJSONAttrDomain(json, "image", new ImageInstance(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
+            domain.user = JSONUtils.getJSONAttrDomain(json, "user", new UserJob(), true)
 
             if (!domain.location) {
                 throw new WrongArgumentException("Geo is null: 0 points")
@@ -188,10 +188,10 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['rate'] = annotation.rate
             returnArray['idTerm'] = annotation.idTerm
             returnArray['idExpectedTerm'] = annotation.idExpectedTerm
-            returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
-            returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
+            returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl, annotation.id)
+            returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl, annotation.id, 256)
+            returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineBaseUrl, annotation.id)
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl, imageinstance.project?.id, imageinstance.id, annotation.id)
             returnArray['reviewed'] = annotation.hasReviewedAnnotation()
             return returnArray
         }

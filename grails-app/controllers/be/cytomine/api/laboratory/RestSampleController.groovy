@@ -7,7 +7,7 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 
 /**
- * //TODO:: document/refactor/test this class
+ * Controller for sample (part of 'source' that has been scan to image)
  */
 class RestSampleController extends RestController {
 
@@ -16,11 +16,16 @@ class RestSampleController extends RestController {
     def sampleService
     def cytomineService
 
+    /**
+     * List all available sample for the current user
+     */
     def list = {
         responseSuccess(sampleService.list(cytomineService.getCurrentUser()))
     }
 
-
+    /**
+     * Get a sample
+     */
     def show = {
         Sample sample = sampleService.read(params.long('id'))
         if (sample) {
@@ -30,39 +35,24 @@ class RestSampleController extends RestController {
         }
     }
 
+    /**
+     * Add a new sample
+     */
     def add = {
-        try {
-            def json = request.JSON
-            def result = sampleService.add(json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
+        add(sampleService, request.JSON)
     }
 
-
+    /**
+     * Update a existing sample
+     */
     def update = {
-        def json = request.JSON
-        try {
-            def domain = sampleService.retrieve(json)
-            def result = sampleService.update(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
+        update(sampleService, request.JSON)
     }
 
+    /**
+     * Delete sample
+     */
     def delete = {
-        def json = JSON.parse("{id : $params.id}")
-        try {
-            def domain = sampleService.retrieve(json)
-            def result = sampleService.delete(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
+        delete(sampleService, JSON.parse("{id : $params.id}"))
     }
 }

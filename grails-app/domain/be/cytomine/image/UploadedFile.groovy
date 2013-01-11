@@ -6,6 +6,9 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
+/**
+ * TODOSTEVBEN: doc
+ */
 class UploadedFile extends CytomineDomain implements Serializable{
 
     public static allowedMime = ["vms", "mrxs", "svs", "opt", "jp2"]

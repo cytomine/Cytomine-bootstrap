@@ -263,15 +263,6 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 //        assertEquals(400, result.code)
 //    }
 
-    void testAddReviewedAnnotationCorrectWithBadStatus() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
-        def json = JSON.parse(annotationToAdd.encodeAsJSON())
-        json.status = "toto"
-
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
-    }
-
 
     void testEditReviewedAnnotation() {
         ReviewedAnnotation annotationToAdd = BasicInstance.createOrGetBasicReviewedAnnotation()

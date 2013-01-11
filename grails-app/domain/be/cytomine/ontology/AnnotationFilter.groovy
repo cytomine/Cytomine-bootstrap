@@ -9,7 +9,9 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 import be.cytomine.utils.JSONUtils
 
-//TO DO : move this Domain to another package (utilities ? preferences ?)
+/**
+ * Annotation filter define a set of filter for annotation listing
+ */
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
     String name
@@ -68,8 +70,13 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
         return domain;
     }
 
+    /**
+     * Create callback metadata
+     * Callback will be send whith request response when add/update/delete on this send
+     * @return Callback for this domain
+     */
     def getCallBack() {
-        return [annotationFilterID: this?.id] //not sure...here
+        return [annotationFilterID: this?.id]
     }
 
     /**
@@ -84,10 +91,12 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
+            returnArray['user'] = it.user?.id
+            returnArray['project'] = it.project?.id
             returnArray['terms'] = it.terms.collect { it.id }
             returnArray['users'] = it.users.collect { it.id }
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
             return returnArray
         }
     }

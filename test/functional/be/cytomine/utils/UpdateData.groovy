@@ -26,6 +26,7 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
+import be.cytomine.ontology.AnnotationFilter
 
 /**
  * User: lrollus
@@ -385,6 +386,20 @@ class UpdateData {
         jsonUpdate.ontology = newOtology.id
         jsonProject = jsonUpdate.encodeAsJSON()
         return ['oldData':project,'newData':jsonProject,'mapOld':mapOld,'mapNew':mapNew]
+    }
+
+    static def createUpdateSet(AnnotationFilter af) {
+        String oldName = "Name1"
+        String newName = Math.random()+""
+
+        def mapNew = ["name": newName]
+        def mapOld = ["name": oldName]
+
+        def json = af.encodeAsJSON()
+        def jsonUpdate = JSON.parse(json)
+        jsonUpdate.name = newName
+        json = jsonUpdate.encodeAsJSON()
+        return ['oldData':af,'newData':json,'mapOld':mapOld,'mapNew':mapNew]
     }
 
 

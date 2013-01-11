@@ -80,7 +80,7 @@ class RestAnnotationDomainController extends RestController {
         Term term = termService.read(params.long('idterm'))
         if (term) {
             def allAnnotations = []
-            List<Project> projects = term.ontology.projects
+            List<Project> projects = projectService.list(term.ontology)
             projects.each {
                 allAnnotations.addAll(userAnnotationService.list(it))
                 allAnnotations.addAll(algoAnnotationService.list(it))

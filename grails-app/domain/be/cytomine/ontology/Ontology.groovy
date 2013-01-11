@@ -7,13 +7,17 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
+import be.cytomine.security.SecUser
 
+/**
+ * An ontology is a list of term
+ * Each term may be link to other term with a special relation (parent, synonym,...)
+ */
 class Ontology extends CytomineDomain implements Serializable {
 
     String name
     User user
-
-    def relationService
 
     static constraints = {
         name(blank: false, unique: true)
@@ -22,44 +26,43 @@ class Ontology extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Ontology.withNewSession {
-            Ontology ontology = Ontology.findByName(name)
-            if(ontology!=null && (ontology.id!=id))  throw new AlreadyExistException("Ontology " + ontology.name + " already exist!")
+            if(name) {
+                Ontology ontology = Ontology.findByName(name)
+                if(ontology!=null && (ontology.id!=id))  throw new AlreadyExistException("Ontology " + ontology.name + " already exist!")
+            }
         }
     }
 
-    //TODO:: remove (move in userService)
-    def users() {
-        def users = []
-        def projects = Project.findAllByOntology(this)
-        projects.each { project ->
-            users.addAll(project.users())
-        }
-        users.unique()
-    }
-
-    def usersId() {
-        users().collect {it.id}
-    }
-
+    /**
+     * Get all ontology terms
+     * @return Term list
+     */
     def terms() {
         Term.findAllByOntology(this)
     }
 
+    /**
+     * Get all term from ontology that have no children (forget 'parent' term)
+     * @return
+     */
     def leafTerms() {
-        //get all term from ontology which are not in term with child
         Relation parent = Relation.findByName(RelationTerm.names.PARENT)
-        if(!parent) return []
-        def terms = Term.executeQuery('SELECT term FROM Term as term WHERE ontology = :ontology AND term.id NOT IN (SELECT DISTINCT rel.term1.id FROM RelationTerm as rel, Term as t WHERE rel.relation = :relation AND t.ontology = :ontology AND t.id=rel.term1.id)',['ontology':this,'relation':parent])
-        return terms
+        if(!parent) {
+            return []
+        } else {
+           return Term.executeQuery('SELECT term FROM Term as term WHERE ontology = :ontology AND term.id NOT IN (SELECT DISTINCT rel.term1.id FROM RelationTerm as rel, Term as t WHERE rel.relation = :relation AND t.ontology = :ontology AND t.id=rel.term1.id)',['ontology':this,'relation':parent])
+        }
     }
 
-    def termsParent() {
-        Term.findAllByOntology(this)
-        //TODO: Check RelationTerm to remove term which have parents
-    }
-
+    /**
+     * Get the full ontology (with term) formatted in tree
+     * @return List of root parent terms, each root parent term has its own child tree
+     */
     def tree() {
         def rootTerms = []
         Relation relation = Relation.findByName(RelationTerm.names.PARENT)
@@ -68,14 +71,34 @@ class Ontology extends CytomineDomain implements Serializable {
             rootTerms << branch(it, relation)
         }
         rootTerms.sort { a, b ->
-            if (a.isFolder != b.isFolder)
+            if (a.isFolder != b.isFolder) {
                 a.isFolder <=> b.isFolder
-            else a.name <=> b.name
+            } else {
+                a.name <=> b.name
+            }
         }
         return rootTerms;
     }
 
+    /**
+     * Get all projects that use this ontology
+     * @return Ontology projects
+     */
+    def projects() {
+        if(this.version){
+            Project.findAllByOntology(this)
+        } else {
+            return []
+        }
 
+    }
+
+    /**
+     * Get the term branch
+     * @param term Root term
+     * @param relation Parent relation
+     * @return Branch with all term children as tree
+     */
     def branch(Term term, Relation relation) {
         def t = [:]
         t.name = term.getName()
@@ -84,8 +107,8 @@ class Ontology extends CytomineDomain implements Serializable {
         t.data = term.getName()
         t.color = term.getColor()
         t.class = term.class
-        RelationTerm rt = RelationTerm.findByRelationAndTerm2(relation, term)
-        t.parent = rt ? rt.term1.id : null
+        RelationTerm childRelation = RelationTerm.findByRelationAndTerm2(relation, term)
+        t.parent = childRelation ? childRelation.term1.id : null
 
         t.attr = ["id": term.id, "type": term.class]
         t.checked = false
@@ -109,16 +132,6 @@ class Ontology extends CytomineDomain implements Serializable {
         return t
     }
 
-    def projectService
-    def getProjects() {
-        def projects = []
-        /*projectService.list(this).each { project->
-            projects << [ id : project.id, name : project.name]
-        }*/
-        return projects
-
-    }
-
     /**
      * Define fields available for JSON response
      * This Method is called during application start
@@ -139,9 +152,12 @@ class Ontology extends CytomineDomain implements Serializable {
             returnArray['hideCheckbox'] = true
             returnArray['user'] = it.user?.id
             returnArray['state'] = "open"
-            returnArray['projects'] = it.getProjects()
-            if (it.version != null) returnArray['children'] = it.tree()
-            else returnArray['children'] = []
+            returnArray['projects'] = it.projects()
+            if (it.version != null) {
+                returnArray['children'] = it.tree()
+            } else {
+                returnArray['children'] = []
+            }
             return returnArray
         }
     }
@@ -176,12 +192,8 @@ class Ontology extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static Ontology insertDataIntoDomain(def domain, def json) {
-        if (!json.name.toString().equals("null")) {
-            domain.name = json.name
-        } else {
-            throw new WrongArgumentException("Ontology name cannot be null")
-        }
-        domain.user = User.get(json.user);
+        domain.name = JSONUtils.getJSONAttrStr(json, 'name')
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
         return domain;
     }
 

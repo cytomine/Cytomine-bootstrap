@@ -16,40 +16,53 @@ class RestAnnotationFilterController extends RestController {
     def projectService
     def cytomineService
 
+    /**
+     * List all filter for a project
+     */
     def listByProject = {
-        if (!params.long('project')) {
-            responseNotFound("Project", "undefined")
-        }
         Long idProject = params.long('project');
         projectService.checkAuthorization(idProject, new AnnotationFilter())
         Project project = projectService.read(idProject, new Project())
-        responseSuccess(annotationFilterService.listByProject(project))
+        if(project) {
+            responseSuccess(annotationFilterService.listByProject(project))
+        } else {
+            responseNotFound("Project", params.project)
+        }
     }
 
+    /**
+     * List all filter for an ontology
+     */
     def listByOntology = {
         Ontology ontology = Ontology.read(params.idOntology)
         if (ontology) {
             def result = []
             List<Project> userProject = projectService.list(ontology)
-
             userProject.each {
                 result.addAll(annotationFilterService.listByProject(it))
             }
-
             responseSuccess(result)
+        } else {
+            responseNotFound("ImageFilter", "Ontology", params.idOntology)
         }
-        else responseNotFound("ImageFilter", "Ontology", params.idOntology)
     }
 
+    /**
+     * Get an annotation filter
+     */
     def show = {
         AnnotationFilter annotationFilter = annotationFilterService.read(params.id)
         if (!annotationFilter) {
             responseNotFound("AnnotationFilter", params.id)
+        } else {
+            responseSuccess(annotationFilter)
+            projectService.checkAuthorization(annotationFilter.project)
         }
-        projectService.checkAuthorization(annotationFilter.project)
-        responseSuccess(annotationFilter)
     }
 
+    /**
+     * Add a new annotation filter
+     */
     def add = {
         def json= request.JSON
         json.user = springSecurityService.principal.id
@@ -60,10 +73,16 @@ class RestAnnotationFilterController extends RestController {
         add(annotationFilterService, json)
     }
 
+    /**
+     * Update an annotation filter
+     */
     def update = {
         update(annotationFilterService, request.JSON)
     }
 
+    /**
+     * Delete an annotation filter
+     */
     def delete = {
         delete(annotationFilterService,  JSON.parse("{id : $params.id}"))
     }

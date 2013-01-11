@@ -6,7 +6,12 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A term is a class that can be link to an annotation
+ * A term is a part of ontology (list/tree of terms)
+ */
 class Term extends CytomineDomain implements Serializable, Comparable {
 
     String name
@@ -17,6 +22,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
 
     static belongsTo = [ontology: Ontology]
     static transients = ["rate"]
+
     static hasMany = [annotationTerm: AnnotationTerm, relationTerm1: RelationTerm, relationTerm2: RelationTerm]
     //must be done because RelationTerm has two Term attribute
     static mappedBy = [relationTerm1: 'term1', relationTerm2: 'term2']
@@ -28,22 +34,22 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Term.withNewSession {
             Term termAlreadyExist=Term.findByNameAndOntology(name, ontology)
-            if(termAlreadyExist!=null && (termAlreadyExist.id!=id))  throw new AlreadyExistException("Term " + termAlreadyExist?.name + " already exist!")
+            if(termAlreadyExist!=null && (termAlreadyExist.id!=id))  {
+                throw new AlreadyExistException("Term " + termAlreadyExist?.name + " already exist!")
+            }
         }
     }
 
-    def annotations() {
-        def annotations = []
-        annotationTerm.each {
-            if (!annotations.contains(it.userAnnotation))
-                annotations << it.userAnnotation
-        }
-        annotations
-    }
-
+    /**
+     * Check if this term has children
+     * @return True if this term has children, otherwise false
+     */
     def hasChildren() {
         boolean hasChildren = false
         this.relationTerm1.each {
@@ -55,20 +61,16 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return hasChildren
     }
 
+    /**
+     * Check if this term has no parent
+     * @return True if term has no parent
+     */
     def isRoot() {
         def isRoot = true;
         this.relationTerm2.each {
             isRoot &= (it.getRelation().getName() != RelationTerm.names.PARENT)
         }
         return isRoot
-    }
-
-    def isChild() {
-        def isChild = false;
-        this.relationTerm2.each {
-            isChild |= (it.getRelation().getName() == RelationTerm.names.PARENT)
-        }
-        return isChild
     }
 
 
@@ -103,22 +105,22 @@ class Term extends CytomineDomain implements Serializable, Comparable {
      * @return Domain with json data filled
      */
     static Term insertDataIntoDomain(def domain, def json) throws CytomineException {
-        if (!json.name.toString().equals("null"))
-            domain.name = json.name
-        else throw new WrongArgumentException("Term name cannot be null")
-        domain.comment = json.comment
+        domain.name = JSONUtils.getJSONAttrStr(json,'name')
+        domain.created = JSONUtils.getJSONAttrDate(json,'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
+        domain.comment = JSONUtils.getJSONAttrStr(json,'comment')
+        domain.color = JSONUtils.getJSONAttrStr(json,'color')
+        domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
 
-        String ontologyId = json.ontology.toString()
-        if (!ontologyId.equals("null")) {
-            domain.ontology = Ontology.get(ontologyId)
-            if (domain.ontology == null) throw new WrongArgumentException("Ontology was not found with id:" + ontologyId)
+        if (!domain.name) {
+            throw new WrongArgumentException("Term name cannot be null")
         }
-        else domain.ontology = null
-
-        domain.color = json.color
         return domain;
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     def getCallBack() {
         return [ontologyID: this?.ontology?.id]
     }
@@ -145,10 +147,14 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
 
     public boolean equals(Object o) {
-        if (!o) return false
-        if (!o instanceof Term) return false
-        try {return ((Term) o).getId() == this.getId()} catch (Exception e) { return false}
-        //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
+        if (!o) {
+            return false
+        } else if (!o instanceof Term) {
+            return false
+        } else {
+            try {return ((Term) o).getId() == this.getId()} catch (Exception e) { return false}
+        }
+
     }
     
     String toString() {

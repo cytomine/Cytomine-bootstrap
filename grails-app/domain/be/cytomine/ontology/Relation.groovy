@@ -5,6 +5,9 @@ import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
+/**
+ * A relation between terms (e.g. term1 PARENT term2)
+ */
 class Relation extends CytomineDomain implements Serializable {
 
     String name
@@ -20,30 +23,6 @@ class Relation extends CytomineDomain implements Serializable {
 
     String toString() {
         return name
-    }
-
-    /**
-     * Thanks to the json, create an new domain of this class
-     * Set the new domain id to json.id value
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Relation createFromDataWithId(def json) {
-        def domain = createRelationFromData(json)
-        try {domain.id = json.id} catch (Exception e) {}
-        return domain
-    }
-
-    static Relation createRelationFromData(jsonRelation) {
-        def relation = new Relation()
-        getRelationFromData(relation, jsonRelation)
-    }
-
-    static Relation getRelationFromData(relation, jsonRelation) {
-        if (!jsonRelation.name.toString().equals("null"))
-            relation.name = jsonRelation.name
-        else throw new WrongArgumentException("Relation name cannot be null")
-        return relation;
     }
 
     /**

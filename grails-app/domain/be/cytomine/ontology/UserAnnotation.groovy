@@ -8,7 +8,14 @@ import be.cytomine.security.User
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
+import be.cytomine.project.Project
+import be.cytomine.security.UserJob
+import be.cytomine.security.SecUser
 
+/**
+ * An annotation created by a user
+ */
 class UserAnnotation extends AnnotationDomain implements Serializable {
 
     User user
@@ -28,13 +35,26 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
          wktLocation(type: 'text')
       }
 
+
+    def beforeInsert() {
+        super.beforeInsert()
+    }
+
+    def beforeUpdate() {
+        super.beforeUpdate()
+    }
+
+    /**
+     * Check if annotation is reviewed
+     * @return True if annotation is linked with at least one review annotation
+     */
     boolean hasReviewedAnnotation() {
         return countReviewedAnnotations>0
     }
 
     /**
      * Get all terms map with the annotation
-     * @return list of terms
+     * @return Terms list
      */
     def terms() {
         return annotationTerm.collect {
@@ -42,6 +62,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         }
     }
 
+    /**
+     * Get all annotation terms id
+     * @return Terms id list
+     */
     def termsId() {
         if (user.algo()) {
             return AlgoAnnotationTerm.findAllByAnnotationIdent(this.id).collect{it.term?.id}.unique()
@@ -51,14 +75,25 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
 
     }
 
+    /**
+     * Get all terms for automatic review
+     * If review is done "for all" (without manual user control), we add these term to the new review annotation
+     * @return
+     */
     List<Term> termsForReview() {
         terms().unique()
     }
 
+    /**
+     * Check if its an algo annotation
+     */
     boolean isAlgoAnnotation() {
         return false
     }
 
+    /**
+     * Check if its a review annotation
+     */
     boolean isReviewedAnnotation() {
         return false
     }
@@ -67,6 +102,11 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         UrlApi.getUserAnnotationCropWithAnnotationId(cytomineUrl,id)
     }
 
+    /**
+     * Get a list of each term link with annotation
+     * For each term, add all users that add this term
+     * [{id: x, term: y, user: [a,b,c]}, {...]
+     */
     def usersIdByTerm() {
         def results = []
         annotationTerm.each { annotationTerm ->
@@ -75,18 +115,13 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             map.term = annotationTerm.term?.id
             map.user = [annotationTerm.user?.id]
             def item = results.find { it.term == annotationTerm.term?.id }
-            if (!item) results << map
-            else item.user.add(annotationTerm.user.id)
+            if (!item) {
+                results << map
+            } else {
+                item.user.add(annotationTerm.user.id)
+            }
         }
         results
-    }
-
-    def beforeInsert() {
-        super.beforeInsert()
-    }
-
-    def beforeUpdate() {
-        super.beforeUpdate()
     }
 
     /**
@@ -120,25 +155,20 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      */
     static UserAnnotation insertDataIntoDomain(def domain, json) {
         try {
-            domain.geometryCompression = (!json.geometryCompression.toString().equals("null")) ? ((String) json.geometryCompression).toDouble() : 0
-            domain.created = (!json.created.toString().equals("null")) ? new Date(Long.parseLong(json.created)) : null
-            domain.updated = (!json.updated.toString().equals("null")) ? new Date(Long.parseLong(json.updated)) : null
-
-            //location
+            domain.geometryCompression = JSONUtils.getJSONAttrDouble(json, 'geometryCompression', 0)
+            domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+            domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
             domain.location = new WKTReader().read(json.location)
-            if (domain.location.getNumPoints() < 1) throw new WrongArgumentException("Geometry is empty:" + domain.location.getNumPoints() + " points")
-            //if (domain.location.getNumPoints() < 3) throw new WrongArgumentException("Geometry is not a polygon :" + domain.location.getNumPoints() + " points")
-            if (!domain.location) throw new WrongArgumentException("Geo is null: 0 points")
-            //image
-            domain.image = ImageInstance.get(json.image);
-            if (!domain.image) throw new WrongArgumentException("Image $json.image not found!")
-            //project
-            domain.project = be.cytomine.project.Project.get(json.project);
-            if (!domain.project) throw new WrongArgumentException("Project $json.project not found!")
-            //user
-            domain.user = User.get(json.user);
-            if (!domain.user) throw new WrongArgumentException("User $json.user not found!")
+            domain.image = JSONUtils.getJSONAttrDomain(json, "image", new ImageInstance(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
+            domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
 
+            if (!domain.location) {
+                throw new WrongArgumentException("Geo is null: 0 points")
+            }
+            if (domain.location.getNumPoints() < 1) {
+                throw new WrongArgumentException("Geometry is empty:" + domain.location.getNumPoints() + " points")
+            }
         } catch (com.vividsolutions.jts.io.ParseException ex) {
             throw new WrongArgumentException(ex.toString())
         }
@@ -159,9 +189,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             returnArray['id'] = annotation.id
             returnArray['location'] = annotation.location.toString()
             returnArray['image'] = annotation.image?.id
-
             returnArray['geometryCompression'] = annotation.geometryCompression
-
             returnArray['project'] = annotation.project.id
             returnArray['container'] = annotation.project.id
             returnArray['user'] = annotation.user?.id
@@ -173,19 +201,15 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null
             returnArray['term'] = annotation.termsId()
             returnArray['userByTerm'] = annotation.usersIdByTerm()
-
-            try {if (annotation?.similarity) returnArray['similarity'] = annotation.similarity} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['rate'] = annotation.rate} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['idTerm'] = annotation.idTerm} catch (Exception e) {}
-            try {if (annotation?.rate) returnArray['idExpectedTerm'] = annotation.idExpectedTerm} catch (Exception e) {}
-
+            returnArray['similarity'] = annotation.similarity
+            returnArray['rate'] = annotation.rate
+            returnArray['idTerm'] = annotation.idTerm
+            returnArray['idExpectedTerm'] = annotation.idExpectedTerm
             returnArray['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
             returnArray['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
             returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
-
             returnArray['reviewed'] = annotation.hasReviewedAnnotation()
-
             return returnArray
         }
     }

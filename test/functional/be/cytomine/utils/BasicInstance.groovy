@@ -539,9 +539,9 @@ class BasicInstance {
         def discipline = Discipline.findByName("BASICDISCIPLINE")
         if (!discipline) {
             discipline = new Discipline(name: "BASICDISCIPLINE")
+            checkDomain(discipline)
+            saveDomain(discipline)
         }
-        checkDomain(discipline)
-        saveDomain(discipline)
         discipline
     }
 
@@ -558,8 +558,48 @@ class BasicInstance {
         checkDomain(discipline)
         discipline
     }
-    
-    
+
+
+
+
+    static AnnotationFilter createOrGetBasicAnnotationFilter() {
+        log.debug "createOrGetBasicAnnotationFilter()"
+        def filter = AnnotationFilter.findByName("BASICFILTER")
+        if (!filter) {
+            filter = new AnnotationFilter()
+            filter.name = "BASICFILTER"
+            filter.project = createOrGetBasicProject()
+            filter.user = getNewUser()
+            checkDomain(filter)
+            saveDomain(filter)
+            filter.addToTerms(createOrGetBasicTerm())
+            filter.addToUsers(getNewUser())
+            checkDomain(filter)
+            saveDomain(filter)
+        }
+        filter
+    }
+
+    static AnnotationFilter getBasicAnnotationFilterNotExist() {
+        log.debug "getBasicAnnotationFilterNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def annotationFilter = AnnotationFilter.findByName(randomInt + "")
+        while (annotationFilter) {
+            randomInt = random.nextInt()
+            annotationFilter = AnnotationFilter.findByName(randomInt + "")
+        }
+        annotationFilter = new AnnotationFilter()
+        annotationFilter.name = randomInt + ""
+        annotationFilter.project = createOrGetBasicProject()
+        annotationFilter.user = getNewUser()
+        annotationFilter.addToTerms(createOrGetBasicTerm())
+        annotationFilter.addToUsers(getNewUser())
+
+        checkDomain(annotationFilter)
+        annotationFilter
+    }
+
     static Sample createOrGetBasicSample() {
         log.debug "createOrGetBasicSample()"
         def sample = Sample.findByName("BASICSAMPLE")
@@ -1361,6 +1401,11 @@ class BasicInstance {
      * @param json New Data
      */
     static void compareDiscipline(map, json) {
+        assert map.name.equals(json.name)
+    }
+
+
+    static void compareAnnotationFilter(map, json) {
         assert map.name.equals(json.name)
     }
 

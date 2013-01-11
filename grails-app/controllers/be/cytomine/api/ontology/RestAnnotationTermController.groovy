@@ -27,6 +27,9 @@ class RestAnnotationTermController extends RestController {
     def algoAnnotationTermService
     def cytomineService
 
+    /**
+     * List all term map with an annotation
+     */
     def listTermByAnnotation = {
 
         if (params.idannotation == "undefined") {
@@ -55,18 +58,19 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
+    /**
+     * Get all term link with an annotation by all user except  params.idUser
+     */
     def listAnnotationTermByUserNot = {
         if (params.idannotation == "undefined") {
             responseNotFound("Annotation Term", "Annotation", params.idannotation)
-        }
-        else {
+        } else {
             UserAnnotation annotation = userAnnotationService.read(params.long('idannotation'))
             if (annotation != null && params.idNotUser) {
                 User user = User.read(params.idNotUser)
                 if (user) {
                     responseSuccess(annotationTermService.listNotUser(annotation, user))
-                }
-                else {
+                }else {
                     responseNotFound("Annotation Term", "User", params.idUser)
                 }
             }
@@ -78,7 +82,9 @@ class RestAnnotationTermController extends RestController {
         def annotations = []
         UserAnnotation.findAllByImage(ImageInstance.read(params.idimageinstance)).each { annotation ->
             annotation.annotationTerm.each { annotationTerm ->
-                if (annotationTerm.getTerm() == term) annotations << annotation
+                if (annotationTerm.getTerm() == term) {
+                    annotations << annotation
+                }
             }
         }
         responseSuccess(annotations)
