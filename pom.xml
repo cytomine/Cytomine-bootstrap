@@ -19,6 +19,6 @@
     <sonar.jdbc.username>sonaruser</sonar.jdbc.username>
     <sonar.jdbc.password>quality</sonar.jdbc.password>  
     <!-- La ligne ci-dessous n'est utile que si le port par défaut (9000) est modifié dans le fichier de configuration. -->
-    <sonar.host.url>http://dev.cytomine.be/sonar</sonar.host.url>
+    <sonar.host.url>http://sonar.cytomine.be/</sonar.host.url>
   </properties>
 </project>
