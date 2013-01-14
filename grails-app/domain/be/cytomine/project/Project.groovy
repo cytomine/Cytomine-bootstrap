@@ -12,21 +12,67 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A project is the main cytomine domain
+ * It structure user data
+ */
 class Project extends CytomineDomain implements Serializable {
 
     def securityService
 
+    /**
+     * Project name
+     */
     String name
+
+    /**
+     * Project ontology link
+     */
     Ontology ontology
+
+    /**
+     * Project discipline link
+     */
     Discipline discipline
+
+    /**
+     * Flag if project has private layer
+     * A project user only see its layer
+     */
     boolean privateLayer = false
+
+    /**
+     * Number of projects user annotations
+     */
     long countAnnotations
+
+    /**
+     * Number of projects algo annotations
+     */
 	long countJobAnnotations
+
+    /**
+     * Number of projects images
+     */
     long countImages
+
+    /**
+     * Number of projects reviewed annotations
+     */
     long countReviewedAnnotations
 
+    /**
+     * Flag if retrieval is disable
+     * If true, don't suggest similar annotations
+     */
     boolean retrievalDisable = false
+
+    /**
+     * Flag for retrieval search on all ontologies
+     * If true, search similar annotations on all project that share the same ontology
+     */
     boolean retrievalAllOntology = true
 
     static belongsTo = [ontology: Ontology]
@@ -34,12 +80,13 @@ class Project extends CytomineDomain implements Serializable {
 
 
     static constraints = {
-        name(maxSize: 150, unique: true, blank: false) //, validator: {
+        name(maxSize: 150, unique: true, blank: false)
         discipline(nullable: true)
-        //  return !Project.findByNameIlike(it)
-        //})
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Project.withNewSession {
             Project projectAlreadyExist = Project.findByName(name)
@@ -57,74 +104,21 @@ class Project extends CytomineDomain implements Serializable {
         name
     }
 
-    def imagesinstance() {
-        ImageInstance.findAllByProject(this)
-    }
-
     def countImageInstance() {
-        countImages//may return null
-    }
-
-    def abstractimages() {
-        ImageInstance.createCriteria().list {
-            eq("project", this)
-            projections {
-                groupProperty("baseImage")
-            }
-        }
-    }
-
-    def annotations() {
-        UserAnnotation.createCriteria().list {
-            eq("project", this)
-            inList("user", this.userLayers())
-        }
+        countImages
     }
 
     def countAnnotations() {
-        countAnnotations  //may return null
+        countAnnotations
     }
 
 	def countJobAnnotations() {
-        countJobAnnotations  //may return null
+        countJobAnnotations
     }
 
-    def samples() {
-        ImageInstance.createCriteria().list {
-            join 'sample'
-            projections {
-                groupProperty('sample')
-            }
-            eq("project", this)
-        }
-    }
-
-    def countSlides() {
-        def query = ImageInstance.createCriteria().list {
-            join 'sample'
-            projections {
-                countDistinct('sample.id')
-            }
-            eq("project", this)
-        }
-        query[0]
-    }
-
-    def groups() {
-        projectGroup.collect { it.group }
-    }
-
-    //TODO:: remove (move in userService)
-    def userLayers() {
-        Collection<SecUser> users = securityService.getUserList(this)
-        SecUser currentUser = cytomineService.getCurrentUser()
-        if (this.privateLayer && users.contains(currentUser)) {
-            return [currentUser]
-        } else if (!this.privateLayer) {
-            return  users
-        } else { //should no arrive but possible if user is admin and not in project
-            []
-        }
+    def countSamples() {
+        //TODO::implement
+        return 0
     }
 
     /**
@@ -157,44 +151,22 @@ class Project extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */           
     static Project insertDataIntoDomain(def domain, def json) {
-        String name = json.name.toString()
-        if (!name.equals("null"))
-            domain.name = json.name.toUpperCase()
-        else throw new WrongArgumentException("Project name cannot be null")
+        domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
+        domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
+        domain.discipline = JSONUtils.getJSONAttrDomain(json, "discipline", new Discipline(), false)
 
-        if (json.ontology)
-            domain.ontology = Ontology.read(json.ontology)
+        domain.countAnnotations = JSONUtils.getJSONAttrLong(json, 'countAnnotations', 0)
+        domain.countImages = JSONUtils.getJSONAttrLong(json, 'countImages', 0)
+        domain.countJobAnnotations = JSONUtils.getJSONAttrLong(json, 'countJobAnnotations', 0)
 
-        if (!json.discipline.toString().equals("null"))
-            domain.discipline = Discipline.read(json.discipline)
-
-        try {domain.countAnnotations = Long.parseLong(json.numberOfAnnotations.toString()) } catch (Exception e) {
-            domain.countAnnotations = 0
-        }
-        try {domain.countImages = Long.parseLong(json.numberOfImages.toString()) } catch (Exception e) {
-            domain.countImages = 0
-        }
-        if(!json.retrievalDisable.toString().equals("null")) domain.retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
-        if(!json.retrievalAllOntology.toString().equals("null")) domain.retrievalAllOntology = Boolean.parseBoolean(json.retrievalAllOntology.toString())
+        domain.retrievalDisable = JSONUtils.getJSONAttrBoolean(json, 'retrievalDisable', false)
+        domain.retrievalAllOntology = JSONUtils.getJSONAttrBoolean(json, 'retrievalAllOntology', true)
+        domain.privateLayer = JSONUtils.getJSONAttrBoolean(json, 'privateLayer', false)
+        domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
         return domain;
     }
-
-    //TODO:: remove (move in userService)
-    def creator() {
-        securityService.getCreator(this)
-    }
-
-    //TODO:: remove (move in userService)
-    def admins() {
-        securityService.getAdminList(this)
-    }
-
-    //TODO:: remove (move in userService)
-    def users() {
-        securityService.getUserList(this)
-    }
-
 
     /**
      * Define fields available for JSON response
@@ -209,29 +181,34 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['id'] = project.id
             returnArray['name'] = project.name
             returnArray['ontology'] = project.ontology?.id
-            returnArray['ontologyName'] = project.ontology ? project.ontology.name : null
+            returnArray['ontologyName'] = project.ontology?.name
             returnArray['discipline'] = project.discipline?.id
             returnArray['privateLayer'] = (project.privateLayer != null &&  project.privateLayer)
-            returnArray['disciplineName'] = project.discipline ? project.discipline.name : null
-            try {returnArray['numberOfSlides'] = project.countSlides()} catch (Exception e) {returnArray['numberOfSlides'] = -1}
-            try {returnArray['numberOfImages'] = project.countImageInstance()} catch (Exception e) {returnArray['numberOfImages'] = -1}
-            try {returnArray['numberOfAnnotations'] = project.countAnnotations()} catch (Exception e) { returnArray['numberOfAnnotations'] = -1}
-			try {returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()} catch (Exception e) { returnArray['numberOfJobAnnotations'] = -1}
-            try {returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id } } catch (Exception e) {log.info "users:"+e}
-
+            returnArray['disciplineName'] = project.discipline?.name
+            returnArray['numberOfSlides'] = project.countSamples()
+            returnArray['numberOfImages'] = project.countImageInstance()
+            returnArray['numberOfAnnotations'] = project.countAnnotations()
+			returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()
+            returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id }
             returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
-
-            returnArray['created'] = project.created ? project.created.time.toString() : null
-            returnArray['updated'] = project.updated ? project.updated.time.toString() : null
+            returnArray['created'] = project.created?.time?.toString()
+            returnArray['updated'] = project.updated?.time?.toString()
             return returnArray
         }
     }
 
     public boolean equals(Object o) {
-        if (!o) return false
-        try {return ((Project) o).getId() == this.getId()} catch (Exception e) { return false}
-        //if no try/catch, when getting term from ontology => GroovyCastException: Cannot cast object 'null' with class 'org.codehaus.groovy.grails.web.json.JSONObject$Null' to class 'be.cytomine.ontology.Term'
+        if (!o) {
+            return false
+        } else {
+            try {
+                return ((Project) o).getId() == this.getId()
+            } catch (Exception e) {
+                return false
+            }
+        }
+
     }
 }

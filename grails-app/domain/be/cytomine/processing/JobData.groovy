@@ -4,14 +4,39 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * Data created by a job
+ * This concerns only data files (annotation or term are store in domain database)
+ */
 class JobData extends CytomineDomain {
 
+    /**
+     * File key (what's the file)
+     */
     String key
+
+    /**
+     * Data filename with extension
+     */
     String filename
+
+    /**
+     * ???
+     */
     String dir
+
+    /**
+     * If data file is store on database (blob field), link to the file
+     */
     JobDataBinaryValue value
+
+    /**
+     * Data size (in Bytes)
+     */
     Long size
+
     static belongsTo = [job: Job]
 
     static constraints = {
@@ -57,17 +82,10 @@ class JobData extends CytomineDomain {
      * @return Domain with json data filled
      */
     static JobData insertDataIntoDomain(def domain, def json) {
-        String key = json.key.toString()
-        if (!key.equals("null"))
-            domain.key = json.key
-        else throw new WrongArgumentException("Key name cannot be null")
-
-        domain.filename = json.filename
-
-        if (!json.job.toString().equals("null"))
-            domain.job = Job.read(json.job)
-
-        return domain;
+        domain.key = JSONUtils.getJSONAttrStr(json, 'key', true)
+        domain.filename = JSONUtils.getJSONAttrStr(json, 'filename',true)
+        domain.job = JSONUtils.getJSONAttrDomain(json, "job", new Job(), true)
+        return domain
     }
 
     /**
@@ -85,8 +103,8 @@ class JobData extends CytomineDomain {
             returnArray['job'] = jobData.job.id
             returnArray['filename'] = jobData.filename
             returnArray['size'] = jobData.size
-            returnArray['created'] = jobData.created ? jobData.created.time.toString() : null
-            returnArray['updated'] = jobData.updated ? jobData.updated.time.toString() : null
+            returnArray['created'] = jobData.created?.time?.toString()
+            returnArray['updated'] = jobData.updated?.time?.toString()
             return returnArray
         }
     }

@@ -5,12 +5,20 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
-class JobParameter  extends CytomineDomain implements Comparable{
+/**
+ * A job parameter is an instance of software parameter
+ * When a job is created, we create a job parameter for each software parameter.
+ */
+class JobParameter extends CytomineDomain implements Comparable {
 
+    /**
+     * Job parameter value
+     */
     String value
 
-    static belongsTo = [job: Job, softwareParameter : SoftwareParameter]
+    static belongsTo = [job: Job, softwareParameter: SoftwareParameter]
 
     static constraints = {
     }
@@ -20,34 +28,15 @@ class JobParameter  extends CytomineDomain implements Comparable{
         softwareParameter fetch: 'join'
     }
 
-     void checkAlreadyExist() {
-        JobParameter.withNewSession {
-            JobParameter jobParamAlreadyExist=JobParameter.findByJobAndSoftwareParameter(job,softwareParameter)
-            if(jobParamAlreadyExist!=null && (jobParamAlreadyExist.id!=id))  throw new AlreadyExistException("Parameter " + softwareParameter?.name + " already exist fro job " + job?.id)
-        }
-    }
-
     /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     * Check if this domain will cause unique constraint fail if saving on database
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
-        JSON.registerObjectMarshaller(JobParameter) {
-            def jobParameter = [:]
-            jobParameter.id = it.id
-            jobParameter.value = it.value
-            jobParameter.job = it.job.id
-            SoftwareParameter softwareParam =  it.softwareParameter
-            jobParameter.softwareParameter = softwareParam.id
-            jobParameter.name = softwareParam.name
-            jobParameter.type = softwareParam.type
-            jobParameter.index = softwareParam.index
-            jobParameter.uri = softwareParam.uri
-            jobParameter.uriPrintAttribut = softwareParam.uriPrintAttribut
-            jobParameter.uriSortAttribut = softwareParam.uriSortAttribut
-            return jobParameter
+    void checkAlreadyExist() {
+        JobParameter.withNewSession {
+            JobParameter jobParamAlreadyExist = JobParameter.findByJobAndSoftwareParameter(job, softwareParameter)
+            if (jobParamAlreadyExist != null && (jobParamAlreadyExist.id != id)) {
+                throw new AlreadyExistException("Parameter " + softwareParameter?.name + " already exist for job " + job?.id)
+            }
         }
     }
 
@@ -81,20 +70,39 @@ class JobParameter  extends CytomineDomain implements Comparable{
      * @return Domain with json data filled
      */
     static JobParameter insertDataIntoDomain(def domain, def json) {
-        if (!json.value.toString().equals("null"))
-            domain.value = json.value
-
-        domain.job = Job.get(json.job.toString())
-        domain.softwareParameter = SoftwareParameter.get(json.softwareParameter.toString())
-
-        if(!domain.job) throw new WrongArgumentException("Job ${json.job.toString()} doesn't exist!")
-        if(!domain.softwareParameter) throw new WrongArgumentException("SoftwareParameter ${json.softwareParameter.toString()} doesn't exist!")
+        domain.value = JSONUtils.getJSONAttrStr(json, 'value')
+        domain.job = JSONUtils.getJSONAttrDomain(json, "job", new Job(), true)
+        domain.softwareParameter = JSONUtils.getJSONAttrDomain(json, "softwareParameter", new SoftwareParameter(), true)
         return domain;
     }
 
     int compareTo(Object t) {
-        if(this.softwareParameter.index<t.softwareParameter.index) return -1
-        else if(this.softwareParameter.index>t.softwareParameter.index) return 1
+        if (this.softwareParameter.index < t.softwareParameter.index) return -1
+        else if (this.softwareParameter.index > t.softwareParameter.index) return 1
         else return 0
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
+    static void registerMarshaller(String cytomineBaseUrl) {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
+        JSON.registerObjectMarshaller(JobParameter) {
+            def jobParameter = [:]
+            jobParameter.id = it.id
+            jobParameter.value = it.value
+            jobParameter.job = it.job.id
+            SoftwareParameter softwareParam = it.softwareParameter
+            jobParameter.softwareParameter = softwareParam.id
+            jobParameter.name = softwareParam.name
+            jobParameter.type = softwareParam.type
+            jobParameter.index = softwareParam.index
+            jobParameter.uri = softwareParam.uri
+            jobParameter.uriPrintAttribut = softwareParam.uriPrintAttribut
+            jobParameter.uriSortAttribut = softwareParam.uriSortAttribut
+            return jobParameter
+        }
     }
 }

@@ -53,7 +53,7 @@ class UserService extends ModelService {
     }
 
     def list(Project project) {
-        project.users()
+        securityService.getUserList(project)
     }
 
     def list(Project project, List ids) {
@@ -78,7 +78,7 @@ class UserService extends ModelService {
         def users = []
         def projects = Project.findAllByOntology(ontology)
         projects.each { project ->
-            users.addAll(project.users())
+            users.addAll(listUsers(project))
         }
         users.unique()
     }

@@ -3,6 +3,9 @@ package be.cytomine.processing
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
+/**
+ * An image filter applies image operations (Binary, Eosin,...)
+ */
 class ImageFilter {
 
     String name

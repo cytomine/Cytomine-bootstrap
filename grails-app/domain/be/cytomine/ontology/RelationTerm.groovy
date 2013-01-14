@@ -109,23 +109,14 @@ class RelationTerm extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static RelationTerm insertDataIntoDomain(def domain, def json) {
-        boolean isNested = false
         try {
-            json.relation.id
-            isNested = true
-        } catch(Exception e) {
-            isNested = false
-        }
-
-
-        if(!isNested) {
-            domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
-            domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
-            domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)
-        } else {
             domain.relation = JSONUtils.getJSONAttrDomain(json.relation, "id", new Relation(), true)
             domain.term1 = JSONUtils.getJSONAttrDomain(json.term1, "id", new Term(), true)
             domain.term2 = JSONUtils.getJSONAttrDomain(json.term2, "id", new Term(), true)
+        } catch(Exception e) {
+            domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
+            domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
+            domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)
         }
         return domain;
     }

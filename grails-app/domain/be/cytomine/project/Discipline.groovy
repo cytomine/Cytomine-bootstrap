@@ -5,7 +5,11 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A discipline is a thematic for a project
+ */
 class Discipline extends CytomineDomain implements Serializable{
 
     String name
@@ -33,10 +37,17 @@ class Discipline extends CytomineDomain implements Serializable{
         }
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Discipline.withNewSession {
-            Discipline disciplineAlreadyExist = Discipline.findByName(name)
-            if(disciplineAlreadyExist && (disciplineAlreadyExist.id!=id))  throw new AlreadyExistException("Discipline "+name + " already exist!")
+            if(name) {
+                Discipline disciplineAlreadyExist = Discipline.findByName(name)
+                if(disciplineAlreadyExist && (disciplineAlreadyExist.id!=id))  {
+                   throw new AlreadyExistException("Discipline "+name + " already exist!")
+                }
+            }
         }
     }
 
@@ -70,10 +81,7 @@ class Discipline extends CytomineDomain implements Serializable{
      * @return Domain with json data filled
      */
     static Discipline insertDataIntoDomain(def domain, def json) {
-        String name = json.name.toString()
-        if (!name.equals("null"))
-            domain.name = json.name.toUpperCase()
-        else throw new WrongArgumentException("Discipline name cannot be null")
+        domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         return domain;
     }
 }

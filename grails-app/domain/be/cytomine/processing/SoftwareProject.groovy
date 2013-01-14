@@ -5,7 +5,12 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A link between a software and a project
+ * We can add a software to many projects
+ */
 class SoftwareProject extends CytomineDomain implements Serializable{
 
     Software software
@@ -15,10 +20,17 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Add software to project
+     */
     static SoftwareProject link(Software software, Project project) {
         link(null, software, project)
     }
 
+    /**
+     * Add software to project
+     * Set id of the new created domain to id parama
+     */
     static SoftwareProject link(def id,Software software, Project project) {
         def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
         if (!softwareProjects) {
@@ -35,14 +47,15 @@ class SoftwareProject extends CytomineDomain implements Serializable{
         softwareProjects
     }
 
+    /**
+     * Remove a software form a project
+     */
     static void unlink(Software software, Project project) {
         def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
         if (softwareProjects) {
             software?.removeFromSoftwareProjects(softwareProjects)
             project?.removeFromSoftwareProjects(softwareProjects)
             softwareProjects.delete(flush: true)
-        } else {
-            Logger.getLogger(this).info("no link between " + software + " " + project)
         }
     }
 
@@ -77,15 +90,13 @@ class SoftwareProject extends CytomineDomain implements Serializable{
      */
     static SoftwareProject insertDataIntoDomain(def domain, def json) {
         try {
-            domain.software = Software.get(json.software.id)
-            domain.project = Project.get(json.project.id)
+            domain.software = JSONUtils.getJSONAttrDomain(json.software, "id", new Software(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json.project, "id", new Project(), true)
         }
         catch (Exception e) {
-            domain.software = Software.get(json.software)
-            domain.project = Project.get(json.project)
+            domain.software = JSONUtils.getJSONAttrDomain(json, "software", new Software(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
         }
-        if (!domain.software) throw new WrongArgumentException("Software ${json.software.toString()} doesn't exist!")
-        if (!domain.project) throw new WrongArgumentException("Project ${json.project.toString()} doesn't exist!")
         return domain;
     }
 

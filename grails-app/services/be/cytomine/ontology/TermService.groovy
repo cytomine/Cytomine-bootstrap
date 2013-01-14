@@ -26,6 +26,7 @@ class TermService extends ModelService {
     def algoAnnotationTermService
     def relationTermService
     def domainService
+    def userService
 
     final boolean saveOnUndoRedoStack = true
 
@@ -70,7 +71,10 @@ class TermService extends ModelService {
         }
 
         projects.each { project ->
-            def annotations = project.annotations();
+            def annotations =  UserAnnotation.createCriteria().list {
+                        eq("project", project)
+                        inList("user", userService.listLayers(project))
+                    }
             annotations.each { annotation ->
                 if (annotation.terms().contains(term)) {
                     count[project.name] = count[project.name] + 1;

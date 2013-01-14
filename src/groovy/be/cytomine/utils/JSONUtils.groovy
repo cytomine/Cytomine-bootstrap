@@ -15,13 +15,21 @@ class JSONUtils {
 
 
     static public String getJSONAttrStr(def json, String attr) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-               return json[attr].toString()
-          } else {
-              return null
-          }
+        getJSONAttrStr(json,attr,false)
        }
+
+    static public String getJSONAttrStr(def json, String attr,boolean mandatory) {
+        println "get attr $attr"
+       if(json[attr]!=null && !json[attr].toString().equals("null")) {
+            return json[attr].toString()
+       } else {
+           if(mandatory) {
+               throw new WrongArgumentException("$attr must be set! value=${json[attr]}")
+           }
+           return null
+       }
+    }
+
 
 
 
@@ -103,4 +111,17 @@ class JSONUtils {
               return defaultValue
           }
        }
+
+    static public Boolean getJSONAttrBoolean(def json, String attr, Boolean defaultValue) {
+        println "get attr $attr"
+       if(json[attr]!=null && !json[attr].toString().equals("null")) {
+           try {
+               return Boolean.parseBoolean(json[attr].toString())
+           } catch(Exception e) {
+               return defaultValue
+           }
+       } else {
+           return defaultValue
+       }
+    }
 }

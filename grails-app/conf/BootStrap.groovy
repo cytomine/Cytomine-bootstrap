@@ -530,10 +530,10 @@ class BootStrap {
                 //AbstractImageGroup.link(image,giga)
 
                 if (project != null) {
-                    project.groups().each { group ->
-                        log.info "GROUP " + group.name + " IMAGE " + image.filename
-                        AbstractImageGroup.link(image, group)
-                    }
+//                    project.groups().each { group ->
+//                        log.info "GROUP " + group.name + " IMAGE " + image.filename
+//                        AbstractImageGroup.link(image, group)
+//                    }
 
                     /*Storage.list().each { storage->
                         storageService.metadata(storage, image)

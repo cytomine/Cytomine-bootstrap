@@ -10,6 +10,7 @@ class StatsController extends RestController {
 
     def termService
     def jobService
+    def userService
 
     /**
      * Compute for each user, the number of annotation of each term
@@ -46,7 +47,7 @@ class StatsController extends RestController {
         }
 
         //build empty result table
-        project.userLayers().each { user ->
+        userService.listUsers(project).each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -101,7 +102,7 @@ class StatsController extends RestController {
         }
 
         //build empty result table
-        project.userLayers().each { user ->
+        userService.listLayers(project).each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname
@@ -181,7 +182,7 @@ class StatsController extends RestController {
         def terms = Term.findAllByOntology(project.getOntology())
 
         //Check if there are user layers
-        def userLayers = project.userLayers()
+        def userLayers = userService.listLayers(project)
         if(terms.isEmpty() || userLayers.isEmpty()) {
             responseSuccess([])
             return
@@ -245,7 +246,7 @@ class StatsController extends RestController {
         }
 
         //build empty result table
-        project.userLayers().each { user ->
+        userService.listLayers(project).each { user ->
             def item = [:]
             item.id = user.id
             item.key = user.firstname + " " + user.lastname

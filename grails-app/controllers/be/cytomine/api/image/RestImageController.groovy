@@ -19,6 +19,7 @@ class RestImageController extends RestController {
     def imagePropertiesService
     def abstractImageService
     def cytomineService
+    def projectService
 
     /**
      * List all abstract image available on cytomine
@@ -50,6 +51,7 @@ class RestImageController extends RestController {
     def show = {
         AbstractImage image = abstractImageService.read(params.long('id'))
         if (image) {
+            //abstractImageService.checkAuthorizationAtLeastOne(projectService.list(image))
             responseSuccess(image)
         } else {
             responseNotFound("Image", params.id)
@@ -162,7 +164,7 @@ class RestImageController extends RestController {
     def cropAnnotation = {
         try {
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
-            def cropURL = cropAnnotation(annotation,params)
+            def cropURL = getCropAnnotationURL(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -178,7 +180,7 @@ class RestImageController extends RestController {
         try {
             params.max_size = "256"
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
-            def cropURL = cropAnnotation(annotation,params)
+            def cropURL = getCropAnnotationURL(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -192,7 +194,7 @@ class RestImageController extends RestController {
     def cropUserAnnotation = {
         try {
             def annotation = UserAnnotation.read(params.id)
-            def cropURL = cropAnnotation(annotation,params)
+            def cropURL = getCropAnnotationURL(annotation,params)
             if(cropURL!=null) responseImage(cropURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -206,7 +208,7 @@ class RestImageController extends RestController {
     def cropAlgoAnnotation = {
         try {
             def annotation = AlgoAnnotation.read(params.id)
-            def cropURL = cropAnnotation(annotation,params)
+            def cropURL = getCropAnnotationURL(annotation,params)
             responseImage(cropURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -220,7 +222,7 @@ class RestImageController extends RestController {
     def cropReviewedAnnotation = {
         try {
             def annotation = ReviewedAnnotation.read(params.id)
-            def cropURL = cropAnnotation(annotation,params)
+            def cropURL = getCropAnnotationURL(annotation,params)
             responseImage(cropURL)
         } catch (Exception e) {
             log.error("GetThumb:" + e)

@@ -16,6 +16,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
+import grails.plugins.springsecurity.Secured
 
 class AbstractImageService extends ModelService {
 
@@ -28,10 +29,18 @@ class AbstractImageService extends ModelService {
     def transactionService
     def storageService
 
+    /**
+     * List all images (only for admin!)
+     */
+    @Secured(['ROLE_ADMIN'])
     def list() {
         return AbstractImage.list()
     }
 
+    /**
+     * Read an abstract image
+     * Authorization check MUST be done in controller
+     */
     AbstractImage read(def id) {
         return AbstractImage.read(id)
     }
@@ -42,7 +51,12 @@ class AbstractImageService extends ModelService {
 
     //TODO: secure!
     def list(Project project) {
-        project.abstractimages()
+        ImageInstance.createCriteria().list {
+            eq("project", project)
+            projections {
+                groupProperty("baseImage")
+            }
+        }
     }
 
     //TODO: secure!

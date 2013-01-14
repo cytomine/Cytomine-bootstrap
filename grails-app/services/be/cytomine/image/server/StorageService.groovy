@@ -3,6 +3,9 @@ package be.cytomine.image.server
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 
+/**
+ * TODOSTEVBEN:: doc
+ */
 class StorageService {
 
     def ais = """scripts/ais/storage/aisStorageClientRuby/ais"""

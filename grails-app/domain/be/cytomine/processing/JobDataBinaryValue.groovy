@@ -2,9 +2,23 @@ package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 
-class JobDataBinaryValue extends CytomineDomain {
-    //jobdata and JobDataBinaryValue are split because we need lazy-loading for data load!
+//* Its better to have a specific domain link than a simple 'byte[] value'.
+//* Each time we load a job data
 
+/**
+ * A job data file stored in database
+ * Used in JobData domain, it's better to do:
+ * -JobDataBinaryValue value
+ * Than
+ * -byte[] value
+ * With the first one, we only load the JobDataBinaryValue id
+ * With the second one, evey time we load a JobData, we load the full byte[] automaticaly
+ */
+class JobDataBinaryValue extends CytomineDomain {
+
+    /**
+     * File data
+     */
     byte[] data
 
     static belongsTo = [jobData: JobData]
@@ -17,8 +31,6 @@ class JobDataBinaryValue extends CytomineDomain {
     }
 
     public beforeValidate() {
-        println "beforeValidate"
         super.beforeValidate()
-        println "this.id="+this.id
     }
 }

@@ -7,9 +7,16 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A job is a software instance
+ * This is the execution of software with some parameters
+ */
 class Job extends CytomineDomain  {
-    //enum type are too heavy with GORM
+    /**
+     * Job status (enum type are too heavy with GORM)
+     */
     public static int NOTLAUNCH = 0
     public static int INQUEUE = 1
     public static int RUNNING = 2
@@ -18,21 +25,49 @@ class Job extends CytomineDomain  {
     public static int INDETERMINATE = 5
     public static int WAIT = 6
 
+    /**
+     * Job progression
+     */
     int progress = 0
-    int status = 0 //enum type are too heavy with GORM
-    int number//nth job of the software within a project
+
+    /**
+     * Job status (see static int)
+     */
+    int status = 0
+
+    /**
+     * Job Indice for this software in this project
+     */
+    int number
+
+    /**
+     * Text comment for the job status
+     */
     String statusComment
 
+    /**
+     * Job project
+     */
     Project project
 
+    /**
+     * Generic field for job rate info
+     * The rate is a quality value about the job works
+     */
     Double rate = null
 
+    /**
+     * Flag to see if data generate by this job are deleted
+     */
     boolean dataDeleted
 
     static transients = ["url"]
 
     static belongsTo = [software: Software]
 
+    /**
+     * Job Parameters lists
+     */
     SortedSet jobParameter
     static hasMany = [jobParameter: JobParameter]
 
@@ -52,46 +87,13 @@ class Job extends CytomineDomain  {
 
     public beforeInsert() {
         super.beforeInsert()
-        List<Job> previousJob = Job.findAllBySoftwareAndProject(software,project,[sort: "number", order: "desc"])
-        if(!previousJob.isEmpty()) number = previousJob.get(0).number+1
-        else number = 1;
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
-     */
-    static void registerMarshaller(String cytomineBaseUrl) {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
-        JSON.registerObjectMarshaller(Job) {
-            def job = [:]
-            job.id = it.id
-            job.algoType = ResponseService.getClassName(it).toLowerCase()
-            job.progress = it.progress
-            job.status = it.status
-            job.number = it.number
-            job.statusComment = it.statusComment
-
-            try {
-                UserJob user = UserJob.findByJob(it)
-                job.username = user?.realUsername()
-                job.userJob = user.id
-            } catch (Exception e) {log.info e}
-
-            job.project = it.project?.id
-            job.software = it.software?.id
-            job.created = it.created ? it.created.time.toString() : null
-            job.updated = it.updated ? it.updated.time.toString() : null
-            job.rate = it.rate
-            try {
-                job.jobParameter =  it.jobParameter
-            } catch(Exception e) {log.info e}
-
-            job.dataDeleted = it.dataDeleted
-
-            return job
-        }
+        //Get the last job with the same software and same project to incr job number
+        List<Job> previousJob = Job.findAllBySoftwareAndProject(software,project,[sort: "number", order: "desc",max: 1])
+        if(!previousJob.isEmpty()) {
+            number = previousJob.get(0).number+1
+        } else {
+            number = 1
+        };
     }
 
     /**
@@ -123,41 +125,48 @@ class Job extends CytomineDomain  {
      * @return Domain with json data filled
      */    
     static def insertDataIntoDomain(def domain, def json) {
-        try {
-            if (!json.status.toString().equals("null"))
-                domain.status = Integer.parseInt(json.status.toString())
-            if (!json.progress.toString().equals("null"))
-                domain.progress = Integer.parseInt(json.progress.toString())
-
-            if (!json.statusComment.toString().equals("null"))
-                domain.statusComment = json.statusComment.toString()
-            else
-                domain.statusComment = ""
-
-            String projectId = json.project.toString()
-            if (!projectId.equals("null")) {
-                domain.project = Project.read(projectId)
-                if (!domain.project) throw new WrongArgumentException("Project was not found with id:" + projectId)
-            } else {
-                domain.project = null
-            }
-
-            String softwareId = json.software.toString()
-            if (!softwareId.equals("null")) {
-                domain.software = Software.read(softwareId)
-                if (!domain.software) throw new WrongArgumentException("Software was not found with id:" + softwareId)
-            } else domain.software = null
-
-            domain.rate = (!json.rate.toString().equals("null")) ? Double.parseDouble(json.rate.toString()) : -1
-
-            if (!json.dataDeleted.toString().equals("null"))
-                domain.dataDeleted = Boolean.parseBoolean(json.progress.toString())
-
-            domain.created = (!json.created.toString().equals("null")) ? new Date(Long.parseLong(json.created.toString())) : null
-            domain.updated = (!json.updated.toString().equals("null")) ? new Date(Long.parseLong(json.updated.toString())) : null
-        }catch(Exception e) {
-            throw new WrongArgumentException(e.toString())
-        }
+        domain.status = JSONUtils.getJSONAttrInteger(json, 'status', 0)
+        domain.progress = JSONUtils.getJSONAttrInteger(json, 'progress', 0)
+        domain.statusComment = JSONUtils.getJSONAttrStr(json, 'statusComment')
+        domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
+        domain.software = JSONUtils.getJSONAttrDomain(json, "software", new Software(), true)
+        domain.rate = JSONUtils.getJSONAttrDouble(json, 'rate', -1)
+        domain.dataDeleted =  JSONUtils.getJSONAttrBoolean(json,'dataDeleted', false)
+        domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
         return domain;
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     * @param cytomineBaseUrl Cytomine base URL (from config file)
+     */
+    static void registerMarshaller(String cytomineBaseUrl) {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
+        JSON.registerObjectMarshaller(Job) {
+            def job = [:]
+            job.id = it.id
+            job.algoType = ResponseService.getClassName(it).toLowerCase()
+            job.progress = it.progress
+            job.status = it.status
+            job.number = it.number
+            job.statusComment = it.statusComment
+            job.project = it.project?.id
+            job.software = it.software?.id
+            job.rate = it.rate
+            job.created = it.created?.time?.toString()
+            job.updated = it.updated?.time?.toString()
+            job.dataDeleted = it.dataDeleted
+            try {
+                UserJob user = UserJob.findByJob(it)
+                job.username = user?.realUsername()
+                job.userJob = user.id
+                job.jobParameter =  it.jobParameter
+            } catch (Exception e) {
+                log.info e
+            }
+            return job
+        }
     }
 }

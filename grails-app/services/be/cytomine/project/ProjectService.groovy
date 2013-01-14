@@ -20,6 +20,8 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
+import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 
 class ProjectService extends ModelService {
 
@@ -81,6 +83,11 @@ class ProjectService extends ModelService {
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(User user) {
         user.projects()
+    }
+
+    //TODO: should be optim!!!!
+    def list(AbstractImage image) {
+        return ImageInstance.findAllByBaseImage(image).collect{it.project}.unique()
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -149,6 +156,7 @@ class ProjectService extends ModelService {
 
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
+
         checkRetrievalConsistency(json)
         SecUser currentUser = cytomineService.getCurrentUser()
         def response = executeCommand(new EditCommand(user: currentUser), json)

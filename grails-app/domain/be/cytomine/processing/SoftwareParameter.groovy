@@ -5,17 +5,62 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A parameter for a software.
+ * It's a template to create job parameter.
+ */
 class SoftwareParameter extends CytomineDomain {
 
+    /**
+     * Software for parameter
+     */
     Software software
+
+    /**
+     * Parameter name
+     */
     String name
+
+    /**
+     * Parameter type (Number, String, other domain...)
+     */
     String type
+
+    /**
+     * Default value when creating job parameter
+     * All value are stored in (generic) String
+     */
     String defaultValue
+
+    /**
+     * Flag if value is mandatory
+     */
     Boolean required = false
+
+    /**
+     * Index for parameter position.
+     * When launching software, parameter will be send ordered by index (asc)
+     */
     Integer index=-1
+
+    /**
+     * Used for UI
+     * If parameter has "Domain" type, the URI will provide a list of choice.
+     * E.g. if uri is api/project.json, the choice list will be cytomine project list
+     */
     String uri
+
+    /**
+     * JSON Fields to print in choice list
+     * E.g. if uri is api/project.json and uriPrintAttribut is "name", the choice list will contains project name
+     */
     String uriPrintAttribut
+
+    /**
+     * JSON Fields used to sort choice list
+     */
     String uriSortAttribut
 
     static belongsTo = [Software]
@@ -31,6 +76,7 @@ class SoftwareParameter extends CytomineDomain {
 
     public beforeInsert() {
         super.beforeInsert()
+        //if index is not set, automaticaly set it to lastIndex+1
         SoftwareParameter softwareParam = SoftwareParameter.findBySoftware(software,[max: 1,sort: "index",order: "desc"])
         if(this.index==-1) {
               if(softwareParam)
@@ -40,16 +86,16 @@ class SoftwareParameter extends CytomineDomain {
         }
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
    void checkAlreadyExist() {
         SoftwareParameter.withNewSession {
             SoftwareParameter softwareParamAlreadyExist=SoftwareParameter.findBySoftwareAndName(software,name)
-            if(softwareParamAlreadyExist!=null && (softwareParamAlreadyExist.id!=id))
+            if(softwareParamAlreadyExist!=null && (softwareParamAlreadyExist.id!=id)) {
                 throw new AlreadyExistException("Parameter " + softwareParamAlreadyExist?.name + " already exist for software " + softwareParamAlreadyExist?.software?.name)
+            }
         }
-    }
-
-    String toString() {
-        return (this as JSON).toString()
     }
 
     /**
@@ -71,7 +117,6 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.uri = it.uri
             softwareParameter.uriPrintAttribut = it.uriPrintAttribut
             softwareParameter.uriSortAttribut = it.uriSortAttribut
-
             return softwareParameter
         }
     }
@@ -106,31 +151,15 @@ class SoftwareParameter extends CytomineDomain {
      * @return Domain with json data filled
      */    
     static SoftwareParameter insertDataIntoDomain(def domain, def json) {
-        if (!json.name.toString().equals("null"))
-            domain.name = json.name
-        else throw new WrongArgumentException("domain name cannot be null")
-
-        if (!json.software.toString().equals("null"))
-            domain.software = Software.read(json.software)
-        if(!domain.software) throw new WrongArgumentException("domain software cannot be null:"+json.software)
-
-        if (!json.type.toString().equals("null"))
-            domain.type = json.type
-        else throw new WrongArgumentException("domain type cannot be null")
-
-        if (!json.defaultValue.toString().equals("null"))
-            domain.defaultValue = json.defaultValue
-
-        if (!json.required.toString().equals("null"))
-            domain.required = Boolean.parseBoolean(json.required.toString())
-
-        if (!json.index.toString().equals("null"))
-            domain.index = Integer.parseInt(json.index.toString())
-
-        domain.uri = json.uri
-        domain.uriPrintAttribut = json.uriPrintAttribut
-        domain.uriSortAttribut = json.uriSortAttribut
-
+        domain.name = JSONUtils.getJSONAttrStr(json, 'name', true)
+        domain.software = JSONUtils.getJSONAttrDomain(json, "software", new Software(), true)
+        domain.type = JSONUtils.getJSONAttrStr(json, 'type', true)
+        domain.defaultValue = JSONUtils.getJSONAttrStr(json, 'defaultValue')
+        domain.required = JSONUtils.getJSONAttrBoolean(json, 'required',false)
+        domain.defaultValue = JSONUtils.getJSONAttrInteger(json, 'index', -1)
+        domain.uri = JSONUtils.getJSONAttrStr(json,'uri')
+        domain.uriPrintAttribut = JSONUtils.getJSONAttrStr(json,'uriPrintAttribut')
+        domain.uriSortAttribut = JSONUtils.getJSONAttrStr(json,'uriSortAttribut')
         return domain;
     }
 }

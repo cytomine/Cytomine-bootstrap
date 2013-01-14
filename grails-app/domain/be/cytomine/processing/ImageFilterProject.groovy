@@ -6,7 +6,12 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
+import be.cytomine.ontology.Relation
 
+/**
+ * An image filter can be link to many projects
+ */
 class ImageFilterProject extends CytomineDomain implements Serializable{
 
     ImageFilter imageFilter
@@ -16,6 +21,17 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
         id(generator: 'assigned', unique: true)
     }
 
+    /**
+     * Add a new filter for a project
+     */
+    static ImageFilterProject link(ImageFilter imageFilter, Project project) {
+        link(null, imageFilter, project)
+    }
+
+    /**
+     * Add a new filter for a project
+     * Put id parameter as new domain id
+     */
     static ImageFilterProject link(def id , ImageFilter imageFilter, Project project) {
         def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, project)
         if (!imageFilterProject) {
@@ -28,14 +44,15 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
             project.refresh()
             imageFilter.refresh()
             imageFilterProject.save(flush: true)
-        } else throw new AlreadyExistException("Image Filter " + imageFilter?.name + " already map with project " + project?.name)
+        } else {
+            throw new AlreadyExistException("Image Filter " + imageFilter?.name + " already map with project " + project?.name)
+        }
         imageFilterProject
     }
 
-    static ImageFilterProject link(ImageFilter imageFilter, Project project) {
-        link(null, imageFilter, project)
-    }
-
+    /**
+     * Remove image filter from project
+     */
     static void unlink(ImageFilter imageFilter, Project project) {
         def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, project)
         if (imageFilterProject) {
@@ -44,8 +61,6 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
             imageFilter.refresh()
             project.refresh()
             imageFilterProject.delete(flush: true)
-        } else {
-            Logger.getLogger(this).info("no link between " + imageFilter + " " + project)
         }
     }
 
@@ -80,15 +95,13 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
      */
     static ImageFilterProject insertDataIntoDomain(def domain, def json) {
         try {
-            domain.imageFilter = ImageFilter.get(json.imageFilter.id)
-            domain.project = Project.get(json.project.id)
+            domain.imageFilter = JSONUtils.getJSONAttrDomain(json, "imageFilter", new ImageFilter(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
         }
         catch (Exception e) {
-            domain.imageFilter = ImageFilter.get(json.imageFilter)
-            domain.project = Project.get(json.project)
+            domain.imageFilter = JSONUtils.getJSONAttrDomain(json.imageFilter, "id", new ImageFilter(), true)
+            domain.project = JSONUtils.getJSONAttrDomain(json.project, "id", new Project(), true)
         }
-        if (!domain.imageFilter) throw new WrongArgumentException("Software ${json.imageFilter.toString()} doesn't exist!")
-        if (!domain.project) throw new WrongArgumentException("Project ${json.project.toString()} doesn't exist!")
         return domain;
     }
 

@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 import be.cytomine.ontology.*
+import org.springframework.security.access.AccessDeniedException
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,8 +49,9 @@ class RestImageInstanceController extends RestController {
         if (image) {
             imageInstanceService.checkAuthorization(image.project)
             responseSuccess(image)
+        } else {
+            responseNotFound("ImageInstance", params.id)
         }
-        else responseNotFound("ImageInstance", params.id)
     }
 
     def showByProjectAndImage = {
@@ -93,6 +95,9 @@ class RestImageInstanceController extends RestController {
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
+        } catch (AccessDeniedException e) {
+             log.error(e)
+             response([success: false, errors: e], 403)
         }
     }
 
