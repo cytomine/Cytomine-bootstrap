@@ -12,13 +12,23 @@ import org.apache.log4j.Logger
  * User: stevben
  * Date: 24/02/12
  * Time: 16:39
+ *
+ *  User position on an image at a time
+ *  Usefull to allow user following
  */
 class UserPosition extends CytomineDomain {
 
     static belongsTo = [user : SecUser, image : ImageInstance, project: Project]
 
+    /**
+     * User position on image
+     */
     double longitude
     double latitude
+
+    /**
+     * User zoom on image
+     */
     int zoom
 
     static constraints = {

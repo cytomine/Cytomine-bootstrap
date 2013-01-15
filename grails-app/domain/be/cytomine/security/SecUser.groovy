@@ -3,6 +3,10 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 
+/**
+ * Cytomine user.
+ * Its the parent class for "user" (human) and "user job" (algo).
+ */
 class SecUser extends CytomineDomain implements Serializable {
 
     String username
@@ -14,18 +18,8 @@ class SecUser extends CytomineDomain implements Serializable {
     boolean accountExpired
     boolean accountLocked
     boolean passwordExpired
-    Boolean transactionInProgress = false //indicates whether the current user is doing several actions seen as only one action
 
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
-
-    //Map userGroup
-    //static hasMany = [userGroup: UserGroup]
-    void checkAlreadyExist() {
-        SecUser.withNewSession {
-            SecUser user = SecUser.findByUsername(username)
-            if(user && (user.id!=id))  throw new AlreadyExistException("User "+username + " already exist!")
-        }
-    }
 
     static constraints = {
         username blank: false, unique: true
@@ -39,28 +33,6 @@ class SecUser extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
     }
 
-    Set<SecRole> getAuthorities() {
-        SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
-    }
-
-    boolean isAdmin() {
-        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id))
-            return true
-        else return false
-    }
-
-    String realUsername() {
-        return username
-    }
-
-
-    def generateKeys() {
-        log.info "GENERATE KEYS"
-        String privateKey = UUID.randomUUID().toString()
-        String publicKey = UUID.randomUUID().toString()
-        this.setPrivateKey(privateKey)
-        this.setPublicKey(publicKey)
-    }
 
     def beforeInsert() {
         super.beforeInsert()
@@ -76,6 +48,59 @@ class SecUser extends CytomineDomain implements Serializable {
         }
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
+    void checkAlreadyExist() {
+        SecUser.withNewSession {
+            SecUser user = SecUser.findByUsername(username)
+            if(user && (user.id!=id)) {
+                throw new AlreadyExistException("User "+username + " already exist!")
+            }
+        }
+    }
+
+    /**
+     * Get user roles
+     */
+    Set<SecRole> getAuthorities() {
+        SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
+    }
+
+    /**
+     * Check if user is a cytomine admin
+     * Rem: a project admin is not a cytomine admin
+     */
+    boolean isAdmin() {
+        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Username of the human user back to this user
+     * If User => humanUsername is username
+     * If Algo => humanUsername is user that launch algo username
+     */
+    String humanUsername() {
+        return username
+    }
+
+    /**
+     * Generate public/privateKey for user authentification
+     */
+    def generateKeys() {
+        String privateKey = UUID.randomUUID().toString()
+        String publicKey = UUID.randomUUID().toString()
+        this.setPrivateKey(privateKey)
+        this.setPublicKey(publicKey)
+    }
+
+    /**
+     * Check if user is an algo (otherwise its an human)
+     */
     boolean algo() {
         return false
     }

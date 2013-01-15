@@ -155,6 +155,8 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
         AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
         def result = AbstractImageAPI.getInfo(image.id,"thumb",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
+
+        //PROB LIE AU SETUP METHOD
     }
 
     void testGetPreview() {

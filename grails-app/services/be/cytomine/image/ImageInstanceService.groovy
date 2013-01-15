@@ -17,9 +17,11 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.Exception.ForbiddenException
 
 class ImageInstanceService extends ModelService {
 
+    boolean saveOnUndoRedoStack = true
     static transactional = true
 
     def cytomineService
@@ -31,25 +33,20 @@ class ImageInstanceService extends ModelService {
     def algoAnnotationService
     def dataSource
 
-    boolean saveOnUndoRedoStack = true
-
     def read(def id) {
-        ImageInstance.read(id)
-    }
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def read(Project project, AbstractImage image) {
-        ImageInstance.findByBaseImageAndProject(image, project)
+        def image = ImageInstance.read(id)
+        if(image) {
+            image.project.checkReadPermission()
+        }
+        image
     }
 
     def get(def id) {
-        ImageInstance.get(id)
-        //get(image.project, image.baseImage)
-    }
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def get(Project project, AbstractImage image) {
-        ImageInstance.findByBaseImageAndProject(image, project)
+        def image = ImageInstance.get(id)
+        if(image) {
+            image.project.checkReadPermission()
+        }
+        image
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -61,11 +58,6 @@ class ImageInstanceService extends ModelService {
             fetchMode 'baseImage', FetchMode.JOIN
         }
         return images
-    }
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, List ids) {
-        ImageInstance.findAllByIdInList(ids)
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -96,32 +88,18 @@ class ImageInstanceService extends ModelService {
         return images
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def listDatatables(Project project) {
-        //TO DO with plugin searchable ?
-        /*def availablesCols = ["baseImage.thumbURL", "filename", "mime.extension", "width", "height", "magnification", "resolution", "countImageAnnotations", "created", "action"]
-        def search = params.sSearch
-        def colSort = Integer.parseInt(params.iSortCol_0)
-        def col = availablesCols[colSort]
-        def order = params.sSortDir_0
-        def first = params.iDisplayStart
-        def max  = params.iDisplayLength
-        log.info "col = " + col
-        log.info "order = " + order
-        log.info "first = " + first
-        log.info "max = " + max
-
-        def images = ImageInstance.createCriteria().list(offset: first, max: max, sort: col, order: order) {
-            eq("project", project)
-            fetchMode 'baseImage', FetchMode.JOIN
-            fetchMode 'baseImage.storageAbstractImages', FetchMode.JOIN
+    void checkProjectAccess(def id) {
+        def project = Project.read(id)
+        if(!project) {
+            throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")
+        } else {
+            project.checkReadPermission()
         }
-        return images*/
-        []
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
+        checkProjectAccess(json.project)
         SecUser currentUser = cytomineService.getCurrentUser()
         log.info "current user = " + currentUser.username
         json.user = currentUser.id
@@ -132,22 +110,22 @@ class ImageInstanceService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def update(def domain,def json) {
-//        if(domain) checkAuthorization(domain.projectId)
+        checkProjectAccess(domain?.project?.id)
         SecUser currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def delete(def domain,def json) {
-//        if(domain) checkAuthorization(domain.projectId)
-        //Start transaction
+        checkProjectAccess(domain?.project?.id)
+
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         //Read image
         ImageInstance imageInstance = retrieve(json)
 
         if(imageInstance && imageInstance.reviewStart!=null)
-            throw new ConstraintException("You cannot remove a image instance that is review or has been reviewed...")
+            throw new ConstraintException("You cannot remove an image instance that is review or has been reviewed...")
 
         /* Delete social stuff */
         UserPosition.findAllByImage(imageInstance).each { userPosition ->
@@ -183,34 +161,46 @@ class ImageInstanceService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(ImageInstance.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(ImageInstance domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(ImageInstance.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(ImageInstance domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Delete", domain.getCallBack())
@@ -220,16 +210,22 @@ class ImageInstanceService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new ImageInstance(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(ImageInstance domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Edit", domain.getCallBack())
@@ -255,7 +251,9 @@ class ImageInstanceService extends ModelService {
     def retrieve(JSONObject json) {
         ImageInstance imageInstance
         imageInstance = ImageInstance.read(json.id)
-        if (!imageInstance) throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
+        if (!imageInstance) {
+            throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
+        }
         return imageInstance
     }
 }

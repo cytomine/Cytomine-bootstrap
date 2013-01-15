@@ -25,10 +25,12 @@ class OntologyService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
+    //TODO: secure ACL
     def list() {
         return Ontology.list()
     }
 
+    //TODO: secure ACL
     def listLight() {
         def ontologies = Ontology.list()
         def data = []
@@ -43,22 +45,6 @@ class OntologyService extends ModelService {
 
     def listByTerm(Term term) {
         return term?.ontology
-    }
-
-    def listByUserLight(SecUser user) {
-        def ontologies = user.ontologies()
-        def data = []
-        ontologies.each { ontology ->
-            def ontologymap = [:]
-            ontologymap.id = ontology.id
-            ontologymap.name = ontology.name
-            data << ontologymap
-        }
-        return data
-    }
-
-    def listByUser(User user) {
-        return user?.ontologies()
     }
 
     Ontology read(def id) {

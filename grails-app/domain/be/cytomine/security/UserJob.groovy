@@ -8,21 +8,19 @@ class UserJob extends SecUser {
 
     def springSecurityService
 
+    /**
+     * Human user that launch algo
+     */
     User user
+
     Job job
+
     double rate = -1d
 
     static constraints = {
         job(nullable: true)
     }
 
-    String toString() {
-        "Job"+ id + " ( " + user.toString() + " )"
-    }
-
-    String realUsername() {
-        return user.username
-    }
 
     def beforeInsert() {
         super.beforeInsert()
@@ -32,40 +30,24 @@ class UserJob extends SecUser {
         super.beforeUpdate()
     }
 
+    String toString() {
+        "Job"+ id + " ( " + user.toString() + " )"
+    }
+
+    /**
+     * Username of the human user back to this user
+     * If User => humanUsername is username
+     * If Algo => humanUsername is user that launch algo username
+     */
+    String humanUsername() {
+        return user?.username
+    }
+
+    /**
+     * Check if user is a job
+     */
     boolean algo() {
         return true
-    }
-
-    def userGroups() {
-        user.userGroups()
-    }
-
-    def groups() {
-        user.groups()
-    }
-
-    def ontologies() {
-        user.ontologies()
-    }
-
-    def projects() {
-        user.projects()
-    }
-
-    def abstractimages() {
-        user.abstractimages()
-    }
-
-    def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
-        user.abstractimage(max,first,col,order,filename,dateAddedStart,dateAddedStop)
-    }
-
-    def samples() {
-        user.samples()
-    }
-
-    def samples(int max, int first, String col, String order) {
-        user.samples(max,first,col,order)
     }
 
     /**
@@ -79,16 +61,14 @@ class UserJob extends SecUser {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['username'] = it.username
-            try {
-                returnArray['realUsername']= it.realUsername()
-            } catch (Exception e) {log.info e}
+            returnArray['humanUsername']= it.humanUsername()
             returnArray['publicKey'] = it.publicKey
             returnArray['privateKey'] = it.privateKey
             returnArray['job'] = it.job?.id
             returnArray['user'] = it.user?.id
             returnArray['rate'] = it.rate
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
             returnArray['algo'] = it.algo()
             return returnArray
         }

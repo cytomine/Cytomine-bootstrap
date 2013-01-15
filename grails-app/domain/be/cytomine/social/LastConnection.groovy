@@ -4,6 +4,10 @@ import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 
+/**
+ * Info on last user connection for a project
+ * User x connect to poject y the 2013/01/01 at xxhyymin
+ */
 class LastConnection extends CytomineDomain{
 
     SecUser user

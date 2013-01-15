@@ -179,6 +179,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getCropURLWithMaxWithOrHeight(def topLeftX, def topLeftY, def width, def height, def desiredWidth, def desiredHeight) {
         def imageServers = getImageServers()
+        println "imageServers=$imageServers"
         if (imageServers == null || imageServers.size() == 0) {
             return null
         }

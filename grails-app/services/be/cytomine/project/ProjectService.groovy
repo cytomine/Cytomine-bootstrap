@@ -35,6 +35,7 @@ class ProjectService extends ModelService {
     def aclService
     def aclUtilService
     def springSecurityService
+    def securityService
 
 
     final boolean saveOnUndoRedoStack = false
@@ -82,7 +83,7 @@ class ProjectService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(User user) {
-        user.projects()
+        securityService.getProjectList(user)
     }
 
     //TODO: should be optim!!!!
@@ -156,6 +157,9 @@ class ProjectService extends ModelService {
 
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
+
+        println "hasPermission="+domain.hasPermission("READ")
+        println "hasPermission="+domain.hasPermission('WRITE')
 
         checkRetrievalConsistency(json)
         SecUser currentUser = cytomineService.getCurrentUser()

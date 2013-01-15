@@ -8,6 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
+import grails.plugins.springsecurity.Secured
 
 class AbstractImageGroupService extends ModelService {
 
@@ -15,24 +16,34 @@ class AbstractImageGroupService extends ModelService {
      * CRUD operation for this domain will be undo/redo-able
      */
     boolean saveOnUndoRedoStack = true
+
     def cytomineService
     def responseService
+    def groupService
 
     def get(AbstractImage abstractimage, Group group) {
         AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
     }
 
+    def list(user) {
+        def groups = groupService.list(user)
+        return AbstractImageGroup.findAllByGroupInList(groups)
+    }
+
+    @Secured(['ROLE_ADMIN'])
     def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    @Secured(['ROLE_ADMIN'])
     def delete(def domain,def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
+    @Secured(['ROLE_ADMIN'])
     def update(def domain,def json) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

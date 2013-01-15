@@ -122,39 +122,23 @@ class RestImageController extends RestController {
      * Get all image servers URL for an image
      */
     def imageservers = {
-        AbstractImage image = abstractImageService.read(params.long('id'))
-        def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
-        def result = [:]
-        result.imageServersURLs = urls
-        response(result)
+        responseSuccess(abstractImageService.imageservers(params.long('id')))
     }
 
     /**
      * Get image thumb URL
      */
     def thumb = {
-        AbstractImage image = AbstractImage.read(params.long('id'))
-        try {
-            String thumbURL = image.getThumbURL()
-            if (thumbURL == null) thumbURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
-            responseImage(thumbURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
+        def url = abstractImageService.thumb(params.long('id'))
+        println "controller.url=$url"
+        responseImage(url)
     }
 
     /**
      * Get image preview URL
      */
     def preview = {
-        AbstractImage image = AbstractImage.read(params.long('id'))
-        try {
-            String previewURL = image.getPreviewURL()
-            if (previewURL == null) previewURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
-            responseImage(previewURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
+        responseImage(abstractImageService.preview(params.long('id')))
     }
 
     /**

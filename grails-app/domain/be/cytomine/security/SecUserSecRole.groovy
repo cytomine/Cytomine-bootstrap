@@ -4,7 +4,12 @@ import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * User - role link
+ * A user may have many role (user+admin for example)
+ */
 class SecUserSecRole extends CytomineDomain implements Serializable {
 
     SecUser secUser
@@ -15,10 +20,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         version false
     }
 
-
     static SecUserSecRole get(long secUserId, long secRoleId) {
-//        find 'from SecUserSecRole where secUser.id=:secUserId and secRole.id=:secRoleId',
-//                [secUserId: secUserId, secRoleId: secRoleId]
         SecUserSecRole.findBySecRoleAndSecUser(SecRole.get(secRoleId),SecUser.get(secUserId))
     }
 
@@ -30,16 +32,6 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         SecUserSecRole instance = SecUserSecRole.findBySecUserAndSecRole(secUser, secRole)
         instance ? instance.delete(flush: flush) : false
     }
-
-    static void removeAll(SecUser secUser) {
-        executeUpdate 'DELETE FROM SecUserSecRole WHERE secUser=:secUser', [secUser: secUser]
-    }
-
-    static void removeAll(SecRole secRole) {
-        executeUpdate 'DELETE FROM SecUserSecRole WHERE secRole=:secRole', [secRole: secRole]
-    }
-
-
 
     /**
      * Thanks to the json, create an new domain of this class
@@ -63,7 +55,6 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         insertDataIntoDomain(new SecUserSecRole(), json)
     }
 
-
     /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
@@ -71,8 +62,8 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static SecUserSecRole insertDataIntoDomain(def domain, def json) {
-        domain.secUser = SecUser.read(json.user)
-        domain.secRole = SecRole.read(json.role)
+        domain.secUser = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
+        domain.secRole = JSONUtils.getJSONAttrDomain(json, "role", new SecRole(), true)
         return domain;
     }
 
@@ -106,6 +97,4 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         if (secRole) builder.append(secRole.id)
         builder.toHashCode()
     }
-
-
 }

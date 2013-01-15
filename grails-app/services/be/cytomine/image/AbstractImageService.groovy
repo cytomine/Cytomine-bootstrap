@@ -21,6 +21,7 @@ import grails.plugins.springsecurity.Secured
 class AbstractImageService extends ModelService {
 
     static transactional = false
+
     def commandService
     def cytomineService
     def imagePropertiesService
@@ -28,6 +29,8 @@ class AbstractImageService extends ModelService {
     def domainService
     def transactionService
     def storageService
+    def abstractImageGroupService
+    def groupService
 
     /**
      * List all images (only for admin!)
@@ -37,14 +40,12 @@ class AbstractImageService extends ModelService {
         return AbstractImage.list()
     }
 
-    /**
-     * Read an abstract image
-     * Authorization check MUST be done in controller
-     */
+    //TODO: secure! ACL
     AbstractImage read(def id) {
-        return AbstractImage.read(id)
+        AbstractImage.read(id)
     }
 
+    //TODO: secure! ACL
     AbstractImage get(def id) {
         return AbstractImage.get(id)
     }
@@ -61,23 +62,27 @@ class AbstractImageService extends ModelService {
 
     //TODO: secure!
     def list(Group group) {
-        group.abstractimages()
+        AbstractImageGroup.findAllByGroup(group).collect{
+            it.abstractimage
+        }
     }
 
+    //TODO: secure! ACL
     def list(User user) {
         if(user.admin) {
             return AbstractImage.list()
         } else {
             def allImages = []
-            def groups = user.groups()
+            def groups = groupService.list(user)
             groups.each { group ->
-                allImages.addAll(group.abstractimages())
+                allImages.addAll(list(group))
 
             }
             return allImages
         }
     }
 
+    //TODO: secure! ACL
     def list(SecUser user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {
         def data = [:]
 
@@ -94,7 +99,7 @@ class AbstractImageService extends ModelService {
 
             log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
 
-            def userGroup = user.userGroups()
+            def userGroup = abstractImageGroupService.list(user)
             log.info "userGroup=" + userGroup.size()
             def imageGroup = AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})
@@ -117,7 +122,7 @@ class AbstractImageService extends ModelService {
             data.rows = results.list
         }
         else {
-            data = user?.abstractimages()
+            data = list(user)
         }
         return data
     }
@@ -126,9 +131,7 @@ class AbstractImageService extends ModelService {
     //TODO:: how to manage security here?
     def add(def json) throws CytomineException {
         transactionService.start()
-
         SecUser currentUser = cytomineService.getCurrentUser()
-
         def res = executeCommand(new AddCommand(user: currentUser), json)
         //AbstractImage abstractImage = retrieve(res.data.abstractimage)
         AbstractImage abstractImage = res.object
@@ -142,10 +145,7 @@ class AbstractImageService extends ModelService {
         abstractImage.save(flush : true)
         //Stop transaction
         transactionService.stop()
-
         return res
-
-
     }
 
     //TODO:: how to manage security here?
@@ -161,11 +161,8 @@ class AbstractImageService extends ModelService {
             Storage storage = storageService.read(storageID)
             StorageAbstractImage.link(storage, abstractImage)
         }
-
-
         //Stop transaction
         transactionService.stop()
-
         return res
     }
 
@@ -173,55 +170,65 @@ class AbstractImageService extends ModelService {
     def delete(def domain,def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
-        AbstractImage abstractImage = AbstractImage.read(json.id)
+        AbstractImage abstractImage = read(json.id)
         Group group = Group.findByName(currentUser.getUsername())
         AbstractImageGroup.unlink(abstractImage, group)
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
             StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
         }
         def res =  executeCommand(new DeleteCommand(user: currentUser), json)
-
         //Stop transaction
         transactionService.stop()
-
         return res
     }
 
-
+    /**
+     * Get Image metadata
+     */
     def metadata(def id) {
-        AbstractImage image = AbstractImage.read(id)
+        AbstractImage image = read(id)
         def url = new URL(image.getMetadataURL())
         return url.text
     }
 
     /**
      * Extract image properties from file for a specific image
-     * @param id
-     * @return
      */
     def imageProperties(def id) {
-        AbstractImage image = AbstractImage.read(id)
+        AbstractImage image = read(id)
         if (image.imageProperties.isEmpty()) {
             imagePropertiesService.populate(image)
         }
         return image.imageProperties
     }
 
+    /**
+     * Get a single property thx to its id
+     */
     def imageProperty(def imageproperty) {
         return ImageProperty.findById(imageproperty)
     }
 
-
+    /**
+     * Get all image servers for an image id
+     */
     def imageservers(def id) {
-        AbstractImage image = AbstractImage.read(id)
-        def urls = image.getImageServers().collect { it.getZoomifyUrl() + image.getPath() + "/" }
+        AbstractImage image = read(id)
+        def urls = image.getImageServers().collect {
+            it.getZoomifyUrl() + image.getPath() + "/"
+        }
         def result = [:]
         result.imageServersURLs = urls
         return result
     }
 
+    /**
+     * Get thumb image URL
+     */
     def thumb(def id) {
+        println "thumb=$id"
         AbstractImage image = AbstractImage.read(id)
+        println "thumb=${image.getThumbURL()}"
         try {
             return image.getThumbURL()
         } catch (Exception e) {
@@ -229,25 +236,44 @@ class AbstractImageService extends ModelService {
         }
     }
 
+    /**
+     * Get Preview image URL
+     */
+    def preview(def id) {
+        AbstractImage image = AbstractImage.read(id)
+        try {
+            String previewURL = image.getPreviewURL()
+            if (previewURL == null) previewURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
+            return previewURL
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    /**
+     * Get annotation crop from this image
+     */
     def cropWithMaxSize(AnnotationDomain annotation, int maxSize) {
         return annotation.toCropURLWithMaxSize(maxSize)
     }
 
+    /**
+     * Get annotation crop from this image
+     */
     def crop(AnnotationDomain annotation, Integer zoom) {
         def boundaries = annotation.getBoundaries()
         if (zoom != null) {
-            log.info "zoom=$zoom"
-
             int desiredWidth = boundaries.width / Math.pow(2, zoom)
             int desiredHeight = boundaries.height / Math.pow(2, zoom)
-            log.info "desiredWidth=$desiredWidth"
-            log.info "desiredHeight=$desiredHeight"
             return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
         } else {
             return annotation.toCropURL()
         }
     }
 
+    /**
+     * TODOSTEVBEN: doc
+     */
     def slidingWindow(AbstractImage abstractImage, parameters) {
         def windows = []
         int windowWidth = parameters.width
@@ -269,34 +295,46 @@ class AbstractImageService extends ModelService {
     }
 
     /**
-     * create domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(AbstractImage.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(AbstractImage domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(AbstractImage.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(AbstractImage domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Delete", domain.getCallBack())

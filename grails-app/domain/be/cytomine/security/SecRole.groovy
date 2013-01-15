@@ -1,5 +1,8 @@
 package be.cytomine.security
 
+/**
+ * User role (user, admin,...)
+ */
 class SecRole {
 
     String authority

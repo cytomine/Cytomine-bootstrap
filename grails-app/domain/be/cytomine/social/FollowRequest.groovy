@@ -9,6 +9,7 @@ import be.cytomine.security.SecUser
  * User: stevben
  * Date: 18/04/12
  * Time: 11:29
+ * TODOSTEVBEN: doc
  */
 class FollowRequest extends CytomineDomain {
 

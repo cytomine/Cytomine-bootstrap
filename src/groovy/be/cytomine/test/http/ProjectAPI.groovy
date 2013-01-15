@@ -61,7 +61,7 @@ class ProjectAPI extends DomainAPI {
         return result
     }
 
-    static def update(def id, def jsonProject, String username, String password) {
+    static def update(def id, String jsonProject, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json"
         return doPUT(URL,jsonProject,username,password)
     }

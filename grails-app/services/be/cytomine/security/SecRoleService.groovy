@@ -15,4 +15,8 @@ class SecRoleService {
     def list() {
         SecRole.list()
     }
+
+    def list(SecUser user) {
+        SecUserSecRole.findAllBySecUser(user).collect { it.secRole } as Set
+    }
 }

@@ -5,10 +5,13 @@ import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A group is a set of user
+ * UserGroup is the link between a group and a user in database
+ */
 class UserGroup {
-
-    def domaineService
 
     User user
     Group group
@@ -26,13 +29,17 @@ class UserGroup {
         builder.toHashCode()
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
 	void checkAlreadyExist() {
         UserGroup.withNewSession {
             UserGroup userGroupAlreadyExist = UserGroup.findByUserAndGroup(user, group)
-            if(userGroupAlreadyExist)  throw new AlreadyExistException("UserGroup "+userGroupAlreadyExist?.user + ","+ userGroupAlreadyExist?.group + " already exist!")
+            if(userGroupAlreadyExist)  {
+                throw new AlreadyExistException("UserGroup "+userGroupAlreadyExist?.user + ","+ userGroupAlreadyExist?.group + " already exist!")
+            }
         }
     }
-
 
     /**
      * Thanks to the json, create an new domain of this class
@@ -63,9 +70,9 @@ class UserGroup {
      * @return Domain with json data filled
      */
     static UserGroup insertDataIntoDomain(def domain, def json) {
-        domain.group = Group.read(json.group)
-        domain.user = User.read(json.user)
-        return domain;
+        domain.group = JSONUtils.getJSONAttrDomain(json, "group", new Group(), true)
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
+        return domain
     }
 
     /**

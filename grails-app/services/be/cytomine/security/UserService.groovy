@@ -227,7 +227,9 @@ class UserService extends ModelService {
     def addUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
                 log.debug "addUserFromProject project=" + project + " username=" + user.username + " ADMIN=" + admin
-                if(admin) projectService.addPermission(project,user.username,ADMINISTRATION)
+                if(admin) {
+                    projectService.addPermission(project,user.username,ADMINISTRATION)
+                }
                 else {
                     projectService.addPermission(project,user.username,READ)
                     //projectService.addPermission(project,user.username,WRITE)

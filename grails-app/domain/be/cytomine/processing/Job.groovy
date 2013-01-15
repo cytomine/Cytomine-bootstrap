@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
-import be.cytomine.Exception.WrongArgumentException
+
 import be.cytomine.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
@@ -160,7 +160,7 @@ class Job extends CytomineDomain  {
             job.dataDeleted = it.dataDeleted
             try {
                 UserJob user = UserJob.findByJob(it)
-                job.username = user?.realUsername()
+                job.username = user?.humanUsername()
                 job.userJob = user.id
                 job.jobParameter =  it.jobParameter
             } catch (Exception e) {

@@ -43,21 +43,6 @@ class SampleService extends ModelService {
 
     }
 
-    PagedResultList list(SecUser user, def page, def limit, def sortedRow, def sord) {
-        def data = [:]
-        log.info "page=" + page + " limit=" + limit + " sortedRow=" + sortedRow + " sord=" + sord
-        int pg = Integer.parseInt(page) - 1
-        int max = Integer.parseInt(limit)
-        int offset = pg * max
-        PagedResultList results = user.samples(max, offset, sortedRow, sord)
-
-        data.page = pg + ""
-        data.records = results.totalCount
-        data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page]
-        data.rows = results.list
-        return data
-    }
-
     def read(def id) {
         Sample.read(id)
     }

@@ -19,7 +19,6 @@ class RestProjectController extends RestController {
 
     def springSecurityService
     def projectService
-    def userService
     def disciplineService
     def ontologyService
     def cytomineService
@@ -142,8 +141,24 @@ class RestProjectController extends RestController {
      * Update a project
      */
     def update = {
-        update(projectService, request.JSON)
+//        println "current user="+cytomineService.currentUser.id
+//        println "current role="+cytomineService.getCurrentUser().authorities.collect{it.authority}
+//        def project = Project.read(request.JSON.id)
+//        println "project="+project?.id
+//        println "users="+userService.listUsers(project).collect{it.id}
+//        println "admins="+userService.listAdmins(project).collect{it.id}
+//        println "hasPermission="+project.hasPermission("READ")
+//        println "hasPermission="+project.hasPermission("WRITE")
+        try {
+            def domain = projectService.retrieve(request.JSON)
+            def result = projectService.update(domain, request.JSON)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
     }
+
 
     /**
      * Delete a project

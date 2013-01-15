@@ -1,5 +1,7 @@
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+import be.cytomine.Exception.ForbiddenException
+import be.cytomine.Exception.ObjectNotFoundException
 
 class UrlMappings {
 
@@ -23,7 +25,8 @@ class UrlMappings {
         "500"(controller: "errors", action: "error500")
         "500"(controller: "errors", action: "error403", exception: AccessDeniedException)
         "500"(controller: "errors", action: "error403", exception: NotFoundException)
-
+        "500"(controller: "errors", action: "error403", exception: ForbiddenException)
+        "500"(controller: "errors", action: "error404", exception: ObjectNotFoundException)
 
         "/processing/detect/$image/$x/$y"(controller:"processing") {
             action = [GET : "detect"]

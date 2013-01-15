@@ -36,6 +36,7 @@ import be.cytomine.image.server.Storage
 class BasicInstance {
 
     def springSecurityService
+    def secRoleService
 
     private static Log log = LogFactory.getLog(BasicInstance.class)
 

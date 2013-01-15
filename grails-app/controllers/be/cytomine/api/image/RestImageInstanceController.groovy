@@ -42,7 +42,6 @@ class RestImageInstanceController extends RestController {
     def imageInstanceService
     def projectService
     def abstractImageService
-    def userService
 
     def show = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
@@ -67,10 +66,7 @@ class RestImageInstanceController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'), new Project())
-        if (project && params.dataTables) {
-            responseSuccess(imageInstanceService.listDatatables(project))
-        }
-        else if (project && params.inf && params.sup) {
+        if (project && params.inf && params.sup) {
             responseSuccess(imageInstanceService.list(project, Integer.parseInt(params.inf), Integer.parseInt(params.sup)))
         }
         else if (project && params.tree && Boolean.parseBoolean(params.tree))  {
@@ -117,13 +113,17 @@ class RestImageInstanceController extends RestController {
     def delete = {
         def json = JSON.parse("{id : $params.id}")
         try {
+            println "####### 1"
             def domain = imageInstanceService.retrieve(json)
-            imageInstanceService.checkAuthorization(domain?.project)
+            println "####### 2"
             def result = imageInstanceService.delete(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
+            println "####### 3"
             log.error(e)
+            println "*****"
             response([success: false, errors: e.msg], e.code)
+            println "*****"
         }
     }
 

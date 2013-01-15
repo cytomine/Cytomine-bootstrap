@@ -7,8 +7,8 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 import static org.springframework.security.acls.domain.BasePermission.*
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.Exception.ServerException
+
+import be.cytomine.Exception.ForbiddenException
 
 /**
  * CytomineDomain is the parent class for all domain.
@@ -85,6 +85,12 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
+    void checkReadPermission() {
+        if(!hasPermission("READ") && !cytomineService.currentUser.admin) {
+             throw new ForbiddenException("You cannot access this resource");
+        }
+    }
+
     /**
      * This method check if current user has permission on the current domain
      * @param permission Type of permission (read, admin,...)
@@ -123,7 +129,7 @@ abstract class CytomineDomain  implements Comparable{
     boolean hasPermission(def domain,String permissionStr) {
         try {
             SecUser currentUser = cytomineService.getCurrentUser()
-            String usernameParentUser = currentUser.realUsername()
+            String usernameParentUser = currentUser.humanUsername()
             int permission = -1
             if(permissionStr.equals("READ")) permission = READ.mask
             else if(permissionStr.equals("WRITE")) permission = WRITE.mask

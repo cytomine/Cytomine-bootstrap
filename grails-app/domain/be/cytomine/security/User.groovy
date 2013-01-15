@@ -6,12 +6,14 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.processing.SoftwareProject
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A cytomine human user
+ */
 class User extends SecUser {
 
     transient springSecurityService
-
-    def projectService
 
     String firstname
     String lastname
@@ -19,8 +21,6 @@ class User extends SecUser {
     String color
     String skypeAccount
     String sipAccount
-
-    int transaction
 
     static constraints = {
         firstname blank: false
@@ -35,11 +35,22 @@ class User extends SecUser {
         id(generator: 'assigned', unique: true)
     }
 
-
     static hasMany = [softwareProjects: SoftwareProject]
 
+    def beforeInsert() {
+        super.beforeInsert()
+    }
 
-    String realUsername() {
+    def beforeUpdate() {
+        super.beforeUpdate()
+    }
+
+    /**
+     * Username of the human user back to this user
+     * If User => humanUsername is username
+     * If Algo => humanUsername is user that launch algo username
+     */
+    String humanUsername() {
         return username
     }
 
@@ -47,108 +58,12 @@ class User extends SecUser {
         firstname + " " + lastname
     }
 
-    def userGroups() {
-        UserGroup.findAllByUser(this)
-    }
-
-    def groups() {
-        return userGroups().collect {
-            it.group
-        }
-    }
-
-    def ontologies() {
-        def ontologies = []
-        //add ontology created by this user
-
-        if (this.version != null) ontologies.addAll(Ontology.findAllByUser(this))
-        //add ontology from project which can be view by this user
-        def project = this.projects();
-        project.each { proj ->
-            Ontology ontology = proj.ontology
-            if (!ontologies.contains(ontology))
-                ontologies << ontology
-        }
-        ontologies
-    }
-
-    def projects() {
-        projectService.list()
-    }
-
-    def abstractimages() {
-        def abstractImages = []
-        def userGroup = userGroups()
-        if (userGroup.size() > 0) {
-            abstractImages = AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect {it.group.id})
-                projections {
-                    groupProperty('abstractimage')
-                }
-            }
-        }
-        abstractImages
-
-    }
-
-
-    def abstractimage(int max, int first, String col, String order, String filename, Date dateAddedStart, Date dateAddedStop) {
-        def userGroup = userGroups()
-        AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
-            inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect {it.group.id})
-                projections {
-                    groupProperty('abstractimage.id')
-                }
-            })
-            projections {
-                groupProperty('abstractimage')
-            }
-            ilike("filename", "%" + filename + "%")
-            between('created', dateAddedStart, dateAddedStop)
-
-        }
-
-    }
-
-    //TODO: ro remove!
-    def samples() {
-        def userGroup = userGroups()
-        AbstractImage.createCriteria().list {
-            inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect {it.group.id})
-                projections {
-                    groupProperty('abstractimage.id')
-                }
-            })
-            projections {
-                groupProperty('sample')
-            }
-        }
-    }
-
-    def samples(int max, int first, String col, String order) {
-        def userGroup = userGroups()
-        AbstractImage.createCriteria().list(offset: first, max: max, sort: col, order: order) {
-            inList("id", AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect {it.group.id})
-                projections {
-                    groupProperty('abstractimage.id')
-                }
-            })
-            projections {
-                groupProperty('sample')
-            }
-        }
-    }
-
+    /**
+     * Check if user is a job
+     */
     boolean algo() {
         return false
     }
-
-
-
-
 
     /**
      * Thanks to the json, create an new domain of this class
@@ -179,24 +94,25 @@ class User extends SecUser {
      * @return Domain with json data filled
      */         
     static User insertDataIntoDomain(def domain, def json) {
-        domain.username = json.username
-        domain.firstname = json.firstname
-        domain.lastname = json.lastname
-        domain.email = json.email
-        domain.color = json.color
-        domain.skypeAccount = json.skypeAccount != null ? json.skypeAccount : null
-        domain.sipAccount = json.sipAccount != null ? json.sipAccount : null
+        domain.username = JSONUtils.getJSONAttrStr(json,'username')
+        domain.firstname = JSONUtils.getJSONAttrStr(json,'firstname')
+        domain.lastname = JSONUtils.getJSONAttrStr(json,'lastname')
+        domain.email = JSONUtils.getJSONAttrStr(json,'email')
+        domain.color = JSONUtils.getJSONAttrStr(json,'color')
+        domain.skypeAccount = JSONUtils.getJSONAttrStr(json,'skypeAccount')
+        domain.sipAccount = JSONUtils.getJSONAttrStr(json,'sipAccount')
         if (json.password && domain.password != null) {
-            domain.newPassword = json.password //user updated
+            domain.newPassword = JSONUtils.getJSONAttrStr(json,'password') //user is updated
         } else if (json.password) {
-            domain.password = json.password //user created
+            domain.password = JSONUtils.getJSONAttrStr(json,'password') //user is created
         }
+        domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
         domain.enabled = true
+
         if (domain.getPublicKey() == null || domain.getPrivateKey() == null || json.publicKey == "" || json.privateKey == "") {
             domain.generateKeys()
         }
-        domain.created = (!json.created.toString().equals("null"))  ? new Date(Long.parseLong(json.created.toString())) : null
-        domain.updated = (!json.updated.toString().equals("null"))  ? new Date(Long.parseLong(json.updated.toString())) : null
         return domain;
     }    
 
@@ -220,24 +136,10 @@ class User extends SecUser {
                 returnArray['privateKey'] = it.privateKey
             }
             returnArray['color'] = it.color
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
             returnArray['algo'] = it.algo()
             return returnArray
         }
     }
-
-    def beforeInsert() {
-        println "beforeInsert.user"
-        super.beforeInsert()
-    }
-
-    def beforeUpdate() {
-        super.beforeUpdate()
-    }
-
-
-
-
 }

@@ -172,8 +172,7 @@ class RestUserController extends RestController {
     def addUserToProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        boolean admin = false
-        userService.addUserFromProject(user, project, admin)
+        userService.addUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -186,8 +185,7 @@ class RestUserController extends RestController {
     def deleteUserFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        boolean admin = false
-        userService.deleteUserFromProject(user, project, admin)
+        userService.deleteUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -200,8 +198,7 @@ class RestUserController extends RestController {
     def addUserAdminToProject = {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
-        boolean admin = true
-        userService.addUserFromProject(user, project, admin)
+        userService.addUserFromProject(user, project, true)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -215,8 +212,7 @@ class RestUserController extends RestController {
     def deleteUserAdminFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        boolean admin = true
-        userService.deleteUserFromProject(user, project, admin)
+        userService.deleteUserFromProject(user, project, true)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)

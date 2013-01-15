@@ -7,10 +7,26 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
+/**
+ * A shared annotation is a comment on a specific annotation
+ * (e.g. is it the good term?, ...)
+ * Receiver user can see the comment and add answer
+ */
 class SharedAnnotation extends CytomineDomain {
 
+    /**
+     * User that ask the question
+     */
     User sender
+
+    /**
+     * Comment that will be share with other user
+     */
     String comment
+
+    /**
+     * Only user annotation for now (not reviewed/algo annotation)
+     */
     UserAnnotation userAnnotation
 
     static hasMany = [receiver : User]
@@ -38,9 +54,9 @@ class SharedAnnotation extends CytomineDomain {
             returnArray['comment'] = it.comment
             returnArray['sender'] = it.sender.toString()
             returnArray['userannotation'] = it.userAnnotation.id
-            returnArray['receiver'] = it.receiver.collect { it.toString() }
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['receiver'] = it.receiver?.collect { it.toString() }
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
             return returnArray
         }
     }

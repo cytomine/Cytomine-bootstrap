@@ -6,14 +6,16 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.project.Project
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import be.cytomine.utils.JSONUtils
 
+/**
+ * A group is a set of user
+ */
 class Group extends CytomineDomain {
 
     String name
-    //Map userGroup
-    static belongsTo = Project
-    static hasMany = [abstractimagegroup: AbstractImageGroup]
 
+    static hasMany = [abstractimagegroup: AbstractImageGroup]
 
     static mapping = {
         table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
@@ -22,12 +24,6 @@ class Group extends CytomineDomain {
     static constraints = {
         name(blank: false, unique: true)
     }
-
-    def userGroups() {
-        UserGroup.findAllByGroup(this)
-    }
-
-
 
     /**
      * Thanks to the json, create an new domain of this class
@@ -58,30 +54,12 @@ class Group extends CytomineDomain {
      * @return Domain with json data filled
      */
     static Group insertDataIntoDomain(def domain, def json) {
-        domain.name = json.name
+        domain.name = JSONUtils.getJSONAttrStr(json,'name',true)
         return domain;
     }
 
     String toString() {
         name
-    }
-
-    def abstractimages() {
-        return abstractimagegroup.collect {
-            it.abstractimage
-        }
-    }
-
-    def users() {
-        return userGroups().collect {
-            it.user
-        }
-    }
-
-    def projects() {
-        return projectGroup.collect {
-            it.project
-        }
     }
 
     /**
@@ -99,6 +77,9 @@ class Group extends CytomineDomain {
         }
     }
 
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
     void checkAlreadyExist() {
         Group.withNewSession {
             Group groupAlreadyExist = Group.findByName(name)
