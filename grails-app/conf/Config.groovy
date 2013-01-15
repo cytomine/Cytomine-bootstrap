@@ -73,21 +73,25 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 environments {
     production {
         grails.serverURL = "http://beta.cytomine.be"
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
     development {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = true
+        grails.resources.adhoc.patterns = []
     }
     test {
         grails.serverURL = "http://localhost:8090"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
     perf {
         grails.serverURL = "http://localhost:8080"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
 }
 coverage {
@@ -146,6 +150,7 @@ environments {
      * If set to null, "node" mode is used by default.
      */
     elasticSearch.client.mode = 'local'
+    grails.resources.processing.enabled = false;
   }
   test {
       elasticSearch {
@@ -287,3 +292,4 @@ grails.plugins.dynamicController.mixins = [
 grails.plugins.springsecurity.controllerAnnotations.staticRules = [
         '/admin/manage/**': ['ROLE_ADMIN']
 ]
+
