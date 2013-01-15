@@ -1,13 +1,9 @@
 <div class="container-fluid" style="margin-bottom: 30px;">
     <div style="margin-top: 20px;">
-        <div class="widget-header">
-            <i class="icon-user"></i>
-
-            <h3>Profile</h3>
-        </div>
-        <div class="widget-content" style="padding: 10px;">
+        <div style="padding: 10px;">
             <form id="edit_profile_form" class="form-horizontal well">
                 <fieldset>
+                    <Legend>Profile</Legend>
                     <div class="control-group">
                         <label class="control-label" for="input_username">Username</label>
 
@@ -50,14 +46,10 @@
         </div>
     </div>
     <div style="margin-top: 20px;">
-        <div class="widget-header">
-            <i class="icon-lock"></i>
-
-            <h3>Password</h3>
-        </div>
-        <div class="widget-content" style="padding: 10px;">
+        <div style="padding: 10px;">
             <form id="edit_password_form" class="form-horizontal well">
                 <fieldset>
+                    <legend>Password</legend>
                     <div class="control-group">
                         <label class="control-label" for="input_password">Actual password</label>
 
@@ -102,32 +94,30 @@
         </div>
     </div>
     <div style="margin-top: 20px;">
-        <div class="widget-header">
-            <i class="icon-lock"></i>
+        <div style="padding: 10px;">
+                <form id="regenerate_keys_form" class="form-horizontal well">
+                    <fieldset>
+                    <legend>API KEYS</legend>
+                    <div class="control-group">
+                        <label class="control-label" for="input_public_key">Public Key</label>
 
-            <h3>API KEYS</h3>
-        </div>
-        <div class="widget-content" style="padding: 10px;">
-            <form id="regenerate_keys_form" class="form-horizontal well">
-                <div class="control-group">
-                    <label class="control-label" for="input_public_key">Public Key</label>
-
-                    <div class="controls">
-                        <input type="text" class="input-xlarge" id="input_public_key" value="<%= publicKey %>" disabled>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input_public_key" value="<%= publicKey %>" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="input_private_key">Private Key</label>
+                    <div class="control-group">
+                        <label class="control-label" for="input_private_key">Private Key</label>
 
-                    <div class="controls">
-                        <input type="text" class="input-xlarge" id="input_private_key" value="<%= privateKey %>"
-                               disabled>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" id="input_private_key" value="<%= privateKey %>"
+                                   disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Regenerate</button>
-                </div>
-            </form>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Regenerate</button>
+                    </div>
+                    </fieldset>
+                </form>
         </div>
     </div>
 
