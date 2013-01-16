@@ -98,6 +98,11 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         return false
     }
 
+    /**
+     * Get CROP (annotation image area) URL for this annotation
+     * @param cytomineUrl Cytomine base URL
+     * @return Full CROP Url
+     */
     def getCropUrl(String cytomineUrl) {
         UrlApi.getUserAnnotationCropWithAnnotationId(cytomineUrl,id)
     }

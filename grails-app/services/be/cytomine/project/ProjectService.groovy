@@ -26,47 +26,17 @@ import be.cytomine.image.ImageInstance
 class ProjectService extends ModelService {
 
     static transactional = true
-    def ontologyService
     def cytomineService
-    def commandService
     def domainService
-    def userGroupService
-    def aclPermissionFactory
-    def aclService
-    def aclUtilService
     def springSecurityService
     def securityService
+    def userService
+    def aclUtilService
 
 
     final boolean saveOnUndoRedoStack = false
 
-    void addPermission(Project project, String username, int permission) {
-        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
-    }
 
-    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
-    synchronized void addPermission(Project project, String username, Permission permission) {
-        log.info "##### Add Permission " +  permission.toString() + " for " + username + " to " + project?.name
-        aclUtilService.addPermission(project, username, permission)
-        log.info "#####  Permission added"
-    }
-
-    @Transactional
-    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
-    void deletePermission(Project project, SecUser user, Permission permission) {
-        def acl = aclUtilService.readAcl(project)
-
-        // Remove all permissions associated with this particular recipient
-        acl.entries.eachWithIndex { entry, i ->
-            log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
-            if (entry.sid.getPrincipal().equals(user.username) && entry.permission.equals(permission)) {
-                log.debug "REMOVE PERMISSION FOR"
-                acl.deleteAce(i)
-            }
-        }
-
-        aclService.updateAcl(acl)
-    }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -157,9 +127,9 @@ class ProjectService extends ModelService {
 
     @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
-
         println "hasPermission="+domain.hasPermission("READ")
         println "hasPermission="+domain.hasPermission('WRITE')
+//        throw new Exception()
 
         checkRetrievalConsistency(json)
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -219,7 +189,13 @@ class ProjectService extends ModelService {
         //Save new object
         domainService.saveDomain(domain)
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
-        addPermission(domain, springSecurityService.authentication.name,BasePermission.ADMINISTRATION)
+
+        log.info "#project.hasPermission('ADMIN')="+domain.hasPermission('ADMIN')
+        log.info "#admin="+cytomineService.currentUser.getAuthorities().collect {it.authority}
+        log.info "#domain.isCurrentUserCreator()="+domain.isCurrentUserCreator()
+        log.info "#Creator="+domain.retrieveCreator()?.id
+        log.info "#Creator="+cytomineService.currentUser?.id
+        aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }

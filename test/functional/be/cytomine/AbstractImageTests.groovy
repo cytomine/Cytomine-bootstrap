@@ -16,6 +16,8 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import cytomine.web.ImagePropertiesService
+import be.cytomine.image.AbstractImageGroup
+import be.cytomine.security.Group
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,16 +29,11 @@ import cytomine.web.ImagePropertiesService
 class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
 
-    def oldMethod1
     def oldMethod2
     def oldMethod3
 
     void setUp()  {
-        oldMethod1 = AbstractImage.metaClass.getImageServers
-        AbstractImage.metaClass.getImageServers  = {->
-            ImageServer bidon = BasicInstance.createOrGetBasicImageServer()
-            return [bidon]
-        }
+
         oldMethod2 = AbstractImageService.metaClass.metadata
         AbstractImageService.metaClass.metadata = { def id ->
            return "metdatatext"
@@ -51,7 +48,6 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     }
 
     void tearDown() {
-        AbstractImage.metaClass.getImageServers = oldMethod1
         AbstractImage.metaClass.metadata = oldMethod2
         ImagePropertiesService.metaClass.extractUseful = oldMethod3
     }
@@ -66,7 +62,8 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
   }
 
     void testListImagesDatatable() {
-        BasicInstance.createOrGetBasicAbstractImage()
+        def image = BasicInstance.createOrGetBasicAbstractImage()
+        AbstractImageGroup.link(image,Group.findByName(Infos.GOODLOGIN))
         def result = AbstractImageAPI.list(true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
@@ -152,11 +149,26 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
 
     void testGetThumb() {
+        println "AbstractImage.metaClass=${AbstractImage.metaClass}"
+        println "AbstractImage.metaClass.getImageServers=${AbstractImage.metaClass.getImageServers}"
+//        def oldMethod1 = AbstractImage.metaClass.getImageServers
+//        AbstractImage.metaClass.getImageServers  = {->
+//            println "### mocking method"
+//            ImageServer bidon = BasicInstance.createOrGetBasicImageServer()
+//            return [bidon]
+//        }
+
+        def oldMethod1 = AbstractImage.metaClass.getThumbURL
+        AbstractImage.metaClass.getThumbURL  = {->
+            println "### mocking method"
+            return "http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png"
+        }
+
         AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
         def result = AbstractImageAPI.getInfo(image.id,"thumb",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
-
         //PROB LIE AU SETUP METHOD
+        AbstractImage.metaClass.getThumbURL = oldMethod1
     }
 
     void testGetPreview() {

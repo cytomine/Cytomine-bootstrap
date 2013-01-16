@@ -22,18 +22,50 @@ import be.cytomine.ontology.ReviewedAnnotation
  * User: lrollus
  * Date: 18/10/12
  * GIGA-ULg
- * 
+ *
+ * Annotation generic domain
+ * Annotation can be:
+ * -UserAnnotation => created by human user
+ * -AlgoAnnotation => created by job
+ * -ReviewedAnnotation => User or AlgoAnnotation validate by user
  */
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
+    /**
+     * Annotation geometry object
+     */
     Geometry location
+
+    /**
+     * Annotation image
+     */
     ImageInstance image
+
+    /**
+     * Annotation project
+     * Redundant with image.project, speedup
+     */
     Project project
+
+    /**
+     * Compression threshold used for annotation simplification
+     */
     Double geometryCompression
+
+    /**
+     * Number of comments for annotation
+     * Redundant to speed up
+     */
     long countComments = 0L
+
+    /**
+     * Annotation geometry WKT location
+     * Redundant, better to use this than getting WKT from location properties
+     */
     String wktLocation  //speedup listing
 
     /* Transients values for JSON/XML rendering */
+    //TODO:: remove from here, use custom SQL request with these info
     Double similarity
     Double rate
     Long idTerm
@@ -59,15 +91,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             location type: org.hibernatespatial.GeometryUserType
         }
     }
-
-    abstract def terms()
-    abstract def termsId()
-    abstract boolean isAlgoAnnotation()
-    abstract boolean isReviewedAnnotation()
-    abstract List<Term> termsForReview()
-    abstract def getCropUrl(String cytomineUrl)
-
-    String toString() {return "Annotation " + id}
 
     /**
      * If name is empty, fill it by "Annotation $id"
@@ -95,6 +118,44 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         if(!wktLocation)
             wktLocation = location.toText()
     }
+
+    /**
+     * Get all terms map with the annotation
+     * @return Terms list
+     */
+    abstract def terms()
+
+    /**
+     * Get all annotation terms id
+     * @return Terms id list
+     */
+    abstract def termsId()
+
+    /**
+     * Check if its an algo annotation
+     */
+    abstract boolean isAlgoAnnotation()
+
+    /**
+     * Check if its a review annotation
+     */
+    abstract boolean isReviewedAnnotation()
+
+    /**
+     * Get all terms for automatic review
+     * If review is done "for all" (without manual user control), we add these term to the new review annotation
+     * @return
+     */
+    abstract List<Term> termsForReview()
+
+    /**
+     * Get CROP (annotation image area) URL for this annotation
+     * @param cytomineUrl Cytomine base URL
+     * @return Full CROP Url
+     */
+    abstract def getCropUrl(String cytomineUrl)
+
+    String toString() {return "Annotation " + id}
 
     def getFilename() {
           return this.image?.baseImage?.getFilename()

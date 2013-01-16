@@ -8,7 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
-import grails.plugins.springsecurity.Secured
+import org.springframework.security.access.annotation.Secured
 
 class AbstractImageGroupService extends ModelService {
 
@@ -30,6 +30,11 @@ class AbstractImageGroupService extends ModelService {
         return AbstractImageGroup.findAllByGroupInList(groups)
     }
 
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @return Response structure (created domain data,..)
+     */
     @Secured(['ROLE_ADMIN'])
     def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -37,15 +42,16 @@ class AbstractImageGroupService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    /**
+     * Delete domain in argument
+     * @param domain Domain to delete
+     * @param json JSON that was passed in request parameter
+     * @return Response structure (created domain data,..)
+     */
     @Secured(['ROLE_ADMIN'])
     def delete(def domain,def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
-    }
-
-    @Secured(['ROLE_ADMIN'])
-    def update(def domain,def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

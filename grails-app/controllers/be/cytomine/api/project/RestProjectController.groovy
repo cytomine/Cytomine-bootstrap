@@ -141,14 +141,6 @@ class RestProjectController extends RestController {
      * Update a project
      */
     def update = {
-//        println "current user="+cytomineService.currentUser.id
-//        println "current role="+cytomineService.getCurrentUser().authorities.collect{it.authority}
-//        def project = Project.read(request.JSON.id)
-//        println "project="+project?.id
-//        println "users="+userService.listUsers(project).collect{it.id}
-//        println "admins="+userService.listAdmins(project).collect{it.id}
-//        println "hasPermission="+project.hasPermission("READ")
-//        println "hasPermission="+project.hasPermission("WRITE")
         try {
             def domain = projectService.retrieve(request.JSON)
             def result = projectService.update(domain, request.JSON)

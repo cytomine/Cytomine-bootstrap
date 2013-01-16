@@ -16,6 +16,9 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 import java.util.TreeMap.Entry
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.CytomineDomain
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -27,23 +30,12 @@ class AlgoAnnotationTermService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    def list() {
-        AlgoAnnotationTerm.list()
-    }
-
+    @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(AnnotationDomain annotation) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
-    def list(Job job) {
-        List<AlgoAnnotationTerm> annotations = []
-        List<UserJob> users = UserJob.findAllByJob(job)
-        users.each {
-            annotations.addAll(AlgoAnnotationTerm.findAllByUserJob(it))
-        }
-        annotations
-    }
-
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def count(Job job) {
         long total = 0
         List<UserJob> users = UserJob.findAllByJob(job)
@@ -53,11 +45,19 @@ class AlgoAnnotationTermService extends ModelService {
         total
     }
 
+    @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
         AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
     }
 
-    def add(def json) {
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param project Project for this domain (just for security check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#project.checkProjectAccess(#project.id)")
+    def add(def json, Project project) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if(!creator)
@@ -65,18 +65,14 @@ class AlgoAnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        def result = deleteAlgoAnnotationTerm(json.userannotation, json.term, json.user, currentUser,null)
-        return result
-    }
-
-    def update(def domain,def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     /**
-     * Delete an annotation term
+     * Delete an algo annotation term
+     * @param idAnnotation Annotation id
+     * @param idTerm Term id
+     * @param idUserJob User id
+     * @param currentUser Current user for this operation
+     * @param transaction Transaction that will packed the delete command
+     * @return Response structure
      */
     def deleteAlgoAnnotationTerm(def idAnnotation, def idTerm, def idUserJob, User currentUser, Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, userJob: $idUserJob}")
@@ -84,7 +80,7 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete all term map for annotation
+     * Delete all algo annotation for an annotation
      */
     def deleteAlgoAnnotationTermFromAllUser(AnnotationDomain annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
@@ -98,7 +94,7 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete all term map by user for term
+     * Delete all algo annotation for a term
      */
     def deleteAlgoAnnotationTermFromAllUser(Term term, User currentUser,Transaction transaction) {
         //Delete all annotation term
@@ -112,58 +108,51 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(AlgoAnnotationTerm.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(AlgoAnnotationTerm domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.term?.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(AlgoAnnotationTerm.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(AlgoAnnotationTerm domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Delete", domain.getCallBack())
         //Delete object
         domainService.deleteDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new AlgoAnnotationTerm(), json), printMessage)
-    }
-
-    def edit(AlgoAnnotationTerm domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        domainService.saveDomain(domain)
         return response
     }
 
@@ -191,15 +180,19 @@ class AlgoAnnotationTermService extends ModelService {
         return domain
     }
 
+    /**
+     * Compute Success rate AVG for all algo annotation term of userJob
+     */
      double computeAVG(def userJob) {
-        log.info "userJob="+userJob
-        log.info "userJob.id="+userJob.id
+        log.info "userJob="+userJob?.id
 
         def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("expectedTerm")
         }
-         if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
+         if(nbTermTotal==0) {
+             throw new Exception("UserJob has no algo-annotation-term!")
+         }
 
          def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
              eq("userJob", userJob)
@@ -207,38 +200,41 @@ class AlgoAnnotationTermService extends ModelService {
              isNotNull("expectedTerm")
              eqProperty("term", "expectedTerm")
          }
-         log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
         return (double) (nbTermCorrect / nbTermTotal)
     }
 
+    /**
+     * Compute Success rate AVG for all algo annotation term of userJob and a term
+     */
     double computeAVG(def userJob, Term term) {
-       log.info "userJob="+userJob
-       log.info "userJob.id="+userJob.id
-       def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
 
        def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
            eq("userJob", userJob)
            eq("expectedTerm",term)
        }
-        if(nbTermTotal==0) throw new Exception("UserJob has no algo-annotation-term!")
+        if(nbTermTotal==0) {
+            throw new Exception("UserJob has no algo-annotation-term!")
+        }
 
+        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
            eq("userJob", userJob)
            eq("expectedTerm",term)
            eqProperty("term", "expectedTerm")
-       }
-        log.info "nbTermNotCorrect="+nbTermCorrect +" nbTermTotal="+nbTermTotal
+        }
        return (double) (nbTermCorrect / nbTermTotal)
    }
 
+    /**
+     * Compute suceess rate AVG per term for a userjob
+     * if AVG success for Term x = 90% && Term y = 20%,
+     * Return will be ((90+20)/2)%
+     */
     double computeAVGAveragePerClass(def userJob) {
-
         def terms = userJob.job.project.ontology.terms()
-
         double total = 0
         int nbTermNotEmpty = 0
 
         terms.each { term ->
-
             def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
                 eq("userJob", userJob)
                 eq("expectedTerm",term)
@@ -253,8 +249,6 @@ class AlgoAnnotationTermService extends ModelService {
                 total = total + (double)(nbTermCorrect/nbTermTotal)
                 nbTermNotEmpty++
             }
-
-
         }
         double avg = 0
         if(nbTermNotEmpty!=0)
@@ -262,6 +256,9 @@ class AlgoAnnotationTermService extends ModelService {
         return avg
    }
 
+    /**
+     * Compute full Confusion Matrix for all terms from projectTerms and all algo annotation term from userJob
+     */
      ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
         Collections.sort(projectTerms);
         def projectTermsId = projectTerms.collect {it.id + ""}
@@ -274,31 +271,33 @@ class AlgoAnnotationTermService extends ModelService {
         return matrix
     }
 
-
-
-    long computeSumOfValue(SortedSet<Entry<Long, Integer>> mapSorted) {
-        long sum = 0
-        mapSorted.each { entry ->
-            sum = sum + entry.value
-        }
-        return sum
-    }
-
+    /**
+     * Get AlgoAnnotationTerm prediction success AVG evolution for all userJobs and a project
+     * For each userJobs, map its date with the success rate of its result
+     */
     def listAVGEvolution(List<UserJob> userJobs, Project project) {
         listAVGEvolution(userJobs,project,null)
     }
+
+    /**
+     * Get AlgoAnnotationTerm prediction success AVG evolution for all userJobs for a specific term
+     * For each userJobs, map its date with the success rate of its result
+     * if term is null, compute success rate for all term
+     */
     def listAVGEvolution(List<UserJob> userJobs, Project project, Term term) {
-        if(userJobs.isEmpty()) return null
+
+        if(userJobs.isEmpty()) {
+            return null
+        }
 
         def data = []
         int count = 0;
         def annotations = null;
-        //List<Annotation> annotations = Annotation.findAllByProject(project,[sort:'created', order:"desc"])
+
         if(!term) {
             annotations = UserAnnotation.executeQuery("select a.created from UserAnnotation a where a.project = ?  order by a.created desc", [project])
         }
         else {
-            log.info "Search on term " + term.name
             annotations = UserAnnotation.executeQuery("select b.created from UserAnnotation b where b.project = ? and b.id in (select x.userAnnotation.id from AnnotationTerm x where x.term = ?)  order by b.created desc", [project,term])
         }
         userJobs.each {
@@ -335,7 +334,4 @@ class AlgoAnnotationTermService extends ModelService {
         }
         return data
     }
-
-
-
 }

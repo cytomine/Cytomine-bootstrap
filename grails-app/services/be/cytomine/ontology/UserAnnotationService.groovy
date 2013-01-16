@@ -309,6 +309,7 @@ class UserAnnotationService extends ModelService {
 
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
+
         SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
         try {

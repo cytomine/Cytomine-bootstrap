@@ -119,6 +119,7 @@ class UserGroupService extends ModelService {
                 throw new InvalidRequestException(userGroup.retrieveErrors().toString())
            }
        }
+        log.info "userGroup=$userGroup"
        userGroup
    }
 

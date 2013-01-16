@@ -130,6 +130,21 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(404, result.code)
         json = JSON.parse(result.data)
     }
+
+    void testListAlgoAnnotationByProjectAndTermAndUserWithAllProjectImage() {
+        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
+        def result = AlgoAnnotationAPI.listByProjectAndTerm(
+                annotationTerm.retrieveAnnotationDomain().project.id,
+                annotationTerm.term.id,
+                ImageInstance.findAllByProject(annotationTerm.retrieveAnnotationDomain().project),
+                annotationTerm.retrieveAnnotationDomain().user.id,
+                Infos.GOODLOGIN,
+                Infos.GOODPASSWORD
+        )
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+    }
     
     void testListAlgoAnnotationByProjectAndTermWithUserNullWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()

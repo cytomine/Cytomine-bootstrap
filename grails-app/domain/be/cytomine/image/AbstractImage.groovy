@@ -146,6 +146,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     def getImageServers() {
+        println "### not mocking method"
         if (this.storageAbstractImages != null && this.storageAbstractImages.size() > 0) {
 
             def imageServers = ImageServer.createCriteria().list {

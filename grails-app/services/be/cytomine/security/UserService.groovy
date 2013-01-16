@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
+import org.springframework.security.acls.model.Permission
+import org.springframework.transaction.annotation.Transactional
 
 class UserService extends ModelService {
 
@@ -28,8 +30,43 @@ class UserService extends ModelService {
     def commandService
     def domainService
     def userGroupService
-    def projectService
     def securityService
+    def aclService
+    def aclUtilService
+    def aclPermissionFactory
+
+
+    //TODO:: these call MUST BE DONE FROM CONTROLLER
+    void addPermission(Project project, String username, int permission) {
+        log.info "##### Add Permission 1: " +  permission + " for " + username + " to " + project?.name
+        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
+    }
+
+    //TODO:: these call MUST BE DONE FROM CONTROLLER
+    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
+    synchronized void addPermission(Project project, String username, Permission permission) {
+        log.info "##### Add Permission 2: " +  permission.toString() + " for " + username + " to " + project?.name
+        aclUtilService.addPermission(project, username, permission)
+        log.info "#####  Permission added"
+    }
+
+    //TODO:: these call MUST BE DONE FROM CONTROLLER
+    @Transactional
+    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    void deletePermission(Project project, SecUser user, Permission permission) {
+        def acl = aclUtilService.readAcl(project)
+
+        // Remove all permissions associated with this particular recipient
+        acl.entries.eachWithIndex { entry, i ->
+            log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()
+            if (entry.sid.getPrincipal().equals(user.username) && entry.permission.equals(permission)) {
+                log.debug "REMOVE PERMISSION FOR"
+                acl.deleteAce(i)
+            }
+        }
+
+        aclService.updateAcl(acl)
+    }
 
 
     def get(def id) {
@@ -228,10 +265,12 @@ class UserService extends ModelService {
             if (project) {
                 log.debug "addUserFromProject project=" + project + " username=" + user.username + " ADMIN=" + admin
                 if(admin) {
-                    projectService.addPermission(project,user.username,ADMINISTRATION)
+                    //TODO:: these call MUST BE DONE FROM CONTROLLER
+                    addPermission(project,user.username,ADMINISTRATION)
                 }
                 else {
-                    projectService.addPermission(project,user.username,READ)
+                    //TODO:: these call MUST BE DONE FROM CONTROLLER
+                    addPermission(project,user.username,READ)
                     //projectService.addPermission(project,user.username,WRITE)
                 }
             }
@@ -242,9 +281,11 @@ class UserService extends ModelService {
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
                 log.debug "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
-                if(admin) projectService.deletePermission(project,user,ADMINISTRATION)
+                //TODO:: these call MUST BE DONE FROM CONTROLLER
+                if(admin) deletePermission(project,user,ADMINISTRATION)
                 else {
-                    projectService.deletePermission(project,user,READ)
+                    //TODO:: these call MUST BE DONE FROM CONTROLLER
+                    deletePermission(project,user,READ)
                     //projectService.deletePermission(project,user.username,WRITE)
                 }
             }

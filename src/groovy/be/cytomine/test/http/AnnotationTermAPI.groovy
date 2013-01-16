@@ -18,6 +18,11 @@ class AnnotationTermAPI extends DomainAPI {
 
     private static final log = LogFactory.getLog(this)
 
+    static def listAnnotationTerm(Long idAnnotation,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term.json"
+        return doGET(URL, username, password)
+    }
+
     static def showAnnotationTerm(Long idAnnotation,Long idTerm, Long idUser,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
         return doGET(URL, username, password)
@@ -60,18 +65,4 @@ class AnnotationTermAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
-    static def showAlgoAnnotationTerm(Long idAnnotation,Long idTerm, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
-        return doGET(URL,username,password)
-    }
-
-    static def createAlgoAnnotationTerm(String jsonAnnotationTerm, String username, String password) {
-        def json = JSON.parse(jsonAnnotationTerm);
-        String URL = Infos.CYTOMINEURL+"api/annotation/"+ json.userannotation +"/term/"+ json.term +".json"
-        def result = doPOST(URL,jsonAnnotationTerm,username,password)
-        json = JSON.parse(result.data)
-        int idAlgoAnnotationTerm
-        try {idAlgoAnnotationTerm= json?.algoannotationterm?.id } catch(Exception e) {log.error e}
-        return [data: AnnotationTerm.get(idAlgoAnnotationTerm), code: result.code]
-    }
 }

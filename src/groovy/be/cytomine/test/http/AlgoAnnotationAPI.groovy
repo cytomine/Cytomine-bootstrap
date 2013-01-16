@@ -68,8 +68,13 @@ class AlgoAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByProjectAndTerm(Long idProject, Long idTerm,List<ImageInstance> images,Long idUser,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser+"&offset=0&max=5&images=${images.collect{it.id}.join(",")}"
+        return doGET(URL, username, password)
+    }
+
     static def listByProjectAndTerm(Long idProject, Long idTerm,Long idImage, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser+"&offset=0&max=5"
+        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser+"&offset=0&max=5&images=${idImage}"
         return doGET(URL, username, password)
     }
 

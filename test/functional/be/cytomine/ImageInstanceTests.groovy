@@ -19,13 +19,39 @@ import be.cytomine.utils.UpdateData
  */
 class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
 
-    void testListImagesInstanceByProjectWithCredential() {
+    void testListImagesInstanceByProject() {
         BasicInstance.createOrGetBasicImageInstance()
         def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
+
+        result = ImageInstanceAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
     }
+
+
+    void testListImagesInstanceByProjectWithBorder() {
+        BasicInstance.createOrGetBasicImageInstance()
+        def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+
+    void testListImagesInstanceWithTreeStructure() {
+        BasicInstance.createOrGetBasicImageInstance()
+        def result = ImageInstanceAPI.listByProjectTree(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+    }
+
+
+    static def listByProjectTree(Long id, Long inf, Long sup,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json?tree=true"
+        return doGET(URL, username, password)
+    }
+
 
     void testGetImageInstanceWithCredential() {
         def result = ImageInstanceAPI.show(BasicInstance.createOrGetBasicImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -82,7 +108,7 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         updateImage.project = -99
         jsonImage = updateImage.encodeAsJSON()
         def result = ImageInstanceAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(404, result.code)
     }
 
     void testEditImageInstance() {

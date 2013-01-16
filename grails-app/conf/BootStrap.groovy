@@ -65,6 +65,17 @@ class BootStrap {
 
     def init = { servletContext ->
 
+
+//        println "TEST***************************************"
+//        def test = UserAnnotation.createCriteria().list {
+//            inList("image.id", [])
+//        }
+//        println test
+//        println "***************************************"
+
+
+
+
         //Register API Authentifier
         log.info "Current directory2="+new File( 'test.html' ).absolutePath
 
@@ -202,49 +213,12 @@ class BootStrap {
 
         createStorage(BootStrapData.storages)
         createImageFilters(BootStrapData.imageFiltersSamples)
-        //createGroups(BootStrapData.groupsSamples)
         createUsers(BootStrapData.usersSamples)
         createScanners(BootStrapData.scannersSamples)
         createMimes(BootStrapData.mimeSamples)
         createImageServers(BootStrapData.imageServerSamples)
         createRetrievalServers(BootStrapData.retrievalServerSamples)
-
-        /* Slides */
-        if (env != BootStrap.test && env != BootStrap.perf) {
-            createOntology(BootStrapData.ontologySamples)
-            createProjects(BootStrapData.projectSamples)
-            createSoftware(BootStrapData.softwareSamples)
-            createDiscipline(BootStrapData.disciplineSamples)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathASP_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisEBUS_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathFrottisPAPA_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathLBACB_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathLBADQ_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathLBApapa_DATA)
-            createSlidesAndAbstractImages(ImageData.ULBAnapathTPP_DATA)
-            createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO13_DATA)
-            createSlidesAndAbstractImages(ImageData3.ULGTESTPHILIPS_DATA)
-            createSlidesAndAbstractImages(ImageData3.ULGLBTDNEO04_DATA)
-            createSlidesAndAbstractImages(ImageData3.ULGLBTDLBA_DATA)
-            createSlidesAndAbstractImages(ImageData4.ULGBMGGZEBRACTL_DATA)
-            createSlidesAndAbstractImages(ImageData4.BOTA)
-        }
-
-        if (env == BootStrap.production) {
-            createSlidesAndAbstractImages(ImageData2.CELLSOLUTIONSBESTCYTECERVIX_DATA)
-            createSlidesAndAbstractImages(ImageData5.CELLSOLUTIONSBESTCYTECERVIX_DATA)
-        }
-
-        if (env != BootStrap.test && env != BootStrap.perf) {
-            createTerms(BootStrapData.termSamples)
-            createRelation(BootStrapData.relationSamples)
-            createRelationTerm(BootStrapData.relationTermSamples)
-            createAnnotations(BootStrapData.annotationSamples)
-        }
-
-        if(env == BootStrap.test) {
-            createRelation(BootStrapData.relationSamples)
-        }
+        createRelation(BootStrapData.relationSamples)
     }
 
 

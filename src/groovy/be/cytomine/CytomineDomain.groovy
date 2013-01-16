@@ -9,6 +9,8 @@ import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import static org.springframework.security.acls.domain.BasePermission.*
 
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.security.User
+import be.cytomine.Exception.ObjectNotFoundException
 
 /**
  * CytomineDomain is the parent class for all domain.
@@ -19,6 +21,7 @@ abstract class CytomineDomain  implements Comparable{
     def springSecurityService
     def cytomineService
     def sequenceService
+    def securityService
 
     static def grailsApplication
     Long id
@@ -85,10 +88,16 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
-    void checkReadPermission() {
-        if(!hasPermission("READ") && !cytomineService.currentUser.admin) {
-             throw new ForbiddenException("You cannot access this resource");
+    boolean checkProjectAccess(def id) {
+        def project = Project.read(id)
+        if(!project) {
+            throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")
         }
+        return project.checkReadPermission()
+    }
+
+    boolean checkReadPermission() {
+        return hasPermission("READ") || cytomineService.currentUser.admin
     }
 
     /**
@@ -158,6 +167,21 @@ abstract class CytomineDomain  implements Comparable{
             e.printStackTrace()
         }
         return false
+    }
+
+    /**
+     * Check if current user is the object creator
+     */
+    boolean isCurrentUserCreator() {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def creator = retrieveCreator()
+        return creator && creator.id==currentUser.id
+    }
+
+    User retrieveCreator() {
+        List<User> users = SecUser.executeQuery("select secUser from AclObjectIdentity as aclObjectId, AclSid as aclSid, SecUser as secUser where aclObjectId.objectId = "+this.id+" and aclObjectId.owner = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
+        User user = users.isEmpty() ? null : users.first()
+        return user
     }
 
 

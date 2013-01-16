@@ -22,10 +22,15 @@ import org.hibernate.FetchMode
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.utils.GeometryUtils
+import groovy.sql.Sql
 
 class AlgoAnnotationService extends ModelService {
 
     static transactional = true
+
+    boolean saveOnUndoRedoStack = true
+
     def cytomineService
     def transactionService
     def annotationTermService
@@ -35,8 +40,24 @@ class AlgoAnnotationService extends ModelService {
     def domainService
     def securityService
     def simplifyGeometryService
+    def dataSource
 
-    boolean saveOnUndoRedoStack = true
+
+    AlgoAnnotation get(def id) {
+        def annotation = AlgoAnnotation.get(id)
+        if(annotation) {
+            annotation.project.checkReadPermission()
+        }
+        annotation
+    }
+
+    AlgoAnnotation read(def id) {
+        def annotation = AlgoAnnotation.read(id)
+        if(annotation) {
+            annotation.project.checkReadPermission()
+        }
+        annotation
+    }
 
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
@@ -58,68 +79,100 @@ class AlgoAnnotationService extends ModelService {
         return algoAnnotations
     }
 
-    @PreAuthorize("#job.hasPermission(#job.project,'READ') or hasRole('ROLE_ADMIN')")
-    def count(Job job) {
-        List<UserJob> user = UserJob.findAllByJob(job);
-        long total = 0
-        user.each {
-            total = total + AlgoAnnotation.countByUser(it)
-        }
-        return total
-    }
-
-
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
         return AlgoAnnotation.findAllByImageAndUser(image, user)
     }
 
+    /**
+     * List annotation created by algorithm
+     * @param image Image filter
+     * @param user User Job that created annotation filter
+     * @param bbox Boundary area filter
+     * @param notReviewedOnly Flag to get only annotation that are not reviewed
+     * @return Algo Annotation list
+     */
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
-        String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
+        Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
-        if(!notReviewedOnly) {
-            AlgoAnnotation.createCriteria()
-                    .add(Restrictions.eq("user", user))
-                    .add(Restrictions.eq("image", image))
-                    .add(SpatialRestrictions.within("location",boundingbox))
-                    .list()
+        //we use SQL request (not hibernate) to speedup time request
+        String request
+
+        if (!notReviewedOnly) {
+            request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
+                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
+                    " WHERE annotation.image_id = $image.id\n" +
+                    " AND annotation.user_id= $user.id\n" +
+                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " ORDER BY annotation.id "
+
         } else {
-            AlgoAnnotation.createCriteria()
-                    .add(Restrictions.eq("user", user))
-                    .add(Restrictions.eq("image", image))
-                    .add(Restrictions.eq("countReviewedAnnotations", 0))
-                    .add(SpatialRestrictions.within("location",boundingbox))
-                    .list()
+            //show only annotation that are not reviewed (use in review mode)
+            request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
+                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
+                    " WHERE annotation.image_id = $image.id\n" +
+                    " AND annotation.user_id= $user.id\n" +
+                    " AND annotation.count_reviewed_annotations = 0 " +
+                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                    " ORDER BY annotation.id "
         }
 
+        def sql = new Sql(dataSource)
 
-    }
+        def data = []
 
-    AlgoAnnotation get(def id) {
-        AlgoAnnotation.get(id)
-    }
+        /*
+        Request result will come like this if an annotation ahs multiple term;
+        -annotation A - Term 1
+        -annotation B - Term 1
+        -annotation B - Term 2
+        ...
+        So during the sql result loop, we will group term by annotation like this:
+        -annotation A - Term 1
+        -annotation B - Term 1 & Term 2
+        */
 
-    AlgoAnnotation read(def id) {
-        AlgoAnnotation.read(id)
+        long lastAnnotationId = -1
+
+        sql.eachRow(request) {
+
+            long idAnnotation = it[0]
+            String location = it[1]
+            def idTerm = it[2]
+
+            if (idAnnotation != lastAnnotationId) {
+                //if its a new annotation, create a new data line
+                data << [id: idAnnotation, location: location, term: idTerm ? [idTerm] : []]
+            } else {
+                //annotation id is the same as the previous iteration, so, just add term
+                if (idTerm)
+                    data.last().term.add(idTerm)
+            }
+            lastAnnotationId = idAnnotation
+        }
+        data
     }
 
     /**
-     * List all algoAnnotation
+     * List Annotation created by algorithm
+     * @param project Annotation project
+     * @param userList Annotation user job
+     * @param imageInstanceList Annotation image
+     * @param noTerm Flag to get only annotation with no term
+     * @param multipleTerm Flag to get only annotation with many terms
+     * @return Algo annotation list
      */
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
         log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
-        if (userList.isEmpty()) return []
-        if (imageInstanceList.isEmpty()) return []
-        else if (multipleTerm) {
+        if (userList.isEmpty()) {
+            return []
+        } else if (imageInstanceList.isEmpty()) {
+            return []
+        } else if (multipleTerm) {
             log.info "multipleTerm"
+            //TODO: could be improve with a single SQL Request
             //get all algoannotationterm where annotation id is twice
 
             def data = []
@@ -133,16 +186,16 @@ class AlgoAnnotationService extends ModelService {
                     countDistinct("term")
                     countDistinct('created', 'createdSort')
                 }
-                order('createdSort','desc')
+                order('createdSort', 'desc')
             }
             annotationsWithTerms.each {
                 String id = it[0]
                 String className = it[1]
-                Long termNumber = (Long)it[2]
+                Long termNumber = (Long) it[2]
 
-                if(termNumber>1) {
-                    AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id,className)
-                    if(imageInstanceList.contains(annotation.image.id)) {
+                if (termNumber > 1) {
+                    AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id, className)
+                    if (imageInstanceList.contains(annotation.image.id)) {
                         data << annotation
                     }
                 }
@@ -151,7 +204,7 @@ class AlgoAnnotationService extends ModelService {
         }
         else if (noTerm) {
             log.info "noTerm"
-
+             //TODO: could be improve with a single SQL Request
             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
                 eq("project", project)
                 inList("userJob.id", userList)
@@ -160,7 +213,7 @@ class AlgoAnnotationService extends ModelService {
                 }
             }
 
-            println "annotationsWithTerms="+annotationsWithTerms
+            println "annotationsWithTerms=" + annotationsWithTerms
 
             //annotationsWithTerms = annotationsWithTerms.collect{it[0]}
 
@@ -220,34 +273,49 @@ class AlgoAnnotationService extends ModelService {
         }
     }
 
-
+    /**
+     * List all annotation created by algo
+     * @param project Annotation project
+     * @param term Term map with this algo annotation from at least an AlgoAnnotationTerm from the same AlgoAnnotation user
+     * @param userList Annotation user job
+     * @param imageInstanceList Annotation Imageinstance
+     * @return Algo Annotation List
+     */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-         if (userList.isEmpty()) return []
-         if (imageInstanceList.isEmpty()) return []
-         if (imageInstanceList.size() == project.countImages) {
-             //TODO:: May be speedup without using hibernate (direct SQL request)
-             List annotationsUsers = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
+        if (userList.isEmpty()) {
+            return []
+        } else if (imageInstanceList.isEmpty()) {
+            return []
+        } else if (imageInstanceList.size() == project.countImages) {
+            //Get all images
+            //TODO:: May be speedup without using hibernate (direct SQL request)
+            List annotationsUsers = AlgoAnnotation.executeQuery(
+                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList])
 
-             List annotationsAlgo = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList])
+            List annotationsAlgo = AlgoAnnotation.executeQuery(
+                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList])
 
-             annotationsUsers.addAll(annotationsAlgo)
-             return annotationsUsers
-         } else {
+            annotationsUsers.addAll(annotationsAlgo)
+            return annotationsUsers
+        } else {
 
-             List annotationsUsers = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+            List annotationsUsers = AlgoAnnotation.executeQuery(
+                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList, imageInstanceList: imageInstanceList])
 
-             List annotationsAlgo = AlgoAnnotation.executeQuery(
-                     "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc",[project:project,term:term,userList:userList,imageInstanceList:imageInstanceList])
+            List annotationsAlgo = AlgoAnnotation.executeQuery(
+                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList, imageInstanceList: imageInstanceList])
 
-             annotationsUsers.addAll(annotationsAlgo)
-             return annotationsUsers
-         }
-     }
+            annotationsUsers.addAll(annotationsAlgo)
+            return annotationsUsers
+        }
+    }
 
-
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json) {
 
@@ -279,6 +347,12 @@ class AlgoAnnotationService extends ModelService {
         }
     }
 
+    /**
+     * Update this domain with new data from json
+     * @param domain Domain to update
+     * @param json JSON with new data
+     * @return  Response structure (new domain data, old domain data..)
+     */
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def update(def domain, def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -296,6 +370,12 @@ class AlgoAnnotationService extends ModelService {
         return result
     }
 
+    /**
+     * Delete domain in argument
+     * @param domain Domain to delete
+     * @param json JSON that was passed in request parameter
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
     def delete(def domain, def json) {
 
@@ -304,8 +384,8 @@ class AlgoAnnotationService extends ModelService {
         //Start transaction
         Transaction transaction = transactionService.start()
 
-        //Delete annotation (+cascade)
-        def result = deleteAnnotation(json.id, currentUser, transaction)
+        //Delete annotation (+cascade) and print message in client
+        def result = deleteAnnotation(AlgoAnnotation.read(json.id), currentUser, true, transaction)
 
         //Stop transaction
         transactionService.stop()
@@ -315,15 +395,19 @@ class AlgoAnnotationService extends ModelService {
         return result
     }
 
-
-    def deleteAnnotation(Long idAnnotation, SecUser currentUser, Transaction transaction) {
-        return deleteAnnotation(idAnnotation, currentUser, true, transaction)
-    }
-
+    /**
+     * Delete algo annotation
+     * This method may delete DATA link with this annotation (AlgoAnnotationTerm,...)
+     * The printMessage flag will tell client to show/hide feeback message.
+     * @param annotation Annotation to delete
+     * @param currentUser User that will delete annotation
+     * @param printMessage Flat to tell client to print or not message
+     * @param transaction Transaction that will packed the delete command
+     * @return Command result
+     */
     def deleteAnnotation(AnnotationDomain annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-
         if (annotation) {
-           //TODO:: delete all domain that reference the deleted domain
+            //TODO:: delete all domain that reference the deleted domain
         }
         //Delete annotation
         def json = JSON.parse("{id: $annotation.id}")
@@ -331,22 +415,23 @@ class AlgoAnnotationService extends ModelService {
         return result
     }
 
-    def deleteAnnotation(Long idAnnotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-        log.info "Delete algoannotation: " + idAnnotation
-        AlgoAnnotation annotation = AlgoAnnotation.read(idAnnotation)
-        return deleteAnnotation(annotation, currentUser, printMessage, transaction)
-    }
-
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(AlgoAnnotation.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(AlgoAnnotation domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
@@ -359,17 +444,24 @@ class AlgoAnnotationService extends ModelService {
 
         return response
     }
+
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(AlgoAnnotation.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(AlgoAnnotation domain, boolean printMessage) {
         //Build response message
         log.info "destroy remove " + domain.id
@@ -385,16 +477,22 @@ class AlgoAnnotationService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new AlgoAnnotation(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(AlgoAnnotation domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
@@ -427,5 +525,4 @@ class AlgoAnnotationService extends ModelService {
         if (!annotation) throw new ObjectNotFoundException("AlgoAnnotation " + json.id + " not found")
         return annotation
     }
-
 }

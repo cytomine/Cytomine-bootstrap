@@ -3,6 +3,8 @@ package be.cytomine
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.project.Project
+import be.cytomine.Exception.ObjectNotFoundException
 
 abstract class ModelService {
 
@@ -13,12 +15,6 @@ abstract class ModelService {
     def cytomineService
     def grailsApplication
     boolean saveOnUndoRedoStack
-
-    abstract def add(def json)
-
-    abstract def update(def domain,def json)
-
-    abstract def delete(def domain,def json)
 
 //
 //    abstract def create(JSONObject json, boolean printMessage)

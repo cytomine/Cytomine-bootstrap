@@ -181,73 +181,12 @@ class RestAlgoAnnotationController extends RestController {
         boolean notReviewedOnly = params.getBoolean("notreviewed")
 
         if (image && user && bbox) {
-
-            Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
-
-            //we use SQL request (not hibernate) to speedup time request
-            String request
-
-            if (!notReviewedOnly) {
-                request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
-                        " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
-                        " WHERE annotation.image_id = $image.id\n" +
-                        " AND annotation.user_id= $user.id\n" +
-                        " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                        " ORDER BY annotation.id "
-
-            } else {
-                //show only annotation that are not reviewed (use in review mode)
-                request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
-                        " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
-                        " WHERE annotation.image_id = $image.id\n" +
-                        " AND annotation.user_id= $user.id\n" +
-                        " AND annotation.count_reviewed_annotations = 0 " +
-                        " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                        " ORDER BY annotation.id "
-            }
-
-            def sql = new Sql(dataSource)
-
-            def data = []
-
-            /*
-             Request result will come like this if an annotation ahs multiple term;
-             -annotation A - Term 1
-             -annotation B - Term 1
-             -annotation B - Term 2
-             ...
-             So during the sql result loop, we will group term by annotation like this:
-             -annotation A - Term 1
-             -annotation B - Term 1 & Term 2
-             */
-
-            long lastAnnotationId = -1
-
-            sql.eachRow(request) {
-
-                long idAnnotation = it[0]
-                String location = it[1]
-                def idTerm = it[2]
-
-                if (idAnnotation != lastAnnotationId) {
-                    //if its a new annotation, create a new data line
-                    data << [id: idAnnotation, location: location, term: idTerm ? [idTerm] : []]
-                } else {
-                    //annotation id is the same as the previous iteration, so, just add term
-                    if (idTerm)
-                        data.last().term.add(idTerm)
-                }
-                lastAnnotationId = idAnnotation
-            }
-            responseSuccess(data)
-        }
-        else if (image && user) {
+            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly))
+        } else if (image && user) {
             responseSuccess(algoAnnotationService.list(image, user))
-        }
-        else if (!user) {
+        } else if (!user) {
             responseNotFound("User", params.idUser)
-        }
-        else if (!image) {
+        } else if (!image) {
             responseNotFound("Image", params.idImage)
         }
     }

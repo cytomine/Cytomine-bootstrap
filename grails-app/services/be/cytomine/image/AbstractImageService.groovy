@@ -16,7 +16,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
-import grails.plugins.springsecurity.Secured
+import org.springframework.security.access.annotation.Secured
+
 
 class AbstractImageService extends ModelService {
 
@@ -129,6 +130,11 @@ class AbstractImageService extends ModelService {
 
 
     //TODO:: how to manage security here?
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @return Response structure (created domain data,..)
+     */
     def add(def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -149,6 +155,12 @@ class AbstractImageService extends ModelService {
     }
 
     //TODO:: how to manage security here?
+    /**
+     * Update this domain with new data from json
+     * @param domain Domain to update
+     * @param json JSON with new data
+     * @return  Response structure (new domain data, old domain data..)
+     */
     def update(def domain,def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -167,6 +179,12 @@ class AbstractImageService extends ModelService {
     }
 
     //TODO:: how to manage security here?
+    /**
+     * Delete domain in argument
+     * @param domain Domain to delete
+     * @param json JSON that was passed in request parameter
+     * @return Response structure (created domain data,..)
+     */
     def delete(def domain,def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -344,16 +362,22 @@ class AbstractImageService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new AbstractImage(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(AbstractImage domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Edit", domain.getCallBack())

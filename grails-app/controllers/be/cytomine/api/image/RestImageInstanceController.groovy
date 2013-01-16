@@ -80,14 +80,10 @@ class RestImageInstanceController extends RestController {
         }
     }
 
+
     def add = {
         try {
-            def json = request.JSON
-            if(!json.project || !Project.read(json.project)) {
-                throw new WrongArgumentException("Image Instance must have a valide project:"+json.project)
-            }
-            imageInstanceService.checkAuthorization(Long.parseLong(json.project.toString()), new Project())
-            responseResult(imageInstanceService.add(json))
+            responseResult(imageInstanceService.add(request.JSON, new Project()))
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
@@ -98,34 +94,44 @@ class RestImageInstanceController extends RestController {
     }
 
     def update = {
-        def json = request.JSON
-        try {
-            def domain = imageInstanceService.retrieve(json)
-            imageInstanceService.checkAuthorization(domain?.project)
-            def result = imageInstanceService.update(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
+        update(imageInstanceService, request.JSON)
     }
 
     def delete = {
-        def json = JSON.parse("{id : $params.id}")
-        try {
-            println "####### 1"
-            def domain = imageInstanceService.retrieve(json)
-            println "####### 2"
-            def result = imageInstanceService.delete(domain,json)
-            responseResult(result)
-        } catch (CytomineException e) {
-            println "####### 3"
-            log.error(e)
-            println "*****"
-            response([success: false, errors: e.msg], e.code)
-            println "*****"
-        }
+        delete(imageInstanceService, JSON.parse("{id : $params.id}"))
     }
+
+
+
+//    def update = {
+//        def json = request.JSON
+//        try {
+//            def domain = imageInstanceService.retrieve(json)
+//            imageInstanceService.checkAuthorization(domain?.project)
+//            def result = imageInstanceService.update(domain,json)
+//            responseResult(result)
+//        } catch (CytomineException e) {
+//            log.error(e)
+//            response([success: false, errors: e.msg], e.code)
+//        }
+//    }
+//
+//    def delete = {
+//        def json = JSON.parse("{id : $params.id}")
+//        try {
+//            println "####### 1"
+//            def domain = imageInstanceService.retrieve(json)
+//            println "####### 2"
+//            def result = imageInstanceService.delete(domain,json)
+//            responseResult(result)
+//        } catch (CytomineException e) {
+//            println "####### 3"
+//            log.error(e)
+//            println "*****"
+//            response([success: false, errors: e.msg], e.code)
+//            println "*****"
+//        }
+//    }
 
     def window = {
         //TODO:: document this method

@@ -137,9 +137,10 @@ class RestAnnotationTermController extends RestController {
                 //TODO:: won't work if we add an annotation term to a algoannotation
                 AnnotationDomain annotation = AlgoAnnotation.read(json.annotationIdent)
                 if(!annotation) annotation = UserAnnotation.read(json.annotationIdent)
-                if(!json.annotationIdent || !annotation) throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotationIdent)
-                annotationTermService.checkAuthorization(annotation.project.id,new Project())
-                def result = algoAnnotationTermService.add(json)
+                if(!json.annotationIdent || !annotation) {
+                    throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotationIdent)
+                }
+                def result = algoAnnotationTermService.add(json, annotation.project)
                 responseResult(result)
             }
         } catch (CytomineException e) {
@@ -149,7 +150,9 @@ class RestAnnotationTermController extends RestController {
     }
 
     def delete = {
-        if(cytomineService.isUserAlgo()) throw new InvalidRequestException("A annotatation term from userJob cannot delete term")
+        if(cytomineService.isUserAlgo()) {
+            throw new InvalidRequestException("A annotatation term from userJob cannot delete term")
+        }
         def idUser = params.idUser!=null ? params.idUser : cytomineService.getCurrentUser().id
         def json = JSON.parse("{userannotation: $params.idannotation, term: $params.idterm, user: $idUser}")
         delete(annotationTermService, json)

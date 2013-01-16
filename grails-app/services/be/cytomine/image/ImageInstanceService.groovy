@@ -19,6 +19,9 @@ import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
 
+/**
+ * TODO:: refactor + doc!!!!!!!
+ */
 class ImageInstanceService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
@@ -88,18 +91,14 @@ class ImageInstanceService extends ModelService {
         return images
     }
 
-    void checkProjectAccess(def id) {
-        def project = Project.read(id)
-        if(!project) {
-            throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")
-        } else {
-            project.checkReadPermission()
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
-        checkProjectAccess(json.project)
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param domain A cytomineDomain (just use to call security check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#domain.checkProjectAccess(#json['project'])")
+    def add(def json, Project domain) {
         SecUser currentUser = cytomineService.getCurrentUser()
         log.info "current user = " + currentUser.username
         json.user = currentUser.id
@@ -108,16 +107,26 @@ class ImageInstanceService extends ModelService {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    /**
+     * Update this domain with new data from json
+     * @param domain Domain to update
+     * @param json JSON with new data
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    @PreAuthorize("#domain.checkProjectAccess(#domain.project.id)")
     def update(def domain,def json) {
-        checkProjectAccess(domain?.project?.id)
         SecUser currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    /**
+     * Delete domain in argument
+     * @param domain Domain to delete
+     * @param json JSON that was passed in request parameter
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#domain.checkProjectAccess(#domain.project.id)")
     def delete(def domain,def json) {
-        checkProjectAccess(domain?.project?.id)
 
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -127,6 +136,7 @@ class ImageInstanceService extends ModelService {
         if(imageInstance && imageInstance.reviewStart!=null)
             throw new ConstraintException("You cannot remove an image instance that is review or has been reviewed...")
 
+        //TODO: create a special method to delete all data recursively
         /* Delete social stuff */
         UserPosition.findAllByImage(imageInstance).each { userPosition ->
             userPosition.delete()

@@ -433,6 +433,8 @@ class BasicInstance {
         user.save(flush: true)
         assert user != null
 
+        Infos.addUserRight(user.user.username,annotation.project)
+
         def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotationIdent': annotation.id, 'term': term, 'userJob': user)
         assert algoannotationTerm == null
         algoannotationTerm = new AlgoAnnotationTerm(term:term,expectedTerm:term,userJob:user,rate:0)
