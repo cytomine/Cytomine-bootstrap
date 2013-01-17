@@ -19,12 +19,12 @@ class RetrievalAPI extends DomainAPI {
     private static final log = LogFactory.getLog(this)
 
     static def getResults(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/annotation/$id/retrieval.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$id/retrieval.json"
         return doGET(URL, username, password)
     }
 
     static def index(Long id, def json, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/annotation/$id/retrieval.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$id/retrieval.json"
         return doGET(URL, username, password)
     }
 }

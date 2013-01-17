@@ -108,6 +108,7 @@ class RestUploadedFileController extends RestController {
 
         //Convert and deploy
         backgroundService.execute("convertAndDeployImage", {
+
             boolean success = convertImagesService.convertUploadedFile(uploadedFile, currentUser)
             if (success) deployImagesService.deployUploadedFile(uploadedFile, currentUser)
         })

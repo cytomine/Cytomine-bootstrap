@@ -27,7 +27,6 @@ class RestRetrievalController extends RestController {
                 responseNotFound("AnnotationDomain",params.idannotation)
             } else {
                 def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
-               response.status = 200
                responseSuccess(data)
             }
         } catch (CytomineException e) {
