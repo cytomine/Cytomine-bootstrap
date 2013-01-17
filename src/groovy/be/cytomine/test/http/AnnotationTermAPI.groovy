@@ -24,7 +24,7 @@ class AnnotationTermAPI extends DomainAPI {
     }
 
     static def showAnnotationTerm(Long idAnnotation,Long idTerm, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm +"/user/"+idUser+".json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/" + idAnnotation + "/term/"+ idTerm + (idUser? "/user/"+idUser : "")+".json"
         return doGET(URL, username, password)
     }
 

@@ -101,6 +101,7 @@ class RestAnnotationTermController extends RestController {
         if (!term) responseNotFound("Term", params.idterm)
         else {
             if (params.idUser && SecUser.read(params.idUser)) {
+                //user is set, get a specific annotation-term link from user
                 if(!cytomineService.isUserAlgo()) {
                     def annoterm = annotationTermService.read(annotation, term, SecUser.read(params.idUser))
                     if (annoterm) responseSuccess(annoterm)
@@ -111,6 +112,7 @@ class RestAnnotationTermController extends RestController {
                     else responseNotFound("Algo Annotation Term", "Term", "Annotation", "User", params.idterm, params.idannotation, params.idUser)
                 }
             } else {
+                //user is not set, we will get the annotation-term from the user
                 if(!cytomineService.isUserAlgo()) {
                     def annoterm = annotationTermService.read(annotation, term, null)
                     if (annoterm) responseSuccess(annoterm)
@@ -130,9 +132,10 @@ class RestAnnotationTermController extends RestController {
         def json = request.JSON
         try {
             if(!cytomineService.isUserAlgo()) {
-                if(!json.userannotation || !UserAnnotation.read(json.userannotation)) throw new WrongArgumentException("AnnotationTerm must have a valide userannotation:"+json.userannotation)
-                annotationTermService.checkAuthorization(UserAnnotation.read(json.userannotation).project)
-                def result = annotationTermService.add(json,new SecurityCheck())
+                if(!json.userannotation || !UserAnnotation.read(json.userannotation)) {
+                    throw new WrongArgumentException("AnnotationTerm must have a valide userannotation:"+json.userannotation)
+                }
+                def result = annotationTermService.add(json,new SecurityCheck(UserAnnotation.read(json.userannotation)))
                 responseResult(result)
             } else {
                 //TODO:: won't work if we add an annotation term to a algoannotation

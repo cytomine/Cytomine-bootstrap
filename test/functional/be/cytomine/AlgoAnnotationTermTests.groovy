@@ -32,6 +32,15 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONObject
     }
 
+
+    void testGetAlgoAnnotationTerm() {
+        def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+        def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,null,annotationTermToAdd.userJob.username,"PasswordUserJob")
+        assertEquals(200,result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
+
     void testAddAlgoAnnotationTermCorrect() {
         def annotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist()
         UserJob currentUserJob = annotationTermToAdd.userJob

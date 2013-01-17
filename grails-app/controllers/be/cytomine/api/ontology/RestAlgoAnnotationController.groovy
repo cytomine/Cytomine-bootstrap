@@ -100,8 +100,6 @@ class RestAlgoAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
-        //TODO: remove this check?
-        algoAnnotationService.checkAuthorization(Long.parseLong(json.project.toString()), new UserAnnotation())
         def result = algoAnnotationService.add(json,new SecurityCheck())
         return result
     }

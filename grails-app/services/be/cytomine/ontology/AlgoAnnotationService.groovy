@@ -317,7 +317,7 @@ class AlgoAnnotationService extends ModelService {
      * @param json New domain data
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()

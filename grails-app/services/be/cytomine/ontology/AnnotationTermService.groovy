@@ -35,25 +35,21 @@ class AnnotationTermService extends ModelService {
         AnnotationTerm.findAllByUserAnnotationAndUserNotEqual(userAnnotation, user)
     }
 
-   @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
-   def list(ImageInstance image, Term term) {
-
-        def annotations = []
-       UserAnnotation.findAllByImage(image).each { userAnnotations ->
-           userAnnotations.annotationTerm.each { annotationTerm ->
-                if (annotationTerm.getTerm() == term) annotations << userAnnotations
-            }
-        }
-        annotations
-    }
-
     @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, SecUser user) {
-        if (user) AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
-        else AnnotationTerm.findWhere('userAnnotation.id':annotation.id, 'term':term)
+        if (user) {
+            AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
+        } else {
+            AnnotationTerm.findWhere('userAnnotation.id':annotation.id, 'term':term)
+        }
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
@@ -62,15 +58,22 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
-        def json = JSON.parse("{userannotation: $idUserAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
-        return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
-    }
-
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return deleteAnnotationTerm(json.userannotation, json.term, json.user,currentUser,null)
+    }
+
+
+    def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
+        def json = JSON.parse("{userannotation: $idUserAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
+        return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
