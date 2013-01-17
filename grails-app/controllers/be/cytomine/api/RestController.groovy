@@ -13,6 +13,9 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import be.cytomine.CytomineDomain
+import be.cytomine.project.Project
+import be.cytomine.SecurityCheck
 
 class RestController {
 
@@ -49,6 +52,9 @@ class RestController {
     }
 
 
+//    public Object update(def service, def json) {
+//        update(service,json,null)
+//    }
 
     /**
      * Call update function for this service with the json
@@ -58,8 +64,9 @@ class RestController {
      */
     public Object update(def service, def json) {
         try {
-            def domain = service.retrieve(json)
-            def result = service.update(domain, json)
+            println "UPDATE=$json"
+            def domain =  service.retrieve(json)
+            def result = service.update(json, new SecurityCheck(domain))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -76,7 +83,7 @@ class RestController {
     public Object delete(def service, def json) {
         try {
             def domain = service.retrieve(json)
-            def result = service.delete(domain, json)
+            def result = service.delete(json,new SecurityCheck(domain))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -91,7 +98,7 @@ class RestController {
      * @return response
      */
     public Object addOne(def service, def json) {
-        return service.add(json)
+        return service.add(json, new SecurityCheck())
     }
 
     /**

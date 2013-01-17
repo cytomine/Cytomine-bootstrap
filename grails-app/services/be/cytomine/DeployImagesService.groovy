@@ -9,6 +9,7 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.image.*
+import be.cytomine.project.Project
 
 class DeployImagesService {
 
@@ -64,7 +65,7 @@ class DeployImagesService {
             if (uploadedFile.getProject() != null) {
 
                 ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  uploadedFile.getProject(), user :currentUser)
-                imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
+                imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()), new SecurityCheck())
                 //imageInstance.save()
             }
 

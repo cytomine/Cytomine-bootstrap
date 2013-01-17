@@ -25,6 +25,7 @@ public abstract class CytomineException extends RuntimeException{
      * @param code Http code
      */
     public CytomineException(String msg, int code) {
+        System.out.println(msg);
         this.msg=msg;
         this.code = code;
     }

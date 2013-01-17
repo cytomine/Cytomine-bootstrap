@@ -3,6 +3,7 @@ package be.cytomine.processing.job
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import be.cytomine.SecurityCheck
 
 class ComputeTermAreaJobService extends AbstractJobService{
 
@@ -15,8 +16,8 @@ class ComputeTermAreaJobService extends AbstractJobService{
     def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()),new SecurityCheck())
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()),new SecurityCheck())
         //Execute Job
         log.info "Execute Job..."
     }

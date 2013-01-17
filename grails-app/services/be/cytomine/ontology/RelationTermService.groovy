@@ -9,6 +9,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class RelationTermService extends ModelService {
 
@@ -46,17 +47,17 @@ class RelationTermService extends ModelService {
 
 
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
-    def delete(def domain,def json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, null)
     }

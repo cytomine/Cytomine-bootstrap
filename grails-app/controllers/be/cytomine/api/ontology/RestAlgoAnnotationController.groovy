@@ -19,6 +19,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.text.SimpleDateFormat
+import be.cytomine.SecurityCheck
 
 /**
  * Controller that handle request on annotation created by software (job)
@@ -99,8 +100,9 @@ class RestAlgoAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
+        //TODO: remove this check?
         algoAnnotationService.checkAuthorization(Long.parseLong(json.project.toString()), new UserAnnotation())
-        def result = algoAnnotationService.add(json)
+        def result = algoAnnotationService.add(json,new SecurityCheck())
         return result
     }
 
@@ -113,7 +115,7 @@ class RestAlgoAnnotationController extends RestController {
             //get annotation from DB
             def domain = algoAnnotationService.retrieve(json)
             //update it thanks to JSON in request
-            def result = algoAnnotationService.update(domain, json)
+            def result = algoAnnotationService.update(json,new SecurityCheck(domain))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

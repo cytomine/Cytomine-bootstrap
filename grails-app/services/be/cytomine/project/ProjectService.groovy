@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 import be.cytomine.command.*
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.SecurityCheck
 
 class ProjectService extends ModelService {
 
@@ -86,7 +87,7 @@ class ProjectService extends ModelService {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         checkRetrievalConsistency(json)
         def response = executeCommand(new AddCommand(user: currentUser), json)
@@ -125,10 +126,10 @@ class ProjectService extends ModelService {
         if(retrievalAllOntology && !retrievalProjectEmpty) throw new WrongArgumentException("Retrieval cannot be set for all procects if some projects are selected")
     }
 
-    @PreAuthorize("#domain.hasPermission('WRITE') or hasRole('ROLE_ADMIN')")
-    def update(def domain, def json) {
-        println "hasPermission="+domain.hasPermission("READ")
-        println "hasPermission="+domain.hasPermission('WRITE')
+    @PreAuthorize("#security.checkProjectWrite() or hasRole('ROLE_ADMIN')")
+    def update(def json, SecurityCheck security) {
+//        println "hasPermission="+domain.hasPermission("READ")
+//        println "hasPermission="+domain.hasPermission('WRITE')
 //        throw new Exception()
 
         checkRetrievalConsistency(json)
@@ -168,10 +169,15 @@ class ProjectService extends ModelService {
         return response
     }
 
-    @PreAuthorize("#domain.hasPermission('DELETE') or hasRole('ROLE_ADMIN')")
-    def delete(def domain, def json) {
+    @PreAuthorize("#security.checkProjectDelete() or hasRole('ROLE_ADMIN')")
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        /*
+           linkProject must be false, special case because we delete project in this command
+           If this command will be linked with the deleted project, we will have an database error (foreign key)
+         */
+        DeleteCommand command = new DeleteCommand(user: currentUser, linkProject:false)
+        return executeCommand(command, json)
     }
 
     /**

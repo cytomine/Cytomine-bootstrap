@@ -6,6 +6,7 @@ import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import grails.converters.JSON
+import be.cytomine.CytomineDomain
 
 /**
  * Controller that handle request on annotation filter

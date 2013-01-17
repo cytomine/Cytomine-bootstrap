@@ -211,4 +211,12 @@ class Project extends CytomineDomain implements Serializable {
         }
 
     }
+
+    /**
+     * Get the project link with this domain type
+     * @return Project of this domain
+     */
+     public Project projectDomain() {
+        return this
+    }
 }

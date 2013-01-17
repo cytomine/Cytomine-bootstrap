@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import grails.plugins.springsecurity.Secured
+import be.cytomine.SecurityCheck
 
 /**
  * Controller for job request.
@@ -116,7 +117,7 @@ class RestJobController extends RestController {
      */
     def add = {
         try {
-            def result = jobService.add(request.JSON)
+            def result = jobService.add(request.JSON,new SecurityCheck())
             def idJob = result?.data?.job?.id
             jobService.executeJob(Job.get(idJob))
             responseResult(result)

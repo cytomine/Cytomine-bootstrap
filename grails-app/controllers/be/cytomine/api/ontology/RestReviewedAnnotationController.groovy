@@ -17,6 +17,7 @@ import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import groovy.sql.Sql
+import be.cytomine.SecurityCheck
 
 /**
  * Controller for reviewed annotation
@@ -321,7 +322,7 @@ class RestReviewedAnnotationController extends RestController {
                 throw new AlreadyExistException("Annotation is already accepted!")
             }
             ReviewedAnnotation review = createReviewAnnotation(basedAnnotation, null)
-            def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()))
+            def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()), new SecurityCheck())
             responseResult(result)
 
         } catch (CytomineException e) {
@@ -346,7 +347,7 @@ class RestReviewedAnnotationController extends RestController {
             }
             def json = JSON.parse("{id : ${reviewedAnnotation.id}}")
             def domain = reviewedAnnotationService.retrieve(json)
-            def result = reviewedAnnotationService.delete(domain, json)
+            def result = reviewedAnnotationService.delete(json,new SecurityCheck(domain))
             responseResult(result)
 
         } catch (CytomineException e) {

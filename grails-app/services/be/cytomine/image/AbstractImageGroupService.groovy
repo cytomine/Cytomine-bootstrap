@@ -9,6 +9,7 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
+import be.cytomine.SecurityCheck
 
 class AbstractImageGroupService extends ModelService {
 
@@ -33,10 +34,11 @@ class AbstractImageGroupService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
     @Secured(['ROLE_ADMIN'])
-    def add(def json) throws CytomineException {
+    def add(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
@@ -44,12 +46,12 @@ class AbstractImageGroupService extends ModelService {
 
     /**
      * Delete domain in argument
-     * @param domain Domain to delete
      * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
     @Secured(['ROLE_ADMIN'])
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

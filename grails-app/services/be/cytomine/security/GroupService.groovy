@@ -7,6 +7,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.image.AbstractImage
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class GroupService extends ModelService {
 
@@ -46,17 +47,17 @@ class GroupService extends ModelService {
         return Group.get(id)
     }
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

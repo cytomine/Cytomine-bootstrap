@@ -19,6 +19,7 @@ import java.util.TreeMap.Entry
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.CytomineDomain
+import be.cytomine.SecurityCheck
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -53,11 +54,11 @@ class AlgoAnnotationTermService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param project Project for this domain (just for security check)
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#project.checkProjectAccess(#project.id)")
-    def add(def json, Project project) {
+    @PreAuthorize("#security.checkProjectAccess()")
+    def add(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if(!creator)
@@ -172,7 +173,7 @@ class AlgoAnnotationTermService extends ModelService {
      */
     def retrieve(JSONObject json) {
         //Retrieve domain
-        Long idAnnotation = Long.parseLong(json.annotationIdent)
+        Long idAnnotation = Long.parseLong(json.annotationIdent+"")
         Term term = Term.read(json.term)
         UserJob userJob = UserJob.read(json.userJob)
         AlgoAnnotationTerm domain = AlgoAnnotationTerm.findWhere(annotationIdent: idAnnotation, term: term, userJob: userJob)

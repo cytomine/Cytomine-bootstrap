@@ -5,7 +5,12 @@ package cytomine.web
  * User: lrollus
  * Date: 7/07/11
  * Time: 15:16
- * To change this template use File | Settings | File Templates.
+ *
+ * Cytomine Service that create all trigger in database
+ * Most of trigger are used avoid request that count something
+ * For example:
+ * project has properties countUserAnnotation, countImages,...
+ * A trigger automaticaly incr (or decr) these values.
  */
 class TriggerService {
 
@@ -20,7 +25,6 @@ class TriggerService {
 
         try {
             def statement = connection.createStatement()
-
             statement.execute(getProjectImageCountTriggerIncr())
             statement.execute(getProjectImageCountTriggerDecr())
             statement.execute(getProjectAnnotationCountTriggerIncr())
@@ -34,14 +38,10 @@ class TriggerService {
             statement.execute(getAnnotationCommentTriggerIncr())
             statement.execute(getAnnotationReviewCountTriggerIncr())
             statement.execute(getAnnotationReviewCountTriggerDecr())
-
             statement.execute(getProjectAnnotationReviewedCountTriggerIncr())
             statement.execute(getProjectAnnotationReviewedCountTriggerDecr())
             statement.execute(getImageAnnotationReviewedCountTriggerIncr())
             statement.execute(getImageAnnotationReviewedCountTriggerDecr())
-
-
-
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }

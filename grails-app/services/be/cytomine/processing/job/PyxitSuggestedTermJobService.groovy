@@ -5,6 +5,7 @@ import be.cytomine.processing.JobParameter
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import be.cytomine.SecurityCheck
 
 class PyxitSuggestedTermJobService extends AbstractJobService {
 
@@ -27,7 +28,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         softwareParameters.each { softwareParameter ->
             def value = parametersValues.get(softwareParameter.getName()) != null ? parametersValues.get(softwareParameter.getName()) : softwareParameter.getDefaultValue()
             JobParameter jobParameter = new JobParameter(value: value, job: job, softwareParameter: softwareParameter)
-            jobParameterService.add(JSON.parse(jobParameter.encodeAsJSON()))
+            jobParameterService.add(JSON.parse(jobParameter.encodeAsJSON()),new SecurityCheck())
         }
     }
 

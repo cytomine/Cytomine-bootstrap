@@ -19,6 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class ReviewedAnnotationService extends ModelService {
 
@@ -73,7 +74,6 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     boolean shareCommonTerm(ReviewedAnnotation annotation1, ReviewedAnnotation annotation2) {
-
         return differenceTerm(annotation1.term, annotation2.term).isEmpty();
     }
 
@@ -167,7 +167,7 @@ class ReviewedAnnotationService extends ModelService {
 
     //reviewedAnnotationService.add
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 //        println "x1:"+json.location
@@ -204,8 +204,8 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     //reviewedAnnotationService.update
-    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def update(def domain, def json) {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
 //        try {
@@ -221,8 +221,8 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     //reviewedAnnotationService.delete
-    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def delete(def domain, def json) {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def delete(def json, SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 

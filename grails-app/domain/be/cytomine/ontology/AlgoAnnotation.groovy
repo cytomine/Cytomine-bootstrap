@@ -10,6 +10,7 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
+import be.cytomine.security.SecUser
 
 /**
  * Annotation added by a job (software)
@@ -195,5 +196,15 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['reviewed'] = annotation.hasReviewedAnnotation()
             return returnArray
         }
+    }
+
+    /**
+     * Return domain user (annotation user, image user...)
+     * By default, a domain has no user.
+     * You need to override userDomain() in domain class
+     * @return Domain user
+     */
+    public SecUser userDomain() {
+        return user;
     }
 }

@@ -26,6 +26,7 @@ import javax.imageio.ImageIO
 
 import be.cytomine.ontology.*
 import org.springframework.security.access.AccessDeniedException
+import be.cytomine.SecurityCheck
 
 /**
  * Created by IntelliJ IDEA.
@@ -83,7 +84,7 @@ class RestImageInstanceController extends RestController {
 
     def add = {
         try {
-            responseResult(imageInstanceService.add(request.JSON, new Project()))
+            responseResult(imageInstanceService.add(request.JSON, new SecurityCheck()))
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)

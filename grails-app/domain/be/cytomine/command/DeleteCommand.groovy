@@ -1,6 +1,7 @@
 package be.cytomine.command
 
 import grails.converters.JSON
+import be.cytomine.project.Project
 
 /**
  * The DeleteCommand class is a command that delete a domain
@@ -8,6 +9,11 @@ import grails.converters.JSON
  * @author ULG-GIGA Cytomine Team
  */
 class DeleteCommand extends Command {
+
+    /**
+     * Add project link in command
+     */
+    boolean linkProject = true
 
     /**
      * Process an Add operation for this command
@@ -20,7 +26,7 @@ class DeleteCommand extends Command {
         //Create a backup (for 'undo' op)
         def backup = oldDomain.encodeAsJSON()
         //Init command info
-        super.setProject(oldDomain?.projectDomain())
+        super.setProject(linkProject? oldDomain?.projectDomain() : null)
         def response = service.destroy(oldDomain, printMessage)
         fillCommandInfoJSON(backup, response.data.message)
         return response

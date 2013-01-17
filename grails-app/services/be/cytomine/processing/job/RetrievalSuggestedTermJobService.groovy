@@ -5,6 +5,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.security.UserJob
 import grails.converters.JSON
+import be.cytomine.SecurityCheck
 
 class RetrievalSuggestedTermJobService extends AbstractJobService {
 
@@ -33,8 +34,8 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
         */
         //Create Job-parameter
 //        jobParameterService.add(JSON.parse(createJobParameter("execType",job,"cytomine").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()), new SecurityCheck())
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()), new SecurityCheck())
         //Execute Job
         log.info "Execute Job..."
     }

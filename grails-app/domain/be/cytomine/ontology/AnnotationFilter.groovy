@@ -101,5 +101,13 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
         }
     }
 
-
+    /**
+     * Return domain user (annotation user, image user...)
+     * By default, a domain has no user.
+     * You need to override userDomain() in domain class
+     * @return Domain user
+     */
+    public SecUser userDomain() {
+        return user;
+    }
 }

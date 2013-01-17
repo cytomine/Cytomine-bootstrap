@@ -22,6 +22,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class UserAnnotationService extends ModelService {
 
@@ -252,7 +253,7 @@ class UserAnnotationService extends ModelService {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 
@@ -307,8 +308,8 @@ class UserAnnotationService extends ModelService {
         }
     }
 
-    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def update(def domain, def json) {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def update(def json, SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
         //simplify annotation
@@ -329,8 +330,8 @@ class UserAnnotationService extends ModelService {
         return result
     }
 
-    @PreAuthorize("#domain.user.id == principal.id  or hasRole('ROLE_ADMIN')")
-    def delete(def domain, def json) {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def delete(def json, SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 

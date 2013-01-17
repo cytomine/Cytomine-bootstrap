@@ -17,6 +17,7 @@ import be.cytomine.security.User
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
+import be.cytomine.SecurityCheck
 
 
 class AbstractImageService extends ModelService {
@@ -133,9 +134,10 @@ class AbstractImageService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    def add(def json) throws CytomineException {
+    def add(def json,SecurityCheck security) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new AddCommand(user: currentUser), json)
@@ -157,11 +159,11 @@ class AbstractImageService extends ModelService {
     //TODO:: how to manage security here?
     /**
      * Update this domain with new data from json
-     * @param domain Domain to update
+     * @param security Security service object (user for right check)
      * @param json JSON with new data
      * @return  Response structure (new domain data, old domain data..)
      */
-    def update(def domain,def json) throws CytomineException {
+    def update(def json,SecurityCheck security) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), json)
@@ -181,11 +183,11 @@ class AbstractImageService extends ModelService {
     //TODO:: how to manage security here?
     /**
      * Delete domain in argument
-     * @param domain Domain to delete
+     * @param security Security service object (user for right check)
      * @param json JSON that was passed in request parameter
      * @return Response structure (created domain data,..)
      */
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json,SecurityCheck security) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         AbstractImage abstractImage = read(json.id)

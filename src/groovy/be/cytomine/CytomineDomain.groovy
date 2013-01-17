@@ -71,10 +71,20 @@ abstract class CytomineDomain  implements Comparable{
     /**
      * Return domain project (annotation project, image project...)
      * By default, a domain has no project.
-     * You need to override getProject() in domain class
+     * You need to override projectDomain() in domain class
      * @return Domain project
      */
     public Project projectDomain() {
+        return null;
+    }
+
+    /**
+     * Return domain user (annotation user, image user...)
+     * By default, a domain has no user.
+     * You need to override userDomain() in domain class
+     * @return Domain user
+     */
+    public SecUser userDomain() {
         return null;
     }
 
@@ -88,18 +98,6 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
-    boolean checkProjectAccess(def id) {
-        def project = Project.read(id)
-        if(!project) {
-            throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")
-        }
-        return project.checkReadPermission()
-    }
-
-    boolean checkReadPermission() {
-        return hasPermission("READ") || cytomineService.currentUser.admin
-    }
-
     /**
      * This method check if current user has permission on the current domain
      * @param permission Type of permission (read, admin,...)
@@ -110,6 +108,19 @@ abstract class CytomineDomain  implements Comparable{
             return hasPermission(this,permission)
         } catch (Exception e) {e.printStackTrace()}
         return false
+    }
+
+    boolean checkReadPermission() {
+        return hasPermission("READ") || cytomineService.currentUser.admin
+    }
+
+    boolean checkWritePermission() {
+        return hasPermission("WRITE") || cytomineService.currentUser.admin
+    }
+
+    boolean checkDeletePermission() {
+        println "checkDeletePermission"
+        return hasPermission("DELETE") || cytomineService.currentUser.admin
     }
 
     /**
@@ -188,24 +199,6 @@ abstract class CytomineDomain  implements Comparable{
     int compareTo(obj) {
         created.compareTo(obj.created)
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

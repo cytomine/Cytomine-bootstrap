@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import org.springframework.security.access.annotation.Secured
+import be.cytomine.SecurityCheck
 
 class SampleService extends ModelService {
 
@@ -52,7 +53,7 @@ class SampleService extends ModelService {
 
     //TODO:: secure ACL (who can add/update/delete a sample?)
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
@@ -60,12 +61,12 @@ class SampleService extends ModelService {
     //TODO:: secure ACL (who can add/update/delete a sample?)
     /**
      * Update this domain with new data from json
-     * @param domain Domain to update
      * @param json JSON with new data
+     * @param security Security service object (user for right check)
      * @return  Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("hasRole('ROLE_USER')")
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
@@ -73,12 +74,12 @@ class SampleService extends ModelService {
     //TODO:: secure ACL (who can add/update/delete a sample?)
     /**
      * Delete domain in argument
-     * @param domain Domain to delete
      * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("hasRole('ROLE_USER')")
-    def delete(def domain,def json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

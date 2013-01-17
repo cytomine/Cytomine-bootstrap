@@ -14,6 +14,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class TermService extends ModelService {
 
@@ -94,17 +95,17 @@ class TermService extends ModelService {
         list
     }
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return deleteTerm(json.id, currentUser,null)
     }

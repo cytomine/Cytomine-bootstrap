@@ -5,6 +5,7 @@ import be.cytomine.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class SecUserSecRoleService extends ModelService {
 
@@ -21,18 +22,18 @@ class SecUserSecRoleService extends ModelService {
         SecUserSecRole.findBySecUserAndSecRole(user, role)
     }
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
 
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

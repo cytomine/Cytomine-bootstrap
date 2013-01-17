@@ -178,4 +178,15 @@ class ImageInstance extends CytomineDomain implements Serializable {
         return project;
     }
 
+    /**
+     * Return domain user (annotation user, image user...)
+     * By default, a domain has no user.
+     * You need to override userDomain() in domain class
+     * @return Domain user
+     */
+    @Override
+    public SecUser userDomain() {
+        return user
+    }
+
 }

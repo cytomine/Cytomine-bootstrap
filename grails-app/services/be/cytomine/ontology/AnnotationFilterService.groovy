@@ -10,6 +10,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.CytomineDomain
+import be.cytomine.SecurityCheck
 
 class AnnotationFilterService extends ModelService {
 
@@ -44,34 +46,35 @@ class AnnotationFilterService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#domain.checkProjectAccess(#json['project'])")
-    def add(def json) throws CytomineException {
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
+    def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param domain Domain to update
      * @param json JSON with new data
+     * @param security Security service object (user for right check)
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#model.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def update(def model,def json) throws CytomineException {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def update(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     /**
      * Delete domain in argument
-     * @param domain Domain to delete
      * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#model.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def delete(def model,def json) throws CytomineException {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def delete(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

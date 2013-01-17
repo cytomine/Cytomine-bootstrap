@@ -15,6 +15,7 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class JobService extends ModelService {
 
@@ -81,7 +82,7 @@ class JobService extends ModelService {
         return data
     }
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         log.info "json="+json
         log.info "cytomineService="+cytomineService
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -114,13 +115,13 @@ class JobService extends ModelService {
         }
     }
 
-    def update(def domain, def json) {
+    def update(def json, SecurityCheck security) {
         log.info "update job:"+json
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain, Object json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         //TODO: delete job-parameters
         //TODO: delete job-data

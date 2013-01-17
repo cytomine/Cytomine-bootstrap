@@ -19,6 +19,7 @@ import static org.springframework.security.acls.domain.BasePermission.ADMINISTRA
 import static org.springframework.security.acls.domain.BasePermission.READ
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
+import be.cytomine.SecurityCheck
 
 class UserService extends ModelService {
 
@@ -133,17 +134,17 @@ class UserService extends ModelService {
     }
 
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) {
+    def update(def json, SecurityCheck security) {
         User currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) {
+    def delete(def json, SecurityCheck security) {
         User currentUser = cytomineService.getCurrentUser()
 
         if (json.id == springSecurityService.principal.id) throw new ForbiddenException("The user can't delete herself")

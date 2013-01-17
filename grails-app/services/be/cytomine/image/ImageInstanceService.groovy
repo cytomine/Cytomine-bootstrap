@@ -18,6 +18,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.SecurityCheck
 
 /**
  * TODO:: refactor + doc!!!!!!!
@@ -94,11 +95,11 @@ class ImageInstanceService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param domain A cytomineDomain (just use to call security check)
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#domain.checkProjectAccess(#json['project'])")
-    def add(def json, Project domain) {
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         log.info "current user = " + currentUser.username
         json.user = currentUser.id
@@ -109,24 +110,24 @@ class ImageInstanceService extends ModelService {
 
     /**
      * Update this domain with new data from json
-     * @param domain Domain to update
      * @param json JSON with new data
+     * @param security Security service object (user for right check)
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#domain.checkProjectAccess(#domain.project.id)")
-    def update(def domain,def json) {
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         executeCommand(new EditCommand(user: currentUser), json)
     }
 
     /**
      * Delete domain in argument
-     * @param domain Domain to delete
      * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#domain.checkProjectAccess(#domain.project.id)")
-    def delete(def domain,def json) {
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
+    def delete(def json, SecurityCheck security) {
 
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()

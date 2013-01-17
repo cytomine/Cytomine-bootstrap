@@ -20,6 +20,7 @@ import grails.converters.JSON
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 import javax.imageio.ImageIO
+import be.cytomine.SecurityCheck
 
 /**
  * Controller for annotation created by user
@@ -374,7 +375,7 @@ class RestUserAnnotationController extends RestController {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
         userAnnotationService.checkAuthorization(Long.parseLong(json.project.toString()), new UserAnnotation())
-        def result = userAnnotationService.add(json)
+        def result = userAnnotationService.add(json,new SecurityCheck())
         return result
     }
 
@@ -385,7 +386,7 @@ class RestUserAnnotationController extends RestController {
         def json = request.JSON
         try {
             def domain = userAnnotationService.retrieve(json)
-            def result = userAnnotationService.update(domain, json)
+            def result = userAnnotationService.update(json,new SecurityCheck(domain))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

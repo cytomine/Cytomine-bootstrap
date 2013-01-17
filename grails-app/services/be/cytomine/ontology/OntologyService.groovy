@@ -12,6 +12,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class OntologyService extends ModelService {
 
@@ -55,20 +56,20 @@ class OntologyService extends ModelService {
         return Ontology.get(id)
     }
 
-    def add(def json) throws CytomineException {
+    def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) throws CytomineException {
+    def update(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
 
 
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json, SecurityCheck security) throws CytomineException {
         //Start transaction
         Transaction transaction = transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()

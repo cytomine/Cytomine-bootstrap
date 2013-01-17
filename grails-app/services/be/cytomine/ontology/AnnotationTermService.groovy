@@ -12,6 +12,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class AnnotationTermService extends ModelService {
 
@@ -53,7 +54,7 @@ class AnnotationTermService extends ModelService {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if(!creator)
@@ -66,15 +67,12 @@ class AnnotationTermService extends ModelService {
         return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }
 
-    @PreAuthorize("#domain.user.id == principal.id or hasRole('ROLE_ADMIN')")
-    def delete(def domain,def json) {
+    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.userannotation, json.term, domain.user.id, currentUser,null)
+        return deleteAnnotationTerm(json.userannotation, json.term, json.user,currentUser,null)
     }
 
-    def update(def domain,def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
@@ -100,7 +98,7 @@ class AnnotationTermService extends ModelService {
     /**
      * Delete an annotation term
      */
-    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, Transaction transaction) {
+    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser,User currentUser, Transaction transaction) {
         return deleteAnnotationTerm(idAnnotation, idTerm, idUser, currentUser, true,transaction)
     }
 

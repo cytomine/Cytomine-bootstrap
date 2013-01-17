@@ -10,6 +10,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class SoftwareProjectService extends ModelService{
 
@@ -34,18 +35,18 @@ class SoftwareProjectService extends ModelService{
         project.softwareProjects
     }
 
-   def add(def json) throws CytomineException {
+   def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) throws CytomineException {
+    def update(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

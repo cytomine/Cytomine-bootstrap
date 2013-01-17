@@ -10,6 +10,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.SecurityCheck
 
 class JobParameterService extends ModelService {
 
@@ -30,17 +31,17 @@ class JobParameterService extends ModelService {
         JobParameter.findAllByJob(job)
     }
 
-    def add(def json) {
+    def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain, Object json) {
+    def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain, Object json) {
+    def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

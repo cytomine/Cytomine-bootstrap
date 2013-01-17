@@ -9,6 +9,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.SecurityCheck
 
 /**
  * Controller for project domain
@@ -143,7 +144,7 @@ class RestProjectController extends RestController {
     def update = {
         try {
             def domain = projectService.retrieve(request.JSON)
-            def result = projectService.update(domain, request.JSON)
+            def result = projectService.update(request.JSON,new SecurityCheck(domain))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -158,7 +159,7 @@ class RestProjectController extends RestController {
     def delete = {
         try {
             def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
-            def result = projectService.delete(domain,JSON.parse("{id : $params.id}"))
+            def result = projectService.delete(JSON.parse("{id : $params.id}"),new SecurityCheck(domain))
             //delete container in retrieval
             try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
             responseResult(result)

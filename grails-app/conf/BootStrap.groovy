@@ -36,6 +36,9 @@ import be.cytomine.ontology.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 
+/**
+ * TODO: cleaner le bootstrap
+ */
 class BootStrap {
     def springSecurityService
     def sequenceService

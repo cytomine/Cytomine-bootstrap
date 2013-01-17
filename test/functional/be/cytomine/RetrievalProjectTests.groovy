@@ -199,7 +199,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
-        projectToAdd.retrievalProjects.clear()
+        projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)
@@ -236,7 +236,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
-        projectToAdd.retrievalProjects.clear()
+        projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)
@@ -275,7 +275,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
-        projectToAdd.retrievalProjects.clear()
+        projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)

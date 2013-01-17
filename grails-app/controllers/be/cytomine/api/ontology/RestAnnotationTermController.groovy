@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.SecurityCheck
 
 /**
  * Controller that handle link between an annotation and a term
@@ -131,7 +132,7 @@ class RestAnnotationTermController extends RestController {
             if(!cytomineService.isUserAlgo()) {
                 if(!json.userannotation || !UserAnnotation.read(json.userannotation)) throw new WrongArgumentException("AnnotationTerm must have a valide userannotation:"+json.userannotation)
                 annotationTermService.checkAuthorization(UserAnnotation.read(json.userannotation).project)
-                def result = annotationTermService.add(json)
+                def result = annotationTermService.add(json,new SecurityCheck())
                 responseResult(result)
             } else {
                 //TODO:: won't work if we add an annotation term to a algoannotation
@@ -140,7 +141,7 @@ class RestAnnotationTermController extends RestController {
                 if(!json.annotationIdent || !annotation) {
                     throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotationIdent)
                 }
-                def result = algoAnnotationTermService.add(json, annotation.project)
+                def result = algoAnnotationTermService.add(json, new SecurityCheck(annotation))
                 responseResult(result)
             }
         } catch (CytomineException e) {

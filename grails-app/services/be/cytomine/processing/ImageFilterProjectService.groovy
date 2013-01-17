@@ -11,6 +11,7 @@ import be.cytomine.security.SecUser
 import grails.plugins.springsecurity.Secured
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class ImageFilterProjectService extends ModelService {
 
@@ -48,18 +49,18 @@ class ImageFilterProjectService extends ModelService {
     }
 
 
-    def add(def json) throws CytomineException {
+    def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def domain,def json) throws CytomineException {
+    def update(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-    def delete(def domain,def json) throws CytomineException {
+    def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }

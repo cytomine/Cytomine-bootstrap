@@ -1,6 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 
 class RelationService extends ModelService {
 
@@ -20,17 +21,5 @@ class RelationService extends ModelService {
 
     def getRelationParent() {
         readByName(RelationTerm.names.PARENT)
-    }
-
-    def add(def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    def update(def domain,def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    def delete(def domain,def json) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
