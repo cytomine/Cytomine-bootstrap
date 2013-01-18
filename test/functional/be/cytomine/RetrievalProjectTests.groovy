@@ -137,7 +137,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalAllOntology = false
         def projectRetrieval = BasicInstance.getBasicProjectNotExist()
         assert projectRetrieval.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval)
+
         json.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
 
         //create project
@@ -178,7 +178,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalAllOntology = false
         def projectRetrieval = BasicInstance.getBasicProjectNotExist()
         projectRetrieval.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval)
+
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -203,8 +203,8 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
-        projectToAdd.retrievalProjects.add(projectRetrieval1)
+
+        projectToAdd.addToRetrievalProjects(projectRetrieval1)
         projectToAdd.save(flush: true)
 
         //add project json
@@ -213,7 +213,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalAllOntology = false
         def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval2.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
+
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"," + projectRetrieval2.id +"]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -240,10 +240,9 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
+
         def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval2.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
 
         projectToAdd.retrievalProjects.add(projectRetrieval1)
         projectToAdd.retrievalProjects.add(projectRetrieval2)
@@ -279,10 +278,9 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         projectToAdd.save(flush: true)
         def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval1.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval1)
+
         def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval2.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval2)
 
         projectToAdd.retrievalProjects.add(projectRetrieval1)
         projectToAdd.retrievalProjects.add(projectRetrieval2)
@@ -311,11 +309,9 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
     void testDeleteProjectRetrievalWithRetrievalProject() {
         def projectToAdd = BasicInstance.getBasicProjectNotExist()
         assert projectToAdd.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectToAdd)
 
         def projectRetrieval = BasicInstance.getBasicProjectNotExist()
         assert projectRetrieval.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,projectRetrieval)
 
         projectToAdd.refresh()
         projectToAdd.addToRetrievalProjects(projectRetrieval)

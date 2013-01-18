@@ -76,7 +76,6 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(annotationNotCriteria.user)
         BasicInstance.checkDomain(annotationNotCriteria)
         BasicInstance.saveDomain(annotationNotCriteria)
-        Infos.addUserRight(annotationNotCriteria.user,annotationNotCriteria.project)
 
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
@@ -519,7 +518,6 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
      void testLockImageReviewingForOtherUser() {
           //create image
           ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-          try {Infos.addUserRight(Infos.ANOTHERLOGIN,image.project)} catch(Exception e) {}
 
           //mark start review + check attr
           def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

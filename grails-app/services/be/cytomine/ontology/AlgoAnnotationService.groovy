@@ -47,7 +47,7 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation get(def id) {
         def annotation = AlgoAnnotation.get(id)
         if(annotation) {
-            annotation.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(annotation.project)
         }
         annotation
     }
@@ -55,7 +55,7 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation read(def id) {
         def annotation = AlgoAnnotation.read(id)
         if(annotation) {
-            annotation.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(annotation.project)
         }
         annotation
     }

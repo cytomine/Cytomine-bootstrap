@@ -4,6 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import groovy.sql.Sql
+import be.cytomine.ontology.Ontology
 
 class SecurityService {
 
@@ -47,6 +48,15 @@ class SecurityService {
                 "select distinct project "+
                 "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
                 "where aclObjectId.objectId = project.id " +
+                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+    }
+
+    List<Ontology> getOntologyList(SecUser user) {
+        return Ontology.executeQuery(
+                "select distinct ontology "+
+                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Ontology as ontology "+
+                "where aclObjectId.objectId = ontology.id " +
                 "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                 "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
     }

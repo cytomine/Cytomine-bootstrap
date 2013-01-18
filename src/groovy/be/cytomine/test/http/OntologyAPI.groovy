@@ -36,6 +36,7 @@ class OntologyAPI extends DomainAPI {
     static def create(String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/ontology.json"
         def result = doPOST(URL,json,username,password)
+        println "result=$result"
         result.data = Ontology.get(JSON.parse(result.data)?.ontology?.id)
         return result
     }

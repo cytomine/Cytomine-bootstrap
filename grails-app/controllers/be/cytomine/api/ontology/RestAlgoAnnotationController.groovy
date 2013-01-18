@@ -58,7 +58,6 @@ class RestAlgoAnnotationController extends RestController {
     def show = {
         AlgoAnnotation annotation = algoAnnotationService.read(params.long('id'))
         if (annotation) {
-            algoAnnotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
         }
         else {

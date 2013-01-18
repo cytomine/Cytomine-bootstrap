@@ -95,7 +95,7 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(job)
         BasicInstance.createSoftwareProject(job.software,job.project)
 
-        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        UserJob userJob = BasicInstance.createBasicUserJobNotExist()
         userJob.job = job
         userJob.user = BasicInstance.getNewUser()
         BasicInstance.checkDomain(userJob)
@@ -106,8 +106,6 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
         //add algo-annotation-term for this job
         AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
-
-        Infos.addUserRight(userJob.user,job.project)
 
         def result = TaskAPI.create(job.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200, result.code)

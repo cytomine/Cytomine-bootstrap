@@ -164,7 +164,7 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.saveDomain(job)
         BasicInstance.createSoftwareProject(job.software,job.project)
 
-        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        UserJob userJob = BasicInstance.createUserJob()
         userJob.job = job
         userJob.user = BasicInstance.getNewUser()
         BasicInstance.checkDomain(userJob)
@@ -182,8 +182,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkDomain(data1)
         BasicInstance.saveDomain(data1)
 
-
-        Infos.addUserRight(userJob.user,job.project)
 
         //count data = 1-1
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1
@@ -211,8 +209,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
 
         //add algo-annotation-term for this job
         AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
-
-        Infos.addUserRight(userJob.user,job.project)
 
         //add reviewed annotation
         ReviewedAnnotation reviewed = BasicInstance.getBasicReviewedAnnotationNotExist()

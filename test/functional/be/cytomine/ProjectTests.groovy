@@ -149,7 +149,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         Project projectWithOldName = BasicInstance.createOrGetBasicProjectWithRight()
         Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
         projectWithNewName.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN, projectWithNewName)
+
         Project projectToEdit = Project.get(projectWithNewName.id)
         def jsonProject = projectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
@@ -176,7 +176,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
     void testDeleteProject() {
         def projectToDelete = BasicInstance.getBasicProjectNotExist()
         assert projectToDelete.save(flush: true) != null
-        Infos.addUserRight(Infos.GOODLOGIN, projectToDelete)
+
         def result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def showResult = ProjectAPI.show(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

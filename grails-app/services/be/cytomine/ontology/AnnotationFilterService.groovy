@@ -29,7 +29,7 @@ class AnnotationFilterService extends ModelService {
     AnnotationFilter read(def id) {
         def filter = AnnotationFilter.read(id)
         if(filter) {
-            filter.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(filter.project)
         }
         filter
     }
@@ -38,7 +38,7 @@ class AnnotationFilterService extends ModelService {
     AnnotationFilter get(def id) {
         def filter = AnnotationFilter.get(id)
         if(filter) {
-            filter.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(filter.project)
         }
         filter
     }
@@ -165,8 +165,7 @@ class AnnotationFilterService extends ModelService {
 
     /**
      * Retrieve domain thanks to a JSON object
-     * @param json JSON w
-     * ith new domain info
+     * @param json JSON with new domain info
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {

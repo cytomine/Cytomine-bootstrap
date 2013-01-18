@@ -102,7 +102,7 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListUserAnnotationByProjectAndTermAndUserWithCredential() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.userAnnotation.project)
+
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -122,7 +122,7 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListUserAnnotationByProjectAndTermAndUserAndImageWithCredential() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.userAnnotation.project)
+
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -339,11 +339,11 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListingUserAnnotationWithoutTerm() {
         //create annotation without term
         User user = BasicInstance.getNewUser()
-        Project project = BasicInstance.getBasicProjectNotExist()
+        Project project = BasicInstance.createOrGetBasicProjectWithRight()
         Ontology ontology = BasicInstance.createOrGetBasicOntology()
         project.ontology = ontology
         project.save(flush: true)
-        Infos.addUserRight(user.username,project)
+
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
@@ -402,11 +402,11 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListingUserAnnotationWithSeveralTerm() {
         //create annotation without term
         User user = BasicInstance.getNewUser()
-        Project project = BasicInstance.getBasicProjectNotExist()
+        Project project = BasicInstance.createOrGetBasicProjectWithRight()
         Ontology ontology = BasicInstance.createOrGetBasicOntology()
         project.ontology = ontology
         project.save(flush: true)
-        Infos.addUserRight(user.username,project)
+
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
         image.save(flush: true)

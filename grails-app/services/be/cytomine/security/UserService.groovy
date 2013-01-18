@@ -17,9 +17,17 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
+import static org.springframework.security.acls.domain.BasePermission.WRITE
+import static org.springframework.security.acls.domain.BasePermission.DELETE
 import org.springframework.security.acls.model.Permission
 import org.springframework.transaction.annotation.Transactional
 import be.cytomine.SecurityCheck
+import be.cytomine.CytomineDomain
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.security.acls.domain.ObjectIdentityImpl
+import org.springframework.security.acls.model.MutableAcl
+import org.springframework.security.acls.model.NotFoundException
+import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 class UserService extends ModelService {
 
@@ -35,27 +43,38 @@ class UserService extends ModelService {
     def aclService
     def aclUtilService
     def aclPermissionFactory
+    def objectIdentityRetrievalStrategy
 
 
     //TODO:: these call MUST BE DONE FROM CONTROLLER
-    void addPermission(Project project, String username, int permission) {
-        log.info "##### Add Permission 1: " +  permission + " for " + username + " to " + project?.name
-        addPermission(project, username, aclPermissionFactory.buildFromMask(permission))
+    void addPermission(def domain, String username, int permission) {
+        log.info "##### Add Permission 1: " +  permission + " for " + username + " to " + domain
+        addPermission(domain, username, aclPermissionFactory.buildFromMask(permission))
     }
 
     //TODO:: these call MUST BE DONE FROM CONTROLLER
-    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
-    synchronized void addPermission(Project project, String username, Permission permission) {
-        log.info "##### Add Permission 2: " +  permission.toString() + " for " + username + " to " + project?.name
-        aclUtilService.addPermission(project, username, permission)
+    @PreAuthorize("#domain.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
+    synchronized void addPermission(def domain, String username, Permission permission) {
+        log.info "##### Add Permission: " +  permission.mask + " for " + username + " to " + domain.id
+
+        println SCH.context.authentication
+
+        ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
+        try {
+            MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
+        } catch (NotFoundException nfe) {
+            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
+        }
+
+        aclUtilService.addPermission(domain, username, permission)
         log.info "#####  Permission added"
     }
 
     //TODO:: these call MUST BE DONE FROM CONTROLLER
     @Transactional
-    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
-    void deletePermission(Project project, SecUser user, Permission permission) {
-        def acl = aclUtilService.readAcl(project)
+    @PreAuthorize("#domain.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    void deletePermission(CytomineDomain domain, SecUser user, Permission permission) {
+        def acl = aclUtilService.readAcl(domain)
 
         // Remove all permissions associated with this particular recipient
         acl.entries.eachWithIndex { entry, i ->
@@ -261,18 +280,24 @@ class UserService extends ModelService {
 //    }
 
     //TODO: when project private/public, a user must have permission to add himself in a public project
-    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
+    // #user.id == principal.id?????????
+    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     def addUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
                 log.debug "addUserFromProject project=" + project + " username=" + user.username + " ADMIN=" + admin
                 if(admin) {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     addPermission(project,user.username,ADMINISTRATION)
+                    addPermission(project.ontology,user.username,READ)
+                    addPermission(project.ontology,user.username,WRITE)
+                    addPermission(project.ontology,user.username,DELETE)
                 }
                 else {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     addPermission(project,user.username,READ)
-                    //projectService.addPermission(project,user.username,WRITE)
+                    addPermission(project.ontology,user.username,READ)
+                    addPermission(project.ontology,user.username,WRITE)
+                    addPermission(project.ontology,user.username,DELETE)
                 }
             }
         [data: [message: "OK"], status: 201]
@@ -281,12 +306,20 @@ class UserService extends ModelService {
     @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
             if (project) {
-                log.debug "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
+                log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
                 //TODO:: these call MUST BE DONE FROM CONTROLLER
-                if(admin) deletePermission(project,user,ADMINISTRATION)
+                if(admin) {
+                    deletePermission(project,user,ADMINISTRATION)
+                    deletePermission(project.ontology,user,READ)
+                    deletePermission(project.ontology,user,WRITE)
+                    deletePermission(project.ontology,user,DELETE)
+                }
                 else {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     deletePermission(project,user,READ)
+                    deletePermission(project.ontology,user,READ)
+                    deletePermission(project.ontology,user,WRITE)
+                    deletePermission(project.ontology,user,DELETE)
                     //projectService.deletePermission(project,user.username,WRITE)
                 }
             }

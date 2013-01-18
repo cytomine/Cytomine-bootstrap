@@ -109,7 +109,6 @@ class RestProjectController extends RestController {
     def show = {
         Project project = projectService.read(params.long('id'), new Project())
         if (project) {
-            projectService.checkAuthorization(project)
             responseSuccess(project)
         } else {
             responseNotFound("Project", params.id)

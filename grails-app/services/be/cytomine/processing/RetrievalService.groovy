@@ -16,6 +16,7 @@ import groovyx.gpars.Asynchronizer
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+import be.cytomine.SecurityCheck
 
 class RetrievalService {
 
@@ -47,13 +48,16 @@ class RetrievalService {
      * @throws Exception
      */
     def listSimilarAnnotationAndBestTerm(Project project, AnnotationDomain annotation) throws Exception {
+        log.info "listSimilarAnnotationAndBestTerm=$annotation"
         def data = [:]
 
+        log.info "check annotation points number ${annotation.location.numPoints}"
         if(annotation.location.numPoints<3) {
             data.term = []
             return data
         }
 
+        log.info "read projects"
         //find project used for retrieval
         List<Long> projectSearch = []
         if(project.retrievalDisable) return data
@@ -61,6 +65,7 @@ class RetrievalService {
             projectSearch=getAllProjectId(annotation.project.ontology)
         else projectSearch=project.retrievalProjects.collect {it.id}
 
+        log.info "search ${annotation.id} on projects ${projectSearch}"
         //Get similar annotation
         def similarAnnotations = loadAnnotationSimilarities(annotation,projectSearch)
         data.annotation = similarAnnotations
@@ -125,7 +130,7 @@ class RetrievalService {
             try {
                 UserAnnotation annotation = UserAnnotation.read(annotationjson.id)
                 if (annotation && annotation.id != searchAnnotation.id) {
-                    projectService.checkAuthorization(annotation.project)
+                    SecurityCheck.checkReadAuthorization(annotation.project)
                     annotation.similarity = new Double(annotationjson.sim)
                     data << annotation
                 }

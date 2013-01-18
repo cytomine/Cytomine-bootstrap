@@ -11,6 +11,7 @@ import static org.springframework.security.acls.domain.BasePermission.*
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.security.User
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ontology.Ontology
 
 /**
  * CytomineDomain is the parent class for all domain.
@@ -89,6 +90,18 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     /**
+     * Return domain ontology (term ontology, relation-term ontology...)
+     * By default, a domain has no ontology linked.
+     * You need to override ontologyDomain() in domain class
+     * @return Domain ontology
+     */
+    public Ontology ontologyDomain() {
+        return null;
+    }
+
+
+
+    /**
      * Build callback data for a domain (by default null)
      * Callback are metadata used by client
      * You need to override getCallBack() in domain class
@@ -111,6 +124,8 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     boolean checkReadPermission() {
+        println "checkReadPermission1=${hasPermission("READ")}"
+        println "checkReadPermission2=${cytomineService.currentUser.admin}"
         return hasPermission("READ") || cytomineService.currentUser.admin
     }
 
@@ -119,7 +134,8 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     boolean checkDeletePermission() {
-        println "checkDeletePermission"
+        println "checkReadPermission1=${hasPermission("DELETE")}"
+        println "checkReadPermission2=${cytomineService.currentUser.admin}"
         return hasPermission("DELETE") || cytomineService.currentUser.admin
     }
 
@@ -195,10 +211,7 @@ abstract class CytomineDomain  implements Comparable{
         return user
     }
 
-
     int compareTo(obj) {
         created.compareTo(obj.created)
     }
-
-
 }

@@ -67,26 +67,4 @@ abstract class ModelService {
     void checkAuthorization(def cytomineDomain) {
     }
 
-    void checkAuthorizationAtLeastOne(def list) {
-        boolean isAllowed = false
-        Exception lastException = null
-        println "checkAuthorizationAtLeastOne $list"
-        list.each {
-            try {
-                println "checkAuthorization:$it"
-                checkAuthorization(it)
-                isAllowed = true
-            } catch(Exception e) {
-                println "error:$it"
-                lastException = e
-            }
-        }
-
-        println "check $isAllowed"
-        if(!isAllowed) {
-            println "throw $lastException"
-            throw lastException
-        }
-    }
-
 }

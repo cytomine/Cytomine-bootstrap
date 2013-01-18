@@ -202,6 +202,9 @@ class ProjectService extends ModelService {
         log.info "#Creator="+domain.retrieveCreator()?.id
         log.info "#Creator="+cytomineService.currentUser?.id
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.READ)
+        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.WRITE)
+        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.DELETE)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }

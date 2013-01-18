@@ -121,7 +121,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAlgoAnnotationByProjectAndTermAndUserWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -133,7 +132,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAlgoAnnotationByProjectAndTermAndUserWithAllProjectImage() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(
                 annotationTerm.retrieveAnnotationDomain().project.id,
                 annotationTerm.term.id,
@@ -208,9 +206,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         annotationToAdd2.save(flush: true)
 
         UserJob user1 = annotationToAdd1.user
-        try {Infos.addUserRight(user1.user.username,annotationToAdd1.project)} catch(Exception e) {println e}
-
-
         def annotations = []
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
@@ -221,7 +216,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationCorrectWithoutProject() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
@@ -231,7 +226,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationCorrectWithTerm() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
 
         Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
@@ -263,7 +257,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationWithoutProject() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
@@ -275,7 +268,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationBadGeom() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POINT(BAD GEOMETRY)'
@@ -291,7 +283,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationBadGeomEmpty() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
@@ -302,7 +293,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationBadGeomNull() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
@@ -313,7 +303,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationImageNotExist() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
@@ -324,7 +313,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testEditAlgoAnnotation() {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = AlgoAnnotationAPI.update(data.oldData.id, data.newData,user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
@@ -350,7 +339,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testEditAlgoAnnotationNotExist() {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         AlgoAnnotation annotationToEdit = AlgoAnnotation.get(annotationToAdd.id)
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
@@ -362,7 +350,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testEditAlgoAnnotationWithBadGeometry() {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
 
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
@@ -374,7 +361,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def annotationToDelete = BasicInstance.getBasicAlgoAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         UserJob user = annotationToDelete.user
-        try {Infos.addUserRight(user.user.username,annotationToDelete.project)} catch(Exception e) {println e}
 
         def id = annotationToDelete.id
         def result = AlgoAnnotationAPI.delete(id, user.username, 'PasswordUserJob')
@@ -404,7 +390,6 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testDeleteAlgoAnnotationWithData() {
         def annotTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         UserJob user = annotTerm.retrieveAnnotationDomain().user
-        try {Infos.addUserRight(user.user.username,annotTerm.retrieveAnnotationDomain().project)} catch(Exception e) {println e}
 
         def annotationToDelete = annotTerm.retrieveAnnotationDomain()
         def result = AlgoAnnotationAPI.delete(annotationToDelete.id,user.username,'PasswordUserJob')
@@ -419,7 +404,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         Ontology ontology = BasicInstance.createOrGetBasicOntology()
         project.ontology = ontology
         project.save(flush: true)
-        try {Infos.addUserRight(userJob.user,project) }catch(Exception e){println e}
+
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
@@ -474,7 +459,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         Ontology ontology = BasicInstance.createOrGetBasicOntology()
         project.ontology = ontology
         project.save(flush: true)
-        try {Infos.addUserRight(userJob.user,project) }catch(Exception e){println e}
+
         ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
@@ -543,7 +528,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotation.findAllByImage(image).size()==0
 
         def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
-        try {Infos.addUserRight(a1.user.user,image.project) }catch(Exception e){println e}
+
         a1.location = new WKTReader().read("POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))")
         a1.image = image
         a1.project = image.project
@@ -574,7 +559,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotation.findAllByImage(image).size()==0
 
         def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
-        try {Infos.addUserRight(a1.user.user,image.project) }catch(Exception e){println e}
+
         a1.location = new WKTReader().read("POLYGON ((0 0, 0 5100, 10000 5100, 10000 0, 0 0))")
         a1.image = image
         a1.project = image.project

@@ -92,14 +92,21 @@ class RestAnnotationTermController extends RestController {
     }
 
     def show = {
-        AnnotationDomain annotation = userAnnotationService.read(params.long('idannotation'))
-        if (!annotation)
-            annotation = algoAnnotationService.read(params.long('idannotation'))
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('idannotation'))
+
+        println "User annotation 3 = ${annotation.id}"
+
         Term term = termService.read(params.long('idterm'))
 
-        if (!annotation) responseNotFound("Annotation", params.idannotation)
-        if (!term) responseNotFound("Term", params.idterm)
+        if (!annotation) {
+            println "User annotation 4 = ${annotation?.id}"
+            responseNotFound("Annotation", params.idannotation)
+        }
+        if (!term) {
+            responseNotFound("Term", params.idterm)
+        }
         else {
+            println "User annotation 5 = ${annotation?.id}"
             if (params.idUser && SecUser.read(params.idUser)) {
                 //user is set, get a specific annotation-term link from user
                 if(!cytomineService.isUserAlgo()) {
@@ -112,7 +119,7 @@ class RestAnnotationTermController extends RestController {
                     else responseNotFound("Algo Annotation Term", "Term", "Annotation", "User", params.idterm, params.idannotation, params.idUser)
                 }
             } else {
-                //user is not set, we will get the annotation-term from the user
+                //user is not set, we will get the annotation-term from all user
                 if(!cytomineService.isUserAlgo()) {
                     def annoterm = annotationTermService.read(annotation, term, null)
                     if (annoterm) responseSuccess(annoterm)

@@ -40,7 +40,8 @@ class ImageInstanceService extends ModelService {
     def read(def id) {
         def image = ImageInstance.read(id)
         if(image) {
-            image.project.checkReadPermission()
+            println "READ IMAGE PERMISSION="+ image.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(image.project)
         }
         image
     }
@@ -48,7 +49,7 @@ class ImageInstanceService extends ModelService {
     def get(def id) {
         def image = ImageInstance.get(id)
         if(image) {
-            image.project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(image.project)
         }
         image
     }

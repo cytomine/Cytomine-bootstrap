@@ -4,6 +4,9 @@ import be.cytomine.project.Project
 import be.cytomine.Exception.ObjectNotFoundException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.security.SecUser
+import be.cytomine.ontology.Ontology
+import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.Exception.ForbiddenException
 
 /**
  * User: lrollus
@@ -14,6 +17,7 @@ import be.cytomine.security.SecUser
 class SecurityCheck {
 
     def cytomineService
+    def securityService
 
     def domain
 
@@ -65,4 +69,44 @@ class SecurityCheck {
         println "checkDeletePermission"
         return project.checkDeletePermission()
     }
+    
+    
+    boolean checkOntologyAccess() {
+        def ontology = domain.ontologyDomain()
+        if(!ontology) {
+            throw new ObjectNotFoundException("Ontology from domain ${domain} was not found! Unable to process ontology auth checking")
+        }
+        return ontology.checkReadPermission()
+    }
+
+    boolean checkOntologyWrite() {
+        def ontology = domain.ontologyDomain()
+        if(!ontology) {
+            throw new ObjectNotFoundException("Ontology from domain ${domain} was not found! Unable to process ontology auth checking")
+        }
+        return ontology.checkWritePermission()
+    }
+
+    boolean checkOntologyDelete() {
+        println "checkOntologyDelete"
+        def ontology = domain.ontologyDomain()
+        println "ontology=$ontology"
+        if(!ontology) {
+            throw new ObjectNotFoundException("Ontology from domain ${domain} was not found! Unable to process ontology auth checking")
+        }
+        println "checkDeletePermission"
+        return ontology.checkDeletePermission()
+    }
+
+    static void checkReadAuthorization(CytomineDomain cytomineDomain) {
+        if(cytomineDomain && !cytomineDomain.checkReadPermission()) {
+            throw new ForbiddenException("You don't have the right to read this resource!")
+        }
+    }
+    
+    
+    
+    
+    
+    
 }

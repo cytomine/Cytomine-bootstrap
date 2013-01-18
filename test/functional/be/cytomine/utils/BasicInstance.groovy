@@ -45,6 +45,7 @@ class BasicInstance {
      * @param domain Domain to check
      */
     static void checkDomain(def domain) {
+        log.debug "#### checkDomain=" + domain.class
         if(!domain.validate()) {
             log.warn domain.class.name+".errors=" + domain.errors
             assert false
@@ -56,6 +57,7 @@ class BasicInstance {
      * @param domain Domain to check
      */
     static void saveDomain(def domain) {
+        log.debug "#### saveDomain=" + domain.class
         if(!domain.save(flush: true)) {
             log.warn domain.class+".errors=" + domain.errors
             assert false
@@ -141,7 +143,7 @@ class BasicInstance {
         BasicInstance.saveDomain(job)
         BasicInstance.createSoftwareProject(job.software,job.project)
 
-        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+        UserJob userJob = BasicInstance.createBasicUserJobNotExist()
         userJob.job = job
         userJob.user = BasicInstance.getNewUser()
         BasicInstance.checkDomain(userJob)
@@ -337,6 +339,15 @@ class BasicInstance {
         userJob
     }
 
+    static UserJob createBasicUserJobNotExist() {
+        UserJob user = getBasicUserJobNotExist()
+        saveDomain(user)
+        user.user.getAuthorities().each { secRole ->
+            SecUserSecRole.create(user, secRole)
+        }
+        user
+    }
+
     static UserJob getBasicUserJobNotExist() {
         log.debug "getBasicUserJobNotExist()"
         def random = new Random()
@@ -347,16 +358,15 @@ class BasicInstance {
             userJob = UserJob.findByUsername(randomInt + "")
         }
         
-        def user = getBasicUserNotExist()
-        user.save(flush: true)
+//        def user = getBasicUserNotExist()
+//        user.save(flush: true)
+        def user = newUser
         def job = getBasicJobNotExist()
         job.save(flush: true)
 
         userJob = new UserJob(username: randomInt+"BasicUserJob",password: "PasswordUserJob",enabled: true,user : user,job: job)
-
-        user.getAuthorities().each { secRole ->
-            SecUserSecRole.create(userJob, secRole)
-        }
+        println "UserJob=$userJob"
+        println "user=$user"
         userJob.generateKeys()
         checkDomain(userJob)
         userJob
@@ -429,11 +439,9 @@ class BasicInstance {
         def term = getBasicTermNotExist()
         term.save(flush: true)
         assert term != null
-        def user = getBasicUserJobNotExist()
-        user.save(flush: true)
-        assert user != null
-
-        Infos.addUserRight(user.user.username,annotation.project)
+        def user = createOrGetBasicUserJob()
+//        user.save(flush: true)
+//        assert user != null
 
         def algoannotationTerm = AlgoAnnotationTerm.findWhere('annotationIdent': annotation.id, 'term': term, 'userJob': user)
         assert algoannotationTerm == null
@@ -471,10 +479,10 @@ class BasicInstance {
         def annotation = getBasicUserAnnotationNotExist()
         annotation.save(flush: true)
         assert annotation != null
-        def user = getBasicUserJobNotExist()
-        user.save(flush: true)
-        assert user != null
-        Infos.addUserRight(user.user,annotation.project)
+        def user = createOrGetBasicUserJob()
+//        user.save(flush: true)
+//        assert user != null
+
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm
@@ -491,7 +499,7 @@ class BasicInstance {
         def user = getBasicUserJobNotExist()
         user.save(flush: true)
         assert user != null
-        Infos.addUserRight(user.user,annotation.project)
+
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm
@@ -788,6 +796,13 @@ class BasicInstance {
         project
     }
 
+    static Project createBasicProjectNotExist() {
+        def project = getBasicProjectNotExist()
+        BasicInstance.saveDomain(project)
+        Infos.addUserRight(Infos.GOODLOGIN,project)
+        project
+    }
+
     static Project getBasicProjectNotExist() {
         log.debug "getBasicProjectNotExist()"
         def random = new Random()
@@ -998,7 +1013,7 @@ class BasicInstance {
             user.save(flush: true)
             log.debug "user.errors=" + user.errors
             try {
-               SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"))
+               SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
             } catch(Exception e) {
                 log.warn(e)
             }
@@ -1119,7 +1134,6 @@ class BasicInstance {
     static Project createOrGetBasicProjectWithRight() {
     	log.debug "createOrGetBasicProjectWithRight()"
         Project project = createOrGetBasicProject()
-        Infos.addUserRight(Infos.GOODLOGIN,project)
         return project
     }
 
@@ -1297,8 +1311,7 @@ class BasicInstance {
         term2.save(flush: true)
 
 
-        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
-        userJob.save(flush : true)
+        UserJob userJob = BasicInstance.createBasicUserJobNotExist()
         Job job = userJob.job
         job.project = project
         println "project.ontology.id="+project.ontology.id

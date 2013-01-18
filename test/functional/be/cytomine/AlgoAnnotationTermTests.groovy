@@ -6,6 +6,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationTermAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
+import be.cytomine.ontology.UserAnnotation
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,6 +36,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
 
     void testGetAlgoAnnotationTerm() {
         def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+
         def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,null,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assertEquals(200,result.code)
         def json = JSON.parse(result.data)
@@ -44,7 +46,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAlgoAnnotationTermCorrect() {
         def annotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist()
         UserJob currentUserJob = annotationTermToAdd.userJob
-        Infos.addUserRight(currentUserJob.user,annotationTermToAdd.retrieveAnnotationDomain().project)
+
         annotationTermToAdd.discard()
         String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
         def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,annotationTermToAdd.userJob.username,"PasswordUserJob")

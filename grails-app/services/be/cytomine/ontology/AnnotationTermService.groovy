@@ -67,7 +67,7 @@ class AnnotationTermService extends ModelService {
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.userannotation, json.term, json.user,currentUser,null)
+        return deleteAnnotationTerm(json.userannotation, json.term, json.user,currentUser,true,null)
     }
 
 
@@ -99,12 +99,9 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete an annotation term
+     * Delete annotation-term
+     * This method should delete all domain linked with annotation-term
      */
-    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser,User currentUser, Transaction transaction) {
-        return deleteAnnotationTerm(idAnnotation, idTerm, idUser, currentUser, true,transaction)
-    }
-
     def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage, Transaction transaction) {
         def json = JSON.parse("{userannotation: $idAnnotation, term: $idTerm, user: $idUser}")
         def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
@@ -112,13 +109,12 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete all term map by user for annotation
+     * Delete all term linked by user for this annotation
      */
     def deleteAnnotationTermFromUser(UserAnnotation annotation, User user, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, user)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
-
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
             deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
@@ -126,13 +122,12 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete all term map for annotation
+     * Delete all term linked with this annotation
      */
     def deleteAnnotationTermFromAllUser(UserAnnotation annotation, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerms = AnnotationTerm.findAllByUserAnnotation(annotation)
         log.info "Delete old annotationTerm= " + annotationTerms.size()
-
         annotationTerms.each { annotationTerm ->
             log.info "unlink annotterm:" + annotationTerm.id
             deleteAnnotationTerm(annotationTerm.userAnnotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false,transaction)
@@ -140,13 +135,12 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Delete all term map by user for term
+     * Delete all term linked by user for this term
      */
     def deleteAnnotationTermFromAllUser(Term term, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def annotationTerm = AnnotationTerm.findAllByTerm(term)
         log.info "Delete old annotationTerm= " + annotationTerm.size()
-
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
             deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
@@ -154,15 +148,22 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(AnnotationTerm.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
@@ -176,15 +177,21 @@ class AnnotationTermService extends ModelService {
     }
 
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
         destroy(AnnotationTerm.createFromData(json), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
@@ -194,16 +201,28 @@ class AnnotationTermService extends ModelService {
         return response
     }
 
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
     AnnotationTerm createFromJSON(def json) {
         return AnnotationTerm.createFromData(json)
     }
 
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
     def retrieve(def json) {
         UserAnnotation annotation = UserAnnotation.get(json.userannotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)
         AnnotationTerm relation = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
-        if (!relation) throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
+        if (!relation) {
+            throw new ObjectNotFoundException("Annotation term not found ($annotation,$term,$user)")
+        }
         return relation
     }
 }

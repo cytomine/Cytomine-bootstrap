@@ -163,6 +163,7 @@ class RestUserAnnotationController extends RestController {
     /**
      * Download report with annotation
      * TODO:: this should be extract in a specific service (and use lot of same code as algo annotation
+     * TODO:: request must be in secure service
      */
     def downloadDocumentByProject = {
         // Export service provided by Export plugin

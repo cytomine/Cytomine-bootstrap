@@ -196,7 +196,6 @@ class RestReviewedAnnotationController extends RestController {
     def show = {
         ReviewedAnnotation annotation = reviewedAnnotationService.read(params.long('id'))
         if (annotation) {
-            reviewedAnnotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
         }
         else {

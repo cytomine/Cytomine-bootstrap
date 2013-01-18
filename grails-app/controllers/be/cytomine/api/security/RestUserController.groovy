@@ -185,6 +185,12 @@ class RestUserController extends RestController {
     def deleteUserFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
+        log.info "deleteUserFromProject :"+user +"#"+project
+
+        log.info "hasRole('ROLE_ADMIN')="+cytomineService.currentUser.authorities.collect {it.authority}
+        log.info "hasRole('ROLE_ADMIN')="+cytomineService.currentUser.authorities.collect {it.authority}
+        //#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')
+
         userService.deleteUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]

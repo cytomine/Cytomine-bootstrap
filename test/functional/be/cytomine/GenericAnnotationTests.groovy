@@ -106,7 +106,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAnnotationByProjectAndTermAndUserWithCredentialForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
+
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -115,7 +115,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAnnotationByProjectAndTermAndUserWithCredentialForAnnotationUser() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.userAnnotation.project)
+
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -125,7 +125,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
+
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -134,7 +134,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationUser() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.userAnnotation.project)
+
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
@@ -204,7 +204,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testAddAnnotationCorrectForAlgo() {
         def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
         def result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(),user.username, 'PasswordUserJob')
         assertEquals(200, result.code)
         int idAnnotation = result.data.id
@@ -250,7 +250,7 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testEditAnnotationWithGenericCallForAlgo() {
         AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
         UserJob user = annotationToAdd.user
-        try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
+
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,user.username, Infos.GOODPASSWORDUSERJOB)
         assertEquals(200, result.code)
@@ -301,7 +301,6 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def annotationToDelete = BasicInstance.getBasicAlgoAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         UserJob user = annotationToDelete.user
-        try {Infos.addUserRight(user.user.username,annotationToDelete.project)} catch(Exception e) {println e}
 
         def id = annotationToDelete.id
         def result = AnnotationDomainAPI.delete(id, user.username, 'PasswordUserJob')

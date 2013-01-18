@@ -45,6 +45,7 @@ class RetrievalHttpUtils {
     }
 
     public static String getPostResponse(String URL, String resource, def jsonStr) {
+        println "getPostSearchResponse not mocked"
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
 

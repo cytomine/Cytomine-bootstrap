@@ -30,13 +30,13 @@ class RestOntologyController extends RestController {
         responseSuccess(ontologyService.listLight())
     }
 
-    /**
-     *
-     */
     def show = {
         Ontology ontology = ontologyService.read(params.long('id'))
-        if (ontology) responseSuccess(ontology)
-        else responseNotFound("Ontology", params.id)
+        if (ontology) {
+            responseSuccess(ontology)
+        } else {
+            responseNotFound("Ontology", params.id)
+        }
     }
 
     def add = {

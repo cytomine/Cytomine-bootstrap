@@ -118,6 +118,7 @@ class AbstractImageGroupService extends ModelService {
      * Retrieve domain thanks to a JSON object
      * @param json JSON with new domain info
      * @return domain retrieve thanks to json
+     * TODO: secure!
      */
     def retrieve(JSONObject json) {
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)

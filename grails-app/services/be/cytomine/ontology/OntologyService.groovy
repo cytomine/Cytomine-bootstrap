@@ -13,6 +13,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.acls.domain.BasePermission
 
 class OntologyService extends ModelService {
 
@@ -23,17 +25,47 @@ class OntologyService extends ModelService {
     def termService
     def cytomineService
     def domainService
+    def securityService
+    def aclUtilService
 
     boolean saveOnUndoRedoStack = true
 
-    //TODO: secure ACL
-    def list() {
-        return Ontology.list()
+    Ontology read(def id) {
+        def ontology = Ontology.read(id)
+        if(ontology) {
+            SecurityCheck.checkReadAuthorization(ontology)
+        }
+        ontology
     }
 
-    //TODO: secure ACL
+    Ontology get(def id) {
+        def ontology = Ontology.get(id)
+        if(ontology) {
+            SecurityCheck.checkReadAuthorization(ontology)
+        }
+        ontology
+    }
+
+    /**
+     * List ontology with full tree structure (term, relation,...)
+     * Security check is done inside method
+     */
+    def list() {
+         def user = cytomineService.currentUser
+         if(!user.admin) {
+             def list = securityService.getOntologyList(user)
+             return list
+         } else {
+             return Ontology.list()
+         }
+    }
+
+    /**
+     * List ontology with just id/name
+     * Security check is done inside method
+     */
     def listLight() {
-        def ontologies = Ontology.list()
+        def ontologies = list()
         def data = []
         ontologies.each { ontology ->
             def ontologymap = [:]
@@ -44,31 +76,38 @@ class OntologyService extends ModelService {
         return data
     }
 
-    def listByTerm(Term term) {
-        return term?.ontology
-    }
-
-    Ontology read(def id) {
-        return Ontology.read(id)
-    }
-
-    Ontology get(def id) {
-        return Ontology.get(id)
-    }
-
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    @PreAuthorize("#security.checkOntologyWrite() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
-
-
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkOntologyDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
         //Start transaction
         Transaction transaction = transactionService.start()
@@ -95,32 +134,50 @@ class OntologyService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(Ontology.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(Ontology domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
+
+        //Add user creator as ontology admin
+        aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
+
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(Ontology.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(Ontology domain, boolean printMessage) {
         if (domain && Project.findAllByOntology(domain).size() > 0) throw new ConstraintException("Ontology is still map with project")
         //Build response message
@@ -131,16 +188,22 @@ class OntologyService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new Ontology(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(Ontology domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
@@ -165,7 +228,9 @@ class OntologyService extends ModelService {
      */
     def retrieve(JSONObject json) {
         Ontology ontology = Ontology.get(json.id)
-        if (!ontology) throw new ObjectNotFoundException("Ontology " + json.id + " not found")
+        if (!ontology) {
+            throw new ObjectNotFoundException("Ontology " + json.id + " not found")
+        }
         return ontology
     }
 

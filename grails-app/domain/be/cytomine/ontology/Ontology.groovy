@@ -197,4 +197,14 @@ class Ontology extends CytomineDomain implements Serializable {
         return domain;
     }
 
+    /**
+     * Return domain ontology (term ontology, relation-term ontology...)
+     * By default, a domain has no ontology linked.
+     * You need to override ontologyDomain() in domain class
+     * @return Domain ontology
+     */
+    public Ontology ontologyDomain() {
+        return this;
+    }
+
 }

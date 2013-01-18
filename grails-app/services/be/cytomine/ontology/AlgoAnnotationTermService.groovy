@@ -48,7 +48,12 @@ class AlgoAnnotationTermService extends ModelService {
 
     @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
-        AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
+        if(userJob) {
+            AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
+        } else {
+            AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term)
+        }
+
     }
 
     /**

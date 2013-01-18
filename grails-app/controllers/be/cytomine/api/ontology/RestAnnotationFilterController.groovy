@@ -57,7 +57,6 @@ class RestAnnotationFilterController extends RestController {
             responseNotFound("AnnotationFilter", params.id)
         } else {
             responseSuccess(annotationFilter)
-            projectService.checkAuthorization(annotationFilter.project)
         }
     }
 

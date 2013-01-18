@@ -218,7 +218,7 @@ class RestController {
      * @param id1 Id for the first filter
      */
     protected def responseNotFound(className, filter, id) {
-        log.error className + ": " + filter + " " + id + " don't exist"
+        log.info className + ": " + filter + " " + id + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter + " : " + id)
@@ -236,7 +236,7 @@ class RestController {
      * @param id2 Id for the second filter
      */
     protected def responseNotFound(className, filter1, filter2, id1, id2) {
-        log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " don't exist"
+        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter1 + " : " + id1 + " and  " + filter2 + " : " + id2)
@@ -256,7 +256,7 @@ class RestController {
      * @param id3 Id for the third filter
      */
     protected def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
-        log.error className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " don't exist"
+        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " don't exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter1 + " : " + id1 + ",  " + filter2 + " : " + id2 + " and " + filter3 + " : " + id3)

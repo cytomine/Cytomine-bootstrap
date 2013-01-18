@@ -66,24 +66,32 @@ class Infos {
      * @param project Project
      */
     static void addUserRight(User user, Project project) {
+        long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        def aclService = ApplicationHolder.application.getMainContext().getBean("aclService")
-        def objectIdentityRetrievalStrategy = ApplicationHolder.application.getMainContext().getBean("objectIdentityRetrievalStrategy")
+//        def aclService = ApplicationHolder.application.getMainContext().getBean("aclService")
+//        def objectIdentityRetrievalStrategy = ApplicationHolder.application.getMainContext().getBean("objectIdentityRetrievalStrategy")
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
 
-        ObjectIdentity oi = new ObjectIdentityImpl(project.class, project.id);
-        try {
-            MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
-        } catch (NotFoundException nfe) {
-            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(project)
-        }
+//        ObjectIdentity oi = new ObjectIdentityImpl(project.class, project.id);
+//        try {
+//            MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
+//        } catch (NotFoundException nfe) {
+//            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(project)
+//        }
 
         aclUtilService.addPermission project, user.username, ADMINISTRATION
+        aclUtilService.addPermission project.ontology, user.username, READ
+        aclUtilService.addPermission project.ontology, user.username, WRITE
+        aclUtilService.addPermission project.ontology, user.username, DELETE
 
         def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
+        println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
     }
+
+
+
 
     /**
      * Print all right info for a specific domain
