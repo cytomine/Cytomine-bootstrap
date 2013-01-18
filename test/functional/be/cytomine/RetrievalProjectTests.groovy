@@ -244,8 +244,8 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval2.save(flush: true)
 
-        projectToAdd.retrievalProjects.add(projectRetrieval1)
-        projectToAdd.retrievalProjects.add(projectRetrieval2)
+        projectToAdd.addToRetrievalProjects(projectRetrieval1)
+        projectToAdd.addToRetrievalProjects(projectRetrieval2)
         projectToAdd.save(flush: true)
 
         //add project json
@@ -282,8 +282,8 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
         projectRetrieval2.save(flush: true)
 
-        projectToAdd.retrievalProjects.add(projectRetrieval1)
-        projectToAdd.retrievalProjects.add(projectRetrieval2)
+        projectToAdd.addToRetrievalProjects(projectRetrieval1)
+        projectToAdd.addToRetrievalProjects(projectRetrieval2)
         projectToAdd.save(flush: true)
 
         //add project json
