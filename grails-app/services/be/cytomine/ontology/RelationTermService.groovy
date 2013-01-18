@@ -22,18 +22,46 @@ class RelationTermService extends ModelService {
 
     final boolean saveOnUndoRedoStack = true
 
+    /**
+     * TODO::Check term access
+     * @param relation
+     * @param term1
+     * @param term2
+     * @return
+     */
+    def get(Relation relation, Term term1, Term term2) {
+        RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
+    }
+
+    /**
+     * TODO:: Admin only
+     */
     def list() {
         RelationTerm.list()
     }
 
+    /**
+     * TODO:: Admin only
+     */
     def list(Relation relation) {
         RelationTerm.findAllByRelation(relation)
     }
 
+    /**
+     * TODO:: check term access
+     * @param term
+     * @param position
+     * @return
+     */
     def list(Term term, def position) {
         position == "1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
     }
 
+    /**
+     * TODO:: check term access
+     * @param term
+     * @return
+     */
     def list(Term term) {
         def relation1 = RelationTerm.findAllByTerm1(term);
         def relation2 = RelationTerm.findAllByTerm2(term);
@@ -41,22 +69,13 @@ class RelationTermService extends ModelService {
         return all
     }
 
-    def get(Relation relation, Term term1, Term term2) {
-        RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-    }
-
-
-
+    //TODO:: fill SecurityCheck with ontology?
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json, SecurityCheck security) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
+    //TODO:: fill SecurityCheck with ontology?
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, null)

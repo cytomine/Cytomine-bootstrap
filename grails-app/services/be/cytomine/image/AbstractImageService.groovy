@@ -196,6 +196,11 @@ class AbstractImageService extends ModelService {
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
             StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
         }
+
+        ImageProperty.findAllByImage(abstractImage).each {
+            it.delete(flush:true)
+        }
+
         def res =  executeCommand(new DeleteCommand(user: currentUser), json)
         //Stop transaction
         transactionService.stop()

@@ -261,6 +261,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
       def imageToDelete = BasicInstance.createOrGetBasicAbstractImage()
       Long id = imageToDelete.id
       def result = AbstractImageAPI.delete(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      println "testDeleteImage=" +result
       assertEquals(200,result.code)
       result = AbstractImageAPI.show(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assertEquals(404,result.code)
