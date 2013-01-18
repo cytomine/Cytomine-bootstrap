@@ -170,7 +170,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
   
         def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(404, result.code)
   }
 
   void testAddRelationTermWithTerm2NotExist() {
@@ -183,7 +183,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
   
         def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(404, result.code)
   }
 
   void testDeleteRelationTerm() {

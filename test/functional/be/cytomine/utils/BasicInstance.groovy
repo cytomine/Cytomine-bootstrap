@@ -866,6 +866,7 @@ class BasicInstance {
         def term2 = getBasicTermNotExist()
         relation.save(flush: true)
         term1.save(flush: true)
+        term2.ontology = term1.ontology
         term2.save(flush: true)
         def relationTerm = new RelationTerm(relation: relation, term1: term1, term2: term2)
         checkDomain(relationTerm)

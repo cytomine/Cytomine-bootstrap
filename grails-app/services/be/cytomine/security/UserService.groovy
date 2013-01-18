@@ -75,7 +75,7 @@ class UserService extends ModelService {
     @PreAuthorize("#domain.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     void deletePermission(CytomineDomain domain, SecUser user, Permission permission) {
         def acl = aclUtilService.readAcl(domain)
-
+        log.info "deletePermission $domain $user $permission"
         // Remove all permissions associated with this particular recipient
         acl.entries.eachWithIndex { entry, i ->
             log.debug "entry.permission.equals(permission)="+entry.permission.equals(permission) + " entry.sid="+entry.sid.getPrincipal()

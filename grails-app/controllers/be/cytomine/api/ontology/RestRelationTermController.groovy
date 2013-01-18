@@ -74,10 +74,13 @@ class RestRelationTermController extends RestController {
         Term term1 = termService.read(params.long('idterm1'))
         Term term2 = termService.read(params.long('idterm2'))
 
-        RelationTerm relationTerm = relationTermService.get(relation, term1, term2)
-
-        if (relation && term1 && term2 && relationTerm) {
-            responseSuccess(relationTerm)
+        if (relation && term1 && term2) {
+            def relationTerm = relationTermService.get(relation, term1, term2)
+            if(relationTerm) {
+                responseSuccess(relationTerm)
+            } else {
+                responseNotFound("RelationTerm", "Relation", relation, "Term1", term1, "Term2", term2)
+            }
         }
         else {
             responseNotFound("RelationTerm", "Relation", relation, "Term1", term1, "Term2", term2)

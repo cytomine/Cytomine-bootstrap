@@ -47,6 +47,10 @@ class RelationTerm extends CytomineDomain implements Serializable {
             throw new WrongArgumentException("Term 2 cannot be null")
         }
 
+        if(term1.ontology.id!=term2.ontology.id) {
+            throw new WrongArgumentException("Term 1 and Term 2 don't have same ontology")
+        }
+
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (!relationTerm) {
             relationTerm = new RelationTerm()
@@ -109,15 +113,9 @@ class RelationTerm extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static RelationTerm insertDataIntoDomain(def domain, def json) {
-        try {
-            domain.relation = JSONUtils.getJSONAttrDomain(json.relation, "id", new Relation(), true)
-            domain.term1 = JSONUtils.getJSONAttrDomain(json.term1, "id", new Term(), true)
-            domain.term2 = JSONUtils.getJSONAttrDomain(json.term2, "id", new Term(), true)
-        } catch(Exception e) {
-            domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
-            domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
-            domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)
-        }
+        domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
+        domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
+        domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)
         return domain;
     }
 
@@ -132,12 +130,22 @@ class RelationTerm extends CytomineDomain implements Serializable {
             def returnArray = [:]
             returnArray['class'] = it.class
             returnArray['id'] = it.id
-            returnArray['relation'] = it.relation
-            returnArray['term1'] = it.term1
-            returnArray['term2'] = it.term2
+            returnArray['relation'] = it.relation.id
+            returnArray['term1'] = it.term1.id
+            returnArray['term2'] = it.term2.id
 
             return returnArray
         }
+    }
+
+    /**
+     * Return domain ontology (term ontology, relation-term ontology...)
+     * By default, a domain has no ontology linked.
+     * You need to override ontologyDomain() in domain class
+     * @return Domain ontology
+     */
+    public Ontology ontologyDomain() {
+        return term1.ontology
     }
 
 }

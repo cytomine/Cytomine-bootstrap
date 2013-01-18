@@ -7,6 +7,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.ontology.Ontology
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.ontology.Term
 
 /**
  * User: lrollus
@@ -69,7 +70,14 @@ class SecurityCheck {
         println "checkDeletePermission"
         return project.checkDeletePermission()
     }
-    
+
+    boolean checkTermAccess(def id) {
+        def term = Term.read(id)
+        if(!term) {
+            throw new ObjectNotFoundException("Term ${id} was not found! Unable to process term ontology auth checking")
+        }
+        return term.ontology.checkReadPermission()
+    }
     
     boolean checkOntologyAccess() {
         def ontology = domain.ontologyDomain()

@@ -10,6 +10,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
 
 class RelationTermService extends ModelService {
 
@@ -23,45 +24,46 @@ class RelationTermService extends ModelService {
     final boolean saveOnUndoRedoStack = true
 
     /**
-     * TODO::Check term access
-     * @param relation
-     * @param term1
-     * @param term2
-     * @return
+     * Get a relation term
      */
+    @PreAuthorize("(#term1.ontology.hasPermission('READ') and #term2.ontology.hasPermission('READ')) or hasRole('ROLE_ADMIN')")
     def get(Relation relation, Term term1, Term term2) {
         RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
     }
 
     /**
-     * TODO:: Admin only
+     * List all relation term (admin only)
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
         RelationTerm.list()
     }
 
     /**
-     * TODO:: Admin only
+     * List all relation term  for a relation (admin only)
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list(Relation relation) {
         RelationTerm.findAllByRelation(relation)
     }
 
     /**
-     * TODO:: check term access
-     * @param term
-     * @param position
-     * @return
+     * List all relation term for a specific term (position 1 or 2)
+     * @param term Term filter
+     * @param position Term position in relation (term x PARENT term y => term x position 1, term y position 2)
+     * @return Relation term list
      */
+    @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Term term, def position) {
         position == "1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
     }
 
     /**
-     * TODO:: check term access
-     * @param term
-     * @return
+     * List all relation term for a specific term (position 1 or 2)
+     * @param term Term filter
+     * @return Relation term list
      */
+    @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Term term) {
         def relation1 = RelationTerm.findAllByTerm1(term);
         def relation2 = RelationTerm.findAllByTerm2(term);
@@ -69,28 +71,42 @@ class RelationTermService extends ModelService {
         return all
     }
 
-    //TODO:: fill SecurityCheck with ontology?
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    @PreAuthorize("(#security.checkTermAccess(#json['term1']) and #security.checkTermAccess(#json['term2'])) or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    //TODO:: fill SecurityCheck with ontology?
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkOntologyAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, null)
+        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, true,null)
     }
 
-    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser,Transaction transaction) {
-        return deleteRelationTerm(idRelation, idTerm1, idTerm2, currentUser, true,transaction)
-    }
-
+    /**
+     * Delete a relation term from database
+     * This method must delete all domain linked with this relation term
+     */
     def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage,Transaction transaction) {
         def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
-        log.info "json=" + json
         return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage,transaction:transaction), json)
     }
 
+    /**
+     * Delete all relation term for a specific term
+     */
     def deleteRelationTermFromTerm(Term term, User currentUser, Transaction transaction) {
         def relationTerm = RelationTerm.findAllByTerm1OrTerm2(term, term)
         log.info "relationTerm= " + relationTerm.size()
@@ -102,16 +118,22 @@ class RelationTermService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(RelationTerm.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(RelationTerm domain, boolean printMessage) {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
@@ -122,16 +144,21 @@ class RelationTermService extends ModelService {
     }
 
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
         destroy(RelationTerm.createFromData(json), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(RelationTerm domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Delete", domain.getCallBack())
@@ -140,16 +167,28 @@ class RelationTermService extends ModelService {
         return response
     }
 
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
     RelationTerm createFromJSON(def json) {
         return RelationTerm.createFromData(json)
     }
 
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
     def retrieve(def json) {
         Relation relation = Relation.get(json.relation)
         Term term1 = Term.get(json.term1)
         Term term2 = Term.get(json.term2)
         RelationTerm relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-        if (!relationTerm) throw new ObjectNotFoundException("Relation-term not found ($relation,$term1,$term2)")
+        if (!relationTerm) {
+            throw new ObjectNotFoundException("Relation-term not found ($relation,$term1,$term2)")
+        }
         return relationTerm
     }
 }
