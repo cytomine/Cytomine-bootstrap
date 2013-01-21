@@ -8,12 +8,8 @@ import be.cytomine.SecurityCheck
 class ComputeTermAreaJobService extends AbstractJobService{
 
     static transactional = false
-    def springSecurityService
-    def cytomineService
-    def commandService
-    def domainService
+
     def jobParameterService
-    def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
         jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()),new SecurityCheck())

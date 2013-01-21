@@ -4,6 +4,9 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
 
+/**
+ * TODO: refactoring + doc + test
+ */
 class RemoteCopyService {
 
     static transactional = false

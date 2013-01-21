@@ -112,7 +112,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             created = new Date()
         }
         if (id == null) {
-            id = sequenceService.generateID(this)
+            id = sequenceService.generateID()
         }
 
         if(!wktLocation)

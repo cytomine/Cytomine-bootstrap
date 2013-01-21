@@ -11,6 +11,9 @@ import java.awt.Color
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 
+/**
+ * TODO: refactoring + doc + test
+ */
 class SegmentationService {
 
     static transactional = false

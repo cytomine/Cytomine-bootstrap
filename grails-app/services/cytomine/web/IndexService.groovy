@@ -5,7 +5,7 @@ package cytomine.web
  * User: lrollus
  * Date: 7/07/11
  * Time: 15:16
- * To change this template use File | Settings | File Templates.
+ * Service used to create index at the application begining
  */
 class IndexService {
 
@@ -14,6 +14,9 @@ class IndexService {
     public final static String SEQ_NAME = "CYTOMINE_SEQ"
     static transactional = true
 
+    /**
+     * Create domain index
+     */
     def initIndex() {
         sessionFactory.getCurrentSession().clear();
         def connection = sessionFactory.currentSession.connection()
@@ -49,6 +52,7 @@ class IndexService {
             /**
              * ReviewedAnnotation
              */
+            createIndex(statement, "reviewed_annotation", "project_id");
             createIndex(statement, "reviewed_annotation", "image_id");  //GIST
             createIndex(statement, "reviewed_annotation", "location", "GIST");
 
@@ -111,18 +115,27 @@ class IndexService {
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }
-
     }
 
+    /**
+     * Create Btree index
+     * @param statement Database statement
+     * @param table Table for index
+     * @param col Column for index
+     */
     def createIndex(def statement, String table, String col) {
         createIndex(statement,table,col,"btree");
     }
 
+    /**
+     * Create an index (various type: BTREE, HASH, GIST,...)
+     * @param statement Database statement
+     * @param table Table for index
+     * @param col Column for index
+     * @param type Index structure type (BTREE, HASH, GIST,...)
+     */
     def createIndex(def statement, String table, String col, String type) {
         String name = table + "_" + col + "_index"
-//        String reqdrop = "DROP INDEX IF EXISTS " + name + ";"
-//        log.info reqdrop
-//        statement.execute(reqdrop);
         String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
         log.info reqcreate
         try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}

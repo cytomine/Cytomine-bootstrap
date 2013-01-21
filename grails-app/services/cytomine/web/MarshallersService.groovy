@@ -2,11 +2,18 @@ package cytomine.web
 
 import grails.converters.JSON
 
+/**
+ * Service to manage marshaller
+ * Marshaller provide json/xml/... response structure for web request
+ */
 class MarshallersService {
 
     def grailsApplication
     static transactional = false
 
+    /**
+     * Init marshaller for all cytomine domain
+     */
     def initMarshallers() {
         String baseUrl = grailsApplication.config.grails.serverURL
         JSON.registerObjectMarshaller(Date) {

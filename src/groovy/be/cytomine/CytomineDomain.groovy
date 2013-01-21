@@ -44,7 +44,7 @@ abstract class CytomineDomain  implements Comparable{
             created = new Date()
         }
         if (id == null) {
-            id = sequenceService.generateID(this)
+            id = sequenceService.generateID()
         }
     }
 
@@ -53,7 +53,7 @@ abstract class CytomineDomain  implements Comparable{
           created = new Date()
       }
       if (id == null) {
-          id = sequenceService.generateID(this)
+          id = sequenceService.generateID()
       }
   }
 
