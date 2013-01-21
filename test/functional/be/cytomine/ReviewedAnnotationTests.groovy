@@ -189,6 +189,13 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
     }
 
+    void testListReviewedAnnotationByImageAndUserAndBBOX() {
+        String bbox = "1,1,10000,10000"
+        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def result = ReviewedAnnotationAPI.listByImageAndUserAndBBOX(annotation.image.id,annotation.user.id,bbox,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
     void testListReviewedAnnotationByImageAndUserWithImageNotExist() {
         def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImageAndUser(-99,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)

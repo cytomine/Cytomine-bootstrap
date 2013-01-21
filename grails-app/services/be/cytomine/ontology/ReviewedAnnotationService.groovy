@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -19,7 +20,6 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.SecurityCheck
 
 class ReviewedAnnotationService extends ModelService {
 
@@ -37,25 +37,34 @@ class ReviewedAnnotationService extends ModelService {
 
     boolean saveOnUndoRedoStack = true
 
-    //reviewedAnnotationService.list(Project)
+    ReviewedAnnotation get(def id) {
+        def annotation = ReviewedAnnotation.get(id)
+        if (annotation) {
+            SecurityCheck.checkReadAuthorization(annotation.project)
+        }
+        annotation
+    }
+
+    ReviewedAnnotation read(def id) {
+        def annotation = ReviewedAnnotation.read(id)
+        if (annotation) {
+            SecurityCheck.checkReadAuthorization(annotation.project)
+        }
+        annotation
+    }
+
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         ReviewedAnnotation.findAllByProject(project)
     }
 
-    //reviewedAnnotationService.list(ImageInstance)
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
         ReviewedAnnotation.findAllByImage(image)
     }
 
-    //reviewedAnnotationService.list(Project, List<SecUser>, Lis<ImageInstance>, List<Term>, boolean duplicate)
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
-        //TODO:: improve perf by query duplication (if imageList.size = project.image.size then don't query with inList)
-        log.info "userList=" + userList
-        log.info "imageList=" + imageList
-        log.info "termList=" + termList
         def reviewed = ReviewedAnnotation.createCriteria().list {
             eq("project", project)
             inList("user.id", userList)
@@ -73,41 +82,44 @@ class ReviewedAnnotationService extends ModelService {
         return annotationWithThisTerm
     }
 
-    boolean shareCommonTerm(ReviewedAnnotation annotation1, ReviewedAnnotation annotation2) {
-        return differenceTerm(annotation1.term, annotation2.term).isEmpty();
-    }
-
-    def differenceTerm(Set<Term> terms1, Set<Term> terms2) {
-        Collection result = union(terms1, terms2);
-        result.removeAll(intersect(terms1, terms2));
-        return result;
-    }
-
-    public static Collection union(Collection coll1, Collection coll2) {
-        Set union = new HashSet(coll1);
-        union.addAll(new HashSet(coll2));
-        return new ArrayList(union);
-    }
-
-    public static Set intersect(Set set1, Set set2) {
-        Set intersection = new HashSet(set1);
-        intersection.retainAll(new HashSet(set2));
-        return intersection;
-    }
-
-    //reviewedAnnotationService.list(image, (String) params.bbox (optional))
+    /**
+     * List validate annotation
+     * @param image Image filter
+     * @param bbox Boundary area filter
+     * @return Reviewed Annotation list
+     */
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, String bbox) {
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
+        /**
+         * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
+         * We compute in 'gc' the set of all other annotation that must be list
+         * For each review annotation, we compute the number of other annotation that cover it (ST_CoveredBy => t or f => 0 or 1)
+         *
+         * ST_CoveredBy will return false if the annotation is not perfectly "under" the compare annotation (if some points are outside)
+         * So in gc, we increase the size of each compare annotation just for the check
+         * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
+         */
+        def xfactor = "1.08"
+        def yfactor = "1.08"
+        //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
+        boolean zoomToLow = true
+        String request
+        if (zoomToLow) {
+            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                    " FROM reviewed_annotation reviewed\n" +
+                    " WHERE reviewed.image_id = $image.id\n" +
+                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                    " ORDER BY numberOfCoveringAnnotation asc, id asc"
+        } else {
+            //too heavy to use with little zoom
+            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                    " FROM reviewed_annotation reviewed\n" +
+                    " WHERE reviewed.image_id = $image.id\n" +
+                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                    " ORDER BY numberOfCoveringAnnotation asc, id asc"
+        }
 
-        println "boundingbox.toString()=" + boundingbox.toString()
-        String request = "SELECT reviewed.id, reviewed.wkt_location\n" +
-                " FROM reviewed_annotation reviewed\n" +
-                " WHERE reviewed.image_id = $image.id\n" +
-                " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))"
-
-
-        println "REQUEST=" + request
         def sql = new Sql(dataSource)
 
         def data = []
@@ -117,7 +129,13 @@ class ReviewedAnnotationService extends ModelService {
         data
     }
 
-    //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
+    /**
+     * List validate annotation
+     * @param image Image filter
+     * @param user User Job that created annotation filter
+     * @param bbox Boundary area filter
+     * @return Reviewed Annotation list
+     */
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user, String bbox) {
         String[] coordinates = bbox.split(",")
@@ -132,7 +150,6 @@ class ReviewedAnnotationService extends ModelService {
                 .add(Restrictions.eq("image", image))
                 .add(SpatialRestrictions.within("location", boundingbox))
                 .list()
-
     }
 
     //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
@@ -153,38 +170,18 @@ class ReviewedAnnotationService extends ModelService {
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
                 .list()
-
     }
 
-    //reviewedAnnotationService.read
-    ReviewedAnnotation get(def id) {
-        ReviewedAnnotation.get(id)
-    }
-
-    ReviewedAnnotation read(def id) {
-        ReviewedAnnotation.read(id)
-    }
-
-    //reviewedAnnotationService.add
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json,SecurityCheck security) {
-
+    def add(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-//        println "x1:"+json.location
-//        //simplify annotation
-//        try {
-//            def data = simplifyGeometryService.simplifyPolygon(json.location)
-//            println "x2:"+data.geometry
-//            json.location = new WKTWriter().write(data.geometry)
-//            println "x3:"+json.location
-//            json.geometryCompression = data.rate
-//        } catch (Exception e) {
-//            log.error("Cannot simplify:" + e)
-//        }
-//        println "x4:"+json.location
-        //Start transaction
         Transaction transaction = transactionService.start()
-
         //Synchronzed this part of code, prevent two annotation to be add at the same time
         synchronized (this.getClass()) {
             //Add annotation user
@@ -192,54 +189,55 @@ class ReviewedAnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-            println "result="+result
             def annotationID = result?.data?.reviewedannotation?.id
-            log.info "reviewedannotation=" + annotationID + " json.term=" + json.term
-
             //Stop transaction
             transactionService.stop()
-
             return result
         }
     }
 
-    //reviewedAnnotationService.update
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return Response structure (new domain data, old domain data..)
+     */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //simplify annotation
-//        try {
-//            def annotation = UserAnnotation.read(json.id)
-//            def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
-//            json.location = new WKTWriter().write(data.geometry)
-//        } catch (Exception e) {
-//            log.error("Cannot simplify:" + e)
-//        }
-
         def result = executeCommand(new EditCommand(user: currentUser), json)
         return result
     }
 
-    //reviewedAnnotationService.delete
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-
         SecUser currentUser = cytomineService.getCurrentUser()
-
         //Start transaction
         Transaction transaction = transactionService.start()
-
         //Delete annotation (+cascade)
         def result = deleteAnnotation(ReviewedAnnotation.read(json.id), currentUser, true, transaction)
-
         //Stop transaction
         transactionService.stop()
         return result
     }
 
+    /**
+     * Delete a reviewed annotation from database
+     * @param annotation Annotation to delete
+     * @param currentUser User that will be the deleter user
+     * @param printMessage Flag to tell the client to print confirmation message or not
+     * @param transaction Transaction that will pack the delete command
+     * @return Result structure
+     */
     def deleteAnnotation(ReviewedAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-
         if (annotation) {
+            //remove annotation term
             annotation.term.clear()
             annotation.save(flush: true)
         }
@@ -250,15 +248,22 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(ReviewedAnnotation.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(ReviewedAnnotation domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
@@ -267,17 +272,24 @@ class ReviewedAnnotationService extends ModelService {
 
         return response
     }
+
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(ReviewedAnnotation.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(ReviewedAnnotation domain, boolean printMessage) {
         //Build response message
         log.info "destroy remove " + domain.id
@@ -288,16 +300,22 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new ReviewedAnnotation(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(ReviewedAnnotation domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
@@ -322,7 +340,9 @@ class ReviewedAnnotationService extends ModelService {
      */
     def retrieve(JSONObject json) {
         ReviewedAnnotation annotation = ReviewedAnnotation.get(json.id)
-        if (!annotation) throw new ObjectNotFoundException("ReviewedAnnotation " + json.id + " not found")
+        if (!annotation) {
+            throw new ObjectNotFoundException("ReviewedAnnotation " + json.id + " not found")
+        }
         return annotation
     }
 

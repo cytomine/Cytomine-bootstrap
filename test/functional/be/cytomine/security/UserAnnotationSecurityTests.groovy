@@ -18,7 +18,7 @@ import be.cytomine.ontology.UserAnnotation
  * Time: 11:08
  * To change this template use File | Settings | File Templates.
  */
-class AnnotationSecurityTests extends SecurityTestsAbstract {
+class UserAnnotationSecurityTests extends SecurityTestsAbstract {
 
     void testAnnotationSecurityForCytomineAdmin() {
         //Get User 1

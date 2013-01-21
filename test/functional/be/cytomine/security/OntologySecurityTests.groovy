@@ -99,7 +99,7 @@ class OntologySecurityTests extends functionaltestplugin.FunctionalTestCase {
       //check if user 2 can access/update/delete
       assertEquals(200, OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
       assertTrue(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(200, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assertEquals(403, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
 
       //remove right to user2

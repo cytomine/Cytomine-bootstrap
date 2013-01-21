@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
@@ -9,7 +10,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.SecurityCheck
 import org.springframework.security.access.prepost.PreAuthorize
 
 class RelationTermService extends ModelService {
@@ -75,10 +75,10 @@ class RelationTermService extends ModelService {
      * Update this domain with new data from json
      * @param json JSON with new data
      * @param security Security service object (user for right check)
-     * @return  Response structure (new domain data, old domain data..)
+     * @return Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("(#security.checkTermAccess(#json['term1']) and #security.checkTermAccess(#json['term2'])) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
@@ -92,16 +92,16 @@ class RelationTermService extends ModelService {
     @PreAuthorize("#security.checkOntologyAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, true,null)
+        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, true, null)
     }
 
     /**
      * Delete a relation term from database
      * This method must delete all domain linked with this relation term
      */
-    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage,Transaction transaction) {
+    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage, Transaction transaction) {
         def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage,transaction:transaction), json)
+        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage, transaction: transaction), json)
     }
 
     /**
@@ -113,7 +113,7 @@ class RelationTermService extends ModelService {
 
         relationTerm.each { relterm ->
             log.info "unlink relterm:" + relationTerm.id
-            deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false,transaction)
+            deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false, transaction)
         }
     }
 

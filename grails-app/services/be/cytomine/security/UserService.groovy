@@ -289,15 +289,15 @@ class UserService extends ModelService {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     addPermission(project,user.username,ADMINISTRATION)
                     addPermission(project.ontology,user.username,READ)
-                    addPermission(project.ontology,user.username,WRITE)
-                    addPermission(project.ontology,user.username,DELETE)
+//                    addPermission(project.ontology,user.username,WRITE)
+//                    addPermission(project.ontology,user.username,DELETE)
                 }
                 else {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     addPermission(project,user.username,READ)
                     addPermission(project.ontology,user.username,READ)
-                    addPermission(project.ontology,user.username,WRITE)
-                    addPermission(project.ontology,user.username,DELETE)
+//                    addPermission(project.ontology,user.username,WRITE)
+//                    addPermission(project.ontology,user.username,DELETE)
                 }
             }
         [data: [message: "OK"], status: 201]
@@ -311,15 +311,15 @@ class UserService extends ModelService {
                 if(admin) {
                     deletePermission(project,user,ADMINISTRATION)
                     deletePermission(project.ontology,user,READ)
-                    deletePermission(project.ontology,user,WRITE)
-                    deletePermission(project.ontology,user,DELETE)
+//                    deletePermission(project.ontology,user,WRITE)
+//                    deletePermission(project.ontology,user,DELETE)
                 }
                 else {
                     //TODO:: these call MUST BE DONE FROM CONTROLLER
                     deletePermission(project,user,READ)
                     deletePermission(project.ontology,user,READ)
-                    deletePermission(project.ontology,user,WRITE)
-                    deletePermission(project.ontology,user,DELETE)
+//                    deletePermission(project.ontology,user,WRITE)
+//                    deletePermission(project.ontology,user,DELETE)
                     //projectService.deletePermission(project,user.username,WRITE)
                 }
             }

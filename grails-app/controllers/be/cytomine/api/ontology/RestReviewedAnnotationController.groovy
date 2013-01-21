@@ -57,42 +57,7 @@ class RestReviewedAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         if (image && params.bbox) {
-            Geometry boundingbox = GeometryUtils.createBoundingBox((String)params.bbox)
-            /**
-             * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
-             * We compute in 'gc' the set of all other annotation that must be list
-             * For each review annotation, we compute the number of other annotation that cover it (ST_CoveredBy => t or f => 0 or 1)
-             *
-             * ST_CoveredBy will return false if the annotation is not perfectly "under" the compare annotation (if some points are outside)
-             * So in gc, we increase the size of each compare annotation just for the check
-             * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
-             */
-            def xfactor = "1.08"
-            def yfactor = "1.08"
-            //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
-            boolean zoomToLow = true
-            String request
-            if(zoomToLow) {
-                request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                      " FROM reviewed_annotation reviewed\n" +
-                      " WHERE reviewed.image_id = $image.id\n" +
-                      " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
-                      " ORDER BY numberOfCoveringAnnotation asc, id asc"
-            } else {
-                //too heavy to use with little zoom
-                request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                       " FROM reviewed_annotation reviewed\n" +
-                       " WHERE reviewed.image_id = $image.id\n" +
-                       " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
-                       " ORDER BY numberOfCoveringAnnotation asc, id asc"
-            }
-
-            def sql = new Sql(dataSource)
-
-            def data = []
-            sql.eachRow(request) {
-                data << [id: it[0], location: it[1], term: []]
-            }
+            def data = reviewedAnnotationService.list(image,(String)params.bbox)
             responseSuccess(data)
         }
         else if(image) {

@@ -4,15 +4,14 @@ import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.SecurityCheck
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 
@@ -32,7 +31,7 @@ class OntologyService extends ModelService {
 
     Ontology read(def id) {
         def ontology = Ontology.read(id)
-        if(ontology) {
+        if (ontology) {
             SecurityCheck.checkReadAuthorization(ontology)
         }
         ontology
@@ -40,7 +39,7 @@ class OntologyService extends ModelService {
 
     Ontology get(def id) {
         def ontology = Ontology.get(id)
-        if(ontology) {
+        if (ontology) {
             SecurityCheck.checkReadAuthorization(ontology)
         }
         ontology
@@ -51,13 +50,13 @@ class OntologyService extends ModelService {
      * Security check is done inside method
      */
     def list() {
-         def user = cytomineService.currentUser
-         if(!user.admin) {
-             def list = securityService.getOntologyList(user)
-             return list
-         } else {
-             return Ontology.list()
-         }
+        def user = cytomineService.currentUser
+        if (!user.admin) {
+            def list = securityService.getOntologyList(user)
+            return list
+        } else {
+            return Ontology.list()
+        }
     }
 
     /**
@@ -83,7 +82,7 @@ class OntologyService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json,SecurityCheck security) throws CytomineException {
+    def add(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
@@ -93,7 +92,7 @@ class OntologyService extends ModelService {
      * Update this domain with new data from json
      * @param json JSON with new data
      * @param security Security service object (user for right check)
-     * @return  Response structure (new domain data, old domain data..)
+     * @return Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("#security.checkOntologyWrite() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) throws CytomineException {
@@ -120,12 +119,12 @@ class OntologyService extends ModelService {
             log.info "Delete term from ontology"
             def terms = ontology.terms()
             terms.each { term ->
-                termService.deleteTermRestricted(term.id, currentUser, false,transaction)
+                termService.deleteTermRestricted(term.id, currentUser, false, transaction)
             }
         }
         //Delete ontology
         log.info "Delete ontology"
-        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
 
         //Stop transaction
         transactionService.stop()

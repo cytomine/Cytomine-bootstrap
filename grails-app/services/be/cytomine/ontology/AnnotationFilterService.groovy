@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -10,8 +11,6 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.CytomineDomain
-import be.cytomine.SecurityCheck
 
 class AnnotationFilterService extends ModelService {
 
@@ -28,7 +27,7 @@ class AnnotationFilterService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     AnnotationFilter read(def id) {
         def filter = AnnotationFilter.read(id)
-        if(filter) {
+        if (filter) {
             SecurityCheck.checkReadAuthorization(filter.project)
         }
         filter
@@ -37,7 +36,7 @@ class AnnotationFilterService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     AnnotationFilter get(def id) {
         def filter = AnnotationFilter.get(id)
-        if(filter) {
+        if (filter) {
             SecurityCheck.checkReadAuthorization(filter.project)
         }
         filter
@@ -50,7 +49,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) throws CytomineException {
+    def add(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
@@ -59,7 +58,7 @@ class AnnotationFilterService extends ModelService {
      * Update this domain with new data from json
      * @param json JSON with new data
      * @param security Security service object (user for right check)
-     * @return  Response structure (new domain data, old domain data..)
+     * @return Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) throws CytomineException {
@@ -74,7 +73,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json,SecurityCheck security) throws CytomineException {
+    def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
@@ -152,7 +151,6 @@ class AnnotationFilterService extends ModelService {
         domainService.saveDomain(domain)
         return response
     }
-
 
     /**
      * Create domain from JSON object

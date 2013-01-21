@@ -87,6 +87,14 @@ class SecurityCheck {
         return ontology.checkReadPermission()
     }
 
+    boolean checkOntologyAccess(def id) {
+        def ontology = Ontology.read(id)
+        if(!ontology) {
+            throw new ObjectNotFoundException("Ontology from domain ${domain} was not found! Unable to process ontology auth checking")
+        }
+        return ontology.checkReadPermission()
+    }
+
     boolean checkOntologyWrite() {
         def ontology = domain.ontologyDomain()
         if(!ontology) {

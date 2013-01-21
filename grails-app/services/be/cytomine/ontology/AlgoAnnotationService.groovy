@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -12,19 +13,14 @@ import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
-import com.vividsolutions.jts.geom.Coordinate
+import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTWriter
 import grails.converters.JSON
+import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
-import org.hibernate.criterion.Restrictions
-import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.utils.GeometryUtils
-import groovy.sql.Sql
-import be.cytomine.SecurityCheck
 
 class AlgoAnnotationService extends ModelService {
 
@@ -46,7 +42,7 @@ class AlgoAnnotationService extends ModelService {
 
     AlgoAnnotation get(def id) {
         def annotation = AlgoAnnotation.get(id)
-        if(annotation) {
+        if (annotation) {
             SecurityCheck.checkReadAuthorization(annotation.project)
         }
         annotation
@@ -54,7 +50,7 @@ class AlgoAnnotationService extends ModelService {
 
     AlgoAnnotation read(def id) {
         def annotation = AlgoAnnotation.read(id)
-        if(annotation) {
+        if (annotation) {
             SecurityCheck.checkReadAuthorization(annotation.project)
         }
         annotation
@@ -205,7 +201,7 @@ class AlgoAnnotationService extends ModelService {
         }
         else if (noTerm) {
             log.info "noTerm"
-             //TODO: could be improve with a single SQL Request
+            //TODO: could be improve with a single SQL Request
             def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
                 eq("project", project)
                 inList("userJob.id", userList)
@@ -315,10 +311,11 @@ class AlgoAnnotationService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
+     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json, SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 
@@ -352,7 +349,7 @@ class AlgoAnnotationService extends ModelService {
      * Update this domain with new data from json
      * @param json JSON with new data
      * @param security Security service object (user for right check)
-     * @return  Response structure (new domain data, old domain data..)
+     * @return Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id)  or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {

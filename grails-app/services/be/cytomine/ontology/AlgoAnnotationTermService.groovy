@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
@@ -14,12 +15,7 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
-
-import java.util.TreeMap.Entry
-import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.CytomineDomain
-import be.cytomine.SecurityCheck
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -48,7 +44,7 @@ class AlgoAnnotationTermService extends ModelService {
 
     @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
-        if(userJob) {
+        if (userJob) {
             AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
         } else {
             AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term)
@@ -66,7 +62,7 @@ class AlgoAnnotationTermService extends ModelService {
     def add(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
-        if(!creator)
+        if (!creator)
             json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
@@ -82,7 +78,7 @@ class AlgoAnnotationTermService extends ModelService {
      */
     def deleteAlgoAnnotationTerm(def idAnnotation, def idTerm, def idUserJob, User currentUser, Transaction transaction) {
         def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, userJob: $idUserJob}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        return executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
     }
 
     /**
@@ -95,21 +91,21 @@ class AlgoAnnotationTermService extends ModelService {
 
         suggestedterm.each { sugterm ->
             log.info "unlink sugterm:" + sugterm.id
-            deleteAlgoAnnotationTerm(sugterm.retrieveAnnotationDomain().id, sugterm.term.id, sugterm.userJob.id, currentUser,transaction)
+            deleteAlgoAnnotationTerm(sugterm.retrieveAnnotationDomain().id, sugterm.term.id, sugterm.userJob.id, currentUser, transaction)
         }
     }
 
     /**
      * Delete all algo annotation for a term
      */
-    def deleteAlgoAnnotationTermFromAllUser(Term term, User currentUser,Transaction transaction) {
+    def deleteAlgoAnnotationTermFromAllUser(Term term, User currentUser, Transaction transaction) {
         //Delete all annotation term
         def algoannotationterm = AlgoAnnotationTerm.findAllByTerm(term)
         log.info "Delete old algoannotationterm= " + algoannotationterm.size()
 
         algoannotationterm.each { algoterm ->
             log.info "unlink sugterm:" + algoterm.id
-            deleteAlgoAnnotationTerm(algoterm.retrieveAnnotationDomain().id, algoterm.term.id, algoterm.userJob.id, currentUser,transaction)
+            deleteAlgoAnnotationTerm(algoterm.retrieveAnnotationDomain().id, algoterm.term.id, algoterm.userJob.id, currentUser, transaction)
         }
     }
 
@@ -178,7 +174,7 @@ class AlgoAnnotationTermService extends ModelService {
      */
     def retrieve(JSONObject json) {
         //Retrieve domain
-        Long idAnnotation = Long.parseLong(json.annotationIdent+"")
+        Long idAnnotation = Long.parseLong(json.annotationIdent + "")
         Term term = Term.read(json.term)
         UserJob userJob = UserJob.read(json.userJob)
         AlgoAnnotationTerm domain = AlgoAnnotationTerm.findWhere(annotationIdent: idAnnotation, term: term, userJob: userJob)
@@ -189,23 +185,23 @@ class AlgoAnnotationTermService extends ModelService {
     /**
      * Compute Success rate AVG for all algo annotation term of userJob
      */
-     double computeAVG(def userJob) {
-        log.info "userJob="+userJob?.id
+    double computeAVG(def userJob) {
+        log.info "userJob=" + userJob?.id
 
         def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
             eq("userJob", userJob)
             isNotNull("expectedTerm")
         }
-         if(nbTermTotal==0) {
-             throw new Exception("UserJob has no algo-annotation-term!")
-         }
+        if (nbTermTotal == 0) {
+            throw new Exception("UserJob has no algo-annotation-term!")
+        }
 
-         def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
-             eq("userJob", userJob)
-             isNotNull("term")
-             isNotNull("expectedTerm")
-             eqProperty("term", "expectedTerm")
-         }
+        def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
+            eq("userJob", userJob)
+            isNotNull("term")
+            isNotNull("expectedTerm")
+            eqProperty("term", "expectedTerm")
+        }
         return (double) (nbTermCorrect / nbTermTotal)
     }
 
@@ -214,21 +210,21 @@ class AlgoAnnotationTermService extends ModelService {
      */
     double computeAVG(def userJob, Term term) {
 
-       def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
-           eq("userJob", userJob)
-           eq("expectedTerm",term)
-       }
-        if(nbTermTotal==0) {
+        def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
+            eq("userJob", userJob)
+            eq("expectedTerm", term)
+        }
+        if (nbTermTotal == 0) {
             throw new Exception("UserJob has no algo-annotation-term!")
         }
 
         def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
-           eq("userJob", userJob)
-           eq("expectedTerm",term)
-           eqProperty("term", "expectedTerm")
+            eq("userJob", userJob)
+            eq("expectedTerm", term)
+            eqProperty("term", "expectedTerm")
         }
-       return (double) (nbTermCorrect / nbTermTotal)
-   }
+        return (double) (nbTermCorrect / nbTermTotal)
+    }
 
     /**
      * Compute suceess rate AVG per term for a userjob
@@ -243,29 +239,29 @@ class AlgoAnnotationTermService extends ModelService {
         terms.each { term ->
             def nbTermCorrect = AlgoAnnotationTerm.createCriteria().count {
                 eq("userJob", userJob)
-                eq("expectedTerm",term)
+                eq("expectedTerm", term)
                 eqProperty("term", "expectedTerm")
             }
             def nbTermTotal = AlgoAnnotationTerm.createCriteria().count {
                 eq("userJob", userJob)
-                eq("expectedTerm",term)
+                eq("expectedTerm", term)
             }
 
-            if(nbTermTotal!=0) {
-                total = total + (double)(nbTermCorrect/nbTermTotal)
+            if (nbTermTotal != 0) {
+                total = total + (double) (nbTermCorrect / nbTermTotal)
                 nbTermNotEmpty++
             }
         }
         double avg = 0
-        if(nbTermNotEmpty!=0)
-            avg = (double)(total/nbTermNotEmpty)
+        if (nbTermNotEmpty != 0)
+            avg = (double) (total / nbTermNotEmpty)
         return avg
-   }
+    }
 
     /**
      * Compute full Confusion Matrix for all terms from projectTerms and all algo annotation term from userJob
      */
-     ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
+    ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
         Collections.sort(projectTerms);
         def projectTermsId = projectTerms.collect {it.id + ""}
         ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);
@@ -282,7 +278,7 @@ class AlgoAnnotationTermService extends ModelService {
      * For each userJobs, map its date with the success rate of its result
      */
     def listAVGEvolution(List<UserJob> userJobs, Project project) {
-        listAVGEvolution(userJobs,project,null)
+        listAVGEvolution(userJobs, project, null)
     }
 
     /**
@@ -292,7 +288,7 @@ class AlgoAnnotationTermService extends ModelService {
      */
     def listAVGEvolution(List<UserJob> userJobs, Project project, Term term) {
 
-        if(userJobs.isEmpty()) {
+        if (userJobs.isEmpty()) {
             return null
         }
 
@@ -300,11 +296,11 @@ class AlgoAnnotationTermService extends ModelService {
         int count = 0;
         def annotations = null;
 
-        if(!term) {
+        if (!term) {
             annotations = UserAnnotation.executeQuery("select a.created from UserAnnotation a where a.project = ?  order by a.created desc", [project])
         }
         else {
-            annotations = UserAnnotation.executeQuery("select b.created from UserAnnotation b where b.project = ? and b.id in (select x.userAnnotation.id from AnnotationTerm x where x.term = ?)  order by b.created desc", [project,term])
+            annotations = UserAnnotation.executeQuery("select b.created from UserAnnotation b where b.project = ? and b.id in (select x.userAnnotation.id from AnnotationTerm x where x.term = ?)  order by b.created desc", [project, term])
         }
         userJobs.each {
             def userJobIt = it
@@ -315,26 +311,26 @@ class AlgoAnnotationTermService extends ModelService {
             //For each userjob, we browse annotation (oreder desc creation) and we count the number of annotation
             //that are most recent than userjob, we subsitute this count from annotation.list()
             //=> not needed to browse n times annotations list, juste 1 time.
-            while(count<annotations.size()) {
-                if(annotations.get(count)<stopDate) break;
+            while (count < annotations.size()) {
+                if (annotations.get(count) < stopDate) break;
                 count++;
             }
-            item.size = annotations.size()-count;
+            item.size = annotations.size() - count;
 
             try {
                 item.date = userJobIt.created.getTime()
-                if(term)
-                    item.avg = computeAVG(userJobIt,term)
+                if (term)
+                    item.avg = computeAVG(userJobIt, term)
                 else {
-                    if(userJobIt.rate==-1 && userJobIt.job.status==Job.SUCCESS) {
+                    if (userJobIt.rate == -1 && userJobIt.job.status == Job.SUCCESS) {
                         userJobIt.rate = computeAVG(userJobIt)
                         userJobIt.save(flush: true)
                     }
                     item.avg = userJobIt.rate
                 }
-                    
+
                 data << item
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.info e
             }
         }

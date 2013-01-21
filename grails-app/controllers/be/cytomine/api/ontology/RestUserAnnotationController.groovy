@@ -52,7 +52,7 @@ class RestUserAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
-            responseSuccess(userAnnotationService.listMap(image))
+            responseSuccess(userAnnotationService.listLight(image))
         } else {
             responseNotFound("Image", params.id)
         }
@@ -71,7 +71,7 @@ class RestUserAnnotationController extends RestController {
             List<Long> userList = paramsService.getParamsUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
-            def list = userAnnotationService.listMap(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
+            def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
             if (params.offset != null) {
                 responseSuccess([size: list.size(), collection: substract(list, offset, max)])
             } else {
@@ -92,10 +92,10 @@ class RestUserAnnotationController extends RestController {
         if (image && user && params.bbox) {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
-            def data = userAnnotationService.listMap(image, user, boundingbox, notReviewedOnly)
+            def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly)
             responseSuccess(data)
         } else if (image && user) {
-            responseSuccess(userAnnotationService.listMap(image, user))
+            responseSuccess(userAnnotationService.listLight(image, user))
         } else if (!user) {
             responseNotFound("User", params.idUser)
         } else if (!image) {

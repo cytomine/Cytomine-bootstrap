@@ -3,16 +3,15 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
-import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.SecurityCheck
 
 class AnnotationTermService extends ModelService {
 
@@ -40,7 +39,7 @@ class AnnotationTermService extends ModelService {
         if (user) {
             AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
         } else {
-            AnnotationTerm.findWhere('userAnnotation.id':annotation.id, 'term':term)
+            AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term)
         }
     }
 
@@ -50,10 +49,10 @@ class AnnotationTermService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
-        if(!creator)
+        if (!creator)
             json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
@@ -67,13 +66,13 @@ class AnnotationTermService extends ModelService {
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.userannotation, json.term, json.user,currentUser,true,null)
+        return deleteAnnotationTerm(json.userannotation, json.term, json.user, currentUser, true, null)
     }
 
 
-    def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser,Transaction transaction) {
+    def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser, Transaction transaction) {
         def json = JSON.parse("{userannotation: $idUserAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
-        return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
+        return executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
     }
 
     /**
@@ -87,10 +86,10 @@ class AnnotationTermService extends ModelService {
         Transaction transaction = transactionService.start()
 
         //Delete all annotation term
-        deleteAnnotationTermFromUser(annotation, currentUser, currentUser,transaction)
+        deleteAnnotationTermFromUser(annotation, currentUser, currentUser, transaction)
 
         //Add annotation term
-        def result = addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser,transaction)
+        def result = addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
 
         //Stop transaction
         transactionService.stop()
@@ -104,7 +103,7 @@ class AnnotationTermService extends ModelService {
      */
     def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage, Transaction transaction) {
         def json = JSON.parse("{userannotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
         return result
     }
 
@@ -117,7 +116,7 @@ class AnnotationTermService extends ModelService {
         log.info "Delete old annotationTerm= " + annotationTerm.size()
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false, transaction)
         }
     }
 
@@ -130,7 +129,7 @@ class AnnotationTermService extends ModelService {
         log.info "Delete old annotationTerm= " + annotationTerms.size()
         annotationTerms.each { annotationTerm ->
             log.info "unlink annotterm:" + annotationTerm.id
-            deleteAnnotationTerm(annotationTerm.userAnnotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotationTerm.userAnnotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false, transaction)
         }
     }
 
@@ -143,7 +142,7 @@ class AnnotationTermService extends ModelService {
         log.info "Delete old annotationTerm= " + annotationTerm.size()
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false,transaction)
+            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false, transaction)
         }
     }
 
@@ -169,7 +168,7 @@ class AnnotationTermService extends ModelService {
         log.debug "domain=" + domain + " responseService=" + responseService
         //Save new object
         //domainService.saveDomain(domain)
-        domain = AnnotationTerm.link(domain.userAnnotation, domain.term,domain.user)
+        domain = AnnotationTerm.link(domain.userAnnotation, domain.term, domain.user)
 
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
 

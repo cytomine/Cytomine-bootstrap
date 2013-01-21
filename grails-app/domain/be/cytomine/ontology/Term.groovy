@@ -164,4 +164,14 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     int compareTo(Object t) {
         return this.name.compareTo(((Term)t).name)
     }
+
+    /**
+     * Return domain ontology (term ontology, relation-term ontology...)
+     * By default, a domain has no ontology linked.
+     * You need to override ontologyDomain() in domain class
+     * @return Domain ontology
+     */
+    public Ontology ontologyDomain() {
+        return ontology;
+    }
 }

@@ -74,6 +74,11 @@ class ReviewedAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByImageAndUserAndBBOX(Long idImage,Long idUser, String bbox, String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/reviewedannotation.json?bbox=$bbox"
+        return doGET(URL, username, password)
+    }
+
     static def create(String jsonAnnotation, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/reviewedannotation.json"
         def result = doPOST(URL,jsonAnnotation,username,password)
