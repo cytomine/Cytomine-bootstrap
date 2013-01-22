@@ -7,8 +7,10 @@ import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
+import be.cytomine.command.Transaction
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 
@@ -170,5 +172,20 @@ class AnnotationFilterService extends ModelService {
         AnnotationFilter annotationFilter = this.read(json.id)
         if (!annotationFilter) throw new ObjectNotFoundException("AnnotationFilter " + json.id + " not found")
         return annotationFilter
+    }
+
+    /**
+     * Delete all annotations filters which contains a Term instance
+     * @param term
+     */
+    def deleteFiltersFromTerm(Term term) {
+        def annotationsFilters = AnnotationFilter.createCriteria().list {
+            terms {
+                idEq(term.id)
+            }
+        }
+        annotationsFilters.each {
+            destroy(it, true)
+        }
     }
 }

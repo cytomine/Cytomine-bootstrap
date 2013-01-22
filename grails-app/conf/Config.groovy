@@ -176,6 +176,7 @@ log4j = {
     println "Log4j consoleLevel"
 
     appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
         rollingFile  name:'infoLog', file:'/tmp/cytomine-info.log', threshold: org.apache.log4j.Level.INFO, maxFileSize:1024
         rollingFile  name:'warnLog', file:'/tmp/cytomine-warn.log', threshold: org.apache.log4j.Level.WARN, maxFileSize:1024
         rollingFile  name:'errorLog', file:'/tmp/cytomine-error.log', threshold: org.apache.log4j.Level.ERROR, maxFileSize:1024
@@ -221,19 +222,19 @@ log4j = {
         }
         development {
             root {
-                info 'appLog',"logfile", stdout
+                info 'appLog',"logfile", 'stdout'
                 additivity = true
             }
         }
         test {
             root {
-                info 'appLog',"logfile", stdout
+                info 'appLog',"logfile", 'stdout'
                 additivity = true
             }
         }
         perf {
             root {
-                info 'appLog',"logfile", stdout
+                info 'appLog',"logfile", 'stdout'
                 additivity = true
             }
         }

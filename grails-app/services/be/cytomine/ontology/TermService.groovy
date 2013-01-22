@@ -28,6 +28,7 @@ class TermService extends ModelService {
     def relationTermService
     def domainService
     def userService
+    def annotationFilterService
 
     final boolean saveOnUndoRedoStack = true
 
@@ -155,6 +156,9 @@ class TermService extends ModelService {
         log.info "Delete term: " + idTerm
         Term term = Term.read(idTerm)
         if (term) {
+            //Delete Annotation-Filters before deleting Term
+            annotationFilterService.deleteFiltersFromTerm(term)
+
             //Delete Annotation-Term before deleting Term
             annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser, transaction)
 

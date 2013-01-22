@@ -119,14 +119,14 @@ class BootStrap {
             initData(GrailsUtil.environment)
         }
 
-        log.info "create scanner"
+        /*log.info "create scanner"
         createScanner()
         log.info "create user"
         createBasicUser()
         log.info "create discipline"
         createDiscipline()
         log.info "create processing server"
-        createProcessingServer()
+        createProcessingServer()*/
 
 
         //countersService.updateCounters()
