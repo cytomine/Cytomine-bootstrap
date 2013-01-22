@@ -178,7 +178,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         return url
     }
 
-    def getCropURLWithMaxWithOrHeight(def topLeftX, def topLeftY, def width, def height, def desiredWidth, def desiredHeight) {
+    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
         def imageServers = getImageServers()
         println "imageServers=$imageServers"
         if (imageServers == null || imageServers.size() == 0) {
@@ -188,11 +188,11 @@ class AbstractImage extends CytomineDomain implements Serializable {
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
         def baseUrl = imageServers[index].getBaseUrl()
         def storage = imageServers[index].getStorage()
-        def basePath = storage.getBasePath()
-        def path = getPath()
-        def widthImg =  this.getWidth()
-        def heightImg = this.getHeight()
-        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg,heightImg, desiredWidth, desiredHeight)
+        String basePath = storage.getBasePath()
+        String path = getPath()
+        int widthImg =  this.getWidth()
+        int heightImg = this.getHeight()
+        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg, heightImg, desiredWidth, desiredHeight)
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height) {
