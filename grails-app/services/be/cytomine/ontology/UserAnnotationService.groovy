@@ -579,7 +579,7 @@ class UserAnnotationService extends ModelService {
      * Execute request and format result into a list of map
      */
     private def selectUserAnnotationFull(String request) {
-        println "REQUEST=" + request
+        log.info "REQUEST=" + request
         def data = []
         long lastAnnotationId = -1
         long lastTermId = -1
