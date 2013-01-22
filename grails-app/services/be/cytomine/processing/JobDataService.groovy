@@ -131,6 +131,4 @@ class JobDataService extends ModelService {
         if (!jobdata) throw new ObjectNotFoundException("Jobdata " + json.id + " not found")
         return jobdata
     }
-
-
 }

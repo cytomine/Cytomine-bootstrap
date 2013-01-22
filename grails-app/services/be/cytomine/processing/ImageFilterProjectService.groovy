@@ -23,14 +23,14 @@ class ImageFilterProjectService extends ModelService {
     def imageFilterService
     def projectService
 
+    @Secured(['ROLE_ADMIN'])
+    def list() {
+        return ImageFilterProject.list()
+    }
+
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def get(Project project, ImageFilter image) {
         return ImageFilterProject.findByImageFilterAndProject(image, project)
-    }
-
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
-    def list() {
-        return ImageFilterProject.list()
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
@@ -38,44 +38,48 @@ class ImageFilterProjectService extends ModelService {
         return ImageFilterProject.findAllByProject(project)
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def add(Project project, ImageFilter imageFilter) {
-        ImageFilterProject.link(imageFilter, project)
-    }
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def delete(Project project, ImageFilter imageFilter) {
-        ImageFilterProject.unlink(imageFilter, project)
-    }
-
-
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
-    def update(def json, SecurityCheck security) throws CytomineException {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
-    }
-
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
-
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(ImageFilterProject.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(ImageFilterProject domain, boolean printMessage) {
         //Save new object
         domain = ImageFilterProject.link(domain.id, domain.imageFilter,domain.project)
@@ -83,11 +87,12 @@ class ImageFilterProjectService extends ModelService {
         //Build response message
         return responseService.createResponseMessage(domain, [domain.imageFilter?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
     }
+
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
@@ -95,6 +100,12 @@ class ImageFilterProjectService extends ModelService {
         destroy(ImageFilterProject.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(ImageFilterProject domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.imageFilter?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())

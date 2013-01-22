@@ -3,6 +3,10 @@ package be.cytomine.processing.job
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 
+/**
+ * Simple software example
+ * Just print hello world
+ */
 class HelloWorldJobService extends AbstractJobService {
 
     static transactional = true
@@ -17,7 +21,6 @@ class HelloWorldJobService extends AbstractJobService {
     }
 
     def execute(Job job) {
-        //get job params
         log.info "Hello world"
     }
 

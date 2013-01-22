@@ -6,6 +6,10 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.SecurityCheck
 
+/**
+ * Software that compute suggest term of each annotation of a project
+ * It compute prediction every X days (or week,month, year,...) between two dates
+ */
 class RetrievalEvolutionJobService extends AbstractJobService{
 
     static transactional = false

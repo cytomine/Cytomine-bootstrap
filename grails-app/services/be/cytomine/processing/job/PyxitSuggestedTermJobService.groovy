@@ -7,6 +7,9 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.SecurityCheck
 
+/**
+ * TODO: doc
+ */
 class PyxitSuggestedTermJobService extends AbstractJobService {
 
     static transactional = false

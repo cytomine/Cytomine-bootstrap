@@ -166,8 +166,21 @@ class BasicInstance {
         imagefilter
     }
 
+    static ImageFilter getBasicImageFilterNotExist() {
+       def imagefilter = new ImageFilter()
+        imagefilter.name = "imagetest"+new Date()
+        imagefilter.baseUrl = "baseurl"
+        def processing = new ProcessingServer(url: "processingserverurl")
+        processing.save(flush:true)
+        imagefilter.processingServer = processing
+        imagefilter
+    }
+
+
     static ImageFilterProject createOrGetBasicImageFilterProject() {
        def imagefilter = createOrGetBasicImageFilter()
+       BasicInstance.checkDomain(imagefilter)
+       BasicInstance.saveDomain(imagefilter)
        def project = createOrGetBasicProject()
        def result = ImageFilterProject.findByProjectAndImageFilter(project,imagefilter)
         if(!result) {
@@ -177,7 +190,9 @@ class BasicInstance {
     }
 
     static ImageFilterProject getBasicImageFilterProjectNotExist() {
-       def imagefilter = createOrGetBasicImageFilter()
+        def imagefilter = getBasicImageFilterNotExist()
+        BasicInstance.checkDomain(imagefilter)
+        BasicInstance.saveDomain(imagefilter)
        def project = getBasicProjectNotExist()
         project.save(flush: true)
        return new ImageFilterProject(imageFilter: imagefilter, project: project)

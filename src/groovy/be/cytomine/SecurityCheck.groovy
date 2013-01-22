@@ -114,6 +114,26 @@ class SecurityCheck {
         return ontology.checkDeletePermission()
     }
 
+
+    boolean checkSoftwareWrite() {
+        def software = domain.softwareDomain()
+        if(!software) {
+            throw new ObjectNotFoundException("Software from domain ${domain} was not found! Unable to process software auth checking")
+        }
+        return software.checkWritePermission()
+    }
+
+    boolean checkSoftwareDelete() {
+        println "checkSoftwareDelete"
+        def software = domain.softwareDomain()
+        println "software=$software"
+        if(!software) {
+            throw new ObjectNotFoundException("Software from domain ${domain} was not found! Unable to process software auth checking")
+        }
+        println "checkDeletePermission"
+        return software.checkDeletePermission()
+    }
+
     static void checkReadAuthorization(CytomineDomain cytomineDomain) {
         if(cytomineDomain && !cytomineDomain.checkReadPermission()) {
             throw new ForbiddenException("You don't have the right to read this resource!")

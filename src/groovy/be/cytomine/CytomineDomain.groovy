@@ -12,6 +12,7 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.security.User
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
 
 /**
  * CytomineDomain is the parent class for all domain.
@@ -96,6 +97,16 @@ abstract class CytomineDomain  implements Comparable{
      * @return Domain ontology
      */
     public Ontology ontologyDomain() {
+        return null;
+    }
+
+    /**
+     * Return domain software (parameter software, job software...)
+     * By default, a domain has no software linked.
+     * You need to override softwareDomain() in domain class
+     * @return Domain software
+     */
+    public Software softwareDomain() {
         return null;
     }
 

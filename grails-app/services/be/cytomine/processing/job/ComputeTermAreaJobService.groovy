@@ -5,6 +5,10 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.SecurityCheck
 
+/**
+ * Launch compute term area job
+ * Compute area % between terms for all images annotations
+ */
 class ComputeTermAreaJobService extends AbstractJobService{
 
     static transactional = false

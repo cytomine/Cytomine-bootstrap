@@ -23,6 +23,7 @@ class SoftwareProjectService extends ModelService{
     def domainService
     def responseService
 
+
     def list() {
         SoftwareProject.list()
     }
@@ -39,11 +40,6 @@ class SoftwareProjectService extends ModelService{
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
-    }
-
-    def update(def json, SecurityCheck security) throws CytomineException {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     def delete(def json, SecurityCheck security) throws CytomineException {

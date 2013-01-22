@@ -7,6 +7,9 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import be.cytomine.SecurityCheck
 
+/**
+ * Software that suggest term for each annotation from a projecy
+ */
 class RetrievalSuggestedTermJobService extends AbstractJobService {
 
     static transactional = false
