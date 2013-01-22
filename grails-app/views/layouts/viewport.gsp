@@ -40,6 +40,7 @@ body {
 </style>
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
 
+
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
@@ -257,7 +258,6 @@ body {
             }
             if (navigator.appVersion.indexOf("Mac")!=-1) {
                 $("#j_username").val("stevben");
-                $("#j_password").val("sB$2011");
             }
 
         }, 1000);
@@ -269,6 +269,7 @@ body {
 <div id='dialogs'></div>
 <div id="alerts"></div>
 <div id="phono-messages"></div>
+<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
 <script type="text/javascript">
     var uvOptions = {};
     (function() {
@@ -277,6 +278,7 @@ body {
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
     })();
 </script>
+</g:if>
 </body>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
     <script type="text/javascript" src="lib.js" ></script>
