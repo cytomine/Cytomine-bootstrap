@@ -49,7 +49,7 @@ grails.project.dependency.resolution = {
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
         runtime ':fields:1.3'
-        runtime ':functional-test:2.0.RC1'
+
         runtime ':twitter-bootstrap:2.0.4'
         runtime ':quartz:1.0-RC5'
         runtime ':quartz-monitor:0.3-RC1'
@@ -59,15 +59,17 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.2.RC2"
         runtime ':jquery:1.8.3'
 
-        test ':code-coverage:1.2.5'
+        test ':code-coverage:1.2'
         test ':selenium-rc:1.0.2'
+        test ':functional-test:2.0.RC1'
+
     }
 }
-//coverage {
-//	exclusions = [
-//            "**/be/cytomine/data/**",
-//            "**/be/cytomine/processing/job/**",
-//            "**/be/cytomine/processing/image/filters/**"
-//    ]
-//}
+coverage {
+	exclusions = [
+            "**/be/cytomine/data/**",
+            "**/be/cytomine/processing/job/**",
+            "**/be/cytomine/processing/image/filters/**"
+    ]
+}
 
