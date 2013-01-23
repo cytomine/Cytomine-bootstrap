@@ -37,14 +37,8 @@ class RestJobController extends RestController {
     /**
      * List all job
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
-        log.info "list all job"
-        if(params.software!=null) {
-            Software software = Software.read(params.software)
-            if(software) responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
-            else responseNotFound("Job", "Software", params.software)
-        } else responseSuccess(jobService.list())
+        responseSuccess(jobService.list())
     }
 
     /**
@@ -73,18 +67,6 @@ class RestJobController extends RestController {
     }
 
     /**
-     * List all job for a software
-     */
-    def listBySoftware = {
-        Software software = softwareService.read(params.long('id'));
-        if (software) {
-            responseSuccess(jobService.list(software,false,Integer.MAX_VALUE))
-        } else {
-            responseNotFound("Job", "Software", params.id)
-        }
-    }
-
-    /**
      * List all job for a software and a project
      */
     def listBySoftwareAndProject = {
@@ -102,7 +84,6 @@ class RestJobController extends RestController {
     /**
      * Get a specific job
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Job job = jobService.read(params.long('id'))
         if (job) {

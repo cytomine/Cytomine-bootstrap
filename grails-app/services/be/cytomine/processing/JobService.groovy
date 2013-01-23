@@ -16,6 +16,7 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
 
 class JobService extends ModelService {
 
@@ -28,63 +29,64 @@ class JobService extends ModelService {
     def springSecurityService
     def backgroundService
 
+    def read(def id) {
+        def job = Job.read(id)
+        if(job) {
+            SecurityCheck.checkReadAuthorization(job.project)
+        }
+        job
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
         Job.list()
     }
 
-    def read(def id) {
-        Job.read(id)
-    }
-
-    def list(Software software, boolean light, def max) {
-        def jobs = Job.findAllBySoftware(software, [max: max, sort: "created", order: "desc"])
-        if(!light) {
-            jobs.each {
-                if(it.rate==-1 && it.status==Job.SUCCESS) {
-                    it.rate = it.software?.service?.computeRate(it)
-                    it.save(flush: true)
-                }
-            }
-        }
-        else getJOBResponseList(jobs)
-    }
-
+    /**
+     * List max job for a project
+     * Light flag allow to get a light list with only main job properties
+     */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, boolean light, def max) {
         def jobs = Job.findAllByProject(project, [max: max, sort: "created", order: "desc"])
-        if(!light) return jobs
-        else getJOBResponseList(jobs)
+        if(!light) {
+            return jobs
+        } else {
+            getJOBResponseList(jobs)
+        }
     }
 
+    /**
+     * List max job for a project and a software
+     * Light flag allow to get a light list with only main job properties
+     */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Software software, Project project, boolean light, def max) {
         def jobs = Job.findAllBySoftwareAndProject(software, project, [max: max, sort: "created", order: "desc"])
         if(!light) {
             jobs.each {
+                //compute success rate if not yet done
+                //TODO: this may be heavy...computeRate just after job running?
                 if(it.rate==-1 && it.status==Job.SUCCESS) {
                     it.rate = it.software?.service?.computeRate(it)
                     it.save(flush: true)
                 }
             }
+            jobs
+        } else {
+            getJOBResponseList(jobs)
         }
-        else getJOBResponseList(jobs)
     }
 
-    private def getJOBResponseList(List<Job> jobs) {
-        def data = []
-        jobs.each {
-           def job = [:]
-            job.id = it.id
-            job.status = it.status
-            job.number = it.number
-            job.created = it.created ? it.created.time.toString() : null
-            job.dataDeleted = it.dataDeleted
-            data << job
-        }
-        return data
-    }
-
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
-        log.info "json="+json
-        log.info "cytomineService="+cytomineService
+
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
@@ -96,15 +98,13 @@ class JobService extends ModelService {
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
             def job = result?.data?.job?.id
-            log.info "job=" + job + " json.params=" + json.params
-            //Add annotation-term if term
-            if (job) {
-                def params = json.params;
-                if (params) {
-                    params.each { param ->
-                        log.info "add param = " + param
-                        jobParameterService.addJobParameter(job,param.softwareParameter,param.value, currentUser, transaction)
-                    }
+
+            //add all job params
+            def params = json.params;
+            if (params) {
+                params.each { param ->
+                    log.info "add param = " + param
+                    jobParameterService.addJobParameter(job,param.softwareParameter,param.value, currentUser, transaction)
                 }
             }
 
@@ -115,12 +115,26 @@ class JobService extends ModelService {
         }
     }
 
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
         log.info "update job:"+json
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         //TODO: delete job-parameters
@@ -309,6 +323,23 @@ class JobService extends ModelService {
             SecUserSecRole.create(userJob, secRole)
         }
         return userJob
+    }
+
+    /**
+     * Convert jobs list to a simple list with json object and main job properties
+     */
+    private def getJOBResponseList(List<Job> jobs) {
+        def data = []
+        jobs.each {
+           def job = [:]
+            job.id = it.id
+            job.status = it.status
+            job.number = it.number
+            job.created = it.created?.time?.toString()
+            job.dataDeleted = it.dataDeleted
+            data << job
+        }
+        return data
     }
 
 }
