@@ -73,22 +73,6 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(404, result.code)
     }
 
-
-
-    void testListProjectByDiscipline() {
-        Discipline discipline = BasicInstance.createOrGetBasicDiscipline()
-        User user = BasicInstance.createOrGetBasicUser()
-        def result = ProjectAPI.listByDiscipline(discipline.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-    }
-
-    void testListProjectByDisciplineNotExist() {
-        def result = ProjectAPI.listByDiscipline(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
-    }
-
     void testListProjectBySoftware() {
         Software software = BasicInstance.createOrGetBasicSoftware()
         User user = BasicInstance.createOrGetBasicUser()

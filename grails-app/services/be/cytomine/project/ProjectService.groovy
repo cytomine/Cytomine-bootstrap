@@ -41,7 +41,7 @@ class ProjectService extends ModelService {
     def read(def id) {
         def project = Project.read(id)
         if(project) {
-            project.checkReadPermission()
+            SecurityCheck.checkReadAuthorization(project)
         }
         project
     }

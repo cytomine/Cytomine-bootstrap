@@ -92,16 +92,16 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         //Add softwareProject 1 with user1
         def result = SoftwareProjectAPI.create(softwareProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
-        softwareProject = result.data
+        softwareProject2 = result.data
 
         //Get/List softwareProject 1 with user 1
-        assertEquals(403, SoftwareProjectAPI.show(softwareProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assertEquals(200, SoftwareProjectAPI.show(softwareProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
         result = SoftwareProjectAPI.listByProject(softwareProject2.project.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(403, result.code)
+        assertEquals(200, result.code)
         assertFalse(SoftwareProjectAPI.containsInJSONList(softwareProject2.id, JSON.parse(result.data)))
 
         //Delete softwareProject 1 with user 1
-        assertEquals(403, SoftwareProjectAPI.delete(softwareProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assertEquals(200, SoftwareProjectAPI.delete(softwareProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
     }
 
 

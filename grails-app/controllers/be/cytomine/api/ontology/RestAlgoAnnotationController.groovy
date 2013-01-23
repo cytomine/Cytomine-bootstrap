@@ -28,6 +28,7 @@ import be.cytomine.SecurityCheck
 class RestAlgoAnnotationController extends RestController {
 
 
+
     def exportService
     def algoAnnotationService
     def domainService

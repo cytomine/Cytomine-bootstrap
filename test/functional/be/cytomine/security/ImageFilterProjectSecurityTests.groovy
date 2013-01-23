@@ -98,14 +98,14 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         //Add imageFilterProject 1 with user 1
         ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject1.project = project
-        result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
         imageFilterProject1 = result.data
 
         //Get/List imageFilterProject 1 with user 2
         result = ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
         assertEquals(200, result.code)
-        assertFalse(ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
+        assertTrue(ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
 
         //Delete imageFilterProject 1 with user 2
         assertEquals(200, ImageFilterProjectAPI.delete(imageFilterProject1.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
@@ -123,15 +123,10 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         Project project = BasicInstance.createBasicProjectNotExist()
         Infos.addUserRight(user1,project)
 
-        //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        Infos.printRight(project)
-        assertEquals(200, resAddUser.code)
-
         //Add imageFilterProject 1 with user 1
         ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject1.project = project
-        result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)
         imageFilterProject1 = result.data
 

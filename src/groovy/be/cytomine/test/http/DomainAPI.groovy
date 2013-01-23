@@ -24,6 +24,8 @@ class DomainAPI {
      * @return True if id is in list, otherwise, false
      */
     static boolean containsInJSONList(Long id, def list) {
+        println "Search $id in ${list}"
+
         if (list == []) return false
         boolean find = false
         list.each { item ->

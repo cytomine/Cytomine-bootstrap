@@ -38,6 +38,7 @@ class SecurityCheck {
     }
 
     boolean checkProjectAccess(def id) {
+        println "checkProjectAccess id=$id"
         def project = Project.read(id)
         if(!project) {
             throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")

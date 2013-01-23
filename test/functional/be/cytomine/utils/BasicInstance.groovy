@@ -1299,6 +1299,7 @@ class BasicInstance {
         Software software = getBasicSoftwareNotExist()
         Project project = getBasicProjectNotExist()
         BasicInstance.saveDomain(software)
+        BasicInstance.saveDomain(project)
         SoftwareProject softproj = new SoftwareProject(software:software,project:project)
         softproj.validate()
         log.debug "getBasicSoftwareParameterNotExist() end"

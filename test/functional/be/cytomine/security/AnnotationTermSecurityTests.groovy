@@ -84,7 +84,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         Infos.addUserRight(user,annotation.project.ontology)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(annotation.project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        def resAddUser = ProjectAPI.addUserProject(annotation.project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         assertEquals(200, resAddUser.code)
 
         //Add annotation-Term for annotation 1 with cytomine admin
