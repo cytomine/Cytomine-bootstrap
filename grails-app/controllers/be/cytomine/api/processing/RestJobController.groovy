@@ -54,7 +54,7 @@ class RestJobController extends RestController {
         boolean light = params.light==null ? false : params.boolean('light')
         int max = params.max==null? Integer.MAX_VALUE : params.int('max')
 
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if(project) {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
@@ -89,7 +89,7 @@ class RestJobController extends RestController {
      */
     def listBySoftwareAndProject = {
         Software software = softwareService.read(params.long('idSoftware'));
-        Project project = projectService.read(params.long('idProject'), new Project());
+        Project project = projectService.read(params.long('idProject'));
         if (!software) {
             responseNotFound("Job", "Software", params.idSoftware)
         } else if (!project) {

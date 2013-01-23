@@ -109,7 +109,7 @@ class RestReviewedAnnotationController extends RestController {
      * List all reviewed annotation by project
      */
     def listByProject = {
-        Project project = projectService.read(params.long('idProject'), new Project())
+        Project project = projectService.read(params.long('idProject'))
         if (project) {
             responseSuccess(reviewedAnnotationService.list(project))
         }
@@ -126,7 +126,7 @@ class RestReviewedAnnotationController extends RestController {
             //if no filter, simply forward to listByproject method
             forward(action: "listByProject")
         } else {
-           Project project = projectService.read(params.long('idProject'), new Project())
+           Project project = projectService.read(params.long('idProject'))
            if (project) {
                Integer offset = params.offset != null ? params.getInt('offset') : 0
                Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE

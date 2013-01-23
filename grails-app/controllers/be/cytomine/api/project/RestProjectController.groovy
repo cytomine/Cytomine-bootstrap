@@ -35,7 +35,7 @@ class RestProjectController extends RestController {
         SecUser user = cytomineService.currentUser
         if(user.isAdmin()) {
             //if user is admin, we print all available project
-            responseSuccess(Project.list())
+            responseSuccess(projectService.list())
         } else {
             // better perf with this direct hql request on spring security acl domain table (than post filter)
             responseSuccess(securityService.getProjectList(user))
@@ -79,23 +79,11 @@ class RestProjectController extends RestController {
     }
 
     /**
-     * List all project available for the current user, that are link with a discipline
-     */
-    def listByDiscipline = {
-        Discipline discipline = disciplineService.read(params.long('id'));
-        if (discipline) {
-            responseSuccess(projectService.list(discipline))
-        } else {
-            responseNotFound("Project", "Discipline", params.id)
-        }
-    }
-
-    /**
      * List all retrieval-project for a specific project
      * The suggested term can use data from other project (with same ontology).
      */
     def listRetrieval = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(project.retrievalProjects)
         } else {
@@ -107,7 +95,7 @@ class RestProjectController extends RestController {
      * Get a project
      */
     def show = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(project)
         } else {
@@ -120,7 +108,7 @@ class RestProjectController extends RestController {
      * ex: "user x add a new annotation on image y",...
      */
     def lastAction = {
-        Project project = projectService.read(params.long('id'),new Project())
+        Project project = projectService.read(params.long('id'))
         int max = Integer.parseInt(params.max);
 
         if (project) {

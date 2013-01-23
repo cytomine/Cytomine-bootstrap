@@ -30,7 +30,7 @@ class RestUserController extends RestController {
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
         boolean online = params.boolean('online')
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project && !online) {
             responseSuccess(userService.listUsers(project))
         } else if (project && online) {
@@ -46,7 +46,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showAdminByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(userService.listAdmins(project))
         } else {
@@ -59,7 +59,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showCreatorByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess([userService.listCreator(project)])
         } else {
@@ -97,7 +97,7 @@ class RestUserController extends RestController {
      */
     @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showLayerByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(userService.listLayers(project))
         } else {
@@ -249,7 +249,7 @@ class RestUserController extends RestController {
         SecUser user = userService.get(params.long('id'))
         Project project = null
         if (params.long('project')) {
-            project = projectService.read(params.long('project'), new Project())
+            project = projectService.read(params.long('project'))
         }
         boolean includeOffline = params.boolean('offline')
 
@@ -278,7 +278,7 @@ class RestUserController extends RestController {
      * List people connected now to the same project and get their openned pictures
      */
     def listOnlineFriendsWithPosition = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         //= now - some seconds
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
 

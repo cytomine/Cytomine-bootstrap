@@ -116,5 +116,15 @@ class SoftwareProject extends CytomineDomain implements Serializable{
             returnArray['project'] = it.project?.id
             return returnArray
         }
-    }    
+    }
+
+    /**
+     * Return domain project (annotation project, image project...)
+     * By default, a domain has no project.
+     * You need to override projectDomain() in domain class
+     * @return Domain project
+     */
+    public Project projectDomain() {
+        return project;
+    }
 }

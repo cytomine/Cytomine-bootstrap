@@ -23,7 +23,7 @@ class RestAnnotationFilterController extends RestController {
     def listByProject = {
         Long idProject = params.long('project');
         projectService.checkAuthorization(idProject, new AnnotationFilter())
-        Project project = projectService.read(idProject, new Project())
+        Project project = projectService.read(idProject)
         if(project) {
             responseSuccess(annotationFilterService.listByProject(project))
         } else {

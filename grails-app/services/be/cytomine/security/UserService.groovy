@@ -66,6 +66,9 @@ class UserService extends ModelService {
             aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
         }
 
+        println "${domain.class} ${domain.id} ${domain.version}"
+        println "${username} ${SecUser.findByUsername(username)} ${SecUser.findByUsername(username).version}"
+
         aclUtilService.addPermission(domain, username, permission)
         log.info "#####  Permission added"
     }

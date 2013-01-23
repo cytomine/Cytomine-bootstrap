@@ -136,18 +136,6 @@ class UserAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         //assert json instanceof JSONArray
     }
-
-    void testListUserAnnotationByTerm() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-
-        def result = UserAnnotationAPI.listByTerm(annotationTerm.term.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-
-        result = UserAnnotationAPI.listByTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
-    }
     
     void testDownloadUserAnnotationDocument() {
         AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()

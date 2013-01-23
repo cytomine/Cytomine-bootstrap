@@ -54,7 +54,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def listByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project && params.inf && params.sup) {
             responseSuccess(imageInstanceService.list(project, Integer.parseInt(params.inf), Integer.parseInt(params.sup)))
         }

@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.AuthorityUtils
 
 import static org.springframework.security.acls.domain.BasePermission.*
 import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
 
 /**
  * Created by IntelliJ IDEA.
@@ -106,7 +107,21 @@ class Infos {
         println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
     }
 
+    static void addUserRight(User user, Software software) {
+        long start = System.currentTimeMillis()
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
+        def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        aclUtilService.addPermission software, user.username, ADMINISTRATION
+        aclUtilService.addPermission software, user.username, READ
+        aclUtilService.addPermission software, user.username, WRITE
+        aclUtilService.addPermission software, user.username, DELETE
+
+        def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
+        sessionFactory.currentSession.flush()
+        SCH.clearContext()
+        println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
+    }
 
 
     /**

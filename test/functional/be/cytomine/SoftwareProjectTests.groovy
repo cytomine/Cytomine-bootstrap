@@ -89,7 +89,7 @@ class SoftwareProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.project = -99
         jsonSoftwareProject = jsonUpdate.encodeAsJSON()
         def result = SoftwareProjectAPI.create(jsonSoftwareProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(404, result.code)
     }
  
 

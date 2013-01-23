@@ -7,6 +7,7 @@ import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.test.Infos
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,9 +52,11 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
 
         //Add annotation 1 with cytomine admin
         UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-
+        Infos.addUserRight(user,annotation.project)
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        annotationTerm.term.ontology = annotation.project.ontology
+        BasicInstance.saveDomain(annotationTerm.term)
         annotationTerm.userAnnotation = annotation
         annotationTerm.user = User.findByUsername(SecurityTestsAbstract.USERNAME1)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -78,6 +81,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
 
         //Create project with user 1
         UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        Infos.addUserRight(user,annotation.project.ontology)
 
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(annotation.project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -85,6 +89,8 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        annotationTerm.term.ontology = annotation.project.ontology
+        BasicInstance.saveDomain(annotationTerm.term)
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assertEquals(200, result.code)

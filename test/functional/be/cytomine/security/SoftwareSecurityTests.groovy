@@ -70,7 +70,6 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
       Infos.printRight(software)
       //check if user 2 cannot access/update/delete
       assertEquals(200, SoftwareAPI.show(software.id,USERNAME2,PASSWORD2).code)
-      assertFalse(SoftwareAPI.containsInJSONList(software.id,JSON.parse(SoftwareAPI.list(USERNAME2,PASSWORD2).data)))
       assertEquals(403, SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAME2,PASSWORD2).code)
       assertEquals(403, SoftwareAPI.delete(software.id,USERNAME2,PASSWORD2).code)
 

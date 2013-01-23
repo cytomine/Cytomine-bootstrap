@@ -57,18 +57,6 @@ class GenericAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     }
 
-    void testListAnnotationByTerm() {
-        AlgoAnnotationTerm at = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
-        def result = AnnotationDomainAPI.listByTerm(at.term.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-
-        result = AnnotationDomainAPI.listByTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
-
-    }
-
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWithAnnotationAlgo() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()

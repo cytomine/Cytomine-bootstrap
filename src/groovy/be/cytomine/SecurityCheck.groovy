@@ -8,6 +8,7 @@ import be.cytomine.ontology.Ontology
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.ontology.Term
+import be.cytomine.processing.Software
 
 /**
  * User: lrollus
@@ -43,6 +44,7 @@ class SecurityCheck {
         }
         return project.checkReadPermission()
     }
+
 
     boolean checkProjectAccess() {
         def project = domain.projectDomain()
@@ -112,6 +114,15 @@ class SecurityCheck {
         }
         println "checkDeletePermission"
         return ontology.checkDeletePermission()
+    }
+
+
+    boolean checkSoftwareAccess(def id) {
+        def software = Software.read(id)
+        if(!software) {
+            throw new ObjectNotFoundException("Software $id was not found! Unable to process software auth checking")
+        }
+        return software.checkReadPermission()
     }
 
 

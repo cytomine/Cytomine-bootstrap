@@ -62,7 +62,7 @@ class RestUserAnnotationController extends RestController {
      * List user annotation by project
      */
     def listByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
 
             Integer offset = params.offset != null ? params.getInt('offset') : 0
@@ -104,24 +104,11 @@ class RestUserAnnotationController extends RestController {
     }
 
     /**
-     * List user annotation by term
-     */
-    def listAnnotationByTerm = {
-        Term term = termService.read(params.long('idterm'))
-        //TODO:: improve this with a single SQL request
-        if (term) {
-            responseSuccess(userAnnotationService.list(term))
-        } else {
-            responseNotFound("Annotation Term", "Term", params.idterm)
-        }
-    }
-
-    /**
      * List annotation by project and term
      */
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
-        Project project = projectService.read(params.long('idproject'), new Project())
+        Project project = projectService.read(params.long('idproject'))
         Integer offset = params.offset != null ? params.getInt('offset') : 0
         Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
@@ -168,7 +155,7 @@ class RestUserAnnotationController extends RestController {
     def downloadDocumentByProject = {
         // Export service provided by Export plugin
 
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (!project) {
             responseNotFound("Project", params.long('id'))
         }

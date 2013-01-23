@@ -87,7 +87,7 @@ class RestUserJobController extends RestController {
      * -no filter =>  findAllByProject => idem sql request
      */
     def listUserJobByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
 
         if (project) {
             if (params.getBoolean("tree")) {

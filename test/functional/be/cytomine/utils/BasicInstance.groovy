@@ -1295,17 +1295,11 @@ class BasicInstance {
     }
 
     static SoftwareProject getBasicSoftwareProjectNotExist() {
-
         log.debug "getBasicSoftwareProjectNotExist() start"
-
         Software software = getBasicSoftwareNotExist()
         Project project = getBasicProjectNotExist()
-        software.save(flush:true)
-        project.save(flush:true)
-
+        BasicInstance.saveDomain(software)
         SoftwareProject softproj = new SoftwareProject(software:software,project:project)
-
-
         softproj.validate()
         log.debug "getBasicSoftwareParameterNotExist() end"
         softproj

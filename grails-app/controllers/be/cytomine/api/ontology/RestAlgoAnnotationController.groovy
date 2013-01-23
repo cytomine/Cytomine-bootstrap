@@ -146,7 +146,7 @@ class RestAlgoAnnotationController extends RestController {
      * List annotation created by algo for a specific project
      */
     def listByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
 
         if (project) {
             Integer offset = params.offset != null ? params.getInt('offset') : 0
@@ -196,7 +196,7 @@ class RestAlgoAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
 
         Term term = termService.read(params.long('idterm'))
-        Project project = projectService.read(params.long('idproject'), new Project())
+        Project project = projectService.read(params.long('idproject'))
         Integer offset = params.offset != null ? params.getInt('offset') : 0
         Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
@@ -226,7 +226,7 @@ class RestAlgoAnnotationController extends RestController {
         //TODO:: should be refactor! We should have a specific service
         //Export service provided by Export plugin
 
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (!project) {
             responseNotFound("Project", params.long('id'))
         }

@@ -37,9 +37,6 @@ class AnnotationUrlMappings {
         "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotationDomain"){
             action = [GET: "listAnnotationByProjectAndTerm"]
         }
-        "/api/term/$idterm/annotation"(controller:"restAnnotationDomain"){
-            action = [GET: "listAnnotationByTerm"]
-        }
 
         /**
          * User Annotation
@@ -58,9 +55,6 @@ class AnnotationUrlMappings {
         }
         "/api/user/$idUser/imageinstance/$idImage/userannotation"(controller:"restUserAnnotation"){
             action = [GET:"listByImageAndUser"]
-        }
-        "/api/term/$idterm/userannotation"(controller:"restUserAnnotation"){
-            action = [GET: "listAnnotationByTerm"]
         }
         "/api/term/$idterm/project/$idproject/userannotation"(controller:"restUserAnnotation"){
             action = [GET: "listAnnotationByProjectAndTerm"]

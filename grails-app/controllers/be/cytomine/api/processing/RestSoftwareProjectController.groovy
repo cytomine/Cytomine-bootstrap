@@ -25,7 +25,7 @@ class RestSoftwareProjectController extends RestController{
      * List all software parameter by project
      */
     def listByProject = {
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(softwareProjectService.list(project))
         } else {

@@ -102,7 +102,7 @@ class RestUserPositionController extends RestController {
     def listLastUserPositionsByProject = {
         DateTime thirtySecondsAgo = new DateTime().minusSeconds(30)
         def userPositions = UserPosition.createCriteria().list() {
-            eq("project", projectService.read(params.id, new Project()))
+            eq("project", projectService.read(params.id))
             or {
                 gt("created", thirtySecondsAgo.toDate())
                 gt("updated", thirtySecondsAgo.toDate())

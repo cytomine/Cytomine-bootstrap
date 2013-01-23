@@ -18,6 +18,10 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
 import be.cytomine.SecurityCheck
 
+/**
+ * Retrieval is a server that can provide similar pictures of a request picture
+ * It can suggest term for an annotation thx to similar picture
+ */
 class RetrievalService {
 
     static transactional = true
@@ -25,47 +29,35 @@ class RetrievalService {
     def grailsApplication
     def dataSource
 
-    private long printTimeAndReset(long timestamp, String name) {
-        println "$name=${System.currentTimeMillis()-timestamp}ms"
-        return System.currentTimeMillis()
-    }
-
-    //=>imageinstance service
-    public List<Long> getAllProjectId(Ontology ontology) {
-        String request = "SELECT p.id FROM project p WHERE ontology_id="+ontology.id
-        def data = []
-        new Sql(dataSource).eachRow(request) {
-            data << it[0]
-        }
-        return data
-    }
-
     /**
      * Search similar annotation and best term for an annotation
      * @param project project which will provide annotation learning set
      * @param annotation annotation to search
      * @return [annotation: #list of similar annotation#, term: #map with best term#]
-     * @throws Exception
      */
     def listSimilarAnnotationAndBestTerm(Project project, AnnotationDomain annotation) throws Exception {
-        log.info "listSimilarAnnotationAndBestTerm=$annotation"
+        log.info "Search similarities for annotation ${annotation.id}"
         def data = [:]
 
-        log.info "check annotation points number ${annotation.location.numPoints}"
         if(annotation.location.numPoints<3) {
             data.term = []
             return data
         }
 
-        log.info "read projects"
         //find project used for retrieval
         List<Long> projectSearch = []
-        if(project.retrievalDisable) return data
-        else if(project.retrievalAllOntology)
-            projectSearch=getAllProjectId(annotation.project.ontology)
-        else projectSearch=project.retrievalProjects.collect {it.id}
-
+        if(project.retrievalDisable) {
+            //retrieval not available for this project, just return empty result
+            return data
+        } else if(project.retrievalAllOntology) {
+            //retrieval available, look in index for all user annotation for the project with same ontologies
+            projectSearch=projectService.getAllProjectId(annotation.project.ontology)
+        } else {
+            //retrieval avaliable, but only looks on a restricted project list
+            projectSearch=project.retrievalProjects.collect {it.id}
+        }
         log.info "search ${annotation.id} on projects ${projectSearch}"
+
         //Get similar annotation
         def similarAnnotations = loadAnnotationSimilarities(annotation,projectSearch)
         data.annotation = similarAnnotations
@@ -103,7 +95,7 @@ class RetrievalService {
         return data
     }
 
-    def getTermMap(List<Term> termList) {
+    private def getTermMap(List<Term> termList) {
         def map = [:]
         termList.each {
             map.put(it, 0d)
@@ -111,7 +103,7 @@ class RetrievalService {
         map
     }
 
-    def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
+    private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         def response = RetrievalHttpUtils.getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(grailsApplication.config.grails.serverURL),projectSearch)
@@ -170,11 +162,6 @@ class RetrievalService {
         RetrievalHttpUtils.getDeleteResponse(server.url,res)
     }
 
-    public static def updateAnnotationSynchronous(Long id) {
-        Logger.getLogger(this).info("update synchronous")
-        deleteAnnotationSynchronous(id)
-        indexAnnotationSynchronous(id)
-    }
 
     public static def indexAnnotationAsynchronous(AnnotationDomain annotation,RetrievalServer server) {
         //indexAnnotationSynchronous(annotation)
@@ -233,7 +220,9 @@ class RetrievalService {
         }
     }
 
-
+    /**
+     * Get missing annotation
+     */
     public void indexMissingAnnotation() {
         //Get indexed resources
         List<Long> resources = getIndexedResource()
@@ -252,7 +241,10 @@ class RetrievalService {
         }
     }
 
-    List<Long> getIndexedResource() {
+    /**
+     * Get all annotation indexed from retrieval server
+     */
+    private List<Long> getIndexedResource() {
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String URL = server.url + ".json"
         List json = JSON.parse(getGetResponse(URL))
@@ -266,7 +258,7 @@ class RetrievalService {
         resources
     }
 
-    public static String getGetResponse(String URL) {
+    private static String getGetResponse(String URL) {
         HttpClient client = new HttpClient();
         client.connect(URL, "xxx", "xxx");
         client.get()

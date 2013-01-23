@@ -25,9 +25,6 @@ class ProjectUrlMappings {
         "/api/ontology/$id/project"(controller:"restProject"){
             action = [GET:"listByOntology"]
         }
-        "/api/discipline/$id/project"(controller:"restProject"){
-            action = [GET:"listByDiscipline"]
-        }
 
         "/api/retrieval/$id/project"(controller:"restProject"){
             action = [GET:"listRetrieval"]

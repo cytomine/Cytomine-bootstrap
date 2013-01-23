@@ -42,7 +42,7 @@ class RestAnnotationDomainController extends RestController {
      */
     def listByProject = {
 
-        Project project = projectService.read(params.long('id'), new Project())
+        Project project = projectService.read(params.long('id'))
 
         if (project) {
             List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
@@ -75,30 +75,11 @@ class RestAnnotationDomainController extends RestController {
     }
 
     /**
-     * List user and algo annotation by term
-     */
-    def listAnnotationByTerm = {
-        Term term = termService.read(params.long('idterm'))
-        if (term) {
-            def allAnnotations = []
-            List<Project> projects = projectService.list(term.ontology)
-            projects.each {
-                allAnnotations.addAll(userAnnotationService.list(it))
-                allAnnotations.addAll(algoAnnotationService.list(it))
-            }
-            responseSuccess(allAnnotations)
-        }
-        else {
-            responseNotFound("Term", params.idterm)
-        }
-    }
-
-    /**
      * List annotation by project and term
      */
     def listAnnotationByProjectAndTerm = {
 
-        Project project = projectService.read(params.long('idproject'), new Project())
+        Project project = projectService.read(params.long('idproject'))
 
         List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
         if (!userList.isEmpty() && userList.get(0)?.algo()) {

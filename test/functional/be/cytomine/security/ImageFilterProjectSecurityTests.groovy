@@ -88,9 +88,10 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         //Create project with user 1
         Project project = BasicInstance.createBasicProjectNotExist()
         Infos.addUserRight(user1,project)
+        Infos.printRight(project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         Infos.printRight(project)
         assertEquals(200, resAddUser.code)
 
@@ -123,7 +124,7 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         Infos.addUserRight(user1,project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         Infos.printRight(project)
         assertEquals(200, resAddUser.code)
 

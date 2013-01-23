@@ -125,19 +125,19 @@ class TermService extends ModelService {
      * @param security Security service object (user for right check)
      * @return Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkOntologyAccess()  or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#security.checkOntologyWrite()  or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     /**
-     * Update this domain with new data from json
-     * @param json JSON with new data
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
      * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkOntologyAccess()  or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#security.checkOntologyDelete()  or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return deleteTerm(json.id, currentUser, true, null)

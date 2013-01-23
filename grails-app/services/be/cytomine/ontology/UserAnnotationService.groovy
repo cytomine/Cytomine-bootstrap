@@ -373,7 +373,11 @@ class UserAnnotationService extends ModelService {
 
         if (result.success) {
             Long id = result.userannotation.id
-            try {updateRetrievalAnnotation(id)} catch (Exception e) { log.error "Cannot update in retrieval:" + e.toString()}
+            try {
+                updateRetrievalAnnotation(id)
+            } catch (Exception e) {
+                log.error "Cannot update in retrieval:" + e.toString()
+            }
         }
         return result
     }

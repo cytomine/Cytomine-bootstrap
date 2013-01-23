@@ -57,7 +57,7 @@ class RestUploadedFileController extends RestController {
         String projectParam = request.getParameter("idProject")
         Project project = null
         if (projectParam != null && projectParam != "undefined" && projectParam != "null") {
-            project = projectService.read(Integer.parseInt(projectParam), new Project())
+            project = projectService.read(Integer.parseInt(projectParam))
         }
 
         //get file to upload

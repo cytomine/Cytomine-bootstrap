@@ -23,6 +23,7 @@ import be.cytomine.command.*
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.SecurityCheck
+import groovy.sql.Sql
 
 class ProjectService extends ModelService {
 
@@ -33,59 +34,75 @@ class ProjectService extends ModelService {
     def securityService
     def userService
     def aclUtilService
-
+    def dataSource
 
     final boolean saveOnUndoRedoStack = false
 
+    def read(def id) {
+        def project = Project.read(id)
+        if(project) {
+            project.checkReadPermission()
+        }
+        project
+    }
 
+    def get(def id, def domain) {
+        def project = Project.get(id)
+        if(project) {
+            project.checkReadPermission()
+        }
+        project
+    }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
+        //list ALL projects,
         Project.list(sort: "name")
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Ontology ontology) {
+        //very slow method because it check right access for each project ontology
         Project.findAllByOntology(ontology)
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(User user) {
+        //faster to get it from database table (getProjectList) than PostFilter
         securityService.getProjectList(user)
     }
 
-    //TODO: should be optim!!!!
-    def list(AbstractImage image) {
-        return ImageInstance.findAllByBaseImage(image).collect{it.project}.unique()
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Discipline discipline) {
-        Project.findAllByDiscipline(discipline)
-    }
-
-    @PreAuthorize("#cytomineDomain.hasPermission(#id, 'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
-    def read(def id, def cytomineDomain) {
-        Project.read(id)
-    }
-
-    @PreAuthorize("#cytomineDomain.hasPermission(#id, 'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
-    def get(def id, def cytomineDomain) {
-        Project.get(id)
-    }
-
     def list(Software software) {
         software.softwareProjects.collect {it.project}
     }
 
+    /**
+     * Get all project id for all project with this ontology
+     * @param ontology Ontology filter
+     * @return Project id list
+     */
+    public List<Long> getAllProjectId(Ontology ontology) {
+        //better for perf than Project.findByOntology(ontology).collect {it.id}
+        String request = "SELECT p.id FROM project p WHERE ontology_id="+ontology.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
+    }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def lastAction(Project project, def max) {
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
     }
 
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -94,43 +111,28 @@ class ProjectService extends ModelService {
 
         //add or delete RetrievalProject
         Project project = response.object
-        log.info "project="+project
-
         if(!json.retrievalProjects.toString().equals("null")) {
             project.refresh()
-            log.info "json.retrievalProjects="+json.retrievalProjects
             json.retrievalProjects.each { idProject ->
-                log.info "idProject="+idProject
                 Long proj = Long.parseLong(idProject.toString())
-                log.info "proj="+proj
                 Project projectRetrieval = proj==-1 ? project : Project.read(proj)
-                if(projectRetrieval) project.retrievalProjects.add(projectRetrieval)
+                if(projectRetrieval) {
+                    project.retrievalProjects.add(projectRetrieval)
+                }
             }
             project.save(flush: true)
         }
         return response
     }
 
-    private void checkRetrievalConsistency(def json) {
-        boolean retrievalDisable =  false
-        if(!json.retrievalDisable.toString().equals("null")) retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
-        boolean retrievalAllOntology =  true
-        if(!json.retrievalAllOntology.toString().equals("null")) retrievalAllOntology= Boolean.parseBoolean(json.retrievalAllOntology.toString())
-        boolean retrievalProjectEmpty = true
-        if(!json.retrievalProjects.toString().equals("null")) retrievalProjectEmpty = json.retrievalProjects.isEmpty()
-
-        log.info "retrievalDisable=$retrievalDisable retrievalAllOntology=$retrievalAllOntology retrievalProjectEmpty=$retrievalProjectEmpty"
-
-        if(retrievalDisable && retrievalAllOntology) throw new WrongArgumentException("Retrieval cannot be disable of all Projects are selected")
-        if(retrievalDisable && !retrievalProjectEmpty) throw new WrongArgumentException("Retrieval cannot be disable of some Projects are selected")
-        if(retrievalAllOntology && !retrievalProjectEmpty) throw new WrongArgumentException("Retrieval cannot be set for all procects if some projects are selected")
-    }
-
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return  Response structure (new domain data, old domain data..)
+     */
     @PreAuthorize("#security.checkProjectWrite() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
-//        println "hasPermission="+domain.hasPermission("READ")
-//        println "hasPermission="+domain.hasPermission('WRITE')
-//        throw new Exception()
 
         checkRetrievalConsistency(json)
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -169,6 +171,12 @@ class ProjectService extends ModelService {
         return response
     }
 
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
     @PreAuthorize("#security.checkProjectDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -181,45 +189,52 @@ class ProjectService extends ModelService {
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(Project.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(Project domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
-
-        log.info "#project.hasPermission('ADMIN')="+domain.hasPermission('ADMIN')
-        log.info "#admin="+cytomineService.currentUser.getAuthorities().collect {it.authority}
-        log.info "#domain.isCurrentUserCreator()="+domain.isCurrentUserCreator()
-        log.info "#Creator="+domain.retrieveCreator()?.id
-        log.info "#Creator="+cytomineService.currentUser?.id
+        //add permission on project
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
-        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.READ)
-        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.WRITE)
-        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.DELETE)
+//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.READ)
+//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.WRITE)
+//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.DELETE)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(Project.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(Project domain, boolean printMessage) {
         //Build response message
         log.info "destroy project"
@@ -280,20 +295,23 @@ class ProjectService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new Project(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(Project project, boolean printMessage) {
-        log.debug "EDIT domain " + project.id
-        Infos.printRight(project)
-        log.debug "CURRENT USER " + cytomineService.getCurrentUser().username
         //Build response message
         def response = responseService.createResponseMessage(project, [project.id, project.name], printMessage, "Edit", project.getCallBack())
         //Save update
@@ -319,6 +337,39 @@ class ProjectService extends ModelService {
         Project project = Project.get(json.id)
         if (!project) throw new ObjectNotFoundException("Project " + json.id + " not found")
         return project
+    }
+
+    /**
+     * Check if retrieval parameter from a project json are ok
+     * E.g. if retrieval is disable and project retrieval is not empty, there is a mistake
+     * @param json Project json
+     */
+    private void checkRetrievalConsistency(def json) {
+
+        boolean retrievalDisable =  false
+        if(!json.retrievalDisable.toString().equals("null")) {
+            retrievalDisable = Boolean.parseBoolean(json.retrievalDisable.toString())
+        }
+
+        boolean retrievalAllOntology =  true
+        if(!json.retrievalAllOntology.toString().equals("null")) {
+            retrievalAllOntology= Boolean.parseBoolean(json.retrievalAllOntology.toString())
+        }
+
+        boolean retrievalProjectEmpty = true
+        if(!json.retrievalProjects.toString().equals("null")) {
+            retrievalProjectEmpty = json.retrievalProjects.isEmpty()
+        }
+
+        if(retrievalDisable && retrievalAllOntology) {
+            throw new WrongArgumentException("Retrieval cannot be disable of all Projects are selected")
+        }
+        if(retrievalDisable && !retrievalProjectEmpty) {
+            throw new WrongArgumentException("Retrieval cannot be disable of some Projects are selected")
+        }
+        if(retrievalAllOntology && !retrievalProjectEmpty) {
+            throw new WrongArgumentException("Retrieval cannot be set for all procects if some projects are selected")
+        }
     }
 
 

@@ -11,6 +11,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.image.ImageInstance
 
 class SoftwareProjectService extends ModelService{
 
@@ -23,25 +25,44 @@ class SoftwareProjectService extends ModelService{
     def domainService
     def responseService
 
+    def read(def id) {
+        def sp = SoftwareProject.get(id)
+        if(sp) {
+            SecurityCheck.checkReadAuthorization(sp.project)
+        }
+        sp
+    }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
         SoftwareProject.list()
     }
 
-    def read(def id) {
-        SoftwareProject.read(id)
-    }
-
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
         project.softwareProjects
     }
 
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
    def add(def json,SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
@@ -57,6 +78,12 @@ class SoftwareProjectService extends ModelService{
         create(SoftwareProject.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(SoftwareProject domain, boolean printMessage) {
         if(SoftwareProject.findBySoftwareAndProject(domain.software,domain.project)) throw new AlreadyExistException("Software  "+domain.software?.name + " already map with project "+domain.project?.name)
         //Save new object
@@ -65,11 +92,12 @@ class SoftwareProjectService extends ModelService{
         //Build response message
         return responseService.createResponseMessage(domain, [domain.software?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
     }
+
     /**
-     * Destroy domain which was previously added
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
@@ -77,6 +105,12 @@ class SoftwareProjectService extends ModelService{
         destroy(SoftwareProject.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(SoftwareProject domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.software?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
