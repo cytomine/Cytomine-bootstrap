@@ -32,17 +32,6 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONArray
     }
 
-    void testListJobBySoftwareWithCredential() {
-        Job job = BasicInstance.createOrGetBasicJob()
-        def result = JobAPI.listBySoftware(job.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-
-        result = JobAPI.listBySoftware(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
-    }
-
     void testListJobBySoftwareAndProjectWithCredential() {
         Job job = BasicInstance.createOrGetBasicJob()
         def result = JobAPI.listBySoftwareAndProject(job.software.id,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)

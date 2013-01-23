@@ -62,10 +62,12 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       def resAddUser = ProjectAPI.addUserProject(project.id,user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       Infos.printRight(project)
       assertEquals(200, resAddUser.code)
+
       //Add image instance to project
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
       image.project = project
-      //check if admin user can access/update/delete
+
+      //check if user 2 can access/update/delete
       result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(200, result.code)
       image = result.data
@@ -90,10 +92,12 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assertEquals(200, result.code)
       Project project = result.data
+
       //Add image instance to project
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
       image.project = project
-      //check if admin user can access/update/delete
+
+      //check if simple  user can access/update/delete
       result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(403, result.code)
       image = result.data

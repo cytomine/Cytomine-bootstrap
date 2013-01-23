@@ -137,40 +137,60 @@ class JobService extends ModelService {
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def userJob = UserJob.findByJob(Job.read(json.id))
+        if(userJob) {
+            //TODO:: move this in a methode deleteUser in userService
+            SecUserSecRole.findAllBySecUser(userJob).each{
+                it.delete(flush:true)
+            }
+            userJob.delete(flish:true)
+        }
         //TODO: delete job-parameters
         //TODO: delete job-data
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(Job.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(Job domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(Job.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(Job domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Delete", domain.getCallBack())
@@ -180,16 +200,22 @@ class JobService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new Job(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(Job domain, boolean printMessage) {
         log.info "edit="+domain
         //Build response message
@@ -219,14 +245,6 @@ class JobService extends ModelService {
         log.info "job="+job
         if (!job) throw new ObjectNotFoundException("Job " + json.id + " not found")
         return job
-    }
-
-     List<UserJob> getAllLastUserJob(Project project, Software software, int max) {
-         //List<Job> jobs = Job.findAllBySoftwareAndSuccessful(software,true)
-         List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
-         //TODO: inlist bad performance
-         List<UserJob> userJob = UserJob.findAllByJobInList(jobs,[max:max,sort:'created', order:"desc"])
-         return userJob
     }
 
      List<UserJob> getAllLastUserJob(Project project, Software software) {
@@ -264,24 +282,36 @@ class JobService extends ModelService {
         return userJob
     }
 
+    /**
+     * Chek if job has reviewed annotation
+     */
     public def hasReviewedAnnotation(List<AlgoAnnotation> annotations) {
         List<Long> annotationsId = annotations.collect{ it.id }
         if (annotationsId.isEmpty()) []
         return ReviewedAnnotation.findAllByParentIdentInList(annotationsId)
     }
 
+    /**
+     * Delete all annotation created by a user job from argument
+     */
     public void deleteAllAlgoAnnotations(List<UserJob> users) {
         List<Long> usersId = users.collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
     }
 
+    /**
+     * Delete all algo-annotation-term created by a user job from argument
+     */
     public void deleteAllAlgoAnnotationsTerm(List<UserJob> users) {
         List<Long> usersId = users.collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
     }
 
+    /**
+     * Delete all data filescreated by a user job from argument
+     */
     public void deleteAllJobData(List<JobData> jobDatas) {
         List<Long> jobDatasId = jobDatas.collect{ it.id }
         if (jobDatasId.isEmpty()) return

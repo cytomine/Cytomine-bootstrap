@@ -14,6 +14,9 @@ import be.cytomine.utils.BasicInstance
  */
 class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
 
+
+    //Mock doesn't work with bamboo sometimes...
+
 //    void testRetrievalResult() {
 //        def project = BasicInstance.createOrGetBasicProject()
 //        def annotation1 = BasicInstance.createUserAnnotation(project)
@@ -49,9 +52,9 @@ class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
 //        def json = JSON.parse(result.data)
 //        assertEquals(0,json.annotation.size())
 //    }
-//
-//    void testRetrievalWithAnnotationNotExist() {
-//        def result = RetrievalAPI.getResults(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assertEquals(404,result.code)
-//    }
+
+    void testRetrievalWithAnnotationNotExist() {
+        def result = RetrievalAPI.getResults(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404,result.code)
+    }
 }
