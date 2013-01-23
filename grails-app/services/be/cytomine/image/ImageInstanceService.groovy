@@ -19,6 +19,7 @@ import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.SecurityCheck
+import groovy.sql.Sql
 
 /**
  * TODO:: refactor + doc!!!!!!!
@@ -91,6 +92,20 @@ class ImageInstanceService extends ModelService {
             fetchMode 'baseImage', FetchMode.JOIN
         }
         return images
+    }
+
+    /**
+     * Get all image id from project
+     */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    public List<Long> getAllImageId(Project project) {
+        //better perf with sql request
+        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
     }
 
     /**

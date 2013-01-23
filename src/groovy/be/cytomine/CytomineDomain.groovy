@@ -110,8 +110,6 @@ abstract class CytomineDomain  implements Comparable{
         return null;
     }
 
-
-
     /**
      * Build callback data for a domain (by default null)
      * Callback are metadata used by client

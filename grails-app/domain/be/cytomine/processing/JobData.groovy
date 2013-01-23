@@ -5,6 +5,7 @@ import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
 import be.cytomine.utils.JSONUtils
+import be.cytomine.project.Project
 
 /**
  * Data created by a job
@@ -107,6 +108,16 @@ class JobData extends CytomineDomain {
             returnArray['updated'] = jobData.updated?.time?.toString()
             return returnArray
         }
+    }
+
+    /**
+     * Return domain project (annotation project, image project...)
+     * By default, a domain has no project.
+     * You need to override projectDomain() in domain class
+     * @return Domain project
+     */
+    public Project projectDomain() {
+        return job.project;
     }
 
 }

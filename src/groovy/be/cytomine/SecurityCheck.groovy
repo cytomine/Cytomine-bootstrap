@@ -10,6 +10,7 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
+import be.cytomine.test.Infos
 
 /**
  * User: lrollus
@@ -154,10 +155,14 @@ class SecurityCheck {
     }
 
     boolean checkJobAccess(def id) {
+        println "checkJobAccess $id"
         def job = Job.read(id)
         if(!job) {
             throw new ObjectNotFoundException("Job $id was not found! Unable to process project auth checking")
         }
+        println "project ${job.project.id}"
+        Infos.printRight(job.project)
+        println "Access ${job.project.checkReadPermission()}"
         return job.project.checkReadPermission()
     }
 

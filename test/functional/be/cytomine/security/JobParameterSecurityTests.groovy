@@ -103,14 +103,13 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       jobParameter.job.project = project
 
       //check if simple user can access/update/delete
+      println "1111111111111111111111"
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(403, result.code)
-      jobParameter = result.data
 
-      jobParameter = BasicInstance.createOrGetBasicJobParameter()
-      jobParameter.job.project = project
-      jobParameter.job.save(flush:true)
+      BasicInstance.saveDomain(jobParameter)
 
+      println "2222222222222222222"
       assertEquals(403, JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
       assertEquals(403,JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
       //assertEquals(403, JobParameterAPI.update(jobParameter,USERNAME2,PASSWORD2).code)

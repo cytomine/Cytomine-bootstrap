@@ -15,6 +15,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import groovy.sql.Sql
 
 class TermService extends ModelService {
 
@@ -29,6 +30,7 @@ class TermService extends ModelService {
     def domainService
     def userService
     def annotationFilterService
+    def dataSource
 
     final boolean saveOnUndoRedoStack = true
 
@@ -71,6 +73,20 @@ class TermService extends ModelService {
         return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
     }
 
+    /**
+     * Get all term id for a project
+     */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    public List<Long> getAllTermId(Project project) {
+        //better perf with sql request
+        String request = "SELECT t.id FROM term t WHERE t.ontology_id="+project.ontology.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
+    }
+
     @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def statProject(Term term) {
         def projects = Project.findAllByOntology(term.ontology)
@@ -99,7 +115,7 @@ class TermService extends ModelService {
         return convertHashToList(count)
     }
 
-    List convertHashToList(HashMap<String, Integer> map) {
+    private List convertHashToList(HashMap<String, Integer> map) {
         def list = []
         map.each {
             list << ["key": it.key, "value": it.value]

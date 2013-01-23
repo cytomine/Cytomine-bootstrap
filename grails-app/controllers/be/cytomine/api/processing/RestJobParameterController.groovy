@@ -19,7 +19,6 @@ class RestJobParameterController extends RestController {
     /**
      * List all job parameter
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(jobParameterService.list())
     }
@@ -39,8 +38,8 @@ class RestJobParameterController extends RestController {
     /**
      * Get a job parameter
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
+        println "66666666666666666666666666"
         JobParameter jobParameter = jobParameterService.read(params.long('id'))
         if (jobParameter) {
             responseSuccess(jobParameter)

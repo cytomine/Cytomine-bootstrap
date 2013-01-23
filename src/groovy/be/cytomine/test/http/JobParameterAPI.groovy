@@ -19,6 +19,7 @@ class JobParameterAPI extends DomainAPI {
     private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
+        println "33333333333333333333333"
         String URL = Infos.CYTOMINEURL + "api/jobparameter/" + id + ".json"
         return doGET(URL, username, password)
     }

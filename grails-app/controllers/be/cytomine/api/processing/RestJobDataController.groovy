@@ -30,19 +30,23 @@ class RestJobDataController extends RestController {
      */
     def listByJob = {
         Job job = Job.read(params.long('id'))
-        if(job) responseSuccess(jobDataService.list(job))
-        else responseNotFound("Job", params.id)
+        if(job) {
+            responseSuccess(jobDataService.list(job))
+        } else {
+            responseNotFound("Job", params.id)
+        }
     }
 
     /**
      * Get a specific data file info
      */
     def show = {
-        JobData jobData = jobDataService.read(params.long('id'), new JobData())
+        JobData jobData = jobDataService.read(params.long('id'))
         if (jobData) {
             responseSuccess(jobData)
+        } else {
+            responseNotFound("JobData", params.id)
         }
-        else responseNotFound("JobData", params.id)
     }
 
     /**
@@ -73,7 +77,7 @@ class RestJobDataController extends RestController {
     def upload = {
         log.info "Upload file = " + params.getLong('id')
 
-        JobData jobData = JobData.read(params.getLong('id'))
+        JobData jobData = jobDataService.read(params.getLong('id'))
         JobDataBinaryValue value = new JobDataBinaryValue(jobData:jobData)
         domainService.saveDomain(value)
         jobData.value = value
@@ -105,7 +109,7 @@ class RestJobDataController extends RestController {
      */
     def download = {
         log.info "Download file jobdata = " + params.getLong('id')
-        JobData jobData = JobData.read(params.getLong('id'))
+        JobData jobData = jobDataService.read(params.getLong('id'))
         if(!jobData) {
             responseNotFound("JobData", params.id)
         } else {

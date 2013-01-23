@@ -75,41 +75,55 @@ class JobParameterService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
-    //jobParameterService.addJobParameter(param.softwareParameter,param.value, currentUser, transaction);
+    /**
+     * Add a job parameter for a job
+     */
     def addJobParameter(def idJob, def idSoftwareParameter, def value,User currentUser,Transaction transaction) {
         def json = JSON.parse("{softwareParameter: $idSoftwareParameter, value: $value, job: $idJob}")
         return executeCommand(new AddCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-
-     * @param printMessage print message or not
-     * @return response
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
         create(JobParameter.createFromDataWithId(json), printMessage)
     }
 
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def create(JobParameter domain, boolean printMessage) {
         //Save new object
         domainService.saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.value, domain.softwareParameter?.name], printMessage, "Add", domain.getCallBack())
     }
-    /**
-     * Destroy domain which was previously added
-     * @param json domain info
 
-     * @param printMessage print message or not
-     * @return response
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def destroy(JSONObject json, boolean printMessage) {
         //Get object to delete
         destroy(JobParameter.get(json.id), printMessage)
     }
 
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def destroy(JobParameter domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.value, domain.softwareParameter?.name], printMessage, "Delete", domain.getCallBack())
@@ -119,16 +133,22 @@ class JobParameterService extends ModelService {
     }
 
     /**
-     * Edit domain which was previously edited
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
      */
     def edit(JSONObject json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(new JobParameter(), json), printMessage)
     }
 
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
     def edit(JobParameter domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.value, domain.softwareParameter?.name], printMessage, "Edit", domain.getCallBack())
