@@ -68,7 +68,7 @@ div .sidebar-map {
     z-index: 800;
     background-color: rgb(90, 89, 89);
     padding: 0px;
-    min-width: 300px;
+    width: 261px;
 }
 
 div .sidebar-map-left {
@@ -91,7 +91,7 @@ div .sidebar-content h3 {
     color:#fff;
     margin:0;
     background-color:#5a5959;
-    padding:0px 0px 0px 10px;
+    padding:0px 10px 0px 10px;
     background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
     border-top:solid #6b6b6b 1px;
     border-bottom:solid #3d3d3d 1px;
@@ -132,16 +132,17 @@ div .annotationsPanel {
 
 
 
-
-
 .tree > ul.dynatree-container
 {
 
 
     font-size: 10pt; /* font size should not be too big */
     white-space: nowrap;
-    padding: 3px;
-
+    padding: 0px;
+    margin-top: 5px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-bottom: 5px;
     background-color: transparent;
     border: 0px dotted gray;
 
@@ -168,6 +169,11 @@ div .annotationsPanel {
     /*border-color: #B8D6FB; /* darker light blue */
 }
 
+span.dynatree-active a
+{
+    background-image: none !important;
+    color: white !important; /* @ IE6 */
+}
 
 .tree > li > span.dynatree-selected a
 {
@@ -179,28 +185,6 @@ div .annotationsPanel {
 .tree > a {
     color : #fff;
 }
-
-div .toolbar {
-    /*position : absolute;
-    width:100%;
-    bottom: 0px;*/
-
-    /*left : 120px;
-    top : 100px;*/
-    /*z-index : 1002;*/
-    /*background-color: transparent;
-    color : #fff;
-    padding: 0px;
-    margin : auto;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;*/
-}
-
-div .toolbarPanel {
-
-}
-
 
 label .layerSwitcher {
     display:inline;
@@ -425,7 +409,7 @@ div.olControlZoomPanel {
     width: 36px;
     position: absolute;
     top: 3px;
-    left: 307px;
+    left: 267px;
 }
 div.olControlZoomPanel div {
     width: 36px;
