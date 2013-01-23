@@ -71,7 +71,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       //Add jobParameter instance to project
       JobParameter jobParameter = BasicInstance.getBasicJobParameterNotExist()
       jobParameter.job.project = project
-
+      jobParameter.job.save(flush: true)
       //check if user 2 can access/update/delete
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assertEquals(200, result.code)
@@ -108,8 +108,8 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       jobParameter = result.data
 
       jobParameter = BasicInstance.createOrGetBasicJobParameter()
-      jobParameter.project = project
-      jobParameter.save(flush:true)
+      jobParameter.job.project = project
+      jobParameter.job.save(flush:true)
 
       assertEquals(403, JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
       assertEquals(403,JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
