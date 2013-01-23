@@ -63,141 +63,59 @@ div.olControlOverviewMapElement {
 
 }
 
-/*div .reviewPanel {*/
-	/*position : absolute;*/
-    /*z-index : 1006;*/
-    /*background-color: rgba(0, 0, 0, 0.7);*/
-    /*color : #fff;*/
-    /*padding: 0px;*/
-    /*margin : 0px;*/
-    /*-moz-border-radius:6px;*/
-    /*-webkit-border-radius: 6px;*/
-    /*border-radius: 6px;*/
-/*}*/
 
-div .overviewPanel {
-    position : absolute;
-    z-index : 1005;
-    background-color: rgba(0, 0, 0, 0.7);
-    color : #fff;
+div .sidebar-map {
+    z-index: 800;
+    background-color: rgb(90, 89, 89);
     padding: 0px;
-    margin : 0px;
-    border : 2px solid #000;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
+    min-width: 300px;
+}
+
+div .sidebar-map-left {
+    position : absolute;
+    left: 5px;
+    top: 85px;
+}
+
+div .sidebar-map-right {
+    position : absolute;
+    right: 5px;
+    top: 85px;
+}
+
+.sidebar-content ul {
+    margin-left: 10px;
+}
+
+div .sidebar-content h3 {
+    color:#fff;
+    margin:0;
+    background-color:#5a5959;
+    padding:0px 0px 0px 10px;
+    background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
+    border-top:solid #6b6b6b 1px;
+    border-bottom:solid #3d3d3d 1px;
+    text-shadow:0 -1px 1px #333;
+    font-size: 11px;
+    line-height: 23px;
+    text-transform: uppercase;
+}
+
+div .sidebar-content {
+    box-shadow:0 1px 0 #727272;
+    color:#fff;
+    font-size:13px;
+    display:block;
+    padding:0px 0px 0px 0px;
+    text-shadow:0 1px 1px #000;
 }
 
 div .popupPanel a {
     color: #26b4e3;
 }
 
-/*div .zoomInfoPanel {*/
-    /*position : absolute;*/
-    /*top : 122px;*/
-    /*left : 65px;*/
-    /*z-index : 2023;*/
-    /*background-color: rgba(0, 0, 0, 0.7);*/
-    /*color : #fff;*/
-    /*overflow : hidden;*/
-    /*font-weight: bold;*/
-    /*width : 40px;*/
-    /*text-align: center;*/
-    /*height : 20px;*/
-    /*padding : 2px;*/
-    /*-moz-border-radius: 6px;*/
-    /*-webkit-border-radius: 6px;*/
-    /*border-radius: 6px;*/
-    /*border : 2px solid #000;*/
-/*}*/
-
-div .zoomInfoPanel {
-   position : absolute;
-   top : 122px;
-   left : 65px;
-   z-index : 2023;
-   background-color: rgba(0, 0, 0, 0.7);
-   color : #fff;
-   /*overflow : hidden;*/
-   font-weight: bold;
-   width : 40px;
-   text-align: center;
-   height : 20px;
-   padding : 2px;
-   -moz-border-radius: 6px;
-   -webkit-border-radius: 6px;
-   border-radius: 6px;
-}
-
 
 div .annotationsPanel {
-    position : absolute;
-    bottom : 70px;
-    left : 0px;
-    z-index : 2023;
-    background-color: rgba(0, 0, 0, 0.7);
-    color : #fff;
-    /*overflow : hidden;*/
-    padding : 0px;
-
-
-}
-div .layerSwitcherPanel {
-    position : absolute;
-    /*right : 20px;
-    top : 100px;*/
-    z-index : 1000;
-    background-color: black;
-    color : #fff;
-    padding: 0px;
-    margin : 0px;
-    /*border : 2px solid #000;*/
-    -moz-border-radius:6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-
-}
-
-div .reviewPanel {
-    position : absolute;
-    z-index : 1006;
-    background-color: rgba(0, 0, 0, 0.7);
-    color : #fff;
-    padding: 0px;
-    margin : 0px;
-    width : 350px;
-    /*height : 500px;*/
-    /*border : 2px solid #000;*/
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-}
-
-
-/*table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td {
-    margin:0px;
-    padding:0px;
-    border:0px;
-    outline:0px;
-    font-size:100%;
-    vertical-align:baseline;
-    background:transparent;
-    line-height:inherit;
-}
- */
-
-
-div .ontologyPanel {
     position : absolute;
     max-width: 500px;
     max-height: 650px;
@@ -215,7 +133,8 @@ div .ontologyPanel {
 
 
 
-div.ontologyPanel > .tree > ul.dynatree-container
+
+.tree > ul.dynatree-container
 {
 
 
@@ -229,7 +148,7 @@ div.ontologyPanel > .tree > ul.dynatree-container
     overflow: hidden;
 }
 
-div.ontologyPanel > .tree > ul.dynatree-container a
+.tree > ul.dynatree-container a
     /*, ul.dynatree-container a:visited*/
 {
     color: white; /* inherit doesn't work on IE */
@@ -240,7 +159,7 @@ div.ontologyPanel > .tree > ul.dynatree-container a
     /*	outline: 0; /* @ Firefox, prevent dotted border after click */
 }
 
-div.ontologyPanel > .tree > ul.dynatree-container a:hover
+.tree > ul.dynatree-container a:hover
 {
     background: none;
     border: 0px;
@@ -250,33 +169,32 @@ div.ontologyPanel > .tree > ul.dynatree-container a:hover
 }
 
 
-div.ontologyPanel > .tree > li > span.dynatree-selected a
+.tree > li > span.dynatree-selected a
 {
     background-color : green;
     color: white;
     font-style: italic;
 }
 
-
-
-
-div .ontologyPanel a {
+.tree > a {
     color : #fff;
 }
 
 div .toolbar {
-    position : absolute;
-    width:auto;
+    /*position : absolute;
+    width:100%;
+    bottom: 0px;*/
+
     /*left : 120px;
     top : 100px;*/
-    z-index : 1002;
-    background-color: transparent;
+    /*z-index : 1002;*/
+    /*background-color: transparent;
     color : #fff;
     padding: 0px;
-    margin : 0px;
+    margin : auto;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
-    border-radius: 6px;
+    border-radius: 6px;*/
 }
 
 div .toolbarPanel {
@@ -297,39 +215,6 @@ input .layerSwitcher{
 }
 
 
-
-
-div .annotationDetailPanel {
-    position : absolute;
-    left : 10px;
-    bottom : 35px;
-    z-index : 1001;
-    color : #fff;
-    padding: 0px;
-    border : 2px solid #000;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    background-color: rgba(0, 0, 0, 0.7);
-    width : 250px;
-}
-
-div .imageFiltersPanel {
-    position : absolute;
-    /*right : 10px;
-    bottom : 15px;*/
-    z-index : 1001;
-
-    color : #fff;
-    padding: 0px;
-    border : 2px solid #000;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    background-color: rgba(0, 0, 0, 0.7);
-    width : 250px;
-}
-
 div.layerSwitcherPanel label, input {
     display:inline;
 }
@@ -346,7 +231,6 @@ div.olControlOverviewMapElement img {
 }
 
 .map .control {
-    /*background:url(../images/palette.png);*/
     height:20px;
     padding:5px;
     position:absolute;
@@ -357,26 +241,17 @@ div.olControlOverviewMapElement img {
 }
 
 
-/** image for "add image to project" panel**/
-.thumbProject{
-    /*background:#FFF;
-    border:#CCC solid 1px;
-    padding:3px;
-    height: 200px;
-    width: 150px;*/
-}
 .thumb-wrapProject{
     float: left;
     margin: 4px;
     margin-right: 0;
     padding: 5px;
-    /*cursor: pointer;*/
 }
 
 #alerts {
     position: absolute;
-    right: 20px;
-    top : 50px;
+    left: 20px;
+    bottom : 10px;
     z-index: 2200;
 }
 
@@ -457,16 +332,16 @@ td.confusionMatrixBadValue{
   background-color: #6C8690;
 }*/
 
-.olLayerGrid .olTileImage {
+/*.olLayerGrid .olTileImage {
     -webkit-transition: opacity 0.2s linear;
     -moz-transition: opacity 0.2s linear;
     -o-transition: opacity 0.2s linear;
     transition: opacity 0.2s linear;
-}
+}*/
 
 @media (-webkit-transform-3d) {
     img.olTileImage {
-        -webkit-transform: none;
+        -webkit-transform: translate3d(0, 0, 0);
     }
 }
 
@@ -543,17 +418,14 @@ table.dataTable th:active {
     background-image: url('../images/tiny_grid.png');
 }
 
-
-
-
 /* OpenLayers Zoom Panel */
 
 div.olControlZoomPanel {
     height: 108px;
     width: 36px;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 3px;
+    left: 307px;
 }
 div.olControlZoomPanel div {
     width: 36px;
@@ -584,14 +456,12 @@ div.olControlZoomPanel .olControlZoomOutItemInactive {
 }
 div.olControlZoomPanel .olControlZoomInItemInactive,
 div.olControlZoomPanel .olControlZoomOutItemInactive {
-    background: rgba(0,0,0,0.7);
+    background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
     position: absolute;
 }
 div.olControlZoomPanel .olControlZoomInItemInactive {
-    border-radius: 5px 5px 0 0;
 }
 div.olControlZoomPanel .olControlZoomOutItemInactive {
-    border-radius: 0 0 5px 5px ;
     top: 37px;
 }
 div.olControlZoomPanel .olControlZoomOutItemInactive:after ,
@@ -784,16 +654,16 @@ div.olControlZoomPanel .olControlZoomToMaxExtentItemInactive {
     background: #FFF;
 }
 
- .chart rect {
-   stroke: white;
-   fill: steelblue;
+.chart rect {
+    stroke: white;
+    fill: steelblue;
 }
 
 .chart div {
-   font: 10px sans-serif;
-   background-color: steelblue;
-   text-align: right;
-   padding: 3px;
-   margin: 1px;
-   color: white;
+    font: 10px sans-serif;
+    background-color: steelblue;
+    text-align: right;
+    padding: 3px;
+    margin: 1px;
+    color: white;
 }

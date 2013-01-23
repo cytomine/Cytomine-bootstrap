@@ -6,9 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-
-
-var OverviewMapPanel = Backbone.View.extend({
+var OverviewMapPanel = SideBarPanel.extend({
     tagName:"div",
 
     /**
@@ -36,10 +34,12 @@ var OverviewMapPanel = Backbone.View.extend({
      */
     doLayout:function (tpl) {
         var self = this;
-        new DraggablePanelView({
-            el:$('#'+self.browseImageView.divId).find('#overviewMap' + self.model.get('id')),
-            className:"overviewPanel",
-            template:_.template(tpl, {id:self.model.get('id'), isDesktop:!window.app.view.isMobile})
-        }).render();
+        var content = _.template(tpl, {id:self.model.get('id'), isDesktop:!window.app.view.isMobile});
+        $('#overviewMap' + self.model.get('id')).html(content);
+        var el = $('#overviewMap' + self.model.get('id'));
+        var elContent = el.find(".overview-panel");
+        var sourceEvent = el.find(".toggle-content ");
+        this.initToggle(el, elContent, sourceEvent, "overview-panel");
+
     }
 });

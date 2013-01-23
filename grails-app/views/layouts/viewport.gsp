@@ -188,9 +188,9 @@ body {
     <script type="text/javascript" src="application/views/processing/result/DefaultResult.js"></script>
     <script type="text/javascript" src="application/views/processing/result/DownloadFiles.js"></script>
 
+    <script type="text/javascript" src="application/views/explorer/SideBarPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
-    <script type="text/javascript" src="application/views/explorer/DraggablePanelView.js" ></script>
     <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
     <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
@@ -198,6 +198,7 @@ body {
     <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/ReviewPanel.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/InformationsPanel.js" ></script>
 
     <script type="text/javascript" src="application/views/upload/UploadFormView.js" ></script>
 

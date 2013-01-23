@@ -5,7 +5,7 @@
  * Time: 14:38
  * To change this template use File | Settings | File Templates.
  */
-var ReviewPanel = Backbone.View.extend({
+var ReviewPanel = SideBarPanel.extend({
     tagName:"div",
     userLayers:null,
     userJobLayers:null,
@@ -189,23 +189,23 @@ var ReviewPanel = Backbone.View.extend({
         //disable from select box
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         //add to list
-        panelElem.find("#reviewSelection" + self.model.id).append('<label style="display:inline;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i>&nbsp;&nbsp;</label>');
+        panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i></span>');
         $("#removeReviewLayer" + layer).click(function (elem) {
             self.removeLayerFromReview(layer);
         });
     },
     doLayout:function (tpl) {
         var self = this;
-        var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+        var el = $("#reviewPanel" + self.model.get("id"));
         var params = {id:self.model.get("id"), isDesktop:!window.app.view.isMobile};
         var content = _.template(tpl, params);
-        panelElem.html(content);
+        el.html(content);
         self.showCurrentAnnotation(null);
 
         if (!self.model.get("reviewed")) {
             //image is not reviewed
 
-            var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
+            var selectElem = el.find("#reviewChoice" + self.model.get("id")).find("select");
 
             //fill select with all possible layers
             this.userLayers.each(function (layer) {
@@ -222,7 +222,7 @@ var ReviewPanel = Backbone.View.extend({
 
             //init event
             $("#addReviewLayers" + self.model.id).click(function () {
-                self.addLayerToReview(panelElem.find("#reviewChoice" + self.model.get("id")).find("select").val());
+                self.addLayerToReview(el.find("#reviewChoice" + self.model.get("id")).find("select").val());
             });
             $("#reviewMultiple" + self.model.id).click(function () {
                 self.addAllReviewAnnotation();
@@ -232,21 +232,6 @@ var ReviewPanel = Backbone.View.extend({
             });
             $("#reviewValidate" + self.model.id).click(function () {
                 self.validatePicture();
-            });
-
-            panelElem.find(".toggleShowAnnotation").click(function () {
-                panelElem.find("#currentReviewAnnotation" + self.model.get("id")).toggle(150);
-                return false;
-            });
-
-            panelElem.find(".toggleShowLayers").click(function () {
-                panelElem.find("#reviewChoice" + self.model.get("id")).toggle(150);
-                return false;
-            });
-
-            panelElem.find(".toggleShowAction").click(function () {
-                panelElem.find("#reviewAction" + self.model.get("id")).toggle(150);
-                return false;
             });
 
             $('#showReviewLayer'+self.model.id).click (function () {
@@ -268,23 +253,28 @@ var ReviewPanel = Backbone.View.extend({
             });
 
             //hide and lock action
-            panelElem.find("#currentReviewAnnotation" + self.model.get("id")).hide();
-            panelElem.find("#reviewChoice" + self.model.get("id")).hide();
-            panelElem.find(".toggleShowAnnotation").click(function () {
+            el.find("#currentReviewAnnotation" + self.model.get("id")).hide();
+            el.find("#reviewChoice" + self.model.get("id")).hide();
+            el.find(".toggleShowAnnotation").click(function () {
                 return false;
             });
-            panelElem.find(".toggleShowLayers").click(function () {
+            el.find(".toggleShowLayers").click(function () {
                 return false;
             });
-            panelElem.find(".toggleShowAction").click(function () {
+            el.find(".toggleShowAction").click(function () {
                 return false;
             });
         }
 
-        new DraggablePanelView({
-            el:$("#" + self.browseImageView.divId).find('#reviewPanel' + self.model.get('id')),
-            className:"reviewPanel"
-        }).render();
+        var elContent1 = el.find(".reviewPanelContent1");
+        var sourceEvent1 = el.find(".toggle-content1");
+        var elContent2 = el.find(".reviewPanelContent2");
+        var sourceEvent2 = el.find(".toggle-content2");
+        var elContent3 = el.find(".reviewPanelContent3");
+        var sourceEvent3 = el.find(".toggle-content3");
+        this.initToggle(el, elContent1, sourceEvent1, "reviewPanelContent1");
+        this.initToggle(el, elContent2, sourceEvent2, "reviewPanelContent2");
+        this.initToggle(el, elContent3, sourceEvent3, "reviewPanelContent3");
     },
     /**
      * Accept curent annotation for review

@@ -1,29 +1,10 @@
 <ul>
-    <li style="color:#FFFFFF;"><b>Annotation</b> : <%= idAnnotation %></li>
-    <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
-    <li style="color:#FFFFFF;"><b>Created</b> : <%= date %></li>
-    <li style="color:#FFFFFF;"><b>Term(s)</b> : <div id="termsChoice<%= idAnnotation %>" style="display:inline;"></div></li>
-
+    <li>Annotation : <%= idAnnotation %></li>
+    <li>User : <%= username %></li>
+    <li>Created : <%= date %></li>
+    <li>Term(s) : <div id="termsChoice<%= idAnnotation %>" style="display:inline;"></div></li>
 </ul>
-
-<!--&lt;!&ndash;<ul id="test">&ndash;&gt;-->
-    <!--&lt;!&ndash;<li class="init">[SELECT]</li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li data-value="value 1">Option 1</li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li data-value="value 2">Option 2</li>&ndash;&gt;-->
-    <!--&lt;!&ndash;<li data-value="value 3">Option 3</li>&ndash;&gt;-->
-<!--&lt;!&ndash;</ul>&ndash;&gt;-->
-<!--<select id="example" name="example" style="width: 300px;height: 300px">-->
-<!--<option value="1">Option 1</option>-->
-<!--<option value="2">Option 2</option>-->
-<!--<option value="3">Option 3</option>-->
-<!--<option value="4">Option 4</option>-->
-<!--<option value="5">Option 5</option>-->
-<!--</select>-->
-
-
-<ul class="reviewAction" align="center">
-    <li >
-        <button class="btn" id="reviewSingle<%= idAnnotation %>">Accept</button>
-        <button class="btn" id="unreviewSingle<%= idAnnotation %>">Reject</button>
-    </li>
-</ul>
+<div class="reviewAction btn-group">
+    <button class="btn btn-small" id="reviewSingle<%= idAnnotation %>">Accept</button>
+    <button class="btn btn-small" id="unreviewSingle<%= idAnnotation %>">Reject</button>
+</div>

@@ -14,12 +14,8 @@ var ApplicationView = Backbone.View.extend({
     intervals:[], //references to followInterval, positionInterval...
     isMobile:( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration:[
-        {key:"toolbar-panel", linkID:"toggle-toolbar-panel", name:"Toolbar", className:"toolbarPanel", value:{ visible:true, position:{ bottom:0}, align:"center"}},
-        {key:"overview-panel", linkID:"toggle-overview-panel", name:"Overview", className:"overviewPanel", value:{ visible:true, position:{ right:250, top:325}}},
-        {key:"ontology-panel", linkID:"toggle-ontology-panel", name:"Ontology", className:"ontologyPanel", value:{ visible:true, position:{ left:20, top:280}}},
-        {key:"layer-panel", linkID:"toggle-layer-panel", name:"Layer switcher", className:"layerSwitcherPanel", value:{ visible:false, position:{ right:250, top:100}}},
-        {key:"review-panel", linkID:"toggle-review-panel", name:"Review", className:"reviewPanel", value:{ visible:false, position:{ right:250, top:100}}},
-        {key:"filters-panel", linkID:"toggle-filters-panel", name:"Filters", className:"imageFiltersPanel", value:{ visible:false, position:{ right:250, bottom:15}}}
+        {key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},
+        {key:"sidebar-map-right", linkID:"toggle-sidebar-map-right", name:"Right Panels", className:"sidebar-map-right", value:{ visible:true}}
     ],
     events:{
 
@@ -43,16 +39,35 @@ var ApplicationView = Backbone.View.extend({
         window.app.controllers.command.redo();
     },
     hideFloatingPanels:function () {
+        var self = this;
         _.each(this.panelsConfiguration, function (item) {
-            if (item.key == "toolbar-panel") return;
-            $("." + item.className).hide();
+            self.hideFloatingPanel(item);
         });
     },
+    hideFloatingPanel : function (item) {
+        if (_.isArray(item.className)) {
+            _.each(item.className, function(_className){
+                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>hide"+_className);
+                $("." + _className).hide();
+            });
+        } else {
+            $("." + item.className).hide();
+        }
+    },
     showFloatingPanels:function () {
+        var self = this;
         _.each(this.panelsConfiguration, function (item) {
-            if (item.key == "toolbar-panel") return;
-            $("." + item.className).show();
+           self.showFloatingPanel(item);
         });
+    },
+    showFloatingPanel : function(item){
+        if (_.isArray(item.className)) {
+            _.each(item.className, function(_className){
+                $("." + _className).show()
+            });
+        } else {
+            $("." + item.className).show();
+        }
     },
     toggleVisibility:function (item) {
         var self = this;
@@ -63,9 +78,6 @@ var ApplicationView = Backbone.View.extend({
             _.each(self.panelsConfiguration, function (panel) {
                 if (panel.key == item.key) return;
                 var visible = false;
-                if (panel.key == "toolbar-panel") {
-                    visible = true;
-                }
                 preferencePanel = localStorage.getObject(panel.key);
                 preferencePanel.visible = visible;
                 localStorage.setObject(panel.key, preferencePanel);
@@ -77,22 +89,15 @@ var ApplicationView = Backbone.View.extend({
 
     },
     updateMenuItem:function (item) {
+        var self = this;
         var preference = localStorage.getObject(item.key);
         if (preference != undefined && preference.visible != undefined && preference.visible == true) {
             $("#" + item.linkID).html("<i class='icon-eye-close' /> " + item.name);
-            $("." + item.className).each(
-                function (intIndex) {
-                    $(this).show('fast');
-                }
-            );
+            self.showFloatingPanel(item);
         }
         else {
             $("#" + item.linkID).html("<i class='icon-eye-open' /> " + item.name);
-            $("." + item.className).each(
-                function (intIndex) {
-                    $(this).hide('fast');
-                }
-            );
+            self.hideFloatingPanel(item);
         }
     },
     /**
@@ -100,13 +105,6 @@ var ApplicationView = Backbone.View.extend({
      * @param options
      */
     initialize:function (options) {
-        var resizeTO = null;
-        $(window).resize(function () {
-            if (resizeTO) clearTimeout(resizeTO);
-            resizeTO = setTimeout(function () {
-                $(window).trigger('resizeEnd');
-            }, 500);
-        });
     },
     /**
      * Render the html into the DOM element associated to the view
@@ -118,9 +116,6 @@ var ApplicationView = Backbone.View.extend({
         _.each(this.components, function (component) {
             component.render();
         });
-        /*/$(window).resize(function(){
-         self.applyPreferences()
-         });*/
         self.initEvents();
         renderCallback.call();
         return this;
@@ -152,89 +147,8 @@ var ApplicationView = Backbone.View.extend({
     applyPreferences:function () {
         var self = this;
         _.each(self.panelsConfiguration, function (item) {
-            self.updatePanelPosition(item, true);
             self.updateMenuItem(item);
         });
-    },
-    updatePanelPosition:function (item, triggerMoveEvent) {
-
-        var preference = localStorage.getObject(item.key);
-
-        if (preference == undefined) return;
-
-        //TMP CODE, we should create mobilePreferences and DesktopPreferences object
-        //and have a versionning in order to override localstorage data on clients
-        if (this.isMobile) { //force bottom right
-            if (item.key == "toolbar-panel")
-                preference.position.bottom = 0;
-            else
-                preference.position.bottom = 40;
-            if (item.key != "toolbar-panel")
-                preference.position.right = 5;
-            else
-                delete preference.position.right;
-            delete preference.position.left;
-            delete preference.position.top;
-        } else { //force bottom right desktop
-            if (item.key == "toolbar-panel") {
-                delete preference.position.right;
-                delete preference.position.left;
-                delete preference.position.top;
-                preference.position.bottom = 0;
-            }
-        }
-        var panelWidth = 0;
-        var panelHeight = 0;
-        $.each($("." + item.className), function (index, value) {
-            var width = $(value).width();
-            var height = $(value).height();
-            if (width > 0) panelWidth = width;
-            if (height > 0) panelHeight = height;
-        });
-        var panel = $("." + item.className);
-
-        var windowWidth = $(window).width();
-        var windowHeight = $(window).height();
-        // Alignment
-
-        if (panelWidth != 0 && preference.align != undefined && preference.align == "center") {
-            var leftPosition = (windowWidth / 2) - (panelWidth / 2);
-            preference.position.left = leftPosition;
-        }
-        // Check if out of bounds
-        if (panelWidth != 0 && preference.position.left + panelWidth > windowWidth) {
-            preference.position.left = windowWidth - panelWidth
-        }
-        if (panelHeight != 0 && preference.position.top + panelHeight > windowHeight) {
-            preference.position.top = windowHeight - panelHeight
-        }
-
-        // Update values
-        localStorage.setObject(item.key, preference);
-
-        // Position
-        var position = preference.position;
-        if (position.top == undefined) position.top = '';
-        $("." + item.className).css("top", position.top);
-        if (position.left == undefined) position.left = '';
-        $("." + item.className).css("left", position.left);
-        if (position.right == undefined) position.right = '';
-        $("." + item.className).css("right", position.right);
-        if (position.bottom == undefined) position.bottom = '';
-        $("." + item.className).css("bottom", position.bottom);
-
-        if (triggerMoveEvent) $("." + item.className).trigger("movedProgramatically");
-    },
-    updatePosition:function (className, position, triggerMoveEvent) {
-        var self = this;
-        var panelConfig = _.find(self.panelsConfiguration, function (item) {
-            return item.className == className;
-        });
-        if (!panelConfig) return;
-        var preference = localStorage.getObject(panelConfig.key);
-        preference.position = position;
-        localStorage.setObject(panelConfig.key, preference);
-        self.updatePanelPosition(panelConfig, triggerMoveEvent);
     },
     initUserMenu:function () {
         var self = this;
@@ -252,7 +166,6 @@ var ApplicationView = Backbone.View.extend({
                 self.updateMenuItem(item);
                 $("#" + item.linkID).on('click', function () {
                     self.toggleVisibility(item);
-                    self.updatePanelPosition(item, true);
                 });
             });
             $("#toggle-floating-panel").on("click", function () {
@@ -265,24 +178,24 @@ var ApplicationView = Backbone.View.extend({
 
     },
     printTaskEvolution:function(task,divToFill, timeout) {
-        printTaskEvolution(task,divToFill,timeout, false)
+        this.printTaskEvolution(task,divToFill,timeout, false);
     },
     printTaskEvolution:function(task,divToFill, timeout, reverse) {
         function checkTask() {
-           //load all job data
-           new TaskModel({id:task.id}).fetch({
-               success:function(taskInfo,response) {
-                   divToFill.empty();
-                   divToFill.append('' +
-                               '<div class="progress progress-striped active">' +
-                               '   <div class="bar" style="width: '+taskInfo.get('progress')+'%;"></div>' +
-                               '</div>');
-                   divToFill.append(taskInfo.get('comments').reverse().join('<br>'));
-               },
-               error:function (collection, response) {
-                    console.log("error getting task");
-               }}
-           );
+            //load all job data
+            new TaskModel({id:task.id}).fetch({
+                    success:function(taskInfo,response) {
+                        divToFill.empty();
+                        divToFill.append('' +
+                            '<div class="progress progress-striped active">' +
+                            '   <div class="bar" style="width: '+taskInfo.get('progress')+'%;"></div>' +
+                            '</div>');
+                        divToFill.append(taskInfo.get('comments').reverse().join('<br>'));
+                    },
+                    error:function (collection, response) {
+                        console.log("error getting task");
+                    }}
+            );
         }
         checkTask();
         var timer=setInterval(function(){checkTask()}, timeout);
@@ -426,7 +339,7 @@ ApplicationView.prototype.message = function (title, message, type) {
     $("#alerts").append(_.template(tpl, { alert:title, message:message, timestamp:timestamp, type:type}));
     setTimeout(function () {
         $("#alert" + timestamp).remove();
-    }, 3000);
+    }, 2000);
 
 }
 

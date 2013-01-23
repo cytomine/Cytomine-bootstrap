@@ -1,36 +1,43 @@
 <div class="tab-pane" id="<%= type %>-<%= project %>-<%= id %>-">
     <div class="map" id="map<%= type %><%= id %>"></div>
-    <div class="controlPanels" id="controlsPanels<%= id %>">
-        <div class="toolbar toolbarPanel" style="display : none">
-            <div class="btn-group" data-toggle="buttons-radio" id="toolbar<%= id %>" align="center">
-                <!--<a class="btn btn-inverse" id="none<%= id %>" data-toggle="button"><i class="icon-move icon-white"/>Navigate</a>-->
-                <a class="btn btn-inverse btn-small" id="select<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-move" /></a>
-                <a class="btn btn-inverse btn-small" id="point<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-pin" /></a>
-                <a class="btn btn-inverse btn-small" id="regular4<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-square" /></a>
-                <a class="btn btn-inverse btn-small" id="regular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-circle" /></a>
-                <a class="btn btn-inverse btn-small" id="polygon<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-polygon" /></a>
-                <a class="btn btn-inverse btn-small" id="freehand<%= id %>" data-toggle="button" alt="Freehand"><i class="glyphicon-pen glyphicon-white"/></a>
-                <a class="btn btn-inverse btn-small" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/><i class="glyphicon-white glyphicon-pen" /></a>
-                <a class="btn btn-inverse btn-small" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/><i class="glyphicon-white glyphicon-pen" /></a>
-                <a class="btn btn-inverse btn-small" id="magic<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-magic"/> </a>
-                <a class="btn btn-inverse btn-small" id="modify<%= id %>" data-toggle="button">Edit</a>
-                <a class="btn btn-inverse btn-small" id="rotate<%= id %>" data-toggle="button">Rotate</a>
-                <a class="btn btn-inverse btn-small" id="resize<%= id %>" data-toggle="button">Resize</a>
-                <a class="btn btn-inverse btn-small" id="drag<%= id %>" data-toggle="button">Drag</a>
-                <a class="btn btn-inverse btn-small" id="fill<%= id %>" data-toggle="button">Fill</a>
-
-                <a class="btn btn-inverse btn-small" id="delete<%= id %>" data-toggle="button"><i class="glyphicon-bin glyphicon-white"/></a>
-                <a class="btn btn-inverse btn-small" id="ruler<%= id %>" data-toggle="button"><i class="glyphicon-ruller glyphicon-white"/></a>
-              </div>
+    <div class="sidebar-map sidebar-map-left" style="display: none;">
+        <div class="sidebar-content">
+            <h3>Tools</h3>
+            <div class="controlPanels" id="controlsPanels<%= id %>">
+                <div class="toolbar toolbarPanel" id="toolbar<%= id %>" style="text-align: left;">
+                    <div class="btn-group" data-toggle="buttons-radio">
+                        <!--<a class="btn btn-inverse" id="none<%= id %>" data-toggle="button"><i class="icon-move icon-white"/>Navigate</a>-->
+                        <a class="btn btn-inverse btn-small" id="select<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-move" /></a>
+                        <a class="btn btn-inverse btn-small" id="point<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-pin" /></a>
+                        <a class="btn btn-inverse btn-small" id="regular4<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-square" /></a>
+                        <a class="btn btn-inverse btn-small" id="regular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-circle" /></a>
+                        <a class="btn btn-inverse btn-small" id="polygon<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-polygon" /></a>
+                        <a class="btn btn-inverse btn-small" id="freehand<%= id %>" data-toggle="button" alt="Freehand"><i class="glyphicon-pen glyphicon-white"/></a>
+                        <a class="btn btn-inverse btn-small" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/><i class="glyphicon-white glyphicon-pen" /></a>
+                        <a class="btn btn-inverse btn-small" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/><i class="glyphicon-white glyphicon-pen" /></a>
+                        <div style="clear: both;"></div>
+                        <a class="btn btn-inverse btn-small" id="magic<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-magic"/> </a>
+                        <a class="btn btn-inverse btn-small" id="modify<%= id %>" data-toggle="button">Ed.</a>
+                        <a class="btn btn-inverse btn-small" id="rotate<%= id %>" data-toggle="button">Rot.</a>
+                        <a class="btn btn-inverse btn-small" id="resize<%= id %>" data-toggle="button">Res.</a>
+                        <a class="btn btn-inverse btn-small" id="drag<%= id %>" data-toggle="button">Drag</a>
+                        <a class="btn btn-inverse btn-small" id="fill<%= id %>" data-toggle="button">Fill</a>
+                        <a class="btn btn-inverse btn-small" id="delete<%= id %>" data-toggle="button"><i class="glyphicon-bin glyphicon-white"/></a>
+                        <a class="btn btn-inverse btn-small" id="ruler<%= id %>" data-toggle="button"><i class="glyphicon-ruller glyphicon-white"/></a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="overviewPanel " id="overviewMap<%= id %>" style="display : none"></div>
-        <div class="layerSwitcherPanel" id="layerSwitcher<%= id %>" style="display : none;"></div>
-        <div class="ontologyPanel" id="ontologyTree<%= id %>" style="display : none"></div>
-        <div class="imageFiltersPanel" id="imageFiltersPanel<%= id %>" style="display : none"></div>
-        <div class="annotationDetailPanel" id="annotationDetailPanel<%= id %>" style="display : none"></div>
-        <div class="reviewPanel" id="reviewPanel<%= id %>" style="display : none"></div>
+        <div class="sidebar-content" id="informationsPanel<%= id %>"></div>
+        <div class="sidebar-content" id="ontologyTree<%= id %>"></div>
+    </div>
+    <div class="sidebar-map sidebar-map-right"  style="display: none;">
+        <div class="sidebar-content " id="overviewMap<%= id %>"></div>
+        <div class="sidebar-content" id="layerSwitcher<%= id %>"></div>
+        <!--<div class="sidebar-content" id="imageFiltersPanel<%= id %>" ></div>-->
+        <div class="sidebar-content" id="reviewPanel<%= id %>"></div>
+        <div class="sidebar-content" id="annotationDetailPanel<%= id %>"></div>
+
     </div>
     <div class="annotationsPanel" id="annotationsPanel<%= id %>"></div>
-    <div class="zoomInfoPanel" id="zoomInfoPanel<%= id %>"></div>
-
 </div>

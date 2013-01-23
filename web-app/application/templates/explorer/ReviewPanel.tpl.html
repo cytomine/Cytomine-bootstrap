@@ -1,51 +1,36 @@
-<div class="dragHandle minimized label">REVIEWS <i class="icon-move icon-white" style="float:right"/></div>
-
-
-<div class="reviewPanelContent" id="reviewPanelcontent<%= id %>" style="padding: 5px;">
-    <% if (isDesktop) { %> <i class="dragHandle icon-move icon-white" style="float:right"></i> <% } %>
-
-
-
-    <h4 style="color : #ffffff; display: inline;">Annotation</h4> <a href="#" class="toggleShowAnnotation">(Show/Hide)</a>
-    <br/><br/>
+<h3><i class="toggle-content1 icon-plus icon-white icon-small"></i> Review | Annotation</h3>
+<div class="reviewPanelContent1" style="padding: 5px;display: none;">
     <div style="display: block; margin:auto;" id="currentReviewAnnotation<%= id %>"></div>
+</div>
+<h3><i class="toggle-content2 icon-plus icon-white icon-small"></i> Review | Layers</h3>
+<div class="reviewPanelContent2" style="padding: 5px;display: none;" id="reviewChoice<%= id %>">
+    <ul>
+        <li><span class="label label-inverse">Display Review layer</span> <input id="showReviewLayer<%= id %>" type="checkbox" checked /></li>
+        <li><span class="label label-inverse">Others layers</span> :
+            <div style="display: block; padding-left: 10px;" id="reviewSelection<%= id %>">
+            </div>
+        </li>
+        <li>
+            <div class="controls controls-row">
+                <select class="span2" style="min-height: 10px;line-height:22px; height : 22px;margin-right: 5px;margin-top: 2px;" />
+                <button class="btn btn-small btn-inverse" id="addReviewLayers<%= id %>"><i class="icon-plus icon-white"></i> Add</button>
+            </div>
+        </li>
+        <li>
+            <div style="display: none; max-height: 150px; overflow:auto;" id="taskreview<%= id %>"></div>
+        </li>
+    </ul>
 
 
-    <h4 style="color : #ffffff; display: inline;">Layers</h4> <a href="#" class="toggleShowLayers">(Show/Hide)</a>
-    <br/><br/>
+</div>
+<h3><i class="toggle-content3 icon-plus icon-white icon-small"></i> Review | Action</h3>
+<div class="reviewPanelContent3" style="padding: 5px;display: none;">
+    <div class="reviewAction btn-group" id="reviewAction<%= id %>">
+        <button class="btn btn-small" id="reviewMultiple<%= id %>">Accept all</button>
+        <button class="btn btn-small" id="unReviewMultiple<%= id %>">Reject all</button>
+        <button class="btn btn-small btn-success" id="reviewValidate<%= id %>">Validate image</button>
+        <button class="btn btn-small btn-danger" style="display:none;" id="reviewUnValidate<%= id %>" >Unvalidate image</button>
+        <button class="btn btn-small"  style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
 
-
-    <div style="display: block; margin:auto;" id="reviewChoice<%= id %>" align="center">
-        <input id="showReviewLayer<%= id %>" type="checkbox" checked> Print Review layer
-        <br/>
-        <br/>
-
-        <select style="display:inline;margin-bottom:0px;">
-        </select>
-        <button style="display: inline; margin-left: auto; margin-right: auto;" id="addReviewLayers<%= id %>" class="btn"><i class="icon-plus icon-black"></i> Add&nbsp;&nbsp;&nbsp;</button>
-        <br/>
-        <div style="display: block" id="reviewSelection<%= id %>">
-
-        </div>
-        <br/>
-        <button class="btn" id="reviewMultiple<%= id %>">Accept all</button>&nbsp;&nbsp;
-        <button class="btn" id="unReviewMultiple<%= id %>">Reject all</button><br><br>
-    </div>
-    <div style="display: none; max-height: 150px; overflow:auto;" id="taskreview<%= id %>"></div>
-    <br/>
-
-
-    <h4 style="color : #ffffff; display: inline;">Action</h4> <a href="#" class="toggleShowAction">(Show/Hide)</a>
-    <br/><br/>
-
-    <div style="display: block;" >
-        <ul class="reviewAction" id="reviewAction<%= id %>">
-            <li>
-
-                <button class="btn btn-success" id="reviewValidate<%= id %>">Validate image</button>
-                <button class="btn btn-danger" style="display:none;" id="reviewUnValidate<%= id %>" >Unvalidate image</button>
-                <button class="btn"  style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
-            </li>
-        </ul>
     </div>
 </div>

@@ -27,9 +27,6 @@ var AdminController = Backbone.Router.extend({
                     });
                     var el = _.template('<select class="<%=   selectClass %>" title="" multiple="multiple" name="example-basic" size="5" style="display:none;">' +
                         '<%=   authorities %></select>', { selectClass:selectClass, authorities:authorities });
-                    setTimeout(function () {
-                        /*$("#authorities").multiselect({});*/
-                    }, 200);
                     return el;
                 }
                 var selectValue = function (elem, operation, value) {

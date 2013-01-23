@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var OntologyPanel = Backbone.View.extend({
+var OntologyPanel = SideBarPanel.extend({
     tagName:"div",
 
     /**
@@ -26,21 +26,21 @@ var OntologyPanel = Backbone.View.extend({
         new ProjectModel({id:window.app.status.currentProject}).fetch({
             success:function (model, response) {
                 var idOntology = model.get('ontology');
-                var ontology = new OntologyModel({id:idOntology}).fetch({
-                    success:function (model, response) {
-                        self.ontologyTreeView = new OntologyTreeView({
-                            el:$('#'+self.browseImageView.divId).find("#ontologyTree" + self.model.get("id")),
-                            browseImageView:self.browseImageView,
-                            model:model
-                        }).render();
-                        self.callback(self.ontologyTreeView);
-                    }
-                });
 
                 require([
                     "text!application/templates/explorer/OntologyTree.tpl.html"
                 ], function (tpl) {
                     self.doLayout(tpl);
+                    new OntologyModel({id:idOntology}).fetch({
+                        success:function (model, response) {
+                            self.ontologyTreeView = new OntologyTreeView({
+                                el:$("#ontologytreecontent" + self.model.get("id")),
+                                browseImageView:self.browseImageView,
+                                model:model
+                            }).render();
+                            self.callback(self.ontologyTreeView);
+                        }
+                    });
                 });
             }
         });
@@ -51,11 +51,11 @@ var OntologyPanel = Backbone.View.extend({
      * @param tpl
      */
     doLayout:function (tpl) {
+        var el = $('#ontologyTree' + this.model.get('id'));
+        el.html(_.template(tpl, {id:this.model.get('id')}));
+        var elContent = el.find(".ontologytreecontent");
+        var sourceEvent = el.find(".toggle-content");
+        this.initToggle(el, elContent, sourceEvent, "ontologytreecontent");
 
-        new DraggablePanelView({
-            el:$('#'+this.browseImageView.divId).find('#ontologyTree' + this.model.get('id')),
-            className:"ontologyPanel",
-            template:_.template(tpl, {id:this.model.get('id')})
-        }).render();
     }
 });

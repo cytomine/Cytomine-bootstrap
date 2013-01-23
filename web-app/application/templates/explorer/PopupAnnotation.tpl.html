@@ -1,13 +1,25 @@
+<h3>Current selection</h3>
 <div class="popupPanel">
     <ul>
         <li style="color:#FFFFFF;"><b>Area </b> : <%= area %> µm²</li>
         <li style="color:#FFFFFF;"><b>Perimeter</b> : <%= perimeter %> µm</li>
+        <% if (terms) { %>
         <li style="color:#FFFFFF;"><b>Term(s)</b> : <%= terms %></li>
+        <% } %>
         <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
+        <li style="color:#FFFFFF;"><a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a> | <a href="#" id="annotationHide<%= id %>">Hide annotation</a></li>
+    </ul>
+</div>
+<h3>Annotation Preview</h3>
+<div style="padding-left : 3px;padding-right: 3px;text-align: center;">
+    <img src="<%= smallCropURL %>" />
+</div>
+<h3>Similarities</h3>
+<div class="popupPanel">
+    <ul>
         <li style="color:#FFFFFF;"><b>Suggested term</b> :
             <div id="suggTerm<%= id %>"></div>
         </li>
-        <li style="color:#FFFFFF;"><a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a> | <a href="#" id="annotationHide<%= id %>">Hide annotation</a></li>
         <li style="color:#FFFFFF;"><label id="loadSimilarAnnotation<%= id %>" style="display:inline;color : #fff">Computing similar annotations...</label></li>
     </ul>
 </div>

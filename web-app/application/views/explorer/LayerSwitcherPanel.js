@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var LayerSwitcherPanel = Backbone.View.extend({
+var LayerSwitcherPanel = SideBarPanel.extend({
     tagName:"div",
 
     /**
@@ -122,16 +122,6 @@ var LayerSwitcherPanel = Backbone.View.extend({
         var content = _.template(tpl, {id:self.model.get("id"), isDesktop:!window.app.view.isMobile});
         $("#"+this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
 
-        $("#"+this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".toggleShowBaseLayers").click(function () {
-            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.baseLayers").toggle(150);
-            return false;
-        });
-
-        $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".toggleShowVectorLayers").click(function () {
-            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers").toggle(150);
-            return false;
-        });
-
         $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
             var followUser = $(this).attr("checked") == "checked";
             $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
@@ -148,8 +138,6 @@ var LayerSwitcherPanel = Backbone.View.extend({
 
         $("#selectLayersIcon" + self.model.get("id")).off("click");
         $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
-            console.log("click");
-            var project = window.app.status.currentProjectModel;
             var userList = $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
             var projectUsers = _.pluck(window.app.models.projectUser, 'id');
             var almostOneCheckedState = false;
@@ -158,12 +146,15 @@ var LayerSwitcherPanel = Backbone.View.extend({
                 if (!almostOneCheckedState && checked) almostOneCheckedState = true;
             });
             if(userList.find("li[data-id=REVIEW]").find('input.showUser').attr("checked") == "checked") almostOneCheckedState = true;
-            console.log("almostOneCheckedState="+almostOneCheckedState);
             self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
         });
-        new DraggablePanelView({
-            el:$("#"+self.browseImageView.divId).find('#layerSwitcher' + self.model.get('id')),
-            className:"layerSwitcherPanel"
-        }).render();
+
+        var el = $('#layerSwitcher' + self.model.get('id'));
+        var elContent1 = el.find(".layerSwitcherContent1");
+        var sourceEvent1 = el.find(".toggle-content1");
+        var sourceEvent2 = el.find(".toggle-content2");
+        var elContent2 = el.find(".layerSwitcherContent2");
+        this.initToggle(el, elContent1, sourceEvent1, "layerSwitcherContent1");
+        this.initToggle(el, elContent2, sourceEvent2, "layerSwitcherContent2");
     }
 });

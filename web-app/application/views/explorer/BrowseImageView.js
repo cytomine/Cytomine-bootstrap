@@ -392,6 +392,14 @@ var BrowseImageView = Backbone.View.extend({
             userJobLayers : self.userJobForImage
         }).render();
     },
+    createInformationPanel : function(){
+        var self = this;
+        this.informationsPanel = new InformationsPanel({
+            browseImageView:self,
+            model:self.model,
+            el:self.el
+        }).render();
+    },
     /**
      * Create a draggable Panel containing a OverviewMap
      */
@@ -428,7 +436,8 @@ var BrowseImageView = Backbone.View.extend({
                 $(".layerSwitcherPanel").hide();
                 console.log("LAYER SWITECHER="+$(".layerSwitcherPanel").length)
             }
-            self.initImageFiltersPanel();
+            self.createInformationPanel();
+            //self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
             var serverResolutions = [];
@@ -452,7 +461,8 @@ var BrowseImageView = Backbone.View.extend({
                     }),
                     new OpenLayers.Control.Navigation({dragPanOptions:{enableKinetic:window.app.view.isMobile}}),
                     new OpenLayers.Control.ZoomPanel(),
-                    new OpenLayers.Control.MousePosition(),
+                    /*new OpenLayers.Control.MousePosition({
+                    }),*/
                     new OpenLayers.Control.KeyboardDefaults()],
                 eventListeners:{
 
@@ -467,11 +477,11 @@ var BrowseImageView = Backbone.View.extend({
                         magnification = Math.round(magnification * 100) / 100;
                         if (magnification > self.model.get("magnification")) {
                             $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html(magnification + "X<br/>digital");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X<br/>digital");
                             $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
                         } else {
                             $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html(magnification + "X");
+                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X");
                             $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
                         }
 
@@ -479,7 +489,11 @@ var BrowseImageView = Backbone.View.extend({
                     },
                     "moveend":function () {
                         self.broadcastPosition();
+                    },
+                    "mousemove":function(e){
+
                     }
+
                 }
             };
 
@@ -505,8 +519,13 @@ var BrowseImageView = Backbone.View.extend({
 
 
             self.map = new OpenLayers.Map("map"+ self.divPrefixId + self.model.get('id'), options);
+            self.map.events.register('mousemove', self.map, function (e) {
+                var position = this.events.getMousePosition(e);
+                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x : position.x, y : position.y});
+                $('#mousePositionContent'+self.model.id).html(coordinates);
+            });
             self.initOntology();
-
+            window.app.view.applyPreferences();
 
 
             var baseLayer = new OpenLayers.Layer.Zoomify(
@@ -573,9 +592,7 @@ var BrowseImageView = Backbone.View.extend({
             }
             self.map.zoomTo(idealZoom);
 
-            setTimeout(function () {
-                window.app.view.applyPreferences()
-            }, 1000);
+
 
             //broadcast position every 5 seconds even if user id idle
             self.initBroadcastingInterval();
@@ -831,10 +848,6 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
-
-        if (this.iPad) {
-            toolbar.find('a[id=freehand' + this.model.get('id') + ']').hide();
-        }
         toolbar.find('a[id=magic' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
