@@ -146,16 +146,15 @@ class RestJobController extends RestController {
                 taskService.finishTask(task)
                 responseError(new ConstraintException("There are ${reviewed.size()} reviewed annotations. You cannot delete all job data!"))
             } else {
-                List<UserJob> users = UserJob.findAllByJob(job)
 
                 taskService.updateTask(task,30,"Delete all terms from annotations...")
-                jobService.deleteAllAlgoAnnotationsTerm(users)
+                jobService.deleteAllAlgoAnnotationsTerm(job)
 
                 taskService.updateTask(task,60,"Delete all annotations...")
-                jobService.deleteAllAlgoAnnotations(users)
+                jobService.deleteAllAlgoAnnotations(job)
 
                 taskService.updateTask(task,90,"Delete all files...")
-                jobService.deleteAllJobData(JobData.findAllByJob(job))
+                jobService.deleteAllJobData(job)
 
                 taskService.finishTask(task)
                 job.dataDeleted = true;

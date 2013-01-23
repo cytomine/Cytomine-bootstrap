@@ -6,6 +6,7 @@ import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
 import be.cytomine.utils.JSONUtils
+import be.cytomine.project.Project
 
 /**
  * A job parameter is an instance of software parameter
@@ -104,5 +105,15 @@ class JobParameter extends CytomineDomain implements Comparable {
             jobParameter.uriSortAttribut = softwareParam.uriSortAttribut
             return jobParameter
         }
+    }
+
+    /**
+     * Return domain project (annotation project, image project...)
+     * By default, a domain has no project.
+     * You need to override projectDomain() in domain class
+     * @return Domain project
+     */
+    public Project projectDomain() {
+        return job.project;
     }
 }

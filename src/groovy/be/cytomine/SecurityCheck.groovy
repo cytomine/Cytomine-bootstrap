@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
+import be.cytomine.processing.Job
 
 /**
  * User: lrollus
@@ -151,10 +152,13 @@ class SecurityCheck {
             throw new ForbiddenException("You don't have the right to read this resource!")
         }
     }
-    
-    
-    
-    
-    
-    
+
+    boolean checkJobAccess(def id) {
+        def job = Job.read(id)
+        if(!job) {
+            throw new ObjectNotFoundException("Job $id was not found! Unable to process project auth checking")
+        }
+        return job.project.checkReadPermission()
+    }
+
 }

@@ -247,6 +247,7 @@ class JobService extends ModelService {
         return job
     }
 
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
      List<UserJob> getAllLastUserJob(Project project, Software software) {
          //TODO: inlist bad performance
          List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
@@ -254,7 +255,7 @@ class JobService extends ModelService {
          return userJob
     }
 
-     UserJob getLastUserJob(Project project, Software software) {
+     private UserJob getLastUserJob(Project project, Software software) {
          List<UserJob> userJobs = getAllLastUserJob(project,software)
          return userJobs.isEmpty()? null : userJobs.first()
     }
@@ -294,8 +295,9 @@ class JobService extends ModelService {
     /**
      * Delete all annotation created by a user job from argument
      */
-    public void deleteAllAlgoAnnotations(List<UserJob> users) {
-        List<Long> usersId = users.collect{ it.id }
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    public void deleteAllAlgoAnnotations(Job job) {
+        List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
     }
@@ -303,8 +305,9 @@ class JobService extends ModelService {
     /**
      * Delete all algo-annotation-term created by a user job from argument
      */
-    public void deleteAllAlgoAnnotationsTerm(List<UserJob> users) {
-        List<Long> usersId = users.collect{ it.id }
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    public void deleteAllAlgoAnnotationsTerm(Job job) {
+        List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
     }
@@ -312,7 +315,9 @@ class JobService extends ModelService {
     /**
      * Delete all data filescreated by a user job from argument
      */
-    public void deleteAllJobData(List<JobData> jobDatas) {
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    public void deleteAllJobData(Job job) {
+        List<JobData> jobDatas = JobData.findAllByJob(job)
         List<Long> jobDatasId = jobDatas.collect{ it.id }
         if (jobDatasId.isEmpty()) return
         JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
@@ -324,6 +329,7 @@ class JobService extends ModelService {
      * @param job Job to launch
      * @return The job
      */
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public def executeJob(Job job) {
         log.info "Create UserJob..."
         UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
@@ -337,6 +343,7 @@ class JobService extends ModelService {
         job
     }
 
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public UserJob createUserJob(User user, Job job) {
         UserJob userJob = new UserJob()
         userJob.job = job

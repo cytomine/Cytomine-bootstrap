@@ -11,6 +11,7 @@ import be.cytomine.security.User
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
 
 class JobParameterService extends ModelService {
 
@@ -19,28 +20,56 @@ class JobParameterService extends ModelService {
     def commandService
     def domainService
 
+
+    def read(def id) {
+        def jobParam = JobParameter.read(id)
+        if(jobParam) {
+            SecurityCheck.checkReadAuthorization(jobParam.job.project)
+        }
+        jobParam
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
         JobParameter.list()
     }
 
-    def read(def id) {
-        JobParameter.read(id)
-    }
-
+    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Job job) {
         JobParameter.findAllByJob(job)
     }
 
+    /**
+     * Add the new domain with JSON data
+     * @param json New domain data
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkJobAccess(#json['job']) or hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    /**
+     * Update this domain with new data from json
+     * @param json JSON with new data
+     * @param security Security service object (user for right check)
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), json)
     }
 
+    /**
+     * Delete domain in argument
+     * @param json JSON that was passed in request parameter
+     * @param security Security service object (user for right check)
+     * @return Response structure (created domain data,..)
+     */
+    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
