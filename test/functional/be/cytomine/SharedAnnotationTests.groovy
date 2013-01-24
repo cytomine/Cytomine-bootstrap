@@ -41,7 +41,7 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse((String)sharedAnnotation.encodeAsJSON())
         json.subject = "subject for test mail"
         json.message = "message for test mail"
-        json.users = [User.findByUsername('lbtd').id]
+        json.users = [User.findByUsername('rmaree').id]
         def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }

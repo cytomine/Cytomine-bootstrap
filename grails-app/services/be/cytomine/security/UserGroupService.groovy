@@ -46,7 +46,7 @@ class UserGroupService extends ModelService {
      * @param security Security service object (user for right check)
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)

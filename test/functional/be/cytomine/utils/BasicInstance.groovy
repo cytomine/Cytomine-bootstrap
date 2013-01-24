@@ -25,6 +25,7 @@ import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.Storage
+import be.cytomine.image.server.MimeImageServer
 
 /**
  * Created by IntelliJ IDEA.
@@ -890,9 +891,15 @@ class BasicInstance {
     }
 
     static Mime createOrGetBasicMime() {
-
         log.debug "createOrGetBasicMime1()"
         def mime = Mime.findByExtension("tif")
+        if(!mime) {
+            mime = new Mime(extension:"tif",mimeType: "tif")
+            BasicInstance.saveDomain(mime)
+            def is = createOrGetBasicImageServer()
+            MimeImageServer.link(is,mime)
+
+        }
         mime.refresh()
         mime.imageServers()
         mime

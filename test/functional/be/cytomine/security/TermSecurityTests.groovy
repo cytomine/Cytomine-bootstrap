@@ -53,7 +53,7 @@ class TermSecurityTests extends functionaltestplugin.FunctionalTestCase {
       println "term.id="+term.id
       //check if admin user can access/update/delete
       assertEquals(200, TermAPI.show(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(termToAdd.ontology.id,USERNAMEADMIN,PASSWORDADMIN).data)))
+      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAMEADMIN,PASSWORDADMIN).data)))
       assertEquals(200, TermAPI.update(term.id,term.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
       assertEquals(200, TermAPI.delete(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
@@ -74,7 +74,7 @@ class TermSecurityTests extends functionaltestplugin.FunctionalTestCase {
 
       //check if user 1 can access/update/delete
       assertEquals(200, TermAPI.show(term.id,USERNAME1,PASSWORD1).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(termToAdd.ontology.id,USERNAME1,PASSWORD1).data)))
+      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME1,PASSWORD1).data)))
       assertEquals(200, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME1,PASSWORD1).code)
       assertEquals(200, TermAPI.delete(term.id,USERNAME1,PASSWORD1).code)
   }
@@ -106,7 +106,7 @@ class TermSecurityTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(200, resAddUser.code)
       //check if user 2 can access/update/delete
       assertEquals(200, TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(termToAdd.ontology.id,USERNAME2,PASSWORD2).data)))
+      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).data)))
       assertEquals(403, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
 
@@ -115,7 +115,7 @@ class TermSecurityTests extends functionaltestplugin.FunctionalTestCase {
       assertEquals(200, resAddUser.code)
       //check if user 2 cannot access/update/delete
       assertEquals(403, TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, TermAPI.listByOntology(termToAdd.ontology.id,USERNAME2,PASSWORD2).code)
+      assertEquals(403, TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).code)
       assertEquals(403, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete term

@@ -224,7 +224,10 @@ class StatsController extends RestController {
      */
     def statUserSlide = {
         Project project = Project.read(params.id)
-        if (project == null) responseNotFound("Project", params.id)
+        if (!project) {
+            responseNotFound("Project", params.id)
+            return
+        }
         def terms = Term.findAllByOntology(project.getOntology())
         if(terms.isEmpty()) {
             responseSuccess([])

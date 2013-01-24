@@ -50,8 +50,6 @@ class Infos {
     public static String UNDOURL = "command/undo"
     public static String REDOURL = "command/redo"
 
-    public static String BEGINTRANSACT = "transaction/begin"
-    public static String ENDTRANSACT = "transaction/end"
 
     /**
      * Add the admin right on a project to a user
@@ -70,17 +68,7 @@ class Infos {
     static void addUserRight(User user, Project project) {
         long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-//        def aclService = ApplicationHolder.application.getMainContext().getBean("aclService")
-//        def objectIdentityRetrievalStrategy = ApplicationHolder.application.getMainContext().getBean("objectIdentityRetrievalStrategy")
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
-
-//        ObjectIdentity oi = new ObjectIdentityImpl(project.class, project.id);
-//        try {
-//            MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
-//        } catch (NotFoundException nfe) {
-//            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(project)
-//        }
-
         aclUtilService.addPermission project, user.username, ADMINISTRATION
         aclUtilService.addPermission project.ontology, user.username, READ
         aclUtilService.addPermission project.ontology, user.username, WRITE
@@ -89,7 +77,6 @@ class Infos {
         def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
-        println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
     }
 
     static void addUserRight(User user, Ontology ontology) {
@@ -104,7 +91,6 @@ class Infos {
         def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
-        println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
     }
 
     static void addUserRight(User user, Software software) {
@@ -120,7 +106,6 @@ class Infos {
         def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
-        println "###### ADD RIGHT TIME = ${System.currentTimeMillis()-start}ms"
     }
 
 
@@ -132,7 +117,6 @@ class Infos {
         def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
         if(!AclObjectIdentity.findByObjectId(domain.id)) return
         def acl = aclUtilService.readAcl(domain)
-        println "Right for domain " + domain.id + " name=" + domain?.name
 
         acl.entries.eachWithIndex { entry, i ->
             println entry.sid.toString() + " " + findPermissionName(entry.permission)
@@ -145,7 +129,6 @@ class Infos {
      */
     static void printUserRight(User user) {
         def roles = user.getAuthorities()
-        println "User $user.username has role:"
         roles.each { role ->
              println role.authority
         }

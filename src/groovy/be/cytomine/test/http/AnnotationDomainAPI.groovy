@@ -31,16 +31,6 @@ class AnnotationDomainAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def list(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation.json"
-        return doGET(URL, username, password)
-    }
-
-    static def listByUser(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/user/$id/annotation.json"
-        return doGET(URL, username, password)
-    }
-
     static def listByProject(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/$id/annotation.json"
         return doGET(URL, username, password)
