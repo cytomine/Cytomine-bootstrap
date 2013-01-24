@@ -1,20 +1,11 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.project.Project
-import be.cytomine.security.User
-import be.cytomine.security.UserJob
-
-import be.cytomine.test.HttpClient
-import be.cytomine.test.Infos
-import com.vividsolutions.jts.io.WKTReader
-import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.AnnotationDomain
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.social.SharedAnnotation
+import be.cytomine.test.Infos
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * User: lrollus
@@ -23,8 +14,6 @@ import be.cytomine.social.SharedAnnotation
  * This class implement all method to easily get/create/update/delete/manage Annotation to Cytomine with HTTP request during functional test
  */
 class AnnotationDomainAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"

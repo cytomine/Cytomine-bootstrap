@@ -3,23 +3,20 @@ package be.cytomine.api.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.utils.GeometryUtils
-import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.text.SimpleDateFormat
-import be.cytomine.SecurityCheck
 
 /**
  * Controller that handle request on annotation created by software (job)

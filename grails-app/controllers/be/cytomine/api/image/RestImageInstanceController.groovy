@@ -2,7 +2,7 @@ package be.cytomine.api.image
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -16,6 +16,7 @@ import grails.converters.JSON
 import ij.ImagePlus
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -25,8 +26,6 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 import be.cytomine.ontology.*
-import org.springframework.security.access.AccessDeniedException
-import be.cytomine.SecurityCheck
 
 /**
  * Created by IntelliJ IDEA.

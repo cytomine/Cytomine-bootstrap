@@ -1,11 +1,11 @@
 package be.cytomine.processing.job
 
+import be.cytomine.SecurityCheck
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobParameter
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import be.cytomine.SecurityCheck
 
 /**
  * TODO: doc

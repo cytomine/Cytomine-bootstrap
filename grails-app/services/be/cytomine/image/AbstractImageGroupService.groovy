@@ -2,14 +2,14 @@ package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.utils.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
+import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
-import be.cytomine.SecurityCheck
 
 class AbstractImageGroupService extends ModelService {
 

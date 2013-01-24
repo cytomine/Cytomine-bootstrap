@@ -1,12 +1,7 @@
 package be.cytomine.test.http
 
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.security.User
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import be.cytomine.project.Project
 
 /**
  * User: lrollus
@@ -15,8 +10,6 @@ import be.cytomine.project.Project
  * This class implement all method to easily get/create/update/delete/manage RelationTerm to Cytomine with HTTP request during functional test
  */
 class RelationTermAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long idRelation, Long idTerm1, Long idTerm2,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/relation/" + idRelation + "/term1/"+ idTerm1 +"/term2/"+idTerm2+".json"

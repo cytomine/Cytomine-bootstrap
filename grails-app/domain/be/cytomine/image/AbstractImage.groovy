@@ -11,9 +11,9 @@ import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
 import be.cytomine.server.resolvers.Resolver
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.utils.JSONUtils
 
 /**
  * An abstract image is an image that can be map with projects.

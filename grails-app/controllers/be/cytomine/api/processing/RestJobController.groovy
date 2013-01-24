@@ -1,7 +1,10 @@
 package be.cytomine.api.processing
 
+import grails.plugins.springsecurity.Secured
+
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.command.Task
 import be.cytomine.ontology.AlgoAnnotation
@@ -10,10 +13,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
-import be.cytomine.security.UserJob
 import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
-import be.cytomine.SecurityCheck
 
 /**
  * Controller for job request.

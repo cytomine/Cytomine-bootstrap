@@ -1,7 +1,5 @@
 package be.cytomine.command
 
-import be.cytomine.command.Transaction
-
 /**
  * Start/Stop transaction (group of command request)
  */

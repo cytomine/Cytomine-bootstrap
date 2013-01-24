@@ -1,10 +1,6 @@
 package be.cytomine.test.http
 
-import be.cytomine.security.User
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus
@@ -13,8 +9,6 @@ import org.apache.commons.logging.LogFactory
  * This class implement all method to easily get/create/update/delete/manage User to Cytomine with HTTP request during functional test
  */
 class UserGroupAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def showUserGroupCurrent(Long idUser, Long idGroup,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/user/$idUser/group/${idGroup}.json"

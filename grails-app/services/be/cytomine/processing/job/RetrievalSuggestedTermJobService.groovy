@@ -1,11 +1,11 @@
 package be.cytomine.processing.job
 
+import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import be.cytomine.SecurityCheck
 
 /**
  * Software that suggest term for each annotation from a projecy

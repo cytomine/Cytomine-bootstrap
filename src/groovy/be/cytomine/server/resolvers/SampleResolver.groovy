@@ -1,8 +1,5 @@
 package be.cytomine.server.resolvers
 
-import grails.converters.JSON
-
-
 class SampleResolver extends Resolver {
 
     public Map<String, String> args

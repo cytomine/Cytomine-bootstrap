@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -11,6 +10,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.GeometryUtils
+import be.cytomine.utils.ModelService
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory

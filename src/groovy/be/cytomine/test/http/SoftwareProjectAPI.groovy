@@ -1,11 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.security.User
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus
@@ -14,8 +11,6 @@ import org.apache.commons.logging.LogFactory
  * This class implement all method to easily get/create/update/delete/manage SoftwareProjectAPI to Cytomine with HTTP request during functional test
  */
 class SoftwareProjectAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/softwareproject/" + id + ".json"

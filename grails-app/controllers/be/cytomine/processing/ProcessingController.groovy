@@ -4,10 +4,7 @@ import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.image.filters.Auto_Threshold
-import com.vividsolutions.jts.geom.Coordinate
-import grails.converters.JSON
 import ij.ImagePlus
-import ij.plugin.filter.PlugInFilter
 import ij.process.ImageConverter
 
 import java.awt.image.BufferedImage

@@ -1,7 +1,6 @@
 package be.cytomine.command
 
 import grails.converters.JSON
-import be.cytomine.project.Project
 
 /**
  * The DeleteCommand class is a command that delete a domain

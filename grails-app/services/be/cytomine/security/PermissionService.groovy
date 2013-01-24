@@ -1,14 +1,11 @@
 package be.cytomine.security
 
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.acls.model.Permission
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.acls.model.ObjectIdentity
+import be.cytomine.CytomineDomain
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.MutableAcl
 import org.springframework.security.acls.model.NotFoundException
-import org.springframework.transaction.annotation.Transactional
-import be.cytomine.CytomineDomain
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.security.acls.model.Permission
 
 class PermissionService {
 

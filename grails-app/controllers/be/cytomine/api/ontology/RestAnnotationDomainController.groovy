@@ -5,9 +5,9 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -15,7 +15,6 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
-import be.cytomine.SecurityCheck
 
 /**
  * Controller that handle request on annotation.

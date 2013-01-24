@@ -1,9 +1,7 @@
 package be.cytomine.api.laboratory
 
-import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.laboratory.Sample
-import be.cytomine.security.SecUser
 import grails.converters.JSON
 
 /**

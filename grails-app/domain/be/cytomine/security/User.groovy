@@ -1,12 +1,9 @@
 package be.cytomine.security
 
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.ontology.Ontology
 import be.cytomine.processing.SoftwareProject
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.utils.JSONUtils
 
 /**
  * A cytomine human user

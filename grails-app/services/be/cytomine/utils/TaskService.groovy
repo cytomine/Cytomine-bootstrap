@@ -1,10 +1,10 @@
 package be.cytomine.utils
 
+import be.cytomine.SecurityCheck
 import be.cytomine.command.Task
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.SecurityCheck
 
 class TaskService {
 

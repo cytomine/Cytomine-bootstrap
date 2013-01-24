@@ -2,7 +2,7 @@ package be.cytomine.project
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.utils.ModelService
+import be.cytomine.SecurityCheck
 import be.cytomine.image.UploadedFile
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.ImageFilterProject
@@ -11,17 +11,14 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
-
+import be.cytomine.utils.ModelService
+import groovy.sql.Sql
 import org.apache.commons.collections.CollectionUtils
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
-
 import be.cytomine.command.*
-
-import be.cytomine.SecurityCheck
-import groovy.sql.Sql
 
 class ProjectService extends ModelService {
 

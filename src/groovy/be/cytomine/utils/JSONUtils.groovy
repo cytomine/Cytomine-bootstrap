@@ -1,7 +1,7 @@
 package be.cytomine.utils
 
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.Exception.ServerException
+import be.cytomine.Exception.WrongArgumentException
 
 /**
  * User: lrollus

@@ -1,11 +1,7 @@
 package be.cytomine.api
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.UserAnnotation
+import be.cytomine.SecurityCheck
 import be.cytomine.test.HttpClient
 import grails.converters.JSON
 import grails.converters.XML
@@ -13,9 +9,6 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import be.cytomine.CytomineDomain
-import be.cytomine.project.Project
-import be.cytomine.SecurityCheck
 
 class RestController {
 

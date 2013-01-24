@@ -2,7 +2,6 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
-import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.Term
 import grails.converters.JSON
 

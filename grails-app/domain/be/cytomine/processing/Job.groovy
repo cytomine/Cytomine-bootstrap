@@ -1,13 +1,12 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
-
 import be.cytomine.command.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.utils.JSONUtils
 
 /**
  * A job is a software instance

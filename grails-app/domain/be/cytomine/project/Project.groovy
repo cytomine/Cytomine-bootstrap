@@ -2,17 +2,13 @@ package be.cytomine.project
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.Command
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.security.SecUser
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import be.cytomine.utils.JSONUtils
 
 /**
  * A project is the main cytomine domain

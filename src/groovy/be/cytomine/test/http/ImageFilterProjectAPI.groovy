@@ -1,13 +1,8 @@
 package be.cytomine.test.http
 
-import be.cytomine.project.Discipline
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
+import be.cytomine.processing.ImageFilterProject
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import be.cytomine.processing.ImageFilterProject
 
 /**
  * User: lrollus
@@ -16,8 +11,6 @@ import be.cytomine.processing.ImageFilterProject
  * This class implement all method to easily get/create/update/delete/manage ImageFilterProject to Cytomine with HTTP request during functional test
  */
 class ImageFilterProjectAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
 
     static def list(String username, String password) {

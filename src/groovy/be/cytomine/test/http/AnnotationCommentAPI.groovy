@@ -1,12 +1,8 @@
 package be.cytomine.test.http
 
-import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import be.cytomine.image.AbstractImageGroup
 
 /**
  * User: lrollus
@@ -15,8 +11,6 @@ import be.cytomine.image.AbstractImageGroup
  * This class implement all method to easily get/create/update/delete/manage AnnotationComment to Cytomine with HTTP request during functional test
  */
 class AnnotationCommentAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long idAnnotation, Long idComment,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/comment/$idComment" + ".json"

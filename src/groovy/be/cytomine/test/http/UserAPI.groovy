@@ -1,10 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.security.User
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**
@@ -14,8 +12,6 @@ import org.codehaus.groovy.grails.web.json.JSONElement
  * This class implement all method to easily get/create/update/delete/manage User to Cytomine with HTTP request during functional test
  */
 class UserAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def showCurrent(String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/user/current.json"

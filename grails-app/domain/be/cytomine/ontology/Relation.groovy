@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
-import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
 import org.apache.log4j.Logger
 

@@ -1,12 +1,9 @@
 package be.cytomine.utils
 
+import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.project.Project
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.Exception.InvalidRequestException
 
 abstract class ModelService {
 

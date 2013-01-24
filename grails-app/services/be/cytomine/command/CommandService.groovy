@@ -2,9 +2,7 @@ package be.cytomine.command
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.TooLongRequestException
-import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONElement
-import be.cytomine.command.*
 
 class CommandService {
 

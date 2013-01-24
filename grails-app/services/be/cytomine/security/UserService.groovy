@@ -1,37 +1,23 @@
 package be.cytomine.security
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.utils.ModelService
-import be.cytomine.command.AddCommand
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
+import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
+import be.cytomine.utils.ModelService
 import be.cytomine.utils.Utils
+import groovy.sql.Sql
 import org.apache.commons.collections.ListUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
-
-import org.springframework.security.acls.model.Permission
-import org.springframework.transaction.annotation.Transactional
-import be.cytomine.SecurityCheck
-import be.cytomine.CytomineDomain
-import org.springframework.security.acls.model.ObjectIdentity
-import org.springframework.security.acls.domain.ObjectIdentityImpl
-import org.springframework.security.acls.model.MutableAcl
-import org.springframework.security.acls.model.NotFoundException
-import org.springframework.security.core.context.SecurityContextHolder as SCH
-import groovy.sql.Sql
-import be.cytomine.command.CommandHistory
-import be.cytomine.command.Command
-import be.cytomine.command.UndoStackItem
-import be.cytomine.command.RedoStackItem
 
 class UserService extends ModelService {
 

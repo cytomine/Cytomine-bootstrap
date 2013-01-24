@@ -1,18 +1,15 @@
 package be.cytomine
 
+import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 import static org.springframework.security.acls.domain.BasePermission.*
-
-import be.cytomine.Exception.ForbiddenException
-import be.cytomine.security.User
-import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ontology.Ontology
-import be.cytomine.processing.Software
 
 /**
  * CytomineDomain is the parent class for all domain.

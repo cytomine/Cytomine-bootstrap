@@ -2,10 +2,10 @@ package be.cytomine.utils
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.social.SharedAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
 
 /**
  * Cytomine @ GIGA-ULG

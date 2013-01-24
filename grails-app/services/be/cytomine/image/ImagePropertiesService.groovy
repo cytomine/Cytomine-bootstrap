@@ -1,6 +1,5 @@
 package be.cytomine.image
 
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.server.resolvers.Resolver

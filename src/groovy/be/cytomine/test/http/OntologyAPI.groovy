@@ -1,13 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.ontology.Ontology
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import be.cytomine.processing.JobParameter
 
 /**
  * User: lrollus
@@ -16,8 +11,6 @@ import be.cytomine.processing.JobParameter
  * This class implement all method to easily get/create/update/delete/manage Ontology to Cytomine with HTTP request during functional test
  */
 class OntologyAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/ontology/" + id + ".json"

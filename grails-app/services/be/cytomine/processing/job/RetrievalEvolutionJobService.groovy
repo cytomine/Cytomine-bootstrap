@@ -1,10 +1,10 @@
 package be.cytomine.processing.job
 
+import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import be.cytomine.SecurityCheck
 
 /**
  * Software that compute suggest term of each annotation of a project

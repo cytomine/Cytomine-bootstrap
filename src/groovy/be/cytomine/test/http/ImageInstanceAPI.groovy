@@ -1,16 +1,8 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.ontology.ReviewedAnnotation
 
 /**
  * User: lrollus
@@ -19,8 +11,6 @@ import be.cytomine.ontology.ReviewedAnnotation
  * This class implement all method to easily get/create/update/delete/manage ImageInstance to Cytomine with HTTP request during functional test
  */
 class ImageInstanceAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def listByProject(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json"

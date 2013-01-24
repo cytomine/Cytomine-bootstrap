@@ -1,12 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.processing.JobParameter
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus
@@ -16,10 +12,7 @@ import org.apache.commons.logging.LogFactory
  */
 class JobParameterAPI extends DomainAPI {
 
-    private static final log = LogFactory.getLog(this)
-
     static def show(Long id, String username, String password) {
-        println "33333333333333333333333"
         String URL = Infos.CYTOMINEURL + "api/jobparameter/" + id + ".json"
         return doGET(URL, username, password)
     }

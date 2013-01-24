@@ -1,40 +1,18 @@
-import org.springframework.security.core.context.SecurityContextHolder as SCH
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+
+import be.cytomine.data.*
 
 import be.cytomine.ViewPortToBuildXML
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.image.ImageInstance
-import be.cytomine.image.Mime
-import be.cytomine.image.acquisition.Instrument
-import be.cytomine.laboratory.Sample
-import be.cytomine.processing.ImageFilter
-import be.cytomine.processing.Job
-import be.cytomine.processing.ProcessingServer
-import be.cytomine.processing.Software
-import be.cytomine.project.Discipline
-import be.cytomine.project.Project
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
-import be.cytomine.test.Infos
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
 import grails.util.GrailsUtil
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.AuthorityUtils
 
 import java.lang.management.ManagementFactory
-
-import be.cytomine.data.*
-import be.cytomine.image.server.*
-import be.cytomine.ontology.*
-
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 
 /**
  * TODO: cleaner le bootstrap

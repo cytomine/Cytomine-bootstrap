@@ -1,17 +1,9 @@
 package be.cytomine.test.http
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.Mime
-import be.cytomine.image.acquisition.Instrument
-import be.cytomine.laboratory.Sample
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONArray
-import be.cytomine.ontology.AlgoAnnotation
 
 /**
  * User: lrollus

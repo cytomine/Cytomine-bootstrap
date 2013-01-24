@@ -3,7 +3,6 @@ package be.cytomine.test.http
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import org.apache.commons.logging.LogFactory
-import be.cytomine.CytomineDomain
 
 /**
  * User: lrollus

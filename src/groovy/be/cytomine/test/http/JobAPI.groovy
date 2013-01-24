@@ -1,13 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.processing.Job
-import be.cytomine.security.User
-
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
-import org.apache.commons.logging.LogFactory
-import be.cytomine.command.Task
 
 /**
  * User: lrollus
@@ -16,8 +11,6 @@ import be.cytomine.command.Task
  * This class implement all method to easily get/create/update/delete/manage Job to Cytomine with HTTP request during functional test
  */
 class JobAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def show(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/job/" + id + ".json"
@@ -35,7 +28,6 @@ class JobAPI extends DomainAPI {
     }
 
     static def listBySoftwareAndProject(Long idSoftware, Long idProject,String username, String password, boolean light) {
-        log.info "list job by software $idSoftware and project $idProject"
         String URL = ""
         if(!light) {
             URL = Infos.CYTOMINEURL + "api/software/$idSoftware/project/$idProject/job.json"

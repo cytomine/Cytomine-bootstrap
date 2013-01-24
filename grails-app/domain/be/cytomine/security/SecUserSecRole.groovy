@@ -1,10 +1,10 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
-import be.cytomine.utils.JSONUtils
 
 /**
  * User - role link

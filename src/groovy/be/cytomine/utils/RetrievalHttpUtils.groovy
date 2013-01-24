@@ -1,16 +1,15 @@
 package be.cytomine.utils
 
 import be.cytomine.AnnotationDomain
-import groovyx.net.http.HTTPBuilder
 import grails.converters.JSON
-
-import static groovyx.net.http.Method.POST
 import groovyx.net.http.ContentType
+import groovyx.net.http.HTTPBuilder
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.log4j.Logger
 
 import static groovyx.net.http.Method.DELETE
+import static groovyx.net.http.Method.POST
 
 /**
  * User: lrollus

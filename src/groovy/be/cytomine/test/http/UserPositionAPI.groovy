@@ -1,7 +1,6 @@
 package be.cytomine.test.http
 
 import be.cytomine.test.Infos
-import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus
@@ -10,8 +9,6 @@ import org.apache.commons.logging.LogFactory
  * This class implement all method to easily get/create/update/delete/manage Annotation to Cytomine with HTTP request during functional test
  */
 class UserPositionAPI extends DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     static def listLastByUser(Long idImage,Long idUser, String username, String password) {
         String URL = Infos.CYTOMINEURL + "/api/imageinstance/$idImage/position/${idUser}.json"

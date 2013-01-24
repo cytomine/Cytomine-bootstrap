@@ -1,7 +1,8 @@
 package cytomine.web
 
-import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+
+import be.cytomine.security.SecUser
 import org.springframework.security.core.codec.Base64
 
 import javax.crypto.Mac

@@ -1,6 +1,5 @@
 package be.cytomine.image
 
-import be.cytomine.image.UploadedFile
 import be.cytomine.security.SecUser
 
 /**

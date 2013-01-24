@@ -2,22 +2,18 @@ package be.cytomine.test
 
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
+import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.domain.ObjectIdentityImpl
-import org.springframework.security.acls.model.MutableAcl
-import org.springframework.security.acls.model.NotFoundException
-import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 
 import static org.springframework.security.acls.domain.BasePermission.*
-import be.cytomine.ontology.Ontology
-import be.cytomine.processing.Software
 
 /**
  * Created by IntelliJ IDEA.

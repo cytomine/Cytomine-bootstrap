@@ -1,17 +1,14 @@
 package be.cytomine
 
-import be.cytomine.project.Project
-import be.cytomine.Exception.ObjectNotFoundException
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.security.SecUser
-import be.cytomine.ontology.Ontology
-import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ForbiddenException
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
-import be.cytomine.processing.Software
 import be.cytomine.processing.Job
-import be.cytomine.test.Infos
+import be.cytomine.processing.Software
+import be.cytomine.project.Project
 import be.cytomine.security.UserGroup
+import be.cytomine.test.Infos
 
 /**
  * User: lrollus
