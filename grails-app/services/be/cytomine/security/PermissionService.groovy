@@ -19,7 +19,12 @@ class PermissionService {
     def aclPermissionFactory
     def objectIdentityRetrievalStrategy
 
-
+    /**
+     * Add Permission right
+     * @param domain
+     * @param username
+     * @param permission
+     */
     void addPermission(def domain, String username, int permission) {
         addPermission(domain, username, aclPermissionFactory.buildFromMask(permission))
     }

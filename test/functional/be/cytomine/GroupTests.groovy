@@ -25,12 +25,6 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
       assert json instanceof JSONArray
   }
 
-    void testListGroupGrid() {
-        def result = GroupAPI.grid(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        def json = JSON.parse(result.data)
-    }
-
   void testShowGroup() {
       def result = GroupAPI.show(BasicInstance.createOrGetBasicGroup().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assertEquals(200, result.code)

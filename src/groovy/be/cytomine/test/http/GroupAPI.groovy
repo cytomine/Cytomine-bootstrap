@@ -29,11 +29,6 @@ class GroupAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def grid(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/group/grid.json"
-        return doGET(URL, username, password)
-    }
-
     static def create(String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/group.json"
         def result = doPOST(URL, json,username, password)

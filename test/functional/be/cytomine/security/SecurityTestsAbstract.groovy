@@ -14,6 +14,8 @@ class SecurityTestsAbstract extends functionaltestplugin.FunctionalTestCase {
     /**
      * Security test
      */
+    static String USERNAMEWITHOUTDATA = "USERNAMEWITHOUTDATA"
+    static String PASSWORDWITHOUTDATA = "PASSWORDWITHOUTDATA"
     static String USERNAME1 = "USERNAME1"
     static String PASSWORD1 = "PASSWORD1"
     static String USERNAME2 = "USERNAME2"

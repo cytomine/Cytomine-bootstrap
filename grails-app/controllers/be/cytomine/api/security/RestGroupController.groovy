@@ -69,30 +69,4 @@ class RestGroupController extends RestController {
     def delete = {
         delete(groupService, JSON.parse("{id : $params.id}"))
     }
-
-    /**
-     * TODO:: method not used? Otherwise document this method
-     */
-    def grid = {
-        def sortIndex = params.sidx ?: 'id'
-        def sortOrder = params.sord ?: 'asc'
-        def maxRows = 50//params.row ? Integer.valueOf(params.rows) : 20
-        def currentPage = params.page ? Integer.valueOf(params.page) : 1
-        def rowOffset = currentPage == 1 ? 0 : (currentPage - 1) * maxRows
-
-        def groups = groupService.list(sortIndex, sortOrder, maxRows, currentPage, rowOffset, params.name)
-
-        def totalRows = groups.totalCount
-        def numberOfPages = Math.ceil(totalRows / maxRows)
-
-        def results = groups?.collect {
-            [
-                    name: it.name,
-                    id: it.id
-            ]
-        }
-
-        def jsonData = [rows: results, page: currentPage, records: totalRows, total: numberOfPages]
-        render jsonData as JSON
-    }
 }

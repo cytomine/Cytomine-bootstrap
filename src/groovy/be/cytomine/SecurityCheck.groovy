@@ -11,6 +11,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
 import be.cytomine.processing.Job
 import be.cytomine.test.Infos
+import be.cytomine.security.UserGroup
 
 /**
  * User: lrollus
@@ -19,8 +20,6 @@ import be.cytomine.test.Infos
  * 
  */
 class SecurityCheck {
-
-    def securityService
 
     def domain
 
@@ -163,6 +162,23 @@ class SecurityCheck {
         Infos.printRight(job.project)
         println "Access ${job.project.checkReadPermission()}"
         return job.project.checkReadPermission()
+    }
+
+    boolean checkIfUserIsMemberGroup(def currentUserId) {
+        println "checkIfUserIsMemberGroup=$currentUserId"
+        def group = domain
+        if(!group) {
+            throw new ObjectNotFoundException("Group from domain ${domain} was not found! Unable to process group/user auth checking")
+        }
+        boolean isInside = false
+        println "Users from group=${UserGroup.findAllByGroup(group).collect{it.user.id}}"
+        UserGroup.findAllByGroup(group).each {
+            if(it.user.id==currentUserId) {
+                isInside = true
+                return true
+            }
+        }
+        return isInside
     }
 
 }
