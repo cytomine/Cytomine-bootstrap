@@ -1,11 +1,11 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
-import be.cytomine.project.Project
+
 import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
@@ -17,7 +17,7 @@ class JobDataService extends ModelService {
 
     def cytomineService
     def commandService
-    def domainService
+    def modelService
     def userGroupService
     def springSecurityService
 
@@ -94,7 +94,7 @@ class JobDataService extends ModelService {
      */
     def create(JobData domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.key, domain.job?.id], printMessage, "Add", domain.getCallBack())
     }
@@ -123,7 +123,7 @@ class JobDataService extends ModelService {
         def response = responseService.createResponseMessage(domain, [domain.id, domain.key, domain.job?.id], printMessage, "Delete", domain.getCallBack())
         //Delete object
         log.info "deleteDomain"
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         log.info "response"
         return response
     }
@@ -149,7 +149,7 @@ class JobDataService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain,[domain.id, domain.key, domain.job?.id], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

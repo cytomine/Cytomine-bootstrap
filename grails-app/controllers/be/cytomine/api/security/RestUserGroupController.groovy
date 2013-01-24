@@ -21,7 +21,6 @@ class RestUserGroupController extends RestController {
     /**
      * List all user-group for a user
      */
-    @Secured(['ROLE_ADMIN'])
     def list = {
         User user = userService.read(params.long('user'));
         responseSuccess(userGroupService.list(user))
@@ -30,7 +29,6 @@ class RestUserGroupController extends RestController {
     /**
      * Get a user-group relation
      */
-    @Secured(['ROLE_ADMIN'])
     def show = {
         User user = userService.read(params.long('user'));
         Group group = groupService.read(params.long('group'));

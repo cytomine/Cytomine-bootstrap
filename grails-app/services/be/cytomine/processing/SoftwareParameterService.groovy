@@ -2,7 +2,7 @@ package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -10,7 +10,6 @@ import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.image.ImageInstance
 
 class SoftwareParameterService extends ModelService{
 
@@ -20,7 +19,7 @@ class SoftwareParameterService extends ModelService{
 
     def cytomineService
     def transactionService
-    def domainService
+    def modelService
     def responseService
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -99,7 +98,7 @@ class SoftwareParameterService extends ModelService{
      */
     def create(SoftwareParameter domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.name, domain.type, domain.software?.name], printMessage, "Add", domain.getCallBack())
     }
@@ -125,7 +124,7 @@ class SoftwareParameterService extends ModelService{
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.name, domain.type, domain.software?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -150,7 +149,7 @@ class SoftwareParameterService extends ModelService{
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.name, domain.type, domain.software?.name], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

@@ -1,4 +1,4 @@
-package be.cytomine
+package be.cytomine.command
 
 import be.cytomine.command.Transaction
 

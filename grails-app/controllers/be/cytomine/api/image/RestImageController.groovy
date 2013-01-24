@@ -51,7 +51,6 @@ class RestImageController extends RestController {
     def show = {
         AbstractImage image = abstractImageService.read(params.long('id'))
         if (image) {
-            //abstractImageService.checkAuthorizationAtLeastOne(projectService.list(image))
             responseSuccess(image)
         } else {
             responseNotFound("Image", params.id)

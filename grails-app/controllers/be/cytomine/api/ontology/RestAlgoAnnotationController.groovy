@@ -31,7 +31,6 @@ class RestAlgoAnnotationController extends RestController {
 
     def exportService
     def algoAnnotationService
-    def domainService
     def termService
     def imageInstanceService
     def userService
@@ -233,7 +232,6 @@ class RestAlgoAnnotationController extends RestController {
             responseNotFound("Project", params.long('id'))
         }
 
-        projectService.checkAuthorization(project)
         def users = []
         if (params.users != null && params.users != "") {
             params.users.split(",").each { id ->
@@ -452,10 +450,10 @@ class RestAlgoAnnotationController extends RestController {
                 removedByUnion.put(compared.id, based.id)
                 //save new annotation with union location
 
-                domainService.saveDomain(based)
+                algoAnnotationService.saveDomain(based)
                 //remove old annotation with data
                 AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotationIdent = :annotation", [annotation: compared.id])
-                domainService.deleteDomain(compared)
+                algoAnnotationService.deleteDomain(compared)
 
             }
         }

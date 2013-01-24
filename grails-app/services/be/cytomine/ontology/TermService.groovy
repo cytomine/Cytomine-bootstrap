@@ -3,7 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -27,7 +27,7 @@ class TermService extends ModelService {
     def annotationTermService
     def algoAnnotationTermService
     def relationTermService
-    def domainService
+    def modelService
     def userService
     def annotationFilterService
     def dataSource
@@ -228,7 +228,7 @@ class TermService extends ModelService {
      */
     def create(Term domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Add", domain.getCallBack())
     }
@@ -256,7 +256,7 @@ class TermService extends ModelService {
         if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has userannotation term")
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -281,7 +281,7 @@ class TermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

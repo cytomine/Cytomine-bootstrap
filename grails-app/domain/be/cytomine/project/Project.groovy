@@ -20,8 +20,6 @@ import be.cytomine.utils.JSONUtils
  */
 class Project extends CytomineDomain implements Serializable {
 
-    def securityService
-
     /**
      * Project name
      */

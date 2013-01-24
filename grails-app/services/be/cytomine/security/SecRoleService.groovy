@@ -1,22 +1,18 @@
 package be.cytomine.security
 
+import org.springframework.security.access.prepost.PreAuthorize
+
 class SecRoleService {
 
     static transactional = true
 
-    def get(def id) {
-        SecRole.get(id)
-    }
-
+    @PreAuthorize("hasRole('ROLE_USER')")
     def read(def id) {
         SecRole.read(id)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def list() {
         SecRole.list()
-    }
-
-    def list(SecUser user) {
-        SecUserSecRole.findAllBySecUser(user).collect { it.secRole } as Set
     }
 }

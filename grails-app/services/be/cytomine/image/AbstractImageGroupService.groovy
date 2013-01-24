@@ -2,7 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group

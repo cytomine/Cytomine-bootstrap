@@ -1,9 +1,11 @@
-package be.cytomine
+package be.cytomine.image
 
 import be.cytomine.image.UploadedFile
 import be.cytomine.security.SecUser
 
-
+/**
+ * TODOSTEVBEN:: doc + refactoring + security (?)
+ */
 class ConvertImagesService {
 
     static transactional = true

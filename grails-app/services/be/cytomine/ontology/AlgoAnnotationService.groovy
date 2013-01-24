@@ -2,7 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -34,8 +34,7 @@ class AlgoAnnotationService extends ModelService {
     def retrievalService
     def algoAnnotationTermService
     def responseService
-    def domainService
-    def securityService
+    def modelService
     def simplifyGeometryService
     def dataSource
 
@@ -432,7 +431,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def create(AlgoAnnotation domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
 
@@ -470,7 +469,7 @@ class AlgoAnnotationService extends ModelService {
         response.data.remove('algoannotation')
 
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -500,7 +499,7 @@ class AlgoAnnotationService extends ModelService {
         response.data.remove('algoannotation')
 
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

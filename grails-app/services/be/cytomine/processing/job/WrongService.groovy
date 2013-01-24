@@ -5,7 +5,7 @@ class WrongService {
     static transactional = true
     def cytomineService
     def commandService
-    def domainService
+    def modelService
 
     /**
      * SERVICE MUST BE DELETE AFTER THE SERVICENAME HAS BEEN SET FOR EACH SOFTWARE

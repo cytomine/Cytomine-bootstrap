@@ -12,7 +12,7 @@ class HelloWorldJobService extends AbstractJobService {
     static transactional = true
     def cytomineService
     def commandService
-    def domainService
+    def modelService
 
     def jobParameterService
 

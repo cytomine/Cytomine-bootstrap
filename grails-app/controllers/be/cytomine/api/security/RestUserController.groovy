@@ -18,7 +18,6 @@ class RestUserController extends RestController {
     def transactionService
     def cytomineService
     def userService
-    def securityService
     def projectService
     def ontologyService
     def imageInstanceService
@@ -27,7 +26,6 @@ class RestUserController extends RestController {
      * Get all project users
      * Online flag may be set to get only online users
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showByProject = {
         boolean online = params.boolean('online')
         Project project = projectService.read(params.long('id'))
@@ -44,7 +42,6 @@ class RestUserController extends RestController {
     /**
      * Get all project admin
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showAdminByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
@@ -57,7 +54,6 @@ class RestUserController extends RestController {
     /**
      * Get project creator
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showCreatorByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
@@ -70,7 +66,6 @@ class RestUserController extends RestController {
     /**
      * Get ontology creator
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showCreatorByOntology = {
         Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) {
@@ -82,7 +77,6 @@ class RestUserController extends RestController {
     /**
      * Get ontology user list
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showUserByOntology = {
         Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) {
@@ -95,7 +89,6 @@ class RestUserController extends RestController {
     /**
      * Get all user layers available for a project
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showLayerByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
@@ -109,7 +102,6 @@ class RestUserController extends RestController {
      * Render and returns all Users into the specified format given in the request
      * @return all Users into the specified format
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         if (params.publicKey != null) {
             responseSuccess(userService.getByPublicKey(params.publicKey))
@@ -123,7 +115,6 @@ class RestUserController extends RestController {
      * @param id the user identifier
      * @return user an User into the specified format
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         SecUser user = userService.read(params.long('id'))
         if (user) {
@@ -136,7 +127,6 @@ class RestUserController extends RestController {
     /**
      * Get current user info
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def showCurrent = {
         responseSuccess(userService.readCurrentUser())
     }
@@ -145,7 +135,6 @@ class RestUserController extends RestController {
     /**
      * Add a new user
      */
-    @Secured(['ROLE_ADMIN'])
     def add = {
         add(userService, request.JSON)
     }
@@ -153,7 +142,6 @@ class RestUserController extends RestController {
     /**
      * Update a user
      */
-    @Secured(['ROLE_USER', 'ROLE_ADMIN'])
     def update = {
         update(userService, request.JSON)
     }
@@ -161,7 +149,6 @@ class RestUserController extends RestController {
     /**
      * Delete a user
      */
-    @Secured(['ROLE_ADMIN'])
     def delete = {
         delete(userService, JSON.parse("{id : $params.id}"))
     }
@@ -185,12 +172,6 @@ class RestUserController extends RestController {
     def deleteUserFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        log.info "deleteUserFromProject :"+user +"#"+project
-
-        log.info "hasRole('ROLE_ADMIN')="+cytomineService.currentUser.authorities.collect {it.authority}
-        log.info "hasRole('ROLE_ADMIN')="+cytomineService.currentUser.authorities.collect {it.authority}
-        //#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')
-
         userService.deleteUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
@@ -200,7 +181,6 @@ class RestUserController extends RestController {
     /**
      * Add user in project admin list
      */
-    @Secured(['ROLE_ADMIN'])
     def addUserAdminToProject = {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
@@ -214,7 +194,6 @@ class RestUserController extends RestController {
     /**
      * Delete user from project admin list
      */
-    @Secured(['ROLE_ADMIN'])
     def deleteUserAdminFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
@@ -222,24 +201,6 @@ class RestUserController extends RestController {
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
-    }
-
-    /**
-     * Print user for grid UI
-     */
-    @Secured(['ROLE_ADMIN'])
-    def grid = {
-        def sortIndex = params.sidx ?: 'id'
-        def sortOrder = params.sord ?: 'asc'
-        def maxRows = 50//params.row ? Integer.valueOf(params.rows) : 20
-        def currentPage = params.page ? Integer.valueOf(params.page) : 1
-
-        def users = userService.list(currentPage, maxRows, sortIndex, sortOrder, params.firstName, params.lastName, params.email)
-
-        def totalRows = users.totalCount
-        def numberOfPages = Math.ceil(totalRows / maxRows)
-        def jsonData = [rows: users, page: currentPage, records: totalRows, total: numberOfPages]
-        render jsonData as JSON
     }
 
     /**
@@ -265,7 +226,7 @@ class RestUserController extends RestController {
         } else {
             if (project) {
                 //get all user project list
-                users = securityService.getUserList(project)
+                users = userService.listUsers(project)
             } else {
                 //get all people that share common project with user
                 users = userService.getAllFriendsUsers(user)

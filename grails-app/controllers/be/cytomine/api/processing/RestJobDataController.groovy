@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 class RestJobDataController extends RestController {
 
     def jobDataService
-    def domainService
 
     /**
      * List all job data
@@ -79,9 +78,9 @@ class RestJobDataController extends RestController {
 
         JobData jobData = jobDataService.read(params.getLong('id'))
         JobDataBinaryValue value = new JobDataBinaryValue(jobData:jobData)
-        domainService.saveDomain(value)
+        jobDataService.saveDomain(value)
         jobData.value = value
-        domainService.saveDomain(jobData)
+        jobDataService.saveDomain(jobData)
 
         byte[] bytes
 

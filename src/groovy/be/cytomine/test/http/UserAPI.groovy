@@ -5,6 +5,7 @@ import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**
  * User: lrollus
@@ -18,11 +19,6 @@ class UserAPI extends DomainAPI {
 
     static def showCurrent(String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/user/current.json"
-        return doGET(URL, username, password)
-    }
-
-    static def grid(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/user/grid.json"
         return doGET(URL, username, password)
     }
 
@@ -70,8 +66,12 @@ class UserAPI extends DomainAPI {
     }
 
     static def create(String json, String username, String password) {
+        JSONElement jsonWithPassword = JSON.parse(json)
+        if(jsonWithPassword.password==null || jsonWithPassword.password.toString()=="null") {
+            jsonWithPassword.password = "toto"
+        }
         String URL = Infos.CYTOMINEURL + "api/user.json"
-        def result = doPOST(URL,json,username,password)
+        def result = doPOST(URL,jsonWithPassword.toString(),username,password)
         result.data = User.get(JSON.parse(result.data)?.user?.id)
         return result
     }

@@ -14,7 +14,6 @@ class ParamsService {
 
     def imageInstanceService
     def termService
-    def securityService
     def userService
     def dataSource
 
@@ -25,10 +24,10 @@ class ParamsService {
     public List<Long> getParamsUserList(String paramsUsers, Project project) {
        if(paramsUsers != null && !paramsUsers.equals("null")) {
            if (!paramsUsers.equals(""))
-               return securityService.getAllowedUserIdList(project).intersect(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
+               return userService.getAllowedUserIdList(project).intersect(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
            else return []
        } else {
-           securityService.getAllowedUserIdList(project)
+           userService.getAllowedUserIdList(project)
        }
     }
 
@@ -42,7 +41,7 @@ class ParamsService {
                return getUserIdList(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
            else return []
        } else {
-           securityService.getAllowedUserIdList(project)
+           userService.getAllowedUserIdList(project)
        }
     }
 

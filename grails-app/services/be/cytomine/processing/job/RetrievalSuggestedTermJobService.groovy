@@ -15,7 +15,7 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
     static transactional = false
     def cytomineService
     def commandService
-    def domainService
+    def modelService
     def jobParameterService
     def jobService
     def algoAnnotationTermService

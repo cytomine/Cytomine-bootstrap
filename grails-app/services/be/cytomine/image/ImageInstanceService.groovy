@@ -2,7 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -17,7 +17,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.Exception.ForbiddenException
+
 import be.cytomine.SecurityCheck
 import groovy.sql.Sql
 
@@ -33,7 +33,7 @@ class ImageInstanceService extends ModelService {
     def commandService
     def transactionService
     def responseService
-    def domainService
+    def modelService
     def userAnnotationService
     def algoAnnotationService
     def dataSource
@@ -206,7 +206,7 @@ class ImageInstanceService extends ModelService {
      */
     def create(ImageInstance domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Add", domain.getCallBack())
     }
@@ -232,7 +232,7 @@ class ImageInstanceService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -257,7 +257,7 @@ class ImageInstanceService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

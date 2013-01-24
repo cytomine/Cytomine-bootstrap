@@ -14,7 +14,6 @@ class RestSecRoleController extends RestController {
     /**
      * List all roles available on cytomine
      */
-    @Secured(['ROLE_ADMIN'])
     def list = {
         responseSuccess(secRoleService.list())
     }

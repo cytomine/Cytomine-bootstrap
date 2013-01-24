@@ -3,7 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -23,8 +23,7 @@ class OntologyService extends ModelService {
     def commandService
     def termService
     def cytomineService
-    def domainService
-    def securityService
+    def modelService
     def aclUtilService
 
     boolean saveOnUndoRedoStack = true
@@ -52,7 +51,12 @@ class OntologyService extends ModelService {
     def list() {
         def user = cytomineService.currentUser
         if (!user.admin) {
-            def list = securityService.getOntologyList(user)
+            def list = Ontology.executeQuery(
+                    "select distinct ontology "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Ontology as ontology "+
+                    "where aclObjectId.objectId = ontology.id " +
+                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
             return list
         } else {
             return Ontology.list()
@@ -151,7 +155,7 @@ class OntologyService extends ModelService {
      */
     def create(Ontology domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
 
         //Add user creator as ontology admin
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
@@ -182,7 +186,7 @@ class OntologyService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -207,7 +211,7 @@ class OntologyService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

@@ -16,7 +16,7 @@ import org.codehaus.groovy.grails.web.json.JSONElement
 class Command extends CytomineDomain {
 
     def messageSource
-    def domainService
+    def modelService
     def responseService
 
     /**

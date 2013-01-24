@@ -90,38 +90,6 @@ class RestImageInstanceController extends RestController {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"))
     }
 
-
-
-//    def update = {
-//        def json = request.JSON
-//        try {
-//            def domain = imageInstanceService.retrieve(json)
-//            imageInstanceService.checkAuthorization(domain?.project)
-//            def result = imageInstanceService.update(domain,json)
-//            responseResult(result)
-//        } catch (CytomineException e) {
-//            log.error(e)
-//            response([success: false, errors: e.msg], e.code)
-//        }
-//    }
-//
-//    def delete = {
-//        def json = JSON.parse("{id : $params.id}")
-//        try {
-//            println "####### 1"
-//            def domain = imageInstanceService.retrieve(json)
-//            println "####### 2"
-//            def result = imageInstanceService.delete(domain,json)
-//            responseResult(result)
-//        } catch (CytomineException e) {
-//            println "####### 3"
-//            log.error(e)
-//            println "*****"
-//            response([success: false, errors: e.msg], e.code)
-//            println "*****"
-//        }
-//    }
-
     def window = {
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))

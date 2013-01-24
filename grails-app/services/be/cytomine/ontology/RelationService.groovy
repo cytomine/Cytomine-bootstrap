@@ -1,6 +1,6 @@
 package be.cytomine.ontology
 
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 
 /**
  * No security restriction for this domain (only read)

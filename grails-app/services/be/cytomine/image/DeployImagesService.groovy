@@ -1,4 +1,4 @@
-package be.cytomine
+package be.cytomine.image
 
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
@@ -10,7 +10,11 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import be.cytomine.image.*
 import be.cytomine.project.Project
+import be.cytomine.SecurityCheck
 
+/**
+ * TODOSTEVEBEN: Doc + refactoring + security?
+ */
 class DeployImagesService {
 
     def imagePropertiesService

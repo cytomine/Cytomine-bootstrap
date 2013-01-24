@@ -2,15 +2,15 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
+
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 
@@ -19,7 +19,7 @@ class AnnotationFilterService extends ModelService {
     static transactional = true
 
     def cytomineService
-    def domainService
+    def modelService
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listByProject(Project project) {
@@ -99,7 +99,7 @@ class AnnotationFilterService extends ModelService {
      */
     def create(AnnotationFilter domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id], printMessage, "Add", domain.getCallBack())
     }
@@ -125,7 +125,7 @@ class AnnotationFilterService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -150,7 +150,7 @@ class AnnotationFilterService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

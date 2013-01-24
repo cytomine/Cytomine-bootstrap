@@ -27,7 +27,6 @@ class RestReviewedAnnotationController extends RestController {
 
     def paramsService
     def algoAnnotationService
-    def domainService
     def termService
     def imageInstanceService
     def userService
@@ -203,7 +202,7 @@ class RestReviewedAnnotationController extends RestController {
             if (image) {
                 image.reviewStart = new Date()
                 image.reviewUser = cytomineService.currentUser
-                domainService.saveDomain(image)
+                reviewedAnnotationService.saveDomain(image)
 
                 response.message = image.reviewUser.username + " start reviewing on " + image.baseImage.filename
                 response.imageinstance = image
@@ -249,7 +248,7 @@ class RestReviewedAnnotationController extends RestController {
                 } else {
                     image.reviewStop = new Date()
                 }
-                domainService.saveDomain(image)
+                reviewedAnnotationService.saveDomain(image)
 
                 def response = [:]
                 response.imageinstance = image
@@ -503,7 +502,7 @@ class RestReviewedAnnotationController extends RestController {
         ReviewedAnnotation review = createReviewAnnotation(annotation,terms)
         review.reviewUser = cytomineService.currentUser
         if(flush) {
-            domainService.saveDomain(review)
+            reviewedAnnotationService.saveDomain(review)
         }
         else {
             review.save()

@@ -23,9 +23,7 @@ import be.cytomine.SecurityCheck
  */
 class RestAnnotationDomainController extends RestController {
 
-    def exportService
     def userAnnotationService
-    def domainService
     def termService
     def imageInstanceService
     def userService

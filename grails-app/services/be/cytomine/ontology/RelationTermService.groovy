@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -19,7 +19,7 @@ class RelationTermService extends ModelService {
     def springSecurityService
     def commandService
     def cytomineService
-    def domainService
+    def modelService
 
     final boolean saveOnUndoRedoStack = true
 

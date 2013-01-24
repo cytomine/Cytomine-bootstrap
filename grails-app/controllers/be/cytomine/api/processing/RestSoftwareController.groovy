@@ -18,7 +18,6 @@ class RestSoftwareController extends RestController {
     /**
      * List all software available in cytomine
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def list = {
         responseSuccess(softwareService.list())
     }
@@ -26,7 +25,6 @@ class RestSoftwareController extends RestController {
     /**
      * List all software by project
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def listByProject = {
         Project project = Project.read(params.long('id'))
         if(project) responseSuccess(softwareService.list(project))
@@ -36,7 +34,6 @@ class RestSoftwareController extends RestController {
     /**
      * Get a specific software
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def show = {
         Software software = softwareService.read(params.long('id'))
         if (software) {

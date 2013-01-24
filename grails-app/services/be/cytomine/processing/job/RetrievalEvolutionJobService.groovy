@@ -16,7 +16,7 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     def springSecurityService
     def cytomineService
     def commandService
-    def domainService
+    def modelService
     def jobParameterService
     def algoAnnotationTermService
 

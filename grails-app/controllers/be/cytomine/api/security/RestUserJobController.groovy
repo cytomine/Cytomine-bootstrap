@@ -23,11 +23,10 @@ class RestUserJobController extends RestController {
     def transactionService
     def cytomineService
     def userService
-    def securityService
     def projectService
     def ontologyService
     def imageInstanceService
-    def domainService
+    def jobService
 
     /**
      * Get a user job
@@ -200,7 +199,7 @@ class RestUserJobController extends RestController {
         Job job = new Job()
         job.software = Software.read(idSoftware)
         job.project = Project.read(idProject)
-        domainService.saveDomain(job)
+        jobService.saveDomain(job)
         job
     }
 
@@ -231,7 +230,7 @@ class RestUserJobController extends RestController {
 
         }
         userJob.created = date
-        domainService.saveDomain(userJob)
+        jobService.saveDomain(userJob)
 
         //add the same role to user job
         user.getAuthorities().each { secRole ->

@@ -21,7 +21,6 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * List all roles for a user
      */
-    @Secured(['ROLE_ADMIN'])
     def list = {
         User user = userService.read(params.long('user'));
         responseSuccess(secUserSecRoleService.list(user))
@@ -31,7 +30,6 @@ class RestSecUserSecRoleController extends RestController {
      * Check a role for a user
      * If user has not this role, send 404
      */
-    @Secured(['ROLE_ADMIN'])
     def show = {
         User user = userService.read(params.long('user'));
         SecRole role = secRoleService.read(params.long('role'));
@@ -46,7 +44,6 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * Add a new role to a user
      */
-    @Secured(['ROLE_ADMIN'])
     def add = {
         add(secUserSecRoleService, request.JSON)
     }
@@ -54,7 +51,6 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * Delete a role from a user
      */
-    @Secured(['ROLE_ADMIN'])
     def delete = {
         delete(secUserSecRoleService, JSON.parse("{user : $params.user, role: $params.role}"))
     }

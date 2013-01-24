@@ -2,7 +2,7 @@ package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 
-import be.cytomine.ResponseService
+import be.cytomine.command.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import grails.converters.JSON

@@ -2,7 +2,7 @@ package be.cytomine.project
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.image.UploadedFile
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.ImageFilterProject
@@ -11,17 +11,15 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
-import be.cytomine.test.Infos
+
 import org.apache.commons.collections.CollectionUtils
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
-import org.springframework.security.acls.model.Permission
-import org.springframework.transaction.annotation.Transactional
+
 import be.cytomine.command.*
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.ImageInstance
+
 import be.cytomine.SecurityCheck
 import groovy.sql.Sql
 
@@ -29,9 +27,8 @@ class ProjectService extends ModelService {
 
     static transactional = true
     def cytomineService
-    def domainService
+    def modelService
     def springSecurityService
-    def securityService
     def userService
     def aclUtilService
     def dataSource
@@ -69,12 +66,22 @@ class ProjectService extends ModelService {
     @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
         //faster to get it from database table (getProjectList) than PostFilter
-        securityService.getProjectList(user)
+        getProjectList(user)
     }
 
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Software software) {
         software.softwareProjects.collect {it.project}
+    }
+
+    List<Project> getProjectList(SecUser user) {
+        //faster method
+        return Project.executeQuery(
+                "select distinct project "+
+                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                "where aclObjectId.objectId = project.id " +
+                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
     }
 
     /**
@@ -207,7 +214,7 @@ class ProjectService extends ModelService {
      */
     def create(Project domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
         //add permission on project
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
@@ -289,7 +296,7 @@ class ProjectService extends ModelService {
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         log.info "deleteDomain"
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         log.info "response"
         return response
     }
@@ -315,7 +322,7 @@ class ProjectService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(project, [project.id, project.name], printMessage, "Edit", project.getCallBack())
         //Save update
-        domainService.saveDomain(project)
+        saveDomain(project)
         return response
     }
 

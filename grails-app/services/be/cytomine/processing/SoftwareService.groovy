@@ -3,7 +3,7 @@ package be.cytomine.processing
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -24,7 +24,7 @@ class SoftwareService extends ModelService {
 
     def cytomineService
     def transactionService
-    def domainService
+    def modelService
     def aclUtilService
 
     def read(def id) {
@@ -121,7 +121,7 @@ class SoftwareService extends ModelService {
      */
     def create(Software domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Add user creator as ontology admin
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
         //Build response message
@@ -150,7 +150,7 @@ class SoftwareService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -175,7 +175,7 @@ class SoftwareService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

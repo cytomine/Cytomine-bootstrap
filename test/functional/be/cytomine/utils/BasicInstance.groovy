@@ -1025,9 +1025,8 @@ class BasicInstance {
                     enabled: true)
             user.generateKeys()
             user.validate()
-            log.debug "user.errors=" + user.errors
-            user.save(flush: true)
-            log.debug "user.errors=" + user.errors
+            checkDomain(user)
+            saveDomain(user)
             try {
                SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
             } catch(Exception e) {

@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -23,7 +23,7 @@ class JobService extends ModelService {
     static transactional = true
     def cytomineService
     def commandService
-    def domainService
+    def modelService
     def transactionService
     def jobParameterService
     def springSecurityService
@@ -169,7 +169,7 @@ class JobService extends ModelService {
      */
     def create(Job domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Add", domain.getCallBack())
     }
@@ -195,7 +195,7 @@ class JobService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -221,7 +221,7 @@ class JobService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, Job], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

@@ -29,7 +29,6 @@ class RestUserAnnotationController extends RestController {
 
     def exportService
     def userAnnotationService
-    def domainService
     def termService
     def imageInstanceService
     def userService
@@ -160,7 +159,6 @@ class RestUserAnnotationController extends RestController {
             responseNotFound("Project", params.long('id'))
         }
 
-        projectService.checkAuthorization(project)
         def users = []
         if (params.users != null && params.users != "") {
             params.users.split(",").each { id ->
@@ -298,7 +296,6 @@ class RestUserAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("Annotation", params.annotation)
         }
-        userAnnotationService.checkAuthorization(annotation.project)
         def sharedAnnotation = SharedAnnotation.findById(params.long('id'))
         if (!sharedAnnotation) {
             responseNotFound("SharedAnnotation", params.id)
@@ -314,7 +311,6 @@ class RestUserAnnotationController extends RestController {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
         User user = User.read(springSecurityService.principal.id)
         if (annotation) {
-            userAnnotationService.checkAuthorization(annotation.project)
             def sharedAnnotations = SharedAnnotation.createCriteria().list {
                 eq("userAnnotation", annotation)
                 or {
@@ -337,7 +333,6 @@ class RestUserAnnotationController extends RestController {
     def show = {
         UserAnnotation annotation = userAnnotationService.read(params.long('id'))
         if (annotation) {
-            userAnnotationService.checkAuthorization(annotation.project)
             responseSuccess(annotation)
         }
         else responseNotFound("Annotation", params.id)
@@ -362,7 +357,6 @@ class RestUserAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
-        userAnnotationService.checkAuthorization(Long.parseLong(json.project.toString()), new UserAnnotation())
         def result = userAnnotationService.add(json,new SecurityCheck())
         return result
     }

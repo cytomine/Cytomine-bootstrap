@@ -26,7 +26,6 @@ class RestProjectController extends RestController {
     def transactionService
     def retrievalService
     def imageInstanceService
-    def securityService
 
     /**
      * List all project available for the current user
@@ -38,7 +37,7 @@ class RestProjectController extends RestController {
             responseSuccess(projectService.list())
         } else {
             // better perf with this direct hql request on spring security acl domain table (than post filter)
-            responseSuccess(securityService.getProjectList(user))
+            responseSuccess(projectService.getProjectList(user))
         }
     }
 

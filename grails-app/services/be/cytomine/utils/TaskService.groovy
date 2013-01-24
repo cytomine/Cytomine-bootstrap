@@ -1,21 +1,31 @@
-package be.cytomine
+package be.cytomine.utils
 
 import be.cytomine.command.Task
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.SecurityCheck
 
 class TaskService {
 
+    def cytomineService
+
     static transactional = true
 
-    //TODO: acl, only task creator can see its task?
     def get(def id) {
-        Task.get(id)
+        def task = Task.get(id)
+        if(task) {
+            SecurityCheck.checkReadAuthorization(task.project)
+        }
+        task
     }
 
-    //TODO: acl, only task creator can see its task?
     def read(def id) {
-        Task.read(id)
+        def task = Task.get(id)
+        if(task) {
+            SecurityCheck.checkReadAuthorization(task.project)
+        }
+        task
     }
 
     /**
@@ -24,6 +34,7 @@ class TaskService {
      * @param user User that create the task
      * @return Task created
      */
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def createNewTask(Project project, SecUser user) {
         Task task = new Task(project: project, user: user)
         //task.addToComments("Task started...")
@@ -38,6 +49,7 @@ class TaskService {
      * @param progress New progress value (0-100)
      * @param comment Comment for the new task status
      */
+    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def updateTask(Task task, int progress, String comment) {
         if(!task) {
             log.info "task is null, ignore task"
@@ -53,6 +65,7 @@ class TaskService {
      * @param task Task to close
      * @return Closed task
      */
+    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
     def finishTask(Task task) {
         if(!task) {
             log.info "task is null, ignore task"

@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -15,7 +15,7 @@ class UserGroupService extends ModelService {
 
     def cytomineService
     def commandService
-    def domainService
+    def modelService
 
     def list(User user) {
         UserGroup.findAllByUser(user)
@@ -58,7 +58,7 @@ class UserGroupService extends ModelService {
             log.info it
         }
         domain.setId(null)
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Add")
     }
@@ -80,7 +80,7 @@ class UserGroupService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.user, domain.group], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 

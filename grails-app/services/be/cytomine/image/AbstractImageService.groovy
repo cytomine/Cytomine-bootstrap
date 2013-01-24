@@ -3,7 +3,7 @@ package be.cytomine.image
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -28,7 +28,6 @@ class AbstractImageService extends ModelService {
     def cytomineService
     def imagePropertiesService
     def responseService
-    def domainService
     def transactionService
     def storageService
     def abstractImageGroupService
@@ -338,7 +337,7 @@ class AbstractImageService extends ModelService {
      */
     def create(AbstractImage domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Add", domain.getCallBack())
     }
@@ -364,7 +363,7 @@ class AbstractImageService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -389,7 +388,7 @@ class AbstractImageService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Edit", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

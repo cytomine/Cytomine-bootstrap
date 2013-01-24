@@ -1,10 +1,12 @@
-package be.cytomine
+package be.cytomine.utils
 
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.project.Project
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.Exception.InvalidRequestException
 
 abstract class ModelService {
 
@@ -16,14 +18,34 @@ abstract class ModelService {
     def grailsApplication
     boolean saveOnUndoRedoStack
 
-//
-//    abstract def create(JSONObject json, boolean printMessage)
-//    abstract def create(Annotation domain, boolean printMessage)
-//    abstract def destroy(JSONObject json, boolean printMessage)
-//    abstract def destroy(Annotation domain, boolean printMessage)
-//    abstract def edit(JSONObject json, boolean printMessage)
-//    abstract def edit(Annotation domain, boolean printMessage)
-//    abstract def retrieve(JSONObject json)
+    /**
+     * Save a domain on database, throw error if cannot save
+     */
+    def saveDomain(def newObject) {
+        newObject.checkAlreadyExist()
+        if (!newObject.validate()) {
+            log.error newObject.errors
+            log.error newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: true)) {
+            throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+    }
+
+    /**
+     * Delete a domain from database
+     */
+    def deleteDomain(def oldObject) {
+        try {
+            oldObject.refresh()
+            oldObject.delete(flush: true, failOnError: true)
+        } catch (Exception e) {
+            log.error e.toString()
+            throw new InvalidRequestException(e.toString())
+        }
+
+    }
 
     /**
      * Add command info for the new domain concerned by the command
@@ -37,18 +59,16 @@ abstract class ModelService {
         return domain
     }
 
+    /**
+     * Get the name of the service (project,...)
+     */
     public String getServiceName() {
         return GrailsNameUtils.getPropertyName(GrailsNameUtils.getShortName(this.getClass()))
     }
 
-    void initCommandService() {
-        if (!commandService) {
-            log.info "initService:" + serviceName
-            commandService =grailsApplication.getMainContext().getBean("commandService")
-        }
-
-    }
-
+    /**
+     * Execute command with JSON data
+     */
     protected executeCommand(Command c, def json) {
         initCommandService()
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
@@ -58,13 +78,11 @@ abstract class ModelService {
         return commandService.processCommand(c, json)
     }
 
-    //@PreAuthorize("hasPermission(#id ,'be.cytomine.project.Project',read) or hasPermission(#id ,'be.cytomine.project.Project',admin) or hasRole('ROLE_ADMIN')")
-    @PreAuthorize("#cytomineDomain.hasPermission(#id,'be.cytomine.project.Project','READ') or hasRole('ROLE_ADMIN')")
-    void checkAuthorization(def id, def cytomineDomain) {
-    }
 
-    @PreAuthorize("#cytomineDomain.hasPermission(#cytomineDomain,'READ') or hasRole('ROLE_ADMIN')")
-    void checkAuthorization(def cytomineDomain) {
-    }
+    private void initCommandService() {
+        if (!commandService) {
+            commandService =grailsApplication.getMainContext().getBean("commandService")
+        }
 
+    }
 }

@@ -28,11 +28,6 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
         assert json instanceof JSONArray
     }
 
-    void testListUserGrid() {
-        def result = UserAPI.grid(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-    }
-
     void testListUserWithKey() {
         def result = UserAPI.list(BasicInstance.newUser.publicKey,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)

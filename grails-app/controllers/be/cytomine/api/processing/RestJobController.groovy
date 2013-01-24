@@ -127,13 +127,11 @@ class RestJobController extends RestController {
      * This method will delete: annotation prediction, uploaded files,...
      * This method is heavy, so we use Task service to provide a progress status to the user interface
      */
-    @Secured(['ROLE_ADMIN', 'ROLE_USER'])
     def deleteAllJobData = {
         Job job = jobService.read(params.long('id'));
         if (!job) {
             responseNotFound("Job",params.id)
         } else {
-            jobService.checkAuthorization(job.project)
 
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."

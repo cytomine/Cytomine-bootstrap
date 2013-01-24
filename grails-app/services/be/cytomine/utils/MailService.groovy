@@ -1,4 +1,4 @@
-package be.cytomine
+package be.cytomine.utils
 
 import org.springframework.core.io.FileSystemResource
 import org.springframework.mail.javamail.JavaMailSenderImpl

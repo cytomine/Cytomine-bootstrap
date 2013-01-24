@@ -1,47 +1,40 @@
 package be.cytomine.security
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.SecurityCheck
+import org.springframework.security.access.prepost.PreAuthorize
 
 class SecUserSecRoleService extends ModelService {
 
     static transactional = true
     def cytomineService
     def commandService
-    def domainService
+    def modelService
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
         SecUserSecRole.findAllBySecUser(user)
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     def get(User user, SecRole role) {
         SecUserSecRole.findBySecUserAndSecRole(user, role)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser), json)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new DeleteCommand(user: currentUser), json)
-    }
-
-
-    def update(def json, SecurityCheck security) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    def list(def sortIndex, def sortOrder, def maxRows, def currentPage, def rowOffset) {
-        def secRoles = SecUserSecRole.createCriteria().list(max: maxRows, offset: rowOffset) {
-            order(sortIndex, sortOrder).ignoreCase()
-        }
-        return secRoles
     }
 
     /**
@@ -60,7 +53,7 @@ class SecUserSecRoleService extends ModelService {
         log.debug "domain=" + domain + " responseService=" + responseService
         def response = responseService.createResponseMessage(domain, [domain.secUser.id, domain.secRole.id], printMessage, "Add", domain.getCallBack())
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

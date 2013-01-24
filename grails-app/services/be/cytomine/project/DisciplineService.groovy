@@ -2,7 +2,7 @@ package be.cytomine.project
 
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -17,7 +17,7 @@ class DisciplineService extends ModelService {
     def cytomineService
     def commandService
     def responseService
-    def domainService
+    def modelService
 
 
     boolean saveOnUndoRedoStack = true
@@ -92,7 +92,7 @@ class DisciplineService extends ModelService {
      */
     def create(Discipline domain, boolean printMessage) {
         //Save new object
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
@@ -121,7 +121,7 @@ class DisciplineService extends ModelService {
         }
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Delete object
-        domainService.deleteDomain(domain)
+        deleteDomain(domain)
         return response
     }
 
@@ -146,7 +146,7 @@ class DisciplineService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Save update
-        domainService.saveDomain(domain)
+        saveDomain(domain)
         return response
     }
 

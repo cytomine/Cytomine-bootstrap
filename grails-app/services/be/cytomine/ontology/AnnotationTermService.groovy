@@ -2,7 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ModelService
+import be.cytomine.utils.ModelService
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -20,7 +20,7 @@ class AnnotationTermService extends ModelService {
     def transactionService
     def commandService
     def responseService
-    def domainService
+    def modelService
 
     boolean saveOnUndoRedoStack = true
 
@@ -167,7 +167,7 @@ class AnnotationTermService extends ModelService {
         //Build response message
         log.debug "domain=" + domain + " responseService=" + responseService
         //Save new object
-        //domainService.saveDomain(domain)
+        //modelService.saveDomain(domain)
         domain = AnnotationTerm.link(domain.userAnnotation, domain.term, domain.user)
 
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
@@ -196,7 +196,7 @@ class AnnotationTermService extends ModelService {
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
         //Delete new object
         AnnotationTerm.unlink(domain.userAnnotation, domain.term, domain.user)
-        //domainService.deleteDomain(domain)
+        //deleteDomain(domain)
         return response
     }
 

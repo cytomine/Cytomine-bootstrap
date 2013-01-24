@@ -20,7 +20,6 @@ import be.cytomine.test.Infos
  */
 class SecurityCheck {
 
-    def cytomineService
     def securityService
 
     def domain
@@ -36,7 +35,7 @@ class SecurityCheck {
 
     boolean checkCurrentUserCreator(def idPrincipal) {
          def creator = domain.userDomain()
-        return creator && creator.id==idPrincipal
+         return creator && creator.id==idPrincipal
     }
 
     boolean checkProjectAccess(def id) {
