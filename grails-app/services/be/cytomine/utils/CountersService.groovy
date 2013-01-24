@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.utils
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation

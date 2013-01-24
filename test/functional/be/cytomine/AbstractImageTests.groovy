@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.security.User
+
 import be.cytomine.utils.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
@@ -10,12 +10,12 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.utils.UpdateData
 import be.cytomine.image.server.ImageProperty
-import be.cytomine.image.server.ImageServer
+
 import be.cytomine.image.AbstractImageService
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
-import cytomine.web.ImagePropertiesService
+import be.cytomine.image.ImagePropertiesService
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.security.Group
 

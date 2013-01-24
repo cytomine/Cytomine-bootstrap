@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.image
 
 import be.cytomine.processing.image.filters.Auto_Threshold
 import com.vividsolutions.jts.geom.Coordinate
@@ -11,6 +11,9 @@ import ij.process.ImageProcessor
 
 import java.awt.image.BufferedImage
 
+/**
+ *  TODOSTEVBEN:: doc + clean
+ */
 class ImageProcessingService {
 
     private static final int BLACK = 0

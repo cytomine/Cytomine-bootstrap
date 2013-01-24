@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.image
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.ImageProperty
@@ -13,6 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient
  * User: stevben
  * Date: 19/07/11
  * Time: 15:19
+ * TODOSTEVBEN: doc + clean + refactor
  */
 class ImagePropertiesService implements Serializable{
 
