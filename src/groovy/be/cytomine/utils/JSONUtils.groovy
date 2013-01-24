@@ -7,121 +7,144 @@ import be.cytomine.Exception.ServerException
  * User: lrollus
  * Date: 11/01/13
  * GIGA-ULg
- * 
+ *
+ *
+ * Utility class to extract/read data from JSON
+ * Usefull when you want to create a cytomine domain from a JSON
  */
 class JSONUtils {
 
-
-
-
-    static public String getJSONAttrStr(def json, String attr) {
-        getJSONAttrStr(json,attr,false)
-       }
-
-    static public String getJSONAttrStr(def json, String attr,boolean mandatory) {
-        println "get attr $attr"
-       if(json[attr]!=null && !json[attr].toString().equals("null")) {
+    /**
+     * Get attr string value from JSON and check if not null (if mandatory = true)
+     * @return Value as String
+     */
+    static public String getJSONAttrStr(def json, String attr, boolean mandatory = false) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
             return json[attr].toString()
-       } else {
-           if(mandatory) {
-               throw new WrongArgumentException("$attr must be set! value=${json[attr]}")
-           }
-           return null
-       }
+        } else {
+            if (mandatory) {
+                throw new WrongArgumentException("$attr must be set! value=${json[attr]}")
+            }
+            return null
+        }
+    }
+
+    /**
+     * Get attr date value from JSON
+     * @return Value as Date
+     */
+    static public Date getJSONAttrDate(def json, String attr) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            return new Date(Long.parseLong(json.created))
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * Get attr long value from JSON and check if not null (if mandatory = true)
+     * @return Value as Long
+     */
+    static public Long getJSONAttrLong(def json, String attr, Long defaultValue) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            try {
+                return Long.parseLong(json[attr].toString())
+            } catch (Exception e) {
+                return defaultValue
+            }
+        } else {
+            return defaultValue
+        }
+    }
+
+    /**
+     * Get attr int value from JSON and check if not null (if mandatory = true)
+     * @return Value as Integer
+     */
+    static public Integer getJSONAttrInteger(def json, String attr, Long defaultValue) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            try {
+                return Integer.parseInt(json[attr].toString())
+            } catch (Exception e) {
+                return defaultValue
+            }
+        } else {
+            return defaultValue
+        }
+    }
+
+    /**
+     * Get attr double value from JSON and check if not null (if mandatory = true)
+     * @return Value as Double
+     */
+    static public Double getJSONAttrDouble(def json, String attr, Double defaultValue) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            try {
+                return Double.parseDouble(json[attr].toString())
+            } catch (Exception e) {
+                return defaultValue
+            }
+        } else {
+            return defaultValue
+        }
+    }
+
+    /**
+     * Get attr bool value from JSON and check if not null (if mandatory = true)
+     * @return Value as Boolean
+     */
+    static public Boolean getJSONAttrBoolean(def json, String attr, Boolean defaultValue) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            try {
+                return Boolean.parseBoolean(json[attr].toString())
+            } catch (Exception e) {
+                return defaultValue
+            }
+        } else {
+            return defaultValue
+        }
+    }
+
+    /**
+     * Get attr domain value from json
+     * Read domain thanks to domain argument class and its id (domain.read)
+     * If mandatory flag is true, check if domain exists
+     * @return  Value as Cytomine Domain
+     */
+    static public def getJSONAttrDomain(def json, String attr, def domain, boolean mandatory) {
+        getJSONAttrDomain(json, attr, domain, 'id', 'Long', mandatory)
+    }
+
+    /**
+     * Get attr domain value from json
+     * Read domain thanks to domain argument, get the correct object thanks to value from column (type: columnType)
+     * If mandatory flag is true, check if domain exists
+     * @return  Value as Cytomine Domain
+     */
+    static public def getJSONAttrDomain(def json, String attr, def domain, String column, String columnType, boolean mandatory) {
+        println "get attr $attr"
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            def domainRead = domain.findWhere("$column": convertValue(json[attr].toString(), columnType))
+            if (!domainRead) {
+                throw new WrongArgumentException("$attr was not found with id:${json[attr]}")
+            }
+            return domainRead
+        } else {
+            if (mandatory) {
+                throw new WrongArgumentException("$attr must be set! value=${json[attr]}")
+            }
+            return null
+        }
     }
 
 
 
-
-       static public Date getJSONAttrDate(def json, String attr) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-               return new Date(Long.parseLong(json.created))
-          } else {
-              return null
-          }
-       }
-
-       static public def getJSONAttrDomain(def json, String attr, def domain, boolean mandatory) {
-           getJSONAttrDomain(json,attr,domain,'id','Long',mandatory)
-       }
-
-       static public def getJSONAttrDomain(def json, String attr, def domain,String column,String columnType, boolean mandatory) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-                def domainRead = domain.findWhere("$column":convertValue(json[attr].toString(),columnType))
-                if(!domainRead)  {
-                    throw new WrongArgumentException("$attr was not found with id:${json[attr]}")
-                }
-              return domainRead
-          } else {
-              if(mandatory) {
-                  throw new WrongArgumentException("$attr must be set! value=${json[attr]}")
-              }
-              return null
-          }
-       }
-
-       static public def convertValue(String value, String type) {
-           if(type.equals("String")) {
-               return value
-           } else if(type.equals("Long")) {
-               return Long.parseLong(value);
-           }
-           throw new ServerException("Type $type not supported! See cytominedomain class")
-       }
-
-       static public Long getJSONAttrLong(def json, String attr, Long defaultValue) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-              try {
-                  return Long.parseLong(json[attr].toString())
-              } catch(Exception e) {
-                  return defaultValue
-              }
-          } else {
-              return defaultValue
-          }
-       }
-
-
-       static public Long getJSONAttrInteger(def json, String attr, Long defaultValue) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-              try {
-                  return Integer.parseInt(json[attr].toString())
-              } catch(Exception e) {
-                  return defaultValue
-              }
-          } else {
-              return defaultValue
-          }
-       }
-
-
-       static public Double getJSONAttrDouble(def json, String attr, Double defaultValue) {
-           println "get attr $attr"
-          if(json[attr]!=null && !json[attr].toString().equals("null")) {
-              try {
-                  return Double.parseDouble(json[attr].toString())
-              } catch(Exception e) {
-                  return defaultValue
-              }
-          } else {
-              return defaultValue
-          }
-       }
-
-    static public Boolean getJSONAttrBoolean(def json, String attr, Boolean defaultValue) {
-        println "get attr $attr"
-       if(json[attr]!=null && !json[attr].toString().equals("null")) {
-           try {
-               return Boolean.parseBoolean(json[attr].toString())
-           } catch(Exception e) {
-               return defaultValue
-           }
-       } else {
-           return defaultValue
-       }
+    static public def convertValue(String value, String type) {
+        if (type.equals("String")) {
+            return value
+        } else if (type.equals("Long")) {
+            return Long.parseLong(value);
+        }
+        throw new ServerException("Type $type not supported! See cytominedomain class")
     }
 }

@@ -25,6 +25,11 @@ class ImageFilterProjectAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByProject(Long id,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$id/imagefilterproject.json"
+        return doGET(URL, username, password)
+    }
+
     static def create(String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/imagefilterproject.json"
         def result = doPOST(URL,json,username,password)
