@@ -1,23 +1,8 @@
 var AnnotationModel = Backbone.Model.extend({
-    /*initialize: function(spec) {
-     if (!spec || !spec.name || !spec.username) {
-     throw "InvalidConstructArgs";
-     }
-     },
-
-     validate: function(attrs) {
-     if (attrs.name) {
-     if (!_.isString(attrs.name) || attrs.name.length === 0) {
-     return "Name must be a string with a length";
-     }
-     }
-     },*/
 
     url:function () {
         var base = 'api/annotation';
         var format = '.json';
-        console.log("this.isNew()="+this.isNew());
-        console.log("this.id="+this.id);
         if (this.isNew()) return base + format;
         var params = "";
         if(this.fill) params = "?fill=true";
@@ -34,8 +19,6 @@ var AnnotationCorrectionModel = Backbone.Model.extend({
     url:function () {
         var base = 'api/annotationcorrection';
         var format = '.json';
-        console.log("this.isNew()="+this.isNew());
-        console.log("this.id="+this.id);
         if (this.isNew()) return base + format;
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
@@ -44,23 +27,7 @@ var AnnotationCorrectionModel = Backbone.Model.extend({
     }
 });
 
-
-//var AnnotationModel = Backbone.Model.extend({
-//
-//    url:function () {
-//        var base = 'api/annotation';
-//        var format = '.json';
-//        if (this.isNew()) return base + format;
-//        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-//    }
-//});
-
-
-
 var AnnotationReviewedModel = Backbone.Model.extend({
-//    isNew:function () {
-//        return true;
-//    },
     url:function () {
         if(this.fill)
             return 'api/annotation/' + this.id + "/review/fill.json";
@@ -71,7 +38,6 @@ var AnnotationReviewedModel = Backbone.Model.extend({
         this.fill = options.fill;
     }
 });
-
 
 var AnnotationCopyModel = Backbone.Model.extend({
     isNew:function () {
@@ -86,80 +52,56 @@ var AnnotationCopyModel = Backbone.Model.extend({
     }
 });
 
-
-var AnnotationCropModel = Backbone.Model.extend({
-
-    url:null,
-    initialize:function (options) {
-        this.url = options.url;
-    }
-});
-
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
     model:AnnotationModel,
     fullSize:-1,
     url:function () {
 
-        var offset = "";
-        if (this.offset != undefined) {
-            offset = offset + "&offset=" + this.offset;
+        //construct queryString
+        var queryString = "";
+        if (this.offset) {
+            queryString = queryString + "&offset=" + this.offset;
         }
-        if (this.maxResult != undefined) {
-            offset = offset + "&max=" + this.maxResult;
+        if (this.maxResult) {
+            queryString = queryString + "&max=" + this.maxResult;
+        }
+        if (this.notReviewedOnly) {
+            queryString = queryString + "&notreviewed=" + this.notReviewedOnly;
         }
 
-        var notReviewedOnly = "";
-        if (this.notReviewedOnly != undefined) {
-            notReviewedOnly = notReviewedOnly + "&notreviewed=" + this.notReviewedOnly;
-        }
-
+        //construct url
         if (this.user != undefined) {
-
-            return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json?" + offset + notReviewedOnly;
+            return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json?" + queryString;
         } else if (this.term != undefined && this.project != undefined) {
-            var users = undefined;
-            if (this.users != undefined) {
-                users = this.users.join('_');
+            if (this.users) {
+                queryString += "&users=" + this.users.join('_');
             }
-            var images = undefined;
-            if (this.images != undefined) {
-                images = this.images.join('_');
+            if (this.images) {
+                queryString += "&images=" + this.images.join('_');
             }
             if (this.term < "0") { //annotations without terms (-1), annotations with multiple terms (-2)
-                var critera = "";
                 if (this.term == -1) {
-                    critera = "noTerm=true";
+                    queryString += "&noTerm=true";
                 } else if (this.term == -2) {
-                    critera = "multipleTerm=true";
+                    queryString += "&multipleTerm=true";
                 }
-                var url = "api/project/" + this.project + "/annotation.json?" + critera + offset;
-                if (users) {
-                    url += "&users=" + users;
-                }
-                if (images) {
-                    url += "&images=" + images;
-                }
-                return url;
+                return "api/project/" + this.project + "/annotation.json?" + queryString;
             }
             if (this.suggestTerm != undefined) { //ask annotation with suggest term diff than correct term
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm=" + this.suggestTerm + "&job=" + this.job + offset;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm=" + this.suggestTerm + "&job=" + this.job + queryString;
             }
 
-            if (this.term >= "0" && this.users == undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + offset;
+            if (this.term >= "0" && this.users == undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + queryString;
             if (this.term >= "0" && this.users != undefined && this.images == undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + offset;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + queryString;
             }
             if (this.term >= "0" && this.users == undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images=" + images + offset;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images=" + images + queryString;
             }
             if (this.term >= "0" && this.users != undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + "&images=" + images + offset;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + "&images=" + images + queryString;
             }
-
-            return "error";
-
-
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/annotation.json";
         } else if (this.image != undefined && this.term != undefined) {
@@ -199,12 +141,6 @@ var AnnotationCollection = Backbone.Collection.extend({
 });
 
 
-
-
-
-
-
-
 // define our collection
 var AnnotationReviewedCollection = Backbone.Collection.extend({
     model:AnnotationModel,
@@ -214,10 +150,6 @@ var AnnotationReviewedCollection = Backbone.Collection.extend({
         if (this.offset != undefined) {
             offset = offset + "offset=" + this.offset;
         }
-//        console.log("ZOOM="+ this.map.getZoomLevel());
-//        if (this.map != undefined) {
-//            offset = offset + "&zoom=" + this.map.getZoomLevel();
-//        }
         return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
     },
     initialize:function (options) {

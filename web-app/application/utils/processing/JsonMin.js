@@ -3,7 +3,7 @@ var JsonMin = {
     conversion:null,
 
     createConvertTable:function () {
-        this.conversion = new Object();
+        this.conversion = {};
         this.conversion["class"] = "cl0";
     },
 

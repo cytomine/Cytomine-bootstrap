@@ -61,7 +61,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
     createStatsView:function () {
         var self = this;
         //Get term from annotation
-        var dataTerm = new Object();
+        var dataTerm = {};
         self.model.each(function (annotation) {
             var termArray = annotation.get('term');
             _.each(termArray, function (termid) {
@@ -80,7 +80,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
         console.log("drawPieChartTerm");
         self.drawPieChartTerm(dataTerm);
 
-        var dataProject = new Object();
+        var dataProject = {};
         self.model.each(function (annotation) {
             var projectId = annotation.get('project');
             if (dataProject[projectId] != null) {

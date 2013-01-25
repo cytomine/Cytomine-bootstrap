@@ -14,8 +14,8 @@ var ApplicationView = Backbone.View.extend({
     intervals:[], //references to followInterval, positionInterval...
     isMobile:( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration:[
-        {key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},
-        {key:"sidebar-map-right", linkID:"toggle-sidebar-map-right", name:"Right Panels", className:"sidebar-map-right", value:{ visible:true}}
+        /*{key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},*/
+        {key:"sidebar-map-right", linkID:"toggle-sidebar-map-right", name:"Panels", className:["sidebar-map-right"], value:{ visible:true}}
     ],
     events:{
 
@@ -47,7 +47,6 @@ var ApplicationView = Backbone.View.extend({
     hideFloatingPanel : function (item) {
         if (_.isArray(item.className)) {
             _.each(item.className, function(_className){
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>hide"+_className);
                 $("." + _className).hide();
             });
         } else {

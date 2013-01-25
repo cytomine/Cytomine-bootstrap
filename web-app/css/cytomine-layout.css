@@ -71,15 +71,33 @@ div .sidebar-map {
     width: 261px;
 }
 
+div .sidebar-toolbar {
+    z-index: 800;
+    position : absolute;
+    right: 5px;
+    top: 85px;
+}
+
+div .toolbar-group > .btn {
+    padding: 0px;
+}
+
+
+.btn-group-vertical .btn:first-child {
+    -webkit-border-radius: 0px 0px 0 0;
+    -moz-border-radius: 0px 0px 0 0;
+    border-radius: 0px 0px 0 0;
+}
+
 div .sidebar-map-left {
     position : absolute;
-    left: 5px;
-    top: 85px;
+    left: 10px;
+    bottom: 85px;
 }
 
 div .sidebar-map-right {
     position : absolute;
-    right: 5px;
+    right: 43px;
     top: 85px;
 }
 
@@ -117,16 +135,12 @@ div .popupPanel a {
 
 div .annotationsPanel {
     position : absolute;
-    max-width: 500px;
-    max-height: 650px;
     z-index : 1004;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgb(90, 89, 89);
     color : #fff;
     padding: 0px;
+    margin: 0px;
     border : 2px solid #000;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
     overflow : auto;
 }
 
@@ -234,7 +248,7 @@ div.olControlOverviewMapElement img {
 
 #alerts {
     position: absolute;
-    left: 20px;
+    right: 20px;
     bottom : 10px;
     z-index: 2200;
 }
@@ -409,7 +423,7 @@ div.olControlZoomPanel {
     width: 36px;
     position: absolute;
     top: 3px;
-    left: 267px;
+    left: 10px;
 }
 div.olControlZoomPanel div {
     width: 36px;

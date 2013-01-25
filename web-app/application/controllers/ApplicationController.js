@@ -31,7 +31,7 @@ var ApplicationController = Backbone.Router.extend({
         self.models.annotations = new AnnotationCollection({});
 
         //"hashtable" with custom collection (useful in software page)
-        self.models.currentCollection = new Object();
+        self.models.currentCollection = {};
 
         //fetch models
         var modelsToPreload = [];
@@ -223,7 +223,7 @@ var ApplicationController = Backbone.Router.extend({
         this.models.currentCollection[key] = value;
     },
     clearCache:function () {
-        this.models.currentCollection = new Object();
+        this.models.currentCollection = {};
     },
     addOrReplaceEvent : function (element, eventType, fCallback) {
             if (!element || !element.data('events') || !element.data('events')[eventType] || !fCallback) {
