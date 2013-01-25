@@ -240,7 +240,7 @@ class RestUserAnnotationController extends RestController {
     def addComment = {
 
         User sender = User.read(springSecurityService.principal.id)
-        UserAnnotation annotation = UserAnnotation.read(params.getLong('userannotation'))
+        UserAnnotation annotation = userAnnotationService.read(params.getLong('userannotation'))
         log.info "add comment from " + sender + " and userannotation " + annotation
 
         //create annotation crop (will be send with comment)

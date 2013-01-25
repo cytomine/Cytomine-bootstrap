@@ -67,10 +67,10 @@ class Task extends CytomineDomain{
     /**
      * Return domain user (annotation user, image user...)
      * By default, a domain has no user.
-     * You need to override userDomain() in domain class
+     * You need to override userDomainCreator() in domain class
      * @return Domain user
      */
-    public SecUser userDomain() {
+    public SecUser userDomainCreator() {
         return user;
     }
 }

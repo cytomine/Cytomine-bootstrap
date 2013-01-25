@@ -17,21 +17,8 @@ import be.cytomine.test.http.TermAPI
  * Time: 11:08
  * To change this template use File | Settings | File Templates.
  */
-class TermSecurityTests extends functionaltestplugin.FunctionalTestCase {
+class TermSecurityTests extends SecurityTestsAbstract {
 
-    /**
-     * Security test
-     */
-    static String USERNAME1 = "USERNAME1"
-    static String PASSWORD1 = "PASSWORD1"
-    static String USERNAME2 = "USERNAME2"
-    static String PASSWORD2 = "PASSWORD2"
-    static String USERNAME3 = "USERNAME3"
-    static String PASSWORD3 = "PASSWORD3"
-    static String USERNAMEADMIN = "USERNAMEADMIN"
-    static String PASSWORDADMIN = "PASSWORDADMIN"
-    static String USERNAMEBAD = "BADUSER"
-    static String PASSWORDBAD = "BADPASSWORD"
 
   void testTermSecurityForCytomineAdmin() {
 

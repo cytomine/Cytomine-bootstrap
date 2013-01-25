@@ -80,10 +80,10 @@ abstract class CytomineDomain  implements Comparable{
     /**
      * Return domain user (annotation user, image user...)
      * By default, a domain has no user.
-     * You need to override userDomain() in domain class
+     * You need to override userDomainCreator() in domain class
      * @return Domain user
      */
-    public SecUser userDomain() {
+    public SecUser userDomainCreator() {
         return null;
     }
 
@@ -129,20 +129,29 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
+    /**
+     * Check if current user has read permission on this domain
+     */
     boolean checkReadPermission() {
-        println "checkReadPermission1=${hasPermission("READ")}"
-        println "checkReadPermission2=${cytomineService.currentUser.admin}"
-        return hasPermission("READ") || cytomineService.currentUser.admin
+        return checkPermission("READ")
     }
 
+    /**
+     * Check if current user has write permission on this domain
+     */
     boolean checkWritePermission() {
-        return hasPermission("WRITE") || cytomineService.currentUser.admin
+        return checkPermission("WRITE")
     }
 
+    /**
+     * Check if current user has delete permission on this domain
+     */
     boolean checkDeletePermission() {
-        println "checkReadPermission1=${hasPermission("DELETE")}"
-        println "checkReadPermission2=${cytomineService.currentUser.admin}"
-        return hasPermission("DELETE") || cytomineService.currentUser.admin
+        return checkPermission("DELETE")
+    }
+
+    boolean checkPermission(String permission) {
+        return hasPermission(permission) || cytomineService.currentUser.admin
     }
 
     /**
@@ -200,21 +209,6 @@ abstract class CytomineDomain  implements Comparable{
             e.printStackTrace()
         }
         return false
-    }
-
-    /**
-     * Check if current user is the object creator
-     */
-    boolean isCurrentUserCreator() {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        def creator = retrieveCreator()
-        return creator && creator.id==currentUser.id
-    }
-
-    User retrieveCreator() {
-        List<User> users = SecUser.executeQuery("select secUser from AclObjectIdentity as aclObjectId, AclSid as aclSid, SecUser as secUser where aclObjectId.objectId = "+this.id+" and aclObjectId.owner = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
-        User user = users.isEmpty() ? null : users.first()
-        return user
     }
 
     int compareTo(obj) {
