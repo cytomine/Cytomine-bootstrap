@@ -13,6 +13,7 @@ import be.cytomine.security.UserJob
 import javassist.tools.rmi.ObjectNotFoundException
 
 import java.text.SimpleDateFormat
+import groovy.sql.Sql
 
 /**
  * Handle HTTP Requests for CRUD operations on the User Job domain class.
@@ -27,6 +28,7 @@ class RestUserJobController extends RestController {
     def ontologyService
     def imageInstanceService
     def jobService
+    def dataSource
 
     /**
      * Get a user job
@@ -142,48 +144,33 @@ class RestUserJobController extends RestController {
                 //just get user job that add data to images
                 def userJobs = []
                 def image = imageInstanceService.read(params.getLong("image"))
-                if (!image) throw new ObjectNotFoundException("Image ${params.image} was not found!")
+                if (!image) {
+                    throw new ObjectNotFoundException("Image ${params.image} was not found!")
+                }
                 //TODO:: should be optim!!! (see method head comment)
 
-                /**
-                 *
-                 * SELECT sec_user.id, job.id, software.id, software.name, TO TIMESTAMP (job.created),job.dataDeleted
-                 FROM job, sec_user, software
-                 WHERE job.project_id = 67
-                 AND job.id = sec_user.job_id
-                 AND job.software_id = software.id
-                 AND sec_user.id IN (SELECT DISTINCT user_id FROM algo_annotation WHERE image_id = 377608)
-                 ORDER BY job.created DESC;
-                 *
-                 *
-                 *
-                 *
-                  */
 
-
-
-
-
-
-                List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
-
-                allJobs.each { job ->
-
-                    def userJob = UserJob.findByJob(job);
-                    if (userJob && AlgoAnnotation.countByUserAndImage(userJob, image) > 0) {
-                        def item = [:]
-                        item.id = userJob.id
-                        item.idJob = job.id
-                        item.idSoftware = job.software.id
-                        item.softwareName = job.software.name
-                        item.created = job.created.getTime()
-                        item.algo = true
-                        item.isDeleted = job.dataDeleted
-                        userJobs << item
-                    }
-
+                //better perf with sql request
+                String request = "SELECT sec_user.id as idUser, job.id as idJob, software.id as idSoftware, software.name as softwareName, extract(epoch from job.created)*1000 as created,job.data_deleted as deleted "+
+                                 "FROM job, sec_user, software " +
+                                 "WHERE job.project_id = ${project.id} " +
+                                 "AND job.id = sec_user.job_id " +
+                                 "AND job.software_id = software.id "+
+                                 "AND sec_user.id IN (SELECT DISTINCT user_id FROM algo_annotation WHERE image_id = ${image.id}) "+
+                                 "ORDER BY job.created DESC"
+                def data = []
+                new Sql(dataSource).eachRow(request) {
+                    def item = [:]
+                    item.id = it.idUser
+                    item.idJob = it.idJob
+                    item.idSoftware = it.idSoftware
+                    item.softwareName = it.softwareName
+                    item.created = it.created
+                    item.algo = true
+                    item.isDeleted = it.deleted
+                    data << item
                 }
-                responseSuccess(userJobs)
+                responseSuccess(data)
             } else {
                 def userJobs = []
                 //TODO:: should be optim (see method head comment)
