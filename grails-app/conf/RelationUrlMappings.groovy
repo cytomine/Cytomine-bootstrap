@@ -8,7 +8,6 @@ class RelationUrlMappings {
 
     static mappings = {
         /* Relation (term)*/
-        //TODO: Implement (see AnnotationTerm for template)
         "/api/relation"(controller: "restRelation"){
             action = [GET:"list", POST:"add"]
         }

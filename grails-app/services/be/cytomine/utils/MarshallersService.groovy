@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.utils
 
 import grails.converters.JSON
 

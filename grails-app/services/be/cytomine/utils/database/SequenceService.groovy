@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.utils.database
 
 /**
  * Sequence service provide new id for domain

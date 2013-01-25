@@ -15,26 +15,18 @@ import grails.util.GrailsUtil
 import java.lang.management.ManagementFactory
 
 /**
- * TODO: cleaner le bootstrap
+ * Bootstrap contains code that must be execute during application (re)start
  */
 class BootStrap {
-    def springSecurityService
+
     def sequenceService
     def marshallersService
     def indexService
     def grailsApplication
-    def storageService
     def messageSource
-    def imagePropertiesService
-    def countersService
     def triggerService
     def grantService
     def userGroupService
-    def aclService
-    def aclUtilService
-    def objectIdentityRetrievalStrategy
-    def sessionFactory
-    def JSONMinService
 
 
 
@@ -47,16 +39,6 @@ class BootStrap {
     def init = { servletContext ->
 
 
-//        println "TEST***************************************"
-//        def test = UserAnnotation.createCriteria().list {
-//            inList("image.id", [])
-//        }
-//        println test
-//        println "***************************************"
-
-
-
-
         //Register API Authentifier
         log.info "Current directory2="+new File( 'test.html' ).absolutePath
 
@@ -67,7 +49,6 @@ class BootStrap {
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
-
 
         marshallersService.initMarshallers()
         sequenceService.initSequences()

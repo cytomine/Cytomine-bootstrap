@@ -1,4 +1,4 @@
-package cytomine.web
+package be.cytomine.utils.database
 
 /**
  * Created by IntelliJ IDEA.

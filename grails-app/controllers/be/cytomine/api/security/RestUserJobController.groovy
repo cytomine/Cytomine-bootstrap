@@ -143,11 +143,32 @@ class RestUserJobController extends RestController {
                 def userJobs = []
                 def image = imageInstanceService.read(params.getLong("image"))
                 if (!image) throw new ObjectNotFoundException("Image ${params.image} was not found!")
+                //TODO:: should be optim!!! (see method head comment)
+
+                /**
+                 *
+                 * SELECT sec_user.id, job.id, software.id, software.name, TO TIMESTAMP (job.created),job.dataDeleted
+                 FROM job, sec_user, software
+                 WHERE job.project_id = 67
+                 AND job.id = sec_user.job_id
+                 AND job.software_id = software.id
+                 AND sec_user.id IN (SELECT DISTINCT user_id FROM algo_annotation WHERE image_id = 377608)
+                 ORDER BY job.created DESC;
+                 *
+                 *
+                 *
+                 *
+                  */
+
+
+
+
+
 
                 List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
 
                 allJobs.each { job ->
-                    //TODO:: should be optim!!! (see method head comment)
+
                     def userJob = UserJob.findByJob(job);
                     if (userJob && AlgoAnnotation.countByUserAndImage(userJob, image) > 0) {
                         def item = [:]

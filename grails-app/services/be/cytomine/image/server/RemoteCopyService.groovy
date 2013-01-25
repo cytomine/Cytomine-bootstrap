@@ -1,8 +1,7 @@
-package cytomine.web
+package be.cytomine.image.server
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
-import be.cytomine.image.server.Storage
 
 /**
  * TODO: refactoring + doc + test
