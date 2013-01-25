@@ -13,6 +13,13 @@ import be.cytomine.security.User
 import grails.util.GrailsUtil
 
 import java.lang.management.ManagementFactory
+import be.cytomine.project.Project
+import org.springframework.security.acls.domain.BasePermission
+import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
 
 /**
  * Bootstrap contains code that must be execute during application (re)start
@@ -77,6 +84,43 @@ class BootStrap {
         /* Fill data just in test environment*/
         if (GrailsUtil.environment == BootStrap.test) {
             initData(GrailsUtil.environment)
+        }
+
+        //toVersion1()
+    }
+
+    def userService
+    def permissionService
+
+    private def toVersion1() {
+        SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        /*
+        =======> Script boostrap:
+        -Pour chaque project
+        --Pour chaque user du projet
+        ---Ajouter le droit de read a l'ontologie du projet
+        -Pour chaque ontologie
+        --Ajouter le doit d'admin au créateur de l'ontologie
+        -Pour chaque software
+        --Ajouter un droit de créateur/admin a qqun
+         */
+        Project.withTransaction {
+            Project.list().each { project ->
+                def users = userService.listUsers(project)
+                users.each { user ->
+                    permissionService.addPermission(project.ontology,user.username,BasePermission.READ)
+                }
+            }
+
+            Ontology.list().each { ontology ->
+                permissionService.addPermission(ontology,ontology.user.username,BasePermission.ADMINISTRATION)
+            }
+
+            Software.list().each { software ->
+                permissionService.addPermission(software,User.findByUsername("lrollus").username,BasePermission.ADMINISTRATION)
+                permissionService.addPermission(software,User.findByUsername("rmaree").username,BasePermission.ADMINISTRATION)
+                permissionService.addPermission(software,User.findByUsername("stevben").username,BasePermission.ADMINISTRATION)
+            }
         }
     }
 

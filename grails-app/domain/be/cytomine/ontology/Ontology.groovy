@@ -32,7 +32,9 @@ class Ontology extends CytomineDomain implements Serializable {
         Ontology.withNewSession {
             if(name) {
                 Ontology ontology = Ontology.findByName(name)
-                if(ontology!=null && (ontology.id!=id))  throw new AlreadyExistException("Ontology " + ontology.name + " already exist!")
+                if(ontology!=null && (ontology.id!=id))  {
+                    throw new AlreadyExistException("Ontology " + ontology.name + " already exist!")
+                }
             }
         }
     }
