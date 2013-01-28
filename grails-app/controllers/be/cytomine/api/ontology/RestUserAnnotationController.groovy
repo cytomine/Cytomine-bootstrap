@@ -135,7 +135,6 @@ class RestUserAnnotationController extends RestController {
             }
             else {
                 Term suggestedTerm = termService.read(params.suggestTerm)
-                //TODO:: improve this with a single SQL request
                 def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
                 if (params.offset != null) {
                     responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
