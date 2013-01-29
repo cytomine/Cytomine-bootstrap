@@ -69,7 +69,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         });
     },
     getFullWidth:function () {
-        return Math.round($(window).width() - 400);
+        return Math.round($(window).width() - 200);
     },
     drawProjectColumnChart : function() {
         var self = this;
