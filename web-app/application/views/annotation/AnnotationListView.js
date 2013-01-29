@@ -6,15 +6,15 @@
  * To change this template use File | Settings | File Templates.
  */
 var AnnotationListView = Backbone.View.extend({
-    tagName:"div",
-    self:this,
-    alreadyBuild:false,
-    initialize:function (options) {
+    tagName: "div",
+    self: this,
+    alreadyBuild: false,
+    initialize: function (options) {
         this.container = options.container;
         this.idAnnotation = options.idAnnotation;
     },
 
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/annotation/AnnotationList.tpl.html"
@@ -25,11 +25,11 @@ var AnnotationListView = Backbone.View.extend({
 
         return this;
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
 
 
         var self = this;
-        $(this.el).html(_.template(tpl, {name:"name", area:"area"}));
+        $(this.el).html(_.template(tpl, {name: "name", area: "area"}));
 
         self.model.each(function (annotation) {
             //$("#annotationList").append(annotation.get('name') + " <br>");
@@ -45,9 +45,9 @@ var AnnotationListView = Backbone.View.extend({
         var data = [];
         self.model.each(function (image) {
             data[i] = {
-                id:image.id,
-                filename:image.get('filename'),
-                created:''
+                id: image.id,
+                filename: image.get('filename'),
+                created: ''
             };
             i++;
         });
@@ -56,7 +56,7 @@ var AnnotationListView = Backbone.View.extend({
     /**
      * Init annotation tabs
      */
-    initAnnotation:function () {
+    initAnnotation: function () {
         var self = this;
 
 

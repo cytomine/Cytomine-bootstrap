@@ -6,31 +6,31 @@
  * To change this template use File | Settings | File Templates.
  */
 var ProjectPanelView = Backbone.View.extend({
-    tagName:"div",
-    loadImages:true, //load images from server or simply show/hide images
-    imageOpened:false, //image are shown or not
-    project:null,
-    projectElem:"#projectlist", //div with project info
-    imageOpenElem:"#projectopenimages",
-    imageAddElem:"#projectaddimages",
-    projectChangeElem:"#radioprojectchange",
-    projectChangeDialog:"div#projectchangedialog",
-    loadImagesInAddPanel:true,
-    projectsPanel:null,
-    container:null,
-    initialize:function (options) {
+    tagName: "div",
+    loadImages: true, //load images from server or simply show/hide images
+    imageOpened: false, //image are shown or not
+    project: null,
+    projectElem: "#projectlist", //div with project info
+    imageOpenElem: "#projectopenimages",
+    imageAddElem: "#projectaddimages",
+    projectChangeElem: "#radioprojectchange",
+    projectChangeDialog: "div#projectchangedialog",
+    loadImagesInAddPanel: true,
+    projectsPanel: null,
+    container: null,
+    initialize: function (options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
         _.bindAll(this, 'render');
     },
-    events:{
-        "click .addSlide":"showAddSlidesPanel",
-        "click .seeSlide":"showSlidesPanel",
-        "click .editProject":"editProject",
-        "click .deleteProject":"deleteProject",
-        "click .infoProject":"infoProject"
+    events: {
+        "click .addSlide": "showAddSlidesPanel",
+        "click .seeSlide": "showSlidesPanel",
+        "click .editProject": "editProject",
+        "click .deleteProject": "deleteProject",
+        "click .infoProject": "infoProject"
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectDetail.tpl.html"
@@ -41,11 +41,11 @@ var ProjectPanelView = Backbone.View.extend({
 
         return this;
     },
-    refresh:function () {
+    refresh: function () {
 
         var self = this;
         self.model.fetch({
-            success:function (model, response) {
+            success: function (model, response) {
 
                 self.loadImages = true;
                 require([
@@ -60,13 +60,13 @@ var ProjectPanelView = Backbone.View.extend({
         });
 
     },
-    clear:function () {
+    clear: function () {
         var self = this;
         //$("#projectlist" + self.model.id).replaceWith("");
         self.projectsPanel.refresh();
 
     },
-    doLayout:function (tpl, replace) {
+    doLayout: function (tpl, replace) {
 
         var self = this;
 
@@ -78,7 +78,9 @@ var ProjectPanelView = Backbone.View.extend({
 
         var maxNumberOfChar = 20;
         var title = json.name;
-        if (title.length > maxNumberOfChar) title = title.substr(0, maxNumberOfChar) + "...";
+        if (title.length > maxNumberOfChar) {
+            title = title.substr(0, maxNumberOfChar) + "...";
+        }
         json.title = title;
 
 
@@ -86,8 +88,12 @@ var ProjectPanelView = Backbone.View.extend({
             json.disciplineName = "Undefined";
         }
 
-        if (json.disciplineName.length > maxNumberOfChar) json.disciplineName = json.disciplineName.substr(0, maxNumberOfChar) + "...";
-        if (json.ontologyName.length > maxNumberOfChar) json.ontologyName = json.ontologyName.substr(0, maxNumberOfChar) + "...";
+        if (json.disciplineName.length > maxNumberOfChar) {
+            json.disciplineName = json.disciplineName.substr(0, maxNumberOfChar) + "...";
+        }
+        if (json.ontologyName.length > maxNumberOfChar) {
+            json.ontologyName = json.ontologyName.substr(0, maxNumberOfChar) + "...";
+        }
         json.ontologyId = idOntology;
 
         var html = _.template(tpl, json);
@@ -95,24 +101,25 @@ var ProjectPanelView = Backbone.View.extend({
         if (replace) {
             $("#projectlist" + json.id).replaceWith(html);
         }
-        else
+        else {
             $(self.el).append(html);
+        }
 
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
     },
-    infoProject : function() {
+    infoProject: function () {
         var self = this;
-        new ProjectInfoDialog({el : self.el, model : self.model}).render();
+        new ProjectInfoDialog({el: self.el, model: self.model}).render();
     },
-    editProject:function () {
+    editProject: function () {
 
         var self = this;
         $('#editproject').remove();
         console.log('editProject');
-        self.editProjectDialog = new EditProjectDialog({projectPanel:self, el:self.el, model:self.model}).render();
+        self.editProjectDialog = new EditProjectDialog({projectPanel: self, el: self.el, model: self.model}).render();
     },
-    deleteProject:function () {
+    deleteProject: function () {
         var self = this;
         if (self.model.get("numberOfImages") > 0 || self.model.get("numberOfAnnotations") > 0 || self.model.get("numberOfSlides") > 0) {
             self.refuseDeleteProject(self.model.get("numberOfImages"));
@@ -120,15 +127,15 @@ var ProjectPanelView = Backbone.View.extend({
             self.acceptDeleteProject();
         }
     },
-    refuseDeleteProject:function (numberOfImage) {
+    refuseDeleteProject: function (numberOfImage) {
         var self = this;
         require(["text!application/templates/project/ProjectDeleteRefuseDialog.tpl.html"], function (tpl) {
             $("#dialogsDeleteProject").replaceWith('');
             var dialog = new ConfirmDialogView({
-                el:'#dialogsDeleteProject',
-                template:_.template(tpl, {project:self.model.get('name'), numberOfImage:numberOfImage}),
-                dialogAttr:{
-                    dialogID:'#delete-project-refuse'
+                el: '#dialogsDeleteProject',
+                template: _.template(tpl, {project: self.model.get('name'), numberOfImage: numberOfImage}),
+                dialogAttr: {
+                    dialogID: '#delete-project-refuse'
                 }
             }).render();
             $("#closeProjectDeleteRefuseDialog").click(function () {
@@ -137,28 +144,28 @@ var ProjectPanelView = Backbone.View.extend({
             });
         });
     },
-    acceptDeleteProject:function () {
+    acceptDeleteProject: function () {
         var self = this;
         require(["text!application/templates/project/ProjectDeleteConfirmDialog.tpl.html"], function (tpl) {
             // $('#dialogsTerm').empty();
             var dialog = new ConfirmDialogView({
-                el:'#dialogsDeleteProject',
-                template:_.template(tpl, {project:self.model.get('name')}),
-                dialogAttr:{
-                    dialogID:'#delete-project-confirm'
+                el: '#dialogsDeleteProject',
+                template: _.template(tpl, {project: self.model.get('name')}),
+                dialogAttr: {
+                    dialogID: '#delete-project-confirm'
                 }
             }).render();
             $("#closeProjectDeleteConfirmDialog").click(function () {
-                new ProjectModel({id:self.model.id}).destroy(
+                new ProjectModel({id: self.model.id}).destroy(
                     {
-                        success:function (model, response) {
+                        success: function (model, response) {
                             window.app.view.message("Project", response.message, "success");
                             self.clear();
                             $('#delete-project-confirm').modal("hide");
                             $('#delete-project-confirm').remove();
 
                         },
-                        error:function (model, response) {
+                        error: function (model, response) {
                             var json = $.parseJSON(response.responseText);
                             window.app.view.message("Project", json.errors[0], "error");
                         }
@@ -168,42 +175,46 @@ var ProjectPanelView = Backbone.View.extend({
         });
 
     },
-    showAddSlidesPanel:function () {
+    showAddSlidesPanel: function () {
         window.location = "#project-manage-" + this.model.id;
     },
-    showSlidesPanel:function () {
+    showSlidesPanel: function () {
         var self = this;
         self.openImagesList(self.model.get('id'));
 
         //change the icon
         self.imageOpened = !self.imageOpened;
-        $(self.imageOpenElem + self.model.id).button({icons:{secondary:self.imageOpened ? "ui-icon-carat-1-n" : "ui-icon-carat-1-s" }});
+        $(self.imageOpenElem + self.model.id).button({icons: {secondary: self.imageOpened ? "ui-icon-carat-1-n" : "ui-icon-carat-1-s" }});
     },
-    changeProject:function () {
+    changeProject: function () {
 
         var self = this;
         var idProject = self.model.get('id');
 
-        if (idProject == window.app.status.currentProject) return true;
+        if (idProject == window.app.status.currentProject) {
+            return true;
+        }
 
         window.app.controllers.browse.closeAll();
         window.app.status.currentProject = idProject;
 
         return true;//go to dashboard
     },
-    renderShowImageButton:function (imageNumber) {
+    renderShowImageButton: function (imageNumber) {
 
         var self = this;
 
         var disabledButton = true;
-        if (imageNumber > 0) disabledButton = false;
+        if (imageNumber > 0) {
+            disabledButton = false;
+        }
 
         $(self.imageOpenElem + self.model.id).button({
-            icons:{secondary:"ui-icon-carat-1-s"},
-            disabled:disabledButton
+            icons: {secondary: "ui-icon-carat-1-s"},
+            disabled: disabledButton
         });
     },
-    renderCurrentProjectButton:function () {
+    renderCurrentProjectButton: function () {
         var self = this;
 
         var isCurrentProject = window.app.status.currentProject == self.model.id
@@ -211,8 +222,10 @@ var ProjectPanelView = Backbone.View.extend({
         /*$(self.el).find(self.projectChangeElem + self.model.id).button({
          icons : {secondary : "ui-icon-image"}
          }); */
-        if (isCurrentProject) $(self.projectChangeElem + self.model.id).click();
+        if (isCurrentProject) {
+            $(self.projectChangeElem + self.model.id).click();
+        }
     },
-    openImagesList:function (idProject) {
+    openImagesList: function (idProject) {
     }
 });

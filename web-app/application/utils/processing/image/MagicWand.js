@@ -1,13 +1,13 @@
 var Processing = Processing || {};
 Processing.MagicWand = $.extend({}, Processing.Utils,
     {
-        defaultTolerance:70,
-        bbox:null,
-        canvas:null,
-        startX:null,
-        startY:null,
-        maxIter:10000,
-        process:function (params) { //canvas, canvasWidth, canvasHeight, startX, startY, tolerance
+        defaultTolerance: 70,
+        bbox: null,
+        canvas: null,
+        startX: null,
+        startY: null,
+        maxIter: 10000,
+        process: function (params) { //canvas, canvasWidth, canvasHeight, startX, startY, tolerance
             this.tolerance = params.tolerance || this.tolerance;
             this.canvasWidth = params.canvasWidth;
             this.canvasHeight = params.canvasHeight;
@@ -19,15 +19,17 @@ Processing.MagicWand = $.extend({}, Processing.Utils,
             this.startColorR = this.canvas.data[firstPixelPos];
             this.startColorG = this.canvas.data[firstPixelPos + 1];
             this.startColorB = this.canvas.data[firstPixelPos + 2];
-            if (this.matchReplacementColor(this.canvas, this.getPixelPos(this.startX, this.startY))) return; //already processed.
+            if (this.matchReplacementColor(this.canvas, this.getPixelPos(this.startX, this.startY))) {
+                return;
+            } //already processed.
             this.initBBOX(this.startX, this.startY);
 
             var success = this.wand(this.canvas, this.startX, this.startY);
 
-            return {success:success, canvas:this.canvas, bbox:this.bbox }
+            return {success: success, canvas: this.canvas, bbox: this.bbox }
 
         },
-        wand:function (canvas, startX, startY) {
+        wand: function (canvas, startX, startY) {
             var pixelStack = [
                 [startX, startY]
             ];
@@ -83,14 +85,14 @@ Processing.MagicWand = $.extend({}, Processing.Utils,
             return iter < this.maxIter;
         },
 
-        initBBOX:function (x, y) {
+        initBBOX: function (x, y) {
             this.bbox = {};
             this.bbox.xmin = x;
             this.bbox.xmax = x;
             this.bbox.ymin = y;
             this.bbox.ymax = y;
         },
-        updateBBOX:function (x, y) {
+        updateBBOX: function (x, y) {
             this.bbox.xmin = Math.min(this.bbox.xmin, x);
             this.bbox.xmax = Math.max(this.bbox.xmax, x);
             this.bbox.ymin = Math.min(this.bbox.ymin, y);

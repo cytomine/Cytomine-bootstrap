@@ -1,20 +1,20 @@
 var ImageFiltersPanel = Backbone.View.extend({
-    tagName:"div",
-    filter:null,
-    enabled:false,
-    parameters:[],
-    browseImageView:null,
+    tagName: "div",
+    filter: null,
+    enabled: false,
+    parameters: [],
+    browseImageView: null,
     /**
      * Constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.browseImageView = options.browseImageView;
     },
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require(["text!application/templates/explorer/ImageFiltersPanel.tpl.html"
         ], function (tpl) {
@@ -27,24 +27,24 @@ var ImageFiltersPanel = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
-        var el = $("#"+this.browseImageView.divId).find('#imageFiltersPanel' + this.model.get('id'));
-        this.model.set({isDesktop:!window.app.view.isMobile});
+        var el = $("#" + this.browseImageView.divId).find('#imageFiltersPanel' + this.model.get('id'));
+        this.model.set({isDesktop: !window.app.view.isMobile});
         el.html(_.template(tpl, this.model.toJSON()));
         el.find("#contrast" + this.model.get("id")).slider({
-            min:0,
-            max:256,
-            value:128,
-            change:function (event, ui) {
+            min: 0,
+            max: 256,
+            value: 128,
+            change: function (event, ui) {
                 self.redraw();
             }
         });
         el.find("#brightness" + this.model.get("id")).slider({
-            min:0,
-            max:256,
-            value:128,
-            change:function (event, ui) {
+            min: 0,
+            max: 256,
+            value: 128,
+            change: function (event, ui) {
                 self.redraw();
             }
         });
@@ -64,7 +64,7 @@ var ImageFiltersPanel = Backbone.View.extend({
         });
     },
 
-    updateGetURL:function () {
+    updateGetURL: function () {
         var self = this;
         var getAdvancedURL = function (bounds) {
             bounds = this.adjustBounds(bounds);
@@ -105,20 +105,22 @@ var ImageFiltersPanel = Backbone.View.extend({
         self.browseImageView.map.baseLayer.redraw();
 
     },
-    redraw:function () {
+    redraw: function () {
         if (!this.enabled) {
             this.parameters = [];
             this.updateGetURL();
             return;
         }
-        var el = $("#"+this.browseImageView.divId).find("#imageFiltersPanel" + this.model.get("id"));
+        var el = $("#" + this.browseImageView.divId).find("#imageFiltersPanel" + this.model.get("id"));
         var brightness = parseInt(el.find("#brightness" + this.model.get("id")).slider("value"));
         var contrast = parseInt(el.find("#contrast" + this.model.get("id")).slider("value"));
         var invert = (el.find("input[name=invert]").attr("checked") == "checked");
         this.parameters = [];
-        this.parameters.push({ key:"brightness", value:brightness});
-        this.parameters.push({ key:"contrast", value:contrast});
-        if (invert) this.parameters.push({ key:"invert", value:true});
+        this.parameters.push({ key: "brightness", value: brightness});
+        this.parameters.push({ key: "contrast", value: contrast});
+        if (invert) {
+            this.parameters.push({ key: "invert", value: true});
+        }
         this.updateGetURL();
     }
 });

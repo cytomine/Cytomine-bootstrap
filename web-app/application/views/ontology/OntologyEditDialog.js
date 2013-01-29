@@ -1,12 +1,12 @@
 var EditOntologyDialog = Backbone.View.extend({
-    ontologyPanel:null,
-    editOntologyDialog:null,
-    initialize:function (options) {
+    ontologyPanel: null,
+    editOntologyDialog: null,
+    initialize: function (options) {
         this.container = options.container;
         this.ontologyPanel = options.ontologyPanel;
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/ontology/OntologyEditDialog.tpl.html"
@@ -16,7 +16,7 @@ var EditOntologyDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (ontologyEditDialogTpl) {
+    doLayout: function (ontologyEditDialogTpl) {
 
         var self = this;
         $("#editontology").replaceWith("");
@@ -38,8 +38,8 @@ var EditOntologyDialog = Backbone.View.extend({
 
         //Build dialog
         self.editOntologyDialog = $("#editontology").modal({
-            keyboard:true,
-            backdrop:false
+            keyboard: true,
+            backdrop: false
         });
         $('#editOntologyButton').click(function () {
             $("#login-form-edit-ontology").submit();
@@ -55,23 +55,23 @@ var EditOntologyDialog = Backbone.View.extend({
         return this;
 
     },
-    fillForm:function () {
+    fillForm: function () {
         var self = this;
         $("#ontology-edit-name").val(self.model.get('name'));
     },
-    refresh:function () {
+    refresh: function () {
     },
-    open:function () {
+    open: function () {
         var self = this;
         self.clearEditOntologyPanel();
     },
-    clearEditOntologyPanel:function () {
+    clearEditOntologyPanel: function () {
         var self = this;
         $("#ontologyediterrormessage").empty();
         $("#ontologyediterrorlabel").hide();
         $("#ontology-edit-name").val("");
     },
-    editOntology:function () {
+    editOntology: function () {
         var self = this;
         $("#ontologyediterrormessage").empty();
         $("#ontologyediterrorlabel").hide();
@@ -81,13 +81,13 @@ var EditOntologyDialog = Backbone.View.extend({
         //edit ontology
         var ontology = self.model;
         ontology.unset('children'); //remove children (terms), they are not use by server
-        ontology.save({name:name}, {
-                success:function (model, response) {
+        ontology.save({name: name}, {
+                success: function (model, response) {
                     window.app.view.message("Ontology", response.message, "success");
                     $("#editontology").modal("hide");
                     self.ontologyPanel.refresh();
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     $("#ontologyediterrorlabel").show();
                     $("#ontologyediterrormessage").append(json.errors);

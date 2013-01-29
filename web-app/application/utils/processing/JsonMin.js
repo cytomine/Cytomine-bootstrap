@@ -1,15 +1,17 @@
 var JsonMin = {
 
-    conversion:null,
+    conversion: null,
 
-    createConvertTable:function () {
+    createConvertTable: function () {
         this.conversion = {};
         this.conversion["class"] = "cl0";
     },
 
-    getCompressKey:function (key) {
+    getCompressKey: function (key) {
         var compressKey = this.conversion[key];
-        if (compressKey != undefined) return compressKey
+        if (compressKey != undefined) {
+            return compressKey
+        }
         else {
             console.log("Oups! The key " + key + " has no its corresponding compress key! This model has not this attributs or there is a bug in compression :-)");
             return key;

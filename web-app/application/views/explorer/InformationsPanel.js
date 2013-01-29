@@ -7,19 +7,19 @@
  */
 
 var InformationsPanel = SideBarPanel.extend({
-    tagName:"div",
+    tagName: "div",
 
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.browseImageView = options.browseImageView;
     },
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/explorer/InformationsPanel.tpl.html"
@@ -32,7 +32,7 @@ var InformationsPanel = SideBarPanel.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         var content = _.template(tpl, self.model.toJSON());
         $('#informationsPanel' + self.model.get('id')).html(content);

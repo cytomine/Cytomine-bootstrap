@@ -7,7 +7,7 @@
  */
 var StatsModel = Backbone.Model.extend({
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/term.json";
         } else if (this.term != undefined) {
@@ -16,19 +16,19 @@ var StatsModel = Backbone.Model.extend({
             return "api/stat.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.term = options.term;
     }
 });
 
 var StatsProjectSoftwareModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/project/" + this.project + "/software/" + this.software + "/stats.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
     }
@@ -36,14 +36,14 @@ var StatsProjectSoftwareModel = Backbone.Model.extend({
 
 
 var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/avg.json?project=" + this.project + "&software=" + this.software;
         } else if (this.job != undefined) {
             return "api/stats/retrieval/avg.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -51,7 +51,7 @@ var StatsRetrievalSuggestionAVGModel = Backbone.Model.extend({
 });
 
 var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         console.log("StatsRetrievalSuggestionMatrixModel=" + this.project + "#" + this.software + "#" + this.job);
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/confusionmatrix.json?project=" + this.project + "&software=" + this.software;
@@ -59,7 +59,7 @@ var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
             return "api/stats/retrieval/confusionmatrix.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -67,14 +67,14 @@ var StatsRetrievalSuggestionMatrixModel = Backbone.Model.extend({
 });
 
 var StatsRetrievalSuggestionWorstTermModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/worstTerm.json?project=" + this.project + "&software=" + this.software;
         } else if (this.job != undefined) {
             return "api/stats/retrieval/worstTerm.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -82,14 +82,14 @@ var StatsRetrievalSuggestionWorstTermModel = Backbone.Model.extend({
 });
 
 var StatsRetrievalSuggestionWorstTermWithSuggest = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/worstTermWithSuggest.json?project=" + this.project + "&software=" + this.software;
         } else if (this.job != undefined) {
             return "api/stats/retrieval/worstTermWithSuggest.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -98,14 +98,14 @@ var StatsRetrievalSuggestionWorstTermWithSuggest = Backbone.Model.extend({
 
 
 var StatsRetrievalSuggestionWorstAnnotationModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/worstAnnotation.json?project=" + this.project + "&software=" + this.software;
         } else if (this.job != undefined) {
             return "api/stats/retrieval/worstAnnotation.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -113,14 +113,14 @@ var StatsRetrievalSuggestionWorstAnnotationModel = Backbone.Model.extend({
 });
 
 var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined) {
             return "api/stats/retrieval/evolution.json?project=" + this.project + "&software=" + this.software;
         } else if (this.job != undefined) {
             return "api/stats/retrieval/evolution.json?job=" + this.job;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -128,7 +128,7 @@ var StatsRetrievalSuggestionEvolutionModel = Backbone.Model.extend({
 });
 
 var StatsRetrievalEvolutionModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.project != undefined && this.software != undefined && this.term == undefined) {
             return "api/stats/retrieval-evolution/evolution.json?project=" + this.project + "&software=" + this.software;
         } else if (this.project != undefined && this.software != undefined && this.term != undefined) {
@@ -139,7 +139,7 @@ var StatsRetrievalEvolutionModel = Backbone.Model.extend({
             return "api/stats/retrieval-evolution/evolutionByTerm.json?job=" + this.job + "&term=" + this.term;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.software = options.software;
         this.job = options.job;
@@ -150,9 +150,9 @@ var StatsRetrievalEvolutionModel = Backbone.Model.extend({
 
 // define our collection
 var StatsTermCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/term.json";
         } else if (this.term != undefined) {
@@ -161,7 +161,7 @@ var StatsTermCollection = Backbone.Collection.extend({
             return "api/stat.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.term = options.term;
     }
@@ -169,66 +169,66 @@ var StatsTermCollection = Backbone.Collection.extend({
 
 // define our collection
 var StatsUserCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/user.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
     }
 });
 
 var StatsUserAnnotationCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/userannotations.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
     }
 });
 
 var StatsTermSlideCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/termslide.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
     }
 });
 
 var StatsUserSlideCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/userslide.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
     }
 });
 
 var StatsAnnotationEvolutionCollection = Backbone.Collection.extend({
-    model:StatsModel,
+    model: StatsModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/stats/annotationevolution.json?daysRange=" + this.daysRange + "&term=" + this.term;
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.daysRange = options.daysRange;
         this.term = options.term;

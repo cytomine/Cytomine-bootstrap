@@ -7,20 +7,20 @@
  */
 
 var AnnotationsPanel = Backbone.View.extend({
-    tagName:"div",
+    tagName: "div",
 
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.refreshAnnotationsTabsFunc = [];
         this.browseImageView = options.browseImageView;
     },
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/explorer/AnnotationsPanel.tpl.html"
@@ -30,7 +30,7 @@ var AnnotationsPanel = Backbone.View.extend({
 
         return this;
     },
-    createTabs:function (idOntology) {
+    createTabs: function (idOntology) {
         var self = this;
         require(["text!application/templates/explorer/TermTab.tpl.html", "text!application/templates/explorer/TermTabContent.tpl.html"], function (termTabTpl, termTabContentTpl) {
             var annotationPanel = $("#annotationsPanel" + self.model.id);
@@ -38,25 +38,25 @@ var AnnotationsPanel = Backbone.View.extend({
             var liEl = annotationPanel.find(".listtabannotation");
 
             //add "All annotation from all term" tab
-            ulEl.append(_.template(termTabTpl, { id:"all", image:self.model.id, name:"All"}));
-            liEl.append(_.template(termTabContentTpl, { id:"all", image:self.model.id, name:"All"}));
+            ulEl.append(_.template(termTabTpl, { id: "all", image: self.model.id, name: "All"}));
+            liEl.append(_.template(termTabContentTpl, { id: "all", image: self.model.id, name: "All"}));
             self.refreshAnnotationsTabsFunc.push({
-                index:0,
-                idTerm:"all",
-                refresh:function () {
+                index: 0,
+                idTerm: "all",
+                refresh: function () {
                     self.refreshAnnotations(undefined, $("#tabsterm-" + self.model.id + "-all"))
                 }
             });
             var i = 1;
             window.app.status.currentTermsCollection.each(function (term) {
                 //add x term tab
-                ulEl.append(_.template(termTabTpl, { id:term.get("id"), image:self.model.id, name:term.get("name")}));
-                liEl.append(_.template(termTabContentTpl, { id:term.get("id"), image:self.model.id, name:term.get("name")}));
+                ulEl.append(_.template(termTabTpl, { id: term.get("id"), image: self.model.id, name: term.get("name")}));
+                liEl.append(_.template(termTabContentTpl, { id: term.get("id"), image: self.model.id, name: term.get("name")}));
 
                 self.refreshAnnotationsTabsFunc.push({
-                    index:i,
-                    idTerm:term.get("id"),
-                    refresh:function () {
+                    index: i,
+                    idTerm: term.get("id"),
+                    refresh: function () {
                         self.refreshAnnotations(term.get("id"), $("#tabsterm-" + self.model.id + "-" + term.get("id")))
                     }
                 });
@@ -64,10 +64,10 @@ var AnnotationsPanel = Backbone.View.extend({
             });
             var annotationPanel = $("#annotationsPanel" + self.model.id);
             annotationPanel.find(".tabsAnnotation").tabs({
-                add:function (event, ui) {
+                add: function (event, ui) {
 
                 },
-                select:function (event, ui) {
+                select: function (event, ui) {
                     var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object) {
                         return (object.index == ui.index);
                     });
@@ -80,7 +80,7 @@ var AnnotationsPanel = Backbone.View.extend({
 
         });
     },
-    refreshAnnotationTabs:function (idTerm) {
+    refreshAnnotationTabs: function (idTerm) {
         var self = this;
         if (idTerm != undefined) {
             var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object) {
@@ -88,18 +88,18 @@ var AnnotationsPanel = Backbone.View.extend({
             });
             obj.refresh.call();
         } else { //refresh the current tab
-            var selected = $("#"+self.browseImageView.divId).find("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs("option", "selected");
+            var selected = $("#" + self.browseImageView.divId).find("#annotationsPanel" + self.model.id).find(".tabsAnnotation").tabs("option", "selected");
             self.refreshAnnotationsTabsFunc[selected].refresh.call();
         }
     },
-    refreshAnnotations:function (idTerm, el) {
-        new AnnotationCollection({image:this.model.id, term:idTerm}).fetch({
-            success:function (collection, response) {
+    refreshAnnotations: function (idTerm, el) {
+        new AnnotationCollection({image: this.model.id, term: idTerm}).fetch({
+            success: function (collection, response) {
                 el.empty();
                 var view = new AnnotationView({
-                    page:undefined,
-                    model:collection,
-                    el:el
+                    page: undefined,
+                    model: collection,
+                    el: el
                 }).render();
 
             }
@@ -109,13 +109,13 @@ var AnnotationsPanel = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
-        var el = $("#"+self.browseImageView.divId).find('#annotationsPanel' + self.model.get('id'));
+        var el = $("#" + self.browseImageView.divId).find('#annotationsPanel' + self.model.get('id'));
         var width = parseInt($(window).width());
-        el.html(_.template(tpl, {id:self.model.get('id')}));
-        new ProjectModel({id:window.app.status.currentProject}).fetch({
-            success:function (model, response) {
+        el.html(_.template(tpl, {id: self.model.get('id')}));
+        new ProjectModel({id: window.app.status.currentProject}).fetch({
+            success: function (model, response) {
                 self.createTabs(model.get("ontology"));
             }
         });
@@ -129,9 +129,9 @@ var AnnotationsPanel = Backbone.View.extend({
             el.find("div.panel_button").toggle();
             el.css("bottom", "0px");
             el.animate({
-                height:"302px"
+                height: "302px"
             }, "fast").animate({
-                    width:width
+                    width: width
                 }, "fast").find("div.panel_content").fadeIn();
 
             //Refresh selected tab
@@ -146,10 +146,10 @@ var AnnotationsPanel = Backbone.View.extend({
 
         el.find("div#hide_button").click(function () {
             el.animate({
-                height:"16px"
+                height: "16px"
             }, "fast")
                 .animate({
-                    width:"16px"
+                    width: "16px"
                 }, "fast");
 
             setTimeout(function () {

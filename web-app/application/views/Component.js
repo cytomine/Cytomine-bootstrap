@@ -1,8 +1,8 @@
 var Component = Backbone.View.extend({
-    tagName:"div",
-    views:{},
+    tagName: "div",
+    views: {},
     /* Component constructor */
-    initialize:function (options) {
+    initialize: function (options) {
         this.divId = options.divId;
         this.el = options.el;
         this.template = options.template;
@@ -20,7 +20,7 @@ var Component = Backbone.View.extend({
     /**
      *  Render the component into it's DOM element and add it to the menu
      */
-    render:function () {
+    render: function () {
         var self = this;
         $(this.el).append(this.template);
 
@@ -73,7 +73,7 @@ var Component = Backbone.View.extend({
     /**
      * Show the DOM element and disable the button associated to the component
      **/
-    activate:function () {
+    activate: function () {
         $("#" + this.divId).show();
         $("#" + this.buttonAttr.elButton).parent().addClass("active");
     },
@@ -81,7 +81,7 @@ var Component = Backbone.View.extend({
     /**
      * Hide the DOM element and enable the button associated
      */
-    deactivate:function () {
+    deactivate: function () {
         $("#" + this.divId).hide();
         $("#" + this.buttonAttr.elButton).parent().removeClass("active");
     },
@@ -92,7 +92,7 @@ var Component = Backbone.View.extend({
      * - scope : the DOM element name which contains pages
      * - name : the name of the page to activate
      */
-    show:function (view, scope, name) {
+    show: function (view, scope, name) {
         $(scope).find(".title.active").each(function () {
             $(this).removeClass("active");
         });

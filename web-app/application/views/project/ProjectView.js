@@ -1,10 +1,10 @@
 var ProjectView = Backbone.View.extend({
-    tagName:"div",
-    searchProjectPanelElem:"#searchProjectPanel",
-    projectListElem:"#projectlist",
-    projectList:null,
-    addSlideDialog:null,
-    initialize:function (options) {
+    tagName: "div",
+    searchProjectPanelElem: "#searchProjectPanel",
+    projectListElem: "#projectlist",
+    projectList: null,
+    addSlideDialog: null,
+    initialize: function (options) {
         this.container = options.container;
         this.model = options.model;
         this.el = options.el;
@@ -13,7 +13,7 @@ var ProjectView = Backbone.View.extend({
         this.ontologies = this.getOntologiesChoice();
         this.disciplines = this.getDisciplinesChoice();
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectList.tpl.html",
@@ -25,7 +25,7 @@ var ProjectView = Backbone.View.extend({
 
         return this;
     },
-    doLayout:function (tpl, newProjectBoxTpl) {
+    doLayout: function (tpl, newProjectBoxTpl) {
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
 
@@ -49,38 +49,40 @@ var ProjectView = Backbone.View.extend({
     /**
      * Show dialog to add a project
      */
-    showAddProjectPanel:function () {
+    showAddProjectPanel: function () {
 
         var self = this;
         $('#addproject').remove();
         self.addProjectDialog = new AddProjectDialog({
-            projectsPanel:self,
-            el:self.el,
-            ontologies:self.ontologies,
-            disciplines:self.disciplines
+            projectsPanel: self,
+            el: self.el,
+            ontologies: self.ontologies,
+            disciplines: self.disciplines
         }).render();
     },
     /**
      * Refresh all project panel
      */
-    refresh:function () {
+    refresh: function () {
         var self = this;
         var idUser = undefined;
 
         //_.each(self.projectList, function(panel){ panel.refresh(); });
-        if (self.addSlideDialog != null) self.addSlideDialog.refresh();
+        if (self.addSlideDialog != null) {
+            self.addSlideDialog.refresh();
+        }
 
 
-        new ProjectCollection({user:idUser}).fetch({
-            success:function (collection, response) {
+        new ProjectCollection({user: idUser}).fetch({
+            success: function (collection, response) {
                 self.model = collection;
                 self.render();
             }});
     },
-    getFullWidth:function () {
+    getFullWidth: function () {
         return Math.round($(window).width() - 90);
     },
-    generateAddProjectPanel:function () {
+    generateAddProjectPanel: function () {
         var self = this;
         require([
             "text!application/templates/project/AddProjectPanel.tpl.html"
@@ -94,41 +96,43 @@ var ProjectView = Backbone.View.extend({
     /**
      * Create search project panel
      */
-    loadSearchProjectPanel:function () {
+    loadSearchProjectPanel: function () {
 
 
         var self = this;
         //create project search panel
         self.searchProjectPanel = new ProjectSearchPanel({
-            model:self.model,
-            ontologies:self.ontologies,
-            disciplines:self.disciplines,
-            el:$("#projectViewNorth"),
-            container:self,
-            projectsPanel:self
+            model: self.model,
+            ontologies: self.ontologies,
+            disciplines: self.disciplines,
+            el: $("#projectViewNorth"),
+            container: self,
+            projectsPanel: self
         }).render();
     },
 
-    getOntologiesChoice:function () {
+    getOntologiesChoice: function () {
         var ontologies = new Backbone.Collection;
         ontologies.comparator = function (item) {
             return item.get("name");
         };
         _.each(this.model.models, function (project) {
-            if (ontologies.get(project.get("ontology")) == undefined)
-                ontologies.add({id:project.get("ontology"), name:project.get("ontologyName")});
+            if (ontologies.get(project.get("ontology")) == undefined) {
+                ontologies.add({id: project.get("ontology"), name: project.get("ontologyName")});
+            }
         });
         return ontologies;
 
     },
-    getDisciplinesChoice:function () {
+    getDisciplinesChoice: function () {
         var disciplines = new Backbone.Collection;
         disciplines.comparator = function (item) {
             return item.get("name");
         };
         _.each(this.model.models, function (project) {
-            if (disciplines.get(project.get("discipline")) == undefined && project.get("discipline") != null)
-                disciplines.add({id:project.get("discipline"), name:project.get("disciplineName")});
+            if (disciplines.get(project.get("discipline")) == undefined && project.get("discipline") != null) {
+                disciplines.add({id: project.get("discipline"), name: project.get("disciplineName")});
+            }
         });
         return disciplines;
     },
@@ -136,7 +140,7 @@ var ProjectView = Backbone.View.extend({
     /**
      * Print all project panel
      */
-    loadProjectsListing:function () {
+    loadProjectsListing: function () {
         var self = this;
 
 
@@ -148,9 +152,9 @@ var ProjectView = Backbone.View.extend({
         //print each project panel
         self.model.each(function (project) {
             var panel = new ProjectPanelView({
-                model:project,
-                projectsPanel:self,
-                container:self
+                model: project,
+                projectsPanel: self,
+                container: self
             }).render();
             self.projectList.push(panel);
             $(self.projectListElem).append(panel.el);
@@ -161,15 +165,16 @@ var ProjectView = Backbone.View.extend({
      * Show all project from the collection and hide the other
      * @param projectsShow  Project collection
      */
-    showProjects:function (projectsShow) {
+    showProjects: function (projectsShow) {
         var self = this;
         self.model.each(function (project) {
             //if project is in project result list, show it
-            if (projectsShow.get(project.id) != null)
-
+            if (projectsShow.get(project.id) != null) {
                 $(self.projectListElem + project.id).show();
-            else
+            }
+            else {
                 $(self.projectListElem + project.id).hide();
+            }
         });
     }
 

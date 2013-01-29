@@ -1,35 +1,35 @@
 var ExplorerController = Backbone.Router.extend({
 
-    tabs:null,
+    tabs: null,
 
-    routes:{
-        "tabs-annotation-:idAnnotation":"browseAnnotation",
-        "tabs-image-:idProject-:idImage-:idAnnotation":"browse",
-        "tabs-review-:idProject-:idImage-":"review",
-        "close":"close"
+    routes: {
+        "tabs-annotation-:idAnnotation": "browseAnnotation",
+        "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
+        "tabs-review-:idProject-:idImage-": "review",
+        "close": "close"
     },
 
-    initialize:function () {
+    initialize: function () {
     },
 
-    initTabs:function () { //SHOULD BE OUTSIDE OF THIS CONTROLLER
+    initTabs: function () { //SHOULD BE OUTSIDE OF THIS CONTROLLER
         this.tabs = new ExplorerTabs({
-            el:$("#explorer > .browser"),
-            container:window.app.view.components.explorer
+            el: $("#explorer > .browser"),
+            container: window.app.view.components.explorer
         }).render();
     },
 
-    browseAnnotation:function (idAnnotation) {
+    browseAnnotation: function (idAnnotation) {
         var self = this;
         console.log("browseAnnotation");
         //allow to access an annotation without knowing its projet/image (usefull to access annotation when we just have annotationTerm data).
-        new AnnotationModel({id:idAnnotation}).fetch({
-            success:function (model, response) {
+        new AnnotationModel({id: idAnnotation}).fetch({
+            success: function (model, response) {
                 self.browse(model.get("project"), model.get("image"), idAnnotation);
             }
         });
     },
-    browse:function (idProject, idImage, idAnnotation) {
+    browse: function (idProject, idImage, idAnnotation) {
         console.log("browse2");
         /*
          if (window.app.secondaryWindow) {
@@ -46,7 +46,7 @@ var ExplorerController = Backbone.Router.extend({
             console.log("createBrowseImageViewTab");
             var browseImageViewInitOptions = {};
             if (idAnnotation != "") {
-                browseImageViewInitOptions.goToAnnotation = {value:idAnnotation};
+                browseImageViewInitOptions.goToAnnotation = {value: idAnnotation};
             }
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
             //$('#tabs-image-'+idImage).tab('show');
@@ -66,9 +66,8 @@ var ExplorerController = Backbone.Router.extend({
     },
 
 
-
-    review:function (idProject, idImage) {
-        console.log("review:"+idProject+"-"+idImage);
+    review: function (idProject, idImage) {
+        console.log("review:" + idProject + "-" + idImage);
 
         var self = this;
         //create tabs if not exist
@@ -99,14 +98,15 @@ var ExplorerController = Backbone.Router.extend({
     },
 
 
-
-    closeAll:function () {
-        if (this.tabs == null) return;
+    closeAll: function () {
+        if (this.tabs == null) {
+            return;
+        }
         this.tabs = null;
         $("#explorer > .browser").empty();
     },
 
-    showView:function () {
+    showView: function () {
         $("#explorer > .browser").show();
         $("#explorer > .noProject").hide();
         window.app.view.showComponent(window.app.view.components.explorer);

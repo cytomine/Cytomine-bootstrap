@@ -1,9 +1,9 @@
 var AnnotationQuestionableView = Backbone.View.extend({
-    tagName:"div",
-    terms:null,
-    term:null,
-    suggestTerm:null,
-    initialize:function (options) {
+    tagName: "div",
+    terms: null,
+    term: null,
+    suggestTerm: null,
+    initialize: function (options) {
         this.container = options.container;
         this.page = options.page;
         this.annotations = null; //array of annotations that are printed
@@ -11,9 +11,11 @@ var AnnotationQuestionableView = Backbone.View.extend({
         this.term = options.term;
         this.suggestTerm = options.suggestTerm;
         window.app.status.currentTermsCollection = options.terms;
-        if (this.page == undefined) this.page = 0;
+        if (this.page == undefined) {
+            this.page = 0;
+        }
     },
-    render:function () {
+    render: function () {
 
         var self = this;
         console.log("AnnotationQuestionableView: main elem " + $(self.el).length);
@@ -21,13 +23,13 @@ var AnnotationQuestionableView = Backbone.View.extend({
         $(self.el).append("<div id=\"questionableThumb\"><div>");
 
         $(self.el).dialog({
-            title:self.createTitle(),
-            width:900,
-            height:500,
-            autoOpen:true,
-            modal:true,
-            buttons:{
-                "Close":function () {
+            title: self.createTitle(),
+            width: 900,
+            height: 500,
+            autoOpen: true,
+            modal: true,
+            buttons: {
+                "Close": function () {
                     $(self.el).dialog("close");
 
                 }
@@ -38,16 +40,16 @@ var AnnotationQuestionableView = Backbone.View.extend({
         return this;
 
     },
-    createTitle:function () {
+    createTitle: function () {
         var self = this;
         var termCorrect = self.terms.get(self.term).get('name');
         var termSuggest = self.terms.get(self.suggestTerm).get('name');
         return "Annotation with term " + termCorrect + " and algo suggest " + termSuggest;
     },
-    createThumbView:function (page) {
+    createThumbView: function (page) {
         this.appendThumbs(page);
     },
-    appendThumbs:function (page) {
+    appendThumbs: function (page) {
         var self = this;
         var cpt = 0;
         var nb_thumb_by_page = 2500;
@@ -62,9 +64,9 @@ var AnnotationQuestionableView = Backbone.View.extend({
                 var annotationModel = new AnnotationModel(annotation);
 
                 var thumb = new AnnotationThumbView({
-                    model:annotationModel,
-                    className:"thumb-wrap",
-                    id:"annotationthumb" + annotationModel.id
+                    model: annotationModel,
+                    className: "thumb-wrap",
+                    id: "annotationthumb" + annotationModel.id
                 }).render();
                 $("#questionableThumb").append(thumb.el);
             }
@@ -76,13 +78,13 @@ var AnnotationQuestionableView = Backbone.View.extend({
      * Add the thumb annotation
      * @param annotation Annotation model
      */
-    add:function (annotation) {
+    add: function (annotation) {
 
         var self = this;
         var thumb = new AnnotationThumbView({
-            model:annotation,
-            className:"thumb-wrap",
-            id:"thumb" + annotation.get('id')
+            model: annotation,
+            className: "thumb-wrap",
+            id: "thumb" + annotation.get('id')
         }).render();
         $(self.el).prepend(thumb.el);
 
@@ -91,7 +93,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
      * Remove thumb annotation with id
      * @param idAnnotation  Annotation id
      */
-    remove:function (idAnnotation) {
+    remove: function (idAnnotation) {
         $("#thumb" + idAnnotation).remove();
     },
     /**
@@ -100,7 +102,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
      * -Remove annotations which are not in newAnnotations but well in the thumb set
      * @param newAnnotations newAnnotations collection
      */
-    refresh:function (newAnnotations) {
+    refresh: function (newAnnotations) {
         var self = this;
 
         var arrayDeletedAnnotations = self.annotations;

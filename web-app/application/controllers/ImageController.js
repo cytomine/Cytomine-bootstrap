@@ -1,17 +1,17 @@
 var ImageController = Backbone.Router.extend({
 
-    routes:{
-        "image":"image",
-        "image/p:page":"image"
+    routes: {
+        "image": "image",
+        "image/p:page": "image"
     },
 
-    image:function (page) {
+    image: function (page) {
         if (!this.view) {
             this.view = new ImageView({
-                page:page,
-                model:window.app.models.images,
-                el:$("#warehouse > .image"),
-                container:window.app.view.components.warehouse
+                page: page,
+                model: window.app.models.images,
+                el: $("#warehouse > .image"),
+                container: window.app.view.components.warehouse
             }).render();
 
             this.view.container.views.image = this.view;

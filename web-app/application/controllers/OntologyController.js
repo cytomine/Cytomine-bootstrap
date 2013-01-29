@@ -7,30 +7,30 @@
  */
 
 var OntologyController = Backbone.Router.extend({
-    routes:{
-        "ontology":"ontology",
-        "ontology/:idOntology":"ontology",
-        "ontology/:idOntology/:idTerm":"ontology"
+    routes: {
+        "ontology": "ontology",
+        "ontology/:idOntology": "ontology",
+        "ontology/:idOntology/:idTerm": "ontology"
     },
-    ontology:function () {
+    ontology: function () {
         this.ontology(0, 0, false);
     },
-    ontology:function (idOntology) {
+    ontology: function (idOntology) {
         this.ontology(idOntology, 0, false);
     },
-    ontology:function (idOntology, idTerm) {
+    ontology: function (idOntology, idTerm) {
         this.ontology(idOntology, idTerm, false);
     },
-    ontology:function (idOntology, idTerm, refresh) {
+    ontology: function (idOntology, idTerm, refresh) {
         console.log("ontology-" + idOntology + "-" + idTerm + "-" + refresh);
         var self = this;
         if (!self.view || refresh) {
             console.log("empty view");
             self.view = new OntologyView({
-                el:$("#ontology"),
-                container:window.app.view.components.ontology,
-                idOntology:idOntology, //selected ontology
-                idTerm:idTerm
+                el: $("#ontology"),
+                container: window.app.view.components.ontology,
+                idOntology: idOntology, //selected ontology
+                idTerm: idTerm
             }).render();
             self.view.container.views.ontology = self.view;
             self.view.container.show(self.view, "#warehouse > .sidebar", "ontology");

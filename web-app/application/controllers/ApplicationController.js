@@ -1,33 +1,33 @@
 var ApplicationController = Backbone.Router.extend({
 
-    models:{},
-    controllers:{},
-    view:null,
-    status:{},
+    models: {},
+    controllers: {},
+    view: null,
+    status: {},
 
-    routes:{
-        "":"initialRoute",
-        "explorer":"explorer",
-        "admin":"admin"
+    routes: {
+        "": "initialRoute",
+        "explorer": "explorer",
+        "admin": "admin"
     },
 
-    startup:function () {
+    startup: function () {
         var self = this;
 
         self.dataTablesBootstrap();
         self.view = new ApplicationView({
-            el:$('#content')
+            el: $('#content')
         });
 
         //init collections
-        self.models.images = new ImageCollection({project:undefined});
-        self.models.imagesinstance = new ImageInstanceCollection({project:undefined});
-        self.models.slides = new SlideCollection({project:undefined});
-        self.models.terms = new TermCollection({project:undefined});
+        self.models.images = new ImageCollection({project: undefined});
+        self.models.imagesinstance = new ImageInstanceCollection({project: undefined});
+        self.models.slides = new SlideCollection({project: undefined});
+        self.models.terms = new TermCollection({project: undefined});
         self.models.ontologies = new OntologyCollection();
-        self.models.ontologiesLigth = new OntologyCollection({light:true});
+        self.models.ontologiesLigth = new OntologyCollection({light: true});
         self.models.disciplines = new DisciplineCollection();
-        self.models.projects = new ProjectCollection({user:undefined});
+        self.models.projects = new ProjectCollection({user: undefined});
         self.models.annotations = new AnnotationCollection({});
 
         //"hashtable" with custom collection (useful in software page)
@@ -41,7 +41,7 @@ var ApplicationController = Backbone.Router.extend({
             var nbModelFetched = 0;
             _.each(modelsToPreload, function (model) {
                 model.fetch({
-                    success:function (model, response) {
+                    success: function (model, response) {
                         self.modelFetched(++nbModelFetched, _.size(modelsToPreload));
                     }
                 });
@@ -49,14 +49,14 @@ var ApplicationController = Backbone.Router.extend({
         }
     },
 
-    modelFetched:function (cpt, expected) {
+    modelFetched: function (cpt, expected) {
         if (cpt == expected) {
             this.view.render(this.start);
         }
     },
 
 
-    start:function () {
+    start: function () {
         window.app.controllers.image = new ImageController();
         window.app.controllers.project = new ProjectController();
         window.app.controllers.dashboard = new DashboardController();
@@ -75,7 +75,7 @@ var ApplicationController = Backbone.Router.extend({
 
         Backbone.history.start();
     },
-    initialize:function () {
+    initialize: function () {
         var self = this;
 
 
@@ -88,10 +88,10 @@ var ApplicationController = Backbone.Router.extend({
                 $("#content").fadeOut('slow').empty();
                 $(".navbar").remove();
                 new ConfirmDialogView({
-                    el:'#dialogs',
-                    template:serverDownTpl,
-                    dialogAttr:{
-                        dialogID:"#server-down"
+                    el: '#dialogs',
+                    template: serverDownTpl,
+                    dialogAttr: {
+                        dialogID: "#server-down"
                     }
                 }).render();
             }
@@ -101,12 +101,12 @@ var ApplicationController = Backbone.Router.extend({
                 self.status.version = data.get('version');
                 self.status.serverURL = data.get('serverURL');
                 if (data.get('authenticated')) {
-                    new UserModel({id:data.get('user')}).fetch({
-                        success:function (model, response) {
+                    new UserModel({id: data.get('user')}).fetch({
+                        success: function (model, response) {
                             self.status.user = {
-                                id:data.get('user'),
-                                authenticated:data.get('authenticated'),
-                                model:model
+                                id: data.get('user'),
+                                authenticated: data.get('authenticated'),
+                                model: model
                             }
                             self.startup();
                         }
@@ -127,13 +127,15 @@ var ApplicationController = Backbone.Router.extend({
 //            });
 
             var project = window.app.status.currentProject
-            if (project == undefined) project = "null";
-            new PingModel({project:project}).save({}, {
-                    success:function (model, response) {
+            if (project == undefined) {
+                project = "null";
+            }
+            new PingModel({project: project}).save({}, {
+                    success: function (model, response) {
                         console.log("Ping success first!");
                         successcallback(model)
                     },
-                    error:function (model, response) {
+                    error: function (model, response) {
                         console.log("Ping error!");
                     }
                 }
@@ -149,7 +151,7 @@ var ApplicationController = Backbone.Router.extend({
 
     },
 
-    explorer:function () {
+    explorer: function () {
         this.view.showComponent(this.view.components.explorer);
     },
 
@@ -157,18 +159,18 @@ var ApplicationController = Backbone.Router.extend({
      this.view.showComponent(this.view.components.upload);
      },*/
 
-    admin:function () {
+    admin: function () {
         this.view.showComponent(this.view.components.admin);
     },
 
-    warehouse:function () {
+    warehouse: function () {
         this.view.showComponent(this.view.components.warehouse);
     },
 
-    initialRoute:function () {
+    initialRoute: function () {
         this.navigate("#project", true);
     },
-    convertLongToDate:function (longDate) {
+    convertLongToDate: function (longDate) {
         var createdDate = new Date();
         createdDate.setTime(longDate);
 
@@ -182,14 +184,16 @@ var ApplicationController = Backbone.Router.extend({
 
         return year + "-" + month + "-" + day + " " + hour + "h" + min;
     },
-    minString:function (string, maxFirstCar, maxLastCar) {
-        if (string.length <= (maxFirstCar + maxLastCar + 5)) return  string;
+    minString: function (string, maxFirstCar, maxLastCar) {
+        if (string.length <= (maxFirstCar + maxLastCar + 5)) {
+            return  string;
+        }
         var start = string.substr(0, maxFirstCar);
         var end = string.substr((string.length - maxLastCar), maxLastCar);
 
         return start + "[...]" + end;
     },
-    replaceVariable:function (value) {
+    replaceVariable: function (value) {
         var result = value;
         result = result.replace("$currentProjectCreationDate$", window.app.status.currentProjectModel.get('created'));
         result = result.replace("$currentProject$", window.app.status.currentProject);
@@ -198,13 +202,15 @@ var ApplicationController = Backbone.Router.extend({
         result = result.replace("$currentOntology$", window.app.status.currentProjectModel.get('ontology'));
         return result;
     },
-    retrieveTerm:function (ontology) {
+    retrieveTerm: function (ontology) {
         var self = this;
         return new TermCollection(self.retrieveChildren(ontology.attributes));
     },
-    retrieveChildren:function (parent) {
+    retrieveChildren: function (parent) {
         var self = this;
-        if (parent['children'].length == 0) return [];
+        if (parent['children'].length == 0) {
+            return [];
+        }
         var children = [];
         _.each(parent['children'], function (elem) {
             children.push(elem);
@@ -212,56 +218,56 @@ var ApplicationController = Backbone.Router.extend({
         });
         return children;
     },
-    isCollectionUndefinedOrEmpty:function (collection) {
+    isCollectionUndefinedOrEmpty: function (collection) {
         console.log(collection);
         return (collection == undefined || (collection == 1 && collection.at(0).id == undefined))
     },
-    getFromCache:function (key) {
+    getFromCache: function (key) {
         return  this.models.currentCollection[key];
     },
-    addToCache:function (key, value) {
+    addToCache: function (key, value) {
         this.models.currentCollection[key] = value;
     },
-    clearCache:function () {
+    clearCache: function () {
         this.models.currentCollection = {};
     },
-    addOrReplaceEvent : function (element, eventType, fCallback) {
-            if (!element || !element.data('events') || !element.data('events')[eventType] || !fCallback) {
-                return false;
-            }
-
-            for (runner in element.data('events')[eventType]) {
-                if (element.data('events')[eventType][runner].handler == fCallback) {
-                    return true;
-                }
-
-            }
-
+    addOrReplaceEvent: function (element, eventType, fCallback) {
+        if (!element || !element.data('events') || !element.data('events')[eventType] || !fCallback) {
             return false;
-        },
-    dataTablesBootstrap:function () {
+        }
+
+        for (runner in element.data('events')[eventType]) {
+            if (element.data('events')[eventType][runner].handler == fCallback) {
+                return true;
+            }
+
+        }
+
+        return false;
+    },
+    dataTablesBootstrap: function () {
         /* Default class modification */
         $.extend($.fn.dataTableExt.oStdClasses, {
-            "sWrapper":"dataTables_wrapper form-inline"
+            "sWrapper": "dataTables_wrapper form-inline"
         });
 
         /* API method to get paging information */
         $.fn.dataTableExt.oApi.fnPagingInfo = function (oSettings) {
             return {
-                "iStart":oSettings._iDisplayStart,
-                "iEnd":oSettings.fnDisplayEnd(),
-                "iLength":oSettings._iDisplayLength,
-                "iTotal":oSettings.fnRecordsTotal(),
-                "iFilteredTotal":oSettings.fnRecordsDisplay(),
-                "iPage":Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-                "iTotalPages":Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+                "iStart": oSettings._iDisplayStart,
+                "iEnd": oSettings.fnDisplayEnd(),
+                "iLength": oSettings._iDisplayLength,
+                "iTotal": oSettings.fnRecordsTotal(),
+                "iFilteredTotal": oSettings.fnRecordsDisplay(),
+                "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+                "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
             };
         }
 
         /* Bootstrap style pagination control */
         $.extend($.fn.dataTableExt.oPagination, {
-            "bootstrap":{
-                "fnInit":function (oSettings, nPaging, fnDraw) {
+            "bootstrap": {
+                "fnInit": function (oSettings, nPaging, fnDraw) {
                     var oLang = oSettings.oLanguage.oPaginate;
                     var fnClickHandler = function (e) {
                         e.preventDefault();
@@ -277,11 +283,11 @@ var ApplicationController = Backbone.Router.extend({
                             '</ul>'
                     );
                     var els = $('a', nPaging);
-                    $(els[0]).bind('click.DT', { action:"previous" }, fnClickHandler);
-                    $(els[1]).bind('click.DT', { action:"next" }, fnClickHandler);
+                    $(els[0]).bind('click.DT', { action: "previous" }, fnClickHandler);
+                    $(els[1]).bind('click.DT', { action: "next" }, fnClickHandler);
                 },
 
-                "fnUpdate":function (oSettings, fnDraw) {
+                "fnUpdate": function (oSettings, fnDraw) {
                     var iListLength = 5;
                     var oPaging = oSettings.oInstance.fnPagingInfo();
                     var an = oSettings.aanFeatures.p;

@@ -7,13 +7,13 @@
  */
 
 var LayerSwitcherPanel = SideBarPanel.extend({
-    tagName:"div",
+    tagName: "div",
 
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.browseImageView = options.browseImageView;
         this.followInterval = null;
         this.userFollowed = null;
@@ -22,7 +22,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/explorer/LayerSwitcher.tpl.html"
@@ -31,44 +31,46 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
         return this;
     },
-    addBaseLayer:function (layer, model) {
+    addBaseLayer: function (layer, model) {
         var self = this;
         var radioName = "layerSwitch-" + model.get("id");
         var layerID = "layerSwitch-" + model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
-        var liLayer = _.template("<li><input type='radio' id='<%=   id %>' name='<%=   radioName %>' checked/><span style='color : #ffffff;'> <%=   name %></span></li>", {id:layerID, radioName:radioName, name:layer.name.substr(0, 15)});
-        $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").append(liLayer);
-        $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").find("#" + layerID);
+        var liLayer = _.template("<li><input type='radio' id='<%=   id %>' name='<%=   radioName %>' checked/><span style='color : #ffffff;'> <%=   name %></span></li>", {id: layerID, radioName: radioName, name: layer.name.substr(0, 15)});
+        $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").append(liLayer);
+        $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").find("#" + layerID);
         $("#" + layerID).change(function () {
             self.browseImageView.map.setBaseLayer(layer);
         });
     },
-    addVectorLayer:function (layer, model, userID) {
+    addVectorLayer: function (layer, model, userID) {
 
-        this.vectorLayers.push({ id:userID, vectorsLayer:layer.vectorsLayer});
+        this.vectorLayers.push({ id: userID, vectorsLayer: layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-" + new Date().getTime(); //index of the layer in this.layers array
         var color = "#FFF";
-        if(userID=="REVIEW") color = "#5BB75B";
+        if (userID == "REVIEW") {
+            color = "#5BB75B";
+        }
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color :<%=   color %>;'> <%=   name %></span></li>", {id:layerID, name:layer.vectorsLayer.name, color:color});
+            layerOptionTpl = _.template("<li><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' checked />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color :<%=   color %>;'> <%=   name %></span></li>", {id: layerID, name: layer.vectorsLayer.name, color: color});
         } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %></span></a> </li>", {userID:userID, id:layerID, name:layer.vectorsLayer.name, color:color});
+            layerOptionTpl = _.template("<li data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %></span></a> </li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
         }
         console.log("*** addVectorLayer " + model.get("id"));
-        $("#"+this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
+        $("#" + this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#" + layerID).click(function () {
             console.log("click");
             var checked = $(this).attr("checked");
-            console.log("visible:"+checked);
+            console.log("visible:" + checked);
             layer.vectorsLayer.setVisibility(checked);
         });
 
     },
-    updateOnlineUsers:function (onlineUsers) {
+    updateOnlineUsers: function (onlineUsers) {
         var self = this;
-        var userList = $("#"+this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
+        var userList = $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
         var projectUsers = _.pluck(window.app.models.projectUser, 'id');
         //check if the the user we are following is always connected, if not disconneted
         if (!_.include(onlineUsers, self.userFollowed)) {
@@ -86,25 +88,27 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             userList.find("li[data-id=" + userID + "]").find('input.followUser').removeAttr("disabled");
         });
     },
-    startFollowing:function () {
+    startFollowing: function () {
         var self = this;
         window.app.view.message("", "Start following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
         var image = this.model.get("id");
         this.followInterval = setInterval(function () {
-            new UserPositionModel({ image:image, user:self.userFollowed }).fetch({
-                success:function (model, response) {
+            new UserPositionModel({ image: image, user: self.userFollowed }).fetch({
+                success: function (model, response) {
                     self.browseImageView.map.moveTo(new OpenLayers.LonLat(model.get("longitude"), model.get("latitude")), model.get("zoom"));
                     var layerWrapper = _.detect(self.vectorLayers, function (item) {
                         return item.id == self.userFollowed;
                     });
-                    if (layerWrapper) layerWrapper.vectorsLayer.refresh();
+                    if (layerWrapper) {
+                        layerWrapper.vectorsLayer.refresh();
+                    }
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                 }
             });
         }, 1000);
     },
-    stopFollowing:function () {
+    stopFollowing: function () {
         var self = this;
         if (self.followInterval != undefined) {
             window.app.view.message("", "Stop following " + window.app.models.projectUser.get(self.userFollowed).prettyName(), "success");
@@ -117,19 +121,21 @@ var LayerSwitcherPanel = SideBarPanel.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
-        var content = _.template(tpl, {id:self.model.get("id"), isDesktop:!window.app.view.isMobile});
-        $("#"+this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
+        var content = _.template(tpl, {id: self.model.get("id"), isDesktop: !window.app.view.isMobile});
+        $("#" + this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
 
-        $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
+        $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
             var followUser = $(this).attr("checked") == "checked";
-            $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
+            $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
                 $(this).attr('checked', false);
             });
             $(this).attr('checked', followUser);
             self.stopFollowing();
-            if (!followUser) return;
+            if (!followUser) {
+                return;
+            }
             var user = $(this).attr("data-user-id");
             self.userFollowed = user;
             self.startFollowing();
@@ -138,14 +144,18 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
         $("#selectLayersIcon" + self.model.get("id")).off("click");
         $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
-            var userList = $("#"+self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
+            var userList = $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
             var projectUsers = _.pluck(window.app.models.projectUser, 'id');
             var almostOneCheckedState = false;
             _.each(projectUsers, function (userID) {
                 var checked = userList.find("li[data-id=" + userID + "]").find('input.showUser').attr("checked") == "checked";
-                if (!almostOneCheckedState && checked) almostOneCheckedState = true;
+                if (!almostOneCheckedState && checked) {
+                    almostOneCheckedState = true;
+                }
             });
-            if(userList.find("li[data-id=REVIEW]").find('input.showUser').attr("checked") == "checked") almostOneCheckedState = true;
+            if (userList.find("li[data-id=REVIEW]").find('input.showUser').attr("checked") == "checked") {
+                almostOneCheckedState = true;
+            }
             self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
         });
 

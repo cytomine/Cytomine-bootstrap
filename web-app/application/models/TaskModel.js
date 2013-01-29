@@ -7,15 +7,19 @@
  */
 var TaskModel = Backbone.Model.extend({
 
-    url:function () {
+    url: function () {
         var base = 'api/task';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-        if(this.project) return url + "?project="+this.project;
+        if (this.project) {
+            return url + "?project=" + this.project;
+        }
         return url;
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
     }
 });

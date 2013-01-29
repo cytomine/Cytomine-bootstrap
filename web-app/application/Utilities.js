@@ -19,15 +19,15 @@ var Watcher = function (model, callback, interval) {
 Watcher.prototype.fetch = function () {
     var that = this;
     this.model.fetch({
-        silent:true,
-        success:function () {
+        silent: true,
+        success: function () {
             var state = JSON.stringify(that.model);
             if (that.current !== state) {
                 that.current = state;
                 that.callback && that.callback();
             }
         },
-        error:function () {
+        error: function () {
         }
     });
 };
@@ -57,12 +57,14 @@ Status.prototype.start = function () {
     var ajaxFn = function () {
 
         var project = window.app.status.currentProject;
-        if (project == undefined) project = "null";
-        new PingModel({project:project}).save({}, {
-                success:function (model, response) {
+        if (project == undefined) {
+            project = "null";
+        }
+        new PingModel({project: project}).save({}, {
+                success: function (model, response) {
                     self.successcallback();
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                     self.error();
                 }
             }

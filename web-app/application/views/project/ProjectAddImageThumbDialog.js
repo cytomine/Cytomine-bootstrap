@@ -1,44 +1,44 @@
 var ProjectAddImageThumbDialog = Backbone.View.extend({
-    imageListing:null,
-    imageThumb:null,
-    slides:null,
-    imagesProject:null,
-    imagesinstanceProject:null,
-    checklistChecked:".checklist input:checked",
-    checklistSelected:".checklist .checkbox-select",
-    checklistDeselected:".checklist .checkbox-deselect",
-    selectedClass:"selected",
-    checkedAttr:"checked",
-    liElem:"projectaddimageitemli",
-    ulElem:"#projectaddimagedialoglist",
-    allProjectUlElem:"ul[id^=projectaddimagedialoglist]",
-    imageDivElem:"#projectaddimageitempict",
+    imageListing: null,
+    imageThumb: null,
+    slides: null,
+    imagesProject: null,
+    imagesinstanceProject: null,
+    checklistChecked: ".checklist input:checked",
+    checklistSelected: ".checklist .checkbox-select",
+    checklistDeselected: ".checklist .checkbox-deselect",
+    selectedClass: "selected",
+    checkedAttr: "checked",
+    liElem: "projectaddimageitemli",
+    ulElem: "#projectaddimagedialoglist",
+    allProjectUlElem: "ul[id^=projectaddimagedialoglist]",
+    imageDivElem: "#projectaddimageitempict",
 
 
-    page:0, //start at the first page
-    nb_slide_by_page:20,
-    nextPage:function () {
+    page: 0, //start at the first page
+    nb_slide_by_page: 20,
+    nextPage: function () {
         var max_page = Math.round(_.size(window.app.models.slides) / this.nb_slide_by_page) - 1;
         this.page = Math.min(this.page + 1, max_page);
         this.renderImageListLayout();
     },
-    previousPage:function () {
+    previousPage: function () {
         this.page = Math.max(this.page - 1, 0);
         this.renderImageListLayout();
     },
-    disablePrevious:function () {
+    disablePrevious: function () {
     },
-    enablePrevious:function () {
+    enablePrevious: function () {
     },
-    disableNext:function () {
+    disableNext: function () {
     },
-    enableNext:function () {
+    enableNext: function () {
     },
     /**
      * ProjectManageSlideDialog constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
         this.imagesProject = options.imagesProject;
@@ -53,7 +53,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectAddImageThumbDialog.tpl.html"
@@ -63,14 +63,14 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
             });
         return this;
     },
-    refresh:function () {
+    refresh: function () {
         this.renderImageList();
     },
 
 
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
-        var view = _.template(tpl, {id:this.model.get('id'), name:this.model.get('name')});
+        var view = _.template(tpl, {id: this.model.get('id'), name: this.model.get('name')});
         $(self.el).append(view);
 
         $(self.el).find("a.next").bind("click", self.nextPage);
@@ -86,31 +86,32 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
     },
 
-    renderImageList:function () {
+    renderImageList: function () {
         var self = this;
         window.app.models.slides.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 self.renderImageListLayout();
             }
         });
     },
-    renderImage:function (projectImages, image, domTarget) {
+    renderImage: function (projectImages, image, domTarget) {
         var self = this;
         require([
             "text!application/templates/project/ProjectAddImageChoice.tpl.html"
         ], function (tpl) {
             var thumb = new ImageSelectView({
-                model:image
+                model: image
             }).render();
 
             var filename = image.get("filename");
-            if (filename.length > 15)
+            if (filename.length > 15) {
                 filename = filename.substring(0, 12) + "...";
-            var item = _.template(tpl, {id:image.id, name:filename, namefull:image.get("filename"), slide:image.get('slide'), info:image.get('info')});
+            }
+            var item = _.template(tpl, {id: image.id, name: filename, namefull: image.get("filename"), slide: image.get('slide'), info: image.get('info')});
 
             $(domTarget).append(item);
             $(domTarget + " " + self.imageDivElem + image.id).append(thumb.el);  //get the div elem (img id) which have this project as parent
-            $(thumb.el).css({"width":30}); //thumb must be smaller
+            $(thumb.el).css({"width": 30}); //thumb must be smaller
 
             //size of the filename text
             $(domTarget).find("label  > b").css("font-size", 10);
@@ -125,39 +126,39 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
 
         });
     },
-    selectAllImages:function (slideID) {
+    selectAllImages: function (slideID) {
         $(".projectImageList" + slideID).find("li.imageThumbChoice").each(function () {
             $(this).find("a.checkbox-select").click();
         });
     },
-    unselectAllImages:function (slideID) {
+    unselectAllImages: function (slideID) {
         $(".projectImageList" + slideID).find("li.imageThumbChoice").each(function () {
             $(this).find("a.checkbox-deselect").click();
         });
     },
 
-    renderSlide:function (slide) {
+    renderSlide: function (slide) {
         var self = this;
         require([
             "text!application/templates/project/ProjectSlideDetail.tpl.html"
         ], function (tpl) {
-            var item = _.template(tpl, { id:slide.get("id"), name:slide.get("name")});
+            var item = _.template(tpl, { id: slide.get("id"), name: slide.get("name")});
             var el = $(self.ulElem + self.model.get('id'));
             el.append("<td>" + item + "</td>");
-            el.find(".slideItem" + slide.get("id")).panel({collapsible:false});
+            el.find(".slideItem" + slide.get("id")).panel({collapsible: false});
             el.find("a[class=selectAll]").bind("click", function () {
                 self.selectAllImages(slide.get("id"));
             });
             el.find("a[class=unselectAll]").bind("click", function () {
                 self.unselectAllImages(slide.get("id"));
             });
-            el.find("a[class=selectAll]").button({text:false,
-                icons:{
-                    secondary:"ui-icon-circle-plus"
+            el.find("a[class=selectAll]").button({text: false,
+                icons: {
+                    secondary: "ui-icon-circle-plus"
                 }});
-            el.find("a[class=unselectAll]").button({text:false,
-                icons:{
-                    secondary:"ui-icon-circle-minus"
+            el.find("a[class=unselectAll]").button({text: false,
+                icons: {
+                    secondary: "ui-icon-circle-minus"
                 }});
             var images = slide.get("images");
             var domTarget = ".projectImageList" + slide.get("id");
@@ -175,7 +176,7 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
      * Render Image thumbs into the dialog
      **/
 
-    renderImageListLayout:function () {
+    renderImageListLayout: function () {
         var self = this;
         var cpt = 0;
         var inf = Math.abs(self.page) * self.nb_slide_by_page;
@@ -208,15 +209,15 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
      * Init click events on Image thumbs
      */
 
-    addImageToProject:function (idImage, idProject) {
+    addImageToProject: function (idImage, idProject) {
 
         //add sample to project
-        new ImageInstanceModel({}).save({project:idProject, user:null, baseImage:idImage}, {
-            success:function (image, response) {
+        new ImageInstanceModel({}).save({project: idProject, user: null, baseImage: idImage}, {
+            success: function (image, response) {
 
                 window.app.view.message("ImageInstance", response.message, "success");
             },
-            error:function (model, response) {
+            error: function (model, response) {
 
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors[0], "error");
@@ -224,23 +225,23 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
         });
     },
 
-    deleteImageToProject:function (idImage, idProject) {
+    deleteImageToProject: function (idImage, idProject) {
 
         //add sample to project
         //delete sample from project
         //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
-        new ImageInstanceModel({id:1, project:idProject, user:null, baseImage:idImage}).destroy({
-            success:function (image, response) {
+        new ImageInstanceModel({id: 1, project: idProject, user: null, baseImage: idImage}).destroy({
+            success: function (image, response) {
                 window.app.view.message("ImageInstance", response.message, "success");
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors[0], "error");
             }
         });
     },
 
-    initEvents:function () {
+    initEvents: function () {
         alert("initEvents");
         /* TO DO
          Recode this method : don't repeat yourself

@@ -1,14 +1,14 @@
 var ProjectAddImageSearchPanel = Backbone.View.extend({
-    images:null,
-    tab:null,
-    initialize:function (options) {
+    images: null,
+    tab: null,
+    initialize: function (options) {
         var self = this;
         this.container = options.container;
         this.images = options.images;
         this.tab = options.tab;
 
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectAddImageSearchDialog.tpl.html"
@@ -18,7 +18,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
 
 
@@ -46,14 +46,14 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
 
         //autocomplete
         $("#filenamesearchtextboxup" + self.model.id + "-" + self.tab).autocomplete({
-            minLength:0, //with min=0, if user erase its text, it will show all project withouth name constraint
-            source:imagesNameArray,
-            select:function (event, ui) {
+            minLength: 0, //with min=0, if user erase its text, it will show all project withouth name constraint
+            source: imagesNameArray,
+            select: function (event, ui) {
                 $("#filenamesearchtextboxup" + self.model.id + "-" + self.tab).val(ui.item.label)
                 self.container.searchImages();
 
             },
-            search:function (event) {
+            search: function (event) {
 
 
                 self.container.searchImages();
@@ -70,14 +70,14 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
         return this;
 
     },
-    search:function (images) {
+    search: function (images) {
         var self = this;
 
 
         //
         return self.filterImages(searchText == "" ? undefined : searchText, dateStart, dateEnd);
     },
-    filterImages:function (searchText, dateStart, dateEnd) {
+    filterImages: function (searchText, dateStart, dateEnd) {
 
         var self = this;
         var images = new ImageCollection(self.images.models);
@@ -96,19 +96,20 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
 
 
     },
-    filterByImagesByName:function (searchText, imagesOldList) {
+    filterByImagesByName: function (searchText, imagesOldList) {
 
         var imagesNewList = new ImageCollection(imagesOldList.models);
 
         imagesOldList.each(function (image) {
-            if (searchText != undefined && !image.get('filename').toLowerCase().contains(searchText.toLowerCase()))
+            if (searchText != undefined && !image.get('filename').toLowerCase().contains(searchText.toLowerCase())) {
                 imagesNewList.remove(image);
+            }
         });
 
         return imagesNewList;
     },
 
-    filterByDateStart:function (dateStart, imagesOldList) {
+    filterByDateStart: function (dateStart, imagesOldList) {
 
         var imagesNewList = new ImageCollection(imagesOldList.models);
 
@@ -125,7 +126,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
 
     },
 
-    filterByDateEnd:function (dateEnd, imagesOldList) {
+    filterByDateEnd: function (dateEnd, imagesOldList) {
         var imagesNewList = new ImageCollection(imagesOldList.models);
 
         imagesOldList.each(function (image) {
@@ -140,7 +141,7 @@ var ProjectAddImageSearchPanel = Backbone.View.extend({
         return imagesNewList;
     },
 
-    renderImageListing:function () {
+    renderImageListing: function () {
         var self = this;
 
 

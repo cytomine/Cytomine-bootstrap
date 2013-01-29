@@ -1,29 +1,45 @@
-<div id='projectlist<%= id %>' data-id='<%= id %>' class="well span2 projectInfoPanel" style="padding: 5px;margin: 0 15px 15px 0px;min-width: 350px;font-size: 12px;">
-   <h4 style="display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h4>
-   <div style="min-height : 175px;padding-top : 10px;">
-       <div style="padding-left : 10px;">
-           <ul >
-               <li>Name : <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
-               <li>Discipline : <%= disciplineName %></li>
-               <li>Ontology : <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
-               <!--<li><i class="icon-user"></i> <a href="#project-users-<%= id %>">See users list</a><li>-->
-           </ul>
-       </div>
-       <div style="padding-left : 10px;">
-           <ul>
-               <!--<li>Number of samples : <a href="#tabs-images-<%= id %>" ><%= numberOfSlides %></a></li>-->
-               <li>Number of images : <a  href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
-               <li>Number of user annotations : <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span> <% } else if (numberOfAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %></li>
-               <li>Number of job annotations : <% if (numberOfJobAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfJobAnnotations %></span> <% } else if (numberOfJobAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfJobAnnotations %></span> <% } else { %><span class="badge badge-success"><%= numberOfJobAnnotations %></span> <% } %></li>
-           </ul>
-       </div>
-   </div>
-    <button class="infoProject btn btn-small" id="infoProjectButton<%= id %>" style="display : inline-block;">Info</button>
-   <button class="editProject btn btn-small" id="editProjectButton<%= id %>" style="display : inline-block;">Edit</button>
-   <button class="deleteProject btn btn-small" id="deleteProjectButton<%= id %>" style="display : inline-block;">Delete</button>
-   <button class="addSlide btn btn-small" id='projectaddimages<%= id %>' type="button">Images</button>
-   <a href="#tabs-dashboard-<%= id %>"><button class="btn btn-inverse btn-small" id='radioprojectchange<%= id %>'>Open</button></a>
- 
- 
-   <!--<a class="addSlide" id='projectaddimages<%= id %>' href="#project-manage-<%= id %>">Manage samples</a>-->
+<div id='projectlist<%= id %>' data-id='<%= id %>' class="well span2 projectInfoPanel"
+     style="padding: 5px;margin: 0 15px 15px 0px;min-width: 350px;font-size: 12px;">
+    <h4 style="display:inline"><a href="#tabs-dashboard-<%= id %>" style="color:#000;"><%= title %></a></h4>
+
+    <div style="min-height : 175px;padding-top : 10px;">
+        <div style="padding-left : 10px;">
+            <ul>
+                <li>Name : <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
+                <li>Discipline : <%= disciplineName %></li>
+                <li>Ontology : <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
+                <!--<li><i class="icon-user"></i> <a href="#project-users-<%= id %>">See users list</a><li>-->
+            </ul>
+        </div>
+        <div style="padding-left : 10px;">
+            <ul>
+                <!--<li>Number of samples : <a href="#tabs-images-<%= id %>" ><%= numberOfSlides %></a></li>-->
+                <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
+                <li>Number of user annotations : <% if (numberOfAnnotations == 0) { %> <span class="badge badge-error"><%= numberOfAnnotations %></span>
+                    <% } else if (numberOfAnnotations < 250) { %><span class="badge badge-warning"><%= numberOfAnnotations %></span>
+                    <% } else { %><span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %>
+                </li>
+                <li>Number of job annotations : <% if (numberOfJobAnnotations == 0) { %> <span
+                        class="badge badge-error"><%= numberOfJobAnnotations %></span> <% } else if
+                    (numberOfJobAnnotations < 250) { %><span
+                            class="badge badge-warning"><%= numberOfJobAnnotations %></span> <% } else { %><span
+                            class="badge badge-success"><%= numberOfJobAnnotations %></span> <% } %>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <button class="infoProject btn btn-small" id="infoProjectButton<%= id %>" style="display : inline-block;">Info
+    </button>
+    <button class="editProject btn btn-small" id="editProjectButton<%= id %>" style="display : inline-block;">Edit
+    </button>
+    <button class="deleteProject btn btn-small" id="deleteProjectButton<%= id %>" style="display : inline-block;">
+        Delete
+    </button>
+    <button class="addSlide btn btn-small" id='projectaddimages<%= id %>' type="button">Images</button>
+    <a href="#tabs-dashboard-<%= id %>">
+        <button class="btn btn-inverse btn-small" id='radioprojectchange<%= id %>'>Open</button>
+    </a>
+
+
+    <!--<a class="addSlide" id='projectaddimages<%= id %>' href="#project-manage-<%= id %>">Manage samples</a>-->
 </div>

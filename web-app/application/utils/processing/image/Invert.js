@@ -1,6 +1,6 @@
 var Processing = Processing || {};
 Processing.invert = {
-    process:function (imgd) {
+    process: function (imgd) {
         var data = imgd.data;
         for (var pix = 0, n = data.length; pix < n; pix += 4) {
             data[pix] = 255 - data[pix]

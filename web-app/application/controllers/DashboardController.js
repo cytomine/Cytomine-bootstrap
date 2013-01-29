@@ -1,20 +1,20 @@
 var DashboardController = Backbone.Router.extend({
 
-    view:null,
-    routes:{
-        "tabs-images-:project":"images",
-        "tabs-thumbs-:project":"imagesthumbs",
-        "tabs-imagesarray-:project":"imagesarray",
-        "tabs-annotations-:project-:terms-:users":"annotations",
-        "tabs-annotations-:project":"annotations",
-        "tabs-dashboard-:project":"dashboard",
-        "tabs-config-:project":"config",
-        "tabs-algos-:project-:software-:job":"algos",
-        "tabs-algos-:project-:software":"algos",
-        "tabs-algos-:project":"algos"
+    view: null,
+    routes: {
+        "tabs-images-:project": "images",
+        "tabs-thumbs-:project": "imagesthumbs",
+        "tabs-imagesarray-:project": "imagesarray",
+        "tabs-annotations-:project-:terms-:users": "annotations",
+        "tabs-annotations-:project": "annotations",
+        "tabs-dashboard-:project": "dashboard",
+        "tabs-config-:project": "config",
+        "tabs-algos-:project-:software-:job": "algos",
+        "tabs-algos-:project-:software": "algos",
+        "tabs-algos-:project": "algos"
     },
 
-    init:function (project, callback) {
+    init: function (project, callback) {
         console.log("window.app.status.currentProject=" + window.app.status.currentProject + " new project=" + project);
         if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
             this.destroyView();
@@ -27,7 +27,9 @@ var DashboardController = Backbone.Router.extend({
             window.app.view.clearIntervals();
             window.app.status.currentProject = project;
             window.app.controllers.browse.initTabs();
-            if (this.view == null) this.createView(callback);
+            if (this.view == null) {
+                this.createView(callback);
+            }
             this.showView();
         } else {
             console.log("3");
@@ -36,7 +38,7 @@ var DashboardController = Backbone.Router.extend({
         }
 
     },
-    images:function (project) {
+    images: function (project) {
         var self = this;
         var func = function () {
             self.view.refreshImagesThumbs();
@@ -45,7 +47,7 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    imagesthumbs:function (project) {
+    imagesthumbs: function (project) {
         var self = this;
         var func = function () {
             self.view.refreshImagesThumbs();
@@ -55,7 +57,7 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    imagesarray:function (project) {
+    imagesarray: function (project) {
         var self = this;
         var func = function () {
             self.view.refreshImagesTable();
@@ -65,8 +67,8 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    annotations:function (project, terms, users) {
-        console.log("controller.annotations="+users);
+    annotations: function (project, terms, users) {
+        console.log("controller.annotations=" + users);
         var self = this;
         var func = function () {
             window.app.controllers.browse.tabs.triggerRoute = false;
@@ -78,7 +80,7 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    algos:function (project, software, job) {
+    algos: function (project, software, job) {
         var self = this;
         var func = function () {
             window.app.controllers.browse.tabs.triggerRoute = false;
@@ -90,7 +92,7 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
 
-    config:function (project) {
+    config: function (project) {
         var self = this;
         var func = function () {
             self.view.refreshConfig();
@@ -100,7 +102,7 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
 
-    dashboard:function (project, callback) {
+    dashboard: function (project, callback) {
         var self = this;
         var func = function () {
             self.view.refreshDashboard();
@@ -108,51 +110,55 @@ var DashboardController = Backbone.Router.extend({
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('#dashboardLink-' + window.app.status.currentProject).click();
             window.app.controllers.browse.tabs.triggerRoute = true;
-            if (callback != undefined) callback.call();
+            if (callback != undefined) {
+                callback.call();
+            }
 
         };
         this.init(project, func);
     },
 
-    createView:function (callback) {
+    createView: function (callback) {
         var self = this;
 
         var nbCollectionToFetch = 5;
         var nbCollectionToFetched = 0;
         var collectionFetched = function (expected) {
             nbCollectionToFetched++;
-            if (nbCollectionToFetched < expected) return;
+            if (nbCollectionToFetched < expected) {
+                return;
+            }
             self.view = new ProjectDashboardView({
-                model:window.app.status.currentProjectModel,
-                el:$("#explorer-tab-content")
+                model: window.app.status.currentProjectModel,
+                el: $("#explorer-tab-content")
             }).render();
             callback.call();
         }
-        new UserJobCollection({project:window.app.status.currentProject}).fetch({
-            success:function (collection, response) {
+        new UserJobCollection({project: window.app.status.currentProject}).fetch({
+            success: function (collection, response) {
                 window.app.models.projectUserJob = collection;
                 collectionFetched(nbCollectionToFetch);
             }
         });
-        new UserCollection({project:window.app.status.currentProject}).fetch({
-            success:function (collection, response) {
+        new UserCollection({project: window.app.status.currentProject}).fetch({
+            success: function (collection, response) {
                 window.app.models.projectUser = collection;
                 collectionFetched(nbCollectionToFetch);
             }
         });
-        new UserLayerCollection({project:window.app.status.currentProject}).fetch({
-            success:function (collection, response) {
+        new UserLayerCollection({project: window.app.status.currentProject}).fetch({
+            success: function (collection, response) {
                 window.app.models.userLayer = collection;
                 collectionFetched(nbCollectionToFetch);
             }
         });
 
-        new ProjectModel({id:window.app.status.currentProject}).fetch({
-            success:function (model, response) {
+        new ProjectModel({id: window.app.status.currentProject}).fetch({
+            success: function (model, response) {
                 window.app.status.currentProjectModel = model;
                 collectionFetched(nbCollectionToFetch);
-                new OntologyModel({id:window.app.status.currentProjectModel.get("ontology")}).fetch({
-                    success:function (model, response) {
+                new OntologyModel({id: window.app.status.currentProjectModel.get("ontology")}).fetch({
+                    success: function (model, response) {
                         window.app.status.currentOntologyModel = model;
                         window.app.status.currentTermsCollection = window.app.retrieveTerm(model);
                         collectionFetched(nbCollectionToFetch);
@@ -164,19 +170,19 @@ var DashboardController = Backbone.Router.extend({
 
     },
 
-    destroyView:function () {
+    destroyView: function () {
         $(".projectUserDialog").modal('hide');
         $(".projectUserDialog").remove();
         this.view = null;
     },
 
-    showView:function () {
+    showView: function () {
         $("#explorer > .browser").show();
         $("#explorer > .noProject").hide();
         window.app.view.showComponent(window.app.view.components.explorer);
     },
     //print job param value in cell
-    printJobParameterValue:function (param, cell, maxSize) {
+    printJobParameterValue: function (param, cell, maxSize) {
         var self = this;
         if (param.type == "Date") {
             cell.html(window.app.convertLongToDate(param.value));
@@ -194,9 +200,9 @@ var DashboardController = Backbone.Router.extend({
             var collection = window.app.getFromCache(window.app.replaceVariable(param.uri));
             if (collection == undefined || (collection.length > 0 && collection.at(0).id == undefined)) {
                 console.log("Collection is NOT CACHE - Reload collection");
-                collection = new SoftwareParameterModelCollection({uri:window.app.replaceVariable(param.uri), sortAttribut:param.uriSortAttribut});
+                collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut: param.uriSortAttribut});
                 collection.fetch({
-                    success:function (col, response) {
+                    success: function (col, response) {
                         window.app.addToCache(window.app.replaceVariable(param.uri), col);
                         cell.html(self.createJobParameterDomainValue(ids, col, param, maxSize));
                         cell.find("a").popover();
@@ -210,16 +216,22 @@ var DashboardController = Backbone.Router.extend({
         }
         else {
             var computeValue = param.value;
-            if (param.name.toLowerCase() == "privatekey" || param.name.toLowerCase() == "publickey") computeValue = "************************************";
+            if (param.name.toLowerCase() == "privatekey" || param.name.toLowerCase() == "publickey") {
+                computeValue = "************************************";
+            }
             cell.html(computeValue);
         }
     },
-    createJobParameterDomainValue:function (ids, collection, param, maxSize) {
+    createJobParameterDomainValue: function (ids, collection, param, maxSize) {
         var names = [];
         _.each(ids, function (id) {
             var name = collection.get(id);
-            if (name == undefined) names.push("Unknown");
-            else names.push(name.get(param.uriPrintAttribut));
+            if (name == undefined) {
+                names.push("Unknown");
+            }
+            else {
+                names.push(name.get(param.uriPrintAttribut));
+            }
 
         });
         names = _.sortBy(names, function (name) {

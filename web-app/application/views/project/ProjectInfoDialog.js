@@ -1,8 +1,8 @@
 var ProjectInfoDialog = Backbone.View.extend({
-    initialize:function (options) {
+    initialize: function (options) {
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectInfoDialog.tpl.html"
@@ -12,13 +12,13 @@ var ProjectInfoDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var htmlCode = _.template(tpl, this.model.toJSON());
         $(this.el).append(htmlCode);
 
         var expectedCallback = 4;
         var dataLoadedCallback = 0;
-        var dataLoaded = function(dataLoadedCallback) {
+        var dataLoaded = function (dataLoadedCallback) {
             if (dataLoadedCallback == expectedCallback) {
                 $("#infoProject").modal("show");
             }
@@ -27,8 +27,8 @@ var ProjectInfoDialog = Backbone.View.extend({
 
         var project = this.model;
 
-        new UserCollection({project:project.id, creator:true}).fetch({
-            success:function (creator, response) {
+        new UserCollection({project: project.id, creator: true}).fetch({
+            success: function (creator, response) {
                 $("#userInfoBigPanel-" + project.id).find("#projectCreator").empty();
                 var list = [];
                 creator.each(function (user) {
@@ -38,8 +38,8 @@ var ProjectInfoDialog = Backbone.View.extend({
                 dataLoaded(++dataLoadedCallback);
             }});
 
-        new UserCollection({project:project.id, admin:true}).fetch({
-            success:function (admin, response) {
+        new UserCollection({project: project.id, admin: true}).fetch({
+            success: function (admin, response) {
                 $("#userInfoBigPanel-" + project.id).find("#projectAdmins").empty();
                 var list = [];
                 admin.each(function (user) {
@@ -48,8 +48,8 @@ var ProjectInfoDialog = Backbone.View.extend({
                 $("#userInfoBigPanel-" + project.id).find("#projectAdmins").append(list.join(", "));
                 dataLoaded(++dataLoadedCallback);
             }});
-        new UserCollection({project:project.id}).fetch({
-            success:function (users, response) {
+        new UserCollection({project: project.id}).fetch({
+            success: function (users, response) {
                 $("#userInfoBigPanel-" + project.id).find("#projectUsers").empty();
                 var list = [];
                 users.each(function (user) {
@@ -58,8 +58,8 @@ var ProjectInfoDialog = Backbone.View.extend({
                 $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
                 dataLoaded(++dataLoadedCallback);
             }});
-        new UserCollection({project:project.id, online:true}).fetch({
-            success:function (users, response) {
+        new UserCollection({project: project.id, online: true}).fetch({
+            success: function (users, response) {
                 $("#userInfoBigPanel-" + project.id).find("#projectUsersOnline").empty();
                 var list = [];
                 users.each(function (user) {
@@ -69,8 +69,8 @@ var ProjectInfoDialog = Backbone.View.extend({
                 dataLoaded(++dataLoadedCallback);
             }});
 
-        new ImageInstanceCollection({project:project.id, inf:0, sup:2}).fetch({
-            success:function (collection, response) {
+        new ImageInstanceCollection({project: project.id, inf: 0, sup: 2}).fetch({
+            success: function (collection, response) {
                 if (collection.length != 0) {
                     collection.each(function (image) {
                         var imgLinkTpl = '<div style="display : inline;margin: 10px;"><a href="#tabs-image-<%= project %>-<%= id %>-"><img class="lazy" alt="<%= filename %>" src="<%= thumb %>" style="height:200px;" /></a></div>';
@@ -82,7 +82,7 @@ var ProjectInfoDialog = Backbone.View.extend({
             }});
 
         //close button
-        $("#closeInfoProject").on("click", function(e){
+        $("#closeInfoProject").on("click", function (e) {
             $("#infoProject").modal("hide");
             $("#infoProject").remove();
         });

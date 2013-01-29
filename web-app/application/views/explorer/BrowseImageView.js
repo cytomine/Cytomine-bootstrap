@@ -1,17 +1,17 @@
 var BrowseImageView = Backbone.View.extend({
-    tagName:"div",
-    tileSize:256,
-    review:false,
-    divPrefixId : "",
-    divId :"",
-    currentAnnotation : null,
-    userJobForImage : null,
+    tagName: "div",
+    tileSize: 256,
+    review: false,
+    divPrefixId: "",
+    divId: "",
+    currentAnnotation: null,
+    userJobForImage: null,
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         console.log("initialize");
         console.log(options);
         this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
@@ -32,9 +32,15 @@ var BrowseImageView = Backbone.View.extend({
             this.digitalResolutions.push(1 / Math.pow(2, i + 1));
         }
         this.currentAnnotation = null;
-        if(options.review!=undefined) this.review = options.review;
-        if(!this.review) this.divPrefixId = "tabs-image";
-        else this.divPrefixId = "tabs-review";
+        if (options.review != undefined) {
+            this.review = options.review;
+        }
+        if (!this.review) {
+            this.divPrefixId = "tabs-image";
+        }
+        else {
+            this.divPrefixId = "tabs-review";
+        }
 
         _.bindAll(this, "initVectorLayers");
     },
@@ -43,12 +49,16 @@ var BrowseImageView = Backbone.View.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         console.log("BrowseImageView:doLayout");
 
-        if(!this.review) this.divId = "tabs-image-"+window.app.status.currentProject+"-"+this.model.id+"-";
-        else this.divId = "tabs-review-"+window.app.status.currentProject+"-"+this.model.id+"-";
+        if (!this.review) {
+            this.divId = "tabs-image-" + window.app.status.currentProject + "-" + this.model.id + "-";
+        }
+        else {
+            this.divId = "tabs-review-" + window.app.status.currentProject + "-" + this.model.id + "-";
+        }
 
         var templateData = this.model.toJSON();
 
@@ -61,8 +71,8 @@ var BrowseImageView = Backbone.View.extend({
         }
 
         var tabTpl =
-                "<li>" +
-                "<a style='float: left;' id='"+self.divPrefixId+"-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#"+self.divPrefixId+"-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
+            "<li>" +
+                "<a style='float: left;' id='" + self.divPrefixId + "-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#" + self.divPrefixId + "-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
                 "<i class='icon-search' /> <%= shortOriginalFilename %> " +
                 "</a>" +
                 "</li>";
@@ -70,63 +80,75 @@ var BrowseImageView = Backbone.View.extend({
         var dataName = 'data-name=<%= idImage %>';
 
         var tabs = $('#explorer-tab');
-        tabs.append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
-        var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab'+self.divPrefixId+'-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
-        tabs.append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
+        tabs.append(_.template(tabTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), originalFilename: this.model.get('originalFilename'), shortOriginalFilename: shortOriginalFilename}));
+        var dropdownTpl = '<li class="dropdown"><a href="#" id="' + self.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + self.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
+        tabs.append(_.template(dropdownTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), filename: this.model.get('filename')}));
 
-        if(this.review && this.model.get('reviewed')) self.changeValidateColor(true);
-        else if(this.review && this.model.get('inReview')) self.changeValidateColor(false);
+        if (this.review && this.model.get('reviewed')) {
+            self.changeValidateColor(true);
+        }
+        else if (this.review && this.model.get('inReview')) {
+            self.changeValidateColor(false);
+        }
 
         this.initToolbar();
 
-        if(this.review) {
-            console.log("this.review="+this.review);
-            new UserJobCollection({project:window.app.status.currentProject, image : self.model.id}).fetch({
-                success:function (collection, response) {
+        if (this.review) {
+            console.log("this.review=" + this.review);
+            new UserJobCollection({project: window.app.status.currentProject, image: self.model.id}).fetch({
+                success: function (collection, response) {
                     self.userJobForImage = collection;
                     self.initMap();
                     self.initAnnotationsTabs();
-                    if (self.iPad) self.initMobile();
+                    if (self.iPad) {
+                        self.initMobile();
+                    }
                 }
             });
         } else {
             this.initMap();
             this.initAnnotationsTabs();
-            if (this.iPad) this.initMobile();
+            if (this.iPad) {
+                this.initMobile();
+            }
         }
         return this;
     },
-    changeValidateColor : function(isValidate) {
+    changeValidateColor: function (isValidate) {
         var self = this;
         var color = ""
-        if(isValidate) color = "#5BB75B";
-        else color = "#BD362F";
+        if (isValidate) {
+            color = "#5BB75B";
+        }
+        else {
+            color = "#BD362F";
+        }
         var tabs = $("#explorer-tab-content");
-        tabs.find("a#"+self.divPrefixId+"-"+self.model.id).css("background-color",color);
+        tabs.find("a#" + self.divPrefixId + "-" + self.model.id).css("background-color", color);
     },
-    initMobile:function () {
+    initMobile: function () {
 
 
     },
-    isCurrentAnnotationUser : function() {
-        console.log("isCurrentAnnotationUser="+window.app.models.projectUser.get( this.currentAnnotation.get('user')));
-        return window.app.models.projectUser.get( this.currentAnnotation.get('user'))!=undefined
+    isCurrentAnnotationUser: function () {
+        console.log("isCurrentAnnotationUser=" + window.app.models.projectUser.get(this.currentAnnotation.get('user')));
+        return window.app.models.projectUser.get(this.currentAnnotation.get('user')) != undefined
     },
-    addTermToReviewPanel : function(idTerm) {
-        console.log("addTermToReviewPanel="+idTerm);
-        if(this.review) {
-            this.reviewPanel.addTermChoice(idTerm,this.currentAnnotation.id);
+    addTermToReviewPanel: function (idTerm) {
+        console.log("addTermToReviewPanel=" + idTerm);
+        if (this.review) {
+            this.reviewPanel.addTermChoice(idTerm, this.currentAnnotation.id);
         }
     },
-    deleteTermFromReviewPanel : function(idTerm) {
-        if(this.review) {
-            this.reviewPanel.deleteTermChoice(idTerm,this.currentAnnotation.id);
+    deleteTermFromReviewPanel: function (idTerm) {
+        if (this.review) {
+            this.reviewPanel.deleteTermChoice(idTerm, this.currentAnnotation.id);
         }
     },
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         //var template = (this.iPad) ? "text!application/templates/explorer/BrowseImageMobile.tpl.html" : "text!application/templates/explorer/BrowseImage.tpl.html";
         require(["text!application/templates/explorer/BrowseImage.tpl.html"
@@ -139,7 +161,7 @@ var BrowseImageView = Backbone.View.extend({
     /**
      * Check init options and call appropriate methods
      */
-    registerEventTile:function (layer) {
+    registerEventTile: function (layer) {
 
         var self = this;
         layer.events.register("loadstart", layer, function () {
@@ -168,11 +190,11 @@ var BrowseImageView = Backbone.View.extend({
 
     },
 
-    show:function (options) {
+    show: function (options) {
         var self = this;
         if (options.goToAnnotation != undefined) {
-            new AnnotationModel({id:options.goToAnnotation.value}).fetch({
-                success:function (annotation, response) {
+            new AnnotationModel({id: options.goToAnnotation.value}).fetch({
+                success: function (annotation, response) {
                     var layer = _.find(self.layers, function (layer) {
                         return layer.userID == annotation.get("user")
                     });
@@ -182,12 +204,14 @@ var BrowseImageView = Backbone.View.extend({
                         self.setLayerVisibility(layer, true);
                         setTimeout(function () {
                             var feature = layer.getFeature(annotation.id)
-                            if (feature) layer.selectFeature(feature);
+                            if (feature) {
+                                layer.selectFeature(feature);
+                            }
                         }, 1000);//select feature once layer is readed. Should be triggered by event...
                     } else {
-                        new UserModel({id:annotation.get('user')}).fetch({
-                            success:function (userAlgo, response) {
-                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map,this.review);
+                        new UserModel({id: annotation.get('user')}).fetch({
+                            success: function (userAlgo, response) {
+                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map, this.review);
                                 layer.isOwner = false;
                                 layer.loadAnnotations(self);
                                 layer.registerEvents(self.map);
@@ -203,20 +227,22 @@ var BrowseImageView = Backbone.View.extend({
         }
     },
 
-    refreshAnnotationTabs:function (idTerm) {
+    refreshAnnotationTabs: function (idTerm) {
         this.annotationsPanel.refreshAnnotationTabs(idTerm);
     },
 
-    setAllLayersVisibility:function (visibility) {
+    setAllLayersVisibility: function (visibility) {
         var self = this;
         _.each(this.layers, function (layer) {
             self.setLayerVisibility(layer, visibility);
         });
     },
-    setLayerVisibility:function (layer, visibility) {
+    setLayerVisibility: function (layer, visibility) {
         // manually check (or uncheck) the checkbox in the menu:
-        $("#"+this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
-            if (layer.name != $(this).attr("value")) return;
+        $("#" + this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
+            if (layer.name != $(this).attr("value")) {
+                return;
+            }
             if (visibility) {
                 if ($(this).attr("checked") != "checked") {
                     this.click();
@@ -228,12 +254,12 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    switchControl:function (controlName) {
-        var toolbar = $("#"+this.divId).find('#toolbar' + this.model.get('id'));
+    switchControl: function (controlName) {
+        var toolbar = $("#" + this.divId).find('#toolbar' + this.model.get('id'));
         toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
     },
-    getZoomLevel: function() {
-      return this.map.zoom
+    getZoomLevel: function () {
+        return this.map.zoom
     },
     /**
      * Move the OpenLayers view to the Annotation, at the
@@ -241,7 +267,7 @@ var BrowseImageView = Backbone.View.extend({
      * @param layer The vector layer containing annotations
      * @param idAnnotation the annotation
      */
-    goToAnnotation:function (layer, annotation) {
+    goToAnnotation: function (layer, annotation) {
         var self = this;
         var format = new OpenLayers.Format.WKT();
         var point = format.read(annotation.get("location"));
@@ -264,21 +290,21 @@ var BrowseImageView = Backbone.View.extend({
         //zoom = Math.max(0, zoom-1);
         self.map.moveTo(new OpenLayers.LonLat(geom.getCentroid().x, geom.getCentroid().y), Math.max(0, zoom));
     },
-    getFeature:function (idAnnotation) {
+    getFeature: function (idAnnotation) {
         return this.userLayer.getFeature(idAnnotation);
     },
-    removeFeature:function (idAnnotation) {
+    removeFeature: function (idAnnotation) {
         return this.userLayer.removeFeature(idAnnotation);
     },
     /**
      * Callback used by AnnotationLayer at the end of theirs initializations
      * @param layer
      */
-    layerLoadedCallback:function (layer) {
+    layerLoadedCallback: function (layer) {
         var self = this;
         this.layersLoaded++;
 
-        if (self.review==false && this.layersLoaded == (window.app.models.userLayer.length+1)) { //+1 for review layer
+        if (self.review == false && this.layersLoaded == (window.app.models.userLayer.length + 1)) { //+1 for review layer
 
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
@@ -293,7 +319,7 @@ var BrowseImageView = Backbone.View.extend({
                     layer.vectorsLayer.setVisibility(true);
                     layer.toggleIrregular();
                     //Simulate click on None toolbar
-                    var toolbar = $("#"+self.divId).find('#toolbar' + self.model.get('id'));
+                    var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
                     toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                 } else {
                     layer.controls.select.activate();
@@ -301,7 +327,9 @@ var BrowseImageView = Backbone.View.extend({
                 }
             });
 
-            if (_.isFunction(self.initCallback)) self.initCallback.call();
+            if (_.isFunction(self.initCallback)) {
+                self.initCallback.call();
+            }
 
             self.initAutoAnnoteTools();
         }
@@ -309,37 +337,38 @@ var BrowseImageView = Backbone.View.extend({
     /**
      * Return the AnnotationLayer of the logged user
      */
-    getUserLayer:function () {
+    getUserLayer: function () {
         return this.userLayer;
     },
-    getUserAndReviewLayer:function () {
-        console.log("getUserAndReviewLayer.user="+this.userLayer.name);
-        console.log("getUserAndReviewLayer.review="+this.reviewPanel.reviewLayer.name);
-        return {user:this.userLayer, review:this.reviewPanel.reviewLayer};
+    getUserAndReviewLayer: function () {
+        console.log("getUserAndReviewLayer.user=" + this.userLayer.name);
+        console.log("getUserAndReviewLayer.review=" + this.reviewPanel.reviewLayer.name);
+        return {user: this.userLayer, review: this.reviewPanel.reviewLayer};
     },
     /**
      * Initialize the OpenLayers Map
      */
-    initMap:function () {
+    initMap: function () {
         var self = this;
         var mime = this.model.get('mime');
 
 
-
-        if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff" || mime == "svs" || mime == "jp2")
+        if (mime == "vms" || mime == "mrxs" || mime == "tif" || mime == "tiff" || mime == "svs" || mime == "jp2") {
             self.initIIP();
+        }
     },
     /**
      * Add a base layer (image) on the Map
      * @param layer the layer to add
      */
-    addBaseLayer:function (layer) {
+    addBaseLayer: function (layer) {
         var self = this;
         this.map.addLayer(layer);
         this.baseLayers.push(layer);
         self.map.setBaseLayer(layer);
-        if(!this.review)
+        if (!this.review) {
             this.layerSwitcherPanel.addBaseLayer(layer, this.model);
+        }
     },
 
     /**
@@ -347,93 +376,94 @@ var BrowseImageView = Backbone.View.extend({
      * @param layer the layer to add
      * @param userID the id of the user associated to the layer
      */
-    reviewLayer : null,
-    addVectorLayer:function (layer, userID) {
+    reviewLayer: null,
+    addVectorLayer: function (layer, userID) {
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
 
-        if(userID==0) {
+        if (userID == 0) {
             this.reviewLayer = layer;
         }
 
         this.layers.push(layer);
 
-        if(!this.review) {
+        if (!this.review) {
             this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
-        } else{
+        } else {
             this.reviewPanel.addVectorLayer(layer, this.model, userID);
-            this.map.raiseLayer(this.reviewLayer.vectorsLayer,1000);
+            this.map.raiseLayer(this.reviewLayer.vectorsLayer, 1000);
         }
     },
-    showAnnotationInReviewPanel : function(annotation){
+    showAnnotationInReviewPanel: function (annotation) {
         console.log("showAnnotationInReviewPanel");
-        if(this.review)
+        if (this.review) {
             this.reviewPanel.showCurrentAnnotation(annotation);
+        }
     },
     /**
      * Create a draggable Panel containing Layers names
      * and tools
      */
-    createLayerSwitcher:function () {
+    createLayerSwitcher: function () {
         this.layerSwitcherPanel = new LayerSwitcherPanel({
-            browseImageView:this,
-            model:this.model,
-            el:this.el
+            browseImageView: this,
+            model: this.model,
+            el: this.el
         }).render();
     },
-    createReviewPanel:function () {
+    createReviewPanel: function () {
         var self = this;
         this.reviewPanel = new ReviewPanel({
-            browseImageView:self,
-            model:self.model,
-            el:self.el,
+            browseImageView: self,
+            model: self.model,
+            el: self.el,
             userLayers: window.app.models.projectUser,
-            userJobLayers : self.userJobForImage
+            userJobLayers: self.userJobForImage
         }).render();
     },
-    createInformationPanel : function(){
+    createInformationPanel: function () {
         var self = this;
         this.informationsPanel = new InformationsPanel({
-            browseImageView:self,
-            model:self.model,
-            el:self.el
+            browseImageView: self,
+            model: self.model,
+            el: self.el
         }).render();
     },
     /**
      * Create a draggable Panel containing a OverviewMap
      */
-    createOverviewMap:function () {
+    createOverviewMap: function () {
         new OverviewMapPanel({
-            model:this.model,
-            el:this.el,
+            model: this.model,
+            el: this.el,
             browseImageView: this
         }).render();
     },
     /**
      * Init the Map if ImageServer is IIPImage
      */
-    initIIP:function () {
+    initIIP: function () {
         var self = this;
 
         //HACK : Set the height of the map manually
         var paddingTop = 77;
         var height = $(window).height() - paddingTop;
-        $("#"+self.divId).find("#map" +self.divPrefixId  + self.model.get('id')).css("height", height);
-        $("#"+self.divId).find("#map" + self.divPrefixId+self.model.get('id')).css("width", "100%");
+        $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("height", height);
+        $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("width", "100%");
         $(window).resize(function () {
             var height = $(window).height() - paddingTop;
-            $("#"+self.divId).find("#map" + self.divPrefixId+self.model.get('id')).css("height", height);
+            $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("height", height);
         });
 
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
-            if(!self.review) {
+            if (!self.review) {
                 self.createLayerSwitcher();
                 $(".reviewPanel").hide();
             }
             else {
                 self.createReviewPanel();
                 $(".layerSwitcherPanel").hide();
-                console.log("LAYER SWITECHER="+$(".layerSwitcherPanel").length)
+                console.log("LAYER SWITECHER=" + $(".layerSwitcherPanel").length)
             }
             self.createInformationPanel();
             //self.initImageFiltersPanel();
@@ -445,49 +475,50 @@ var BrowseImageView = Backbone.View.extend({
             }
             var resolutions = _.union(serverResolutions, self.digitalResolutions)
             var options = {
-                maxExtent:new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                resolutions:resolutions,
-                serverResolutions:serverResolutions,
-                units:'pixels',
-                tileSize:new OpenLayers.Size(self.tileSize, self.tileSize),
-                controls:[
+                maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                resolutions: resolutions,
+                serverResolutions: serverResolutions,
+                units: 'pixels',
+                tileSize: new OpenLayers.Size(self.tileSize, self.tileSize),
+                controls: [
                     new OpenLayers.Control.TouchNavigation({
-                        dragPanOptions:{
-                            enableKinetic:window.app.view.isMobile
+                        dragPanOptions: {
+                            enableKinetic: window.app.view.isMobile
                         }
                     }),
-                    new OpenLayers.Control.Navigation({dragPanOptions:{enableKinetic:window.app.view.isMobile}}),
+                    new OpenLayers.Control.Navigation({dragPanOptions: {enableKinetic: window.app.view.isMobile}}),
                     new OpenLayers.Control.ZoomPanel(),
                     /*new OpenLayers.Control.MousePosition({
-                    }),*/
+                     }),*/
                     new OpenLayers.Control.KeyboardDefaults()],
-                eventListeners:{
+                eventListeners: {
 
-                    "zoomend":function (event) {
+                    "zoomend": function (event) {
                         var map = event.object;
                         var maxMagnification = self.model.get("magnification") * Math.pow(2, self.nbDigitialZoom);
                         var deltaZoom = map.getNumZoomLevels() - map.getZoom() - 1;
 
                         var magnification = maxMagnification;
-                        if (deltaZoom != 0)
+                        if (deltaZoom != 0) {
                             magnification = maxMagnification / (Math.pow(2, deltaZoom));
+                        }
                         magnification = Math.round(magnification * 100) / 100;
                         if (magnification > self.model.get("magnification")) {
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X<br/>digital");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X<br/>digital");
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
                         } else {
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X");
-                            $("#"+self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X");
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
                         }
 
                         self.broadcastPosition();
                     },
-                    "moveend":function () {
+                    "moveend": function () {
                         self.broadcastPosition();
                     },
-                    "mousemove":function(e){
+                    "mousemove": function (e) {
 
                     }
 
@@ -503,23 +534,23 @@ var BrowseImageView = Backbone.View.extend({
 
             self.createOverviewMap();
             var overviewMapControl = new OpenLayers.Control.OverviewMap({
-                size:new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
-                layers:[overviewMap],
-                div:$("#"+self.divId).find('#overviewmapcontent' + self.model.get('id'))[0],
-                minRatio:1,
-                maxRatio:1024,
-                mapOptions:{
-                    maxExtent:new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                    maximized:true
+                size: new OpenLayers.Size(metadata.overviewWidth, metadata.overviewHeight),
+                layers: [overviewMap],
+                div: $("#" + self.divId).find('#overviewmapcontent' + self.model.get('id'))[0],
+                minRatio: 1,
+                maxRatio: 1024,
+                mapOptions: {
+                    maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                    maximized: true
                 }
             });
 
 
-            self.map = new OpenLayers.Map("map"+ self.divPrefixId + self.model.get('id'), options);
+            self.map = new OpenLayers.Map("map" + self.divPrefixId + self.model.get('id'), options);
             self.map.events.register('mousemove', self.map, function (e) {
                 var position = this.events.getMousePosition(e);
-                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x : position.x, y : position.y});
-                $('#mousePositionContent'+self.model.id).html(coordinates);
+                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: position.x, y: position.y});
+                $('#mousePositionContent' + self.model.id).html(coordinates);
             });
             self.initOntology();
             window.app.view.applyPreferences();
@@ -529,7 +560,7 @@ var BrowseImageView = Backbone.View.extend({
                 "Original",
                 zoomify_urls,
                 new OpenLayers.Size(metadata.width, metadata.height),
-                {tileOptions:{crossOriginKeyword:'anonymous'}}
+                {tileOptions: {crossOriginKeyword: 'anonymous'}}
             );
 
             baseLayer.transitionEffect = 'resize';
@@ -541,16 +572,22 @@ var BrowseImageView = Backbone.View.extend({
                     var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
                     var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
                     //check if tiles exist on server at this zoom level, if not return
-                    if (this.tierImageSize[z] == undefined) return null;
+                    if (this.tierImageSize[z] == undefined) {
+                        return null;
+                    }
                     var w = this.standardTileSize;
                     var h = this.standardTileSize;
                     if (x == this.tierSizeInTiles[z].w - 1) {
                         w = this.tierImageSize[z].w % this.standardTileSize;
-                        if (w == 0) w = this.standardTileSize;
+                        if (w == 0) {
+                            w = this.standardTileSize;
+                        }
                     }
                     if (y == this.tierSizeInTiles[z].h - 1) {
                         h = this.tierImageSize[z].h % this.standardTileSize;
-                        if (h == 0) h = this.standardTileSize;
+                        if (h == 0) {
+                            h = this.standardTileSize;
+                        }
                     }
                     return (new OpenLayers.Size(w, h));
                 } else {
@@ -590,11 +627,12 @@ var BrowseImageView = Backbone.View.extend({
             self.map.zoomTo(idealZoom);
 
 
-
             //broadcast position every 5 seconds even if user id idle
             self.initBroadcastingInterval();
             //check users online of this image
-            if(!self.review) self.initWatchOnlineUsersInterval();
+            if (!self.review) {
+                self.initWatchOnlineUsersInterval();
+            }
         }
 
         var t_width = self.model.get("width");
@@ -605,11 +643,11 @@ var BrowseImageView = Backbone.View.extend({
             t_width = Math.floor(t_width / 2);
             t_height = Math.floor(t_height / 2);
         }
-        var metadata = {width:self.model.get("width"), height:self.model.get("height"), nbZoom:nbZoom, overviewWidth:200, overviewHeight:Math.round((200 / self.model.get("width") * self.model.get("height")))};
-        new ImageServerUrlsModel({id:self.model.get('baseImage')}).fetch({
-            success:function (model, response) {
-                new ProjectImageFilterCollection({ project:self.model.get("project")}).fetch({
-                    success:function (imageFilters, response) {
+        var metadata = {width: self.model.get("width"), height: self.model.get("height"), nbZoom: nbZoom, overviewWidth: 200, overviewHeight: Math.round((200 / self.model.get("width") * self.model.get("height")))};
+        new ImageServerUrlsModel({id: self.model.get('baseImage')}).fetch({
+            success: function (model, response) {
+                new ProjectImageFilterCollection({ project: self.model.get("project")}).fetch({
+                    success: function (imageFilters, response) {
                         initZoomifyLayer(metadata, model.get('imageServersURLs'), imageFilters);
                     }
                 });
@@ -617,42 +655,46 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    broadcastPosition:function () {
+    broadcastPosition: function () {
         var image = this.model.get("id");
         var lonLat = this.map.getExtent().getCenterLonLat();
         var lon = lonLat.lon;
         var lat = lonLat.lat;
         var zoom = this.map.zoom;
-        if (zoom == null || lon == null || lat == null) return; //map not yet initialized
-        new UserPositionModel({ lon:lon, lat:lat, zoom:zoom, image:image}).save();
+        if (zoom == null || lon == null || lat == null) {
+            return;
+        } //map not yet initialized
+        new UserPositionModel({ lon: lon, lat: lat, zoom: zoom, image: image}).save();
     },
-    reloadAnnotation:function (idAnnotation) {
+    reloadAnnotation: function (idAnnotation) {
         var self = this;
         self.removeFeature(idAnnotation);
-        new AnnotationModel({id:idAnnotation}).fetch({
-            success:function (annotation, response) {
+        new AnnotationModel({id: idAnnotation}).fetch({
+            success: function (annotation, response) {
                 var feature = AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
                 self.userLayer.addFeature(feature);
                 self.userLayer.selectFeature(feature);
             }
         });
     },
-    initBroadcastingInterval:function () {
+    initBroadcastingInterval: function () {
         var self = this;
         this.broadcastPositionInterval = setInterval(function () {
             self.broadcastPosition();
         }, 5000);
         window.app.view.intervals.push(this.broadcastPositionInterval);
     },
-    stopBroadcastingInterval:function () {
+    stopBroadcastingInterval: function () {
         clearInterval(this.broadcastPositionInterval);
     },
-    initWatchOnlineUsersInterval:function () {
+    initWatchOnlineUsersInterval: function () {
         var self = this;
-        if(this.review) return;
+        if (this.review) {
+            return;
+        }
         this.watchOnlineUsersInterval = setInterval(function () {
-            new UserOnlineModel({image:self.model.get("id")}).fetch({
-                success:function (model, response) {
+            new UserOnlineModel({image: self.model.get("id")}).fetch({
+                success: function (model, response) {
                     var usersOnlineArray = model.get("users").split(",");
                     self.layerSwitcherPanel.updateOnlineUsers(usersOnlineArray);
                 }
@@ -660,14 +702,16 @@ var BrowseImageView = Backbone.View.extend({
         }, 5000);
         window.app.view.intervals.push(this.watchOnlineUsersInterval);
     },
-    stopWatchOnlineUsersInterval:function () {
+    stopWatchOnlineUsersInterval: function () {
         clearInterval(this.watchOnlineUsersInterval);
     },
-    initAutoAnnoteTools:function () {
+    initAutoAnnoteTools: function () {
         var self = this;
         var processInProgress = false;
         var handleMapClick = function handleMapClick(evt) {
-            if (!self.getUserLayer().magicOnClick) return;
+            if (!self.getUserLayer().magicOnClick) {
+                return;
+            }
 
             if (processInProgress) {
                 window.app.view.message("Warning", "Magic Wand in progress...", "warning");
@@ -683,17 +727,19 @@ var BrowseImageView = Backbone.View.extend({
             newCanvas.height = newCanvasHeight;
             newCanvas.display = 'none';
             document.body.appendChild(newCanvas);
-            var mapContainerDiv = $("#"+self.divId).find("#map" + self.model.id).children().children()[0];
+            var mapContainerDiv = $("#" + self.divId).find("#map" + self.model.id).children().children()[0];
             var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
             var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
             for (var row = 0; row < tiles.length; row++) {
                 for (var col = 0; col < tiles[row].length; col++) {
                     var tile = tiles[row][col];
                     var tileCtx = tile.getCanvasContext();
-                    if (tileCtx) newContext.drawImage(
-                        tileCtx.canvas,
-                        viewPositionLeft + tile.position.x,
-                        viewPositionTop + tile.position.y);
+                    if (tileCtx) {
+                        newContext.drawImage(
+                            tileCtx.canvas,
+                            viewPositionLeft + tile.position.x,
+                            viewPositionTop + tile.position.y);
+                    }
                 }
             }
             var startX = evt.xy.x;
@@ -708,20 +754,20 @@ var BrowseImageView = Backbone.View.extend({
             console.log("threshold=" + threshold);
             console.log("tolerance=" + tolerance);
             if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {
-                Processing.ColorChannel.process({canvas:imgd, channel:Processing.ColorChannel.GREEN});
+                Processing.ColorChannel.process({canvas: imgd, channel: Processing.ColorChannel.GREEN});
             } else {
-                Processing.Threshold.process({canvas:imgd, threshold:threshold});
+                Processing.Threshold.process({canvas: imgd, threshold: threshold});
             }
 
             //process PIX
             console.log("MagicWand...");
             var wandResult = Processing.MagicWand.process({
-                canvas:imgd,
-                canvasWidth:newCanvasWidth,
-                canvasHeight:newCanvasHeight,
-                startX:startX,
-                startY:startY,
-                tolerance:tolerance
+                canvas: imgd,
+                canvasWidth: newCanvasWidth,
+                canvasHeight: newCanvasHeight,
+                startX: startX,
+                startY: startY,
+                tolerance: tolerance
             });
             if (!wandResult.success) {
                 processInProgress = false;
@@ -732,10 +778,10 @@ var BrowseImageView = Backbone.View.extend({
             console.log("done");
             console.log("Outline");
             var outline = Processing.Outline.process({
-                canvas:imgd,
-                canvasWidth:newCanvasWidth,
-                canvasHeight:newCanvasHeight,
-                bbox:wandResult.bbox
+                canvas: imgd,
+                canvasWidth: newCanvasWidth,
+                canvasHeight: newCanvasHeight,
+                bbox: wandResult.bbox
             });
             console.log("done");
             processInProgress = false;
@@ -754,10 +800,12 @@ var BrowseImageView = Backbone.View.extend({
                     newContext.fillRect(outline.points[i].x - 1, outline.points[i].y - 1, 3, 3);
                 }
             }
-            if (!debug) document.body.removeChild(newCanvas);
+            if (!debug) {
+                document.body.removeChild(newCanvas);
+            }
             var polyPoints = []
             for (var i = 0; i + 5 < outline.points.length; i = i + 5) {
-                var _p = self.map.getLonLatFromViewPortPx({ x:outline.points[i].x, y:outline.points[i].y});
+                var _p = self.map.getLonLatFromViewPortPx({ x: outline.points[i].x, y: outline.points[i].y});
                 var point = new OpenLayers.Geometry.Point(
                     _p.lon,
                     _p.lat);
@@ -781,11 +829,11 @@ var BrowseImageView = Backbone.View.extend({
     /**
      * Init the toolbar
      */
-    initToolbar:function () {
+    initToolbar: function () {
 
         var self = this;
-        var toolbar = $("#"+self.divId).find('#toolbar' + this.model.get('id'));
-        $("#"+self.divId).find('a[id=none' + this.model.get('id') + ']').click(function () {
+        var toolbar = $("#" + self.divId).find('#toolbar' + this.model.get('id'));
+        $("#" + self.divId).find('a[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
             self.getUserLayer().enableHightlight();
@@ -859,7 +907,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.review) {
+            if (!self.review) {
                 self.getUserLayer().toggleEdit();
                 self.getUserLayer().toggleControl("modify");
                 self.getUserLayer().disableHightlight();
@@ -884,7 +932,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('a[id=rotate' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.review) {
+            if (!self.review) {
                 self.getUserLayer().toggleRotate();
                 self.getUserLayer().disableHightlight();
             } else {
@@ -898,23 +946,23 @@ var BrowseImageView = Backbone.View.extend({
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             var annotation = self.currentAnnotation;
-            if(annotation) {
-                new AnnotationModel({id:annotation.id, fill:true}).save({}, {
-                        success:function (annotation, response) {
-                            window.app.view.message("Annotation edited", response.message, "success");
-                            if(!self.review) {
-                                self.getUserLayer().vectorsLayer.refresh()
-                            } else {
-                                self.getUserAndReviewLayer().user.vectorsLayer.refresh()
-                                self.getUserAndReviewLayer().review.vectorsLayer.refresh()
-                            }
-                        },
-                        error:function (model, response) {
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Annotation", json.errors, "");
+            if (annotation) {
+                new AnnotationModel({id: annotation.id, fill: true}).save({}, {
+                    success: function (annotation, response) {
+                        window.app.view.message("Annotation edited", response.message, "success");
+                        if (!self.review) {
+                            self.getUserLayer().vectorsLayer.refresh()
+                        } else {
+                            self.getUserAndReviewLayer().user.vectorsLayer.refresh()
+                            self.getUserAndReviewLayer().review.vectorsLayer.refresh()
                         }
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Annotation", json.errors, "");
+                    }
                 });
-             } else {
+            } else {
                 window.app.view.message("Annotation", "You must select an annotation!", "error");
             }  //vectorsLayer.refresh()
 
@@ -925,7 +973,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.review) {
+            if (!self.review) {
                 self.getUserLayer().toggleResize();
                 self.getUserLayer().disableHightlight();
             } else {
@@ -939,7 +987,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('a[id=drag' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.review) {
+            if (!self.review) {
                 self.getUserLayer().toggleDrag();
                 self.getUserLayer().disableHightlight();
             } else {
@@ -968,20 +1016,20 @@ var BrowseImageView = Backbone.View.extend({
     /**
      * Collect data and call appropriate methods in order to add Vector Layers on the Map
      */
-    initVectorLayers:function (ontologyTreeView) {
+    initVectorLayers: function (ontologyTreeView) {
         var self = this;
-        if(!self.review) {
+        if (!self.review) {
             var project = window.app.status.currentProjectModel;
             var projectUsers = window.app.models.projectUser.select(function (user) {
                 return window.app.models.userLayer.get(user.id) != undefined;
             });
             _.each(projectUsers, function (user) {
-                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map,self.review);
+                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map, self.review);
                 layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                 layerAnnotation.loadAnnotations(self);
             });
             //init review layer in explore mode
-            var layerAnnotation = new AnnotationLayer("Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map,self.review);
+            var layerAnnotation = new AnnotationLayer("Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
             layerAnnotation.isOwner = false;
             layerAnnotation.loadAnnotations(self);
         } else {
@@ -994,20 +1042,20 @@ var BrowseImageView = Backbone.View.extend({
         }
 
     },
-    refreshReviewLayer : function() {
-      if(this.reviewPanel) {
-          this.reviewPanel.reviewLayer.vectorsLayer.refresh();
-      }
+    refreshReviewLayer: function () {
+        if (this.reviewPanel) {
+            this.reviewPanel.reviewLayer.vectorsLayer.refresh();
+        }
     },
-    initAnnotationsTabs:function () {
+    initAnnotationsTabs: function () {
         this.annotationsPanel = new AnnotationsPanel({
-            el:this.el,
-            model:this.model,
-            browseImageView : this
+            el: this.el,
+            model: this.model,
+            browseImageView: this
         }).render();
 
     },
-    clickSelect : function() {
+    clickSelect: function () {
         var self = this;
         $("#" + self.divId).find('#toolbar' + self.model.get('id')).find('a#select' + self.model.get('id')).click();
     },
@@ -1015,62 +1063,62 @@ var BrowseImageView = Backbone.View.extend({
      * Create a draggable Panel containing a tree which represents the Ontology
      * associated to the Image
      */
-    initOntology:function () {
+    initOntology: function () {
         var self = this;
         self.ontologyPanel = new OntologyPanel({
-            el:this.el,
-            model:this.model,
-            callback:self.initVectorLayers,
-            browseImageView:self
+            el: this.el,
+            model: this.model,
+            callback: self.initVectorLayers,
+            browseImageView: self
         }).render();
 
     },
-    initImageFiltersPanel:function () {
+    initImageFiltersPanel: function () {
         var self = this;
         self.imageFiltersPanel = new ImageFiltersPanel({
-            el:this.el,
-            model:this.model,
-            browseImageView:self
+            el: this.el,
+            model: this.model,
+            browseImageView: self
         }).render();
     },
     /**
      * Bind controls to the map
      * @param controls the controls we want to bind
      */
-    initTools:function (controls) {
+    initTools: function (controls) {
         for (var key in controls) {
             this.map.addControl(controls[key]);
         }
     },
-    validatePicture : function() {
+    validatePicture: function () {
         var self = this;
         console.log("validateImage");
-        new ImageReviewModel({id:self.model.id}).destroy({
-            success:function (model, response) {
+        new ImageReviewModel({id: self.model.id}).destroy({
+            success: function (model, response) {
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
                 self.changeValidateColor(true);
                 self.reviewPanel.refresh(self.model);
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors, "error");
-        }});
+            }});
     },
-    unvalidatePicture : function() {
+    unvalidatePicture: function () {
         var self = this;
         console.log("cancelReviewing");
-        new ImageReviewModel({id:self.model.id, cancel:true}).destroy({
-            success:function (model, response) {
+        new ImageReviewModel({id: self.model.id, cancel: true}).destroy({
+            success: function (model, response) {
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
                 self.changeValidateColor(false);
                 self.reviewPanel.refresh(self.model);
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors, "error");
-        }});
+            }});
 
     }
 });

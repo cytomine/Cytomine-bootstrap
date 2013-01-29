@@ -1,17 +1,17 @@
 var LaunchJobView = Backbone.View.extend({
-    width:null,
-    software:null,
-    project:null,
-    parent:null,
-    params:[],
-    paramsViews:[],
-    initialize:function (options) {
+    width: null,
+    software: null,
+    project: null,
+    parent: null,
+    params: [],
+    paramsViews: [],
+    initialize: function (options) {
         this.width = options.width;
         this.software = options.software;
         this.project = options.project;
         this.parent = options.parent;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/JobLaunch.tpl.html"
@@ -21,7 +21,7 @@ var LaunchJobView = Backbone.View.extend({
             });
         return this;
     },
-    loadResult:function (JobLaunchTpl) {
+    loadResult: function (JobLaunchTpl) {
         var self = this;
         var content = _.template(JobLaunchTpl, {});
         $(self.el).empty();
@@ -32,25 +32,25 @@ var LaunchJobView = Backbone.View.extend({
         var width = ($(window).width() - 200);
         var height = ($(window).height() - 200);
         $(self.el).dialog({
-            modal:true,
-            minWidth:Math.min(Math.round($(window).width() - 75), 800),
-            minHeight:Math.round($(window).height() - 75),
-            maxWidth:800,
-            buttons:[
+            modal: true,
+            minWidth: Math.min(Math.round($(window).width() - 75), 800),
+            minHeight: Math.round($(window).height() - 75),
+            maxWidth: 800,
+            buttons: [
                 {
-                    text:"Cancel",
-                    click:function () {
+                    text: "Cancel",
+                    click: function () {
                         $(this).dialog("close");
                     }
                 },
                 {
-                    text:"Create job",
-                    click:function () {
+                    text: "Create job",
+                    click: function () {
                         self.createJobFromParam();
 
                     }
                 }
-            ], close:function (event, ui) {
+            ], close: function (event, ui) {
                 $("#userRetrievalSuggestMatrixDataTable").empty();
             }
         });
@@ -66,21 +66,39 @@ var LaunchJobView = Backbone.View.extend({
         self.printSoftwareParams();
 //        self.checkEntryValidation();
     },
-    getParamView:function (param) {
-        if (param.type == "String") return new InputTextView({param:param});
-        if (param.type == "Number") return new InputNumberView({param:param});
-        if (param.type == "Date") return new InputDateView({param:param});
-        if (param.type == "Boolean") return new InputBooleanView({param:param});
-        if (param.type == "List") return new InputListView({param:param});
-        if (param.type == "ListDomain") return new InputListDomainView({param:param, multiple:true});
-        if (param.type == "Domain") return new InputListDomainView({param:param, multiple:false});
+    getParamView: function (param) {
+        if (param.type == "String") {
+            return new InputTextView({param: param});
+        }
+        if (param.type == "Number") {
+            return new InputNumberView({param: param});
+        }
+        if (param.type == "Date") {
+            return new InputDateView({param: param});
+        }
+        if (param.type == "Boolean") {
+            return new InputBooleanView({param: param});
+        }
+        if (param.type == "List") {
+            return new InputListView({param: param});
+        }
+        if (param.type == "ListDomain") {
+            return new InputListDomainView({param: param, multiple: true});
+        }
+        if (param.type == "Domain") {
+            return new InputListDomainView({param: param, multiple: false});
+        }
 
 
-        else return new InputTextView({param:param});
+        else {
+            return new InputTextView({param: param});
+        }
     },
-    printSoftwareParams:function () {
+    printSoftwareParams: function () {
         var self = this;
-        if (self.software == undefined) return;
+        if (self.software == undefined) {
+            return;
+        }
 
         //build datatables
         $('#launchJobParamsTable').find('tbody').empty();
@@ -93,24 +111,24 @@ var LaunchJobView = Backbone.View.extend({
             paramView.checkEntryValidation();
         });
         $('#launchJobParamsTable').dataTable({
-            "sDom":"<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-            "sPaginationType":"bootstrap",
-            "oLanguage":{
-                "sLengthMenu":"_MENU_ records per page"
+            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
             },
-            "bSort":false,
-            "iDisplayLength":1000,
-            bDestroy:true,
-            "aoColumnDefs":[
-                { "sWidth":"25%", "aTargets":[ 0 ] },
-                { "sWidth":"50%", "aTargets":[ 1 ] },
-                { "sWidth":"25%", "aTargets":[ 2 ] }
+            "bSort": false,
+            "iDisplayLength": 1000,
+            bDestroy: true,
+            "aoColumnDefs": [
+                { "sWidth": "25%", "aTargets": [ 0 ] },
+                { "sWidth": "50%", "aTargets": [ 1 ] },
+                { "sWidth": "25%", "aTargets": [ 2 ] }
             ]
         });
     },
 
 
-    createJobFromParam:function () {
+    createJobFromParam: function () {
         var self = this;
         //retrieve an array of param
         console.log("retrieveParams()...");
@@ -129,37 +147,37 @@ var LaunchJobView = Backbone.View.extend({
 
         //close windows (ok in dialog), refresh daashboardalog view
     },
-    createJobModel:function (params) {
+    createJobModel: function (params) {
         var self = this;
         var job = new JobModel({
-            software:self.software.id,
-            project:self.project.id,
-            params:params
+            software: self.software.id,
+            project: self.project.id,
+            params: params
         });
         return job;
     },
-    retrieveParams:function () {
+    retrieveParams: function () {
         var self = this;
         var jobParams = [];
 
         _.each(self.paramsViews, function (paramView) {
             var softwareParam = paramView.param;
             var value = paramView.getStringValue();
-            var param = {value:'"' + value + '"', softwareParameter:softwareParam.id};
+            var param = {value: '"' + value + '"', softwareParameter: softwareParam.id};
             jobParams.push(param);
         });
         return jobParams;
     },
-    saveJobModel:function (job) {
+    saveJobModel: function (job) {
         var self = this;
         job.save({}, {
-            success:function (model, response) {
+            success: function (model, response) {
                 window.app.view.message("Add Job", response.message, "success");
                 console.log(model.get('job').id);
                 self.parent.changeJobSelection(model.get('job').id);
                 $(self.el).dialog("close");
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Add Job", "error:" + json.errors, "error");
             }
@@ -169,14 +187,14 @@ var LaunchJobView = Backbone.View.extend({
 
 
 var InputTextView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -184,42 +202,50 @@ var InputTextView = Backbone.View.extend({
             self.checkEntryValidation();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = "";
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
-        else classRequier = 'border-style: solid;border-width: 2px;';
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;';
+        }
+        else {
+            classRequier = 'border-style: solid;border-width: 2px;';
+        }
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
         console.log("checkEntryValidation");
-        if (self.param.required && self.getValue().trim() == "") self.changeStyle(self.trElem, false, "Field require");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.param.required && self.getValue().trim() == "") {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("input").val();
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         InputView.changeStyle(elem, success, message);
     }
 });
 
 var InputNumberView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -227,44 +253,54 @@ var InputNumberView = Backbone.View.extend({
             self.checkEntryValidation();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = "";
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
-        else classRequier = 'border-style: solid;border-width: 2px;';
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;';
+        }
+        else {
+            classRequier = 'border-style: solid;border-width: 2px;';
+        }
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="text-align:center;' + classRequier + '"></div></div>';
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
         console.log("checkEntryValidation");
-        if (self.param.required && self.getValue().trim() == "") self.changeStyle(self.trElem, false, "Field require");
-        else if (self.getValue().trim() != "" && isNaN(self.getValue())) self.changeStyle(self.trElem, false, "Not valid number");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.param.required && self.getValue().trim() == "") {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else if (self.getValue().trim() != "" && isNaN(self.getValue())) {
+            self.changeStyle(self.trElem, false, "Not valid number");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("input").val();
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         InputView.changeStyle(elem, success, message);
     }
 });
 
 
 var InputDateView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -272,64 +308,79 @@ var InputDateView = Backbone.View.extend({
         var defaultValue = self.getDefaultValue();
         console.log("addRow defaultValue =" + defaultValue);
         var dateDefault = null;
-        if (defaultValue != null) dateDefault = new Date(Number(defaultValue));
+        if (defaultValue != null) {
+            dateDefault = new Date(Number(defaultValue));
+        }
         console.log("dateDefault =" + dateDefault);
 
         self.trElem.find("input").datepicker({
-            dateFormat:"yy-mm-dd",
-            onSelect:function (dateText, inst) {
+            dateFormat: "yy-mm-dd",
+            onSelect: function (dateText, inst) {
                 self.checkEntryValidation();
             }
         });
-        if (dateDefault != null)
+        if (dateDefault != null) {
             self.trElem.find("input").datepicker("setDate", dateDefault);
+        }
 
         self.trElem.find('input').keyup(function () {
             self.checkEntryValidation();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = "";
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;';
-        else classRequier = 'border-style: dotted;border-width: 2px;';
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;';
+        }
+        else {
+            classRequier = 'border-style: dotted;border-width: 2px;';
+        }
         return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" style="text-align:center;' + classRequier + '"></div></div>';
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
         var date = self.trElem.find("input").datepicker("getDate");
         console.log("checkEntryValidation");
         console.log(date);
         console.log((self.param.required && date == null));
-        if (self.param.required && date == null) self.changeStyle(self.trElem, false, "Field require");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.param.required && date == null) {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var date = self.trElem.find("input").datepicker("getDate");
-        if (date == null) return null;
-        else return date.getTime();
+        if (date == null) {
+            return null;
+        }
+        else {
+            return date.getTime();
+        }
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         InputView.changeStyle(elem, success, message);
     }
 });
 
 var InputBooleanView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -337,38 +388,40 @@ var InputBooleanView = Backbone.View.extend({
             self.checkEntryValidation();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         return '<div><input type="checkbox" class="span3" ' + this.getDefaultValue() + ' /></div>';
     },
-    getDefaultValue:function () {
-        if (this.param.type == "Boolean" && this.param.defaultParamValue != undefined && this.param.defaultParamValue.toLowerCase() == "true") return 'checked="checked"';
+    getDefaultValue: function () {
+        if (this.param.type == "Boolean" && this.param.defaultParamValue != undefined && this.param.defaultParamValue.toLowerCase() == "true") {
+            return 'checked="checked"';
+        }
         return "";
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
         console.log("checkEntryValidation");
         self.changeStyle(self.trElem, true, "");
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("input").is(":checked");
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue() + '';
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         InputView.changeStyle(elem, success, message);
     }
 });
 
 var InputListView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td style="text-align:center;">' + self.getHtmlElem() + '</td><td style="text-align:center;"><span class="label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -392,11 +445,15 @@ var InputListView = Backbone.View.extend({
             self.checkEntryValidation();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = ""
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;'
-        else classRequier = 'border-style: dotted;border-width: 2px;'
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;'
+        }
+        else {
+            classRequier = 'border-style: dotted;border-width: 2px;'
+        }
         var defaultValues = self.getDefaultValue();
         var valueStr = '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + "" + '" style="text-align:center;' + classRequier + '"><i class="icon-plus-sign"></i><select>';
         _.each(defaultValues, function (value) {
@@ -405,7 +462,7 @@ var InputListView = Backbone.View.extend({
         valueStr = valueStr + '</select><i class="icon-minus-sign"></i></div></div>';
         return valueStr;
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         var self = this;
         var split = self.param.defaultParamValue.split(",");
         var values = [];
@@ -415,12 +472,16 @@ var InputListView = Backbone.View.extend({
         });
         return values;
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
-        if (self.trElem.find("select").children().length == 0) self.changeStyle(self.trElem, false, "Field require");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.trElem.find("select").children().length == 0) {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var valueArray = [];
         self.trElem.find("select").find("option").each(function () {
@@ -428,41 +489,43 @@ var InputListView = Backbone.View.extend({
         });
         return valueArray.join(',');
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         InputView.changeStyle(elem, success, message);
     }
 });
 
 var InputListDomainView = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    multiple:true,
-    collection:null,
-    printAttribut:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    multiple: true,
+    collection: null,
+    printAttribut: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
         this.multiple = options.multiple;
         this.printAttribut = this.param.uriPrintAttribut;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;">' + self.param.name + '</td><td id="' + self.param.id + '" style="text-align:center;"></td><td style="text-align:center;"><span class="errorMessage label label-important hidden"></span></td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
 
-        self.collection = new SoftwareParameterModelCollection({uri:window.app.replaceVariable(self.param.uri), sortAttribut:self.param.uriSortAttribut});
+        self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut: self.param.uriSortAttribut});
 
         //Check if collection data are still loaded in "currentCollection" (cache objet)
         if (window.app.getFromCache(window.app.replaceVariable(self.param.uri)) == undefined) {
             if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
                 self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
-                if (self.param.required) self.changeStyle(self.trElem, false, "Field require");
+                if (self.param.required) {
+                    self.changeStyle(self.trElem, false, "Field require");
+                }
                 self.collection.fetch({
-                    success:function (collection, response) {
+                    success: function (collection, response) {
                         self.collection = collection;
                         window.app.addToCache(window.app.replaceVariable(self.param.uri), collection);
                         self.collection.comparator = function (item) {
@@ -472,7 +535,9 @@ var InputListDomainView = Backbone.View.extend({
                         self.addHtmlElem();
                     }
                 });
-            } else self.addHtmlElem();
+            } else {
+                self.addHtmlElem();
+            }
         } else {
             self.collection = window.app.getFromCache(window.app.replaceVariable(self.param.uri));
             self.collection.comparator = function (item) {
@@ -482,7 +547,7 @@ var InputListDomainView = Backbone.View.extend({
             self.addHtmlElem();
         }
     },
-    addHtmlElem:function () {
+    addHtmlElem: function () {
         var self = this;
         self.trElem.find("td#" + self.param.id).empty();
         self.trElem.find("td#" + self.param.id).append(self.getHtmlElem());
@@ -502,7 +567,9 @@ var InputListDomainView = Backbone.View.extend({
             }
         } else {
             fnSelectionView = function (numChecked, numTotal, checkedItem) {
-                if (numChecked == 0) return "0 selected";
+                if (numChecked == 0) {
+                    return "0 selected";
+                }
                 var selectTitle = [];
                 $(checkedItem).each(function () {
                     selectTitle.push($(this).attr("title"));
@@ -513,7 +580,7 @@ var InputListDomainView = Backbone.View.extend({
             };
         }
 
-        self.trElem.find(".domainList").multiselect({'autoOpen':false, minWidth:300, 'height':200, 'multiple':self.multiple, 'selectedText':fnSelectionView}).multiselectfilter();
+        self.trElem.find(".domainList").multiselect({'autoOpen': false, minWidth: 300, 'height': 200, 'multiple': self.multiple, 'selectedText': fnSelectionView}).multiselectfilter();
         //put header menu option on the same line
         self.trElem.find(".ui-multiselect-menu").find("span").css("display", "inline");
         self.trElem.find(".ui-multiselect-menu").find(".ui-multiselect-header").find("li").css("display", "inline");
@@ -544,7 +611,7 @@ var InputListDomainView = Backbone.View.extend({
         });
 
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         var self = this;
         var split = self.param.defaultParamValue.split(",");
         var values = [];
@@ -556,13 +623,17 @@ var InputListDomainView = Backbone.View.extend({
         console.log(values);
         return values;
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = "";
         //mark default value as selected:
         var defaultValues = self.getDefaultValue();
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;'
-        else classRequier = 'border-style: dotted;border-width: 2px;'
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;'
+        }
+        else {
+            classRequier = 'border-style: dotted;border-width: 2px;'
+        }
         var valueStr = '<select class="domainList" multiple="multiple">';
         self.collection.each(function (value) {
             var selClass = "";
@@ -576,40 +647,60 @@ var InputListDomainView = Backbone.View.extend({
         valueStr = valueStr + '</select>';
         return valueStr;
     },
-    checkEntryValidationWithAllValue:function (value, checked) {
+    checkEntryValidationWithAllValue: function (value, checked) {
         var self = this;
         console.log("checkEntryValidation");
 
         var values = self.getValue();
         var length = values.length;
-        if (checked) length++;
-        else length--;
+        if (checked) {
+            length++;
+        }
+        else {
+            length--;
+        }
         console.log(self.param.required + "|" + values);
-        if (self.param.required && length == 0) self.changeStyle(self.trElem, false, "Field require");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.param.required && length == 0) {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
 
     },
-    checkEntryValidation:function () {
+    checkEntryValidation: function () {
         var self = this;
         console.log("checkEntryValidation");
         var values = self.getValue();
         console.log(self.param.required + "|" + values.length);
-        if (self.param.required && values.length == 0) self.changeStyle(self.trElem, false, "Field require");
-        else self.changeStyle(self.trElem, true, "");
+        if (self.param.required && values.length == 0) {
+            self.changeStyle(self.trElem, false, "Field require");
+        }
+        else {
+            self.changeStyle(self.trElem, true, "");
+        }
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var values = self.trElem.find(".domainList").val();
-        if (values == undefined) return [];
-        else return values;
+        if (values == undefined) {
+            return [];
+        }
+        else {
+            return values;
+        }
     },
-    getStringValue:function () {
+    getStringValue: function () {
         var self = this;
         var values = self.trElem.find(".domainList").val();
-        if (values == undefined) return "";
-        else return values.join(",");
+        if (values == undefined) {
+            return "";
+        }
+        else {
+            return values.join(",");
+        }
     },
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         var labelElem = elem.find('.errorMessage');
         if (success) {
             labelElem.addClass("hidden");
@@ -622,8 +713,12 @@ var InputListDomainView = Backbone.View.extend({
 
         var className = "";
         //color input
-        if (success) className = "success";
-        else  className = "error";
+        if (success) {
+            className = "success";
+        }
+        else {
+            className = "error";
+        }
         var valueElem = this.trElem.find("button");
         if (success) {
             //just put background color doesn't work!
@@ -642,11 +737,15 @@ var InputListDomainView = Backbone.View.extend({
 });
 
 var InputView = {
-    changeStyle:function (elem, success, message) {
+    changeStyle: function (elem, success, message) {
         var className = "";
         //color input
-        if (success) className = "success";
-        else  className = "error";
+        if (success) {
+            className = "success";
+        }
+        else {
+            className = "error";
+        }
         var valueElem = elem.children().eq(1).children().eq(0);
         valueElem.removeClass("success");
         valueElem.removeClass("error");

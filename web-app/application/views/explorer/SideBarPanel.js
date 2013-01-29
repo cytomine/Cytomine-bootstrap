@@ -6,11 +6,11 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var SideBarPanel =  Backbone.View.extend({
+var SideBarPanel = Backbone.View.extend({
 
-    initToggle : function (el, elContent, sourceEvent, storageKey) {
+    initToggle: function (el, elContent, sourceEvent, storageKey) {
         var self = this;
-        sourceEvent.click(function (e){
+        sourceEvent.click(function (e) {
             if (elContent.is(':hidden')) {
                 self.show($(this), elContent, storageKey);
             } else {
@@ -28,18 +28,18 @@ var SideBarPanel =  Backbone.View.extend({
         }
     },
 
-    show : function(link, elContent, storageKey) {
+    show: function (link, elContent, storageKey) {
         if (storageKey) {
-            localStorage.setObject(storageKey, { visible : true});
+            localStorage.setObject(storageKey, { visible: true});
         }
         link.removeClass("icon-plus");
         link.addClass("icon-minus");
         elContent.show();
     },
 
-    hide : function (link, elContent, storageKey) {
+    hide: function (link, elContent, storageKey) {
         if (storageKey) {
-            localStorage.setObject(storageKey, { visible : false});
+            localStorage.setObject(storageKey, { visible: false});
         }
         link.addClass("icon-plus");
         link.removeClass("icon-minus");

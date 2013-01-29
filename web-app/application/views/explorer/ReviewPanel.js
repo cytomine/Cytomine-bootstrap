@@ -6,35 +6,37 @@
  * To change this template use File | Settings | File Templates.
  */
 var ReviewPanel = SideBarPanel.extend({
-    tagName:"div",
-    userLayers:null,
-    userJobLayers:null,
-    reviewLayer:null,
+    tagName: "div",
+    userLayers: null,
+    userJobLayers: null,
+    reviewLayer: null,
     /**
      * ExplorerTabs constructor
      * @param options
      */
-    initialize:function (options) {
+    initialize: function (options) {
         this.browseImageView = options.browseImageView;
         this.userLayers = options.userLayers;
         this.userJobLayers = options.userJobLayers;
         this.printedLayer = [];
         this.layerName = {};
     },
-    isLayerPrinted : function(layer) {
+    isLayerPrinted: function (layer) {
 
-        console.log("isLayerPrinted "+layer);
+        console.log("isLayerPrinted " + layer);
         var isPresent = false;
-        _.each(this.printedLayer,function(item) {
-              if(item.id==layer) isPresent = true;
+        _.each(this.printedLayer, function (item) {
+            if (item.id == layer) {
+                isPresent = true;
+            }
         });
-        console.log("isLayerPrinted="+isPresent);
+        console.log("isLayerPrinted=" + isPresent);
         return isPresent;
     },
     /**
      * Grab the layout and call ask for render
      */
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/explorer/ReviewPanel.tpl.html"
@@ -44,29 +46,31 @@ var ReviewPanel = SideBarPanel.extend({
 
         return this;
     },
-    initControl:function (layerAnnotation) {
+    initControl: function (layerAnnotation) {
         var self = this;
-        console.log("initControl="+layerAnnotation.name);
+        console.log("initControl=" + layerAnnotation.name);
         var selectFeature = new OpenLayers.Control.SelectFeature(layerAnnotation.vectorsLayer);
-            var layer = layerAnnotation;
-            layer.initControls(self.browseImageView, selectFeature);
-            layer.registerEvents(self.browseImageView.map);
-            layer.controls.select.activate();
+        var layer = layerAnnotation;
+        layer.initControls(self.browseImageView, selectFeature);
+        layer.registerEvents(self.browseImageView.map);
+        layer.controls.select.activate();
 
 
-        if (_.isFunction(self.browseImageView.initCallback)) self.browseImageView.initCallback.call();
+        if (_.isFunction(self.browseImageView.initCallback)) {
+            self.browseImageView.initCallback.call();
+        }
         self.browseImageView.initAutoAnnoteTools();
     },
     /**
      * Add the review layer on the map
      */
-    addReviewLayerToReview:function () {
+    addReviewLayerToReview: function () {
         var self = this;
 
         var layer = "REVIEW";
         var layerAnnotation = new AnnotationLayer(layer, self.model.get('id'), 0, "#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
         layerAnnotation.loadAnnotations(self.browseImageView);
-        self.printedLayer.push({id:layer, vectorsLayer:layerAnnotation.vectorsLayer, layer:layerAnnotation});
+        self.printedLayer.push({id: layer, vectorsLayer: layerAnnotation.vectorsLayer, layer: layerAnnotation});
         var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]);
         layerAnnotation.isOwner = true;
         layerAnnotation.initControls(self.browseImageView, selectFeature);
@@ -79,7 +83,7 @@ var ReviewPanel = SideBarPanel.extend({
         toolbar.find('a[id=select' + self.model.get('id') + ']').click();
         layerAnnotation.controls.select.activate();
         self.reviewLayer = layerAnnotation;
-        _.each(this.printedLayer, function(item) {
+        _.each(this.printedLayer, function (item) {
             item.layer.controls.select.activate();
         });
     },
@@ -87,9 +91,11 @@ var ReviewPanel = SideBarPanel.extend({
      * Add a specific user/job layer on the map
      * @param layer User/UserJob id
      */
-    addLayerToReview:function (layer) {
+    addLayerToReview: function (layer) {
         var self = this;
-        if(layer==undefined) return;
+        if (layer == undefined) {
+            return;
+        }
 
         var alreadyPrintBeforeLayer = null;
         _.each(self.printedLayer, function (elem) {
@@ -98,12 +104,14 @@ var ReviewPanel = SideBarPanel.extend({
                 alreadyPrintBeforeLayer.setVisibility(true);
             }
         });
-        if(alreadyPrintBeforeLayer) return;
+        if (alreadyPrintBeforeLayer) {
+            return;
+        }
 
 
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         //remeber if the current mode was "edit"
-        var isEdit = ($("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id') +".active").length==1)
+        var isEdit = ($("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id') + ".active").length == 1)
         //disable edition
         $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
 
@@ -112,16 +120,18 @@ var ReviewPanel = SideBarPanel.extend({
         self.addToListLayer(layer);
 
         var user = self.userLayers.get(layer);
-        if (user == undefined) user = self.userJobLayers.get(layer);
+        if (user == undefined) {
+            user = self.userJobLayers.get(layer);
+        }
 
         var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-        if(layerAnnotation.isOwner) {
+        if (layerAnnotation.isOwner) {
             self.browseImageView.userLayer = layerAnnotation;
         }
         layerAnnotation.loadAnnotations(self.browseImageView);
 
-        self.printedLayer.push({id:layer, vectorsLayer:layerAnnotation.vectorsLayer, layer:layerAnnotation});
+        self.printedLayer.push({id: layer, vectorsLayer: layerAnnotation.vectorsLayer, layer: layerAnnotation});
 
         //disable from selecy list
         var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
@@ -135,25 +145,25 @@ var ReviewPanel = SideBarPanel.extend({
         layerAnnotation.initControls(self.browseImageView, selectFeature);
         layerAnnotation.registerEvents(self.browseImageView.map);
 
-        if(layer.isOwner) {
+        if (layer.isOwner) {
             layerAnnotation.vectorsLayer.setVisibility(true);
             layerAnnotation.toggleIrregular();
             //Simulate click on None toolbar
         } else {
-           //layerAnnotation.controls.select.activate();
+            //layerAnnotation.controls.select.activate();
         }
-        _.each(this.printedLayer, function(item) {
+        _.each(this.printedLayer, function (item) {
             item.layer.controls.select.activate();
         });
 
         //force unnselected
         $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#select' + self.model.get('id')).click();
-        if(isEdit) {
+        if (isEdit) {
             $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#modify' + self.model.get('id')).click()
         }
 
     },
-    getVisibleVectorsLayer : function() {
+    getVisibleVectorsLayer: function () {
         var vectorLayers = _.map(this.printedLayer, function (layer) {
             return layer.vectorsLayer;
         });
@@ -163,12 +173,14 @@ var ReviewPanel = SideBarPanel.extend({
      * Remove a specific layer on the map
      * @param layer User/UserJob id
      */
-    removeLayerFromReview:function (layer) {
+    removeLayerFromReview: function (layer) {
         var self = this;
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         //hide this layer
         _.each(self.printedLayer, function (elem) {
-            if (elem.id == layer) elem.vectorsLayer.setVisibility(false);
+            if (elem.id == layer) {
+                elem.vectorsLayer.setVisibility(false);
+            }
         });
         //remove from layer list
         self.printedLayer = _.filter(self.printedLayer, function (elem) {
@@ -180,11 +192,11 @@ var ReviewPanel = SideBarPanel.extend({
         var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
         selectElem.find("option#" + layer).removeAttr("disabled");
     },
-    addVectorLayer:function (layer, model, userID) {
+    addVectorLayer: function (layer, model, userID) {
         var self = this;
         layer.vectorsLayer.setVisibility(true);
     },
-    addToListLayer:function (layer) {
+    addToListLayer: function (layer) {
         var self = this;
         //disable from select box
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
@@ -194,10 +206,10 @@ var ReviewPanel = SideBarPanel.extend({
             self.removeLayerFromReview(layer);
         });
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         var el = $("#reviewPanel" + self.model.get("id"));
-        var params = {id:self.model.get("id"), isDesktop:!window.app.view.isMobile};
+        var params = {id: self.model.get("id"), isDesktop: !window.app.view.isMobile};
         var content = _.template(tpl, params);
         el.html(content);
         self.showCurrentAnnotation(null);
@@ -214,7 +226,7 @@ var ReviewPanel = SideBarPanel.extend({
             });
 
             this.userJobLayers.each(function (layer) {
-                if(!layer.get("isDeleted")) {
+                if (!layer.get("isDeleted")) {
                     self.layerName[layer.id] = layer.layerName();
                     selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
                 }
@@ -234,14 +246,14 @@ var ReviewPanel = SideBarPanel.extend({
                 self.validatePicture();
             });
 
-            $('#showReviewLayer'+self.model.id).click (function () {
+            $('#showReviewLayer' + self.model.id).click(function () {
                 self.reviewLayer.vectorsLayer.setVisibility($(this).attr("checked"));
             });
 
         } else {
             //image is validate
             var panel = $("#" + self.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-            panel.find('#showReviewLayer'+self.model.id).attr("disabled", "disabled")
+            panel.find('#showReviewLayer' + self.model.id).attr("disabled", "disabled")
             panel.find("#addReviewLayers" + self.model.id).attr("disabled", "disabled");
             panel.find("select").attr("disabled", "disabled");
             panel.find("#reviewMultiple" + self.model.id).attr("disabled", "disabled");
@@ -279,7 +291,7 @@ var ReviewPanel = SideBarPanel.extend({
     /**
      * Accept curent annotation for review
      */
-    addReviewAnnotation:function () {
+    addReviewAnnotation: function () {
         var self = this;
         var annotation = self.browseImageView.currentAnnotation;
 
@@ -288,47 +300,47 @@ var ReviewPanel = SideBarPanel.extend({
 
         //remove the based annotation from the layer
         self.browseImageView.removeFeature(annotation.id);
-        new AnnotationReviewedModel({id:annotation.id}).save({terms:terms}, {
-            success:function (model, response) {
-                self.refreshAnnotation(response,annotation);
+        new AnnotationReviewedModel({id: annotation.id}).save({terms: terms}, {
+            success: function (model, response) {
+                self.refreshAnnotation(response, annotation);
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Annotation", json.errors, "error");
             }});
     },
-    deleteReviewAnnotation:function () {
+    deleteReviewAnnotation: function () {
         var self = this;
         var annotation = self.browseImageView.currentAnnotation;
         self.browseImageView.removeFeature(annotation.id);
-        new AnnotationReviewedModel({id:annotation.get('parentIdent')}).destroy({
-            success:function (model, response) {
+        new AnnotationReviewedModel({id: annotation.get('parentIdent')}).destroy({
+            success: function (model, response) {
                 window.app.view.message("Annotation", response.message, "success");
-                _.each(self.printedLayer,function(layer) {
+                _.each(self.printedLayer, function (layer) {
                     layer.vectorsLayer.refresh();
                 });
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Annotation", json.errors, "error");
             }});
     },
-    refreshAnnotation : function(response,annotation) {
+    refreshAnnotation: function (response, annotation) {
         var self = this;
-         //add the reviewed annotation on the layer + print message
+        //add the reviewed annotation on the layer + print message
         var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
         var cropURL = annotation.get('cropURL');
-        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
-        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:response.message, cropImage:cropImage});
+        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url: cropURL, alt: cropURL});
+        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message: response.message, cropImage: cropImage});
         window.app.view.message("Reviewed annotation", alertMessage, "success");
         self.reviewLayer.addFeature(newFeature);
         self.reviewLayer.controls.select.unselectAll();
         self.reviewLayer.controls.select.select(newFeature);
-        _.each(self.printedLayer,function(layer) {
+        _.each(self.printedLayer, function (layer) {
             layer.vectorsLayer.refresh();
         });
     },
-    showCurrentAnnotation:function (annotation) {
+    showCurrentAnnotation: function (annotation) {
         var self = this;
         console.log("showCurrentAnnotation=" + annotation);
         $("#currentReviewAnnotation" + self.model.id).empty();
@@ -340,13 +352,15 @@ var ReviewPanel = SideBarPanel.extend({
 
             //fill current annotation info
             if (annotation == null) {
-                params = {id:self.model.get("id"), username:"", date:"", isReviewed:false, idAnnotation:""};
+                params = {id: self.model.get("id"), username: "", date: "", isReviewed: false, idAnnotation: ""};
                 idAnnotation = "";
             }
             else {
                 var user = window.app.models.projectUser.get(annotation.get("user"));
-                if (user == undefined) user = window.app.models.projectUserJob.get(annotation.get("user"));
-                params = {id:self.model.get("id"), username:user.prettyName(), date:window.app.convertLongToDate(annotation.get("created")), isReviewed:annotation.get("reviewed"), idAnnotation:annotation.id }
+                if (user == undefined) {
+                    user = window.app.models.projectUserJob.get(annotation.get("user"));
+                }
+                params = {id: self.model.get("id"), username: user.prettyName(), date: window.app.convertLongToDate(annotation.get("created")), isReviewed: annotation.get("reviewed"), idAnnotation: annotation.id }
                 idAnnotation = annotation.id;
             }
             var content = _.template(tpl, params);
@@ -380,7 +394,7 @@ var ReviewPanel = SideBarPanel.extend({
      * Show all term map with this annotation and add a checkbox to each one
      * @param annotation
      */
-    showAnnotationTerm:function (annotation) {
+    showAnnotationTerm: function (annotation) {
         var self = this;
 
         if (annotation != null) {
@@ -389,44 +403,46 @@ var ReviewPanel = SideBarPanel.extend({
             _.each(annotation.get('term'), function (term) {
                 self.addTermChoice(term, annotation.id, annotation.get("reviewed"));
             });
-            $("#termsChoice" + annotation.id +" .termchoice").sort(self.asc_sort).appendTo("#termsChoice" + annotation.id);
+            $("#termsChoice" + annotation.id + " .termchoice").sort(self.asc_sort).appendTo("#termsChoice" + annotation.id);
         }
     },
-    addTermChoice:function (idTerm, idAnnotation) {
+    addTermChoice: function (idTerm, idAnnotation) {
         this.addTermChoice(idTerm, idAnnotation, false);
     },
-    addTermChoice:function (idTerm, idAnnotation, lock) {
+    addTermChoice: function (idTerm, idAnnotation, lock) {
         var self = this;
         var termsListElem = $("#currentReviewAnnotation" + self.model.id).find("#termsChoice" + idAnnotation);
         var lockCheckBox = ""
-        if (lock) lockCheckBox = 'disabled="disabled"';
+        if (lock) {
+            lockCheckBox = 'disabled="disabled"';
+        }
         termsListElem.append('<div class="termchoice"><input type="checkbox" ' + lockCheckBox + ' checked="checked" name="terms" value="' + idTerm + '" id="termInput' + idTerm + '"> ' + window.app.status.currentTermsCollection.get(idTerm).get('name') + "&nbsp;&nbsp;</div>");
     },
-    asc_sort:function(a, b){
-      return ($(b).text()) < ($(a).text());
+    asc_sort: function (a, b) {
+        return ($(b).text()) < ($(a).text());
     },
-    deleteTermChoice:function (idTerm, idAnnotation) {
+    deleteTermChoice: function (idTerm, idAnnotation) {
         var self = this;
         var termsListElem = $("#currentReviewAnnotation" + self.model.id).find("#termsChoice" + idAnnotation)
         termsListElem.find("input#termInput" + idTerm).replaceWith("");
     },
-    getSelectedTerm:function (annotation) {
+    getSelectedTerm: function (annotation) {
         var self = this;
         var termsListElem = $("#currentReviewAnnotation" + self.model.id).find("#termsChoice" + annotation.id);
         var selectedInput = termsListElem.find("input[name='terms']:checked:enabled");
         var selectedTermsId = [];
 
         _.each(selectedInput, function (input) {
-            console.log("selectedTermsId it="+input);
+            console.log("selectedTermsId it=" + input);
             selectedTermsId.push($(input).val())
         });
-        console.log("selectedTermsId="+selectedTermsId);
+        console.log("selectedTermsId=" + selectedTermsId);
         return selectedTermsId;
     },
     /**
      * Review all visible layers
      */
-    addAllReviewAnnotation:function () {
+    addAllReviewAnnotation: function () {
         var self = this;
 
         var layers = _.map(_.filter(self.printedLayer, function (num) {
@@ -438,30 +454,86 @@ var ReviewPanel = SideBarPanel.extend({
         if (layers.length == 0) {
             window.app.view.message("Annotation", "You must add at least one layer!", "error");
         } else {
-            new TaskModel({project:self.model.get('project')}).save({}, {
-                        success:function (task, response) {
-                            console.log("task=" + task);
+            new TaskModel({project: self.model.get('project')}).save({}, {
+                    success: function (task, response) {
+                        console.log("task=" + task);
 
+
+                        $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
+                        $("#reviewChoice" + self.model.id).hide();
+                        $("#taskreview" + self.model.id).show();
+
+
+                        var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
+
+                        new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).save({}, {
+                            success: function (model, response) {
+                                clearInterval(timer);
+                                $("#taskreview" + self.model.id).empty();
+                                $("#taskreview" + self.model.id).hide();
+                                $("#reviewChoice" + self.model.id).show();
+                                window.app.view.message("Annotation", "Annotation are reviewed!", "success");
+                                _.each(self.printedLayer, function (layer) {
+                                    layer.vectorsLayer.refresh();
+                                });
+                            },
+                            error: function (model, response) {
+                                console.log("AnnotationImageReviewedModel error");
+                                var json = $.parseJSON(response.responseText);
+                                window.app.view.message("Annotation", json.errors, "error");
+                                $("#taskreview" + self.model.id).empty();
+                                $("#taskreview" + self.model.id).hide();
+                                $("#reviewChoice" + self.model.id).show();
+                                clearInterval(timer);
+
+                            }});
+
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Task", json.errors, "error");
+                    }
+                }
+            );
+        }
+    },
+    deleteAllReviewAnnotation: function () {
+        var self = this;
+
+        var layers = _.map(_.filter(self.printedLayer, function (num) {
+            return num.id != "REVIEW";
+        }), function (item) {
+            return item.id
+        });
+
+        if (layers.length == 0) {
+            window.app.view.message("Annotation", "You must add at least one layer!", "error");
+        } else {
+
+            var x = window.confirm("Are you sure you to reject all annotation from these layers?")
+            if (x) {
+                new TaskModel({project: self.model.get('project')}).save({}, {
+                        success: function (task, response) {
+                            console.log("task=" + task);
 
                             $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
                             $("#reviewChoice" + self.model.id).hide();
                             $("#taskreview" + self.model.id).show();
 
-
                             var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
 
-                            new AnnotationImageReviewedModel({image:self.model.id, layers:layers, task:task.id}).save({}, {
-                                success:function (model, response) {
+                            new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).destroy({
+                                success: function (model, response) {
                                     clearInterval(timer);
                                     $("#taskreview" + self.model.id).empty();
                                     $("#taskreview" + self.model.id).hide();
                                     $("#reviewChoice" + self.model.id).show();
-                                    window.app.view.message("Annotation", "Annotation are reviewed!", "success");
-                                    _.each(self.printedLayer,function(layer) {
+                                    window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
+                                    _.each(self.printedLayer, function (layer) {
                                         layer.vectorsLayer.refresh();
                                     });
                                 },
-                                error:function (model, response) {
+                                error: function (model, response) {
                                     console.log("AnnotationImageReviewedModel error");
                                     var json = $.parseJSON(response.responseText);
                                     window.app.view.message("Annotation", json.errors, "error");
@@ -473,81 +545,25 @@ var ReviewPanel = SideBarPanel.extend({
                                 }});
 
                         },
-                        error:function (model, response) {
+                        error: function (model, response) {
                             var json = $.parseJSON(response.responseText);
                             window.app.view.message("Task", json.errors, "error");
                         }
                     }
-            );
-        }
-    },
-    deleteAllReviewAnnotation:function () {
-        var self = this;
-
-        var layers = _.map(_.filter(self.printedLayer, function (num) {
-            return num.id != "REVIEW";
-        }), function (item) {
-            return item.id
-        });
-
-        if (layers.length == 0) {
-            window.app.view.message("Annotation", "You must add at least one layer!", "error");
-        } else {
-
-            var x=window.confirm("Are you sure you to reject all annotation from these layers?")
-            if (x) {
-                new TaskModel({project:self.model.get('project')}).save({}, {
-                                        success:function (task, response) {
-                                            console.log("task=" + task);
-
-                                            $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
-                                            $("#reviewChoice" + self.model.id).hide();
-                                            $("#taskreview" + self.model.id).show();
-
-                                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
-
-                                            new AnnotationImageReviewedModel({image:self.model.id, layers:layers, task:task.id}).destroy({
-                                                success:function (model, response) {
-                                                    clearInterval(timer);
-                                                    $("#taskreview" + self.model.id).empty();
-                                                    $("#taskreview" + self.model.id).hide();
-                                                    $("#reviewChoice" + self.model.id).show();
-                                                    window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
-                                                    _.each(self.printedLayer,function(layer) {
-                                                        layer.vectorsLayer.refresh();
-                                                    });
-                                                },
-                                                error:function (model, response) {
-                                                    console.log("AnnotationImageReviewedModel error");
-                                                    var json = $.parseJSON(response.responseText);
-                                                    window.app.view.message("Annotation", json.errors, "error");
-                                                    $("#taskreview" + self.model.id).empty();
-                                                    $("#taskreview" + self.model.id).hide();
-                                                    $("#reviewChoice" + self.model.id).show();
-                                                    clearInterval(timer);
-
-                                                }});
-
-                                        },
-                                        error:function (model, response) {
-                                            var json = $.parseJSON(response.responseText);
-                                            window.app.view.message("Task", json.errors, "error");
-                                        }
-                                    }
-                            );
+                );
             }
 
         }
     },
-    validatePicture:function () {
+    validatePicture: function () {
         var self = this;
         self.browseImageView.validatePicture();
     },
-    unvalidatePicture:function () {
+    unvalidatePicture: function () {
         var self = this;
         self.browseImageView.unvalidatePicture();
     },
-    refresh:function (model) {
+    refresh: function (model) {
         var self = this;
         self.model = model;
         self.render();

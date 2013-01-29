@@ -2,8 +2,8 @@ var Processing = Processing || {};
 
 Processing.Threshold = $.extend({}, Processing.Utils,
     {
-        defaultTheshold:165,
-        process:function (params) {
+        defaultTheshold: 165,
+        process: function (params) {
             console.log("Thresholding...");
             var canvas = params.canvas;
             var threshold = params.threshold;

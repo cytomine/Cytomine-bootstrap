@@ -1,5 +1,5 @@
 var PingModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         var base = 'server/ping';
         var format = '.json';
         return base + format;

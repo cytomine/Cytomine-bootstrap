@@ -7,24 +7,26 @@
  */
 var ProjectModel = Backbone.Model.extend({
 
-    url:function () {
+    url: function () {
         var base = 'api/project';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     }
 });
 
 
 var ProjectUserModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         if (this.user == undefined) {
             return "api/project/" + this.project + "/user.json";
         } else {
             return "api/project/" + this.project + "/user/" + this.user + ".json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.project = options.project;
         this.user = options.user;
     }
@@ -32,20 +34,20 @@ var ProjectUserModel = Backbone.Model.extend({
 
 
 var OntologyProjectModel = Backbone.Collection.extend({
-    model:ProjectModel,
-    url:function () {
+    model: ProjectModel,
+    url: function () {
         return "api/ontology/" + this.ontology + "/project.json";
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.ontology = options.ontology;
     }
 });
 
 // define our collection
 var ProjectCollection = Backbone.Collection.extend({
-    model:ProjectModel,
+    model: ProjectModel,
 
-    url:function () {
+    url: function () {
         if (this.user != undefined) {
             return "api/user/" + this.user + "/project.json";
         } else if (this.ontology != undefined) {
@@ -54,13 +56,13 @@ var ProjectCollection = Backbone.Collection.extend({
             return "api/project.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         if (options != undefined) {
             this.user = options.user;
             this.ontology = options.ontology;
         }
     },
-    comparator:function (project) {
+    comparator: function (project) {
         return project.get("name");
     }
 });

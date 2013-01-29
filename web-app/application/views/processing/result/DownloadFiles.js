@@ -1,15 +1,15 @@
 var DownloadFiles = Backbone.View.extend({
-    project:null,
-    terms:null,
-    jobs:null,
-    software:null,
-    initialize:function (options) {
+    project: null,
+    terms: null,
+    jobs: null,
+    software: null,
+    initialize: function (options) {
         this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
         this.software = options.software;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/DownloadFiles.tpl.html"
@@ -19,15 +19,15 @@ var DownloadFiles = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         var content = _.template(tpl, {});
         $(this.el).append(content);
 
 
         var refresh = function () {
-            new JobDataCollection({ job:self.model.id}).fetch({
-                success:function (collection, response) {
+            new JobDataCollection({ job: self.model.id}).fetch({
+                success: function (collection, response) {
                     $("#jobDataResult").find('tbody').empty();
                     collection.each(function (data) {
                         console.log("data=" + data + " " + collection.length);
@@ -50,9 +50,11 @@ var DownloadFiles = Backbone.View.extend({
 
 
     },
-    convertSize:function (bytes) {
+    convertSize: function (bytes) {
         var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        if (bytes == 0) return 'n/a';
+        if (bytes == 0) {
+            return 'n/a';
+        }
         var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }

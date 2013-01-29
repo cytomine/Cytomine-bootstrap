@@ -1,14 +1,18 @@
 var AnnotationModel = Backbone.Model.extend({
 
-    url:function () {
+    url: function () {
         var base = 'api/annotation';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         var params = "";
-        if(this.fill) params = "?fill=true";
-        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format+params;
+        if (this.fill) {
+            params = "?fill=true";
+        }
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format + params;
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.id = options.id;
         this.fill = options.fill;
     }
@@ -16,47 +20,52 @@ var AnnotationModel = Backbone.Model.extend({
 
 
 var AnnotationCorrectionModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         var base = 'api/annotationcorrection';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.id = options.id;
     }
 });
 
 var AnnotationReviewedModel = Backbone.Model.extend({
-    url:function () {
-        if(this.fill)
+    url: function () {
+        if (this.fill) {
             return 'api/annotation/' + this.id + "/review/fill.json";
-        else return 'api/annotation/' + this.id + "/review.json";
+        }
+        else {
+            return 'api/annotation/' + this.id + "/review.json";
+        }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.id = options.id;
         this.fill = options.fill;
     }
 });
 
 var AnnotationCopyModel = Backbone.Model.extend({
-    isNew:function () {
+    isNew: function () {
         return true;
     },
-    url:function () {
+    url: function () {
 
         return 'api/annotation/' + this.id + "/copy.json";
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.id = options.id;
     }
 });
 
 // define our collection
 var AnnotationCollection = Backbone.Collection.extend({
-    model:AnnotationModel,
-    fullSize:-1,
-    url:function () {
+    model: AnnotationModel,
+    fullSize: -1,
+    url: function () {
 
         //construct queryString
         var queryString = "";
@@ -92,7 +101,9 @@ var AnnotationCollection = Backbone.Collection.extend({
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm=" + this.suggestTerm + "&job=" + this.job + queryString;
             }
 
-            if (this.term >= "0" && this.users == undefined && this.images == undefined) return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + queryString;
+            if (this.term >= "0" && this.users == undefined && this.images == undefined) {
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + queryString;
+            }
             if (this.term >= "0" && this.users != undefined && this.images == undefined) {
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + queryString;
             }
@@ -114,7 +125,7 @@ var AnnotationCollection = Backbone.Collection.extend({
             return "api/annotation.json";
         }
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.image = options.image;//one image
         this.user = options.user;
         this.images = options.images;//multiple image
@@ -125,7 +136,7 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.job = options.job;
         this.notReviewedOnly = options.notReviewedOnly;
     },
-    build:function () {
+    build: function () {
         var self = this;
         var model = self.at(0);
         var coll = model.get("collection");
@@ -135,28 +146,28 @@ var AnnotationCollection = Backbone.Collection.extend({
             self.add(item);
         });
     },
-     comparator : function (annotation) {
-     return -annotation.get("id"); //id or created (chronology?)
-     }
+    comparator: function (annotation) {
+        return -annotation.get("id"); //id or created (chronology?)
+    }
 });
 
 
 // define our collection
 var AnnotationReviewedCollection = Backbone.Collection.extend({
-    model:AnnotationModel,
-    fullSize:-1,
-    url:function () {
+    model: AnnotationModel,
+    fullSize: -1,
+    url: function () {
         var offset = "?";
         if (this.offset != undefined) {
             offset = offset + "offset=" + this.offset;
         }
         return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.image = options.image;//one image
         this.map = options.map;
     },
-    build:function () {
+    build: function () {
         var self = this;
         var model = self.at(0);
         var coll = model.get("collection");
@@ -171,32 +182,21 @@ var AnnotationReviewedCollection = Backbone.Collection.extend({
 
 // define our collection
 var AnnotationImageReviewedModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         var task = ""
-        if(this.task) task = "&task="+this.task;
+        if (this.task) {
+            task = "&task=" + this.task;
+        }
 
 
-        return "api/imageinstance/" + this.id + "/annotation/review.json?users=" +this.layers.join(",")+task;
+        return "api/imageinstance/" + this.id + "/annotation/review.json?users=" + this.layers.join(",") + task;
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.id = options.image;//one image
         this.layers = options.layers;
         this.task = options.task;
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 AnnotationCollection.comparator = function (annotation) {
@@ -205,43 +205,45 @@ AnnotationCollection.comparator = function (annotation) {
 
 // define our collection
 var AnnotationRetrievalModel = Backbone.Model.extend({
-    url:function () {
+    url: function () {
         return "api/annotation/" + this.annotation + "/retrieval.json";
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.annotation = options.annotation;
     }
 });
 
 var AnnotationRetrievalCollection = Backbone.Collection.extend({
-    model:AnnotationModel,
-    initialize:function (options) {
+    model: AnnotationModel,
+    initialize: function (options) {
         this.annotation = options.annotation;
     },
-    comparator:function (annotation) {
+    comparator: function (annotation) {
         return -annotation.get("similarity");
     }
 });
 
 
 var AnnotationCommentModel = Backbone.Model.extend({
-    initialize:function (options) {
+    initialize: function (options) {
         this.annotation = options.annotation;
     },
-    url:function () {
+    url: function () {
         var base = 'api/annotation/' + this.annotation + '/comment';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     }
 });
 
 var AnnotationCommentCollection = Backbone.Collection.extend({
-    model:AnnotationCommentModel,
-    initialize:function (options) {
+    model: AnnotationCommentModel,
+    initialize: function (options) {
         this.annotation = options.annotation;
     },
-    url:function () {
+    url: function () {
         return'api/annotation/' + this.annotation + '/comment.json';
     }
 });

@@ -1,14 +1,14 @@
 var AnnotationThumbView = Backbone.View.extend({
 
-    events:{
+    events: {
 
     },
 
-    initialize:function (options) {
+    initialize: function (options) {
         this.term = options.term;
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require(["text!application/templates/dashboard/AnnotationThumb.tpl.html", "text!application/templates/dashboard/AnnotationPopOverThumb.tpl.html"], function (tpl, popoverTpl) {
             var annotation = self.model.clone();
@@ -20,7 +20,9 @@ var AnnotationThumbView = Backbone.View.extend({
             ;
 
             var colorStyle = undefined;
-            if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) colorStyle = "#cccccc";
+            if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) {
+                colorStyle = "#cccccc";
+            }
             else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
                 colorStyle = "#F89406"
             }
@@ -33,23 +35,25 @@ var AnnotationThumbView = Backbone.View.extend({
 
             if (userJob) {
                 jobLink = _.template("#tabs-algos-<%= idProject %>-<%= idSoftware%>-<%= idJob %>", {
-                    idProject:window.app.status.currentProject,
-                    idSoftware:userJob.get("idSoftware"),
-                    idJob:userJob.get("idJob")
+                    idProject: window.app.status.currentProject,
+                    idSoftware: userJob.get("idSoftware"),
+                    idJob: userJob.get("idJob")
                 });
             }
 
             annotation.set({
-                sameUser:(window.app.status.user.id == annotation.get("user")),
-                ratePourcent:ratePourcent,
-                colorStyle:colorStyle,
-                jobLink:jobLink
+                sameUser: (window.app.status.user.id == annotation.get("user")),
+                ratePourcent: ratePourcent,
+                colorStyle: colorStyle,
+                jobLink: jobLink
             });
 
 
             $(self.el).html(_.template(tpl, annotation.toJSON()));
             $(self.el).attr("data-annotation", annotation.get("id"));
-            if (self.term != undefined) $(self.el).attr("data-term", self.term);
+            if (self.term != undefined) {
+                $(self.el).attr("data-term", self.term);
+            }
 
 
             //POPOVER
@@ -62,8 +66,8 @@ var AnnotationThumbView = Backbone.View.extend({
                     userName.push(window.app.view.getUserNameById(userID));
                 })
                 userByTerm.push({
-                    userName:userName.join(" and "),
-                    termName:termName
+                    userName: userName.join(" and "),
+                    termName: termName
                 });
             });
 
@@ -74,19 +78,19 @@ var AnnotationThumbView = Backbone.View.extend({
                 expectedTermName = window.app.status.currentTermsCollection.get(annotation.get("idExpectedTerm")).get('name')
             }
             var popoverContent = _.template(popoverTpl, {
-                created:window.app.convertLongToDate(annotation.get("created")),
-                userName:window.app.view.getUserNameById(annotation.get("user")),
-                userByTerm:userByTerm,
-                termName:termName,
-                expectedTermName:expectedTermName
+                created: window.app.convertLongToDate(annotation.get("created")),
+                userName: window.app.view.getUserNameById(annotation.get("user")),
+                userByTerm: userByTerm,
+                termName: termName,
+                expectedTermName: expectedTermName
             });
 
             $(self.el).popover({
-                html:true,
-                title:'Annotation details',
-                content:popoverContent,
-                placement:'right',
-                trigger:'hover'
+                html: true,
+                title: 'Annotation details',
+                content: popoverContent,
+                placement: 'right',
+                trigger: 'hover'
             });
 
             self.initDraggable();
@@ -94,20 +98,20 @@ var AnnotationThumbView = Backbone.View.extend({
         return this;
     },
 
-    initDraggable:function () {
+    initDraggable: function () {
         var self = this;
         $(self.el).draggable({
-            scroll:true,
+            scroll: true,
             //scrollSpeed : 00,
-            revert:true,
-            delay:500,
-            opacity:0.35,
-            cursorAt:{ top:85, left:90},
-            start:function (event, ui) {
+            revert: true,
+            delay: 500,
+            opacity: 0.35,
+            cursorAt: { top: 85, left: 90},
+            start: function (event, ui) {
                 var thumb = $(self.el).find(".thumb");
                 thumb.popover('hide');
             },
-            stop:function (event, ui) {
+            stop: function (event, ui) {
 
             }
 

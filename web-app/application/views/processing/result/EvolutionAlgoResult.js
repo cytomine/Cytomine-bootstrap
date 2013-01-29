@@ -3,20 +3,20 @@ var EvolutionAlgoResult = Backbone.View.extend({
     //terms
     //annotations
     //el
-    width:null,
-    project:null,
-    annotations:null,
-    terms:null,
-    jobs:null,
-    software:null,
-    initialize:function (options) {
+    width: null,
+    project: null,
+    annotations: null,
+    terms: null,
+    jobs: null,
+    software: null,
+    initialize: function (options) {
         this.annotations = window.app.status.currentAnnotationsCollection;
         this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
         this.software = options.software;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/EvolutionAlgoResult.tpl.html"
@@ -26,13 +26,13 @@ var EvolutionAlgoResult = Backbone.View.extend({
             });
         return this;
     },
-    loadResult:function (retrievalAlgoViewTpl) {
+    loadResult: function (retrievalAlgoViewTpl) {
         var self = this;
         var width = ((($(self.el).width() - 125))) + "px"
         var height = "400px"
         var content = _.template(retrievalAlgoViewTpl, {
-            width:width,
-            height:height
+            width: width,
+            height: height
         });
         self.width = width;
         console.log($(self.el));
@@ -40,8 +40,8 @@ var EvolutionAlgoResult = Backbone.View.extend({
         $(self.el).append(content);
 
         console.log("StatsRetrievalSuggestionEvolutionModel");
-        new StatsRetrievalEvolutionModel({job:self.model.id}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalEvolutionModel({job: self.model.id}).fetch({
+            success: function (model, response) {
                 self.drawAVGEvolution(model, response);
 
             }
@@ -59,7 +59,7 @@ var EvolutionAlgoResult = Backbone.View.extend({
 
         self.drawAVGEvolutionByTermAction()
     },
-    drawAVGEvolution:function (model, response) {
+    drawAVGEvolution: function (model, response) {
         var self = this;
         // Create and populate the data table.
         var evolution = model.get('evolution');
@@ -84,7 +84,9 @@ var EvolutionAlgoResult = Backbone.View.extend({
                 indiceJob = i;
             }
             var avg = 0;
-            if (evolution[i].avg != -1) avg = (evolution[i].avg * 100);
+            if (evolution[i].avg != -1) {
+                avg = (evolution[i].avg * 100);
+            }
             data.addRow([date, evolution[i].size, avg ]);
         }
 
@@ -92,26 +94,26 @@ var EvolutionAlgoResult = Backbone.View.extend({
         // Create and draw the visualization.
         var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChart')[0]);
         evolChart.draw(data, {
-                colors:['#dc3912', '#3366cc'],
-                title:'',
-                width:this.width, height:350,
-                vAxes:{
-                    0:{
-                        label:'Y1'
+                colors: ['#dc3912', '#3366cc'],
+                title: '',
+                width: this.width, height: 350,
+                vAxes: {
+                    0: {
+                        label: 'Y1'
                     },
-                    1:{
-                        label:'Y2'
+                    1: {
+                        label: 'Y2'
                     }
                 },
-                vAxis:{title:"", minValue:0, maxValue:100},
-                hAxis:{title:"Time"},
-                backgroundColor:"white",
-                seriesType:"line",
-                series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
-                lineWidth:1}
+                vAxis: {title: "", minValue: 0, maxValue: 100},
+                hAxis: {title: "Time"},
+                backgroundColor: "white",
+                seriesType: "line",
+                series: {0: {targetAxisIndex: 0}, 1: {type: "area", targetAxisIndex: 1}},
+                lineWidth: 1}
         );
         evolChart.setSelection([
-            {row:indiceJob, column:1}
+            {row: indiceJob, column: 1}
         ]);
         var handleClick = function () {
             var row = evolChart.getSelection()[0]['row'];
@@ -133,17 +135,17 @@ var EvolutionAlgoResult = Backbone.View.extend({
         google.visualization.events.addListener(evolChart, 'select', handleClick);
 
     },
-    drawAVGEvolutionByTermAction:function () {
+    drawAVGEvolutionByTermAction: function () {
         var self = this;
         var termSelected = $(self.el).find("#avgEvolutionLineChartByTermSelect").val();
-        new StatsRetrievalEvolutionModel({job:self.model.id, term:termSelected}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalEvolutionModel({job: self.model.id, term: termSelected}).fetch({
+            success: function (model, response) {
                 self.drawAVGEvolutionByTerm(model, response);
 
             }
         });
     },
-    drawAVGEvolutionByTerm:function (model, response) {
+    drawAVGEvolutionByTerm: function (model, response) {
         var self = this;
         // Create and populate the data table.
         var evolution = model.get('evolution');
@@ -170,7 +172,9 @@ var EvolutionAlgoResult = Backbone.View.extend({
                 indiceJob = i;
             }
             var avg = 0;
-            if (evolution[i].avg != -1) avg = (evolution[i].avg * 100);
+            if (evolution[i].avg != -1) {
+                avg = (evolution[i].avg * 100);
+            }
             data.addRow([date, evolution[i].size, avg ]);
         }
 
@@ -178,26 +182,26 @@ var EvolutionAlgoResult = Backbone.View.extend({
         // Create and draw the visualization.
         var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChartByTerm')[0]);
         evolChart.draw(data, {
-                colors:['#dc3912', '#3366cc'],
-                title:'',
-                width:this.width, height:350,
-                vAxes:{
-                    0:{
-                        label:'Y1'
+                colors: ['#dc3912', '#3366cc'],
+                title: '',
+                width: this.width, height: 350,
+                vAxes: {
+                    0: {
+                        label: 'Y1'
                     },
-                    1:{
-                        label:'Y2'
+                    1: {
+                        label: 'Y2'
                     }
                 },
-                vAxis:{title:"", minValue:0, maxValue:100},
-                hAxis:{title:"Time"},
-                backgroundColor:"white",
-                seriesType:"line",
-                series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
-                lineWidth:1}
+                vAxis: {title: "", minValue: 0, maxValue: 100},
+                hAxis: {title: "Time"},
+                backgroundColor: "white",
+                seriesType: "line",
+                series: {0: {targetAxisIndex: 0}, 1: {type: "area", targetAxisIndex: 1}},
+                lineWidth: 1}
         );
         evolChart.setSelection([
-            {row:indiceJob, column:1}
+            {row: indiceJob, column: 1}
         ]);
         var handleClick = function () {
             var row = evolChart.getSelection()[0]['row'];

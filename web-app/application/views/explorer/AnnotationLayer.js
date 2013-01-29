@@ -1,8 +1,8 @@
 var AnnotationStatus = {
-    NO_TERM:'NO_TERM',
-    MULTIPLE_TERM:'MULTIPLE_TERM',
-    TOO_SMALL:'TOO_SMALL',
-    REVIEW:'REVIEW'
+    NO_TERM: 'NO_TERM',
+    MULTIPLE_TERM: 'MULTIPLE_TERM',
+    TOO_SMALL: 'TOO_SMALL',
+    REVIEW: 'REVIEW'
 }
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
@@ -20,22 +20,24 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
         term = terms[0]; //put ID
     }
     feature.attributes = {
-        idAnnotation:annotation.id,
-        measure:'NO',
-        listener:'NO',
-        importance:10,
-        term:term
+        idAnnotation: annotation.id,
+        measure: 'NO',
+        listener: 'NO',
+        importance: 10,
+        term: term
     };
     return feature;
 };
 
 /* Annotation Layer */
 OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
-    read:function (collection) {
+    read: function (collection) {
         var self = this;
         var features = [];
         _.each(collection, function (annotation) {
-            if (_.indexOf(self.annotationLayer.featuresHidden, annotation.id) != -1) return;
+            if (_.indexOf(self.annotationLayer.featuresHidden, annotation.id) != -1) {
+                return;
+            }
             var feature = AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
             features.push(feature);
         });
@@ -44,54 +46,54 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
 
 });
 
-var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map,reviewMode) {
+var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map, reviewMode) {
     this.ontologyTreeView = ontologyTreeView;
     this.pointRadius = window.app.view.isMobile ? 12 : 8;
     this.name = name;
     this.map = map;
     this.imageID = imageID;
     this.userID = userID;
-    this.reviewLayer = (name=="REVIEW") || (name=="Review layer");
+    this.reviewLayer = (name == "REVIEW") || (name == "Review layer");
     this.reviewMode = reviewMode;
     var rules = [new OpenLayers.Rule({
-        symbolizer:{strokeColor:"#00FF00", strokeWidth:2},
+        symbolizer: {strokeColor: "#00FF00", strokeWidth: 2},
         // symbolizer: {}, // instead if you want to keep default colors
-        elseFilter:true
+        elseFilter: true
     })];
 
     var defaultStyle = new OpenLayers.Style({
-        'fillColor':'#EEEEEE',
-        'fillOpacity':.8,
-        'strokeColor':'#000000',
-        'strokeWidth':3,
-        'pointRadius':this.pointRadius
+        'fillColor': '#EEEEEE',
+        'fillOpacity': .8,
+        'strokeColor': '#000000',
+        'strokeWidth': 3,
+        'pointRadius': this.pointRadius
     });
     defaultStyle.addRules(rules);
     var selectStyle = null;
 
 //    if(!reviewMode)  {
     selectStyle = new OpenLayers.Style({
-        'fillColor':'#EEEEEE',
-        'fillOpacity':.8,
-        'strokeColor':'#00FF00',
-        'strokeWidth':3,
-        'pointRadius':this.pointRadius
+        'fillColor': '#EEEEEE',
+        'fillOpacity': .8,
+        'strokeColor': '#00FF00',
+        'strokeWidth': 3,
+        'pointRadius': this.pointRadius
     });
 
     selectStyle.addRules(rules);
     var styleMap = new OpenLayers.StyleMap({
-        'default':defaultStyle,
-        'select':selectStyle
+        'default': defaultStyle,
+        'select': selectStyle
     });
 
-    console.log("reviewMode="+reviewMode +" this.reviewLayer=" + this.reviewLayer);
-    if(this.reviewLayer) {
+    console.log("reviewMode=" + reviewMode + " this.reviewLayer=" + this.reviewLayer);
+    if (this.reviewLayer) {
         //review layer: paint it green
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReview(false));
         styleMap.styles["select"].addRules(rules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReview(true));
-    }else if(!reviewMode) {
+    } else if (!reviewMode) {
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
         styleMap.styles["select"].addRules(rules);
@@ -105,24 +107,24 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     }
 
     var annotationsCollection = null;
-    if(!this.reviewLayer) {
-        annotationsCollection= new AnnotationCollection({user:this.userID, image:this.imageID, term:undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
+    if (!this.reviewLayer) {
+        annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, term: undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
     } else {
-        annotationsCollection= new AnnotationReviewedCollection({image:this.imageID, term:undefined,map:browseImageView}).url().replace("json", "jsonp");
+        annotationsCollection = new AnnotationReviewedCollection({image: this.imageID, term: undefined, map: browseImageView}).url().replace("json", "jsonp");
     }
 
 
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
-        strategies:[
-            new OpenLayers.Strategy.BBOX({resFactor:1})
+        strategies: [
+            new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],
-        protocol:new OpenLayers.Protocol.Script({
+        protocol: new OpenLayers.Protocol.Script({
             url: annotationsCollection,
-            format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
-            callbackKey:"callback"
+            format: new OpenLayers.Format.Cytomine({ annotationLayer: this}),
+            callbackKey: "callback"
         }),
-        'styleMap':styleMap
+        'styleMap': styleMap
     });
 
     this.controls = null;
@@ -147,151 +149,158 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 }
 
 AnnotationLayer.prototype = {
-    defaultStrokeColor:"#000000",
-    selectedStrokeColor:"#00FF00",
-    getSymbolizer:function (selected) {
+    defaultStrokeColor: "#000000",
+    selectedStrokeColor: "#00FF00",
+    getSymbolizer: function (selected) {
         var strokeColor = this.defaultStrokeColor;
-        if (selected) strokeColor = this.selectedStrokeColor;
+        if (selected) {
+            strokeColor = this.selectedStrokeColor;
+        }
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor':"#EEEEEE",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#EEEEEE",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#CCCCCC",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#CCCCCC",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#FF0000",
-            'fillOpacity':1,
-            'strokeColor':strokeColor,
-            'strokeWidth':5,
-            'pointRadius':this.pointRadius
+            'fillColor': "#FF0000",
+            'fillOpacity': 1,
+            'strokeColor': strokeColor,
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor':term.get('color'),
-                'fillOpacity':.6,
-                'strokeColor':strokeColor,
-                'strokeWidth':3,
-                'pointRadius':self.pointRadius
+                'fillColor': term.get('color'),
+                'fillOpacity': .6,
+                'strokeColor': strokeColor,
+                'strokeWidth': 3,
+                'pointRadius': self.pointRadius
             }
         });
         return symbolizers_lookup
     },
-    getSymbolizerReview:function (selected) {
+    getSymbolizerReview: function (selected) {
         var strokeColor = this.defaultStrokeColor;
-        if (selected) strokeColor = this.selectedStrokeColor;
+        if (selected) {
+            strokeColor = this.selectedStrokeColor;
+        }
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor':"#5BB75B",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#5BB75B",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#5BB75B",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#5BB75B",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#5BB75B",
-            'fillOpacity':1,
-            'strokeColor':strokeColor,
-            'strokeWidth':5,
-            'pointRadius':this.pointRadius
+            'fillColor': "#5BB75B",
+            'fillOpacity': 1,
+            'strokeColor': strokeColor,
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#5BB75B",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':5,
-            'pointRadius':this.pointRadius
+            'fillColor': "#5BB75B",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor':"#5BB75B",
-                'fillOpacity':.6,
-                'strokeColor':strokeColor,
-                'strokeWidth':3,
-                'pointRadius':self.pointRadius
+                'fillColor': "#5BB75B",
+                'fillOpacity': .6,
+                'strokeColor': strokeColor,
+                'strokeWidth': 3,
+                'pointRadius': self.pointRadius
             }
         });
         return symbolizers_lookup
     },
-    getSymbolizerReviewNotReviewLayer:function (selected) {
+    getSymbolizerReviewNotReviewLayer: function (selected) {
         var strokeColor = this.defaultStrokeColor;
-        if (selected) strokeColor = this.selectedStrokeColor;
+        if (selected) {
+            strokeColor = this.selectedStrokeColor;
+        }
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor':"#BD362F",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#BD362F",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#BD362F",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
+            'fillColor': "#BD362F",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#BD362F",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':5,
-            'pointRadius':this.pointRadius
+            'fillColor': "#BD362F",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor':"#BD362F",
-            'fillOpacity':.6,
-            'strokeColor':strokeColor,
-            'strokeWidth':5,
-            'pointRadius':this.pointRadius
+            'fillColor': "#BD362F",
+            'fillOpacity': .6,
+            'strokeColor': strokeColor,
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor':"#BD362F",
-                'fillOpacity':.6,
-                'strokeColor':strokeColor,
-                'strokeWidth':3,
-                'pointRadius':self.pointRadius
+                'fillColor': "#BD362F",
+                'fillOpacity': .6,
+                'strokeColor': strokeColor,
+                'strokeWidth': 3,
+                'pointRadius': self.pointRadius
             }
         });
         return symbolizers_lookup
     },
 
-    registerEvents:function (map) {
+    registerEvents: function (map) {
 
         var self = this;
 
         this.vectorsLayer.events.on({
-            clickFeature:function (evt) {
+            clickFeature: function (evt) {
 
             },
-            onSelect:function (evt) {
+            onSelect: function (evt) {
 
             },
-            featureselected:function (evt) {
+            featureselected: function (evt) {
                 console.log("featureselected");
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.idAnnotation = evt.feature.attributes.idAnnotation;
-                    if(!self.reviewLayer)
+                    if (!self.reviewLayer) {
                         self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
+                    }
 
                     if (self.deleteOnSelect == true) {
                         self.removeSelection();
@@ -300,21 +309,27 @@ AnnotationLayer.prototype = {
                         //self.vectorsLayer.drawFeature(evt.feature);
                     }
                 }
-                else self.showPopupMeasure(map, evt);
+                else {
+                    self.showPopupMeasure(map, evt);
+                }
 
             },
-            'featureunselected':function (evt) {
+            'featureunselected': function (evt) {
                 console.log("featureunselected on " + self.name);
-                if (self.measureOnSelect) self.vectorsLayer.removeFeatures(evt.feature);
+                if (self.measureOnSelect) {
+                    self.vectorsLayer.removeFeatures(evt.feature);
+                }
 
-                if (self.dialog != null) self.dialog.destroy();
+                if (self.dialog != null) {
+                    self.dialog.destroy();
+                }
                 self.ontologyTreeView.clear();
                 self.ontologyTreeView.clearAnnotation();
                 self.browseImageView.showAnnotationInReviewPanel(null);
                 self.clearPopup(map, evt);
                 self.vectorsLayer.drawFeature(evt.feature);
             },
-            'featureadded':function (evt) {
+            'featureadded': function (evt) {
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
@@ -324,12 +339,15 @@ AnnotationLayer.prototype = {
 
                         evt.feature.attributes.measure = 'YES';
 
-                        if(self.browseImageView.freeHandUpdateAdd)
-                            self.correctAnnotation(evt.feature,false);
-                        else if(self.browseImageView.freeHandUpdateRem)
-                            self.correctAnnotation(evt.feature,true);
-                        else
+                        if (self.browseImageView.freeHandUpdateAdd) {
+                            self.correctAnnotation(evt.feature, false);
+                        }
+                        else if (self.browseImageView.freeHandUpdateRem) {
+                            self.correctAnnotation(evt.feature, true);
+                        }
+                        else {
                             self.addAnnotation(evt.feature);
+                        }
                     }
                 }
                 else {
@@ -338,122 +356,130 @@ AnnotationLayer.prototype = {
                 }
 
             },
-            'sketchcomplete':function (evt) {
-                if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
+            'sketchcomplete': function (evt) {
+                if (self.triggerUpdateOnUnselect) {
+                    self.updateAnnotation(evt.feature);
+                }
             },
-            'featuremodified':function (evt) {
+            'featuremodified': function (evt) {
                 //prevent to update an annotation when it is unnecessary
-                if (self.triggerUpdateOnUnselect) self.updateAnnotation(evt.feature);
+                if (self.triggerUpdateOnUnselect) {
+                    self.updateAnnotation(evt.feature);
+                }
             },
-            'onDelete':function (feature) {
+            'onDelete': function (feature) {
             },
-            "moveend":function () {
+            "moveend": function () {
                 self.clearPopup();
             }
         });
     },
-    initControls:function (map, selectFeature) {
+    initControls: function (map, selectFeature) {
         /*if (isOwner) { */
         console.log("initControls");
         this.controls = {
-            'freehand':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
-                handlerOptions:{
-                    freehand:true,
-                    holeModifier:"altKey"
+            'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
+                handlerOptions: {
+                    freehand: true,
+                    holeModifier: "altKey"
                 }
             }),
-            'point':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
-            'line':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
-            'polygon':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
-                handlerOptions:{
-                    holeModifier:"altKey"
+            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
+            'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
+            'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
+                handlerOptions: {
+                    holeModifier: "altKey"
                 }
             }),
-            'regular':new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
-                handlerOptions:{
-                    sides:5,
-                    holeModifier:"altKey"
+            'regular': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.RegularPolygon, {
+                handlerOptions: {
+                    sides: 5,
+                    holeModifier: "altKey"
                 }
             }),
-            'modify':new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
-            'select':selectFeature
+            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+            'select': selectFeature
         }
         this.controls.freehand.freehand = true;
 
         map.initTools(this.controls);
 
     },
-    loadAnnotations:function (browseImageView) {
+    loadAnnotations: function (browseImageView) {
 
         var self = this;
         browseImageView.addVectorLayer(this, this.userID);
         browseImageView.layerLoadedCallback(self);
     },
-    addFeature:function (feature) {
+    addFeature: function (feature) {
         this.vectorsLayer.addFeatures(feature);
     },
-    selectFeature:function (feature) {
+    selectFeature: function (feature) {
         this.controls.select.unselectAll();
         this.controls.select.select(feature);
     },
-    removeFeature:function (idAnnotation) {
+    removeFeature: function (idAnnotation) {
         var feature = this.getFeature(idAnnotation);
         this.vectorsLayer.removeFeatures(feature);
         this.ontologyTreeView.clearAnnotation();
         this.ontologyTreeView.clear();
     },
-    getFeature:function (idAnnotation) {
+    getFeature: function (idAnnotation) {
         var features = this.vectorsLayer.getFeaturesByAttribute("idAnnotation", idAnnotation);
-        if (_.isArray(features) && _.size(features) > 0) return features[0];
+        if (_.isArray(features) && _.size(features) > 0) {
+            return features[0];
+        }
         return null;
     },
-    removeSelection:function () {
+    removeSelection: function () {
         for (var i in this.vectorsLayer.selectedFeatures) {
             var feature = this.vectorsLayer.selectedFeatures[i];
             this.removeAnnotation(feature);
         }
     },
-    clearPopup:function (map, evt) {
+    clearPopup: function (map, evt) {
         var self = this;
-        var elem = $("#"+self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
+        var elem = $("#" + self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
         elem.empty();
         elem.hide();
     },
-    hideFeature:function (feature) {
+    hideFeature: function (feature) {
         var idAnnotation = feature.attributes.idAnnotation;
         if (_.indexOf(this.featuresHidden, idAnnotation) == -1) {
             this.featuresHidden.push(idAnnotation);
         }
         this.vectorsLayer.refresh();
     },
-    showFeature:function (idAnnotation) {
+    showFeature: function (idAnnotation) {
         this.featuresHidden = _.without(this.featuresHidden, idAnnotation);
         this.vectorsLayer.refresh();
     },
-    showPopup:function (map, evt) {
+    showPopup: function (map, evt) {
         var self = this;
         require([
             "text!application/templates/explorer/PopupAnnotation.tpl.html"
         ], function (tpl) {
-            new AnnotationModel({id:evt.feature.attributes.idAnnotation}).fetch({
-                success:function (annotation, response) {
+            new AnnotationModel({id: evt.feature.attributes.idAnnotation}).fetch({
+                success: function (annotation, response) {
                     self.browseImageView.showAnnotationInReviewPanel(annotation);
 
                     var user = window.app.models.projectUser.get(annotation.get("user"));
-                    if (user==undefined) user = window.app.models.projectUserJob.get(annotation.get("user"));
+                    if (user == undefined) {
+                        user = window.app.models.projectUserJob.get(annotation.get("user"));
+                    }
 
 
-                    annotation.set({"username":user.prettyName()});
-                    console.log("current annotation = "+annotation.id);
-                    self.browseImageView.currentAnnotation =annotation;
+                    annotation.set({"username": user.prettyName()});
+                    console.log("current annotation = " + annotation.id);
+                    self.browseImageView.currentAnnotation = annotation;
                     var terms = [];
                     //browse all term and compute the number of user who add this term
 
-                    if(annotation.get("reviewed")) {
+                    if (annotation.get("reviewed")) {
                         _.each(annotation.get("term"), function (idTerm) {
                             var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
                             var idOntology = window.app.status.currentProjectModel.get('ontology');
-                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> ", {idOntology:idOntology, idTerm:idTerm, termName:termName});
+                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> ", {idOntology: idOntology, idTerm: idTerm, termName: termName});
                             terms.push(tpl);
 
                         });
@@ -463,21 +489,21 @@ AnnotationLayer.prototype = {
                             var termName = window.app.status.currentTermsCollection.get(idTerm).get('name');
                             var userCount = termuser.user.length;
                             var idOntology = window.app.status.currentProjectModel.get('ontology');
-                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> (<%=   userCount %>)", {idOntology:idOntology, idTerm:idTerm, termName:termName, userCount:userCount});
+                            var tpl = _.template("<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>'><%=   termName %></a> (<%=   userCount %>)", {idOntology: idOntology, idTerm: idTerm, termName: termName, userCount: userCount});
                             terms.push(tpl);
 
                         });
                     }
 
 
-                    annotation.set({"terms":terms.join(", ")});
+                    annotation.set({"terms": terms.join(", ")});
 
-                    if(annotation.get("nbComments")==undefined) {
-                        annotation.set({"nbComments":0});
+                    if (annotation.get("nbComments") == undefined) {
+                        annotation.set({"nbComments": 0});
                     }
 
                     var content = _.template(tpl, annotation.toJSON());
-                    var elem = $("#"+self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
+                    var elem = $("#" + self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
 
 
                     elem.html(content);
@@ -487,12 +513,17 @@ AnnotationLayer.prototype = {
 
                         self.controls.select.unselectAll();
                         var feature = self.getFeature(annotation.id);
-                        if (feature == undefined || feature == null) return false;
+                        if (feature == undefined || feature == null) {
+                            return false;
+                        }
                         self.hideFeature(feature);
                         var url = "";
-                        if(!self.reviewMode)
+                        if (!self.reviewMode) {
                             url = "tabs-image-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
-                        else url = "tabs-review-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
+                        }
+                        else {
+                            url = "tabs-review-" + window.app.status.currentProjectModel.get("id") + "-" + self.browseImageView.model.get("id") + "-";
+                        }
                         window.app.controllers.browse.navigate(url, false);
                         return false;
                     });
@@ -505,12 +536,12 @@ AnnotationLayer.prototype = {
             });
         });
     },
-    showSimilarAnnotation:function (model) {
+    showSimilarAnnotation: function (model) {
         var self = this;
         console.log('showSimilarAnnotation');
         if (window.app.status.currentTermsCollection == undefined || (window.app.status.currentTermsCollection.length > 0 && window.app.status.currentTermsCollection.at(0).id == undefined)) {
-            new TermCollection({idOntology:window.app.status.currentProjectModel.get('ontology')}).fetch({
-                success:function (terms, response) {
+            new TermCollection({idOntology: window.app.status.currentProjectModel.get('ontology')}).fetch({
+                success: function (terms, response) {
                     window.app.status.currentTermsCollection = terms;
                     self.showSimilarAnnotationResult(model);
                 }});
@@ -518,11 +549,11 @@ AnnotationLayer.prototype = {
             self.showSimilarAnnotationResult(model);
         }
     },
-    showSimilarAnnotationResult:function (model) {
+    showSimilarAnnotationResult: function (model) {
         var self = this;
         console.log('showSimilarAnnotationResult');
-        new AnnotationRetrievalModel({annotation:model.id}).fetch({
-            success:function (collection, response) {
+        new AnnotationRetrievalModel({annotation: model.id}).fetch({
+            success: function (collection, response) {
 
                 var termsList = collection.get('term');
 
@@ -536,8 +567,12 @@ AnnotationLayer.prototype = {
 
                 _.each(termsList, function (term) {
                     sum = sum + term.rate;
-                    if (i == 0) bestTerm1Object = term;
-                    if (i == 1) bestTerm2Object = term;
+                    if (i == 0) {
+                        bestTerm1Object = term;
+                    }
+                    if (i == 1) {
+                        bestTerm2Object = term;
+                    }
                     i++;
                 });
 
@@ -548,12 +583,16 @@ AnnotationLayer.prototype = {
                 if (bestTerm1Object != undefined) {
                     bestTerm1 = bestTerm1Object.id;
                     bestTerm1Value = bestTerm1Object.rate;
-                    if (bestTerm1Value == 0) bestTerm1 = undefined;
+                    if (bestTerm1Value == 0) {
+                        bestTerm1 = undefined;
+                    }
                 }
                 if (bestTerm2Object != undefined) {
                     bestTerm2 = bestTerm2Object.id;
                     bestTerm2Value = bestTerm2Object.rate;
-                    if (bestTerm2Value == 0) bestTerm2 = undefined;
+                    if (bestTerm2Value == 0) {
+                        bestTerm2 = undefined;
+                    }
                 }
 
                 bestTerm1Value = (bestTerm1Value / sum) * 100;
@@ -561,18 +600,20 @@ AnnotationLayer.prototype = {
 
                 //Print suggested Term
                 self.printSuggestedTerm(model, window.app.status.currentTermsCollection.get(bestTerm1), window.app.status.currentTermsCollection.get(bestTerm2), bestTerm1Value, bestTerm2Value, window.app.status.currentTermsCollection, collection.get('annotation'));
-            }, error:function (bad, response) {
+            }, error: function (bad, response) {
                 $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
             }});
     },
-    printSuggestedTerm:function (annotation, bestTerm1, bestTerm2, bestTerm1Value, bestTerm2Value, terms, similarAnnotation) {
+    printSuggestedTerm: function (annotation, bestTerm1, bestTerm2, bestTerm1Value, bestTerm2Value, terms, similarAnnotation) {
         var self = this;
         var suggestedTerm = "";
         var suggestedTerm2 = "";
-        if (bestTerm1 != undefined)
+        if (bestTerm1 != undefined) {
             suggestedTerm += "<span id=\"changeBySuggest" + bestTerm1.id + "\" style=\"display : inline\"><u>" + bestTerm1.get('name') + "</u> (" + Math.round(bestTerm1Value) + "%)<span>";
-        if (bestTerm2 != undefined)
+        }
+        if (bestTerm2 != undefined) {
             suggestedTerm2 += " or " + "<span id=\"changeBySuggest" + bestTerm2.id + "\" style=\"display : inline\"><u>" + bestTerm2.get('name') + "</u> (" + Math.round(bestTerm2Value) + "%)<span>";
+        }
 
         $("#suggTerm" + annotation.id).empty();
         $("#suggTerm" + annotation.id).append(suggestedTerm);
@@ -595,36 +636,36 @@ AnnotationLayer.prototype = {
             var bestTerms = [bestTerm1, bestTerm2];
             var bestTermsValue = [bestTerm1Value, bestTerm2Value];
             var panel = new AnnotationRetrievalView({
-                model:new AnnotationRetrievalCollection(similarAnnotation),
-                projectsPanel:self,
-                container:self,
-                el:"#annotationRetrieval",
-                baseAnnotation:annotation,
-                terms:terms,
-                bestTerms:bestTerms,
-                bestTermsValue:bestTermsValue
+                model: new AnnotationRetrievalCollection(similarAnnotation),
+                projectsPanel: self,
+                container: self,
+                el: "#annotationRetrieval",
+                baseAnnotation: annotation,
+                terms: terms,
+                bestTerms: bestTerms,
+                bestTermsValue: bestTermsValue
             }).render();
             return false;
 
         });
     },
 
-    createSuggestedTermLink:function (term, annotation) {
+    createSuggestedTermLink: function (term, annotation) {
         var self = this;
         $("#changeBySuggest" + term.id).click(function () {
-            new AnnotationTermModel({term:term.id, userannotation:annotation.id, clear:true
-            }).save(null, {success:function (termModel, response) {
+            new AnnotationTermModel({term: term.id, userannotation: annotation.id, clear: true
+            }).save(null, {success: function (termModel, response) {
                     window.app.view.message("Correct Term", response.message, "");
                     //Refresh tree
                     self.ontologyTreeView.refresh(annotation.id);
-                }, error:function (model, response) {
+                }, error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Correct term", "error:" + json.errors, "");
                 }});
         });
     },
 
-    showPopupMeasure:function (map, evt) {
+    showPopupMeasure: function (map, evt) {
         var self = this;
         require([
             "text!application/templates/explorer/PopupMeasure.tpl.html"
@@ -641,7 +682,7 @@ AnnotationLayer.prototype = {
             } else {
                 length += " pixels";
             }
-            var content = _.template(tpl, {length:length});
+            var content = _.template(tpl, {length: length});
             self.popup = new OpenLayers.Popup("chicken",
                 new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
                 new OpenLayers.Size(200, 60),
@@ -658,41 +699,43 @@ AnnotationLayer.prototype = {
 
 
     },
-    enableHightlight:function () {
+    enableHightlight: function () {
         //this.hoverControl.activate();
     },
-    disableHightlight:function () {
+    disableHightlight: function () {
         //this.hoverControl.deactivate();
     },
-    correctAnnotation : function(feature,remove) {
+    correctAnnotation: function (feature, remove) {
         var self = this;
 
         console.log("correctAddAnnotation");
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
 
-        console.log("geomwkt="+geomwkt);
-        console.log("geomwkt="+geomwkt.indexOf("LINESTRING"));
-        if(geomwkt.indexOf("LINESTRING")!=-1) {
+        console.log("geomwkt=" + geomwkt);
+        console.log("geomwkt=" + geomwkt.indexOf("LINESTRING"));
+        if (geomwkt.indexOf("LINESTRING") != -1) {
             self.vectorsLayer.removeFeatures([feature]);
             return
         }
 
         var annotationCorrection = new AnnotationCorrectionModel({
-            location:geomwkt,
-            image:this.imageID,
-            review : self.reviewMode,
-            remove : remove
+            location: geomwkt,
+            image: this.imageID,
+            review: self.reviewMode,
+            remove: remove
         });
 
         annotationCorrection.save({}, {
-            success:function (annotation, response) {
+            success: function (annotation, response) {
                 window.app.view.message("Annotation updated", "Annotation updated with success", "success");
                 self.vectorsLayer.refresh();
-                if(self.reviewMode) self.browseImageView.refreshReviewLayer();
+                if (self.reviewMode) {
+                    self.browseImageView.refreshReviewLayer();
+                }
                 self.vectorsLayer.removeFeatures([feature]);
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Cannot correct annotation", "error:" + json.errors, "error");
                 self.vectorsLayer.removeFeatures([feature]);
@@ -703,7 +746,7 @@ AnnotationLayer.prototype = {
 
 
     /*Add annotation in database*/
-    addAnnotation:function (feature) {
+    addAnnotation: function (feature) {
         console.log("addAnnotation");
         var alias = this;
         var self = this;
@@ -712,13 +755,13 @@ AnnotationLayer.prototype = {
 
         var terms = alias.ontologyTreeView.getTermsChecked();
         var annotation = new AnnotationModel({
-            name:"",
-            location:geomwkt,
-            image:this.imageID,
-            term:terms
+            name: "",
+            location: geomwkt,
+            image: this.imageID,
+            term: terms
         });
 
-        if(self.reviewMode && !self.browseImageView.reviewPanel.isLayerPrinted(window.app.status.user.id)) {
+        if (self.reviewMode && !self.browseImageView.reviewPanel.isLayerPrinted(window.app.status.user.id)) {
             window.app.view.message("Add annotation", "You must add your layer to add new annotation!", "error");
             self.vectorsLayer.removeFeatures([feature]);
             return;
@@ -726,9 +769,9 @@ AnnotationLayer.prototype = {
 
 
         annotation.save({}, {
-            success:function (annotation, response) {
-                new AnnotationModel({id:response.annotation.id}).fetch({
-                    success:function (annotation, response) {
+            success: function (annotation, response) {
+                new AnnotationModel({id: response.annotation.id}).fetch({
+                    success: function (annotation, response) {
                         //annotation.set(response.annotation.id);
                         var message = response.message;
                         self.vectorsLayer.removeFeatures([feature]);
@@ -737,15 +780,15 @@ AnnotationLayer.prototype = {
                         self.controls.select.unselectAll();
                         self.controls.select.select(newFeature);
                         var cropURL = annotation.get('cropURL');
-                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url:cropURL, alt:cropURL});
-                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message:message, cropImage:cropImage});
+                        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url: cropURL, alt: cropURL});
+                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message: message, cropImage: cropImage});
                         window.app.view.message("Annotation added", alertMessage, "success");
                         //if(self.reviewMode) self.vectorsLayer.refresh();
                     }
                 });
 
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Add annotation", "error:" + json.errors, "error");
             }
@@ -753,19 +796,19 @@ AnnotationLayer.prototype = {
 
 
     },
-    removeAnnotation:function (feature) {
+    removeAnnotation: function (feature) {
         var idAnnotation = feature.attributes.idAnnotation;
         this.removeFeature(feature);
         this.controls.select.unselectAll();
         this.vectorsLayer.removeFeatures([feature]);
         var self = this;
-        new AnnotationModel({id:feature.attributes.idAnnotation}).destroy({
-            success:function (model, response) {
+        new AnnotationModel({id: feature.attributes.idAnnotation}).destroy({
+            success: function (model, response) {
                 window.app.view.message("Annotation", response.message, "success");
                 self.browseImageView.refreshAnnotationTabs(undefined);
 
             },
-            error:function (model, response) {
+            error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Annotation", json.errors, "error");
             }
@@ -773,21 +816,23 @@ AnnotationLayer.prototype = {
     },
 
     /*Modifiy annotation on database*/
-    updateAnnotation:function (feature) {
-        if (feature.attributes.idAnnotation == undefined) return;
+    updateAnnotation: function (feature) {
+        if (feature.attributes.idAnnotation == undefined) {
+            return;
+        }
         var self = this;
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
-        new AnnotationModel({id:feature.attributes.idAnnotation}).fetch({
-            success:function (model, response) {
+        new AnnotationModel({id: feature.attributes.idAnnotation}).fetch({
+            success: function (model, response) {
 
-                model.save({location:geomwkt}, {
-                    success:function (annotation, response) {
+                model.save({location: geomwkt}, {
+                    success: function (annotation, response) {
                         var message = response.message;
-                        var alertMessage = _.template("<p><%=   message %></p>", { message:message});
+                        var alertMessage = _.template("<p><%=   message %></p>", { message: message});
                         window.app.view.message("Annotation edited", alertMessage, "success");
                     },
-                    error:function (model, response) {
+                    error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
                         window.app.view.message("Annotation", json.errors, "");
                     }
@@ -795,7 +840,7 @@ AnnotationLayer.prototype = {
             }
         });
     },
-    toggleRotate:function () {
+    toggleRotate: function () {
         this.resize = false;
         this.drag = false;
         this.rotate = true;
@@ -803,7 +848,7 @@ AnnotationLayer.prototype = {
         this.updateControls();
         this.toggleControl("modify");
     },
-    toggleFill:function () {
+    toggleFill: function () {
         this.resize = false;
         this.drag = false;
         this.rotate = false;
@@ -811,7 +856,7 @@ AnnotationLayer.prototype = {
         this.updateControls();
         this.toggleControl("modify");
     },
-    toggleResize:function () {
+    toggleResize: function () {
         this.resize = true;
         this.drag = false;
         this.rotate = false;
@@ -819,7 +864,7 @@ AnnotationLayer.prototype = {
         this.updateControls();
         this.toggleControl("modify");
     },
-    toggleDrag:function () {
+    toggleDrag: function () {
         this.resize = false;
         this.drag = true;
         this.rotate = false;
@@ -828,7 +873,7 @@ AnnotationLayer.prototype = {
         this.toggleControl("modify");
 
     },
-    toggleEdit:function () {
+    toggleEdit: function () {
         this.resize = false;
         this.drag = false;
         this.rotate = false;
@@ -837,20 +882,20 @@ AnnotationLayer.prototype = {
         this.toggleControl("modify");
 
     },
-    toggleIrregular:function () {
+    toggleIrregular: function () {
 
         this.irregular = !this.irregular;
         this.updateControls();
     },
-    toggleAspectRatio:function () {
+    toggleAspectRatio: function () {
         this.aspectRatio = !this.aspectRatio;
         this.updateControls();
     },
-    setSides:function (sides) {
+    setSides: function (sides) {
         this.sides = sides;
         this.updateControls();
     },
-    updateControls:function () {
+    updateControls: function () {
 
         this.controls.modify.mode = OpenLayers.Control.ModifyFeature.RESHAPE;
         if (this.rotate) {
@@ -872,7 +917,7 @@ AnnotationLayer.prototype = {
         this.controls.regular.handler.sides = this.sides;
         this.controls.regular.handler.irregular = this.irregular;
     },
-    disableMeasureOnSelect:function () {
+    disableMeasureOnSelect: function () {
         var self = this;
         this.measureOnSelect = false;
         //browse measure on select
@@ -893,7 +938,7 @@ AnnotationLayer.prototype = {
             }
         }
     },
-    toggleControl:function (name) {
+    toggleControl: function (name) {
         //Simulate an OpenLayers.Control.EraseFeature tool by using SelectFeature with the flag 'deleteOnSelect'
         this.deleteOnSelect = false;
         this.disableMeasureOnSelect();
@@ -923,14 +968,14 @@ AnnotationLayer.prototype = {
 
     },
     /* Callbacks undo/redo */
-    annotationAdded:function (idAnnotation) {
+    annotationAdded: function (idAnnotation) {
         var self = this;
         var deleteOnSelectBackup = self.deleteOnSelect;
         self.deleteOnSelect = false;
         new AnnotationModel({
-            id:idAnnotation
+            id: idAnnotation
         }).fetch({
-                success:function (model) {
+                success: function (model) {
                     var feature = AnnotationLayerUtils.createFeatureFromAnnotation(model);
                     self.addFeature(feature);
                     self.selectFeature(feature);
@@ -940,19 +985,19 @@ AnnotationLayer.prototype = {
             });
 
     },
-    annotationRemoved:function (idAnnotation) {
+    annotationRemoved: function (idAnnotation) {
         this.removeFeature(idAnnotation);
     },
-    annotationUpdated:function (idAnnotation, idImage) {
+    annotationUpdated: function (idAnnotation, idImage) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
 
     },
-    termAdded:function (idAnnotation, idTerm) {
+    termAdded: function (idAnnotation, idTerm) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
     },
-    termRemoved:function (idAnnotation, idTerm) {
+    termRemoved: function (idAnnotation, idTerm) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
     }

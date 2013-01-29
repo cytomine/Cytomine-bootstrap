@@ -1,26 +1,26 @@
 var UploadFormView = Backbone.View.extend({
 
-    statusLabels:{
-        uploadedLabel:'<span class="label label-inverse">UPLOADED</span>',
-        errorFormatLabel:'<span class="label label-important">ERROR FORMAT</span>',
-        convertedLabel:'<span class="label label-info">CONVERTED</span>',
-        deployedLabel:'<span class="label label-success">DEPLOYED</span>'
+    statusLabels: {
+        uploadedLabel: '<span class="label label-inverse">UPLOADED</span>',
+        errorFormatLabel: '<span class="label label-important">ERROR FORMAT</span>',
+        convertedLabel: '<span class="label label-info">CONVERTED</span>',
+        deployedLabel: '<span class="label label-success">DEPLOYED</span>'
     },
-    fileUploadErrors:{
-        maxFileSize:'File is too big',
-        minFileSize:'File is too small',
-        acceptFileTypes:'Filetype not allowed',
-        maxNumberOfFiles:'Max number of files exceeded',
-        uploadedBytes:'Uploaded bytes exceed file size',
-        emptyResult:'Empty file upload result'
+    fileUploadErrors: {
+        maxFileSize: 'File is too big',
+        minFileSize: 'File is too small',
+        acceptFileTypes: 'Filetype not allowed',
+        maxNumberOfFiles: 'Max number of files exceeded',
+        uploadedBytes: 'Uploaded bytes exceed file size',
+        emptyResult: 'Empty file upload result'
     },
-    initialize:function (options) {
+    initialize: function (options) {
         this.uploadDataTables = null;
     },
-    events:{
+    events: {
 
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/upload/UploadForm.tpl.html"
@@ -31,46 +31,46 @@ var UploadFormView = Backbone.View.extend({
 
         return this;
     },
-    defineFileUpload:function (uploadTpl, downloadTpl) {
+    defineFileUpload: function (uploadTpl, downloadTpl) {
         var uploadFormView = this;
         $.widget('cytomine.fileupload', $.blueimp.fileupload, {
 
-            options:{
+            options: {
                 // By default, files added to the widget are uploaded as soon
                 // as the user clicks on the start buttons. To enable automatic
                 // uploads, set the following option to true:
-                autoUpload:false,
+                autoUpload: false,
                 // The following option limits the number of files that are
                 // allowed to be uploaded using this widget:
-                maxNumberOfFiles:undefined,
+                maxNumberOfFiles: undefined,
                 // The maximum allowed file size:
-                maxFileSize:undefined,
+                maxFileSize: undefined,
                 // The minimum allowed file size:
-                minFileSize:1,
+                minFileSize: 1,
                 // The regular expression for allowed file types, matches
                 // against either file type or file name:
-                acceptFileTypes:/.+$/i,
+                acceptFileTypes: /.+$/i,
                 // The regular expression to define for which files a preview
                 // image is shown, matched against the file type:
-                previewFileTypes:/^image\/(gif|jpeg|png)$/,
+                previewFileTypes: /^image\/(gif|jpeg|png)$/,
                 // The maximum file size for preview images:
-                previewMaxFileSize:5000000, // 5MB
+                previewMaxFileSize: 5000000, // 5MB
                 // The maximum width of the preview images:
-                previewMaxWidth:80,
+                previewMaxWidth: 80,
                 // The maximum height of the preview images:
-                previewMaxHeight:80,
+                previewMaxHeight: 80,
                 // By default, preview images are displayed as canvas elements
                 // if supported by the browser. Set the following option to false
                 // to always display preview images as img elements:
-                previewAsCanvas:true,
+                previewAsCanvas: true,
                 // The expected data type of the upload response, sets the dataType
                 // option of the $.ajax upload requests:
-                dataType:'json',
+                dataType: 'json',
 
                 // The add callback is invoked as soon as files are added to the fileupload
                 // widget (via file input selection, drag & drop or add API call).
                 // See the basic file upload widget for more information:
-                add:function (e, data) {
+                add: function (e, data) {
                     var that = $(this).data('fileupload'),
                         files = data.files;
                     that._adjustMaxNumberOfFiles(-files.length);
@@ -89,7 +89,7 @@ var UploadFormView = Backbone.View.extend({
                     }
                 },
                 // Callback for the start of each file upload request:
-                send:function (e, data) {
+                send: function (e, data) {
                     if (!data.isValidated) {
                         var that = $(this).data('fileupload');
                         if (!data.isAdjusted) {
@@ -111,14 +111,14 @@ var UploadFormView = Backbone.View.extend({
                     }
                 },
                 // Callback for successful uploads:
-                done:function (e, data) {
+                done: function (e, data) {
                     var that = $(this).data('fileupload'),
                         template,
                         preview;
                     if (data.context) {
                         data.context.each(function (index) {
                             var file = ($.isArray(data.result) &&
-                                data.result[index]) || {error:'emptyResult'};
+                                data.result[index]) || {error: 'emptyResult'};
                             if (file.error) {
                                 that._adjustMaxNumberOfFiles(1);
                             }
@@ -152,7 +152,7 @@ var UploadFormView = Backbone.View.extend({
 
                 },
                 // Callback for failed (abort or error) uploads:
-                fail:function (e, data) {
+                fail: function (e, data) {
                     var that = $(this).data('fileupload'),
                         template;
                     that._adjustMaxNumberOfFiles(data.files.length);
@@ -194,7 +194,7 @@ var UploadFormView = Backbone.View.extend({
                 },
 
                 // Callback for upload progress events:
-                progress:function (e, data) {
+                progress: function (e, data) {
                     if (data.context) {
                         data.context.find('.progressbar div').css(
                             'width',
@@ -203,24 +203,24 @@ var UploadFormView = Backbone.View.extend({
                     }
                 },
                 // Callback for global upload progress events:
-                progressall:function (e, data) {
+                progressall: function (e, data) {
                     $(this).find('.fileupload-progressbar div').css(
                         'width',
                         parseInt(data.loaded / data.total * 100, 10) + '%'
                     );
                 },
                 // Callback for uploads start, equivalent to the global ajaxStart event:
-                start:function () {
+                start: function () {
                     $(this).find('.fileupload-progressbar')
                         .addClass('in').find('div').css('width', '0%');
                 },
                 // Callback for uploads stop, equivalent to the global ajaxStop event:
-                stop:function () {
+                stop: function () {
                     $(this).find('.fileupload-progressbar')
                         .removeClass('in').find('div').css('width', '0%');
                 },
                 // Callback for file deletion:
-                destroy:function (e, data) {
+                destroy: function (e, data) {
                     var that = $(this).data('fileupload');
                     if (data.url) {
                         $.ajax(data);
@@ -237,7 +237,7 @@ var UploadFormView = Backbone.View.extend({
 
             // Link handler, that allows to download files
             // by drag & drop of the links to the desktop:
-            _enableDragToDesktop:function () {
+            _enableDragToDesktop: function () {
                 var link = $(this),
                     url = link.prop('href'),
                     name = decodeURIComponent(url.split('/').pop())
@@ -254,7 +254,7 @@ var UploadFormView = Backbone.View.extend({
                 });
             },
 
-            _adjustMaxNumberOfFiles:function (operand) {
+            _adjustMaxNumberOfFiles: function (operand) {
                 if (typeof this.options.maxNumberOfFiles === 'number') {
                     this.options.maxNumberOfFiles += operand;
                     if (this.options.maxNumberOfFiles < 1) {
@@ -265,7 +265,7 @@ var UploadFormView = Backbone.View.extend({
                 }
             },
 
-            _formatFileSize:function (bytes) {
+            _formatFileSize: function (bytes) {
                 if (typeof bytes !== 'number') {
                     return '';
                 }
@@ -278,7 +278,7 @@ var UploadFormView = Backbone.View.extend({
                 return (bytes / 1000).toFixed(2) + ' KB';
             },
 
-            _hasError:function (file) {
+            _hasError: function (file) {
                 if (file.error) {
                     return file.error;
                 }
@@ -306,7 +306,7 @@ var UploadFormView = Backbone.View.extend({
                 return null;
             },
 
-            _validate:function (files) {
+            _validate: function (files) {
                 var that = this,
                     valid = !!files.length;
                 $.each(files, function (index, file) {
@@ -318,17 +318,17 @@ var UploadFormView = Backbone.View.extend({
                 return valid;
             },
 
-            _renderTemplate:function (tpl, files) {
-                var nodes = _.template(tpl, { o:{
-                    files:files,
-                    formatFileSize:this._formatFileSize,
-                    options:this.options,
-                    fileUploadErrors:uploadFormView.fileUploadErrors
+            _renderTemplate: function (tpl, files) {
+                var nodes = _.template(tpl, { o: {
+                    files: files,
+                    formatFileSize: this._formatFileSize,
+                    options: this.options,
+                    fileUploadErrors: uploadFormView.fileUploadErrors
                 }});
                 return $(this.options.templateContainer).html(nodes).children();
             },
 
-            _renderUpload:function (files) {
+            _renderUpload: function (files) {
                 var that = this,
                     options = this.options,
                     nodes = this._renderTemplate(options.uploadTemplate, files);
@@ -347,9 +347,9 @@ var UploadFormView = Backbone.View.extend({
                                 $(node).addClass('in');
                             },
                             {
-                                maxWidth:options.previewMaxWidth,
-                                maxHeight:options.previewMaxHeight,
-                                canvas:options.previewAsCanvas
+                                maxWidth: options.previewMaxWidth,
+                                maxHeight: options.previewMaxHeight,
+                                canvas: options.previewAsCanvas
                             }
                         );
                     }
@@ -357,7 +357,7 @@ var UploadFormView = Backbone.View.extend({
                 return nodes;
             },
 
-            _renderDownload:function (files) {
+            _renderDownload: function (files) {
                 var nodes = this._renderTemplate(
                     this.options.downloadTemplate,
                     files
@@ -366,7 +366,7 @@ var UploadFormView = Backbone.View.extend({
                 return nodes;
             },
 
-            _startHandler:function (e) {
+            _startHandler: function (e) {
                 e.preventDefault();
                 var button = $(this),
                     tmpl = button.closest('.template-upload'),
@@ -376,7 +376,7 @@ var UploadFormView = Backbone.View.extend({
                 }
             },
 
-            _cancelHandler:function (e) {
+            _cancelHandler: function (e) {
                 e.preventDefault();
                 var tmpl = $(this).closest('.template-upload'),
                     data = tmpl.data('data') || {};
@@ -388,18 +388,18 @@ var UploadFormView = Backbone.View.extend({
                 }
             },
 
-            _deleteHandler:function (e) {
+            _deleteHandler: function (e) {
                 e.preventDefault();
                 var button = $(this);
                 e.data.fileupload._trigger('destroy', e, {
-                    context:button.closest('.template-download'),
-                    url:button.attr('data-url'),
-                    type:button.attr('data-type'),
-                    dataType:e.data.fileupload.options.dataType
+                    context: button.closest('.template-download'),
+                    url: button.attr('data-url'),
+                    type: button.attr('data-type'),
+                    dataType: e.data.fileupload.options.dataType
                 });
             },
 
-            _transitionCallback:function (node, callback) {
+            _transitionCallback: function (node, callback) {
                 var that = this;
                 if (this._transition && node.hasClass('fade')) {
                     node.bind(
@@ -418,7 +418,7 @@ var UploadFormView = Backbone.View.extend({
                 }
             },
 
-            _initTransitionSupport:function () {
+            _initTransitionSupport: function () {
                 var that = this,
                     style = (document.body || document.documentElement).style,
                     suffix = '.' + that.options.namespace;
@@ -437,7 +437,7 @@ var UploadFormView = Backbone.View.extend({
                 }
             },
 
-            _initButtonBarEventHandlers:function () {
+            _initButtonBarEventHandlers: function () {
                 var fileUploadButtonBar = $('.fileupload-buttonbar'),
                     filesList = this._files,
                     ns = this.options.namespace;
@@ -466,40 +466,40 @@ var UploadFormView = Backbone.View.extend({
                     });
             },
 
-            _destroyButtonBarEventHandlers:function () {
+            _destroyButtonBarEventHandlers: function () {
                 this.element.find('.fileupload-buttonbar button')
                     .unbind('click.' + this.options.namespace);
                 this.element.find('.fileupload-buttonbar .toggle')
                     .unbind('change.' + this.options.namespace);
             },
 
-            _initEventHandlers:function () {
+            _initEventHandlers: function () {
                 $.blueimp.fileupload.prototype._initEventHandlers.call(this);
-                var eventData = {fileupload:this};
+                var eventData = {fileupload: this};
                 this._files
                     .delegate(
-                    '.start button',
-                    'click.' + this.options.namespace,
-                    eventData,
-                    this._startHandler
-                )
+                        '.start button',
+                        'click.' + this.options.namespace,
+                        eventData,
+                        this._startHandler
+                    )
                     .delegate(
-                    '.cancel button',
-                    'click.' + this.options.namespace,
-                    eventData,
-                    this._cancelHandler
-                )
+                        '.cancel button',
+                        'click.' + this.options.namespace,
+                        eventData,
+                        this._cancelHandler
+                    )
                     .delegate(
-                    '.delete button',
-                    'click.' + this.options.namespace,
-                    eventData,
-                    this._deleteHandler
-                );
+                        '.delete button',
+                        'click.' + this.options.namespace,
+                        eventData,
+                        this._deleteHandler
+                    );
                 this._initButtonBarEventHandlers();
                 this._initTransitionSupport();
             },
 
-            _destroyEventHandlers:function () {
+            _destroyEventHandlers: function () {
                 this._destroyButtonBarEventHandlers();
                 this._files
                     .undelegate('.start button', 'click.' + this.options.namespace)
@@ -508,19 +508,19 @@ var UploadFormView = Backbone.View.extend({
                 $.blueimp.fileupload.prototype._destroyEventHandlers.call(this);
             },
 
-            _enableFileInputButton:function () {
+            _enableFileInputButton: function () {
                 this.element.find('.fileinput-button input')
                     .prop('disabled', false)
                     .parent().removeClass('disabled');
             },
 
-            _disableFileInputButton:function () {
+            _disableFileInputButton: function () {
                 this.element.find('.fileinput-button input')
                     .prop('disabled', true)
                     .parent().addClass('disabled');
             },
 
-            _initTemplates:function () {
+            _initTemplates: function () {
                 this.options.templateContainer = document.createElement(
                     this._files.prop('nodeName')
                 );
@@ -528,34 +528,34 @@ var UploadFormView = Backbone.View.extend({
                 this.options.downloadTemplate = downloadTpl
             },
 
-            _initFiles:function () {
+            _initFiles: function () {
                 this._files = this.element.find('.files-list');
             },
 
-            _create:function () {
+            _create: function () {
                 this._initFiles();
                 $.blueimp.fileupload.prototype._create.call(this);
                 this._initTemplates();
             },
 
-            destroy:function () {
+            destroy: function () {
                 $.blueimp.fileupload.prototype.destroy.call(this);
             },
 
-            enable:function () {
+            enable: function () {
                 $.blueimp.fileupload.prototype.enable.call(this);
                 this.element.find('input, button').prop('disabled', false);
                 this._enableFileInputButton();
             },
 
-            disable:function () {
+            disable: function () {
                 this.element.find('input, button').prop('disabled', true);
                 this._disableFileInputButton();
                 $.blueimp.fileupload.prototype.disable.call(this);
             }
         });
     },
-    getStatusLabel:function (model) {
+    getStatusLabel: function (model) {
         if (model.uploaded) {
             return this.statusLabels.uploadedLabel;
         } else if (model.converted) {
@@ -567,12 +567,12 @@ var UploadFormView = Backbone.View.extend({
         }
         return "?";//this.statusLabels.deployedLabel;
     },
-    appendUploadedFile:function (model, target) {
+    appendUploadedFile: function (model, target) {
         var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
-        model.set({status:this.getStatusLabel(model)});
+        model.set({status: this.getStatusLabel(model)});
         target.append(_.template(rowTpl, model.toJSON()));
     },
-    injectFnReloadAjax:function () {
+    injectFnReloadAjax: function () {
         $.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings, sNewSource, fnCallback, bStandingRedraw) {
             if (typeof sNewSource != 'undefined' && sNewSource != null) {
                 oSettings.sAjaxSource = sNewSource;
@@ -613,23 +613,23 @@ var UploadFormView = Backbone.View.extend({
             }, oSettings);
         }
     },
-    renderUploadedFiles:function () {
+    renderUploadedFiles: function () {
         var self = this;
         var uploadTable = $('#uploaded_files');
         var loadingDiv = $("#loadingUploadedFiles");
-        var uploadedFileCollectionUrl = new UploadedFileCollection({ dataTables:true}).url();
+        var uploadedFileCollectionUrl = new UploadedFileCollection({ dataTables: true}).url();
         uploadTable.hide();
         loadingDiv.show();
         this.injectFnReloadAjax();
         self.uploadDataTables = uploadTable.dataTable({
-            "sDom":"<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-            "sPaginationType":"bootstrap",
-            "oLanguage":{
-                "sLengthMenu":"_MENU_ records per page"
+            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
             },
-            "iDisplayLength":25,
-            "bDestroy":true,
-            "bProcessing":true,
+            "iDisplayLength": 25,
+            "bDestroy": true,
+            "bProcessing": true,
             /*"aoColumnDefs": [
              { "sWidth": "20%", "aTargets": [ 0 ] },
              { "sWidth": "20%", "aTargets": [ 1 ] },
@@ -637,23 +637,23 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 3 ] },
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
-            "aoColumns":[
-                { "mDataProp":"filename" },
-                { "mDataProp":"created" },
-                { "mDataProp":"size" },
-                { "mDataProp":"contentType" },
-                { "mDataProp":"uploaded" }
+            "aoColumns": [
+                { "mDataProp": "filename" },
+                { "mDataProp": "created" },
+                { "mDataProp": "size" },
+                { "mDataProp": "contentType" },
+                { "mDataProp": "uploaded" }
             ],
-            "aoColumnDefs":[
+            "aoColumnDefs": [
                 {
-                    "fnRender":function (o, val) {
+                    "fnRender": function (o, val) {
                         return self.getStatusLabel(o.aData);
                     },
-                    "aTargets":[ 4 ]
+                    "aTargets": [ 4 ]
                 }
 
             ],
-            "sAjaxSource":uploadedFileCollectionUrl
+            "sAjaxSource": uploadedFileCollectionUrl
         });
         uploadTable.show();
         loadingDiv.hide();
@@ -665,7 +665,7 @@ var UploadFormView = Backbone.View.extend({
 
         });
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         $(this.el).html(tpl);
 
@@ -683,7 +683,7 @@ var UploadFormView = Backbone.View.extend({
             }
         });
         new ProjectCollection().fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 var optionTpl = "<option value='<%= id %>'><%= name %></option>";
                 collection.each(function (project) {
                     var selectOption = _.template(optionTpl, project.toJSON());
@@ -697,8 +697,8 @@ var UploadFormView = Backbone.View.extend({
         require(["text!application/templates/upload/upload.tpl.html", "text!application/templates/upload/download.tpl.html"], function (uploadTpl, downloadTpl) {
             self.defineFileUpload(uploadTpl, downloadTpl);
             $('#fileupload').fileupload({
-                limitConcurrentUploads:10,
-                maxFileSize:5000000000
+                limitConcurrentUploads: 10,
+                maxFileSize: 5000000000
                 /*acceptFileTypes : "/(\.|\/)(gif|jpe?g|png|tif|tiff|svs|vms|mrxs|scn|ndpi|jp2)$/i",*/
             });
 
@@ -715,7 +715,7 @@ var UploadFormView = Backbone.View.extend({
                 if (linkWithProject.attr("checked") == "checked") {
                     idProject = linkProjectSelect.val();
                 }
-                data.formData = {idProject:idProject};
+                data.formData = {idProject: idProject};
                 return true;
             });
             $('#fileupload').bind('fileuploadsend', function (e, data) {
@@ -723,8 +723,8 @@ var UploadFormView = Backbone.View.extend({
                     var target = $('<a/>').prop('href', data.url)[0];
                     if (window.location.host !== target.host) {
                         data.formData.push({
-                            name:'redirect',
-                            value:redirectPage
+                            name: 'redirect',
+                            value: redirectPage
                         });
                     }
                 }

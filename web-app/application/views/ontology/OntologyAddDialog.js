@@ -1,12 +1,12 @@
 var AddOntologyDialog = Backbone.View.extend({
-    ontologiesPanel:null,
-    addOntologyDialog:null,
-    initialize:function (options) {
+    ontologiesPanel: null,
+    addOntologyDialog: null,
+    initialize: function (options) {
         this.container = options.container;
         this.ontologiesPanel = options.ontologiesPanel;
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/ontology/OntologyAddDialog.tpl.html"
@@ -16,7 +16,7 @@ var AddOntologyDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (ontologyAddDialogTpl) {
+    doLayout: function (ontologyAddDialogTpl) {
 
         var self = this;
         var dialog = _.template(ontologyAddDialogTpl, {});
@@ -38,8 +38,8 @@ var AddOntologyDialog = Backbone.View.extend({
 
         //Build dialog
         self.addOntologyDialog = $("#addontology").modal({
-            keyboard:true,
-            backdrop:false
+            keyboard: true,
+            backdrop: false
         });
         $('#saveOntologyButton').click(function () {
             $("#login-form-add-ontology").submit();
@@ -54,18 +54,18 @@ var AddOntologyDialog = Backbone.View.extend({
         return this;
 
     },
-    refresh:function () {
+    refresh: function () {
     },
-    open:function () {
+    open: function () {
         var self = this;
         self.clearAddOntologyPanel();
     },
-    clearAddOntologyPanel:function () {
+    clearAddOntologyPanel: function () {
         $("#errormessage").empty();
         $("#ontologyerrorlabel").hide();
         $("#ontology-name").val("");
     },
-    createOntology:function () {
+    createOntology: function () {
         var self = this;
 
         $("#errormessage").empty();
@@ -80,14 +80,14 @@ var AddOntologyDialog = Backbone.View.extend({
         });
 
         //create ontology
-        var ontology = new OntologyModel({name:name}).save({name:name}, {
-                success:function (model, response) {
+        var ontology = new OntologyModel({name: name}).save({name: name}, {
+                success: function (model, response) {
                     window.app.view.message("Ontology", response.message, "success");
                     var id = response.ontology.id;
                     self.ontologiesPanel.refresh(id);
                     $("#addontology").modal("hide");
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     $("#ontologyerrorlabel").show();
                     $("#errormessage").append(json.errors)

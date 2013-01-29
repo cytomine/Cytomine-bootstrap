@@ -14,10 +14,12 @@
  */
 var CommandModel = Backbone.Model.extend({
 
-    url:function () {
+    url: function () {
         var base = 'api/command';
         var format = '.json';
-        if (this.isNew()) return base + format;
+        if (this.isNew()) {
+            return base + format;
+        }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     }
 });
@@ -25,19 +27,25 @@ var CommandModel = Backbone.Model.extend({
 
 // define our collection
 var CommandCollection = Backbone.Collection.extend({
-    model:CommandModel,
+    model: CommandModel,
 
-    url:function () {
+    url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/last/" + this.max + ".json";
         } else {
             return "api/command.json";
         }
     },
-    initialize:function (options) {
-        if (!options) return;
-        if (options.project != undefined) this.project = options.project;
-        if (options.max != undefined) this.max = options.max;
+    initialize: function (options) {
+        if (!options) {
+            return;
+        }
+        if (options.project != undefined) {
+            this.project = options.project;
+        }
+        if (options.max != undefined) {
+            this.max = options.max;
+        }
     }
 });
 

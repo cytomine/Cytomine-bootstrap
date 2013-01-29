@@ -1,15 +1,15 @@
 var DefaultResult = Backbone.View.extend({
-    project:null,
-    terms:null,
-    jobs:null,
-    software:null,
-    initialize:function (options) {
+    project: null,
+    terms: null,
+    jobs: null,
+    software: null,
+    initialize: function (options) {
         this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
         this.software = options.software;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/DefaultResult.tpl.html"
@@ -19,7 +19,7 @@ var DefaultResult = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var content = _.template(tpl, {});
         $(this.el).append(content);
     }

@@ -6,66 +6,76 @@
  * To change this template use File | Settings | File Templates.
  */
 var OntologyTreeView = Backbone.View.extend({
-    tagName:"div",
-    annotationTerm:{},
+    tagName: "div",
+    annotationTerm: {},
     //template : _.template($('#project-view-tpl').html()),
-    initialize:function (options) {
+    initialize: function (options) {
         this.tree = null;
         this.activeEvent = true;
         this.browseImageView = options.browseImageView;
         this.idAnnotation = null;
     },
-    showColors:function () {
+    showColors: function () {
         $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
 
-            if (node.children != null) return; //title is ok
+            if (node.children != null) {
+                return;
+            } //title is ok
 
             var title = node.data.title
             var color = node.data.color
             var htmlNode = "<%=   title %> <span style='background-color:<%=   color %>'>&nbsp;&nbsp;</span> ";
-            if (!node.data.isFolder) htmlNode = htmlNode + "(<span id='usercount" + node.data.key + "'>0</span>)";
-            var nodeTpl = _.template(htmlNode, {title:title, color:color});
+            if (!node.data.isFolder) {
+                htmlNode = htmlNode + "(<span id='usercount" + node.data.key + "'>0</span>)";
+            }
+            var nodeTpl = _.template(htmlNode, {title: title, color: color});
 
 
             node.setTitle(nodeTpl);
         });
     },
-    render:function () {
+    render: function () {
         var self = this;
         require(["text!application/templates/explorer/OntologyTreeWrapper.tpl.html"], function (tpl) {
             self.doLayout(tpl);
         });
         return this;
     },
-    doLayout:function (tpl) {
-        $(this.el).html(_.template(tpl, {isDesktop:!window.app.view.isMobile}));
+    doLayout: function (tpl) {
+        $(this.el).html(_.template(tpl, {isDesktop: !window.app.view.isMobile}));
         this.tree = $(this.el).find('.tree');
         var self = this;
 
         $(this.el).find('.tree').dynatree({
-            checkbox:true,
-            selectMode:2,
-            expand:true,
-            onExpand:function () {
+            checkbox: true,
+            selectMode: 2,
+            expand: true,
+            onExpand: function () {
             },
-            children:this.model.toJSON(),
-            onSelect:function (select, node) {
+            children: this.model.toJSON(),
+            onSelect: function (select, node) {
 
-                if (!self.activeEvent) return;
-                if (self.idAnnotation == null) return; // nothing to do
+                if (!self.activeEvent) {
+                    return;
+                }
+                if (self.idAnnotation == null) {
+                    return;
+                } // nothing to do
 
                 if (node.isSelected()) {
-                    if(self.browseImageView.isCurrentAnnotationUser()) {
+                    if (self.browseImageView.isCurrentAnnotationUser()) {
                         console.log("link");
 
 
-                        if(self.browseImageView.currentAnnotation.get("class")=="be.cytomine.ontology.ReviewedAnnotation") {
+                        if (self.browseImageView.currentAnnotation.get("class") == "be.cytomine.ontology.ReviewedAnnotation") {
                             window.app.view.message("Reviewed annotation", "You cannot add a term to an accepted annotation, you must reject it before!", "error");
                             self.activeEvent = false;
                             node.select(false);
                             self.activeEvent = true;
 
-                        } else self.linkTerm(node.data.key);
+                        } else {
+                            self.linkTerm(node.data.key);
+                        }
 
                     } else {
                         console.log("addTermToReviewPanel");
@@ -73,44 +83,44 @@ var OntologyTreeView = Backbone.View.extend({
                     }
 
                 } else if (!node.isSelected()) {
-                    if(self.browseImageView.isCurrentAnnotationUser()) {
+                    if (self.browseImageView.isCurrentAnnotationUser()) {
                         self.unlinkTerm(node.data.key);
                     } else {
                         self.browseImageView.deleteTermFromReviewPanel(node.data.key);
                     }
                 }
             },
-            onDblClick:function (node, event) {
+            onDblClick: function (node, event) {
                 node.toggleSelect();
             },
-            onRender:function (node, nodeSpan) {
-                $(nodeSpan).find("span.dynatree-icon").css({"background-image":"url(css/custom-theme/images/ui-icons_ffffff_256x240.png)"});
+            onRender: function (node, nodeSpan) {
+                $(nodeSpan).find("span.dynatree-icon").css({"background-image": "url(css/custom-theme/images/ui-icons_ffffff_256x240.png)"});
             },
 
             // The following options are only required, if we have more than one tree on one page:
-            initId:"treeData" + this.model.id,
-            cookieId:"dynatree-Cb" + this.model.id,
-            idPrefix:"dynatree-Cb" + this.model.id + "-"
+            initId: "treeData" + this.model.id,
+            cookieId: "dynatree-Cb" + this.model.id,
+            idPrefix: "dynatree-Cb" + this.model.id + "-"
         });
 
         self.showColors();
 
 
         //expand root, simpliest way ? 
-        $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {            
+        $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
             if (node.data.key == self.model.id) {
-                node.expand(true);    
-            }            
+                node.expand(true);
+            }
         });
-        
+
         return this;
     },
-    expand : function() {
+    expand: function () {
         $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
             node.expand(true);
         });
     },
-    clear:function () {
+    clear: function () {
         var self = this;
         this.activeEvent = false;
         $(this.el).find('.otherUsersTerms').empty();
@@ -120,10 +130,10 @@ var OntologyTreeView = Backbone.View.extend({
         });
         this.activeEvent = true;
     },
-    clearAnnotation:function () {
+    clearAnnotation: function () {
         this.idAnnotation = null;
     },
-    check:function (idTerm) {
+    check: function (idTerm) {
         var self = this;
         self.activeEvent = false;
         (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
@@ -133,7 +143,7 @@ var OntologyTreeView = Backbone.View.extend({
         });
         self.activeEvent = true;
     },
-    uncheck:function (idTerm) {
+    uncheck: function (idTerm) {
         var self = this;
         self.activeEvent = false;
         (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
@@ -143,7 +153,7 @@ var OntologyTreeView = Backbone.View.extend({
         });
         self.activeEvent = true;
     },
-    refresh:function (idAnnotation) {
+    refresh: function (idAnnotation) {
         var self = this;
         console.log("refresh term for annotation " + idAnnotation);
 
@@ -178,50 +188,52 @@ var OntologyTreeView = Backbone.View.extend({
             self.activeEvent = true;
         }
 
-        new AnnotationTermCollection({idAnnotation:idAnnotation}).fetch({success:refreshTree});
+        new AnnotationTermCollection({idAnnotation: idAnnotation}).fetch({success: refreshTree});
     },
-    getTermsChecked:function () {
+    getTermsChecked: function () {
         var terms = [];
         (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
-            if (node.isSelected()) terms.push(node.data.key);
+            if (node.isSelected()) {
+                terms.push(node.data.key);
+            }
         });
         return terms;
     },
-    linkTerm:function (idTerm) {
+    linkTerm: function (idTerm) {
         var self = this;
-            new AnnotationTermModel({userannotation:this.idAnnotation, term:idTerm}).save({userannotation:this.idAnnotation, term:idTerm},
-                {
-                    success:function (model, response) {
-                        window.app.view.message("Annotation Term", response.message, "success");
-                        self.browseImageView.reloadAnnotation(self.idAnnotation);
-                        self.browseImageView.refreshAnnotationTabs(idTerm);
-                    },
-                    error:function (model, response) {
-                        var json = $.parseJSON(response.responseText);
-                        window.app.view.message("Annotation-Term", json.errors, "error");
-                    }
+        new AnnotationTermModel({userannotation: this.idAnnotation, term: idTerm}).save({userannotation: this.idAnnotation, term: idTerm},
+            {
+                success: function (model, response) {
+                    window.app.view.message("Annotation Term", response.message, "success");
+                    self.browseImageView.reloadAnnotation(self.idAnnotation);
+                    self.browseImageView.refreshAnnotationTabs(idTerm);
+                },
+                error: function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Annotation-Term", json.errors, "error");
                 }
-            );
+            }
+        );
     },
-    unlinkTerm:function (idTerm) {
+    unlinkTerm: function (idTerm) {
         var self = this;
         console.log("unlinkTerm IdTerm " + idTerm + " : " + this.idAnnotation);
 
-            var annotationTerm = self.annotationTerm.find(function (annotationTerm) {
-                       return (annotationTerm.get("term") == idTerm && annotationTerm.get("user") == window.app.status.user.id);
-                   });
-                   new AnnotationTermModel({ id:annotationTerm.id, userannotation:self.idAnnotation, term:idTerm}).destroy({
-                           success:function (model, response) {
-                               window.app.view.message("Annotation Term", response.message, "success");
-                               self.browseImageView.reloadAnnotation(self.idAnnotation);
-                               self.browseImageView.refreshAnnotationTabs(idTerm);
-                           },
-                           error:function (model, response) {
-                               var json = $.parseJSON(response.responseText);
-                               window.app.view.message("Annotation-Term", json.errors, "error");
-                           }
-                       }
-                   );
+        var annotationTerm = self.annotationTerm.find(function (annotationTerm) {
+            return (annotationTerm.get("term") == idTerm && annotationTerm.get("user") == window.app.status.user.id);
+        });
+        new AnnotationTermModel({ id: annotationTerm.id, userannotation: self.idAnnotation, term: idTerm}).destroy({
+                success: function (model, response) {
+                    window.app.view.message("Annotation Term", response.message, "success");
+                    self.browseImageView.reloadAnnotation(self.idAnnotation);
+                    self.browseImageView.refreshAnnotationTabs(idTerm);
+                },
+                error: function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Annotation-Term", json.errors, "error");
+                }
+            }
+        );
     }
 
 });

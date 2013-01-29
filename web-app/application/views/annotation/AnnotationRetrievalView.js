@@ -1,8 +1,8 @@
 var AnnotationRetrievalView = Backbone.View.extend({
-    tagName:"div",
-    baseAnnotation:null,
-    terms:null,
-    initialize:function (options) {
+    tagName: "div",
+    baseAnnotation: null,
+    terms: null,
+    initialize: function (options) {
         this.container = options.container;
         this.page = options.page;
         this.annotations = null; //array of annotations that are printed
@@ -11,9 +11,11 @@ var AnnotationRetrievalView = Backbone.View.extend({
         this.bestTerms = options.bestTerms;
         this.bestTermsValue = options.bestTermsValue;
         window.app.status.currentTermsCollection = options.terms;
-        if (this.page == undefined) this.page = 0;
+        if (this.page == undefined) {
+            this.page = 0;
+        }
     },
-    render:function () {
+    render: function () {
 
         var self = this;
         console.log("AnnotationRetrievalView: main elem " + $(self.el).length);
@@ -26,13 +28,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         $("#annotationRetrieval").tabs();
         $(self.el).dialog({
-            title:self.createTitle(),
-            width:900,
-            height:500,
-            autoOpen:true,
-            modal:true,
-            buttons:{
-                "Close":function () {
+            title: self.createTitle(),
+            width: 900,
+            height: 500,
+            autoOpen: true,
+            modal: true,
+            buttons: {
+                "Close": function () {
                     $(self.el).dialog("close");
 
                 }
@@ -43,22 +45,23 @@ var AnnotationRetrievalView = Backbone.View.extend({
         return this;
 
     },
-    createTitle:function () {
+    createTitle: function () {
         var self = this;
         var id = self.baseAnnotation.get('id');
         var termsNameArray = [];
 
         _.each(self.bestTerms, function (term, i) {
-            if (term != undefined && term != null)
+            if (term != undefined && term != null) {
                 termsNameArray.push(term.get('name') + " (" + (self.bestTermsValue[i]).toFixed(2) + "%)");
+            }
         });
         return "Annotation " + id + ": similar annotations " + termsNameArray.join(', ');
 
     },
-    createThumbView:function (page) {
+    createThumbView: function (page) {
         this.appendThumbs(page);
     },
-    createStatsView:function () {
+    createStatsView: function () {
         var self = this;
         //Get term from annotation
         var dataTerm = {};
@@ -92,11 +95,11 @@ var AnnotationRetrievalView = Backbone.View.extend({
         console.log("drawPieChartProject");
 
         window.app.models.projects.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 self.drawPieChartProject(dataProject, collection);
             }});
     },
-    drawPieChartTerm:function (collection) {
+    drawPieChartTerm: function (collection) {
         var self = this;
         $("#retrievalPieChartTerm").empty();
         // Create and populate the data table.
@@ -120,11 +123,11 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         // Create and draw the visualization.
         new google.visualization.PieChart(document.getElementById('retrievalPieChartTerm')).
-            draw(data, {width:500, height:350, title:""});
+            draw(data, {width: 500, height: 350, title: ""});
     },
 
 
-    drawPieChartProject:function (collection, projects) {
+    drawPieChartProject: function (collection, projects) {
         var self = this;
         $("#retrievalPieChartProject").empty();
         // Create and populate the data table.
@@ -152,10 +155,10 @@ var AnnotationRetrievalView = Backbone.View.extend({
         console.log("creation:" + $("#retrievalPieChartProject").length);
         // Create and draw the visualization.
         new google.visualization.PieChart(document.getElementById('retrievalPieChartProject')).
-            draw(data, {width:500, height:350, title:""});
+            draw(data, {width: 500, height: 350, title: ""});
     },
 
-    appendThumbs:function (page) {
+    appendThumbs: function (page) {
         var self = this;
         var cpt = 0;
         var nb_thumb_by_page = 2500;
@@ -165,9 +168,9 @@ var AnnotationRetrievalView = Backbone.View.extend({
         self.annotations = [];
 
         var thumb = new AnnotationThumbView({
-            model:self.baseAnnotation,
-            className:"thumb-wrap",
-            id:"annotationthumb" + self.baseAnnotation.get('id')
+            model: self.baseAnnotation,
+            className: "thumb-wrap",
+            id: "annotationthumb" + self.baseAnnotation.get('id')
         }).render();
         $(thumb.el).css("border", "50px");
         $(thumb.el).css("color", "green");
@@ -177,13 +180,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
         self.model.each(function (annotation) {
 
             if ((cpt >= inf) && (cpt < sup)) {
-                annotation.set({name:annotation.get('similarity')});
+                annotation.set({name: annotation.get('similarity')});
                 var annotationModel = new AnnotationModel(annotation);
 
                 var thumb = new AnnotationThumbView({
-                    model:annotationModel,
-                    className:"thumb-wrap",
-                    id:"annotationthumb" + annotationModel.id
+                    model: annotationModel,
+                    className: "thumb-wrap",
+                    id: "annotationthumb" + annotationModel.id
                 }).render();
                 $("#retrievalThumb").append(thumb.el);
             }
@@ -197,13 +200,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
      * Add the thumb annotation
      * @param annotation Annotation model
      */
-    add:function (annotation) {
+    add: function (annotation) {
 
         var self = this;
         var thumb = new AnnotationThumbView({
-            model:annotation,
-            className:"thumb-wrap",
-            id:"thumb" + annotation.get('id')
+            model: annotation,
+            className: "thumb-wrap",
+            id: "thumb" + annotation.get('id')
         }).render();
         $(self.el).prepend(thumb.el);
 
@@ -212,7 +215,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
      * Remove thumb annotation with id
      * @param idAnnotation  Annotation id
      */
-    remove:function (idAnnotation) {
+    remove: function (idAnnotation) {
         $("#thumb" + idAnnotation).remove();
     },
     /**
@@ -221,7 +224,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
      * -Remove annotations which are not in newAnnotations but well in the thumb set
      * @param newAnnotations newAnnotations collection
      */
-    refresh:function (newAnnotations) {
+    refresh: function (newAnnotations) {
         var self = this;
 
         var arrayDeletedAnnotations = self.annotations;

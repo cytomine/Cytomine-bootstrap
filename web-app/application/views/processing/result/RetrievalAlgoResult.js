@@ -3,18 +3,18 @@ var RetrievalAlgoResult = Backbone.View.extend({
     //terms
     //annotations
     //el
-    width:null,
-    project:null,
-    terms:null,
-    jobs:null,
-    software:null,
-    initialize:function (options) {
+    width: null,
+    project: null,
+    terms: null,
+    jobs: null,
+    software: null,
+    initialize: function (options) {
         this.terms = window.app.status.currentTermsCollection;
         this.project = options.project;
         this.jobs = options.jobs;
         this.software = options.software;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/RetrievalAlgoResult.tpl.html"
@@ -24,13 +24,13 @@ var RetrievalAlgoResult = Backbone.View.extend({
             });
         return this;
     },
-    loadResult:function (retrievalAlgoViewTpl) {
+    loadResult: function (retrievalAlgoViewTpl) {
         var self = this;
         var width = ((($(self.el).width() - 125) / 2)) + "px"
         var height = "400px"
         var content = _.template(retrievalAlgoViewTpl, {
-            width:width,
-            height:height
+            width: width,
+            height: height
         });
         self.width = width;
         console.log($(self.el));
@@ -38,9 +38,9 @@ var RetrievalAlgoResult = Backbone.View.extend({
         $(self.el).append(content);
 
         console.log("StatsRetrievalSuggestionWorstTermWithSuggest:" + self.model.id);
-        new StatsRetrievalSuggestionWorstTermWithSuggest({job:self.model.id}).fetch({
+        new StatsRetrievalSuggestionWorstTermWithSuggest({job: self.model.id}).fetch({
 
-            success:function (model, response) {
+            success: function (model, response) {
                 console.log("StatsRetrievalSuggestionWorstTermWithSuggest model:");
                 console.log(model);
                 self.drawWorstTermTable(model, response, self.terms);
@@ -49,30 +49,30 @@ var RetrievalAlgoResult = Backbone.View.extend({
         });
 
         console.log("StatsRetrievalSuggestionWorstTermModel");
-        new StatsRetrievalSuggestionWorstTermModel({job:self.model.id}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalSuggestionWorstTermModel({job: self.model.id}).fetch({
+            success: function (model, response) {
                 self.drawWorstTermPieChart(model, response, self.terms);
 
             }
         });
 
         console.log("StatsRetrievalSuggestionWorstAnnotationModel");
-        new StatsRetrievalSuggestionWorstAnnotationModel({job:self.model.id}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalSuggestionWorstAnnotationModel({job: self.model.id}).fetch({
+            success: function (model, response) {
                 self.drawWorstAnnotationsTable(model, response, self.terms);
 
             }
         });
 
         console.log("StatsRetrievalSuggestionEvolutionModel");
-        new StatsRetrievalSuggestionEvolutionModel({job:self.model.id}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalSuggestionEvolutionModel({job: self.model.id}).fetch({
+            success: function (model, response) {
                 self.drawAVGEvolution(model, response);
 
             }
         });
     },
-    reduceTermName:function (termName) {
+    reduceTermName: function (termName) {
         //var termReduce = termName.substring(0,Math.min(4,termName.length));
         var termReduce = "";
         var termNameItems = termName.split(" ");
@@ -82,7 +82,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
         return termReduce;
     },
     //worstTermList
-    drawWorstTermTable:function (model, response, terms) {
+    drawWorstTermTable: function (model, response, terms) {
 
         var termList = model.get('worstTerms');
         if (termList == undefined) {
@@ -98,11 +98,13 @@ var RetrievalAlgoResult = Backbone.View.extend({
 
                 terms.each(function (term) {
 
-                    var action = _.template(worstTermListTpl, {term:term.get('name'), id:term.id, idProject:self.project.id});
+                    var action = _.template(worstTermListTpl, {term: term.get('name'), id: term.id, idProject: self.project.id});
 
                     var max = 3;
                     var entry = termList[term.id];
-                    if (entry.length > 0) $(self.el).find("#worstTermList").append(action); //if no annotation, don't print info
+                    if (entry.length > 0) {
+                        $(self.el).find("#worstTermList").append(action);
+                    } //if no annotation, don't print info
                     for (var i = 0; i < entry.length && i < max; i++) {
 
                         for (var propertyName in entry[i]) {
@@ -136,7 +138,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
             }
         );
     },
-    linkAnnotationMapWithBadTerm:function ($item, term, suggestTerm, terms) {
+    linkAnnotationMapWithBadTerm: function ($item, term, suggestTerm, terms) {
         var self = this;
         $item.click(function () {
 
@@ -144,41 +146,41 @@ var RetrievalAlgoResult = Backbone.View.extend({
             $(self.el).find("#annotationQuestionableMain").empty();
             $(self.el).find("#annotationQuestionableMain").append("<div id=\"annotationQuestionable\"></div>");
 
-            new AnnotationCollection({project:self.project.id, term:term, suggestTerm:suggestTerm, job:self.model.id}).fetch({
-                success:function (collection, response) {
+            new AnnotationCollection({project: self.project.id, term: term, suggestTerm: suggestTerm, job: self.model.id}).fetch({
+                success: function (collection, response) {
                     var panel = new AnnotationQuestionableView({
-                        model:collection,
-                        container:self,
-                        el:"#annotationQuestionable",
-                        terms:terms,
-                        term:term,
-                        suggestTerm:suggestTerm
+                        model: collection,
+                        container: self,
+                        el: "#annotationQuestionable",
+                        terms: terms,
+                        term: term,
+                        suggestTerm: suggestTerm
                     }).render();
 
                 }
             });
         });
     },
-    initMatrixDialog:function (terms) {
+    initMatrixDialog: function (terms) {
         var self = this;
         $(self.el).find('#userRetrievalSuggestMatrixDataTable').empty();
-        new StatsRetrievalSuggestionMatrixModel({job:self.model.id}).fetch({
-            success:function (model, response) {
+        new StatsRetrievalSuggestionMatrixModel({job: self.model.id}).fetch({
+            success: function (model, response) {
                 console.log("build matrix");
                 self.drawRetrievalSuggestionTable(model, response, terms);
                 console.log("build dialog:" + $("#userRetrievalSuggestMatrixDataTable").length);
                 $("#userRetrievalSuggestMatrixDataTable").dialog({
-                    modal:true,
-                    minWidth:Math.round($(window).width() - 75),
-                    minHeight:Math.round($(window).height() - 75),
-                    buttons:[
+                    modal: true,
+                    minWidth: Math.round($(window).width() - 75),
+                    minHeight: Math.round($(window).height() - 75),
+                    buttons: [
                         {
-                            text:"Ok",
-                            click:function () {
+                            text: "Ok",
+                            click: function () {
                                 $(this).dialog("close");
                             }
                         }
-                    ], close:function (event, ui) {
+                    ], close: function (event, ui) {
                         $("#userRetrievalSuggestMatrixDataTable").empty();
                     }
                 });
@@ -186,15 +188,15 @@ var RetrievalAlgoResult = Backbone.View.extend({
             }
         });
     },
-    tableElement:'userRetrievalSuggestMatrixDataTable',
-    tableElementHtml:'userRetrievalSuggestMatrixDataTableHtml',
-    addLine:function (idLine) {
+    tableElement: 'userRetrievalSuggestMatrixDataTable',
+    tableElementHtml: 'userRetrievalSuggestMatrixDataTableHtml',
+    addLine: function (idLine) {
         $('#userRetrievalSuggestMatrixDataTableHtml').append('<tr onMouseOver="this.className=\'confusionMatrixBadValueHover\'" id="' + idLine + '" class="confusionMatrixRow"></tr>');
     },
-    addCell:function (idLine, idColumn, value, style) {
+    addCell: function (idLine, idColumn, value, style) {
         this.addCell(idLine, idColumn, value, style, '');
     },
-    addCell:function (idLine, idColumn, value, style, tooltip) {
+    addCell: function (idLine, idColumn, value, style, tooltip) {
         $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#" + idLine).append('<td id="' + idColumn + '"title="' + tooltip + '" class="' + style + '">' + value + '</td>');
         var elem = $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#" + idLine).find("td#" + idColumn);
         if (tooltip != '' && tooltip != undefined) {
@@ -205,12 +207,14 @@ var RetrievalAlgoResult = Backbone.View.extend({
             this.linkAnnotationMapWithBadTerm(elem, idLine, idColumn, this.terms)
         }
     },
-    drawRetrievalSuggestionTable:function (model, response, terms) {
+    drawRetrievalSuggestionTable: function (model, response, terms) {
         var self = this;
         this.terms = terms;
         var matrixJSON = model.get('matrix');
 
-        if (matrixJSON == undefined) return;
+        if (matrixJSON == undefined) {
+            return;
+        }
 
         var matrix = eval('(' + matrixJSON + ')');
 
@@ -225,7 +229,9 @@ var RetrievalAlgoResult = Backbone.View.extend({
         for (var i = 1; i < matrix[0].length - 1; i++) {
             var termName = "";
             var term = terms.get(matrix[0][i]);
-            if (term != undefined) termName = self.reduceTermName(term.get('name'));
+            if (term != undefined) {
+                termName = self.reduceTermName(term.get('name'));
+            }
             self.addCell(-1, term.id, termName, 'confusionMatrixHeader', term.get('name'));
             self.addLine(term.id);
             self.addCell(term.id, -1, termName, 'confusionMatrixHeader', term.get('name'));
@@ -275,7 +281,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
         }
 
     },
-    drawWorstTermPieChart:function (model, response, terms) {
+    drawWorstTermPieChart: function (model, response, terms) {
         $(this.el).find("#worstTermprojectPieChart").empty();
         var dataJSON = model.get('worstTerms');
         if (dataJSON == undefined) {
@@ -298,10 +304,10 @@ var RetrievalAlgoResult = Backbone.View.extend({
 
         // Create and draw the visualization.
         new google.visualization.PieChart($(this.el).find('#worstTermprojectPieChart')[0]).
-            draw(data, {width:this.width, height:350, title:"", backgroundColor:"white", colors:colors});
+            draw(data, {width: this.width, height: 350, title: "", backgroundColor: "white", colors: colors});
     },
 
-    drawWorstAnnotationsTable:function (model, response, terms) {
+    drawWorstAnnotationsTable: function (model, response, terms) {
         var annotationsTerms = model.get('worstAnnotations');
         if (annotationsTerms == undefined) {
             $(self.el).find("#worstAnnotationPanel").hide();
@@ -330,13 +336,13 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     var cropStyle = "block";
                     var cropURL = annotationTerm.cropURL;
 
-                    var action = _.template(suggestedAnnotationTermTpl, {idProject:self.project.id, idAnnotation:annotationTerm.annotation, idImage:annotationTerm.image, icon:"add.png", text:text, rate:rate, cropURL:cropURL, cropStyle:cropStyle});
+                    var action = _.template(suggestedAnnotationTermTpl, {idProject: self.project.id, idAnnotation: annotationTerm.annotation, idImage: annotationTerm.image, icon: "add.png", text: text, rate: rate, cropURL: cropURL, cropStyle: cropStyle});
                     $(self.el).find("#worstannotationitem").append(action);
                 }
             }
         );
     },
-    drawAVGEvolution:function (model, response) {
+    drawAVGEvolution: function (model, response) {
         var self = this;
         // Create and populate the data table.
         var evolution = model.get('evolution');
@@ -361,7 +367,9 @@ var RetrievalAlgoResult = Backbone.View.extend({
                 indiceJob = i;
             }
             var avg = 0;
-            if (evolution[i].avg != -1) avg = (evolution[i].avg * 100);
+            if (evolution[i].avg != -1) {
+                avg = (evolution[i].avg * 100);
+            }
             data.addRow([date, evolution[i].size, avg ]);
         }
 
@@ -369,26 +377,26 @@ var RetrievalAlgoResult = Backbone.View.extend({
         // Create and draw the visualization.
         var evolChart = new google.visualization.LineChart($(this.el).find('#avgEvolutionLineChart')[0]);
         evolChart.draw(data, {
-                colors:['#dc3912', '#3366cc'],
-                title:'',
-                width:this.width, height:350,
-                vAxes:{
-                    0:{
-                        label:'Y1'
+                colors: ['#dc3912', '#3366cc'],
+                title: '',
+                width: this.width, height: 350,
+                vAxes: {
+                    0: {
+                        label: 'Y1'
                     },
-                    1:{
-                        label:'Y2'
+                    1: {
+                        label: 'Y2'
                     }
                 },
-                vAxis:{title:"", minValue:0, maxValue:100},
-                hAxis:{title:"Time"},
-                backgroundColor:"white",
-                seriesType:"line",
-                series:{0:{targetAxisIndex:0}, 1:{type:"area", targetAxisIndex:1}},
-                lineWidth:1}
+                vAxis: {title: "", minValue: 0, maxValue: 100},
+                hAxis: {title: "Time"},
+                backgroundColor: "white",
+                seriesType: "line",
+                series: {0: {targetAxisIndex: 0}, 1: {type: "area", targetAxisIndex: 1}},
+                lineWidth: 1}
         );
         evolChart.setSelection([
-            {row:indiceJob, column:1}
+            {row: indiceJob, column: 1}
         ]);
         var handleClick = function () {
             var row = evolChart.getSelection()[0]['row'];

@@ -1,12 +1,12 @@
 var JobSearchEngineView = Backbone.View.extend({
-    width:null,
-    software:null,
-    project:null,
-    parent:null,
-    listing:null,
-    allJobs:null,
-    paramViews:null,
-    initialize:function (options) {
+    width: null,
+    software: null,
+    project: null,
+    parent: null,
+    listing: null,
+    allJobs: null,
+    paramViews: null,
+    initialize: function (options) {
         var self = this;
         this.software = options.software;
         this.project = options.project;
@@ -16,7 +16,7 @@ var JobSearchEngineView = Backbone.View.extend({
         this.allJobs = options.allJobs;
         this.paramViews = [];
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/JobSearchEngine.tpl.html"
@@ -26,7 +26,7 @@ var JobSearchEngineView = Backbone.View.extend({
             });
         return this;
     },
-    loadResult:function (JobSearchEngineTpl) {
+    loadResult: function (JobSearchEngineTpl) {
         console.log("JobSearchEngineView.loadResult");
         var self = this;
         var content = _.template(JobSearchEngineTpl, {});
@@ -48,7 +48,7 @@ var JobSearchEngineView = Backbone.View.extend({
         self.printAdvancedSearchPanel();
 
     },
-    printBasicSearchPanel:function () {
+    printBasicSearchPanel: function () {
         var self = this;
 
         var launchQuickSearch = function () {
@@ -64,13 +64,13 @@ var JobSearchEngineView = Backbone.View.extend({
         $("#searchJobFilterAll").keyup(launchQuickSearch);
         $("#searchJobFilterAll").click(launchQuickSearch);
         $("#searchJobFilterDateAfter").datepicker({
-            numberOfMonths:3,
-            showButtonPanel:true
+            numberOfMonths: 3,
+            showButtonPanel: true
         });
 
         $("#searchJobFilterDateBefore").datepicker({
-            numberOfMonths:3,
-            showButtonPanel:true
+            numberOfMonths: 3,
+            showButtonPanel: true
         });
 
         $("#searchJobFilterStatusNotLaunch").append('<span class="label btn-inverse">Not Launch!</span>');
@@ -90,7 +90,7 @@ var JobSearchEngineView = Backbone.View.extend({
             self.launchReset();
         });
     },
-    printAdvancedSearchPanel:function () {
+    printAdvancedSearchPanel: function () {
         var self = this;
         _.each(self.software.get('parameters'), function (param) {
             var paramView = self.getParamView(param);
@@ -99,17 +99,33 @@ var JobSearchEngineView = Backbone.View.extend({
             paramView.addRow($("#searchJobFilterParameterTable"));
         });
     },
-    getParamView:function (param) {
-        if (param.type == "String") return new InputTextViewSearch({param:param});
-        if (param.type == "Number") return new InputNumberViewSearch({param:param});
-        if (param.type == "Boolean") return new InputBooleanViewSearch({param:param});
-        if (param.type == "List") return new InputListViewSearch({param:param});
-        if (param.type == "Date") return new InputDateViewSearch({param:param});
-        if (param.type == "ListDomain") return new InputListDomainViewSearch({param:param, multiple:true});
-        if (param.type == "Domain") return new InputListDomainViewSearch({param:param, multiple:false});
-        else return new InputTextViewSearch({param:param});
+    getParamView: function (param) {
+        if (param.type == "String") {
+            return new InputTextViewSearch({param: param});
+        }
+        if (param.type == "Number") {
+            return new InputNumberViewSearch({param: param});
+        }
+        if (param.type == "Boolean") {
+            return new InputBooleanViewSearch({param: param});
+        }
+        if (param.type == "List") {
+            return new InputListViewSearch({param: param});
+        }
+        if (param.type == "Date") {
+            return new InputDateViewSearch({param: param});
+        }
+        if (param.type == "ListDomain") {
+            return new InputListDomainViewSearch({param: param, multiple: true});
+        }
+        if (param.type == "Domain") {
+            return new InputListDomainViewSearch({param: param, multiple: false});
+        }
+        else {
+            return new InputTextViewSearch({param: param});
+        }
     },
-    launchSearch:function () {
+    launchSearch: function () {
         var self = this;
         console.log("search job");
 
@@ -138,9 +154,11 @@ var JobSearchEngineView = Backbone.View.extend({
         });
         self.listing.refresh(new JobCollection(filterJobs));
     },
-    searchById:function (jobs, num) {
+    searchById: function (jobs, num) {
         console.log("Before searchById:" + jobs.length + " value=" + num);
-        if (num == undefined || num == null || num.trim() == "") return jobs;
+        if (num == undefined || num == null || num.trim() == "") {
+            return jobs;
+        }
         var filterJobs = [];
 
         _.each(jobs, function (job) {
@@ -151,9 +169,11 @@ var JobSearchEngineView = Backbone.View.extend({
         console.log("After searchById:" + filterJobs.length);
         return filterJobs;
     },
-    searchByNumber:function (jobs, num) {
+    searchByNumber: function (jobs, num) {
         console.log("Before searchByNumber:" + jobs.length + " value=" + num);
-        if (num == undefined || num == null || num.trim() == "") return jobs;
+        if (num == undefined || num == null || num.trim() == "") {
+            return jobs;
+        }
         var filterJobs = [];
         _.each(jobs, function (job) {
             if (job.get('number') == num) {
@@ -163,9 +183,11 @@ var JobSearchEngineView = Backbone.View.extend({
         console.log("After searchByNumber:" + filterJobs.length);
         return filterJobs;
     },
-    searchByCreationDateAfter:function (jobs, datetime) {
+    searchByCreationDateAfter: function (jobs, datetime) {
         console.log("Before searchByCreationDateAfter:" + jobs.length + " datetime=" + datetime);
-        if (datetime == undefined || datetime == null) return jobs;
+        if (datetime == undefined || datetime == null) {
+            return jobs;
+        }
         var filterJobs = [];
         _.each(jobs, function (job) {
             if (job.get('created') >= datetime.getTime()) {
@@ -175,9 +197,11 @@ var JobSearchEngineView = Backbone.View.extend({
         console.log("After searchByCreationDateAfter:" + filterJobs.length);
         return filterJobs;
     },
-    searchByCreationDateBefore:function (jobs, datetime) {
+    searchByCreationDateBefore: function (jobs, datetime) {
         console.log("Before searchByCreationDateBefore:" + jobs.length + " datetime=" + datetime);
-        if (datetime == undefined || datetime == null) return jobs;
+        if (datetime == undefined || datetime == null) {
+            return jobs;
+        }
         var filterJobs = [];
         _.each(jobs, function (job) {
             if (job.get('created') < datetime.getTime()) {
@@ -187,9 +211,11 @@ var JobSearchEngineView = Backbone.View.extend({
         console.log("After searchByCreationDateBefore:" + filterJobs.length);
         return filterJobs;
     },
-    searchByStatus:function (jobs, status, check) {
+    searchByStatus: function (jobs, status, check) {
         console.log("Before searchByStatus:" + jobs.length + " status=" + status + " check=" + check);
-        if (check) return jobs; //if check, include jobs from this status so no filter
+        if (check) {
+            return jobs;
+        } //if check, include jobs from this status so no filter
         var filterJobs = [];
         _.each(jobs, function (job) {
             if (job.get('status') != status) {
@@ -200,15 +226,19 @@ var JobSearchEngineView = Backbone.View.extend({
         return filterJobs;
 
     },
-    searchByParam:function (jobs, paramName, paramValue) {
+    searchByParam: function (jobs, paramName, paramValue) {
         var self = this;
         console.log("Before searchByParam:" + jobs.length + " paramName=" + paramName + " paramValue=" + paramValue);
-        if (paramValue == undefined || paramValue == null || paramValue.trim() == "") return jobs;
+        if (paramValue == undefined || paramValue == null || paramValue.trim() == "") {
+            return jobs;
+        }
         var filterJobs = [];
 
         _.each(jobs, function (job) {
             var jobParam = self.getJobParam(job, paramName);
-            if (jobParam != undefined) console.log("jobParam.value=" + jobParam.value);
+            if (jobParam != undefined) {
+                console.log("jobParam.value=" + jobParam.value);
+            }
             if (jobParam != undefined && jobParam != null && self.isJobParamCorrect(jobParam, paramValue)) {
                 filterJobs.push(job);
             }
@@ -216,7 +246,7 @@ var JobSearchEngineView = Backbone.View.extend({
         console.log("After searchByParam:" + filterJobs.length);
         return filterJobs;
     },
-    isJobParamCorrect:function (jobParam, paramValue) {
+    isJobParamCorrect: function (jobParam, paramValue) {
         if (jobParam.type == "Date") {
             var date = paramValue.split("-");
             var isCorrectStart = true;
@@ -234,7 +264,7 @@ var JobSearchEngineView = Backbone.View.extend({
             return jobParam.value.toLowerCase() == paramValue.toLowerCase();
         }
     },
-    getJobParam:function (job, name) {
+    getJobParam: function (job, name) {
         var goodParam = undefined;
         _.each(job.get('jobParameter'), function (param) {
             if (param.name == name) {
@@ -243,7 +273,7 @@ var JobSearchEngineView = Backbone.View.extend({
         });
         return goodParam;
     },
-    launchReset:function () {
+    launchReset: function () {
         var self = this;
         console.log("search job");
         var filterJobs = self.allJobs.models;
@@ -268,97 +298,97 @@ var JobSearchEngineView = Backbone.View.extend({
 
 
 var InputTextViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         return '<input type="text" value="' + '" style="text-align:center;" class="input-medium">';
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("input").val();
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    reset:function () {
+    reset: function () {
         this.trElem.find("input").val("");
     }
 });
 
 var InputNumberViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         return '<input type="text" value="' + '" style="text-align:center;" class="input-medium">';
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("input").val();
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    reset:function () {
+    reset: function () {
         this.trElem.find("input").val("");
     }
 });
 
 var InputBooleanViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         return '<select class="input-medium"><option value="">All</option><option value="true">Yes</option><option value="false">No</option></select>';
     },
-    getValue:function () {
+    getValue: function () {
         return this.trElem.find("select").val();
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue() + '';
     },
-    reset:function () {
+    reset: function () {
         this.trElem.find('option[value=""]').attr('selected', 'selected');
     }
 });
 
 var InputListViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
@@ -380,7 +410,7 @@ var InputListViewSearch = Backbone.View.extend({
             $(this).parent().find("select").find('[value="' + value + '"]').remove();
         });
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var defaultValues = self.getDefaultValue();
         var valueStr = '<div class="controls"><input type="text" value="" style="text-align:center;"><i class="icon-plus-sign"></i><select><option value="">All</option>';
@@ -390,10 +420,10 @@ var InputListViewSearch = Backbone.View.extend({
         valueStr = valueStr + '</select><i class="icon-minus-sign"></i></div></div>';
         return valueStr;
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         return [];
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var valueArray = [];
         self.trElem.find("select").find("option").each(function () {
@@ -401,33 +431,33 @@ var InputListViewSearch = Backbone.View.extend({
         });
         return valueArray.join(',');
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    reset:function () {
+    reset: function () {
         this.trElem.find('option[value=""]').attr('selected', 'selected');
     }
 });
 
 
 var InputDateViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td style="text-align:left;"><b>' + self.param.name + '</b><br>' + self.getHtmlElem() + '</td></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
 
         var dates = self.trElem.find("#from" + self.param.id + ", #to" + self.param.id).datepicker({
-            defaultDate:"+1w",
-            changeMonth:true,
-            numberOfMonths:3,
-            onSelect:function (selectedDate) {
+            defaultDate: "+1w",
+            changeMonth: true,
+            numberOfMonths: 3,
+            onSelect: function (selectedDate) {
                 var option = this.id == "from" + self.param.id ? "minDate" : "maxDate",
                     instance = $(this).data("datepicker"),
                     date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat, selectedDate, instance.settings);
@@ -436,11 +466,11 @@ var InputDateViewSearch = Backbone.View.extend({
         });
 
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         return 'From <input type="text" id="from' + self.param.id + '" value="' + '" style="text-align:center;" class="input-medium"> to <input type="text" id="to' + self.param.id + '" name="to"/>';
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var dateStart = this.trElem.find("#from" + self.param.id).datepicker("getDate");
         var dateEnd = this.trElem.find("#to" + self.param.id).datepicker("getDate");
@@ -449,10 +479,10 @@ var InputDateViewSearch = Backbone.View.extend({
         var dateEndString = dateEnd == null ? "null" : dateEnd.getTime();
         return dateStartString + "-" + dateEndString;
     },
-    getStringValue:function () {
+    getStringValue: function () {
         return this.getValue();
     },
-    reset:function () {
+    reset: function () {
         var self = this;
         this.trElem.find("#from" + self.param.id).datepicker("setDate", null);
         this.trElem.find("#to" + self.param.id).datepicker("setDate", null);
@@ -460,27 +490,27 @@ var InputDateViewSearch = Backbone.View.extend({
 });
 
 var InputListDomainViewSearch = Backbone.View.extend({
-    param:null,
-    parent:null,
-    trElem:null,
-    multiple:true,
-    collection:null,
-    printAttribut:null,
-    initialize:function (options) {
+    param: null,
+    parent: null,
+    trElem: null,
+    multiple: true,
+    collection: null,
+    printAttribut: null,
+    initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
         this.multiple = options.multiple;
         this.printAttribut = this.param.uriPrintAttribut;
     },
-    addRow:function (tbody) {
+    addRow: function (tbody) {
         var self = this;
         tbody.append('<tr id="' + self.param.id + '"><td id="' + self.param.id + '" style="text-align:left;"><b>' + self.param.name + '</b><br></tr>');
         self.trElem = tbody.find('tr#' + self.param.id);
         console.log("### " + window.app.replaceVariable(self.param.uri) + " ###" + self.param.uriSortAttribut);
-        self.collection = new SoftwareParameterModelCollection({uri:window.app.replaceVariable(self.param.uri), sortAttribut:self.param.uriSortAttribut});
+        self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut: self.param.uriSortAttribut});
         if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
             self.collection.fetch({
-                success:function (collection, response) {
+                success: function (collection, response) {
                     console.log(collection);
                     self.collection = collection;
                     self.collection.comparator = function (item) {
@@ -490,9 +520,11 @@ var InputListDomainViewSearch = Backbone.View.extend({
                     self.addHtmlElem();
                 }
             });
-        } else self.addHtmlElem();
+        } else {
+            self.addHtmlElem();
+        }
     },
-    addHtmlElem:function () {
+    addHtmlElem: function () {
         var self = this;
         self.trElem.find("td#" + self.param.id).append(self.getHtmlElem());
 
@@ -511,7 +543,9 @@ var InputListDomainViewSearch = Backbone.View.extend({
             }
         } else {
             fnSelectionView = function (numChecked, numTotal, checkedItem) {
-                if (numChecked == 0) return "0 selected";
+                if (numChecked == 0) {
+                    return "0 selected";
+                }
                 var selectTitle = [];
                 $(checkedItem).each(function () {
                     selectTitle.push($(this).attr("title"));
@@ -522,7 +556,7 @@ var InputListDomainViewSearch = Backbone.View.extend({
             };
         }
 
-        self.trElem.find(".domainList").multiselect({'autoOpen':false, minWidth:300, 'height':200, 'multiple':self.multiple, 'selectedText':fnSelectionView}).multiselectfilter();
+        self.trElem.find(".domainList").multiselect({'autoOpen': false, minWidth: 300, 'height': 200, 'multiple': self.multiple, 'selectedText': fnSelectionView}).multiselectfilter();
         self.trElem.find("button").width("150");
         //put header menu option on the same line
         self.trElem.find(".ui-multiselect-menu").find("span").css("display", "inline");
@@ -538,17 +572,21 @@ var InputListDomainViewSearch = Backbone.View.extend({
         self.trElem.find(".domainList").multiselect("close");
 
     },
-    getDefaultValue:function () {
+    getDefaultValue: function () {
         var self = this;
         return [];
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         var self = this;
         var classRequier = "";
         //mark default value as selected:
         var defaultValues = self.getDefaultValue();
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;'
-        else classRequier = 'border-style: dotted;border-width: 2px;'
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;'
+        }
+        else {
+            classRequier = 'border-style: dotted;border-width: 2px;'
+        }
         var valueStr = '<select class="domainList" multiple="multiple">';
         self.collection.each(function (value) {
             var selClass = "";
@@ -562,19 +600,27 @@ var InputListDomainViewSearch = Backbone.View.extend({
         valueStr = valueStr + '</select>';
         return valueStr;
     },
-    getValue:function () {
+    getValue: function () {
         var self = this;
         var values = self.trElem.find(".domainList").val();
-        if (values == undefined) return [];
-        else return values;
+        if (values == undefined) {
+            return [];
+        }
+        else {
+            return values;
+        }
     },
-    getStringValue:function () {
+    getStringValue: function () {
         var self = this;
         var values = self.trElem.find(".domainList").val();
-        if (values == undefined) return "";
-        else return values.join(",");
+        if (values == undefined) {
+            return "";
+        }
+        else {
+            return values.join(",");
+        }
     },
-    reset:function () {
+    reset: function () {
         this.trElem.find(".domainList").multiselect("uncheckAll");
     }
 });

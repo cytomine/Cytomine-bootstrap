@@ -1,23 +1,25 @@
 var ImageView = Backbone.View.extend({
-    tagName:"div",
-    initialize:function (options) {
+    tagName: "div",
+    initialize: function (options) {
         this.images = null; //array of images that are printed
         this.container = options.container;
         this.page = options.page;
         this.nb_thumb_by_page = 30;
         this.appendingThumbs = false;
         this.tabsContent = undefined;
-        if (this.page == undefined) this.page = 0;
+        if (this.page == undefined) {
+            this.page = 0;
+        }
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         this.tabsContent = [];
         if (window.app.status.currentProjectModel.get("numberOfImages") != 0) {
             $(self.el).empty();
         } else {
             require(["text!application/templates/dashboard/NoImageAvailable.tpl.html"], function (tpl) {
-                $(self.el).html(_.template(tpl, { idProject:window.app.status.currentProjectModel.id}))
+                $(self.el).html(_.template(tpl, { idProject: window.app.status.currentProjectModel.id}))
             });
         }
 
@@ -31,7 +33,9 @@ var ImageView = Backbone.View.extend({
                 return;
             }
             //2. Look if we are already appending thumbs. If yes, return
-            if (self.appendingThumbs) return;
+            if (self.appendingThumbs) {
+                return;
+            }
 
             if (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()) {
                 /*console.log("$(window).scrollTop() : " + $(window).scrollTop());
@@ -47,10 +51,10 @@ var ImageView = Backbone.View.extend({
 
         return this;
     },
-    showLoading:function () {
+    showLoading: function () {
         window.app.view.message("Loading...", "", "info");
     },
-    appendThumbs:function (page) {
+    appendThumbs: function (page) {
         var self = this;
         self.appendingThumbs = true;
         var inf = Math.abs(page) * this.nb_thumb_by_page;
@@ -63,13 +67,13 @@ var ImageView = Backbone.View.extend({
         }
 
 
-        self.model = new ImageInstanceCollection({project:window.app.status.currentProject, inf:inf, sup:sup});
+        self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf: inf, sup: sup});
         self.model.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 var idDivPage = window.app.status.currentProject + "-image-page-" + self.page;
                 if ($("#" + idDivPage).length == 0) { //create page div
                     $(self.el).append(_.template("<div id='<%= idDivPage %>'></div>", {
-                        idDivPage:idDivPage
+                        idDivPage: idDivPage
                     }));
                 }
                 var cpt = 0;
@@ -84,11 +88,11 @@ var ImageView = Backbone.View.extend({
                         thumb.refresh();
                     } else {
                         var thumb = new ImageThumbView({
-                            model:image
+                            model: image
                         });
                         thumb.render();
                         $("#" + idDivPage).append(thumb.el);
-                        self.tabsContent.push({ id_image:image.id, thumb:thumb});
+                        self.tabsContent.push({ id_image: image.id, thumb: thumb});
                     }
                     cpt++;
 
@@ -103,12 +107,12 @@ var ImageView = Backbone.View.extend({
      * Add the thumb image
      * @param image Image model
      */
-    add:function (image) {
+    add: function (image) {
         var self = this;
         var thumb = new ImageThumbView({
-            model:image,
-            className:"row",
-            id:"thumb" + image.get('id')
+            model: image,
+            className: "row",
+            id: "thumb" + image.get('id')
         }).render();
         $(self.el).append(thumb.el);
 
@@ -117,11 +121,12 @@ var ImageView = Backbone.View.extend({
      * Remove thumb image with id
      * @param idImage  Image id
      */
-    remove:function (idImage) {
+    remove: function (idImage) {
         $("#thumb" + idImage).remove();
     },
-    refresh:function () {
-        for (var p = 0; p <= this.page; p++)
+    refresh: function () {
+        for (var p = 0; p <= this.page; p++) {
             this.appendThumbs(p);
+        }
     }
 });

@@ -1,55 +1,54 @@
-<a class="title-thumb-<%= id %>" rel="tooltip" data-original-title="<%= originalFilename %> " href='#tabs-image-<%= project %>-<%=  id  %>-'><%= originalFilename %></a>
+<a class="title-thumb-<%= id %>" rel="tooltip" data-original-title="<%= originalFilename %> "
+   href='#tabs-image-<%= project %>-<%=  id  %>-'><%= originalFilename %></a>
 <p>
     <b>Magnification</b> : <%= magnification %> X<br/>
     <b>Resolution</b> : <%= resolution %><br/>
     <b>Size</b> : <%= width %>x<%= height %><br/>
 
-        <b>User annotations</b>
-            <% if (numberOfAnnotations == 0) { %>
-                <span class="badge badge-error"><%= numberOfAnnotations %></span>
-            <% } else if (numberOfAnnotations < 100) { %>
-                <span class="badge badge-warning"><%= numberOfAnnotations %></span> <%
-            } else { %>
-              <span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %><br/>
-        <b>Job annotations</b> : <%= numberOfJobAnnotations %> <br/>
-        <b>Reviewed annotations</b> : <%= numberOfReviewedAnnotations %>
+    <b>User annotations</b>
+    <% if (numberOfAnnotations == 0) { %>
+    <span class="badge badge-error"><%= numberOfAnnotations %></span>
+    <% } else if (numberOfAnnotations < 100) { %>
+    <span class="badge badge-warning"><%= numberOfAnnotations %></span> <%
+    } else { %>
+    <span class="badge badge-success"><%= numberOfAnnotations %></span> <% } %><br/>
+    <b>Job annotations</b> : <%= numberOfJobAnnotations %> <br/>
+    <b>Reviewed annotations</b> : <%= numberOfReviewedAnnotations %>
 
 
- </p>
-        <div id="reviewingImageData<%= id %>">
+</p>
+<div id="reviewingImageData<%= id %>">
 
 
-        </div>
-                <br/>
-                <br/>
-    <p>
-
-
-
-
-
+</div>
+<br/>
+<br/>
+<p>
 
 
     <!--<a class="btn btn-small" id="getImageProperties-<%= id %>" href="#"><i class="icon-info-sign"></i> More info</a>-->
     <!--<a href='#tabs-image-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-eye-open icon-white"></i> Explore</a>-->
 
-    <div class="btn-group">
-      <button class="btn btn-inverse" id="exploreButton<%=  id  %>">Explore</button>
-      <button class="btn dropdown-toggle btn-inverse" data-toggle="dropdown">
+<div class="btn-group">
+    <button class="btn btn-inverse" id="exploreButton<%=  id  %>">Explore</button>
+    <button class="btn dropdown-toggle btn-inverse" data-toggle="dropdown">
         <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-          <li><a id="explore<%=  id  %>" href='#tabs-image-<%= project %>-<%=  id  %>-'><i class="icon-eye-open icon-black"></i> Explore</a></li>
-          <li><a id="review<%=  id  %>" href="#tabs-review-<%= project %>-<%=  id  %>-"><i class="icon-check icon-black"></i> Review</a></li>
-          <li class="divider"></li>
-          <li><a id="startreview<%=  id  %>" href="#"><i class="icon-play icon-black"></i> Start reviewing</a></li>
-          <li><a id="cancelreview<%=  id  %>" href="#"><i class="icon-stop icon-black"></i> Cancel Reviewing</a></li>
-          <li><a id="validateimage<%=  id  %>" href="#"><i class="icon-thumbs-up icon-black"></i> Validate image</a></li>
-          <li><a id="unvalidateimage<%=  id  %>" href="#"><i class="icon-thumbs-down icon-black"></i> Unvalidate image</a></li>
-          <li class="divider"></li>
-          <li><a id="moreinfo<%=  id  %>" href="#"><i class="icon-info-sign icon-black"></i> More info</a></li>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a id="explore<%=  id  %>" href='#tabs-image-<%= project %>-<%=  id  %>-'><i
+                class="icon-eye-open icon-black"></i> Explore</a></li>
+        <li><a id="review<%=  id  %>" href="#tabs-review-<%= project %>-<%=  id  %>-"><i
+                class="icon-check icon-black"></i> Review</a></li>
+        <li class="divider"></li>
+        <li><a id="startreview<%=  id  %>" href="#"><i class="icon-play icon-black"></i> Start reviewing</a></li>
+        <li><a id="cancelreview<%=  id  %>" href="#"><i class="icon-stop icon-black"></i> Cancel Reviewing</a></li>
+        <li><a id="validateimage<%=  id  %>" href="#"><i class="icon-thumbs-up icon-black"></i> Validate image</a></li>
+        <li><a id="unvalidateimage<%=  id  %>" href="#"><i class="icon-thumbs-down icon-black"></i> Unvalidate image</a>
+        </li>
+        <li class="divider"></li>
+        <li><a id="moreinfo<%=  id  %>" href="#"><i class="icon-info-sign icon-black"></i> More info</a></li>
 
-      </ul>
-    </div>
-    <!--<a href='#tabs-review-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-check icon-white"></i> Review</a>-->
+    </ul>
+</div>
+<!--<a href='#tabs-review-<%= project %>-<%=  id  %>-' class="btn btn-inverse btn-small"><i class="icon-check icon-white"></i> Review</a>-->
 </p>

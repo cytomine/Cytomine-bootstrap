@@ -2,11 +2,11 @@ var Processing = Processing || {};
 
 Processing.ColorChannel = $.extend({}, Processing.Utils,
     {
-        RED:0,
-        GREEN:1,
-        BLUE:2,
-        ALPHA:3,
-        process:function (params) {
+        RED: 0,
+        GREEN: 1,
+        BLUE: 2,
+        ALPHA: 3,
+        process: function (params) {
             console.log("Thresholding...");
             var canvas = params.canvas;
             var channel = params.channel;

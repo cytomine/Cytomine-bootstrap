@@ -1,16 +1,16 @@
 var AddProjectDialog = Backbone.View.extend({
-    projectsPanel:null,
-    addProjectDialog:null,
-    userMultiSelect:null,
-    projectMultiSelectAlreadyLoad:false,
-    initialize:function (options) {
+    projectsPanel: null,
+    addProjectDialog: null,
+    userMultiSelect: null,
+    projectMultiSelectAlreadyLoad: false,
+    initialize: function (options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
         this.ontologies = options.ontologies;
         this.disciplines = options.disciplines;
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectAddDialog.tpl.html",
@@ -23,7 +23,7 @@ var AddProjectDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
+    doLayout: function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
         var self = this;
         var dialog = _.template(projectAddDialogTpl, {});
         $("#editproject").replaceWith("");
@@ -37,8 +37,8 @@ var AddProjectDialog = Backbone.View.extend({
 
         //Build dialog
         self.addProjectDialog = $("#addproject").modal({
-            keyboard:true,
-            backdrop:false
+            keyboard: true,
+            backdrop: false
         });
         $("#saveProjectButton").click(function () {
             $("#login-form-add-project").submit();
@@ -52,8 +52,8 @@ var AddProjectDialog = Backbone.View.extend({
         self.open();
         return this;
     },
-    initStepy:function () {
-        $('#login-form-add-project').stepy({next:function (index) {
+    initStepy: function () {
+        $('#login-form-add-project').stepy({next: function (index) {
             //check validate name
             var error = false;
             if (index == 2) {
@@ -73,10 +73,14 @@ var AddProjectDialog = Backbone.View.extend({
                 return !error;
             }
             //show save button on last step
-            if (index == $("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").show();
-        }, back:function (index) {
+            if (index == $("#login-form-add-project").find("fieldset").length) {
+                $("#saveProjectButton").show();
+            }
+        }, back: function (index) {
             //hide save button if not on last step
-            if (index != $("#login-form-add-project").find("fieldset").length) $("#saveProjectButton").hide();
+            if (index != $("#login-form-add-project").find("fieldset").length) {
+                $("#saveProjectButton").hide();
+            }
         }});
         $("fieldset").find("a.button-next").css("float", "right");
         $("fieldset").find("a.button-back").css("float", "left");
@@ -84,7 +88,7 @@ var AddProjectDialog = Backbone.View.extend({
         $("fieldset").find("a").removeClass("button-back");
         $("fieldset").find("a").addClass("btn btn-primary");
     },
-    createProjectInfo:function (ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
+    createProjectInfo: function (ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
         var self = this;
         $("#login-form-add-project").submit(function () {
             self.createProject();
@@ -100,13 +104,13 @@ var AddProjectDialog = Backbone.View.extend({
         $("#projectdiscipline").empty();
         $("#choiceListDiscipline").empty();
         $("#choiceListDiscipline").append('<select class="input-xlarge focused" id="projectdiscipline" />');
-        var choice = _.template(disciplinesChoicesRadioTpl, {id:-1, name:"*** Undefined ***"});
+        var choice = _.template(disciplinesChoicesRadioTpl, {id: -1, name: "*** Undefined ***"});
         $("#projectdiscipline").append(choice);
         window.app.models.disciplines.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
 
                 collection.each(function (discipline) {
-                    var choice = _.template(ontologiesChoicesRadioTpl, {id:discipline.id, name:discipline.get("name")});
+                    var choice = _.template(ontologiesChoicesRadioTpl, {id: discipline.id, name: discipline.get("name")});
                     $("#projectdiscipline").append(choice);
                 });
                 $("#projectdiscipline").find("option:selected").removeAttr("selected");
@@ -114,12 +118,12 @@ var AddProjectDialog = Backbone.View.extend({
         });
         $("#projectontology").empty();
         window.app.models.ontologiesLigth.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 $("#choiceListOntology").empty();
                 $("#choiceListOntology").append('<select class="input-xlarge focused" id="projectontology" />');
 
                 collection.each(function (ontology) {
-                    var choice = _.template(ontologiesChoicesRadioTpl, {id:ontology.id, name:ontology.get("name")});
+                    var choice = _.template(ontologiesChoicesRadioTpl, {id: ontology.id, name: ontology.get("name")});
                     $("#projectontology").append(choice);
                 });
                 $("#projectontology").find("option:selected").removeAttr("selected");
@@ -130,19 +134,19 @@ var AddProjectDialog = Backbone.View.extend({
 
             //create ontology
             var projectName = $("#project-name").val().toUpperCase().trim();
-            var ontology = new OntologyModel({name:projectName}).save({name:projectName}, {
-                    success:function (model, response) {
+            var ontology = new OntologyModel({name: projectName}).save({name: projectName}, {
+                    success: function (model, response) {
                         window.app.view.message("Ontology", response.message, "success");
                         var id = response.ontology.id;
                         window.app.models.ontologies.add(model);
 
-                        var choice = _.template(ontologiesChoicesRadioTpl, {id:id, name:model.get("name")});
+                        var choice = _.template(ontologiesChoicesRadioTpl, {id: id, name: model.get("name")});
                         $("#projectontology").prepend(choice);
                         $("#projectontology").val(id);
 
 
                     },
-                    error:function (model, response) {
+                    error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
                         window.app.view.message("Ontology", json.errors, "error");
                     }
@@ -152,27 +156,29 @@ var AddProjectDialog = Backbone.View.extend({
 
         })
     },
-    createUserList:function () {
+    createUserList: function () {
         /* Create Users List */
         $("#projectuser").empty();
 
         new UserCollection({}).fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
 
                 collection.each(function (user) {
                     if (user.id == window.app.status.user.id) {
                         $("#projectuser").append('<option value="' + user.id + '" selected="selected">' + user.prettyName() + '</option>');
-                    } else $("#projectuser").append('<option value="' + user.id + '">' + user.prettyName() + '</option>');
+                    } else {
+                        $("#projectuser").append('<option value="' + user.id + '">' + user.prettyName() + '</option>');
+                    }
                 });
                 $("#projectuser").multiselectNext({
-                    deselected:function (event, ui) {
+                    deselected: function (event, ui) {
                         //lock current user (cannot be deselected
                         if ($(ui.option).val() == window.app.status.user.id) {
                             $("#projectuser").multiselectNext('select', $(ui.option).text());
                             window.app.view.message("User", "You must be in user list of your project!", "error");
                         }
                     },
-                    selected:function (event, ui) {
+                    selected: function (event, ui) {
                         //alert($(ui.option).val() + " has been selected");
                     }});
 
@@ -188,7 +194,7 @@ var AddProjectDialog = Backbone.View.extend({
 
 
     },
-    createRetrievalProject:function () {
+    createRetrievalProject: function () {
         var self = this;
         $("input#retrievalProjectSome,input#retrievalProjectAll,input#retrievalProjectNone").change(function () {
             if ($("input#retrievalProjectSome").is(':checked')) {
@@ -219,7 +225,7 @@ var AddProjectDialog = Backbone.View.extend({
             }
         });
     },
-    createRetrievalProjectSelect:function () {
+    createRetrievalProjectSelect: function () {
         /* Create Users List */
         $("#retrievalproject").empty();
 
@@ -228,14 +234,15 @@ var AddProjectDialog = Backbone.View.extend({
 
 
         window.app.models.projects.each(function (project) {
-            if (project.get('ontology') == idOntology)
+            if (project.get('ontology') == idOntology) {
                 $("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
+            }
         });
         $("#retrievalproject").append('<option value="-1" selected="selected">' + projectName + '</option>');
 
         $("#retrievalproject").multiselectNext('destroy');
         $("#retrievalproject").multiselectNext({
-            selected:function (event, ui) {
+            selected: function (event, ui) {
                 //alert($(ui.option).val() + " has been selected");
             }});
 
@@ -245,14 +252,14 @@ var AddProjectDialog = Backbone.View.extend({
 
         $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
     },
-    refresh:function () {
+    refresh: function () {
     },
-    open:function () {
+    open: function () {
         var self = this;
         self.clearAddProjectPanel();
         $("#addproject").modal('show');
     },
-    clearAddProjectPanel:function () {
+    clearAddProjectPanel: function () {
         var self = this;
         $("#errormessage").empty();
         $("#projecterrorlabel").hide();
@@ -262,7 +269,7 @@ var AddProjectDialog = Backbone.View.extend({
         $(self.addProjectCheckedDisciplinesRadioElem).attr("checked", false);
         $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
-    createProject:function () {
+    createProject: function () {
 
         var self = this;
 
@@ -271,7 +278,9 @@ var AddProjectDialog = Backbone.View.extend({
 
         var name = $("#project-name").val().toUpperCase();
         var discipline = $("#projectdiscipline").attr('value');
-        if (discipline == -1) discipline = null;
+        if (discipline == -1) {
+            discipline = null;
+        }
         var ontology = $("#projectontology").attr('value');
         var users = $("#projectuser").multiselectNext('selectedValues');
 
@@ -280,12 +289,13 @@ var AddProjectDialog = Backbone.View.extend({
         var retrievalProjectAll = $("input#retrievalProjectAll").is(':checked');
         var retrievalProjectSome = $("input#retrievalProjectSome").is(':checked');
         var projectRetrieval = [];
-        if (retrievalProjectSome)
+        if (retrievalProjectSome) {
             projectRetrieval = $("#retrievalproject").multiselectNext('selectedValues');
+        }
 
         //create project
-        new ProjectModel({name:name, ontology:ontology, discipline:discipline, retrievalDisable:retrievalDisable, retrievalAllOntology:retrievalProjectAll, retrievalProjects:projectRetrieval}).save({name:name, ontology:ontology, discipline:discipline, retrievalDisable:retrievalDisable, retrievalAllOntology:retrievalProjectAll, retrievalProjects:projectRetrieval}, {
-                success:function (model, response) {
+        new ProjectModel({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}, {
+                success: function (model, response) {
 
                     window.app.view.message("Project", response.message, "success");
                     var id = response.project.id;
@@ -293,13 +303,15 @@ var AddProjectDialog = Backbone.View.extend({
                     //create user-project "link"
                     var total = users.length;
                     var counter = 0;
-                    if (total == 0) self.addDeleteUserProjectCallback(0, 0);
+                    if (total == 0) {
+                        self.addDeleteUserProjectCallback(0, 0);
+                    }
                     _.each(users, function (user) {
 
-                        new ProjectUserModel({project:id, user:user}).save({}, {
-                            success:function (model, response) {
+                        new ProjectUserModel({project: id, user: user}).save({}, {
+                            success: function (model, response) {
                                 self.addUserProjectCallback(total, ++counter);
-                            }, error:function (model, response) {
+                            }, error: function (model, response) {
                                 self.addUserProjectCallback(total, ++counter);
                                 var json = $.parseJSON(response.responseText);
                                 window.app.view.message("User", json.errors, "error");
@@ -308,7 +320,7 @@ var AddProjectDialog = Backbone.View.extend({
                     });
 
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Project", json.errors, "error");
                     $('#login-form-add-project').stepy('step', 1);
@@ -317,8 +329,10 @@ var AddProjectDialog = Backbone.View.extend({
             }
         );
     },
-    addUserProjectCallback:function (total, counter) {
-        if (counter < total) return;
+    addUserProjectCallback: function (total, counter) {
+        if (counter < total) {
+            return;
+        }
         var self = this;
         self.projectsPanel.refresh();
         $("#addproject").modal("hide");

@@ -1,17 +1,17 @@
 var JobTableView = Backbone.View.extend({
-    width:null,
-    software:null,
-    project:null,
-    jobs:null,
-    parent:null,
-    table:null,
-    datatable:null,
-    paramsFromSoftwares:null,
-    paramsFromSoftwaresFull:null,
-    paramsFromSoftwaresVisibility:null,
-    paramsFromSoftwaresDomainFill:null,
-    FIRSTCOLUMNWITHJOBDATA:7,
-    initialize:function (options) {
+    width: null,
+    software: null,
+    project: null,
+    jobs: null,
+    parent: null,
+    table: null,
+    datatable: null,
+    paramsFromSoftwares: null,
+    paramsFromSoftwaresFull: null,
+    paramsFromSoftwaresVisibility: null,
+    paramsFromSoftwaresDomainFill: null,
+    FIRSTCOLUMNWITHJOBDATA: 7,
+    initialize: function (options) {
         var self = this;
         this.software = options.software;
         this.project = options.project;
@@ -30,7 +30,7 @@ var JobTableView = Backbone.View.extend({
             self.paramsFromSoftwaresDomainFill.push(false);
         });
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/processing/JobListing.tpl.html"
@@ -40,7 +40,7 @@ var JobTableView = Backbone.View.extend({
             });
         return this;
     },
-    loadResult:function (jobListingViewTpl) {
+    loadResult: function (jobListingViewTpl) {
         console.log("JobTableView.loadResult");
         var self = this;
         var content = _.template(jobListingViewTpl, {});
@@ -49,13 +49,13 @@ var JobTableView = Backbone.View.extend({
 
         self.printDatatables();
     },
-    refresh:function (jobs) {
+    refresh: function (jobs) {
         var self = this;
         console.log("JobTableView.refresh");
         self.jobs = jobs;
         self.printDatatables();
     },
-    printDatatables:function () {
+    printDatatables: function () {
         var self = this;
         console.log("JobTableView.printDatatables");
         $(self.el).find('#searchJobTable').find('#searchJobHeader').empty();
@@ -90,15 +90,15 @@ var JobTableView = Backbone.View.extend({
         });
 
         self.table = $(self.el).find('#searchJobTable').dataTable({
-            "bFilter":true,
-            "sDom":'<"toolbar">rtip',
-            "sPaginationType":"bootstrap",
-            "oLanguage":{
-                "sLengthMenu":"_MENU_ records per page"
+            "bFilter": true,
+            "sDom": '<"toolbar">rtip',
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ records per page"
             },
-            "iDisplayLength":15,
-            "bLengthChange":false,
-            bDestroy:true
+            "iDisplayLength": 15,
+            "bLengthChange": false,
+            bDestroy: true
         });
 
         //print sub grid datatables
@@ -109,7 +109,7 @@ var JobTableView = Backbone.View.extend({
 
 
     },
-    addColumns:function (job) {
+    addColumns: function (job) {
         var self = this;
 
         $(self.el).find('#searchJobTable').find('#searchJobHeader').append('<th></th>');
@@ -124,7 +124,7 @@ var JobTableView = Backbone.View.extend({
             $(self.el).find('#searchJobTable').find('#searchJobHeader').append("<th>" + param.name + "</th>");
         });
     },
-    addRow:function (job) {
+    addRow: function (job) {
         var self = this;
         var tbody = $(self.el).find('#searchJobTable').find("tbody");
         var cellIcon = '<i class="icon-plus"></i>';
@@ -134,7 +134,9 @@ var JobTableView = Backbone.View.extend({
         var cellState = self.getStateElement(job);
         var cellSee = '<button id="' + job.id + '">See details</button>';
         var cellRate = "";
-        if (job.get('rate') != -1) cellRate = (job.get('rate') * 100).toFixed(2) + "%";
+        if (job.get('rate') != -1) {
+            cellRate = (job.get('rate') * 100).toFixed(2) + "%";
+        }
 
         //fill array with first column info
         var colArray = ['<tr>', '<td>' + cellIcon + '</td>', '<td  style="text-align:left;">' + cellId + '</td>', '<td  style="text-align:center;">' + cellNumber + '</td>', '<td  style="text-align:center;">' + cellDate + '</td>', '<td  style="text-align:center;">' + cellState + '</td>', '<td  style="text-align:center;">' + cellRate + '</td>', '<td>' + cellSee + '</td>']
@@ -162,13 +164,17 @@ var JobTableView = Backbone.View.extend({
         tbody.append(rowString);
 
     },
-    getValueElement:function (param) {
+    getValueElement: function (param) {
         var self = this;
         if (param.type == "String" || param.type == "Number") {
             return '<td>' + param.value + '</td>';
         } else if (param.type == "Boolean") {
-            if (param.value) return '<td><input type="checkbox" name="checkbox" value="checkbox" checked="checked"></td>'
-            else return '<td><input type="checkbox" name="checkbox" value="checkbox" checked="checked"></td>'
+            if (param.value) {
+                return '<td><input type="checkbox" name="checkbox" value="checkbox" checked="checked"></td>'
+            }
+            else {
+                return '<td><input type="checkbox" name="checkbox" value="checkbox" checked="checked"></td>'
+            }
         } else if (param.type == "List") {
             return '<td>' + param.value + '</td>';
         } else if (param.type == "Date") {
@@ -176,24 +182,44 @@ var JobTableView = Backbone.View.extend({
             if (param.value != null) {
                 return '<td>' + window.app.convertLongToDate(param.value) + '</td>';
             }
-            else return "<td></td>";
+            else {
+                return "<td></td>";
+            }
         } else if (param.type == 'ListDomain' || param.type == 'Domain') {
             return '<td><label style="display:inline;" data="' + param.value + '" class="' + param.softwareParameter + '" id="paramsTable' + param.id + '"><i class="icon-refresh" />Loading...</label></td>';
-        } else return '<td>' + param.value + '</td>';
+        } else {
+            return '<td>' + param.value + '</td>';
+        }
 
     },
 
-    getStateElement:function (job) {
-        if (job.isNotLaunch()) return '<span class="label btn-inverse">Not Launch!</span> ';
-        else if (job.isInQueue()) return '<span class="label btn-info">In queue!</span> ';
-        else if (job.isRunning()) return '<span class="label btn-primary">Running!</span> ';
-        else if (job.isSuccess()) return '<span class="label btn-success">Success!</span> ';
-        else if (job.isFailed()) return '<span class="label btn-danger">Failed!</span> ';
-        else if (job.isIndeterminate()) return '<span class="label btn-inverse">Indetereminate!</span> ';
-        else if (job.isWait()) return '<span class="label btn-warning">Wait!</span> ';
-        else return "no supported";
+    getStateElement: function (job) {
+        if (job.isNotLaunch()) {
+            return '<span class="label btn-inverse">Not Launch!</span> ';
+        }
+        else if (job.isInQueue()) {
+            return '<span class="label btn-info">In queue!</span> ';
+        }
+        else if (job.isRunning()) {
+            return '<span class="label btn-primary">Running!</span> ';
+        }
+        else if (job.isSuccess()) {
+            return '<span class="label btn-success">Success!</span> ';
+        }
+        else if (job.isFailed()) {
+            return '<span class="label btn-danger">Failed!</span> ';
+        }
+        else if (job.isIndeterminate()) {
+            return '<span class="label btn-inverse">Indetereminate!</span> ';
+        }
+        else if (job.isWait()) {
+            return '<span class="label btn-warning">Wait!</span> ';
+        }
+        else {
+            return "no supported";
+        }
     },
-    initSubGridDatatables:function () {
+    initSubGridDatatables: function () {
         console.log("JobTableView.initSubGridDatatables");
         var self = this;
 
@@ -217,8 +243,8 @@ var JobTableView = Backbone.View.extend({
                 self.table.fnOpen(nTr, self.seeDetails(nTr), 'details');
                 var aData = self.table.fnGetData(nTr);
                 console.log("aData[1]=" + aData[1]);
-                new JobModel({ id:aData[1]}).fetch({
-                    success:function (model, response) {
+                new JobModel({ id: aData[1]}).fetch({
+                    success: function (model, response) {
                         var tableParam = $(self.el).find('#searchJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameter'), function (param) {
                             tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
@@ -229,7 +255,7 @@ var JobTableView = Backbone.View.extend({
         });
     },
     /* Formating function for row details */
-    seeDetails:function (nTr) {
+    seeDetails: function (nTr) {
         var self = this;
         var aData = self.table.fnGetData(nTr);
 
@@ -238,13 +264,13 @@ var JobTableView = Backbone.View.extend({
 
         return sOut;
     },
-    buildShowHideAllColumn:function (datatable, show) {
+    buildShowHideAllColumn: function (datatable, show) {
         var self = this;
         for (var i = 0; i < datatable.fnSettings().aoColumns.length; i++) {
             datatable.fnSetColumnVis(i, show);
         }
     },
-    buildSHowHideColumnParamPanel:function (datatable) {
+    buildSHowHideColumnParamPanel: function (datatable) {
         var self = this;
         console.log("buildHideColumnParamPanel=" + datatable.fnSettings().aoColumns.length);
         for (var i = self.FIRSTCOLUMNWITHJOBDATA; i < datatable.fnSettings().aoColumns.length; i++) {
@@ -261,10 +287,10 @@ var JobTableView = Backbone.View.extend({
         $("#showParamColumnSearchJobTable").append(strSelectBox);
 
         $("#selectShowParamColumnSearchJobTable").multiselect({
-            selectedText:"Show/Hide  Parameters columns: # of # selected",
-            noneSelectedText:"Show/Hide Parameters columns",
-            minWidth:($("#showParamColumnSearchJobTable").width() - 50),
-            height:'auto'
+            selectedText: "Show/Hide  Parameters columns: # of # selected",
+            noneSelectedText: "Show/Hide Parameters columns",
+            minWidth: ($("#showParamColumnSearchJobTable").width() - 50),
+            height: 'auto'
         });
 
         var selectElem = $("#showParamColumnSearchJobTable");
@@ -298,7 +324,7 @@ var JobTableView = Backbone.View.extend({
             self.showOrHideAllColumnVisibility(datatable, false);
         });
     },
-    showOrHideAllColumnVisibility:function (datatable, show) {
+    showOrHideAllColumnVisibility: function (datatable, show) {
         var self = this;
         self.paramsFromSoftwaresVisibility = [];
         _.each(self.software.get('parameters'), function (param) {
@@ -311,7 +337,7 @@ var JobTableView = Backbone.View.extend({
             i++;
         });
     },
-    showOrHideColumnVisibility:function (colIndex, datatable, show) {
+    showOrHideColumnVisibility: function (colIndex, datatable, show) {
         console.log("Click show/hide column:" + colIndex);
         var self = this;
         var columnIndex = colIndex - self.FIRSTCOLUMNWITHJOBDATA;
@@ -324,25 +350,28 @@ var JobTableView = Backbone.View.extend({
         var param = self.paramsFromSoftwaresFull[columnIndex];
         self.fillDomainElement(param, columnIndex);
     },
-    fillDomainElement:function (param, index) {
+    fillDomainElement: function (param, index) {
 
 
         if (param.type == "Domain" || param.type == "ListDomain") {
-            if (!this.paramsFromSoftwaresDomainFill[index]) this.retrieveAndReplaceCell(param, index);
+            if (!this.paramsFromSoftwaresDomainFill[index]) {
+                this.retrieveAndReplaceCell(param, index);
+            }
         }
 
     },
-    retrieveAndReplaceCell:function (param, index) {
+    retrieveAndReplaceCell: function (param, index) {
         var self = this;
-        new SoftwareParameterModelCollection({uri:window.app.replaceVariable(param.uri), sortAttribut:param.uriSortAttribut}).fetch({
-            success:function (collection, response) {
+        new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut: param.uriSortAttribut}).fetch({
+            success: function (collection, response) {
                 _.each($(self.el).find("label." + param.id), function (cell) {
                     var domainList = $(cell).attr("data");
                     var domainName = [];
                     _.each(domainList.split(","), function (id) {
                         var domain = collection.get(id);
-                        if (domain != undefined)
+                        if (domain != undefined) {
                             domainName.push(domain.get(param.uriPrintAttribut));
+                        }
                     });
                     $(cell).empty();
                     $(cell).text(domainName.join(","));

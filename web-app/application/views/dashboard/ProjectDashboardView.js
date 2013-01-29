@@ -6,22 +6,22 @@
  * To change this template use File | Settings | File Templates.
  */
 var ProjectDashboardView = Backbone.View.extend({
-    tagName:"div",
-    projectElem:"#projectdashboardinfo", //div with project info
-    maxCommandsView:20,
-    maxSuggestView:30,
-    projectDashboardAnnotations:null,
-    projectDashboardImages:null,
-    rendered:false,
-    initialize:function (options) {
+    tagName: "div",
+    projectElem: "#projectdashboardinfo", //div with project info
+    maxCommandsView: 20,
+    maxSuggestView: 30,
+    projectDashboardAnnotations: null,
+    projectDashboardImages: null,
+    rendered: false,
+    initialize: function (options) {
         _.bindAll(this, 'render');
     },
-    events:{
+    events: {
     },
     /**
      * Print all information for this project
      */
-    render:function () {
+    render: function () {
         var self = this;
         require(["text!application/templates/dashboard/Dashboard.tpl.html"], function (tpl) {
             self.doLayout(tpl);
@@ -30,7 +30,7 @@ var ProjectDashboardView = Backbone.View.extend({
         return this;
 
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var self = this;
         $(self.el).append(_.template(tpl, self.model.toJSON()));
         window.app.controllers.browse.tabs.addDashboard(self);
@@ -38,31 +38,35 @@ var ProjectDashboardView = Backbone.View.extend({
 
         //Refresh dashboard
         setInterval(function () {
-            if ($("#tabs-dashboard-" + self.model.id).hasClass('active')) self.refreshDashboard();
+            if ($("#tabs-dashboard-" + self.model.id).hasClass('active')) {
+                self.refreshDashboard();
+            }
         }, 60000);
     },
-    refreshImagesThumbs:function () {
+    refreshImagesThumbs: function () {
         if (this.projectDashboardImages == null) {
-            this.projectDashboardImages = new ProjectDashboardImages({ model:this.model});
+            this.projectDashboardImages = new ProjectDashboardImages({ model: this.model});
         }
         this.projectDashboardImages.refreshImagesThumbs();
 
     },
-    refreshAlgos:function (idSoftware, idJob) {
+    refreshAlgos: function (idSoftware, idJob) {
         if (this.projectDashboardAlgos == null || this.projectDashboardAlgos == undefined) {
             this.projectDashboardAlgos = new ProjectDashboardAlgos({
-                model:this.model,
-                idSoftware:idSoftware,
-                idJob:idJob
+                model: this.model,
+                idSoftware: idSoftware,
+                idJob: idJob
             }).render();
         }
-        else this.projectDashboardAlgos.refresh(idSoftware, idJob);
+        else {
+            this.projectDashboardAlgos.refresh(idSoftware, idJob);
+        }
 
     },
-    refreshConfig:function () {
+    refreshConfig: function () {
         if (this.ProjectDashboardConfig == null) {
             this.ProjectDashboardConfig = new ProjectDashboardConfig({
-                model:this.model
+                model: this.model
             });
         }
 
@@ -70,18 +74,18 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
 
-    refreshImagesTable:function () {
+    refreshImagesTable: function () {
         if (this.projectDashboardImages == null) {
-            this.projectDashboardImages = new ProjectDashboardImages({ model:this.model});
+            this.projectDashboardImages = new ProjectDashboardImages({ model: this.model});
         }
         this.projectDashboardImages.refreshImagesTable();
     },
-    refreshAnnotations:function (terms, users) {
-        console.log("ProjectDashboardView.refreshAnnotations="+users);
+    refreshAnnotations: function (terms, users) {
+        console.log("ProjectDashboardView.refreshAnnotations=" + users);
         var self = this;
 
         if (this.projectDashboardAnnotations == null) {
-            this.projectDashboardAnnotations = new ProjectDashboardAnnotations({ model:this.model, el:this.el});
+            this.projectDashboardAnnotations = new ProjectDashboardAnnotations({ model: this.model, el: this.el});
             this.projectDashboardAnnotations.render(function () {
                 self.projectDashboardAnnotations.checkTermsAndUsers(terms, users);
             });
@@ -93,24 +97,27 @@ var ProjectDashboardView = Backbone.View.extend({
     /**
      * Refresh all information for this project
      */
-    refreshDashboard:function () {
+    refreshDashboard: function () {
         var self = this;
-        if (!self.rendered) return;
+        if (!self.rendered) {
+            return;
+        }
         self.model.fetch({
-            success:function (model, response) {
+            success: function (model, response) {
                 window.app.status.currentProjectModel = model;
                 self.model = model;
                 self.fetchProjectInfo();
                 self.fetchCommands();
                 self.fetchUsersOnline();
 
-                if (self.projectStats == null)
-                    self.projectStats = new ProjectDashboardStats({model:self.model});
+                if (self.projectStats == null) {
+                    self.projectStats = new ProjectDashboardStats({model: self.model});
+                }
 
             }
         });
     },
-    fetchProjectInfo:function () {
+    fetchProjectInfo: function () {
         var self = this;
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
@@ -123,30 +130,32 @@ var ProjectDashboardView = Backbone.View.extend({
         });
 
         $("#seeUsersProjectList-" + self.model.id).on("click", function () {
-            new ProjectUsersDialog({model:self.model, el:$("#explorer")}).render();
+            new ProjectUsersDialog({model: self.model, el: $("#explorer")}).render();
         });
     },
-    fetchUsersOnline:function () {
+    fetchUsersOnline: function () {
         var self = this;
         var refreshData = function () {
             require(["text!application/templates/dashboard/OnlineUser.tpl.html"],
                 function (userOnlineTpl) {
-                    new UserOnlineCollection({project:self.model.id}).fetch({
-                        success:function (collection, response) {
+                    new UserOnlineCollection({project: self.model.id}).fetch({
+                        success: function (collection, response) {
                             $("#userOnlineItem").empty();
                             collection.each(function (user) {
                                 //if undefined => user is cytomine admin but not in project!
-                                if (window.app.models.projectUser.get(user.id) == undefined) return;
+                                if (window.app.models.projectUser.get(user.id) == undefined) {
+                                    return;
+                                }
 
                                 var positions = "";
                                 _.each(user.get('position'), function (position) {
-                                    var position = _.template(userOnlineTpl, {project:self.model.id, filename:window.app.minString(position.filename, 15, 10), image:position.image});
+                                    var position = _.template(userOnlineTpl, {project: self.model.id, filename: window.app.minString(position.filename, 15, 10), image: position.image});
                                     positions += position;
                                 });
                                 var onlineUser = _.template("<div id='onlineUser-<%= id %>'><li class='icon-user' /><%= user %><ul><%= positions %></ul></div>", {
-                                    id : user.id,
-                                    user : window.app.models.projectUser.get(user.id).prettyName(),
-                                    positions : positions
+                                    id: user.id,
+                                    user: window.app.models.projectUser.get(user.id).prettyName(),
+                                    positions: positions
                                 });
                                 $("#userOnlineItem").append(onlineUser);
                             });
@@ -161,14 +170,14 @@ var ProjectDashboardView = Backbone.View.extend({
             clearInterval(interval);
         });
     },
-    fetchCommands:function () {
+    fetchCommands: function () {
         var self = this;
         require([
             "text!application/templates/dashboard/CommandAnnotation.tpl.html",
             "text!application/templates/dashboard/CommandAnnotationTerm.tpl.html",
             "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
             function (commandAnnotationTpl, commandAnnotationTermTpl, commandImageInstanceTpl) {
-                var commandCollection = new CommandCollection({project:self.model.get('id'), max:self.maxCommandsView});
+                var commandCollection = new CommandCollection({project: self.model.get('id'), max: self.maxCommandsView});
                 var commandCallback = function (collection, response) {
                     $("#lastactionitem").empty();
                     if (collection.size() == 0) {
@@ -188,123 +197,124 @@ var ProjectDashboardView = Backbone.View.extend({
                             var cropStyle = "block";
                             var cropURL = jsonCommand.cropURL;
                             action = _.template(commandAnnotationTpl,
-                                {   idProject:self.model.id,
-                                    idAnnotation:jsonCommand.id,
-                                    idImage:jsonCommand.image,
-                                    imageFilename:jsonCommand.imageFilename,
-                                    icon:"add.png",
-                                    text:commandHistory.get("prefixAction") + " " + command.action,
-                                    datestr:dateStr,
-                                    cropURL:cropURL,
-                                    cropStyle:cropStyle
+                                {   idProject: self.model.id,
+                                    idAnnotation: jsonCommand.id,
+                                    idImage: jsonCommand.image,
+                                    imageFilename: jsonCommand.imageFilename,
+                                    icon: "add.png",
+                                    text: commandHistory.get("prefixAction") + " " + command.action,
+                                    datestr: dateStr,
+                                    cropURL: cropURL,
+                                    cropStyle: cropStyle
                                 });
                         }
                         else if (command.serviceName == "annotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.newAnnotation.cropURL;
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.newAnnotation.id, idImage:jsonCommand.newAnnotation.image, imageFilename:jsonCommand.newAnnotation.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newAnnotation.id, idImage: jsonCommand.newAnnotation.image, imageFilename: jsonCommand.newAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
                         }
                         else if (command.serviceName == "annotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.cropURL;
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.id, idImage:jsonCommand.image, imageFilename:jsonCommand.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
                         }
                         else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
                             var cropStyle = "block";
                             var cropURL = jsonCommand.cropURL;
                             action = _.template(commandAnnotationTpl,
-                                {   idProject:self.model.id,
-                                    idAnnotation:jsonCommand.id,
-                                    idImage:jsonCommand.image,
-                                    imageFilename:jsonCommand.imageFilename,
-                                    icon:"add.png",
-                                    text:commandHistory.get("prefixAction") + " " + command.action,
-                                    datestr:dateStr,
-                                    cropURL:cropURL,
-                                    cropStyle:cropStyle
+                                {   idProject: self.model.id,
+                                    idAnnotation: jsonCommand.id,
+                                    idImage: jsonCommand.image,
+                                    imageFilename: jsonCommand.imageFilename,
+                                    icon: "add.png",
+                                    text: commandHistory.get("prefixAction") + " " + command.action,
+                                    datestr: dateStr,
+                                    cropURL: cropURL,
+                                    cropStyle: cropStyle
                                 });
                         }
                         else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.newUserAnnotation.cropURL;
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.newUserAnnotation.id, idImage:jsonCommand.newUserAnnotation.image, imageFilename:jsonCommand.newUserAnnotation.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newUserAnnotation.id, idImage: jsonCommand.newUserAnnotation.image, imageFilename: jsonCommand.newUserAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
                         }
                         else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.cropURL;
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.id, idImage:jsonCommand.image, imageFilename:jsonCommand.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
                         }
                         else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
                             var cropStyle = "block";
                             var cropURL = jsonCommand.cropURL;
                             action = _.template(commandAnnotationTpl,
-                                {   idProject:self.model.id,
-                                    idAnnotation:jsonCommand.id,
-                                    idImage:jsonCommand.image,
-                                    imageFilename:jsonCommand.imageFilename,
-                                    icon:"add.png",
-                                    text:commandHistory.get("prefixAction") + " " + command.action,
-                                    datestr:dateStr,
-                                    cropURL:cropURL,
-                                    cropStyle:cropStyle
+                                {   idProject: self.model.id,
+                                    idAnnotation: jsonCommand.id,
+                                    idImage: jsonCommand.image,
+                                    imageFilename: jsonCommand.imageFilename,
+                                    icon: "add.png",
+                                    text: commandHistory.get("prefixAction") + " " + command.action,
+                                    datestr: dateStr,
+                                    cropURL: cropURL,
+                                    cropStyle: cropStyle
                                 });
                         }
                         else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.newAnnotation.cropURL;
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.newAnnotation.id, idImage:jsonCommand.newAnnotation.image, imageFilename:jsonCommand.newAnnotation.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newAnnotation.id, idImage: jsonCommand.newAnnotation.image, imageFilename: jsonCommand.newAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
                         }
                         else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
                             var cropStyle = "";
                             var cropURL = jsonCommand.cropURL;
 
-                            action = _.template(commandAnnotationTpl, {idProject:self.model.id, idAnnotation:jsonCommand.id, idImage:jsonCommand.image, imageFilename:jsonCommand.imageFilename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
                         }
                         else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
-                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-plus", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, image:""});
+                            action = _.template(commandAnnotationTermTpl, {icon: "ui-icon-plus", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
 
                         }
                         else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
-                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-pencil", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, image:""});
+                            action = _.template(commandAnnotationTermTpl, {icon: "ui-icon-pencil", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
 
                         }
                         else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
-                            action = _.template(commandAnnotationTermTpl, {icon:"ui-icon-trash", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, image:""});
+                            action = _.template(commandAnnotationTermTpl, {icon: "ui-icon-trash", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
 
                         }
                         else if (command.serviceName == "imageInstanceService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
                             var cropStyle = "block";
                             var cropURL = jsonCommand.thumb;
-                            action = _.template(commandImageInstanceTpl, {idProject:self.model.id, idImage:jsonCommand.id, imageFilename:jsonCommand.filename, icon:"add.png", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "add.png", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
                         }
                         else if (command.serviceName == "imageInstanceService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
                             var cropStyle = "block";
                             var cropURL = jsonCommand.thumb;
-                            action = _.template(commandImageInstanceTpl, {idProject:self.model.id, idImage:jsonCommand.id, imageFilename:jsonCommand.filename, icon:"delete.gif", text:commandHistory.get("prefixAction") + " " + command.action, datestr:dateStr, cropURL:cropURL, cropStyle:cropStyle});
+                            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
                         }
-                        if(action!="undefined")
+                        if (action != "undefined") {
                             ulContainer.append(action);
+                        }
                     });
                 }
                 commandCollection.fetch({
-                    success:function (collection, response) {
+                    success: function (collection, response) {
                         commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
                     }
                 });
             });
     },
-    showImagesThumbs:function () {
+    showImagesThumbs: function () {
         $("#tabs-projectImageThumb" + this.model.id).show();
         $("#tabs-projectImageListing" + this.model.id).hide();
         $('#imageThumbs' + this.model.id).attr("disabled", "disabled");
         $('#imageArray' + this.model.id).removeAttr("disabled");
     },
-    showImagesTable:function () {
+    showImagesTable: function () {
         $("#tabs-projectImageThumb" + this.model.id).hide();
         $("#tabs-projectImageListing" + this.model.id).show();
         $('#imageThumbs' + this.model.id).removeAttr("disabled");

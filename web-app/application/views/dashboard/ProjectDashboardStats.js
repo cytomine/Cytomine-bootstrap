@@ -1,6 +1,6 @@
 var ProjectDashboardStats = Backbone.View.extend({
-    annotationNumberSelectedTerm:-1,
-    initialize:function () {
+    annotationNumberSelectedTerm: -1,
+    initialize: function () {
         var self = this;
         this.noDataAlert = _.template("<div class='alert alert-block'>No data to display</div>", {});
         var select = $("#annotationNumberEvolution");
@@ -23,25 +23,25 @@ var ProjectDashboardStats = Backbone.View.extend({
         });
         $('a[href="#_projectPieChartPanel"]').on('shown', function (e) {
             window.location = dashboard_location;
-            var statsCollection = new StatsTermCollection({project:self.model.get('id')});
+            var statsCollection = new StatsTermCollection({project: self.model.get('id')});
             statsCollection.fetch({
-                success:function (collection, response) {
+                success: function (collection, response) {
                     self.drawPieChart(collection, response);
                 }
             });
         });
         $('a[href="#_userAnnotationsChart"]').on('shown', function (e) {
             window.location = dashboard_location;
-            new StatsUserAnnotationCollection({project:self.model.get('id')}).fetch({
-                success:function (collection, response) {
+            new StatsUserAnnotationCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
                     self.drawUserAnnotationsChart(collection, undefined, response);
                 }
             });
         });
         $('a[href="#_userNbAnnotationsChart"]').on('shown', function (e) {
             window.location = dashboard_location;
-            new StatsUserCollection({project:self.model.get('id')}).fetch({
-                success:function (collection, response) {
+            new StatsUserCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
                     self.drawUserNbAnnotationsChart(collection, response);
                 }
             });
@@ -49,16 +49,16 @@ var ProjectDashboardStats = Backbone.View.extend({
         });
         $('a[href="#_termSlideAnnotationsChart"]').on('shown', function (e) {
             window.location = dashboard_location;
-            new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
-                success:function (collection, response) {
+            new StatsTermSlideCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
                     self.drawTermSlideChart(collection, response);
                 }
             });
         });
         $('a[href="#_userSlideAnnotationsChart"]').on('shown', function (e) {
             window.location = dashboard_location;
-            new StatsUserSlideCollection({project:self.model.get('id')}).fetch({
-                success:function (collection, response) {
+            new StatsUserSlideCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
                     self.drawUserSlideChart(collection, response);
                 }
             });
@@ -68,19 +68,19 @@ var ProjectDashboardStats = Backbone.View.extend({
             self.drawAnnotationNumberEvolutionByTermAction();
         });
     },
-    getFullWidth:function () {
+    getFullWidth: function () {
         return Math.round($(window).width() - 200);
     },
-    drawProjectColumnChart : function() {
+    drawProjectColumnChart: function () {
         var self = this;
-        var statsCollection = new StatsTermCollection({project:self.model.get('id')});
+        var statsCollection = new StatsTermCollection({project: self.model.get('id')});
         statsCollection.fetch({
-            success:function (collection, response) {
+            success: function (collection, response) {
                 self.drawColumnChart(collection, response);
             }
         });
     },
-    drawUserAnnotationsChart:function (collection, currentUser, response) {
+    drawUserAnnotationsChart: function (collection, currentUser, response) {
         var self = this;
         // Create and populate the data table.
         var data = new google.visualization.DataTable();
@@ -91,7 +91,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         data.addColumn('string', 'Terms');
         collection.each(function (item) {
             cpt++;
-            if (cpt != currentUser && currentUser != undefined) return;
+            if (cpt != currentUser && currentUser != undefined) {
+                return;
+            }
             data.addColumn('number', item.get("key"));
         });
 
@@ -107,7 +109,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         var i = 1;
         collection.each(function (item) {
             cpt++;
-            if (cpt != currentUser && currentUser != undefined) return;
+            if (cpt != currentUser && currentUser != undefined) {
+                return;
+            }
             var j = 0;
             _.each(item.get("terms"), function (term) {
                 data.setValue(j, i, term.value);
@@ -120,10 +124,10 @@ var ProjectDashboardStats = Backbone.View.extend({
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById('userAnnotationsChart'));
         chart.draw(data,
-            {title:"Term by users",
-                backgroundColor:"white",
-                width:width, height:350,
-                hAxis:{title:"Terms" }
+            {title: "Term by users",
+                backgroundColor: "white",
+                width: width, height: 350,
+                hAxis: {title: "Terms" }
             }
         );
         var handleClick = function () {
@@ -142,14 +146,14 @@ var ProjectDashboardStats = Backbone.View.extend({
             var width = self.getFullWidth();
             //$("#userAnnotationsChart").css("width", width);
             chart.draw(data,
-                {title:"Term by users",
-                    backgroundColor:"white",
-                    width:width, height:350,
-                    hAxis:{title:"Terms" }
+                {title: "Term by users",
+                    backgroundColor: "white",
+                    width: width, height: 350,
+                    hAxis: {title: "Terms" }
                 });
         });
     },
-    drawUserNbAnnotationsChart:function (collection, response) {
+    drawUserNbAnnotationsChart: function (collection, response) {
         var self = this;
         $("#userNbAnnotationsChart").empty();
         var dataToShow = false;
@@ -164,7 +168,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         var j = 0;
         collection.each(function (stat) {
             //colors.push(stat.get('color'));
-            if (stat.get('value') > 0) dataToShow = true;
+            if (stat.get('value') > 0) {
+                dataToShow = true;
+            }
             data.setValue(j, 0, stat.get("key"));
             data.setValue(j, 1, stat.get("value"));
             j++;
@@ -173,13 +179,13 @@ var ProjectDashboardStats = Backbone.View.extend({
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart"));
         chart.draw(data,
-            {title:"",
-                legend:"none",
-                width:width,
-                height:350,
-                backgroundColor:"white",
-                vAxis:{title:"Number of annotations"},
-                hAxis:{title:"Users" }
+            {title: "",
+                legend: "none",
+                width: width,
+                height: 350,
+                backgroundColor: "white",
+                vAxis: {title: "Number of annotations"},
+                hAxis: {title: "Users" }
             }
         );
 
@@ -203,17 +209,17 @@ var ProjectDashboardStats = Backbone.View.extend({
         $(window).bind("resizeEnd", function (event) {
             var width = self.getFullWidth();
             chart.draw(data,
-                {title:"",
-                    legend:"none",
-                    width:width,
-                    height:350,
-                    backgroundColor:"white",
-                    vAxis:{title:"Number of annotations"},
-                    hAxis:{title:"Users" }
+                {title: "",
+                    legend: "none",
+                    width: width,
+                    height: 350,
+                    backgroundColor: "white",
+                    vAxis: {title: "Number of annotations"},
+                    hAxis: {title: "Users" }
                 });
         });
     },
-    drawPieChart:function (collection, response) {
+    drawPieChart: function (collection, response) {
         if (this.model.get('numberOfAnnotations') == 0) {
             //set no data to display if pie Chart
             $("#projectPieChart").html(this.noDataAlert);
@@ -238,7 +244,7 @@ var ProjectDashboardStats = Backbone.View.extend({
         var width = self.getFullWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
-        chart.draw(data, {width:width, height:350, title:"", backgroundColor:"white", colors:colors});
+        chart.draw(data, {width: width, height: 350, title: "", backgroundColor: "white", colors: colors});
         var handleClick = function () {
             var row = chart.getSelection()[0]['row'];
             var column = chart.getSelection()[0]['column'];
@@ -257,10 +263,10 @@ var ProjectDashboardStats = Backbone.View.extend({
 
         $(window).bind("resizeEnd", function (event) {
             var width = self.getFullWidth();
-            chart.draw(data, {width:width, height:350, title:"", backgroundColor:"white", colors:colors});
+            chart.draw(data, {width: width, height: 350, title: "", backgroundColor: "white", colors: colors});
         });
     },
-    drawColumnChart:function (collection, response) {
+    drawColumnChart: function (collection, response) {
         var self = this;
 
         var dataToShow = false;
@@ -275,7 +281,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         var j = 0;
         collection.each(function (stat) {
             colors.push(stat.get('color'));
-            if (stat.get('value') > 0) dataToShow = true;
+            if (stat.get('value') > 0) {
+                dataToShow = true;
+            }
             data.setValue(j, 0, stat.get("key"));
             data.setValue(j, 1, stat.get("value"));
             j++;
@@ -285,12 +293,12 @@ var ProjectDashboardStats = Backbone.View.extend({
         $("#projectColumnChart").empty();
         var chart = new google.visualization.ColumnChart(document.getElementById("projectColumnChart"));
         chart.draw(data,
-            {title:"",
-                legend:"none",
-                backgroundColor:"white",
-                width:width, height:350,
-                vAxis:{title:"Number of annotations"},
-                hAxis:{title:"Terms" }
+            {title: "",
+                legend: "none",
+                backgroundColor: "white",
+                width: width, height: 350,
+                vAxis: {title: "Number of annotations"},
+                hAxis: {title: "Terms" }
             }
         );
         var handleClick = function () {
@@ -312,19 +320,19 @@ var ProjectDashboardStats = Backbone.View.extend({
         $(window).bind("resizeEnd", function (event) {
             var width = self.getFullWidth();
             chart.draw(data,
-                {title:"",
-                    legend:"none",
-                    backgroundColor:"white",
-                    width:width, height:350,
-                    vAxis:{title:"Number of annotations"},
-                    hAxis:{title:"Terms" }
+                {title: "",
+                    legend: "none",
+                    backgroundColor: "white",
+                    width: width, height: 350,
+                    vAxis: {title: "Number of annotations"},
+                    hAxis: {title: "Terms" }
                 }
             );
         });
     },
 
 
-    drawTermSlideChart:function (collection, response) {
+    drawTermSlideChart: function (collection, response) {
         var self = this;
         var dataToShow = false;
         // Create and populate the data table.
@@ -345,12 +353,12 @@ var ProjectDashboardStats = Backbone.View.extend({
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart"));
         chart.draw(data,
-            {title:"",
-                legend:"none",
-                backgroundColor:"white",
-                width:width, height:350,
-                vAxis:{title:"Slides"},
-                hAxis:{title:"Terms" }
+            {title: "",
+                legend: "none",
+                backgroundColor: "white",
+                width: width, height: 350,
+                vAxis: {title: "Slides"},
+                hAxis: {title: "Terms" }
             }
         );
         var handleClick = function () {
@@ -371,17 +379,17 @@ var ProjectDashboardStats = Backbone.View.extend({
         $(window).bind("resizeEnd", function (event) {
             var width = self.getFullWidth();
             chart.draw(data,
-                {title:"",
-                    legend:"none",
-                    backgroundColor:"white",
-                    width:width, height:350,
-                    vAxis:{title:"Slides"},
-                    hAxis:{title:"Terms" }
+                {title: "",
+                    legend: "none",
+                    backgroundColor: "white",
+                    width: width, height: 350,
+                    vAxis: {title: "Slides"},
+                    hAxis: {title: "Terms" }
                 }
             );
         });
     },
-    drawUserSlideChart:function (collection, response) {
+    drawUserSlideChart: function (collection, response) {
         var self = this;
 
         // Create and populate the data table.
@@ -402,13 +410,13 @@ var ProjectDashboardStats = Backbone.View.extend({
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart"));
         chart.draw(data,
-            {title:"",
-                legend:"none",
-                backgroundColor:"white",
-                enableInteractivity:true,
-                width:width, height:350,
-                vAxis:{title:"Slides"},
-                hAxis:{title:"Users"}
+            {title: "",
+                legend: "none",
+                backgroundColor: "white",
+                enableInteractivity: true,
+                width: width, height: 350,
+                vAxis: {title: "Slides"},
+                hAxis: {title: "Users"}
             }
         );
         var handleClick = function () {
@@ -430,29 +438,29 @@ var ProjectDashboardStats = Backbone.View.extend({
             var width = self.getFullWidth();
             //$("#userSlideAnnotationsChartPanel").css("width", width);
             chart.draw(data,
-                {title:"",
-                    legend:"none",
-                    backgroundColor:"white",
-                    enableInteractivity:true,
-                    width:width, height:350,
-                    vAxis:{title:"Slides"},
-                    hAxis:{title:"Users"}
+                {title: "",
+                    legend: "none",
+                    backgroundColor: "white",
+                    enableInteractivity: true,
+                    width: width, height: 350,
+                    vAxis: {title: "Slides"},
+                    hAxis: {title: "Users"}
                 }
             );
         });
     },
-    drawAnnotationNumberEvolutionByTermAction:function () {
+    drawAnnotationNumberEvolutionByTermAction: function () {
 
         var self = this;
         var termSelected = $("#annotationNumberEvolution").val();
         self.annotationNumberSelectedTerm = termSelected;
-        new StatsAnnotationEvolutionCollection({project:self.model.get('id'), daysRange:7, term:termSelected}).fetch({
-            success:function (collection, response) {
+        new StatsAnnotationEvolutionCollection({project: self.model.get('id'), daysRange: 7, term: termSelected}).fetch({
+            success: function (collection, response) {
                 self.drawAnnotationNumberEvolutionChart(collection, response);
             }
         });
     },
-    drawAnnotationNumberEvolutionChart:function (collection, response) {
+    drawAnnotationNumberEvolutionChart: function (collection, response) {
         var self = this;
 
         if (collection == undefined) {
@@ -476,13 +484,13 @@ var ProjectDashboardStats = Backbone.View.extend({
             j++;
         });
         var evolChart = new google.visualization.AreaChart(document.getElementById('annotationsEvolutionChart'));
-        evolChart.draw(data, {title:'',
-                width:self.getFullWidth(), height:350,
-                vAxis:{title:"Number of annotations", minValue:0, maxValue:100},
-                hAxis:{title:"Time"},
-                backgroundColor:"white",
-                lineWidth:1,
-                legend:{position:'none'}}
+        evolChart.draw(data, {title: '',
+                width: self.getFullWidth(), height: 350,
+                vAxis: {title: "Number of annotations", minValue: 0, maxValue: 100},
+                hAxis: {title: "Time"},
+                backgroundColor: "white",
+                lineWidth: 1,
+                legend: {position: 'none'}}
         );
     }
 

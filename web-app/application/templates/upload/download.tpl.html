@@ -5,7 +5,7 @@
     <td class="name"><%=file.name%></td>
     <td class="size"><%=o.formatFileSize(file.size)%></td>
     <td class="error" colspan="2"><span class="label important">Error</span>
-    <%=fileUploadErrors[file.error] || file.error %>
+        <%=fileUploadErrors[file.error] || file.error %>
     </td>
     <% } else { %>
     <td class="preview"></td>
@@ -13,7 +13,8 @@
         <%=file.name%>
     </td>
     <td class="size">
-    <%=o.formatFileSize(file.size)%></td>
+        <%=o.formatFileSize(file.size)%>
+    </td>
     <td colspan="2"></td>
     <% } %>
     <td class="delete">

@@ -1,9 +1,9 @@
 var AccountController = Backbone.Router.extend({
-    initialized:false,
-    routes:{
-        "account":"account"
+    initialized: false,
+    routes: {
+        "account": "account"
     },
-    account:function () {
+    account: function () {
         if (!this.initialized) {
             /* init upload */
             this.render();
@@ -11,11 +11,11 @@ var AccountController = Backbone.Router.extend({
         }
         window.app.view.showComponent(window.app.view.components.account);
     },
-    render:function () {
+    render: function () {
 
         new AccountDetails({
-            el:"#account",
-            model:window.app.status.user.model
+            el: "#account",
+            model: window.app.status.user.model
         }).render();
     }
 });

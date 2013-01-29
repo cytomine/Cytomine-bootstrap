@@ -1,14 +1,14 @@
 var LogoutDialogView = Backbone.View.extend({
-    tagName:"div",
+    tagName: "div",
 
-    initialize:function (options) {
+    initialize: function (options) {
     },
-    doLayout:function (tpl) {
+    doLayout: function (tpl) {
         var dialog = new ConfirmDialogView({
-            el:'#dialogs',
-            template:_.template(tpl, {}),
-            dialogAttr:{
-                dialogID:"#logout-confirm"
+            el: '#dialogs',
+            template: _.template(tpl, {}),
+            dialogAttr: {
+                dialogID: "#logout-confirm"
             }
         }).render();
 
@@ -25,7 +25,7 @@ var LogoutDialogView = Backbone.View.extend({
 
         return this;
     },
-    render:function () {
+    render: function () {
         var self = this;
         require(["text!application/templates/auth/LogoutDialog.tpl.html"], function (tpl) {
             self.doLayout(tpl);

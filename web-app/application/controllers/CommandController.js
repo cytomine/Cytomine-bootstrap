@@ -1,8 +1,8 @@
 var CommandController = Backbone.Router.extend({
-    initialize:function () {
+    initialize: function () {
         this.commandInProgess = false;
     },
-    undo:function () {
+    undo: function () {
         var self = this;
         if (self.commandInProgess) {
             window.app.view.message("Oh wait :-)", "Operation already in progress", "error");
@@ -22,7 +22,7 @@ var CommandController = Backbone.Router.extend({
 
     },
 
-    redo:function () {
+    redo: function () {
         var self = this;
         if (self.commandInProgess) {
             window.app.view.message("Oh wait :-)", "Operation already in progress", "error");
@@ -32,16 +32,20 @@ var CommandController = Backbone.Router.extend({
         $.post('command/redo.json', {}, function (data) {
             _.each(data, function (redoElem) {
                 self.dispatch(redoElem.callback, redoElem.message, "Redo");
-                if (redoElem.printMessage) window.app.view.message("Redo", redoElem.message, "info");
+                if (redoElem.printMessage) {
+                    window.app.view.message("Redo", redoElem.message, "info");
+                }
             });
             self.commandInProgess = false;
         }, "json");
 
     },
 
-    dispatch:function (callback, message, operation) {
+    dispatch: function (callback, message, operation) {
 
-        if (!callback) return; //nothing to do
+        if (!callback) {
+            return;
+        } //nothing to do
 
         /**
          * ANNOTATION
@@ -53,36 +57,45 @@ var CommandController = Backbone.Router.extend({
                 return object.idImage == callback.imageID;
             });
 
-            if (tab == undefined) return; //tab is closed
+            if (tab == undefined) {
+                return;
+            } //tab is closed
 
             var image = tab.view;
             image.getUserLayer().annotationAdded(callback.annotationID);
-            if (window.app.controllers.dashboard.view != null)
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refreshAnnotations();
+            }
         } else if (callback.method == "be.cytomine.EditUserAnnotationCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
             });
-            if (tab == undefined) return; //tab is closed
+            if (tab == undefined) {
+                return;
+            } //tab is closed
 
             var image = tab.view;
             image.getUserLayer().annotationUpdated(callback.annotationID);
-            if (window.app.controllers.dashboard.view != null)
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refreshAnnotations();
+            }
 
         } else if (callback.method == "be.cytomine.DeleteUserAnnotationCommand") {
             console.log("delete annotation");
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
             });
-            if (tab == undefined) return; //tab is closed
+            if (tab == undefined) {
+                return;
+            } //tab is closed
 
             var image = tab.view;
 
             image.getUserLayer().annotationRemoved(callback.annotationID);
-            if (window.app.controllers.dashboard.view != null)
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refreshAnnotations();
+            }
             /**
              * ANNOTATION TERM
              */
@@ -91,23 +104,29 @@ var CommandController = Backbone.Router.extend({
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
             });
-            if (tab == undefined) return; //tab is closed
+            if (tab == undefined) {
+                return;
+            } //tab is closed
 
             var image = tab.view;
             image.getUserLayer().termAdded(callback.annotationID, callback.termID);
-            if (window.app.controllers.dashboard.view != null)
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refreshAnnotations();
+            }
         } else if (callback.method == "be.cytomine.DeleteAnnotationTermCommand") {
 
             var tab = _.detect(window.app.controllers.browse.tabs.tabs, function (object) {
                 return object.idImage == callback.imageID;
             });
-            if (tab == undefined) return; //tab is closed
+            if (tab == undefined) {
+                return;
+            } //tab is closed
 
             var image = tab.view;
             image.getUserLayer().termRemoved(callback.annotationID, callback.termID);
-            if (window.app.controllers.dashboard.view != null)
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refreshAnnotations();
+            }
         }
 
         /**
@@ -151,21 +170,27 @@ var CommandController = Backbone.Router.extend({
         }
 
         else if (callback.method == "be.cytomine.AddImageInstanceCommand") {
-            if (window.app.controllers.project.view != null)
+            if (window.app.controllers.project.view != null) {
                 window.app.controllers.project.view.refresh();
-            if (window.app.controllers.dashboard.view != null)
+            }
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refresh();
+            }
         } else if (callback.method == "be.cytomine.DeleteImageInstanceCommand") {
 
-            if (window.app.controllers.project.view != null)
+            if (window.app.controllers.project.view != null) {
                 window.app.controllers.project.view.refresh();
-            if (window.app.controllers.dashboard.view != null)
+            }
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refresh();
+            }
         } else if (callback.method == "be.cytomine.EditImageInstanceCommand") {
-            if (window.app.controllers.project.view != null)
+            if (window.app.controllers.project.view != null) {
                 window.app.controllers.project.view.refresh();
-            if (window.app.controllers.dashboard.view != null)
+            }
+            if (window.app.controllers.dashboard.view != null) {
                 window.app.controllers.dashboard.view.refresh();
+            }
         }
 
     }

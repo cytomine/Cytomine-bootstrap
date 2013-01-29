@@ -1,23 +1,27 @@
 var MultiSelectView = Backbone.View.extend({
-    collection:null,
-    multiple:null,
-    initialize:function (options) {
+    collection: null,
+    multiple: null,
+    initialize: function (options) {
         this.el = options.el;
         this.collection = options.collection;
         this.multiple = options.multiple;
     },
-    buildMultiSelect:function () {
+    buildMultiSelect: function () {
         var self = this;
         self.addHtmlElem();
     },
-    getHtmlElem:function () {
+    getHtmlElem: function () {
         console.log("getHtmlElem");
         var self = this;
         var classRequier = "";
         //mark default value as selected:
         var defaultValues = self.getDefaultValue();
-        if (self.param.required)  classRequier = 'border-style: solid; border-width: 2px;'
-        else classRequier = 'border-style: dotted;border-width: 2px;'
+        if (self.param.required) {
+            classRequier = 'border-style: solid; border-width: 2px;'
+        }
+        else {
+            classRequier = 'border-style: dotted;border-width: 2px;'
+        }
         var valueStr = '<select class="domainList" multiple="multiple">';
         self.collection.each(function (value) {
             var selClass = "";
@@ -31,7 +35,7 @@ var MultiSelectView = Backbone.View.extend({
         valueStr = valueStr + '</select>';
         return valueStr;
     },
-    addHtmlElem:function () {
+    addHtmlElem: function () {
         var self = this;
         console.log("addHtmlElem");
         self.el.append(self.getHtmlElem());
@@ -50,7 +54,9 @@ var MultiSelectView = Backbone.View.extend({
             }
         } else {
             fnSelectionView = function (numChecked, numTotal, checkedItem) {
-                if (numChecked == 0) return "0 selected";
+                if (numChecked == 0) {
+                    return "0 selected";
+                }
                 var selectTitle = [];
                 $(checkedItem).each(function () {
                     selectTitle.push($(this).attr("title"));
@@ -61,7 +67,7 @@ var MultiSelectView = Backbone.View.extend({
             };
         }
 
-        self.el.find(".domainList").multiselect({'autoOpen':false, minWidth:300, 'height':200, 'multiple':self.multiple, 'selectedText':fnSelectionView}).multiselectfilter();
+        self.el.find(".domainList").multiselect({'autoOpen': false, minWidth: 300, 'height': 200, 'multiple': self.multiple, 'selectedText': fnSelectionView}).multiselectfilter();
         self.el.find("button").width("150");
         //put header menu option on the same line
         self.el.find(".ui-multiselect-menu").find("span").css("display", "inline");
@@ -77,15 +83,15 @@ var MultiSelectView = Backbone.View.extend({
         self.el.find(".domainList").multiselect("close");
 
     },
-    checkAll:function () {
+    checkAll: function () {
         console.log("checkAll");
         this.el.find(".domainList").multiselect("checkAll");
     },
-    uncheckAll:function () {
+    uncheckAll: function () {
         console.log("uncheckAll");
         this.el.find(".domainList").multiselect("uncheckAll");
     },
-    isCheckAll:function () {
+    isCheckAll: function () {
         var self = this;
         var numberOfChoice = self.el.find(".domainList").length;
         var numberOfSelect = self.el.find(".domainList").multiselect("getChecked").length;

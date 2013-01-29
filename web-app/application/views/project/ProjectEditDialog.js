@@ -1,13 +1,13 @@
 var EditProjectDialog = Backbone.View.extend({
-    projectsPanel:null,
-    editProjectDialog:null,
-    projectMultiSelectAlreadyLoad:false,
-    initialize:function (options) {
+    projectsPanel: null,
+    editProjectDialog: null,
+    projectMultiSelectAlreadyLoad: false,
+    initialize: function (options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/project/ProjectEditDialog.tpl.html",
@@ -18,7 +18,7 @@ var EditProjectDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (projectEditDialogTpl, usersChoicesTpl) {
+    doLayout: function (projectEditDialogTpl, usersChoicesTpl) {
         var self = this;
         $("#editproject").replaceWith("");
         $("#addproject").replaceWith("");
@@ -44,16 +44,16 @@ var EditProjectDialog = Backbone.View.extend({
 
         //Build dialog
         self.editProjectDialog = $("#editproject").modal({
-            keyboard:true,
-            backdrop:false
+            keyboard: true,
+            backdrop: false
         });
         self.open();
         self.fillForm();
         return this;
 
     },
-    initStepy:function () {
-        $('#login-form-edit-project').stepy({next:function (index) {
+    initStepy: function () {
+        $('#login-form-edit-project').stepy({next: function (index) {
             //check validate name
             if (index == 2) {
                 if ($("#project-edit-name").val().toUpperCase().trim() == "") {
@@ -62,10 +62,14 @@ var EditProjectDialog = Backbone.View.extend({
                 }
             }
             //show save button on last step
-            if (index == $("#login-form-edit-project").find("fieldset").length) $("#editProjectButton").show();
-        }, back:function (index) {
+            if (index == $("#login-form-edit-project").find("fieldset").length) {
+                $("#editProjectButton").show();
+            }
+        }, back: function (index) {
             //hide save button if not on last step
-            if (index != $("#login-form-edit-project").find("fieldset").length) $("#editProjectButton").hide();
+            if (index != $("#login-form-edit-project").find("fieldset").length) {
+                $("#editProjectButton").hide();
+            }
         }});
         $('#login-form-edit-project').find("fieldset").find("a.button-next").css("float", "right");
         $('#login-form-edit-project').find("fieldset").find("a.button-back").css("float", "left");
@@ -73,7 +77,7 @@ var EditProjectDialog = Backbone.View.extend({
         $('#login-form-edit-project').find("fieldset").find("a").removeClass("button-back");
         $('#login-form-edit-project').find("fieldset").find("a").addClass("btn btn-primary");
     },
-    createProjectInfo:function () {
+    createProjectInfo: function () {
         var self = this;
         $("#login-form-edit-project").submit(function () {
             self.editProject();
@@ -86,7 +90,7 @@ var EditProjectDialog = Backbone.View.extend({
             }
         });
     },
-    createUserList:function () {
+    createUserList: function () {
         var self = this;
         /* Create Users List */
         $("#projectedituser").empty();
@@ -94,16 +98,20 @@ var EditProjectDialog = Backbone.View.extend({
         var allUser = null;
         var projectUser = null;
         var loadUser = function () {
-            if (allUser == null || projectUser == null) return
+            if (allUser == null || projectUser == null) {
+                return
+            }
 
             allUser.each(function (user) {
                 if (projectUser.get(user.id) != undefined) {
                     $("#projectedituser").append('<option value="' + user.id + '" selected="selected">' + user.prettyName() + '</option>');
-                } else $("#projectedituser").append('<option value="' + user.id + '">' + user.prettyName() + '</option>');
+                } else {
+                    $("#projectedituser").append('<option value="' + user.id + '">' + user.prettyName() + '</option>');
+                }
             });
 
             $("#projectedituser").multiselectNext({
-                deselected:function (event, ui) {
+                deselected: function (event, ui) {
                     //lock current user (cannot be deselected
                     if ($(ui.option).val() == window.app.status.user.id) {
                         $("#projectedituser").multiselectNext('select', $(ui.option).text());
@@ -111,7 +119,7 @@ var EditProjectDialog = Backbone.View.extend({
                     } else {
                     }
                 },
-                selected:function (event, ui) {
+                selected: function (event, ui) {
                 }});
 
             $("div.ui-multiselect").find("ul.available").css("height", "150px");
@@ -125,19 +133,19 @@ var EditProjectDialog = Backbone.View.extend({
         }
 
         new UserCollection({}).fetch({
-            success:function (allUserCollection, response) {
+            success: function (allUserCollection, response) {
                 allUser = allUserCollection;
                 loadUser();
             }});
 
-        new UserCollection({project:self.model.id}).fetch({
-            success:function (projectUserCollection, response) {
+        new UserCollection({project: self.model.id}).fetch({
+            success: function (projectUserCollection, response) {
                 projectUser = projectUserCollection;
                 window.app.models.projectUser = projectUserCollection;
                 loadUser();
             }});
     },
-    createRetrievalProject:function () {
+    createRetrievalProject: function () {
         var self = this;
         $('#login-form-edit-project').find("input#retrievalProjectSome,input#retrievalProjectAll,input#retrievalProjectNone").change(function () {
             console.log("change1");
@@ -176,24 +184,26 @@ var EditProjectDialog = Backbone.View.extend({
 
         }
     },
-    createRetrievalProjectSelect:function () {
+    createRetrievalProjectSelect: function () {
         var self = this;
         /* Create Users List */
         $('#login-form-edit-project').find("#retrievalproject").empty();
 
         window.app.models.projects.each(function (project) {
             if (project.get('ontology') == self.model.get('ontology') && project.id != self.model.id) {
-                if (_.indexOf(self.model.get('retrievalProjects'), project.id) == -1)
+                if (_.indexOf(self.model.get('retrievalProjects'), project.id) == -1) {
                     $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
-                else
+                }
+                else {
                     $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '" selected="selected">' + project.get('name') + '</option>');
+                }
             }
         });
         $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
 
         $('#login-form-edit-project').find("#retrievalproject").multiselectNext('destroy');
         $('#login-form-edit-project').find("#retrievalproject").multiselectNext({
-            selected:function (event, ui) {
+            selected: function (event, ui) {
                 //alert($(ui.option).val() + " has been selected");
             }});
 
@@ -203,20 +213,20 @@ var EditProjectDialog = Backbone.View.extend({
 
         $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
     },
-    fillForm:function () {
+    fillForm: function () {
 
         var self = this;
         //fill project Name
 
     },
-    refresh:function () {
+    refresh: function () {
     },
-    open:function () {
+    open: function () {
         var self = this;
         self.clearEditProjectPanel();
         $("#editproject").modal('show');
     },
-    clearEditProjectPanel:function () {
+    clearEditProjectPanel: function () {
         var self = this;
 
         $("#projectediterrormessage").empty();
@@ -233,16 +243,19 @@ var EditProjectDialog = Backbone.View.extend({
      * @param b Array two
      * @return An array containing the result
      */
-    diffArray:function (a, b) {
+    diffArray: function (a, b) {
         var seen = [], diff = [];
-        for (var i = 0; i < b.length; i++)
+        for (var i = 0; i < b.length; i++) {
             seen[b[i]] = true;
-        for (var i = 0; i < a.length; i++)
-            if (!seen[a[i]])
+        }
+        for (var i = 0; i < a.length; i++) {
+            if (!seen[a[i]]) {
                 diff.push(a[i]);
+            }
+        }
         return diff;
     },
-    editProject:function () {
+    editProject: function () {
 
         var self = this;
 
@@ -257,15 +270,16 @@ var EditProjectDialog = Backbone.View.extend({
         var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
         var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
         var projectRetrieval = [];
-        if (retrievalProjectSome)
+        if (retrievalProjectSome) {
             projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
+        }
 
         //edit project
         var project = self.model;
-        project.set({name:name, retrievalDisable:retrievalDisable, retrievalAllOntology:retrievalProjectAll, retrievalProjects:projectRetrieval});
+        project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval});
 
-        project.save({name:name, retrievalDisable:retrievalDisable, retrievalAllOntology:retrievalProjectAll, retrievalProjects:projectRetrieval}, {
-                success:function (model, response) {
+        project.save({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}, {
+                success: function (model, response) {
 
 
                     window.app.view.message("Project", response.message, "success");
@@ -310,13 +324,15 @@ var EditProjectDialog = Backbone.View.extend({
                      _.each(projectDeleteUser,function(user){*/
                     var total = projectAddUser.length + projectDeleteUser.length;
                     var counter = 0;
-                    if (total == 0) self.addDeleteUserProjectCallback(0, 0);
+                    if (total == 0) {
+                        self.addDeleteUserProjectCallback(0, 0);
+                    }
                     _.each(projectAddUser, function (user) {
 
-                        new ProjectUserModel({project:id, user:user}).save({}, {
-                            success:function (model, response) {
+                        new ProjectUserModel({project: id, user: user}).save({}, {
+                            success: function (model, response) {
                                 self.addDeleteUserProjectCallback(total, ++counter);
-                            }, error:function (model, response) {
+                            }, error: function (model, response) {
 
                                 var json = $.parseJSON(response.responseText);
                                 window.app.view.message("User", json.errors[0], "error");
@@ -324,10 +340,10 @@ var EditProjectDialog = Backbone.View.extend({
                     });
                     _.each(projectDeleteUser, function (user) {
                         //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
-                        new ProjectUserModel({id:1, project:id, user:user}).destroy({
-                            success:function (model, response) {
+                        new ProjectUserModel({id: 1, project: id, user: user}).destroy({
+                            success: function (model, response) {
                                 self.addDeleteUserProjectCallback(total, ++counter);
-                            }, error:function (model, response) {
+                            }, error: function (model, response) {
 
                                 var json = $.parseJSON(response.responseText);
                                 window.app.view.message("User", json.errors[0], "error");
@@ -335,7 +351,7 @@ var EditProjectDialog = Backbone.View.extend({
                     });
 
                 },
-                error:function (model, response) {
+                error: function (model, response) {
                     console.log(response);
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Project", json.errors[0], "error");
@@ -347,8 +363,10 @@ var EditProjectDialog = Backbone.View.extend({
             }
         );
     },
-    addDeleteUserProjectCallback:function (total, counter) {
-        if (counter < total) return;
+    addDeleteUserProjectCallback: function (total, counter) {
+        if (counter < total) {
+            return;
+        }
         var self = this;
         self.projectPanel.refresh();
         $("#editproject").modal('hide');

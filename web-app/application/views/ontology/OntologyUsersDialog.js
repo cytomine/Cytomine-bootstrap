@@ -1,9 +1,9 @@
 var ontologyUsersDialog = Backbone.View.extend({
-    usersOntologyDialog:null,
-    initialize:function (options) {
+    usersOntologyDialog: null,
+    initialize: function (options) {
         _.bindAll(this, 'render');
     },
-    render:function () {
+    render: function () {
         var self = this;
         require([
             "text!application/templates/ontology/OntologyUsers.tpl.html"
@@ -13,10 +13,10 @@ var ontologyUsersDialog = Backbone.View.extend({
             });
         return this;
     },
-    doLayout:function (ontologyUsersDialogTpl) {
+    doLayout: function (ontologyUsersDialogTpl) {
         var self = this;
 
-        var dialog = _.template(ontologyUsersDialogTpl, {id:self.model.id, name:self.model.get("name")});
+        var dialog = _.template(ontologyUsersDialogTpl, {id: self.model.id, name: self.model.get("name")});
         $("#ontologyUsers" + self.model.id).replaceWith("");
         $(self.el).append(dialog);
 
@@ -26,8 +26,8 @@ var ontologyUsersDialog = Backbone.View.extend({
         //Build dialog
         console.log("Open element:" + $("#ontologyUsers" + self.model.id).length);
         self.usersOntologyDialog = $("#ontologyUsers" + self.model.id).modal({
-            keyboard:true,
-            backdrop:false
+            keyboard: true,
+            backdrop: false
         });
         $("#closeUserOntologyDialog" + self.model.id).click(function () {
             console.log("close!");
@@ -37,27 +37,27 @@ var ontologyUsersDialog = Backbone.View.extend({
         self.open();
         return this;
     },
-    printCreator:function () {
+    printCreator: function () {
         var self = this;
-        new UserCollection({ontology:self.model.id, creator:true}).fetch({
-            success:function (creator, response) {
+        new UserCollection({ontology: self.model.id, creator: true}).fetch({
+            success: function (creator, response) {
                 $("#ontologyCreator").empty();
                 creator.each(function (user) {
                     $("#ontologyCreator").append(user.prettyName());
                 });
             }});
     },
-    printUsers:function () {
+    printUsers: function () {
         var self = this;
-        new UserCollection({ontology:self.model.id}).fetch({
-            success:function (users, response) {
+        new UserCollection({ontology: self.model.id}).fetch({
+            success: function (users, response) {
                 $("#ontologyUsers").empty();
                 users.each(function (user) {
                     $("#ontologyUsers").append(user.prettyName() + " | ");
                 });
             }});
     },
-    open:function () {
+    open: function () {
         var self = this;
         $("#ontologyUsers" + self.model.id).modal('show');
     }
