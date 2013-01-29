@@ -25,7 +25,6 @@ var ExplorerTabs = Backbone.View.extend({
      * @param tpl
      */
     doLayout:function (tpl) {
-        var self = this;
         $(this.el).html(_.template(tpl, {}));
         return this;
     },
@@ -57,11 +56,8 @@ var ExplorerTabs = Backbone.View.extend({
                 view.model = model;
                 view.render();
                 $("#closeTabtabs-image-"+idImage).on("click", function (e) {
-                    console.log("############### CLOSE TAB:"+$(this).html());
                     var idImage = $(this).attr("data-image");
-                    console.log("############### idImage:"+idImage);
                     self.removeTab(idImage,"image");
-                    console.log("############### removed");
                 });
                 self.showTab(idImage,"image");
 
@@ -124,16 +120,16 @@ var ExplorerTabs = Backbone.View.extend({
      */
     removeTab:function (idImage, prefix) {
         var browseImageView = null
-        console.log("############### getImageView:"+idImage);
+
         if(prefix!="review") browseImageView = this.getImageView(idImage);
         else browseImageView = this.getImageView("review-"+idImage);
-        console.log("############### browseImageView:"+browseImageView);
+
         browseImageView.view.stopBroadcastingInterval();
         browseImageView.view.stopWatchOnlineUsersInterval();
         var indexOf = this.tabs.indexOf(browseImageView);
 
         this.tabs.splice(indexOf, 1);
-        var tabs = $(this.el).children('.nav-tab');
+        var tabs = $('#explorer-tab');
         //Remove Tab
         $('#tabs-'+prefix+'-' + idImage).parent().remove();
         //Remove dropdown
@@ -146,7 +142,7 @@ var ExplorerTabs = Backbone.View.extend({
      * @param idImage the identifier of the Tab
      */
     showTab:function (idImage, prefix) {
-        var tabs = $("#explorer > .browser").find(".nav-tabs");
+        var tabs = $('#explorer-tab');
         window.app.controllers.browse.tabs.triggerRoute = false;
         $('#tabs-'+prefix+'-' + idImage).click();
         window.app.controllers.browse.tabs.triggerRoute = true;
@@ -173,12 +169,12 @@ var ExplorerTabs = Backbone.View.extend({
     addDashboard:function (dashboard) {
         var self = this;
         this.dashboard = dashboard;
-        var tabs = $('#explorer-tab-content');
-        $(".nav-tabs").append(_.template("<li><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>", { idProject:window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>", { idProject:window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>", { idProject:window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>", { idProject:window.app.status.currentProject}));
-        $(".nav-tabs").append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>", { idProject:window.app.status.currentProject}));
+        var tabs = $('#explorer-tab');
+        tabs.append(_.template("<li><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>", { idProject:window.app.status.currentProject}));
+        tabs.append(_.template("<li><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>", { idProject:window.app.status.currentProject}));
+        tabs.append(_.template("<li><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>", { idProject:window.app.status.currentProject}));
+        tabs.append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>", { idProject:window.app.status.currentProject}));
+        tabs.append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>", { idProject:window.app.status.currentProject}));
 
         $('a[data-toggle="tab"]').live('show', function (e) {
             var hash = this.href.split("#")[1];

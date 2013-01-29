@@ -2,19 +2,8 @@ var ProjectDashboardStats = Backbone.View.extend({
     annotationNumberSelectedTerm:-1,
     initialize:function () {
         var self = this;
-        this.noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>", {});
-        var width = self.getTierWidth();
-        $("#projectInfoPanel").css("width", width);
-        $("#projectLastCommandPanel").css("width", width);
-        $(window).bind("resizeEnd", function (event) {
-            var width = self.getTierWidth();
-            $("#projectInfoPanel").css("width", width);
-            $("#projectLastCommandPanel").css("width", width);
-            $("#projectUserOnline").css("width", width);
-        });
-
-
-        var select = $("#annotationNumberEvolutionLineChartByTermSelect");
+        this.noDataAlert = _.template("<div class='alert alert-block'>No data to display</div>", {});
+        var select = $("#annotationNumberEvolution");
         select.empty();
         select.append('<option value="' + -1 + '">All terms</option>');
         window.app.status.currentTermsCollection.each(function (term) {
@@ -25,66 +14,71 @@ var ProjectDashboardStats = Backbone.View.extend({
         select.change(function () {
             self.drawAnnotationNumberEvolutionByTermAction();
         });
+
+        var dashboard_location = "#tabs-dashboard-" + self.model.get('id');
+        self.drawProjectColumnChart(); //selected tab (first)
+        $('a[href="#_projectColumnChart"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            self.drawProjectColumnChart();
+        });
+        $('a[href="#_projectPieChartPanel"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            var statsCollection = new StatsTermCollection({project:self.model.get('id')});
+            statsCollection.fetch({
+                success:function (collection, response) {
+                    self.drawPieChart(collection, response);
+                }
+            });
+        });
+        $('a[href="#_userAnnotationsChart"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            new StatsUserAnnotationCollection({project:self.model.get('id')}).fetch({
+                success:function (collection, response) {
+                    self.drawUserAnnotationsChart(collection, undefined, response);
+                }
+            });
+        });
+        $('a[href="#_userNbAnnotationsChart"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            new StatsUserCollection({project:self.model.get('id')}).fetch({
+                success:function (collection, response) {
+                    self.drawUserNbAnnotationsChart(collection, response);
+                }
+            });
+
+        });
+        $('a[href="#_termSlideAnnotationsChart"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
+                success:function (collection, response) {
+                    self.drawTermSlideChart(collection, response);
+                }
+            });
+        });
+        $('a[href="#_userSlideAnnotationsChart"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            new StatsUserSlideCollection({project:self.model.get('id')}).fetch({
+                success:function (collection, response) {
+                    self.drawUserSlideChart(collection, response);
+                }
+            });
+        });
+        $('a[href="#_annotationNumberEvolution"]').on('shown', function (e) {
+            window.location = dashboard_location;
+            self.drawAnnotationNumberEvolutionByTermAction();
+        });
     },
     getFullWidth:function () {
-        return Math.round($(window).width() - 90);
+        return Math.round($(window).width() - 400);
     },
-    getHalfWidth:function () {
-        if ($(window).width() < 1300) {
-            return this.getFullWidth();
-        }
-        return Math.round($(window).width() / 2 - 75);
-    },
-    getTierWidth:function () {
-        if ($(window).width() < 1300) {
-            return this.getFullWidth();
-        }
-        return Math.round($(window).width() / 3 - 75);
-    },
-    fetchStats:function (terms) {
+    drawProjectColumnChart : function() {
         var self = this;
-        console.log("fetchStats");
-        //Annotations by terms
         var statsCollection = new StatsTermCollection({project:self.model.get('id')});
-        var statsCallback = function (collection, response) {
-            //Check if there is something to display
-            self.drawPieChart(collection, response);
-            self.drawColumnChart(collection, response);
-        };
         statsCollection.fetch({
-            success:function (model, response) {
-                statsCallback(model, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-            }
-        });
-        //Annotations by user
-        new StatsUserCollection({project:self.model.get('id')}).fetch({
             success:function (collection, response) {
-                self.drawUserNbAnnotationsChart(collection, response);
-
+                self.drawColumnChart(collection, response);
             }
         });
-        new StatsUserAnnotationCollection({project:self.model.get('id')}).fetch({
-            success:function (collection, response) {
-                var nbCharts = _.size(collection);
-                self.drawUserAnnotationsChart(collection, undefined, response);
-            }
-        });
-        new StatsTermSlideCollection({project:self.model.get('id')}).fetch({
-            success:function (collection, response) {
-                self.drawTermSlideChart(collection, response);
-            }
-        });
-
-        new StatsUserSlideCollection({project:self.model.get('id')}).fetch({
-            success:function (collection, response) {
-                self.drawUserSlideChart(collection, response);
-            }
-        });
-
-
-        self.drawAnnotationNumberEvolutionByTermAction();
-
-
     },
     drawUserAnnotationsChart:function (collection, currentUser, response) {
         var self = this;
@@ -146,7 +140,7 @@ var ProjectDashboardStats = Backbone.View.extend({
 
         $(window).bind("resizeEnd", function (event) {
             var width = self.getFullWidth();
-            $("#userAnnotationsChart").css("width", width);
+            //$("#userAnnotationsChart").css("width", width);
             chart.draw(data,
                 {title:"Term by users",
                     backgroundColor:"white",
@@ -175,8 +169,8 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = self.getHalfWidth();
-        $("#userNbAnnotationsChartPanel").css("width", width);
+        var width = self.getFullWidth();
+        //$("#userNbAnnotationsChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userNbAnnotationsChart"));
         chart.draw(data,
@@ -208,9 +202,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         $("#userNbAnnotationsChart").show();
 
         $(window).bind("resizeEnd", function (event) {
-            var width = self.getHalfWidth();
-            $("#userNbAnnotationsChart").css("width", width);
-            $("#userNbAnnotationsChartPanel").css("width", width);
+            var width = self.getFullWidth();
+            //$("#userNbAnnotationsChart").css("width", width);
+            //$("#userNbAnnotationsChartPanel").css("width", width);
             chart.draw(data,
                 {title:"",
                     legend:"none",
@@ -244,8 +238,8 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(i, 1, stat.get('value'));
             i++;
         });
-        var width = self.getHalfWidth();
-        $("#projectPieChartPanel").css("width", width);
+        var width = self.getFullWidth();
+        //$("#projectPieChartPanel").css("width", width);
         // Create and draw the visualization.
         var chart = new google.visualization.PieChart(document.getElementById('projectPieChart'));
         chart.draw(data, {width:width, height:350, title:"", backgroundColor:"white", colors:colors});
@@ -266,15 +260,15 @@ var ProjectDashboardStats = Backbone.View.extend({
         google.visualization.events.addListener(chart, 'select', handleClick);
 
         $(window).bind("resizeEnd", function (event) {
-            var width = self.getHalfWidth();
-            $("#projectPieChart").css("width", width);
-            $("#projectPieChartPanel").css("width", width);
+            var width = self.getFullWidth();
+            //$("#projectPieChart").css("width", width);
+            //$("#projectPieChartPanel").css("width", width);
             chart.draw(data, {width:width, height:350, title:"", backgroundColor:"white", colors:colors});
         });
     },
     drawColumnChart:function (collection, response) {
         var self = this;
-        $("#projectColumnChart").empty();
+
         var dataToShow = false;
         // Create and populate the data table.
         var data = new google.visualization.DataTable();
@@ -292,9 +286,10 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = self.getHalfWidth();
-        $("#projectcolumnChartPanel").css("width", width);
+        var width = self.getFullWidth();
+        //$("#projectcolumnChartPanel").css("width", width);
         // Create and draw the visualization.
+        $("#projectColumnChart").empty();
         var chart = new google.visualization.ColumnChart(document.getElementById("projectColumnChart"));
         chart.draw(data,
             {title:"",
@@ -322,9 +317,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         google.visualization.events.addListener(chart, 'select', handleClick);
         $("#projectColumnChart").show();
         $(window).bind("resizeEnd", function (event) {
-            var width = self.getHalfWidth();
-            $("#projectColumnChart").css("width", width);
-            $("#projectcolumnChartPanel").css("width", width);
+            var width = self.getFullWidth();
+            //$("#projectColumnChart").css("width", width);
+            //$("#projectcolumnChartPanel").css("width", width);
             chart.draw(data,
                 {title:"",
                     legend:"none",
@@ -355,10 +350,10 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = self.getHalfWidth();
+        var width = self.getFullWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("termSlideAnnotationsChart"));
-        $("#termSlideAnnotationsChartPanel").css("width", width);
+        //$("#termSlideAnnotationsChartPanel").css("width", width);
         chart.draw(data,
             {title:"",
                 legend:"none",
@@ -384,9 +379,9 @@ var ProjectDashboardStats = Backbone.View.extend({
         };
         google.visualization.events.addListener(chart, 'select', handleClick);
         $(window).bind("resizeEnd", function (event) {
-            var width = self.getHalfWidth();
-            $("#termSlideAnnotationsChart").css("width", width);
-            $("#termSlideAnnotationsChartPanel").css("width", width);
+            var width = self.getFullWidth();
+            //$("#termSlideAnnotationsChart").css("width", width);
+            //$("#termSlideAnnotationsChartPanel").css("width", width);
             chart.draw(data,
                 {title:"",
                     legend:"none",
@@ -415,10 +410,10 @@ var ProjectDashboardStats = Backbone.View.extend({
             data.setValue(j, 1, stat.get("value"));
             j++;
         });
-        var width = self.getHalfWidth();
+        var width = self.getFullWidth();
         // Create and draw the visualization.
         var chart = new google.visualization.ColumnChart(document.getElementById("userSlideAnnotationsChart"));
-        $("#userSlideAnnotationsChartPanel").css("width", width);
+        //$("#userSlideAnnotationsChartPanel").css("width", width);
         chart.draw(data,
             {title:"",
                 legend:"none",
@@ -445,8 +440,8 @@ var ProjectDashboardStats = Backbone.View.extend({
         };
         google.visualization.events.addListener(chart, 'select', handleClick);
         $(window).bind("resizeEnd", function (event) {
-            var width = self.getHalfWidth();
-            $("#userSlideAnnotationsChartPanel").css("width", width);
+            var width = self.getFullWidth();
+            //$("#userSlideAnnotationsChartPanel").css("width", width);
             chart.draw(data,
                 {title:"",
                     legend:"none",
@@ -462,7 +457,7 @@ var ProjectDashboardStats = Backbone.View.extend({
     drawAnnotationNumberEvolutionByTermAction:function () {
         console.log("drawAnnotationNumberEvolutionByTermAction");
         var self = this;
-        var termSelected = $("#annotationNumberEvolutionLineChartByTermSelect").val();
+        var termSelected = $("#annotationNumberEvolution").val();
         self.annotationNumberSelectedTerm = termSelected;
         new StatsAnnotationEvolutionCollection({project:self.model.get('id'), daysRange:7, term:termSelected}).fetch({
             success:function (collection, response) {
@@ -500,10 +495,10 @@ var ProjectDashboardStats = Backbone.View.extend({
         // Create and draw the visualization.
 //        console.log("CONTAINER:"+$(this.el).html());
 //        console.log("CONTAINER:"+$(this.el).find('#annotationsEvolutionChart').length);
-        $("#annotationsEvolutionChartPanel").css("width", self.getHalfWidth());
+        //$("#annotationsEvolutionChartPanel").css("width", self.getFullWidth());
         var evolChart = new google.visualization.AreaChart(document.getElementById('annotationsEvolutionChart'));
         evolChart.draw(data, {title:'',
-                width:self.getHalfWidth(), height:350,
+                width:self.getFullWidth(), height:350,
                 vAxis:{title:"Number of annotations", minValue:0, maxValue:100},
                 hAxis:{title:"Time"},
                 backgroundColor:"white",

@@ -32,12 +32,7 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     doLayout:function (tpl) {
         var self = this;
-        var width = Math.round($(window).width() / 2 - 95);
-        var width2 = Math.round($(window).width() - 95);
-        self.model.set({"width":width + "px"});
-        self.model.set({"width2":width2 + "px"});
-        var html = _.template(tpl, self.model.toJSON());
-        $(self.el).append(html);
+        $(self.el).append(_.template(tpl, self.model.toJSON()));
         window.app.controllers.browse.tabs.addDashboard(self);
         self.showImagesThumbs();
 
@@ -101,39 +96,19 @@ var ProjectDashboardView = Backbone.View.extend({
     refreshDashboard:function () {
         var self = this;
         if (!self.rendered) return;
+        self.model.fetch({
+            success:function (model, response) {
+                window.app.status.currentProjectModel = model;
+                self.model = model;
+                self.fetchProjectInfo();
+                self.fetchCommands();
+                self.fetchUsersOnline();
 
-        var refreshDashboard = function (model, response) {
-            self.model = model;
-            console.log("fetchProjectInfo");
-            self.fetchProjectInfo();
-            console.log("fetchCommands");
-            self.fetchCommands();
-            console.log("fetchUsersOnline");
-            self.fetchUsersOnline();
+                if (self.projectStats == null)
+                    self.projectStats = new ProjectDashboardStats({model:self.model});
 
-            console.log("create stats view");
-            //self.fetchWorstAnnotations(collection,terms);
-            if (self.projectStats == null)
-                self.projectStats = new ProjectDashboardStats({model:self.model});
-
-            console.log("fetsh stats");
-            self.projectStats.fetchStats(window.app.status.currentTermsCollection);
-            console.log("end-1...");
-            //new ProjectDashboardStats({model : self.model}).fetchStats();
-        }
-        var fetchInformations = function () {
-            self.model.fetch({
-                success:function (model, response) {
-                    window.app.status.currentProjectModel = model;
-                    refreshDashboard(model, response); //to do : optimiser pour ne pas tout recharger
-                }
-            });
-        }
-
-        console.log("fetchInformations");
-        fetchInformations();
-        console.log("end...");
-
+            }
+        });
     },
     fetchProjectInfo:function () {
         var self = this;
@@ -145,46 +120,14 @@ var ProjectDashboardView = Backbone.View.extend({
             window.app.models.projectUser.each(function (user) {
                 users.push(user.prettyName());
             });
-            //$("#projectInfoUserList").html(users.join(", "));
         });
 
-        console.log("event listener:" + $("#seeUsersProjectList-" + self.model.id).length);
-        $("#seeUsersProjectList-" + self.model.id).click(function () {
-            console.log("open project users " + self.model.id);
+        $("#seeUsersProjectList-" + self.model.id).on("click", function () {
             new ProjectUsersDialog({model:self.model, el:$("#explorer")}).render();
         });
-
-        return; //????
-        var self = this;
-        var json = self.model.toJSON();
-
-        //Get created/updated date
-        /*var dateCreated = new Date();
-         dateCreated.setTime(json.created);
-         json.created = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
-         var dateUpdated = new Date();
-         dat                                           eUpdated.setTime(json.updated);
-         json.updated = dateUpdated.toLocaleDateString() + " " + dateUpdated.toLocaleTimeString();*/
-
-        var resetElem = function (elem, txt) {
-            $(this.el).find(elem).empty();
-            $(this.el).find(elem).append(txt);
-        };
-
-        resetElem("#projectInfoName", json.name);
-        resetElem("#projectInfoOntology", json.ontologyName);
-        resetElem("#projectInfoNumberOfSlides", json.numberOfSlides);
-        resetElem("#projectInfoNumberOfImages", json.numberOfImages);
-        resetElem("#projectInfoNumberOfAnnotations", json.numberOfAnnotations);
-        resetElem("#projectInfoCreated", json.created);
-        resetElem("#projectInfoUpdated", json.updated);
-
-
     },
     fetchUsersOnline:function () {
         var self = this;
-
-
         var refreshData = function () {
             require(["text!application/templates/dashboard/OnlineUser.tpl.html"],
                 function (userOnlineTpl) {
@@ -193,19 +136,20 @@ var ProjectDashboardView = Backbone.View.extend({
                             $("#userOnlineItem").empty();
                             collection.each(function (user) {
                                 //if undefined => user is cytomine admin but not in project!
-                                if (window.app.models.projectUser.get(user.id) != undefined) {
-                                    var divId = 'onlineUser-' + user.id;
-                                    $("#userOnlineItem").append('<div id="' + divId + '"><li class="icon-user"/> ' + window.app.models.projectUser.get(user.id).prettyName() + '</div>');
+                                if (window.app.models.projectUser.get(user.id) == undefined) return;
 
-                                    var positions = user.get('position');
-                                    $("#" + divId).append("<ul></ul>")
-                                    _.each(positions, function (position) {
-
-                                        $("#" + divId).find("ul").append(_.template(userOnlineTpl, {project:self.model.id, filename:window.app.minString(position.filename, 15, 10), image:position.image}));
-
-                                    });
-                                }
-                            })
+                                var positions = "";
+                                _.each(user.get('position'), function (position) {
+                                    var position = _.template(userOnlineTpl, {project:self.model.id, filename:window.app.minString(position.filename, 15, 10), image:position.image});
+                                    positions += position;
+                                });
+                                var onlineUser = _.template("<div id='onlineUser-<%= id %>'><li class='icon-user' /><%= user %><ul><%= positions %></ul></div>", {
+                                    id : user.id,
+                                    user : window.app.models.projectUser.get(user.id).prettyName(),
+                                    positions : positions
+                                });
+                                $("#userOnlineItem").append(onlineUser);
+                            });
                         }
                     });
                 }
@@ -216,8 +160,6 @@ var ProjectDashboardView = Backbone.View.extend({
         $(window).bind('hashchange', function () {
             clearInterval(interval);
         });
-
-
     },
     fetchCommands:function () {
         var self = this;

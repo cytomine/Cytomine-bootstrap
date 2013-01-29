@@ -1,166 +1,76 @@
 <div class="tab-pane" id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
-    <div class="row" style="padding-top: 15px;padding-left: 30px;">
-        <div id="projectInfoPanel" style="padding : 15px;margin-right:5px;min-height: 250px;" class="span5">
-
-        </div>
-
-        <div id="projectUserOnline" style="padding : 15px;margin-right:5px;min-height: 250px;" class="span5">
-            <div class="widget-header">
-                <i class="icon-list-alt"></i>
-
-                <h3>Online Users</h3>
+    <div class="row-fluid widget-container">
+        <div class="row-fluid">
+            <div class="span3">
+                <div id="projectInfoPanel">
+                </div>
             </div>
-            <div class="widget-content" style="padding: 10px;">
-                <div style="height: 200px;">
-                    <div id="userOnlineItem" style="max-height: 200px;overflow-y: auto;"><br/><br/>
+            <div class="span3">
+                <h4 class="header_h">Online Users</h4>
+                <div id="userOnlineItem" style="max-height: 200px;overflow-y: auto;"><br/><br/>
 
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                </div>
+            </div>
+            <div class="span6">
+                <h4 class="header_h">Activity</h4>
+                <div id="lastactionitem" style="max-height: 250px; overflow: auto;">
+                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-dashboard">
+            <h4 class="header_h">Statistics</h4>
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#_projectColumnChart" data-toggle="tab">Annotations vs term</a></li>
+                    <li><a href="#_projectPieChartPanel" data-toggle="tab">Annotations vs term</a></li>
+                    <li><a href="#_userAnnotationsChart" data-toggle="tab">Annotations vs term by user</a></li>
+                    <li><a href="#_userNbAnnotationsChart" data-toggle="tab">Number of annotations by user</a></li>
+                    <li><a href="#_termSlideAnnotationsChart" data-toggle="tab">Number of annotated slides by term</a></li>
+                    <li><a href="#_userSlideAnnotationsChart" data-toggle="tab">Number of annotated slides by users</a></li>
+                    <li><a href="#_annotationNumberEvolution" data-toggle="tab">Number of user annotation</a></li>
+                </ul>
+                <div class="tab-content" >
+                    <div class="tab-pane fade in active" id="_projectColumnChart" style="background-color: #fff;background-image: none;">
+                        <div id="projectColumnChart">
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_projectPieChartPanel">
+                        <div id="projectPieChart">
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_userAnnotationsChart">
+                        <div id="userAnnotationsChart">
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_userNbAnnotationsChart">
+                        <div id="userNbAnnotationsChart" style="height: 350px"><br/><br/>
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_termSlideAnnotationsChart">
+                        <div id="termSlideAnnotationsChart" style="height: 350px"><br/><br/>
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_userSlideAnnotationsChart">
+                        <div id="userSlideAnnotationsChart" style="height: 350px"><br/><br/>
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="_annotationNumberEvolution">
+                        <select id="annotationNumberEvolution"></select>
+                        <div id="annotationsEvolutionChart" style="height: 350px"><br/><br/>
+                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div id="projectLastCommandPanel" style="padding : 15px;margin-right:5px;min-height: 250px;" class="span5">
-            <div class="widget-header">
-                <i class="icon-fire"></i>
-
-                <h3>Activity</h3>
-            </div>
-            <div class="widget-content" style="padding: 10px;">
-                <div style="height: 200px;">
-                    <div id="lastactionitem" style="max-height: 200px;overflow-y: auto;"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="projectcolumnChartPanel" style="padding : 15px; margin-right:5px;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotations by term (column)</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="projectColumnChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="projectPieChartPanel" style="padding : 15px;margin-right:5px;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotations by term (pie)</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="projectPieChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="userAnnotationsChartPanel" style="padding : 15px;margin-right:5px;min-width: 95%;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotations by term & user</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="userAnnotationsChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="userNbAnnotationsChartPanel" style="padding : 15px;margin-right:5px;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotations by user</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="userNbAnnotationsChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="termSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotated slides by term</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="termSlideAnnotationsChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="userSlideAnnotationsChartPanel" style="padding : 15px;margin-right:5px;" class="span5">
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of annotated slides by users</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <div id="userSlideAnnotationsChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="annotationsEvolutionChartPanel" style="padding : 15px;margin-right:5px;" class="span5">
-
-            <div class="widget-header">
-                <i class="icon icon-signal"></i>
-
-                <h3>Number of user annotation</h3>
-            </div>
-            <div class="widget-content">
-                <div>
-                    <select id="annotationNumberEvolutionLineChartByTermSelect"></select>
-
-                    <div id="annotationsEvolutionChart" style="height: 350px"><br/><br/>
-
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--<div id="worstAnnotationTablePanel" style="padding : 15px;margin-right:5px;"  class="span5 hero-unit">-->
-        <!--<h3>Most Questionable Annotations</h3>-->
-        <!--<div>-->
-        <!--<div id="worstAnnotationTable"><br /><br /><div class="alert alert-info"><i class="icon-refresh" /> Loading...</div></div>-->
-        <!--</div>-->
-        <!--</div>-->
-
-        <!--<div id="userRetrievalSuggestMatrixDataTablePanel" style="padding : 15px;margin-right:5px;min-width:95%;"  class="span5 hero-unit">-->
-        <!--<h3>Confusion Matrix</h3>-->
-        <!--<div>-->
-        <!---->
-        <!--</div>-->
-        <!--</div>-->
-
     </div>
 </div>
 <div class="tab-pane" id="tabs-images-<%= id %>" style="overflow : auto;padding: 5px;">
@@ -171,9 +81,9 @@
                 class="icon-th-list icon-white"></i></a>
     </div>
     <div id="tabs-projectImageThumb<%= id %>" style="min-height:700px;padding-bottom: 150px">
-            <div id="projectImageThumb<%= id %>" style="display:inline-block;width:100%;">
-                <div class="alert alert-info" style="margin : 10px;"><i class="icon-refresh"/> Loading...</div>
-            </div>
+        <div id="projectImageThumb<%= id %>" style="display:inline-block;width:100%;">
+            <div class="alert alert-info" style="margin : 10px;"><i class="icon-refresh"/> Loading...</div>
+        </div>
     </div>
     <div id="tabs-projectImageListing<%= id %>" style="display:inline-block;width:100%;">
         <div id="projectImageListing<%= id %>" style="width:100%;">
@@ -367,8 +277,7 @@
             <div class="widget-content" style="padding: 10px;">
                 <ul class="image-filters">
                     <li>
-                        <button id="addImageFilterButton" class="btn btn-small btn-primary"><i
-                                class="icon-plus icon-white"/> Add&nbsp;&nbsp;&nbsp;</button>
+                        <button id="addImageFilterButton" class="btn btn-small btn-primary"><i class="icon-plus icon-white"/></i> Add&nbsp;&nbsp;&nbsp;</button>
                         <select id="addImageFilter"></select></li>
                 </ul>
             </div>
@@ -380,8 +289,7 @@
             <div class="widget-content" style="padding: 10px;">
                 <ul class="softwares">
                     <li>
-                        <button id="addSoftwareButton" class="btn btn-small btn-primary"><i
-                                class="icon-plus icon-white"/> Add&nbsp;&nbsp;&nbsp;</button>
+                        <button id="addSoftwareButton" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
                         <select id="addSoftware"></select></li>
                 </ul>
             </div>

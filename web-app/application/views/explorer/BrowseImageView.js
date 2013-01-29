@@ -71,10 +71,10 @@ var BrowseImageView = Backbone.View.extend({
 //        if(this.review) dataName = 'review<%= idImage %>';
 //
 //        //data-image="'+dataName+'"
-
-        $(".nav-tabs").append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
+        var tabs = $('#explorer-tab');
+        tabs.append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
         var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab'+self.divPrefixId+'-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
-        $(".nav-tabs").append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
+        tabs.append(_.template(dropdownTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), filename:this.model.get('filename')}));
 
         if(this.review && this.model.get('reviewed')) self.changeValidateColor(true);
         else if(this.review && this.model.get('inReview')) self.changeValidateColor(false);
@@ -103,7 +103,8 @@ var BrowseImageView = Backbone.View.extend({
         var color = ""
         if(isValidate) color = "#5BB75B";
         else color = "#BD362F";
-        $(".nav-tabs").find("a#"+self.divPrefixId+"-"+self.model.id).css("background-color",color);
+        var tabs = $("#explorer-tab-content");
+        tabs.find("a#"+self.divPrefixId+"-"+self.model.id).css("background-color",color);
     },
     initMobile:function () {
 

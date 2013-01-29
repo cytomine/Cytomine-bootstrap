@@ -1,21 +1,10 @@
-<div class="widget-header">
-    <i class="icon-list-alt"></i>
+<h4 class="header_h">Project Info</h4>
+<ul style="margin-left : 0px;">
+    <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
+    <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
+    <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
+    <li>Number of user annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
+    <li>Number of job annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfJobAnnotations %></a></li>
+    <li><a id="seeUsersProjectList-<%= id %>">More Details...</a></li>
+</ul>
 
-    <h3>Project Info</h3>
-</div>
-<div class="widget-content" style="padding: 10px;">
-    <ul>
-        <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
-        <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
-        <li>Users :
-            <button id="seeUsersProjectList-<%= id %>" class='btn'>See users list</button>
-        </li>
-    </ul>
-    <br/>
-    <ul>
-        <!--<li>Number of samples : <a href="#tabs-images-<%= id %>"><%= numberOfSlides %></a></li>-->
-        <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
-        <li>Number of user annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
-        <li>Number of job annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfJobAnnotations %></a></li>
-    </ul>
-</div>
