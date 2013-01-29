@@ -727,7 +727,7 @@ var BrowseImageView = Backbone.View.extend({
             newCanvas.height = newCanvasHeight;
             newCanvas.display = 'none';
             document.body.appendChild(newCanvas);
-            var mapContainerDiv = $("#" + self.divId).find("#map" + self.model.id).children().children()[0];
+            var mapContainerDiv = $("#maptabs-image" + self.model.id).children().children()[0];
             var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
             var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
             for (var row = 0; row < tiles.length; row++) {
