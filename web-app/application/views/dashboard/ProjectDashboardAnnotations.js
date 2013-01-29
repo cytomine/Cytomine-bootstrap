@@ -496,26 +496,6 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     initSelectJobs:function () {
         var self = this;
-
-//                var treeData = {
-//                    id : self.model.id,
-//                    name : "Jobs",
-//                    title : "Jobs",
-//                    key : self.model.id,
-//                    "hideCheckbox": true,
-//                    isFolder : true,
-//                    children : []
-//                };
-//                collection.each(function(userjob) {
-//                    console.log(userjob);
-//                    treeData.children.push({
-//                        id : userjob.id,
-//                        key : userjob.id,
-//                        name : userjob.id,
-//                        title : window.app.convertLongToDate(userjob.get('created')),
-//                        children : []
-//                    });
-//                });
         $(self.el).find('#treeJobListing').dynatree({
             checkbox:true,
             selectMode:2,

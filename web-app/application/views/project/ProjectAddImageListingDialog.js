@@ -20,8 +20,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     render:function () {
         var self = this;
-        //self.fillAbstractImageProjectCollection(self.imagesProject);
-        require([
+         require([
             "text!application/templates/project/ProjectAddImageListingDialog.tpl.html"
         ],
             function (tpl) {
@@ -41,14 +40,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var dialog = _.template(tpl, json);
         $(self.el).append(dialog);
 
-        /*
-         self.searchPanel = new ProjectAddImageSearchPanel({
-         model : self.model,
-         images : self.images,
-         el:$("#tdsearchpanel"+self.model.id),
-         container : self,
-         tab : 2
-         }).render(); */
 
         //print listing
         this.renderImageList();
@@ -138,8 +129,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             }
             , 500);
         $(this).data('timer', wait);
-        //setTimeout("alert('foo');",5000);
-        //this.searchImages();
 
     },
 

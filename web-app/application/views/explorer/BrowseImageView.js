@@ -68,9 +68,7 @@ var BrowseImageView = Backbone.View.extend({
                 "</li>";
 
         var dataName = 'data-name=<%= idImage %>';
-//        if(this.review) dataName = 'review<%= idImage %>';
-//
-//        //data-image="'+dataName+'"
+
         var tabs = $('#explorer-tab');
         tabs.append(_.template(tabTpl, { idProject:window.app.status.currentProject, idImage:this.model.get('id'), originalFilename:this.model.get('originalFilename'), shortOriginalFilename:shortOriginalFilename}));
         var dropdownTpl = '<li class="dropdown"><a href="#" id="'+self.divPrefixId+'-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab'+self.divPrefixId+'-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
@@ -448,8 +446,6 @@ var BrowseImageView = Backbone.View.extend({
             var resolutions = _.union(serverResolutions, self.digitalResolutions)
             var options = {
                 maxExtent:new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
-                /*maxResolution: Math.pow(2,  metadata.nbZoom -1),
-                 numZoomLevels:  metadata.nbZoom,*/
                 resolutions:resolutions,
                 serverResolutions:serverResolutions,
                 units:'pixels',

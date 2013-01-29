@@ -238,52 +238,6 @@ var JobTableView = Backbone.View.extend({
 
         return sOut;
     },
-//    buildShowHideAllColumn : function(datatable, show) {
-//        var self = this;
-//        for(var i=0;i<datatable.fnSettings().aoColumns.length;i++) {
-//            datatable.fnSetColumnVis( i, show);
-//        }
-//    },
-//    buildSHowHideColumnParamPanel : function(datatable) {
-//        var self = this;
-//        console.log("buildHideColumnParamPanel="+datatable.fnSettings().aoColumns.length);
-//        for(var i=self.FIRSTCOLUMNWITHJOBDATA;i<datatable.fnSettings().aoColumns.length;i++) {
-//            var visibility = self.paramsFromSoftwaresVisibility[i-self.FIRSTCOLUMNWITHJOBDATA];
-//            datatable.fnSetColumnVis( i, visibility);
-//        }
-//
-//        $("#showParamColumnSearchJobTable").empty();
-//        for(var i=self.FIRSTCOLUMNWITHJOBDATA;i<datatable.fnSettings().aoColumns.length;i++) {
-//            var showOrHide = !self.paramsFromSoftwaresVisibility[i-self.FIRSTCOLUMNWITHJOBDATA]?"Show" : "Hide";
-//            $("#showParamColumnSearchJobTable").append('<button id="'+(i-self.FIRSTCOLUMNWITHJOBDATA)+'">'+ showOrHide +' '+datatable.fnSettings().aoColumns[i].sTitle+'</button>');
-//
-//            $("#showParamColumnSearchJobTable").find('#'+(i-self.FIRSTCOLUMNWITHJOBDATA)).click(function () {
-//                var $this = $(this);
-//                console.log("Show/Hide:"+$this.attr("id"));
-//                self.showOrHideColumnVisibility((parseInt($this.attr("id"))+self.FIRSTCOLUMNWITHJOBDATA), datatable);
-//
-//            });
-//        }
-//    },
-//    showOrHideColumnVisibility : function(colIndex, datatable) {
-//        console.log("Click show/hide column:"+colIndex);
-//        var self = this;
-//        var columnIndex = colIndex - self.FIRSTCOLUMNWITHJOBDATA;
-//        var columnParamIndex = parseInt(colIndex);
-//        console.log("columnIndex="+columnIndex +" columnParamIndex="+columnParamIndex);
-//        var oldVisibility = self.paramsFromSoftwaresVisibility[columnIndex];
-//        self.paramsFromSoftwaresVisibility[columnIndex] = !self.paramsFromSoftwaresVisibility[columnIndex];
-//        console.log("Change visibility to "+self.paramsFromSoftwaresVisibility[columnIndex]);
-//        datatable.fnSetColumnVis( columnParamIndex, self.paramsFromSoftwaresVisibility[columnIndex]);
-//
-//        if(oldVisibility) {
-//            //hide
-//            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Show " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
-//        } else {
-//            //show
-//            $("#showParamColumnSearchJobTable").find('#'+columnIndex).text("Hide " + datatable.fnSettings().aoColumns[(columnParamIndex)].sTitle);
-//        }
-//    }
     buildShowHideAllColumn:function (datatable, show) {
         var self = this;
         for (var i = 0; i < datatable.fnSettings().aoColumns.length; i++) {
@@ -300,17 +254,8 @@ var JobTableView = Backbone.View.extend({
 
         $("#showParamColumnSearchJobTable").empty();
         var strSelectBox = '<select id="selectShowParamColumnSearchJobTable">';
-
         for (var i = self.FIRSTCOLUMNWITHJOBDATA; i < datatable.fnSettings().aoColumns.length; i++) {
-
             strSelectBox = strSelectBox + '<option value="' + (i - self.FIRSTCOLUMNWITHJOBDATA) + '">' + datatable.fnSettings().aoColumns[i].sTitle + '</option>';
-
-//            $("#showParamColumnSearchJobTable").find('#'+(i-self.FIRSTCOLUMNWITHJOBDATA)).click(function () {
-//                var $this = $(this);
-//                console.log("Show/Hide:"+$this.attr("id"));
-//                self.showOrHideColumnVisibility((parseInt($this.attr("id"))+self.FIRSTCOLUMNWITHJOBDATA), datatable);
-//
-//            });
         }
         strSelectBox = strSelectBox + "</select>";
         $("#showParamColumnSearchJobTable").append(strSelectBox);

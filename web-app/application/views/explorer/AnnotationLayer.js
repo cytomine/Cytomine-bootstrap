@@ -70,22 +70,13 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     var selectStyle = null;
 
 //    if(!reviewMode)  {
-        selectStyle = new OpenLayers.Style({
-            'fillColor':'#EEEEEE',
-            'fillOpacity':.8,
-            'strokeColor':'#00FF00',
-            'strokeWidth':3,
-            'pointRadius':this.pointRadius
-        });
-//    } else {
-//        selectStyle = new OpenLayers.Style({
-//            'fillColor':'#F89406',
-//            'fillOpacity':.8,
-//            'strokeColor':'#F89406',
-//            'strokeWidth':3,
-//            'pointRadius':this.pointRadius
-//        });
-//    }
+    selectStyle = new OpenLayers.Style({
+        'fillColor':'#EEEEEE',
+        'fillOpacity':.8,
+        'strokeColor':'#00FF00',
+        'strokeWidth':3,
+        'pointRadius':this.pointRadius
+    });
 
     selectStyle.addRules(rules);
     var styleMap = new OpenLayers.StyleMap({
@@ -94,7 +85,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     });
 
     console.log("reviewMode="+reviewMode +" this.reviewLayer=" + this.reviewLayer);
-     if(this.reviewLayer) {
+    if(this.reviewLayer) {
         //review layer: paint it green
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReview(false));
@@ -105,13 +96,13 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
         styleMap.styles["select"].addRules(rules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
-     } else {
+    } else {
         //a layer in review mode but not a review layer: paint it red
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReviewNotReviewLayer(false));
         styleMap.styles["select"].addRules(rules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
-     }
+    }
 
     var annotationsCollection = null;
     if(!this.reviewLayer) {
@@ -121,31 +112,18 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     }
 
 
-//    if(this.reviewLayer) {
-//        this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-//            //renderers: ["Canvas", "SVG", "VML"],
-////            protocol:new OpenLayers.Protocol.Script({
-////                url: annotationsCollection,
-////                format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
-////                callbackKey:"callback"
-////            }),
-//            'styleMap':styleMap
-//        });
-//    } else {
-        this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
-            //renderers: ["Canvas", "SVG", "VML"],
-            strategies:[
-                new OpenLayers.Strategy.BBOX({resFactor:1})
-            ],
-            protocol:new OpenLayers.Protocol.Script({
-                url: annotationsCollection,
-                format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
-                callbackKey:"callback"
-            }),
-            'styleMap':styleMap
-        });
-//    }
-
+    this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
+        //renderers: ["Canvas", "SVG", "VML"],
+        strategies:[
+            new OpenLayers.Strategy.BBOX({resFactor:1})
+        ],
+        protocol:new OpenLayers.Protocol.Script({
+            url: annotationsCollection,
+            format:new OpenLayers.Format.Cytomine({ annotationLayer:this}),
+            callbackKey:"callback"
+        }),
+        'styleMap':styleMap
+    });
 
     this.controls = null;
     this.dialog = null;
@@ -335,23 +313,13 @@ AnnotationLayer.prototype = {
                 self.browseImageView.showAnnotationInReviewPanel(null);
                 self.clearPopup(map, evt);
                 self.vectorsLayer.drawFeature(evt.feature);
-
-//                self.browseImageView.clickSelect();
-                //alias.ontologyTreeView.refresh(null);
             },
             'featureadded':function (evt) {
-              // console.log("*********** featureadded on " + self.name);
-                //Abort if the geometry contains less than 3 vertices
-//                if (evt.feature.geometry.getVertices().length < 3) {
-//                    self.vectorsLayer.removeFeatures(evt.feature);
-//                    return;
-//                }
-
                 /* Check if feature must throw a listener when it is added
                  * true: annotation already in database (no new insert!)
                  * false: new annotation that just have been draw (need insert)
                  * */
-                 if (!self.measureOnSelect) {
+                if (!self.measureOnSelect) {
                     if (evt.feature.attributes.listener != 'NO') {
 
                         evt.feature.attributes.measure = 'YES';
@@ -412,12 +380,6 @@ AnnotationLayer.prototype = {
         }
         this.controls.freehand.freehand = true;
 
-        /* else {
-
-         this.controls = {
-         'select': new OpenLayers.Control.SelectFeature(this.vectorsLayer)
-         }
-         }*/
         map.initTools(this.controls);
 
     },
@@ -425,16 +387,6 @@ AnnotationLayer.prototype = {
 
         var self = this;
         browseImageView.addVectorLayer(this, this.userID);
-        /*new AnnotationCollection({user : this.userID, image : this.imageID, term: undefined}).fetch({
-         success : function (collection, response) {
-         collection.each(function(annotation) {
-         var feature = self.AnnotationLayerUtils.createFeatureFromAnnotation(annotation);
-         self.addFeature(feature);
-         });
-         browseImageView.layerLoadedCallback(self);
-         }
-         });*/
-
         browseImageView.layerLoadedCallback(self);
     },
     addFeature:function (feature) {
@@ -999,15 +951,9 @@ AnnotationLayer.prototype = {
     termAdded:function (idAnnotation, idTerm) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
-                  /*console.log("term Added " + idTerm);
-        this.ontologyTreeView.check(idTerm);
-        this.refresh();*/
     },
     termRemoved:function (idAnnotation, idTerm) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
-        /*console.log("term Removed " + idTerm);
-        this.ontologyTreeView.uncheck(idTerm);
-        this.refresh();*/
     }
 };

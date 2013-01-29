@@ -101,7 +101,6 @@ var ImageThumbView = Backbone.View.extend({
         });
     },
     refresh:function () {
-        //$(this.el).find("#image-properties-" + this.model.id).html(_.template(this.tplProperties, this.model.toJSON()));
         this.render();
     },
     startReviewing : function() {
@@ -118,7 +117,7 @@ var ImageThumbView = Backbone.View.extend({
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors, "error");
-        }});
+            }});
     },
     cancelReviewing : function() {
         var self = this;
@@ -135,15 +134,13 @@ var ImageThumbView = Backbone.View.extend({
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors, "error");
-        }});
+            }});
     },
     validateImage : function() {
         var self = this;
         console.log("validateImage");
         new ImageReviewModel({id:self.model.id}).destroy({
             success:function (model, response) {
-                //window.location = "#tabs-images-"+self.model.get('project');
-//                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
                 self.model = new ImageModel(response.imageinstance);
@@ -152,7 +149,7 @@ var ImageThumbView = Backbone.View.extend({
             error:function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Image", json.errors, "error");
-        }});
+            }});
     }
 });
 

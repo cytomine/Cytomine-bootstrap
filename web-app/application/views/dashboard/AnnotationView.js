@@ -17,7 +17,6 @@ var AnnotationView = Backbone.View.extend({
 
         self.model.fetch({
             success:function (collection, response) {
-
                 $(self.el).empty();
                 collection.build();
                 self.model = collection;
@@ -69,30 +68,15 @@ var AnnotationView = Backbone.View.extend({
         self.render();
     },
     appendThumbs:function (page) {
-
         var self = this;
-        var cpt = 0;
-        var inf = Math.abs(page) * self.nb_thumb_by_page;
-        var sup = (Math.abs(page) + 1) * self.nb_thumb_by_page;
-
         self.annotations = [];
-
-        //check if it exist annotations
-        /*if (_.size(self.model) == 0) {
-         (self.el).html("No annotation with this term");
-         } */
-
         self.model.each(function (annotation) {
-            //if ((cpt >= inf) && (cpt < sup)) {
             var thumb = new AnnotationThumbView({
                 model:annotation,
                 className:"thumb-wrap",
                 term:self.term
-                //id : "annotationthumb"+annotation.get('id')
             }).render();
             $(self.el).append(thumb.el);
-            //}
-            //cpt++;
             self.annotations.push(annotation.id);
         });
     },
@@ -118,55 +102,5 @@ var AnnotationView = Backbone.View.extend({
     remove:function (idAnnotation) {
         $("#thumb" + idAnnotation).remove();
     }
-    /**
-     * Refresh thumb with newAnnotations collection:
-     * -Add annotations thumb from newAnnotations which are not already in the thumb set
-     * -Remove annotations which are not in newAnnotations but well in the thumb set
-     * @param newAnnotations newAnnotations collection
-     */
-//    refresh : function(newAnnotations) {
-//        var self = this;
-//
-//
-//        newAnnotations.fetch({
-//            success : function (collection, response) {
-//                collection.build();
-//
-//                var arrayDeletedAnnotations = self.annotations;
-//                collection.each(function(annotation) {
-//                    //if annotation is not in table, add it
-//                    if(_.indexOf(self.annotations, annotation.id)==-1){
-//                        self.add(annotation);
-//                        self.annotations.push(annotation.id);
-//                    }
-//                    /*
-//                     * We remove each "new" annotation from  arrayDeletedAnnotations
-//                     * At the end of the loop, element from arrayDeletedAnnotations must be deleted because they aren't
-//                     * in the set of new annotations
-//                     */
-//                    //
-//                    arrayDeletedAnnotations = _.without(arrayDeletedAnnotations,annotation.id);
-//
-//                });
-//
-//                arrayDeletedAnnotations.forEach(function(removeAnnotation) {
-//                    self.remove(removeAnnotation);
-//                    self.annotations = _.without(self.annotations,removeAnnotation);
-//                });
-//
-//
-//
-//
-//            }
-//
-//
-//
-//
-//        });
-//
-//
-//
-//    }
-
 
 });

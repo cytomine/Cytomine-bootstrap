@@ -303,18 +303,6 @@ var ReviewPanel = SideBarPanel.extend({
         self.browseImageView.removeFeature(annotation.id);
         new AnnotationReviewedModel({id:annotation.get('parentIdent')}).destroy({
             success:function (model, response) {
-                //remove the reviewed annotation from the layer
-//                var layerItem = _.find(self.printedLayer, function (item) {
-//                    return item.id == response.basedannotation.user;
-//                });
-//
-//                if (layerItem) {
-//                    //if layer is undefined, don't need to add old annotation
-//                    var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.basedannotation);
-//                    layerItem.layer.addFeature(newFeature);
-//                    layerItem.layer.controls.select.unselectAll();
-//                    layerItem.layer.controls.select.select(newFeature);
-//                }
                 window.app.view.message("Annotation", response.message, "success");
                 _.each(self.printedLayer,function(layer) {
                     layer.vectorsLayer.refresh();
@@ -385,36 +373,6 @@ var ReviewPanel = SideBarPanel.extend({
             $("#currentReviewAnnotation" + self.model.id).find("#reviewValidate" + idAnnotation).click(function () {
                 self.validatePicture();
             });
-//            $("#example").multiselectNext({
-//            deselected:function (event, ui) {
-//                //lock current user (cannot be deselected
-////                if ($(ui.option).val() == window.app.status.user.id) {
-////                    $("#projectuser").multiselectNext('select', $(ui.option).text());
-////                    window.app.view.message("User", "You must be in user list of your project!", "error");
-////                }
-//            },
-//            selected:function (event, ui) {
-//                //alert($(ui.option).val() + " has been selected");
-//            }});
-
-//            $("#test").on("click", ".init", function() {
-//                $(this).closest("ul").children('li:not(.init)').toggle();
-//            });
-//
-//            var allOptions = $("#test").children('li:not(.init)');
-//            $("#test").on("click", "li:not(.init)", function() {
-//                allOptions.removeClass('selected');
-//                $(this).addClass('selected');
-//                $("#test").children('.init').html($(this).html());
-//                allOptions.toggle();
-//            });
-//
-//
-////            $("#submit").click(function() {
-////                alert("The selected Value is "+ $("#currentReviewAnnotation" + self.model.id).find("ul").find(".selected").data("value"));
-////            });
-
-
             self.showAnnotationTerm(annotation)
         });
     },

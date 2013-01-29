@@ -70,18 +70,6 @@ var JobComparatorView = Backbone.View.extend({
         } else {
             self.changeSelectionValue($("#comparatorJobSelection").find('.job2'), self.jobs2.at(0).id);
         }
-
-//
-//        if (self.job1 != null && self.job1 != undefined) {
-//            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.job1.id);
-//            if (self.job1.id != self.jobs2.at(0).id) self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(0).id);
-//            else self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(1).id);
-//        }
-//        else {
-//            //if no job pre-selected, select the first (last in date) and second
-//            self.changeSelectionValue($("#comparatorJobSelection").find('.job1'),self.jobs1.at(0).id);
-//            self.changeSelectionValue($("#comparatorJobSelection").find('.job2'),self.jobs2.at(1).id);
-//        }
     },
     changeSelectionValue:function (elem, value) {
         elem.find('select').val(value);
@@ -239,8 +227,6 @@ var JobComparatorView = Backbone.View.extend({
         elemParent.find('#runParamsTable').append('<thead><tr><th>Name</th><th>Value</th><th>Type</th></tr></thead>');
         elemParent.find('#runParamsTable').append('<tbody></tbody>');
 
-
-        //var datatable = elemParent.find('#runParamsTable').dataTable();
         //print data from project image table
         var tbody = elemParent.find('#runParamsTable').find("tbody");
 

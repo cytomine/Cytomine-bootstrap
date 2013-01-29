@@ -14,8 +14,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     render:function () {
         var self = this;
-        console.log("##########################" + $("#selectRunParamsTable").length);
-        require([
+       require([
             "text!application/templates/processing/SoftwareInfo.tpl.html"
         ],
             function (tpl) {
@@ -28,7 +27,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         $(this.el).empty();
         $(this.el).append(_.template(tpl, {}));
-        console.log("##########################" + $("#selectRunParamsTable").length);
 
         //get all software from project and print menu
         new SoftwareCollection({ project:self.model.id}).fetch({
@@ -71,8 +69,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         this.printProjectSoftwareInfo();
     },
     refresh:function (idSoftware, idJob) {
-        console.log("Print job " + idJob + " from software " + idSoftware);
-        if (!this.softwares || this.softwares.length < 1) return;
+      if (!this.softwares || this.softwares.length < 1) return;
         this.idJob = idJob;
         if (idSoftware == undefined) {
             idSoftware = this.idSoftware;
@@ -230,8 +227,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         } else {
             $("#panelJobDetails").hide();
             $("#panelJobResults").hide();
-//            $("#panelJobDetails").empty();
-//            $("#panelJobResults").empty();
         }
 
     },
@@ -378,24 +373,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 { "sWidth":"20%", "aTargets":[ 2 ] }
             ]
         });
-    },
-    getJobParamValue:function (param) {
-//        if(param.type=="List") {
-//            var valueStr = "<select>";
-//            var values = param.value.split(',');
-//            _.each(values,function(value) {
-//                valueStr = valueStr + "<option>"+value+"</option>";
-//            });
-//            valueStr = valueStr + "</select>";
-//            return valueStr;
-//        } else if(param.type=="Date") {
-//            return window.app.convertLongToDate(param.value);
-//        } else if(param.type=="Boolean") {
-//            if(param.value=="true") return '<input type="checkbox" name="" checked="checked" />';
-//            else  return '<input type="checkbox" name="" />';
-//        } else if(param.name.toLowerCase()=="privatekey") return "***********";
-//        else if(param.name.toLowerCase()=="publickey") return "***********";
-//        else return param.value
     },
     printJobResult:function (job) {
         if (job == undefined) {
