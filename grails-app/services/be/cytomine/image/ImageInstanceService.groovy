@@ -40,7 +40,6 @@ class ImageInstanceService extends ModelService {
     def read(def id) {
         def image = ImageInstance.read(id)
         if(image) {
-            println "READ IMAGE PERMISSION="+ image.project.checkReadPermission()
             SecurityCheck.checkReadAuthorization(image.project)
         }
         image
@@ -87,7 +86,7 @@ class ImageInstanceService extends ModelService {
         def images = ImageInstance.createCriteria().list(max:sup-inf, offset:inf) {
             createAlias("baseImage", "i")
             eq("project", project)
-            order("i.created", "desc")
+            order("created", "desc")
             fetchMode 'baseImage', FetchMode.JOIN
         }
         return images

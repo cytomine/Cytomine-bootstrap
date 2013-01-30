@@ -29,10 +29,7 @@ class SoftwareParameterService extends ModelService{
 
     def read(def id) {
         def softParam = SoftwareParameter.read(id)
-//        if(softParam) {
-//            println "READ IMAGE PERMISSION="+ softParam.software.checkReadPermission()
-//            SecurityCheck.checkReadAuthorization(softParam.software)
-//        }
+        //TODO: security?
         softParam
     }
 

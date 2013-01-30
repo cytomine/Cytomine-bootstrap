@@ -195,4 +195,30 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
+
+    void testGetNextImageInstance() {
+
+        def project = BasicInstance.createOrGetBasicProject()
+
+        def image1 = BasicInstance.getBasicImageInstanceNotExist()
+        image1.project = project
+        BasicInstance.saveDomain(image1)
+
+        def image2 = BasicInstance.getBasicImageInstanceNotExist()
+        image2.project = project
+        BasicInstance.saveDomain(image2)
+
+        def result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert Long.parseLong(json.id+"") == image2.id
+
+
+        result = ImageInstanceAPI.next(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.id == null
+    }
 }

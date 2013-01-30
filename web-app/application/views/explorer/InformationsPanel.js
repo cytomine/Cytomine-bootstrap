@@ -44,5 +44,20 @@ var InformationsPanel = SideBarPanel.extend({
         this.initToggle(el, elContent1, sourceEvent1, "infoPanelContent1");
         this.initToggle(el, elContent2, sourceEvent2, "infoPanelContent2");
 
+        $("#getNext"+self.model.id).click(function() {
+            new ImageInstanceModel({next:true, id:self.model.id}).fetch({
+                success:function (model, response) {
+                    if(model.get('project')) {
+                        var nextUrl = "#tabs-image-"+model.get('project')+"-"+model.id+"-";
+                        $("#closeTabtabs-image-"+self.model.id).click();
+                        window.location = nextUrl;
+                    } else {
+                        window.app.view.message("Next image", "This is the last image", "error");
+                    }
+                }
+            });
+        });
+        $("#getNext"+self.model.id).show();
+
     }
 });

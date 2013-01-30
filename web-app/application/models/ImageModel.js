@@ -71,13 +71,27 @@ var ImageInstanceModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/imageinstance';
         var format = '.json';
+<<<<<<< .mine
+        if (this.isNew()) {
+            return base + format;
+        }
+        var nextImage = "";
+        if(this.next) {
+            nextImage = "/next"
+        }
+        var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + nextImage + format;
+        console.log(url);
+        return url;
+=======
         if (this.isNew()) {
             return base + format;
         }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+>>>>>>> .r1987
     },
     initialize: function (options) {
         this.id = options.id;
+        this.next = options.next;
     }
 });
 

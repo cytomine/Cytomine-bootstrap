@@ -49,4 +49,9 @@ class ImageInstanceAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
+    static def next(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/next.json"
+        return doGET(URL, username, password)
+    }
+
 }

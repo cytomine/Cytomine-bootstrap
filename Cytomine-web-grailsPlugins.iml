@@ -17,7 +17,6 @@
           <root url="file://$USER_HOME$/.grails/2.2.0/projects/cytomine/plugins/twitter-bootstrap-2.0.4/web-app" relative="/" />
           <root url="file://$USER_HOME$/.grails/2.2.0/projects/cytomine/plugins/quartz-1.0-RC5/web-app" relative="/" />
         </webroots>
-        <sourceRoots />
       </configuration>
     </facet>
   </component>
