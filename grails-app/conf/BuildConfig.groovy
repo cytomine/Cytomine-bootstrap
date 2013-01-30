@@ -58,6 +58,7 @@ grails.project.dependency.resolution = {
         runtime ':database-migration:1.2.1'
         runtime ":resources:1.2.RC2"
         runtime ':jquery:1.8.3'
+        compile ":grails-ant:0.1.3"
 
         test ':code-coverage:1.2'
         test ':selenium-rc:1.0.2'

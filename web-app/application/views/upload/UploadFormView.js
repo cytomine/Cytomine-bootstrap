@@ -3,8 +3,10 @@ var UploadFormView = Backbone.View.extend({
     statusLabels: {
         uploadedLabel: '<span class="label label-inverse">UPLOADED</span>',
         errorFormatLabel: '<span class="label label-important">ERROR FORMAT</span>',
-        convertedLabel: '<span class="label label-info">CONVERTED</span>',
-        deployedLabel: '<span class="label label-success">DEPLOYED</span>'
+        convertedLabel: '<span class="label label-info">TO DEPLOY</span>',
+        deployedLabel: '<span class="label label-success">DEPLOYED</span>',
+        errorConvertLabel: '<span class="label label-important">ERROR CONVERT</span>',
+        uncompressed : '<span class="label label-success">UNCOMPRESSED</span>'
     },
     fileUploadErrors: {
         maxFileSize: 'File is too big',
@@ -562,9 +564,14 @@ var UploadFormView = Backbone.View.extend({
             return this.statusLabels.convertedLabel;
         } else if (model.deployed) {
             return this.statusLabels.deployedLabel;
-        } else if (model.error) {
+        } else if (model.error_format) {
             return this.statusLabels.errorFormatLabel;
+        } else if (model.error_convert) {
+            return this.statusLabels.errorConvertLabel;
+        } else if (model.uncompressed) {
+            return this.statusLabels.uncompressed;
         }
+
         return "?";//this.statusLabels.deployedLabel;
     },
     appendUploadedFile: function (model, target) {

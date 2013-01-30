@@ -21,8 +21,6 @@ import org.apache.log4j.Logger
  */
 class AbstractImage extends CytomineDomain implements Serializable {
 
-    def imagePropertiesService
-
     String originalFilename
     String filename
     Instrument scanner
@@ -36,7 +34,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     static belongsTo = Sample
 
-    static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty]
+    static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty, nestFiles : NestedFile]
 
     static transients = ["zoomLevels", "thumbURL"]
 

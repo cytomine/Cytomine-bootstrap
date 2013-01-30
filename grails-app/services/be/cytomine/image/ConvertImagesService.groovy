@@ -1,32 +1,146 @@
 package be.cytomine.image
 
 import be.cytomine.security.SecUser
+import org.springframework.mock.web.MockMultipartFile
+
+import javax.activation.MimetypesFileTypeMap
 
 /**
  * TODOSTEVBEN:: doc + refactoring + security (?)
  */
 class ConvertImagesService {
 
+    def zipService
+    def fileSystemService
+    def grailsApplication
+
+    static String MRXS_EXTENSION = "mrxs"
+    static String VMS_EXTENSION = "vms"
+
     static transactional = true
 
     def convertUploadedFile(UploadedFile uploadedFile, SecUser currentUser) {
-//        SpringSecurityUtils.reauthenticate currentUser.getUsername(), null
         //Check if file mime is allowed
-        if (!UploadedFile.allowedMime.plus(UploadedFile.mimeToConvert).contains(uploadedFile.getExt())) {
+        def allMime = UploadedFile.allowedMime.plus(UploadedFile.mimeToConvert).plus(UploadedFile.zipMime)
+        if (!allMime.contains(uploadedFile.getExt())) {
             log.info uploadedFile.getFilename() + " : FORMAT NOT ALLOWED"
             uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
+            uploadedFile.setConverted(false)
             uploadedFile.save(flush : true)
-            return true
+            return [uploadedFile]
         }
+
+        if (UploadedFile.zipMime.contains(uploadedFile.getExt())) {
+            return handleCompressedFile(uploadedFile, currentUser)
+        } else {
+            return handleSingleFile(uploadedFile, currentUser)
+        }
+    }
+
+    private def handleSpecialFile(UploadedFile uploadedFile, SecUser currentUser, def pathsAndExtensions) {
+
+        UploadedFile mainUploadedFile = null //mrxs or vms file
+        def uploadedFiles = [] //nested files
+
+        pathsAndExtensions.each { it ->
+            if (it.extension == MRXS_EXTENSION || it.extension == VMS_EXTENSION) {
+                mainUploadedFile = createNewUploadedFile(uploadedFile, it, currentUser, null)
+            }
+        }
+
+        if (!mainUploadedFile) return null //ok, it's not a special file
+
+        //create nested file
+        mainUploadedFile.setStatus(UploadedFile.CONVERTED)
+        mainUploadedFile.setConverted(true)
+        mainUploadedFile.save()
+        uploadedFiles << mainUploadedFile
+        pathsAndExtensions.each { it ->
+            if (it.extension != MRXS_EXTENSION && it.extension != VMS_EXTENSION) {
+                UploadedFile nestedUploadedFile = createNewUploadedFile(uploadedFile, it, currentUser, "application/octet-stream")
+                nestedUploadedFile.setStatus(UploadedFile.CONVERTED)
+                nestedUploadedFile.setParent(mainUploadedFile)
+                nestedUploadedFile.setConverted(true)
+                if (nestedUploadedFile.validate()) {
+                    nestedUploadedFile.save()
+                } else {
+                    nestedUploadedFile.errors.each {
+                        log.error it
+                    }
+                }
+
+                uploadedFiles << nestedUploadedFile
+            }
+        }
+
+        return uploadedFiles
+    }
+
+    private def handleCompressedFile(UploadedFile uploadedFile, SecUser currentUser) {
+        /* Unzip the archive within the target */
+        String destPath = zipService.uncompress(uploadedFile.getAbsolutePath())
+
+
+        /* List files from the archive */
+        def pathsAndExtensions = fileSystemService.getAbsolutePathsAndExtensionsFromPath(destPath)
+        uploadedFile.setStatus(UploadedFile.UNCOMPRESSED)
+        uploadedFile.save()
+
+        def specialFiles = handleSpecialFile(uploadedFile, currentUser, pathsAndExtensions)
+        if (specialFiles) return specialFiles
+
+        //it looks like we have a set of "single file"
+        def uploadedFiles = []
+        pathsAndExtensions.each { it ->
+
+            UploadedFile new_uploadedFile = createNewUploadedFile(uploadedFile, it, currentUser, null)
+
+            if (new_uploadedFile.validate()){
+                new_uploadedFile = handleSingleFile(new_uploadedFile, currentUser)
+                if (new_uploadedFile.getStatus() == UploadedFile.CONVERTED) {
+                    uploadedFiles << new_uploadedFile
+                }
+            } else {
+                uploadedFile.errors.each {
+                    log.error it
+                }
+            }
+        }
+
+        return uploadedFiles
+    }
+
+    private def createNewUploadedFile(UploadedFile parentUploadedFile, def pathAndExtension, SecUser currentUser, String contentType){
+        String absolutePath = pathAndExtension.absolutePath
+        String extension = pathAndExtension.extension
+        println "createNewUploadedFile $absolutePath"
+        String filename = absolutePath.substring(parentUploadedFile.getPath().length(), absolutePath.length())
+        if (!contentType) {
+            MockMultipartFile multipartFile = new MockMultipartFile(absolutePath, new File(absolutePath).getBytes())
+            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+            contentType = mimeTypesMap.getContentType(absolutePath)
+        }
+        return new UploadedFile(
+                originalFilename: filename,
+                filename : filename,
+                path : parentUploadedFile.getPath(),
+                ext : extension,
+                size : new File(absolutePath).size(),
+                contentType : contentType,
+                project : parentUploadedFile.getProject(),
+                user : currentUser
+        )
+    }
+
+    private def handleSingleFile(UploadedFile uploadedFile, SecUser currentUser) {
 
         //Check if file must be converted or not...
         if (!UploadedFile.mimeToConvert.contains(uploadedFile.getExt())) {
             log.info uploadedFile.getFilename() + " : CONVERTED"
             uploadedFile.setStatus(UploadedFile.CONVERTED)
+            uploadedFile.setConverted(false)
             uploadedFile.setConvertedExt(uploadedFile.getExt())
             uploadedFile.setConvertedFilename(uploadedFile.getFilename())
-            uploadedFile.save(flush : true)
-            return true
         } else {
             log.info "convert $uploadedFile"
             //..if yes. Convert it
@@ -36,81 +150,56 @@ class ConvertImagesService {
             String contextPath = uploadedFile.getPath().endsWith("/") ?  uploadedFile.getPath() :  uploadedFile.getPath() + "/"
             String originalFilenameFullPath = contextPath + uploadedFile.getFilename()
             String convertedFilenameFullPath = contextPath + convertFileName
+
             uploadedFile.setConvertedFilename(convertFileName)
             uploadedFile.setConvertedExt("tiff")
 
 
-
             try {
-                //Check number of bits in channels (e.g //identify -verbose /tmp/cytominebuffer/18/1351541319227/JPCLN001.png | grep Depth)
-                /*if (uploadedFile.getExt().toLowerCase() == "png") {
-                    log.info "It's a PNG. 16 bits per channel ?"
-                    String identifyCommand = """ -verbose "$originalFilenameFullPath" | grep Depth"""
-                    def ant = new AntBuilder()   // create an antbuilder
-                    ant.exec(outputproperty:"cmdOut",
-                            errorproperty: "cmdErr",
-                            resultproperty:"cmdExit",
-                            failonerror: "true",
-                            executable: "/usr/local/bin/identify") {
-                        arg(line:identifyCommand)
-                    }
-                    String result = ant.project.properties.cmdOut //ex :  Depth: 16-bit
-                    println "RESULT : $result"
-                    if (result) {
-                        String tmpFilename = "$originalFilenameFullPath.8bits.png"
-                        String bitsString = result.split(":")[1].split("-")[0]
-                        log.info "bitsString : $bitsString"
-                        if (Integer.parseInt(bitsString) == 16) {
-                            log.info "converting to 8 bits"
-                            //IF 16 BITS => convert /tmp/cytominebuffer/18/1351541319227/JPCLN001.png -depth 8 /tmp/cytominebuffer/18/1351541319227/JPCLN001_8.png
-                            ant = new AntBuilder()   // create an antbuilder
-                            ant.exec(outputproperty:"cmdOut",
-                                    errorproperty: "cmdErr",
-                                    resultproperty:"cmdExit",
-                                    failonerror: "true",
-                                    executable: "/usr/local/bin/convert") {
-                                arg(line:""" "$originalFilenameFullPath" -depth 8 "$tmpFilename" """)
-                            }
-                            originalFilenameFullPath = tmpFilename
-                        }
-                    }
 
+                Boolean success = vipsify(originalFilenameFullPath, convertedFilenameFullPath)
+                if (success) {
+                    uploadedFile.setConverted(true)
+                    uploadedFile.setStatus(UploadedFile.CONVERTED)
 
-                }*/
-                //Convert
-
-                //1. Look for vips executable
-
-                def executable = "/usr/bin/vips"
-                if (System.getProperty("os.name").contains("OS X")) {
-                    executable = "/usr/local/bin/vips"
+                } else {
+                    uploadedFile.setConverted(false)
+                    uploadedFile.setStatus(UploadedFile.ERROR_CONVERT)
                 }
-                log.info "vips is in : $executable"
-                def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
-                log.info "$executable $convertCommand"
-                def ant = new AntBuilder()   // create an antbuilder
-                ant.exec(outputproperty:"cmdOut",
-                        errorproperty: "cmdErr",
-                        resultproperty:"cmdExit",
-                        failonerror: "true",
-                        executable: executable) {
-                    arg(line:convertCommand)
-                }
-                log.info "return code:  ${ant.project.properties.cmdExit}"
-                log.info "stderr:         ${ant.project.properties.cmdErr}"
-                log.info "stdout:        ${ ant.project.properties.cmdOut}"
 
-                uploadedFile.setStatus(UploadedFile.CONVERTED)
-                uploadedFile.save(flush : true)
-                return true
 
             } catch (Exception e) {
                 e.printStackTrace()
                 uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
-                uploadedFile.save(flush : true)
-                return false
             }
 
         }
+        uploadedFile.save()
+        return uploadedFile
+    }
+
+    private def vipsify(String originalFilenameFullPath, String convertedFilenameFullPath) {
+        //1. Look for vips executable
+        def executable = "/usr/bin/vips"
+        if (System.getProperty("os.name").contains("OS X")) {
+            executable = "/usr/local/bin/vips"
+        }
+        log.info "vips is in : $executable"
+        //2. Create command
+        def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
+        log.info "$executable $convertCommand"
+        //3. Execute
+        def ant = new AntBuilder()   // create an antbuilder
+        ant.exec(outputproperty:"cmdOut",
+                errorproperty: "cmdErr",
+                resultproperty:"cmdExit",
+                failonerror: "true",
+                executable: executable) {
+            arg(line:convertCommand)
+        }
+        log.info "return code:  ${ant.project.properties.cmdExit}"
+        log.info "stderr:         ${ant.project.properties.cmdErr}"
+        log.info "stdout:        ${ ant.project.properties.cmdOut}"
+        return ant.project.properties.cmdExit == "0"
     }
 }

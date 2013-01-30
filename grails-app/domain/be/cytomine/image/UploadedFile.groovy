@@ -11,12 +11,15 @@ import org.apache.log4j.Logger
  */
 class UploadedFile extends CytomineDomain implements Serializable{
 
-    public static allowedMime = ["vms", "mrxs", "svs", "opt", "jp2"]
+    public static allowedMime = ["svs", "opt", "jp2"]
+    public static zipMime = ["zip"]
     public static mimeToConvert = ["jpg", "png", "tiff", "tif","pgm"]//, "ndpi"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1
     public static int DEPLOYED = 2
     public static int ERROR_FORMAT = 3
+    public static int ERROR_CONVERT = 4
+    public static int UNCOMPRESSED = 5
 
     SecUser user
     Project project
@@ -27,13 +30,20 @@ class UploadedFile extends CytomineDomain implements Serializable{
     String ext
     String path
     String contentType
+    UploadedFile parent
     int size
     int status = 0
+
+    /**
+     * Indicates whether or not a conversion was done
+     */
+    Boolean converted = false
 
     static constraints = {
         project (nullable : true)
         convertedFilename (nullable: true)
         convertedExt (nullable: true)
+        parent(nullable : true)
     }
 
     /**
@@ -58,8 +68,15 @@ class UploadedFile extends CytomineDomain implements Serializable{
             returnArray['uploaded'] = (it.status == UploadedFile.UPLOADED)
             returnArray['converted'] = (it.status == UploadedFile.CONVERTED)
             returnArray['deployed'] = (it.status == UploadedFile.DEPLOYED)
-            returnArray['error'] = (it.status == UploadedFile.ERROR_FORMAT)
+            returnArray['error_format'] = (it.status == UploadedFile.ERROR_FORMAT)
+            returnArray['error_convert'] = (it.status == UploadedFile.ERROR_CONVERT)
+            returnArray['uncompressed'] = (it.status == UploadedFile.UNCOMPRESSED)
             return returnArray
         }
+    }
+
+    def getAbsolutePath() {
+        String contextPath = this.path.endsWith("/") ?  this.path :  this.path + "/"
+        return contextPath + this.filename
     }
 }
