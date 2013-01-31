@@ -7,6 +7,8 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class SecUserSecRoleService extends ModelService {
 
@@ -46,6 +48,12 @@ class SecUserSecRoleService extends ModelService {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        return executeCommand(new DeleteCommand(user: currentUser), json)
+    }
+
+    def delete(SecUserSecRole userRole, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{user: ${userRole.secUser.id}, role: ${userRole.secRole.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -114,7 +122,7 @@ class SecUserSecRoleService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(def json) {
-        User user = User.read(json.user)
+        SecUser user = SecUser.read(json.user)
         SecRole role = SecRole.read(json.role)
         SecUserSecRole domain = SecUserSecRole.findBySecUserAndSecRole(user, role)
         if (!domain) throw new ObjectNotFoundException("Sec user sec role not found ($user,$domain)")

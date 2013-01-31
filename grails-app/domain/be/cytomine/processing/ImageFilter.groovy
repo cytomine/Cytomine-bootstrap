@@ -12,8 +12,6 @@ class ImageFilter {
     String baseUrl
     ProcessingServer processingServer
 
-    static hasMany = [imageFilterProjects: ImageFilterProject]
-
     static constraints = {
         name(blank: false, nullable: false)
         baseUrl(blank: false, nullable: false)

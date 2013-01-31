@@ -19,12 +19,4 @@ class TransactionService {
             return transaction
         }
     }
-
-    /**
-     * Stop a transaction
-     */
-    def stop() {
-        //for this implementation (with simple domain), no need to do something in stop method
-       log.info "end transaction:" + springSecurityService.principal.id
-    }
 }

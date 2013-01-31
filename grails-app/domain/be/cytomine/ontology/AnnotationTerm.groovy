@@ -19,70 +19,8 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     Term term
     SecUser user
 
-    static constraints = {
-    }
-
-    String toString() {
-        "[" + this.id + " <" + userAnnotation + "," + term + "," + user + ">]"
-    }
-
-    /**
-     * Add a term to an annotation
-     */
-    static AnnotationTerm link(UserAnnotation annotation, Term term,SecUser user) {
-
-        if (!annotation) {
-            throw new WrongArgumentException("Annotation cannot be null")
-        }
-        if (!term) {
-            throw new WrongArgumentException("Term cannot be null")
-        }
-        if (!user) {
-            throw new WrongArgumentException("User cannot be null")
-        }
-
-        def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term,'user': user)
-
-        if (!annotationTerm) {
-            annotationTerm = new AnnotationTerm(user: user)
-            annotation?.addToAnnotationTerm(annotationTerm)
-            term?.addToAnnotationTerm(annotationTerm)
-            annotation.refresh()
-            term.refresh()
-            annotationTerm.save(flush: true)
-        } else {
-            throw new AlreadyExistException("Annotation " + annotation.id + " and term " + term.id + " are already mapped with user " + user.id)
-        }
-
-        return annotationTerm
-    }
-
-    /**
-     * Remove a term from an annotation
-     */
-    static void unlink(UserAnnotation annotation, Term term,SecUser user) {
-
-        if (!annotation) {
-            throw new WrongArgumentException("Annotation cannot be null")
-        }
-        if (!term) {
-            throw new WrongArgumentException("Term cannot be null")
-        }
-        if (!user) {
-            throw new WrongArgumentException("User cannot be null")
-        }
-
-        def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
-
-        if (annotationTerm) {
-            annotation?.removeFromAnnotationTerm(annotationTerm)
-            term?.removeFromAnnotationTerm(annotationTerm)
-            annotation.refresh()
-            term.refresh()
-            annotationTerm.delete(flush: true)
-        } else {
-            throw new WrongArgumentException("Annotation - term - user not exist")
-        }
+    static mapping = {
+        id(generator: 'assigned', unique: true)
     }
 
     /**

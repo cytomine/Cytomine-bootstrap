@@ -9,6 +9,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class JobDataService extends ModelService {
 
@@ -19,6 +21,7 @@ class JobDataService extends ModelService {
     def modelService
     def userGroupService
     def springSecurityService
+    def transactionService
 
     def read(def id) {
         def jobData = JobData.read(id)
@@ -70,7 +73,12 @@ class JobDataService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        delete(retrieve(json), transactionService.start())
+    }
+
+    def delete(JobData jobData, Transaction transaction, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${jobData.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -117,13 +125,9 @@ class JobDataService extends ModelService {
      */
     def destroy(JobData domain, boolean printMessage) {
         //Build response message
-        log.info "destroy JobData"
-        log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.key, domain.job?.id], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        log.info "deleteDomain"
         deleteDomain(domain)
-        log.info "response"
         return response
     }
 
@@ -168,7 +172,16 @@ class JobDataService extends ModelService {
      */
     def retrieve(JSONObject json) {
         JobData jobdata = JobData.get(json.id)
-        if (!jobdata) throw new ObjectNotFoundException("Jobdata " + json.id + " not found")
+        if (!jobdata) {
+            throw new ObjectNotFoundException("Jobdata " + json.id + " not found")
+        }
         return jobdata
+    }
+
+    def deleteDependentJobDataBinaryValue(JobData jobData, Transaction transaction) {
+        println "jobData=$jobData"
+        if(jobData.value) {
+            jobData.value.delete()
+        }
     }
 }

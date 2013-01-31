@@ -32,8 +32,6 @@ class User extends SecUser {
         id(generator: 'assigned', unique: true)
     }
 
-    static hasMany = [softwareProjects: SoftwareProject]
-
     def beforeInsert() {
         super.beforeInsert()
     }

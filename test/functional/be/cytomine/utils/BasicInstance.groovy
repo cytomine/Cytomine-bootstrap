@@ -185,7 +185,8 @@ class BasicInstance {
        def project = createOrGetBasicProject()
        def result = ImageFilterProject.findByProjectAndImageFilter(project,imagefilter)
         if(!result) {
-            result = ImageFilterProject.link(imagefilter,project)
+            result = new ImageFilterProject(imagefilter:imagefilter,project:project)
+            saveDomain(result)
         }
         return result
     }
@@ -408,7 +409,10 @@ class BasicInstance {
             randomInt = random.nextInt()
             image = AbstractImage.findByFilename(randomInt + "")
         }
+
         image = new AbstractImage(filename: randomInt, scanner: createOrGetBasicScanner(), sample: null, mime: BasicInstance.createOrGetBasicMime(), path: "pathpathpath")
+        println "scanner.version=${image.scanner.version}"
+        println "mime.version=${image.mime.version}"
         checkDomain(image)
         image
     }
@@ -426,7 +430,7 @@ class BasicInstance {
 
         def annotationTerm = AnnotationTerm.findWhere(userAnnotation: annotation, 'term': term, 'user': user)
         assert annotationTerm == null
-        annotationTerm = AnnotationTerm.link(annotation, term,user)
+        annotationTerm = new AnnotationTerm(userAnnotation: annotation, term: term,user: user)
         saveDomain(annotationTerm)
         annotationTerm
     }
@@ -533,7 +537,8 @@ class BasicInstance {
         assert abstractimageGroup == null
 
         if (!abstractimageGroup) {
-            abstractimageGroup = AbstractImageGroup.link(abstractimage, group)
+            abstractimageGroup = new AbstractImageGroup(abstractimage:abstractimage, group:group)
+            saveDomain(abstractimageGroup)
         }
         abstractimageGroup
     }
@@ -869,7 +874,8 @@ class BasicInstance {
 
         def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
         if (!relationTerm) {
-            relationTerm = RelationTerm.link(relation, term1, term2)
+            relationTerm = new RelationTerm(relation:relation, term1:term1, term2:term2)
+            saveDomain(relationTerm)
         }
         assert relationTerm != null
         relationTerm
@@ -897,7 +903,8 @@ class BasicInstance {
             mime = new Mime(extension:"tif",mimeType: "tif")
             BasicInstance.saveDomain(mime)
             def is = createOrGetBasicImageServer()
-            MimeImageServer.link(is,mime)
+            def mis = new MimeImageServer(imageServer: is,mime:mime)
+            saveDomain(mis)
 
         }
         mime.refresh()
@@ -1287,16 +1294,8 @@ class BasicInstance {
         log.debug "createOrGetBasicSoftwareProject()"
         Software software = createOrGetBasicSoftware()
         Project project = createOrGetBasicProject()
-        log.debug "software="+software+" project="+project
-
-        SoftwareProject softproj = SoftwareProject.link(software,project)
-
-        softproj.validate()
-        log.debug "SoftwareParameter.errors=" + softproj.errors
-        softproj.save(flush: true)
-        log.debug "SoftwareParameter.errors=" + softproj.errors
-
-        assert softproj != null
+        SoftwareProject softproj = new SoftwareProject(software:software,project:project)
+        saveDomain(softproj)
         softproj
     }
 

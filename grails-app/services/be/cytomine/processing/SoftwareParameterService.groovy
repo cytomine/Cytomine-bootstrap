@@ -10,6 +10,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class SoftwareParameterService extends ModelService{
 
@@ -21,6 +23,7 @@ class SoftwareParameterService extends ModelService{
     def transactionService
     def modelService
     def responseService
+    def jobParameterService
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
@@ -71,9 +74,13 @@ class SoftwareParameterService extends ModelService{
      */
     @PreAuthorize("#security.checkSoftwareDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
+        delete(retrieve(json))
+    }
+
+    def delete(SoftwareParameter sp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def result = executeCommand(new DeleteCommand(user: currentUser), json)
-        return result
+        def json = JSON.parse("{id: ${sp.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -168,5 +175,12 @@ class SoftwareParameterService extends ModelService{
         SoftwareParameter parameter = SoftwareParameter.get(json.id)
         if (!parameter) throw new ObjectNotFoundException("SoftwareParameter " + json.id + " not found")
         return parameter
+    }
+
+
+    def deleteDependentJobParameter(SoftwareParameter sp, Transaction transaction) {
+        JobParameter.findAllBySoftwareParameter(sp).each {
+            jobParameterService.delete(it,transaction,false)
+        }
     }
 }

@@ -189,8 +189,6 @@ class ReviewedAnnotationService extends ModelService {
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
             def annotationID = result?.data?.reviewedannotation?.id
-            //Stop transaction
-            transactionService.stop()
             return result
         }
     }
@@ -216,14 +214,13 @@ class ReviewedAnnotationService extends ModelService {
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(ReviewedAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //Start transaction
-        Transaction transaction = transactionService.start()
-        //Delete annotation (+cascade)
-        def result = deleteAnnotation(ReviewedAnnotation.read(json.id), currentUser, true, transaction)
-        //Stop transaction
-        transactionService.stop()
-        return result
+        def json = JSON.parse("{id: ${annotation.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -344,5 +341,15 @@ class ReviewedAnnotationService extends ModelService {
         }
         return annotation
     }
+
+    def deleteDependentAlgoAnnotationTerm(ReviewedAnnotation annotation, Transaction transaction) {
+        AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id).each {
+            algoAnnotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentHasManyTerm(ReviewedAnnotation annotation, Transaction transaction) {
+        annotation.term?.clear()
+     }
 
 }

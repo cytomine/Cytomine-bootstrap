@@ -9,6 +9,8 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class UserGroupService extends ModelService {
 
@@ -16,7 +18,7 @@ class UserGroupService extends ModelService {
 
     def cytomineService
     def commandService
-    def modelService
+    def transactionService
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
@@ -48,7 +50,12 @@ class UserGroupService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(UserGroup ug, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{group: ${ug.group.id},user:${ug.user.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -141,33 +148,4 @@ class UserGroupService extends ModelService {
         if (!domain) throw new ObjectNotFoundException("Usergroup with user $user and group $group not found")
         return domain
     }
-
-    UserGroup link(User user, Group group) {
-       log.info "link between " + user?.username + " " + group?.name
-       def userGroup = UserGroup.findByUserAndGroup(user, group)
-       if (!userGroup) {
-           userGroup = new UserGroup(user:user, group:group)
-            if (!userGroup.validate()) {
-                log.info userGroup.retrieveErrors().toString()
-                throw new WrongArgumentException(userGroup.retrieveErrors().toString())
-            }
-            if (!userGroup.save(flush: true)) {
-                log.info userGroup.retrieveErrors().toString()
-                throw new InvalidRequestException(userGroup.retrieveErrors().toString())
-           }
-       }
-        log.info "userGroup=$userGroup"
-       userGroup
-   }
-
-   void unlink(User user, Group group) {
-       log.info "###################################"
-       def userGroup = UserGroup.findByUserAndGroup(user, group)
-       if (userGroup) {
-           userGroup.delete(flush:true)
-
-       } else {log.info "no link between " + user?.username + " " + group?.name}
-   }
-
-
 }

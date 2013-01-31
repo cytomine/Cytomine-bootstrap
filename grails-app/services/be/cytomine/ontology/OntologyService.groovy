@@ -14,6 +14,8 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
+import be.cytomine.Exception.WrongArgumentException
+import grails.converters.JSON
 
 class OntologyService extends ModelService {
 
@@ -112,28 +114,13 @@ class OntologyService extends ModelService {
      */
     @PreAuthorize("#security.checkOntologyDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
-        //Start transaction
-        Transaction transaction = transactionService.start()
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(Ontology ontology, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //Read ontology
-        Ontology ontology = Ontology.read(json.id)
-
-        //Delete each term from ontology (if possible)
-        if (ontology) {
-            log.info "Delete term from ontology"
-            def terms = ontology.terms()
-            terms.each { term ->
-                termService.deleteTermRestricted(term.id, currentUser, false, transaction)
-            }
-        }
-        //Delete ontology
-        log.info "Delete ontology"
-        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-
-        //Stop transaction
-        transactionService.stop()
-
-        return result
+        def json = JSON.parse("{id: ${ontology.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -182,7 +169,6 @@ class OntologyService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(Ontology domain, boolean printMessage) {
-        if (domain && Project.findAllByOntology(domain).size() > 0) throw new ConstraintException("Ontology is still map with project")
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
@@ -237,4 +223,15 @@ class OntologyService extends ModelService {
         return ontology
     }
 
+    def deleteDependentTerm(Ontology ontology, Transaction transaction) {
+        Term.findAllByOntology(ontology).each {
+            termService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentProject(Ontology ontology, Transaction transaction) {
+        if(Project.findByOntology(ontology)) {
+            throw new ConstraintException("Ontology is linked with project. Cannot delete ontology!")
+        }
+    }
 }

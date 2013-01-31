@@ -18,8 +18,19 @@ import be.cytomine.command.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
+import be.cytomine.image.ImageInstance
+import grails.converters.JSON
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.AnnotationFilter
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.social.SharedAnnotation
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.social.UserPosition
+import be.cytomine.image.UploadedFile
 
-class UserService extends ModelService {
+class SecUserService extends ModelService {
 
     static transactional = true
 
@@ -31,6 +42,15 @@ class UserService extends ModelService {
     def userGroupService
     def dataSource
     def permissionService
+    def algoAnnotationService
+    def algoAnnotationTermService
+    def annotationFilterService
+    def annotationTermService
+    def imageInstanceService
+    def ontologyService
+    def reviewedAnnotationService
+    def secUserSecRoleService
+    def userAnnotationService
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def get(def id) {
@@ -226,10 +246,15 @@ class UserService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-        User currentUser = cytomineService.getCurrentUser()
         if (json.id == springSecurityService.principal.id) {
             throw new ForbiddenException("A user can't delete herself")
         }
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(SecUser user, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${user.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -323,13 +348,9 @@ class UserService extends ModelService {
      * @param printMessage Flag to specify if confirmation message must be show in client
      * @return Response structure (status, object data,...)
      */
-    def destroy(User domain, boolean printMessage) {
+    def destroy(SecUser domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.username], printMessage, "Delete", domain.getCallBack())
-
-        SecUserSecRole.findAllBySecUser(domain).each{
-            it.delete(flush:true)
-        }
 
         Command.findAllByUser(domain).each {
             UndoStackItem.findAllByCommand(it).each { it.delete()}
@@ -383,8 +404,130 @@ class UserService extends ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(JSONObject json) {
-        User user = User.get(json.id)
+        SecUser user = SecUser.get(json.id)
         if (!user) throw new ObjectNotFoundException("User " + json.id + " not found")
         return user
     }
+
+
+
+
+    def deleteDependentAlgoAnnotation(SecUser user, Transaction transaction) {
+        if(user instanceof UserJob) {
+            AlgoAnnotation.findAllByUser((UserJob)user).each {
+                algoAnnotationService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentAlgoAnnotationTerm(SecUser user, Transaction transaction) {
+        if(user instanceof UserJob) {
+            AlgoAnnotationTerm.findAllByUserJob((UserJob)user).each {
+                algoAnnotationTermService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentAnnotationFilter(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            AnnotationFilter.findAllByUser(user).each {
+                annotationFilterService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentAnnotationTerm(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            AnnotationTerm.findAllByUser(user).each {
+                annotationTermService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentImageInstance(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            ImageInstance.findAllByUser(user).each {
+                imageInstanceService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentOntology(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            Ontology.findAllByUser(user).each {
+                ontologyService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentReviewedAnnotation(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            ReviewedAnnotation.findAllByUser(user).each {
+                reviewedAnnotationService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentSecUserSecRole(SecUser user, Transaction transaction) {
+        SecUserSecRole.findAllBySecUser(user).each {
+            secUserSecRoleService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentUserAnnotation(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            UserAnnotation.findAllByUser(user).each {
+                userAnnotationService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentUserGroup(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            UserGroup.findAllByUser((User)user).each {
+                userGroupService.delete(it,transaction, false)
+            }
+        }
+    }
+
+    def deleteDependentUserPosition(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            UserPosition.findAllByUser((User)user).each {
+                it.delete()
+            }
+        }
+    }
+
+    def deleteDependentUserJob(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            UserJob.findAllByUser((User)user).each {
+                delete(it,transaction,false)
+            }
+        }
+    }
+
+    def deleteDependentUploadedFile(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            UploadedFile.findAllByUser((User)user).each {
+                it.delete()
+            }
+        }
+    }
+
+    def deleteDependentTask(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            Task.findAllByUser((User)user).each {
+                it.delete()
+            }
+        }
+    }
+
+    def deleteDependentLastConnection(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            LastConnection.findAllByUser((User)user).each {
+                it.delete()
+            }
+        }
+    }
+
 }

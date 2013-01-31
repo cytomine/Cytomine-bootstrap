@@ -2,21 +2,23 @@ package be.cytomine.image
 
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.CytomineDomain
 
 /**
  * Image Extension
  */
-class Mime implements Serializable {
+class Mime extends CytomineDomain implements Serializable {
 
     String extension
     String mimeType
 
-    static belongsTo = ImageServer
-    static hasMany = [mis: MimeImageServer]
-
     static constraints = {
         extension(maxSize: 5, blank: false, unique: true)
         mimeType(blank: false, unique: false)
+    }
+
+    static mapping = {
+        id(generator: 'assigned', unique: true)
     }
 
     /**
@@ -24,11 +26,7 @@ class Mime implements Serializable {
      * @return Image server list
      */
     def imageServers() {
-        if (mis) {
-            return mis.collect {it.imageServer}
-        } else {
-            return []
-        }
+        MimeImageServer.findAllByMime(this).collect {it.imageServer}
     }
 
     String toString() {

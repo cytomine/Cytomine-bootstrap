@@ -208,17 +208,10 @@ class ImageInstanceTests extends functionaltestplugin.FunctionalTestCase {
         image2.project = project
         BasicInstance.saveDomain(image2)
 
-        def result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.next(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        assert Long.parseLong(json.id+"") == image2.id
-
-
-        result = ImageInstanceAPI.next(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
-        json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        assert json.id == null
+        assert Long.parseLong(json.id+"") == image1.id
     }
 }

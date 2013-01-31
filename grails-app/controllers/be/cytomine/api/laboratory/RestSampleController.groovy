@@ -10,7 +10,7 @@ import grails.converters.JSON
 class RestSampleController extends RestController {
 
     def springSecurityService
-    def userService
+    def secUserService
     def sampleService
     def cytomineService
 

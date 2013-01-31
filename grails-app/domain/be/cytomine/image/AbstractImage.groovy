@@ -34,8 +34,11 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     static belongsTo = Sample
 
+<<<<<<< .mine
+=======
     static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty, nestFiles : NestedFile]
 
+>>>>>>> .r1989
     static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {
@@ -129,7 +132,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
             returnArray['scanner'] = it.scanner?.id
             returnArray['sample'] = it.sample?.id
             returnArray['path'] = it.path
-            returnArray['mime'] = it.mime.extension
+            returnArray['mime'] = it.mime?.extension
             returnArray['created'] = it.created?.time?.toString()
             returnArray['updated'] = it.updated?.time?.toString()
             returnArray['width'] = it.width
@@ -145,11 +148,13 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServers() {
         println "### not mocking method"
-        if (this.storageAbstractImages != null && this.storageAbstractImages.size() > 0) {
+        if(!this.version) return null
+        def sai = StorageAbstractImage.findAllByAbstractImage(this)
+        if (!sai.isEmpty()) {
 
             def imageServers = ImageServer.createCriteria().list {
                 eq("available", true)
-                inList("storage", this.storageAbstractImages.collect { it.storage })
+                inList("storage", sai.collect { it.storage })
                 inList("id", MimeImageServer.findAllByMime(this.getMime()).collect {it.imageServer.id}.unique())
             }
             return imageServers

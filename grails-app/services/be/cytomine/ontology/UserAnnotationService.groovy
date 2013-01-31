@@ -22,6 +22,7 @@ import grails.converters.JSON
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.Exception.ConstraintException
 
 class UserAnnotationService extends ModelService {
 
@@ -329,9 +330,6 @@ class UserAnnotationService extends ModelService {
                 }
             }
 
-            //Stop transaction
-            transactionService.stop()
-
             //add annotation on the retrieval
             if (annotationID && UserAnnotation.read(annotationID).location.getNumPoints() >= 3) {
                 if (!currentUser.algo()) {
@@ -389,23 +387,15 @@ class UserAnnotationService extends ModelService {
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-
-        SecUser currentUser = cytomineService.getCurrentUser()
-
-        //Start transaction
-        Transaction transaction = transactionService.start()
-
-        //Delete annotation (+cascade)
-        def result = deleteAnnotation(UserAnnotation.read(json.id), currentUser, true, transaction)
-
-        //Stop transaction
-        transactionService.stop()
-
-        //Remove annotation from retrieval
-        Long idAnnotation = json.id
-        log.info "Remove " + json.id + " from retrieval"
-        try {if (idAnnotation) deleteRetrievalAnnotation(idAnnotation) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
+        def result = delete(retrieve(json),transactionService.start())
+        try {if (json.id) deleteRetrievalAnnotation(json.id) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
         return result
+    }
+
+    def delete(UserAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${annotation.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -670,6 +660,29 @@ class UserAnnotationService extends ModelService {
             data << [id: idAnnotation, container: idContainer, url: url]
         }
         data
+    }
+
+    def deleteDependentAlgoAnnotationTerm(UserAnnotation ua, Transaction transaction) {
+        AlgoAnnotationTerm.findAllByAnnotationIdent(ua.id).each {
+            algoAnnotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentAnnotationTerm(UserAnnotation ua, Transaction transaction) {
+        AnnotationTerm.findAllByUserAnnotation(ua).each {
+            annotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction) {
+        //TODO: we should implement a full service for sharedannotation and delete them if annotation is deleted
+        if(SharedAnnotation.findByUserAnnotation(ua)) {
+            throw new ConstraintException("There are some comments on this annotation. Cannot delete it!")
+        }
+    }
+
+    def deleteDependentHasManyAnnotationTerm(UserAnnotation ua, Transaction transaction) {
+        ua.annotationTerm?.clear()
     }
 
 }

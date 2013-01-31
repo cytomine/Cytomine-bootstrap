@@ -1,8 +1,6 @@
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
-import be.cytomine.data.*
-
 import be.cytomine.ViewPortToBuildXML
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
@@ -21,6 +19,16 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 
+import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsDomainBinder
+import groovy.sql.Sql
+
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.JobDataBinaryValue
+import be.cytomine.processing.JobData
+import be.cytomine.security.UserGroup
+
 /**
  * Bootstrap contains code that must be execute during application (re)start
  */
@@ -34,6 +42,9 @@ class BootStrap {
     def triggerService
     def grantService
     def userGroupService
+    def termService
+
+    def dataSource
 
 
 
@@ -44,6 +55,12 @@ class BootStrap {
 
 
     def init = { servletContext ->
+
+
+//        println "******************************"
+//        JobDataBinaryValue.findAllByJobData(JobData.list().first()).each {
+//            println "* youyhouuu!"
+//        }
 
 
         //Register API Authentifier
@@ -62,6 +79,8 @@ class BootStrap {
         triggerService.initTrigger()
         indexService.initIndex()
         grantService.initGrant()
+
+        termService.initialize()
 
         //countersService.updateCounters()
 
@@ -87,10 +106,43 @@ class BootStrap {
         }
 
         //toVersion1()
+
     }
+
+
+
+
+
 
     def userService
     def permissionService
+
+
+
+
+//    private def getDependencyColumn(def domain) {
+//        def tableName = GrailsDomainBinder.getMapping(domain.class).table.name
+//        def columnDep = []
+//        new Sql(dataSource).eachRow("select column_name,* from information_schema.columns where table_name = '$tableName' order by ordinal_position") {
+//           if(it[0].toString().endsWith("_id")) {
+//               columnDep << it[0]
+//           }
+//        }
+//        return columnDep
+//    }
+//
+//    private def check
+
+
+
+
+
+
+
+
+
+
+
 
     private def toVersion1() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
@@ -177,7 +229,8 @@ class BootStrap {
                 ]
                 createGroups(userGroup)
                 Group group = Group.findByName(userGroupName)
-                userGroupService.link(user, group)
+                UserGroup ug = new UserGroup(user:user, group:group)
+                ug.save(flush:true,failOnError: true)
 
                 /* Handle groups */
                 item.group.each { elem ->
@@ -187,7 +240,8 @@ class BootStrap {
                     createGroups(newGroup)
                     log.info "Fetch group " + elem.name
                     group = Group.findByName(elem.name)
-                    userGroupService.link(user, group)
+                    ug = new UserGroup(user:user, group:group)
+                    ug.save(flush:true,failOnError: true)
                 }
 
                 /* Add Roles */

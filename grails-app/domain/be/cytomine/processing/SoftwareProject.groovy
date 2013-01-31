@@ -20,45 +20,6 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Add software to project
-     */
-    static SoftwareProject link(Software software, Project project) {
-        link(null, software, project)
-    }
-
-    /**
-     * Add software to project
-     * Set id of the new created domain to id parama
-     */
-    static SoftwareProject link(def id,Software software, Project project) {
-        def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
-        if (!softwareProjects) {
-            softwareProjects = new SoftwareProject()
-            softwareProjects.id = id
-            softwareProjects.software = software
-            softwareProjects.project = project
-            software?.addToSoftwareProjects(softwareProjects)
-            project?.addToSoftwareProjects(softwareProjects)
-            project.refresh()
-            software.refresh()
-            softwareProjects.save(flush: true)
-        }
-        softwareProjects
-    }
-
-    /**
-     * Remove a software form a project
-     */
-    static void unlink(Software software, Project project) {
-        def softwareProjects = SoftwareProject.findBySoftwareAndProject(software, project)
-        if (softwareProjects) {
-            software?.removeFromSoftwareProjects(softwareProjects)
-            project?.removeFromSoftwareProjects(softwareProjects)
-            softwareProjects.delete(flush: true)
-        }
-    }
-
-    /**
      * Thanks to the json, create an new domain of this class
      * Set the new domain id to json.id value
      * @param json JSON with data to create domain

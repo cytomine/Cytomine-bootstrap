@@ -21,6 +21,7 @@ class DeployImagesService {
     def cytomineService
     def abstractImageService
     def imageInstanceService
+    def storageService
     static transactional = true
 
     void deployUploadedFile(UploadedFile uploadedFile, SecUser currentUser) {
@@ -61,10 +62,23 @@ class DeployImagesService {
             //abstractImage.refresh()
             abstractImage.save(flush: true)
             Group group = Group.findByName(currentUser.getUsername())
-            AbstractImageGroup.link(abstractImage, group)
+            AbstractImageGroup aig = new AbstractImageGroup(abstractImage:abstractImage, group:group)
+            aig.save(flush: true,failOnError: true)
             storages.each { storage ->
-                StorageAbstractImage.link(storage, abstractImage)
+                StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+                sai.save(flush: true,failOnError: true)
             }
+
+            StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+               def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
+               sai.delete(flush:true)
+           }
+           json.storage.each { storageID ->
+               Storage storage = storageService.read(storageID)
+               StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+               sai.save(flush:true,failOnError: true)
+           }
+
             if (uploadedFile.getProject() != null) {
 
                 ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  uploadedFile.getProject(), user :currentUser)

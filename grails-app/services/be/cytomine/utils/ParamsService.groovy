@@ -14,7 +14,7 @@ class ParamsService {
 
     def imageInstanceService
     def termService
-    def userService
+    def secUserService
     def dataSource
 
     /**
@@ -24,10 +24,10 @@ class ParamsService {
     public List<Long> getParamsUserList(String paramsUsers, Project project) {
        if(paramsUsers != null && !paramsUsers.equals("null")) {
            if (!paramsUsers.equals(""))
-               return userService.getAllowedUserIdList(project).intersect(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
+               return secUserService.getAllowedUserIdList(project).intersect(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
            else return []
        } else {
-           userService.getAllowedUserIdList(project)
+           secUserService.getAllowedUserIdList(project)
        }
     }
 
@@ -41,7 +41,7 @@ class ParamsService {
                return getUserIdList(paramsUsers.split(paramsUsers.contains("_")?"_":",").collect{ Long.parseLong(it)})
            else return []
        } else {
-           userService.getAllowedUserIdList(project)
+           secUserService.getAllowedUserIdList(project)
        }
     }
 
@@ -80,7 +80,7 @@ class ParamsService {
     public List<SecUser> getParamsSecUserDomainList(String paramsUsers, Project project) {
         List<SecUser> userList = []
         if (paramsUsers != null && paramsUsers != "null" && paramsUsers != "") {
-            userList = userService.list(project, paramsUsers.split("_").collect{ Long.parseLong(it)})
+            userList = secUserService.list(project, paramsUsers.split("_").collect{ Long.parseLong(it)})
         }
         return userList
     }

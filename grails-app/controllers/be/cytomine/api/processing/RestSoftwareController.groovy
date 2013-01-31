@@ -13,7 +13,6 @@ import grails.plugins.springsecurity.Secured
 class RestSoftwareController extends RestController {
 
     def softwareService
-    def jobService
 
     /**
      * List all software available in cytomine

@@ -70,7 +70,7 @@ class Project extends CytomineDomain implements Serializable {
     boolean retrievalAllOntology = true
 
     static belongsTo = [ontology: Ontology]
-    static hasMany = [commands: Command, softwareProjects: SoftwareProject, imageFilterProjects: ImageFilterProject, retrievalProjects : Project]
+    static hasMany = [retrievalProjects : Project]
 
 
     static constraints = {

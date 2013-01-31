@@ -13,8 +13,6 @@ class Storage {
     String password
     Integer port
 
-    static hasMany = [storageAbstractImages: StorageAbstractImage]
-
     static constraints = {
         name(maxSize: 8, unique: true) //ais storage max length
         basePath(nullable: false, blank: false)

@@ -11,7 +11,6 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.social.FollowRequest
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
 import grails.converters.JSON
@@ -19,6 +18,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.ontology.ReviewedAnnotation
 
 /**
  * TODO:: refactor + doc!!!!!!!
@@ -29,13 +29,12 @@ class ImageInstanceService extends ModelService {
     static transactional = true
 
     def cytomineService
-    def commandService
     def transactionService
     def responseService
-    def modelService
     def userAnnotationService
     def algoAnnotationService
     def dataSource
+    def reviewedAnnotationService
 
     def read(def id) {
         def image = ImageInstance.read(id)
@@ -144,46 +143,55 @@ class ImageInstanceService extends ModelService {
     def delete(def json, SecurityCheck security) {
 
         Transaction transaction = transactionService.start()
-        SecUser currentUser = cytomineService.getCurrentUser()
-        //Read image
-        ImageInstance imageInstance = retrieve(json)
+//        SecUser currentUser = cytomineService.getCurrentUser()
+//        //Read image
+//        ImageInstance imageInstance = retrieve(json)
+//
+//        if(imageInstance && imageInstance.reviewStart!=null)
+//            throw new ConstraintException("You cannot remove an image instance that is review or has been reviewed...")
+//
+//        //TODO: create a special method to delete all data recursively
+//        /* Delete social stuff */
+//        UserPosition.findAllByImage(imageInstance).each { userPosition ->
+//            userPosition.delete()
+//        }
+//        FollowRequest.findAllByImage(imageInstance).each { followRequest ->
+//            followRequest.delete()
+//        }
+//        //Delete each annotation from image (if possible)
+//        if (imageInstance) {
+//            log.info "Delete userAnnotation from image"
+//            def userAnnotations = UserAnnotation.findAllByImage(imageInstance)
+//            userAnnotations.each { annotation ->
+//                userAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
+//            }
+//            log.info "Delete algoAnnotations from image"
+//            def algoAnnotations = AlgoAnnotation.findAllByImage(imageInstance)
+//            algoAnnotations.each { annotation ->
+//                algoAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
+//            }
+//        }
+//        //Delete image
+//        log.info "Delete image"
+//        Long id = imageInstance?.id
+//        if (!imageInstance) throw new ObjectNotFoundException("Image Instance $json.idproject - $json.idimage not found")
+//        def jsonImage = JSON.parse("{id : $id}")
+//        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), jsonImage)
+//
+//        //Stop transaction
+//        transactionService.stop()
+//
+//        return result
 
-        if(imageInstance && imageInstance.reviewStart!=null)
-            throw new ConstraintException("You cannot remove an image instance that is review or has been reviewed...")
-
-        //TODO: create a special method to delete all data recursively
-        /* Delete social stuff */
-        UserPosition.findAllByImage(imageInstance).each { userPosition ->
-            userPosition.delete()
-        }
-        FollowRequest.findAllByImage(imageInstance).each { followRequest ->
-            followRequest.delete()
-        }
-        //Delete each annotation from image (if possible)
-        if (imageInstance) {
-            log.info "Delete userAnnotation from image"
-            def userAnnotations = UserAnnotation.findAllByImage(imageInstance)
-            userAnnotations.each { annotation ->
-                userAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
-            }
-            log.info "Delete algoAnnotations from image"
-            def algoAnnotations = AlgoAnnotation.findAllByImage(imageInstance)
-            algoAnnotations.each { annotation ->
-                algoAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
-            }
-        }
-        //Delete image
-        log.info "Delete image"
-        Long id = imageInstance?.id
-        if (!imageInstance) throw new ObjectNotFoundException("Image Instance $json.idproject - $json.idimage not found")
-        def jsonImage = JSON.parse("{id : $id}")
-        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), jsonImage)
-
-        //Stop transaction
-        transactionService.stop()
-
-        return result
+        return delete(retrieve(json),transaction)
     }
+
+    def delete(ImageInstance image, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${image.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
+    }
+
 
     /**
      * Create new domain in database
@@ -280,5 +288,29 @@ class ImageInstanceService extends ModelService {
             throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
         }
         return imageInstance
+    }
+
+    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction) {
+        AlgoAnnotation.findAllByImage(image).each {
+             algoAnnotationService.delete(it,transaction)
+        }
+    }
+
+    def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction) {
+        ReviewedAnnotation.findAllByImage(image).each {
+            reviewedAnnotationService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction) {
+        UserAnnotation.findAllByImage(image).each {
+            userAnnotationService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentUserPosition(ImageInstance image,Transaction transaction) {
+        UserPosition.findAllByImage(image).each {
+            it.delete()
+        }
     }
 }

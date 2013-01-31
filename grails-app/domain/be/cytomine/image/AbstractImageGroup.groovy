@@ -21,63 +21,6 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Add credential to group to access abstractimage
-     * @param abstractimage Image that will be available for group
-     * @param group Group that will have access to image
-     * @return Relation between group and image
-     */
-    static AbstractImageGroup link(AbstractImage abstractimage, Group group) {
-
-        if (!abstractimage) {
-            throw new WrongArgumentException("AbstractImage cannot be null")
-        }
-        if (!group) {
-            throw new WrongArgumentException("Group cannot be null")
-        }
-
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-
-        if (!abstractimageGroup) {
-            abstractimageGroup = new AbstractImageGroup()
-            abstractimage?.addToAbstractimagegroup(abstractimageGroup)
-            group?.addToAbstractimagegroup(abstractimageGroup)
-            abstractimage.refresh()
-            group.refresh()
-            abstractimageGroup.save(flush: true)
-        } else {
-            throw new AlreadyExistException("AbstractImage " + abstractimage.id + " and group " + group.id + " are already mapped")
-        }
-        return abstractimageGroup
-    }
-
-
-    /**
-     * Remove credential from a  group to access abstractimage
-     * @param abstractimage Image not longer available for group
-     * @param group Group to remoe from image credential
-     */
-    static void unlink(AbstractImage abstractimage, Group group) {
-
-        if (!abstractimage) {
-            throw new WrongArgumentException("AbstractImage cannot be null")
-        }
-
-        if (!group) {
-            throw new WrongArgumentException("Group cannot be null")
-        }
-
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-
-        if (abstractimageGroup) {
-            abstractimage?.removeFromAbstractimagegroup(abstractimageGroup)
-            group?.removeFromAbstractimagegroup(abstractimageGroup)
-            abstractimage.refresh()
-            group.refresh()
-            abstractimageGroup.delete(flush: true)
-        }
-    }
-
-    /**
      * Thanks to the json, create an new domain of this class
      * Set the new domain id to json.id value
      * @param json JSON with data to create domain
@@ -139,6 +82,20 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
             returnArray['abstractimage'] = it.abstractimage?.id
             returnArray['group'] = it.group?.id
             return returnArray
+        }
+    }
+
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
+    void checkAlreadyExist() {
+        AbstractImageGroup.withNewSession {
+            if(abstractimage && group) {
+                AbstractImageGroup aig = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage,group)
+                if(aig!=null && (aig.id!=id))  {
+                    throw new AlreadyExistException("AbstractImageGroup with image=${abstractimage.id} and group ${group.id} already exist!")
+                }
+            }
         }
     }
 }

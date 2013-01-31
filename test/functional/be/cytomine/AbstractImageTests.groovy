@@ -63,7 +63,8 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
     void testListImagesDatatable() {
         def image = BasicInstance.createOrGetBasicAbstractImage()
-        AbstractImageGroup.link(image,Group.findByName(Infos.GOODLOGIN))
+        AbstractImageGroup aig = new AbstractImageGroup(abstractimage: image,group:Group.findByName(Infos.GOODLOGIN))
+        BasicInstance.saveDomain(aig)
         def result = AbstractImageAPI.list(true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
@@ -105,34 +106,30 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
 
     void testGetImageProperties() {
         AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
-        if(image.imageProperties==null || image.imageProperties.isEmpty()) {
+        if(!ImageProperty.findByImage(image)) {
             ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
             BasicInstance.saveDomain(imageProperty)
-            image.addToImageProperties(imageProperty)
-            BasicInstance.saveDomain(image)
         }
         def result = AbstractImageAPI.getInfo(image.id,"property",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
         assert json.size()>0
-        assert json[0].key.equals(image.imageProperties.first().key)
+        assert json[0].key.equals(ImageProperty.findByImage(image).first().key)
     }
 
     void testGetImageProperty() {
         AbstractImage image = BasicInstance.createOrGetBasicAbstractImage()
-        if(image.imageProperties==null || image.imageProperties.isEmpty()) {
+        if(!ImageProperty.findByImage(image)) {
             ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
             BasicInstance.saveDomain(imageProperty)
-            image.addToImageProperties(imageProperty)
-            BasicInstance.saveDomain(image)
         }
         println "==>"+ImageProperty.list().collect{it.id}
-        def result = AbstractImageAPI.getInfo(image.id,"property/${image.imageProperties.first().id}",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AbstractImageAPI.getInfo(image.id,"property/${ImageProperty.findByImage(image).first().id}",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        assert json.key.equals(image.imageProperties.first().key)
+        assert json.key.equals(ImageProperty.findByImage(image).first().key)
     }
 
     void testGetImagePropertyNotFound() {
@@ -274,7 +271,7 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
     annotation.save(flush:true)
       Long id = imageToDelete.baseImage.id
       def result = AbstractImageAPI.delete(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(400,result.code)
+      assertEquals(200,result.code)
   }
 
   void testDeleteImageNoExist()  {

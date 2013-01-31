@@ -249,13 +249,13 @@ class UserTests extends functionaltestplugin.FunctionalTestCase {
         assertEquals(403, result.code)
     }    
   
-        void testDeleteUserWithDate() {
+        void testDeleteUserWithData() {
         def userToDelete = BasicInstance.createOrGetBasicUser()
         def image =  BasicInstance.createOrGetBasicImageInstance()
         image.user = userToDelete
         assert image.save(flush:true)!=null
         def result = UserAPI.delete(userToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assertEquals(200, result.code)
     }
 
     void testAddDeleteUserToProject() {

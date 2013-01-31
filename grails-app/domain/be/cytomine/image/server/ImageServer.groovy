@@ -15,12 +15,9 @@ class ImageServer extends CytomineDomain {
     Storage storage
     Boolean available
 
-    static hasMany = [mimes: Mime, mis: MimeImageServer]
-
     static constraints = {
         name blank: false
         url blank: false
-        mimes nullable: true
         storage nullable: true
         available nullable: false
     }

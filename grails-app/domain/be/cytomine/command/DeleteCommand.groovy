@@ -9,6 +9,7 @@ import grails.converters.JSON
  */
 class DeleteCommand extends Command {
 
+    def backup
     /**
      * Add project link in command
      */
@@ -22,8 +23,6 @@ class DeleteCommand extends Command {
         initService()
         //Retrieve domain to delete it
         def oldDomain = service.retrieve(json)
-        //Create a backup (for 'undo' op)
-        def backup = oldDomain.encodeAsJSON()
         //Init command info
         super.setProject(linkProject? oldDomain?.projectDomain() : null)
         def response = service.destroy(oldDomain, printMessage)

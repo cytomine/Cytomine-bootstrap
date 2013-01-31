@@ -15,6 +15,7 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
+import grails.converters.JSON
 
 class SoftwareService extends ModelService {
 
@@ -24,8 +25,10 @@ class SoftwareService extends ModelService {
 
     def cytomineService
     def transactionService
-    def modelService
     def aclUtilService
+    def softwareParameterService
+    def jobService
+    def softwareProjectService
 
     def read(def id) {
         //TODO: check authorization?
@@ -39,7 +42,7 @@ class SoftwareService extends ModelService {
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
-        project.softwareProjects.collect {it.software}
+        SoftwareProject.findAllByProject(project).collect {it.software}
     }
 
     /**
@@ -77,30 +80,13 @@ class SoftwareService extends ModelService {
     @PreAuthorize("#security.checkSoftwareDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
         //Start transaction
-        Transaction transaction = transactionService.start()
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(Software software, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //Read software
-
-        Software software = Software.read(json.id)
-
-        if(software && Job.countBySoftware(Software.read(json.id))>0) {
-            throw new WrongArgumentException("There are job for this software, you cannot delete it!")
-        }
-
-        //TODO: Delete each Job
-
-        //TODO: Delete each software-projects
-
-        //TODO: Delete each software-parameters
-
-        //Delete software
-        log.info "Delete software"
-        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
-
-        //Stop transaction
-        transactionService.stop()
-
-        return result
+        def json = JSON.parse("{id: ${software.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -197,5 +183,23 @@ class SoftwareService extends ModelService {
         Software software = Software.get(json.id)
         if (!software) throw new ObjectNotFoundException("Software " + json.id + " not found")
         return software
+    }
+
+    def deleteDependentSoftwareParameter(Software software, Transaction transaction) {
+        SoftwareParameter.findAllBySoftware(software).each {
+            softwareParameterService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentJob(Software software, Transaction transaction) {
+        Job.findAllBySoftware(software).each {
+            jobService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentSoftwareProject(Software software, Transaction transaction) {
+        SoftwareProject.findAllBySoftware(software).each {
+            softwareProjectService.delete(it,transaction, false)
+        }
     }
 }

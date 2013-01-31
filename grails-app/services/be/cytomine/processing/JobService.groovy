@@ -17,17 +17,19 @@ import be.cytomine.security.UserJob
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import grails.converters.JSON
 
 class JobService extends ModelService {
 
     static transactional = true
     def cytomineService
-    def commandService
     def modelService
     def transactionService
     def jobParameterService
     def springSecurityService
     def backgroundService
+    def jobDataService
+    def secUserService
 
     def read(def id) {
         def job = Job.read(id)
@@ -108,9 +110,6 @@ class JobService extends ModelService {
                 }
             }
 
-        //Stop transaction
-        transactionService.stop()
-
         return result
         }
     }
@@ -136,17 +135,25 @@ class JobService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+//        SecUser currentUser = cytomineService.getCurrentUser()
+//        def userJob = UserJob.findByJob(Job.read(json.id))
+//        if(userJob) {
+//            //TODO:: move this in a methode deleteUser in userService
+//            SecUserSecRole.findAllBySecUser(userJob).each{
+//                it.delete(flush:true)
+//            }
+//            userJob.delete(flish:true)
+//        }
+//        //TODO: delete job-parameters
+//        //TODO: delete job-data
+//        return executeCommand(new DeleteCommand(user: currentUser), json)
+        delete(retrieve(json))
+    }
+
+
+    def delete(Job job, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def userJob = UserJob.findByJob(Job.read(json.id))
-        if(userJob) {
-            //TODO:: move this in a methode deleteUser in userService
-            SecUserSecRole.findAllBySecUser(userJob).each{
-                it.delete(flush:true)
-            }
-            userJob.delete(flish:true)
-        }
-        //TODO: delete job-parameters
-        //TODO: delete job-data
+        def json = JSON.parse("{id: ${job.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -377,6 +384,25 @@ class JobService extends ModelService {
             data << job
         }
         return data
+    }
+
+
+    def deleteDependentJobParameter(Job job, Transaction transaction) {
+        JobParameter.findAllByJob(job).each {
+            jobParameterService.delete(it, transaction, false)
+        }
+    }
+
+    def deleteDependentJobData(Job job, Transaction transaction) {
+        JobData.findAllByJob(job).each {
+            jobDataService.delete(it, transaction, false)
+        }
+    }
+
+    def deleteDependentUserJob(Job job, Transaction transaction) {
+        UserJob.findAllByJob(job).each {
+            secUserService.delete(it, transaction, false)
+        }
     }
 
 }

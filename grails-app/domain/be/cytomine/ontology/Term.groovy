@@ -23,10 +23,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     static belongsTo = [ontology: Ontology]
     static transients = ["rate"]
 
-    static hasMany = [annotationTerm: AnnotationTerm, relationTerm1: RelationTerm, relationTerm2: RelationTerm]
-    //must be done because RelationTerm has two Term attribute
-    static mappedBy = [relationTerm1: 'term1', relationTerm2: 'term2']
-
     static constraints = {
         comment(blank: true, nullable: true)
     }
@@ -52,7 +48,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
      */
     def hasChildren() {
         boolean hasChildren = false
-        this.relationTerm1.each {
+        RelationTerm.findAllByTerm1(this).each {
             if (it.getRelation().getName().equals(RelationTerm.names.PARENT)) {
                 hasChildren = true
                 return
@@ -67,7 +63,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
      */
     def isRoot() {
         def isRoot = true;
-        this.relationTerm2.each {
+        RelationTerm.findAllByTerm2(this).each {
             isRoot &= (it.getRelation().getName() != RelationTerm.names.PARENT)
         }
         return isRoot

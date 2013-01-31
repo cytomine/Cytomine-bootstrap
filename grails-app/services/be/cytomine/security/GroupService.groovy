@@ -10,13 +10,17 @@ import be.cytomine.utils.ModelService
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import be.cytomine.image.AbstractImageGroup
 
 class GroupService extends ModelService {
 
     static transactional = true
     def cytomineService
     def commandService
-    def modelService
+    def abstractImageGroupService
+    def userGroupService
+    def transactionService
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def list() {
@@ -25,9 +29,7 @@ class GroupService extends ModelService {
 
     //TODO:: security!
     def list(AbstractImage abstractimage) {
-        return abstractimage.abstractimagegroup.collect {
-            it.group
-        }
+        return AbstractImageGroup.findAllByAbstractimage(abstractimage).collect{it.group}
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -77,19 +79,12 @@ class GroupService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-        println "delete=$json"
-        println cytomineService.getCurrentUser().authorities.collect {it.authority}
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteGroup(Group.read(json.id), currentUser)
+        return delete(retrieve(json), transactionService.start())
     }
 
-    def deleteGroup(Group group, SecUser currentUser) {
-
-        UserGroup.findAllByGroup(group).each {
-            it.delete()
-        }
-
-        def json = JSON.parse("{id: $group.id}")
+    def delete(Group group, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${group.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -188,6 +183,18 @@ class GroupService extends ModelService {
             throw new ObjectNotFoundException("Group " + json.id + " not found")
         }
         return group
+    }
+
+    def deleteDependentAbstractImageGroup(Group group, Transaction transaction) {
+        AbstractImageGroup.findAllByGroup(group).each {
+            abstractImageGroupService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentUserGroup(Group group, Transaction transaction) {
+        UserGroup.findAllByGroup(group).each {
+            userGroupService.delete(it, transaction, false)
+        }
     }
 
 }

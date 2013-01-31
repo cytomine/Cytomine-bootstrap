@@ -15,6 +15,10 @@ import groovyx.gpars.Asynchronizer
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+import org.springframework.context.ApplicationContextAware
+import org.apache.catalina.core.ApplicationContext
+import be.cytomine.ontology.Ontology
+import groovy.sql.Sql
 
 /**
  * Retrieval is a server that can provide similar pictures of a request picture
@@ -23,9 +27,12 @@ import org.springframework.security.acls.model.NotFoundException
 class RetrievalService {
 
     static transactional = true
-    def projectService
     def grailsApplication
     def dataSource
+
+    ApplicationContext applicationContext
+
+
 
     /**
      * Search similar annotation and best term for an annotation
@@ -49,7 +56,7 @@ class RetrievalService {
             return data
         } else if(project.retrievalAllOntology) {
             //retrieval available, look in index for all user annotation for the project with same ontologies
-            projectSearch=projectService.getAllProjectId(annotation.project.ontology)
+            projectSearch=getAllProjectId(annotation.project.ontology)
         } else {
             //retrieval avaliable, but only looks on a restricted project list
             projectSearch=project.retrievalProjects.collect {it.id}
@@ -127,6 +134,21 @@ class RetrievalService {
             }
             catch (AccessDeniedException ex) {log.info "User cannot have access to this userAnnotation"}
             catch (NotFoundException ex) {log.info "User cannot have access to this userAnnotation"}
+        }
+        return data
+    }
+
+    /**
+     * Get all project id for all project with this ontology
+     * @param ontology Ontology filter
+     * @return Project id list
+     */
+    public List<Long> getAllProjectId(Ontology ontology) {
+        //better for perf than Project.findByOntology(ontology).collect {it.id}
+        String request = "SELECT p.id FROM project p WHERE ontology_id="+ontology.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
         }
         return data
     }

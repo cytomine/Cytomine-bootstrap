@@ -28,9 +28,18 @@ class TermService extends ModelService {
     def algoAnnotationTermService
     def relationTermService
     def modelService
-    def userService
+
     def annotationFilterService
     def dataSource
+
+    protected def secUserService
+
+    def initialize() { this.secUserService = grailsApplication.mainContext.secUserService }
+
+
+
+
+
 
     final boolean saveOnUndoRedoStack = true
 
@@ -102,7 +111,7 @@ class TermService extends ModelService {
         projects.each { project ->
             def annotations = UserAnnotation.createCriteria().list {
                 eq("project", project)
-                inList("user", userService.listLayers(project))
+                inList("user", secUserService.listLayers(project))
             }
             annotations.each { annotation ->
                 if (annotation.terms().contains(term)) {
@@ -155,8 +164,13 @@ class TermService extends ModelService {
      */
     @PreAuthorize("#security.checkOntologyDelete()  or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
+        return delete(retrieve(json), transactionService.start())
+    }
+
+    def delete(Term term, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteTerm(json.id, currentUser, true, null)
+        def json = JSON.parse("{id: ${term.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -304,4 +318,29 @@ class TermService extends ModelService {
         if (!term) throw new ObjectNotFoundException("Term " + json.id + " not found")
         return term
     }
+
+    def deleteDependentAlgoAnnotationTerm(Term term, Transaction transaction) {
+        AlgoAnnotationTerm.findAllByTerm(term).each {
+            algoAnnotationTermService.delete(it,transaction,false)
+        }
+        AlgoAnnotationTerm.findAllByExpectedTerm(term).each {
+            algoAnnotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentAnnotationTerm(Term term, Transaction transaction) {
+        AnnotationTerm.findAllByTerm(term).each {
+            annotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentRelationTerm(Term term, Transaction transaction) {
+        RelationTerm.findAllByTerm1(term).each {
+            relationTermService.delete(it,transaction,false)
+        }
+        RelationTerm.findAllByTerm2(term).each {
+            relationTermService.delete(it,transaction,false)
+        }
+    }
+
 }

@@ -11,6 +11,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class SoftwareProjectService extends ModelService{
 
@@ -38,7 +40,7 @@ class SoftwareProjectService extends ModelService{
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
-        project.softwareProjects
+        SoftwareProject.findAllByProject(project)
     }
 
     /**
@@ -66,6 +68,13 @@ class SoftwareProjectService extends ModelService{
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
+
+    def delete(SoftwareProject sp, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${sp.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
+    }
+
     /**
      * Restore domain which was previously deleted
      * @param json domain info
@@ -83,10 +92,8 @@ class SoftwareProjectService extends ModelService{
      * @return Response structure (status, object data,...)
      */
     def create(SoftwareProject domain, boolean printMessage) {
-        if(SoftwareProject.findBySoftwareAndProject(domain.software,domain.project)) throw new AlreadyExistException("Software  "+domain.software?.name + " already map with project "+domain.project?.name)
         //Save new object
-        domain = SoftwareProject.link(domain.id,domain.software,domain.project)
-        log.info "1. new domain="+ domain?.id
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.software?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
     }
@@ -113,7 +120,7 @@ class SoftwareProjectService extends ModelService{
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.software?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        SoftwareProject.unlink(domain.software,domain.project)
+        deleteDomain(domain)
         return response
     }
 

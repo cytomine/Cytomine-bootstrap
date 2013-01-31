@@ -31,7 +31,7 @@ class RestUserAnnotationController extends RestController {
     def userAnnotationService
     def termService
     def imageInstanceService
-    def userService
+    def secUserService
     def projectService
     def cytomineService
     def mailService
@@ -87,7 +87,7 @@ class RestUserAnnotationController extends RestController {
      */
     def listByImageAndUser = {
         def image = imageInstanceService.read(params.long('idImage'))
-        def user = userService.read(params.idUser)
+        def user = secUserService.read(params.idUser)
         if (image && user && params.bbox) {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)

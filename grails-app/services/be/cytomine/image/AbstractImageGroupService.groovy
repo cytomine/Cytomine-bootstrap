@@ -10,6 +10,10 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
+import be.cytomine.processing.JobParameter
+import be.cytomine.command.Transaction
+import grails.converters.JSON
+import be.cytomine.security.UserGroup
 
 class AbstractImageGroupService extends ModelService {
 
@@ -20,14 +24,15 @@ class AbstractImageGroupService extends ModelService {
 
     def cytomineService
     def responseService
-    def groupService
+    def transactionService
 
     def get(AbstractImage abstractimage, Group group) {
         AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
     }
 
+    @Secured(['ROLE_USER'])
     def list(user) {
-        def groups = groupService.list(user)
+        def groups = UserGroup.findByUser(user).collect{it.group}
         return AbstractImageGroup.findAllByGroupInList(groups)
     }
 
@@ -52,7 +57,13 @@ class AbstractImageGroupService extends ModelService {
      */
     @Secured(['ROLE_ADMIN'])
     def delete(def json,SecurityCheck security) throws CytomineException {
+        Transaction transaction = transactionService.start()
+        delete(retrieve(json),transaction)
+    }
+
+    def delete(AbstractImageGroup aig, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{abstractimage: ${aig.abstractimage.id},group:${aig.group.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -75,7 +86,7 @@ class AbstractImageGroupService extends ModelService {
      */
     def create(AbstractImageGroup domain, boolean printMessage) {
         //Save new object
-        domain = AbstractImageGroup.link(domain.abstractimage, domain.group)
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Add", domain.getCallBack())
     }
@@ -101,7 +112,7 @@ class AbstractImageGroupService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        AbstractImageGroup.unlink(domain.abstractimage, domain.group)
+        deleteDomain(domain)
         return response
     }
 

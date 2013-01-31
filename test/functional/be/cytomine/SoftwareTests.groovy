@@ -165,7 +165,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
    void testDeleteSoftwareWithProject() {
        def softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
        def result = SoftwareAPI.delete(softwareProject.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(400, result.code)
+       assertEquals(200, result.code)
    }
 
     void testDeleteSoftwareWithJob() {

@@ -1,6 +1,9 @@
 package be.cytomine.ontology
 
 import be.cytomine.utils.ModelService
+import be.cytomine.project.Project
+import be.cytomine.command.Transaction
+import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 
 /**
  * No security restriction for this domain (only read)
@@ -23,5 +26,9 @@ class RelationService extends ModelService {
 
     def getRelationParent() {
         readByName(RelationTerm.names.PARENT)
+    }
+
+    def deleteDependentRelationTerm(Project project, Transaction transaction) {
+        throw new CytomineMethodNotYetImplementedException("");
     }
 }

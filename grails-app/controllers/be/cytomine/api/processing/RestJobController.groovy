@@ -1,7 +1,5 @@
 package be.cytomine.api.processing
 
-import grails.plugins.springsecurity.Secured
-
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityCheck
@@ -25,7 +23,7 @@ class RestJobController extends RestController {
     def softwareService
     def projectService
     def jobParameterService
-    def userService
+    def secUserService
     def backgroundService
     def algoAnnotationService
     def annotationTermService

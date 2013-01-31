@@ -11,6 +11,8 @@ import be.cytomine.utils.ModelService
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.security.UserJob
+import be.cytomine.image.ImageInstance
 
 class RelationTermService extends ModelService {
 
@@ -20,6 +22,7 @@ class RelationTermService extends ModelService {
     def commandService
     def cytomineService
     def modelService
+    def transactionService
 
     final boolean saveOnUndoRedoStack = true
 
@@ -91,8 +94,13 @@ class RelationTermService extends ModelService {
      */
     @PreAuthorize("#security.checkOntologyAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json), transactionService.start())
+    }
+
+    def delete(RelationTerm rt, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteRelationTerm(json.relation ? json.relation : -1, json.term1, json.term2, currentUser, true, null)
+        def json = JSON.parse("{relation: ${rt.relation.id}, term1:${rt.term1.id}, term2:${rt.term2.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -139,7 +147,7 @@ class RelationTermService extends ModelService {
         log.debug "domain=" + domain + " responseService=" + responseService
         def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Add", domain.getCallBack())
         //Save new object
-        RelationTerm.link(domain.relation, domain.term1, domain.term2)
+        saveDomain(domain)
         return response
     }
 
@@ -150,7 +158,7 @@ class RelationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
-        destroy(RelationTerm.createFromData(json), printMessage)
+        destroy(RelationTerm.read(json.id), printMessage)
     }
 
     /**
@@ -163,7 +171,7 @@ class RelationTermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-        RelationTerm.unlink(domain.relation, domain.term1, domain.term2)
+        deleteDomain(domain)
         return response
     }
 
@@ -191,4 +199,6 @@ class RelationTermService extends ModelService {
         }
         return relationTerm
     }
+
+
 }

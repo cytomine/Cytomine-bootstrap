@@ -18,6 +18,8 @@ import be.cytomine.utils.ModelService
 import grails.orm.PagedResultList
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class AbstractImageService extends ModelService {
 
@@ -31,6 +33,7 @@ class AbstractImageService extends ModelService {
     def storageService
     def abstractImageGroupService
     def groupService
+    def imageInstanceService
 
     /**
      * List all images (only for admin!)
@@ -142,15 +145,19 @@ class AbstractImageService extends ModelService {
         //AbstractImage abstractImage = retrieve(res.data.abstractimage)
         AbstractImage abstractImage = res.object
         Group group = Group.findByName(currentUser.getUsername())
-        AbstractImageGroup.link(abstractImage, group)
+
+        AbstractImageGroup aig = new AbstractImageGroup(abstractimage: abstractImage,group:group)
+        aig.save(flush:true,failOnError: true)
+
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
-            StorageAbstractImage.link(storage, abstractImage)
+            StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+            sai.save(flush:true,failOnError: true)
         }
         imagePropertiesService.extractUseful(abstractImage)
         abstractImage.save(flush : true)
         //Stop transaction
-        transactionService.stop()
+
         return res
     }
 
@@ -167,14 +174,15 @@ class AbstractImageService extends ModelService {
         def res = executeCommand(new EditCommand(user: currentUser), json)
         AbstractImage abstractImage = res.object
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-            StorageAbstractImage.unlink(storageAbstractImage.storage, abstractImage)
+            def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
+            sai.delete(flush:true)
         }
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
-            StorageAbstractImage.link(storage, abstractImage)
+            StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+            sai.save(flush:true,failOnError: true)
         }
-        //Stop transaction
-        transactionService.stop()
+
         return res
     }
 
@@ -186,24 +194,29 @@ class AbstractImageService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def delete(def json,SecurityCheck security) throws CytomineException {
-        transactionService.start()
-        SecUser currentUser = cytomineService.getCurrentUser()
-        AbstractImage abstractImage = read(json.id)
-        Group group = Group.findByName(currentUser.getUsername())
-        AbstractImageGroup.unlink(abstractImage, group)
-        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-            StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
-        }
-
-        ImageProperty.findAllByImage(abstractImage).each {
-            it.delete(flush:true)
-        }
-
-        def res =  executeCommand(new DeleteCommand(user: currentUser), json)
-        //Stop transaction
-        transactionService.stop()
-        return res
+//        transactionService.start()
+//        SecUser currentUser = cytomineService.getCurrentUser()
+//        AbstractImage abstractImage = read(json.id)
+//        Group group = Group.findByName(currentUser.getUsername())
+//        AbstractImageGroup.unlink(abstractImage, group)
+//        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+//            StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
+//        }
+//
+//        ImageProperty.findAllByImage(abstractImage).each {
+//            it.delete(flush:true)
+//        }
+//
+//        def res =  executeCommand(new DeleteCommand(user: currentUser), json)
+        return delete(retrieve(json),transactionService.start())
     }
+
+    def delete(AbstractImage image, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${image.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
+    }
+
 
     /**
      * Get Image metadata
@@ -219,10 +232,10 @@ class AbstractImageService extends ModelService {
      */
     def imageProperties(def id) {
         AbstractImage image = read(id)
-        if (image.imageProperties.isEmpty()) {
+        if (!ImageProperty.findByImage(image)) {
             imagePropertiesService.populate(image)
         }
-        return image.imageProperties
+        return ImageProperty.findAllByImage(image)
     }
 
     /**
@@ -410,6 +423,39 @@ class AbstractImageService extends ModelService {
         if (!image) throw new ObjectNotFoundException("Image " + json.id + " not found")
         return image
     }
+
+    def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction) {
+        AbstractImageGroup.findAllByAbstractimage(ai).each {
+            abstractImageGroupService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentImageInstance(AbstractImage ai, Transaction transaction) {
+        ImageInstance.findAllByBaseImage(ai).each {
+            imageInstanceService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentImageProperty(AbstractImage ai, Transaction transaction) {
+        //TODO: implement imagePropertyService with command
+        imagePropertiesService.clear(ai)
+    }
+
+    def deleteDependentNestedFile(AbstractImage ai, Transaction transaction) {
+        //TODO: implement this with command (nestedFileService should be create)
+        NestedFile.findAllByAbstractImage(ai).each {
+            it.delete(flush: true)
+        }
+    }
+
+    def deleteDependentStorageAbstractImage(AbstractImage ai, Transaction transaction) {
+        //TODO: implement this with command (storage abst image should be create)
+        StorageAbstractImage.findAllByAbstractImage(ai).each {
+            it.delete(flush: true)
+        }
+    }
+
+
 
 
 }

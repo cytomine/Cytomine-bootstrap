@@ -2,7 +2,7 @@ package be.cytomine.api.security
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-import be.cytomine.ontology.AlgoAnnotation
+
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProject
@@ -23,7 +23,7 @@ class RestUserJobController extends RestController {
     def springSecurityService
     def transactionService
     def cytomineService
-    def userService
+    def secUserService
     def projectService
     def ontologyService
     def imageInstanceService

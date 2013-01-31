@@ -31,10 +31,8 @@ class AlgoAnnotationService extends ModelService {
     def cytomineService
     def transactionService
     def annotationTermService
-    def retrievalService
     def algoAnnotationTermService
     def responseService
-    def modelService
     def simplifyGeometryService
     def dataSource
 
@@ -337,8 +335,6 @@ class AlgoAnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
-            //Stop transaction
-            transactionService.stop()
 
             return result
         }
@@ -375,21 +371,16 @@ class AlgoAnnotationService extends ModelService {
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id)   or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-
-        SecUser currentUser = cytomineService.getCurrentUser()
-
         //Start transaction
         Transaction transaction = transactionService.start()
-
-        //Delete annotation (+cascade) and print message in client
-        def result = deleteAnnotation(AlgoAnnotation.read(json.id), currentUser, true, transaction)
-
-        //Stop transaction
-        transactionService.stop()
-
-        //Remove annotation from retrieval
-        log.info "Remove " + json.id + " from retrieval"
+        def result = delete(retrieve(json),transaction)
         return result
+    }
+
+    def delete(AlgoAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${annotation.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**
@@ -521,5 +512,12 @@ class AlgoAnnotationService extends ModelService {
         AlgoAnnotation annotation = AlgoAnnotation.get(json.id)
         if (!annotation) throw new ObjectNotFoundException("AlgoAnnotation " + json.id + " not found")
         return annotation
+    }
+
+
+    def deleteDependentAlgoAnnotationTerm(AlgoAnnotation ao, Transaction transaction) {
+        AlgoAnnotationTerm.findAllByAnnotationIdent(ao.id).each {
+            algoAnnotationTermService.delete(it,transaction,false)
+        }
     }
 }

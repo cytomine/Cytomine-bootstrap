@@ -3,14 +3,13 @@ package be.cytomine.project
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityCheck
-import be.cytomine.image.UploadedFile
+
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.social.LastConnection
-import be.cytomine.social.UserPosition
+
 import be.cytomine.utils.ModelService
 import groovy.sql.Sql
 import org.apache.commons.collections.CollectionUtils
@@ -19,6 +18,15 @@ import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 import be.cytomine.command.*
+import be.cytomine.processing.Job
+import be.cytomine.processing.SoftwareProject
+import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.AnnotationFilter
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.ontology.UserAnnotation
+import grails.converters.JSON
 
 class ProjectService extends ModelService {
 
@@ -26,9 +34,18 @@ class ProjectService extends ModelService {
     def cytomineService
     def modelService
     def springSecurityService
-    def userService
     def aclUtilService
     def dataSource
+    def imageFilterProjectService
+    def jobService
+    def softwareProjectService
+    def transactionService
+    def algoAnnotationService
+    def algoAnnotationTermService
+    def annotationFilterService
+    def imageInstanceService
+    def reviewedAnnotationService
+    def userAnnotationService
 
     final boolean saveOnUndoRedoStack = false
 
@@ -68,7 +85,7 @@ class ProjectService extends ModelService {
 
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Software software) {
-        software.softwareProjects.collect {it.project}
+        SoftwareProject.findAllBySoftware(software).collect {it.project}
     }
 
     List<Project> getProjectList(SecUser user) {
@@ -81,20 +98,6 @@ class ProjectService extends ModelService {
                 "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
     }
 
-    /**
-     * Get all project id for all project with this ontology
-     * @param ontology Ontology filter
-     * @return Project id list
-     */
-    public List<Long> getAllProjectId(Ontology ontology) {
-        //better for perf than Project.findByOntology(ontology).collect {it.id}
-        String request = "SELECT p.id FROM project p WHERE ontology_id="+ontology.id
-        def data = []
-        new Sql(dataSource).eachRow(request) {
-            data << it[0]
-        }
-        return data
-    }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def lastAction(Project project, def max) {
@@ -183,13 +186,17 @@ class ProjectService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectDelete() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(Project project, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${project.id}}")
         /*
            linkProject must be false, special case because we delete project in this command
            If this command will be linked with the deleted project, we will have an database error (foreign key)
          */
-        DeleteCommand command = new DeleteCommand(user: currentUser, linkProject:false)
-        return executeCommand(command, json)
+        return executeCommand(new DeleteCommand(user: currentUser,linkProject:false), json)
     }
 
     /**
@@ -242,28 +249,28 @@ class ProjectService extends ModelService {
     def destroy(Project domain, boolean printMessage) {
         //Build response message
         log.info "destroy project"
-
-        //remove Retrieval-project where this project is set
-       def criteria = Project.createCriteria()
-        List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
-          retrievalProjects {
-              eq('id', domain.id)
-          }
-        }
-
-        projectsThatUseThisProjectForRetrieval.each {
-            it.refresh()
-            it.removeFromRetrievalProjects(domain)
-            it.save(flush: true)
-        }
-
-        ImageFilterProject.findAllByProject(domain).each {
-            it.delete()
-        }
-
-        //remove retrieval-project of this project
-        //domain.retrievalProjects.clear()
-
+//
+//        //remove Retrieval-project where this project is set
+//       def criteria = Project.createCriteria()
+//        List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
+//          retrievalProjects {
+//              eq('id', domain.id)
+//          }
+//        }
+//
+//        projectsThatUseThisProjectForRetrieval.each {
+//            it.refresh()
+//            it.removeFromRetrievalProjects(domain)
+//            it.save(flush: true)
+//        }
+//
+//        ImageFilterProject.findAllByProject(domain).each {
+//            it.delete()
+//        }
+//
+//        //remove retrieval-project of this project
+//        //domain.retrievalProjects.clear()
+//
         //Delete all command / command history from project
         CommandHistory.findAllByProject(domain).each { it.delete() }
         Command.findAllByProject(domain).each {
@@ -272,22 +279,22 @@ class ProjectService extends ModelService {
             RedoStackItem.findAllByCommand(it).each { it.delete()}
             it.delete()
         }
-        log.info "command deleted"
-        UploadedFile.findAllByProject(domain).each { uploadedFile ->
-            uploadedFile.delete()
-        }
-
-        LastConnection.findAllByProject(domain).each {
-            it.delete()
-        }
-
-        UserPosition.findAllByProject(domain).each {
-            it.delete()
-        }
-
-        Task.findAllByProject(domain).each {
-            it.delete()
-        }
+//        log.info "command deleted"
+//        UploadedFile.findAllByProject(domain).each { uploadedFile ->
+//            uploadedFile.delete()
+//        }
+//
+//        LastConnection.findAllByProject(domain).each {
+//            it.delete()
+//        }
+//
+//        UserPosition.findAllByProject(domain).each {
+//            it.delete()
+//        }
+//
+//        Task.findAllByProject(domain).each {
+//            it.delete()
+//        }
 
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
@@ -376,5 +383,57 @@ class ProjectService extends ModelService {
         }
     }
 
+    def deleteDependentImageFilterProject(Project project, Transaction transaction) {
+        ImageFilterProject.findAllByProject(project).each {
+            imageFilterProjectService.delete(it,transaction, false)
+        }
+    }
 
+    def deleteDependentJob(Project project, Transaction transaction) {
+        Job.findAllByProject(project).each {
+            jobService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentSoftwareProject(Project project, Transaction transaction) {
+        SoftwareProject.findAllByProject(project).each {
+            softwareProjectService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentAlgoAnnotation(Project project, Transaction transaction) {
+        AlgoAnnotation.findAllByProject(project).each {
+            algoAnnotationService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentAlgoAnnotationTerm(Project project, Transaction transaction) {
+        AlgoAnnotationTerm.findAllByProject(project).each {
+            algoAnnotationTermService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentAnnotationFilter(Project project, Transaction transaction) {
+        AnnotationFilter.findAllByProject(project).each {
+            annotationFilterService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentImageInstance(Project project, Transaction transaction) {
+        ImageInstance.findAllByProject(project).each {
+            imageInstanceService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentReviewedAnnotation(Project project, Transaction transaction) {
+        ReviewedAnnotation.findAllByProject(project).each {
+            reviewedAnnotationService.delete(it,transaction, false)
+        }
+    }
+
+    def deleteDependentUserAnnotation(Project project, Transaction transaction) {
+        UserAnnotation.findAllByProject(project).each {
+            userAnnotationService.delete(it,transaction, false)
+        }
+    }
 }

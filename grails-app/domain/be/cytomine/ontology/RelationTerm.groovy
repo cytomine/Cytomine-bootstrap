@@ -27,63 +27,6 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Add a new relation for term1 and term2
-     */
-    static RelationTerm link(Relation relation, Term term1, Term term2) {
-        link(-1, relation, term1, term2)
-    }
-
-    /**
-     * Add a new relation for term1 and term2
-     */
-    static RelationTerm link(long id, Relation relation, Term term1, Term term2) {
-        if (!relation) {
-            throw new WrongArgumentException("Relation cannot be null")
-        }
-        if (!term1) {
-            throw new WrongArgumentException("Term 1 cannot be null")
-        }
-        if (!term2) {
-            throw new WrongArgumentException("Term 2 cannot be null")
-        }
-
-        if(term1.ontology.id!=term2.ontology.id) {
-            throw new WrongArgumentException("Term 1 and Term 2 don't have same ontology")
-        }
-
-        def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-        if (!relationTerm) {
-            relationTerm = new RelationTerm()
-            if (id != -1) {
-                relationTerm.id = id
-            }
-            term1?.addToRelationTerm1(relationTerm)
-            term2?.addToRelationTerm2(relationTerm)
-            relation?.addToRelationTerm(relationTerm)
-            term1.refresh()
-            term2.refresh()
-            relation.refresh()
-            relationTerm.save(flush: true)
-        } else {
-            throw new AlreadyExistException("Term1 " + term1.id + " and " + term2.id + " are already mapped with relation " + relation.id)
-        }
-        return relationTerm
-    }
-
-    /**
-     * Remove a relation between term1 and term2
-     */
-    static void unlink(Relation relation, Term term1, Term term2) {
-        def relationTerm = RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-        if (relationTerm) {
-            term1?.removeFromRelationTerm1(relationTerm)
-            term2?.removeFromRelationTerm2(relationTerm)
-            relation?.removeFromRelationTerm(relationTerm)
-            relationTerm.delete(flush: true)
-        }
-    }
-
-    /**
      * Thanks to the json, create an new domain of this class
      * Set the new domain id to json.id value
      * @param json JSON with data to create domain
@@ -146,6 +89,17 @@ class RelationTerm extends CytomineDomain implements Serializable {
      */
     public Ontology ontologyDomain() {
         return term1.ontology
+    }
+
+    void checkAlreadyExist() {
+        RelationTerm.withNewSession {
+            if(relation && term1 && term2) {
+                RelationTerm rt = RelationTerm.findByRelationAndTerm1AndTerm2(relation,term1,term2)
+                if(rt!=null && (rt.id!=id))  {
+                    throw new AlreadyExistException("RelationTerm with relation=${relation.id} and term1 ${term1.id} and term2 ${term2.id} already exist!")
+                }
+            }
+        }
     }
 
 }

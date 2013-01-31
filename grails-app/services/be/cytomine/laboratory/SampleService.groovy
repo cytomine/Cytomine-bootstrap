@@ -12,6 +12,10 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.command.Transaction
+import be.cytomine.ontology.AlgoAnnotationTerm
+import grails.converters.JSON
 
 class SampleService extends ModelService {
 
@@ -21,8 +25,8 @@ class SampleService extends ModelService {
 
     def modelService
     def cytomineService
-    def groupService
     def abstractImageService
+    def transactionService
 
     @Secured(['ROLE_ADMIN'])
     def list() {
@@ -78,7 +82,12 @@ class SampleService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_USER')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(Sample sample, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${sample.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -177,4 +186,11 @@ class SampleService extends ModelService {
         }
         return sample
     }
+
+    def deleteDependentAbstractImage(Sample sample, Transaction transaction) {
+        AbstractImage.findAllBySample(sample).each {
+            abstractImageService.delete(it,transaction,false)
+        }
+    }
+
 }

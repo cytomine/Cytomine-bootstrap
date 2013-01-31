@@ -18,6 +18,8 @@ class Ontology extends CytomineDomain implements Serializable {
     String name
     User user
 
+    //TODO: if perf issue, may be save ontology json in a text field. Load json instead ontology marshaller and update json when ontology is updated
+
     static constraints = {
         name(blank: false, unique: true)
     }
@@ -116,7 +118,7 @@ class Ontology extends CytomineDomain implements Serializable {
         t.key = term.getId()
         t.children = []
         boolean isFolder = false
-        term.relationTerm1.each() { relationTerm ->
+        RelationTerm.findAllByTerm1(term).each() { relationTerm ->
             if (relationTerm.getRelation().getName() == RelationTerm.names.PARENT) {
                 isFolder = true
                 def child = branch(relationTerm.getTerm2(), relation)

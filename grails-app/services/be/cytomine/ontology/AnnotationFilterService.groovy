@@ -11,6 +11,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class AnnotationFilterService extends ModelService {
 
@@ -18,6 +20,7 @@ class AnnotationFilterService extends ModelService {
 
     def cytomineService
     def modelService
+    def transactionService
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listByProject(Project project) {
@@ -74,7 +77,13 @@ class AnnotationFilterService extends ModelService {
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+
+    def delete(AnnotationFilter af, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${af.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 

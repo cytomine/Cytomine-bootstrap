@@ -71,7 +71,12 @@ class JobParameterService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        delete(retrieve(json))
+    }
+
+    def delete(JobParameter jp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${jp.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 

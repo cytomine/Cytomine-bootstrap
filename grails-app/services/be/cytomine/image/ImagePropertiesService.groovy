@@ -17,7 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 class ImagePropertiesService implements Serializable{
 
     def clear(AbstractImage image) {
-        image.imageProperties.each {
+        ImageProperty.findByImage(image).each {
             it.delete()
         }
     }

@@ -5,14 +5,13 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
 
 /**
  * Controller to manage user role
  */
 class RestSecUserSecRoleController extends RestController {
 
-    def userService
+    def secUserService
     def secRoleService
     def secUserSecRoleService
     def cytomineService
@@ -22,7 +21,7 @@ class RestSecUserSecRoleController extends RestController {
      * List all roles for a user
      */
     def list = {
-        User user = userService.read(params.long('user'));
+        User user = secUserService.read(params.long('user'));
         responseSuccess(secUserSecRoleService.list(user))
     }
 
@@ -31,7 +30,7 @@ class RestSecUserSecRoleController extends RestController {
      * If user has not this role, send 404
      */
     def show = {
-        User user = userService.read(params.long('user'));
+        User user = secUserService.read(params.long('user'));
         SecRole role = secRoleService.read(params.long('role'));
         SecUserSecRole secUserSecRole = secUserSecRoleService.get(user, role)
         if (!secUserSecRole) {

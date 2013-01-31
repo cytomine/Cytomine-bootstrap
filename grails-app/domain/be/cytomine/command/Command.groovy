@@ -42,7 +42,7 @@ class Command extends CytomineDomain {
     Project project
 
     /**
-     * Flag that indicate that the message will be show or not
+     * Flag that indicate that the message will be show or not for undo/redo
      */
     boolean printMessage = true
 

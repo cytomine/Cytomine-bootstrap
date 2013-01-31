@@ -20,7 +20,6 @@ class AnnotationTermService extends ModelService {
     def transactionService
     def commandService
     def responseService
-    def modelService
 
     boolean saveOnUndoRedoStack = true
 
@@ -65,8 +64,13 @@ class AnnotationTermService extends ModelService {
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
+        return delete(retrieve(json),transactionService.start())
+    }
+
+    def delete(AnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return deleteAnnotationTerm(json.userannotation, json.term, json.user, currentUser, true, null)
+        def json = JSON.parse("{userannotation: ${at.userAnnotation.id}, term: ${at.term.id}, user: ${at.user.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
 
@@ -90,9 +94,6 @@ class AnnotationTermService extends ModelService {
 
         //Add annotation term
         def result = addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
-
-        //Stop transaction
-        transactionService.stop()
 
         return result
     }
@@ -168,7 +169,7 @@ class AnnotationTermService extends ModelService {
         log.debug "domain=" + domain + " responseService=" + responseService
         //Save new object
         //modelService.saveDomain(domain)
-        domain = AnnotationTerm.link(domain.userAnnotation, domain.term, domain.user)
+        saveDomain(domain)
 
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
 
@@ -182,7 +183,7 @@ class AnnotationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
-        destroy(AnnotationTerm.createFromData(json), printMessage)
+        destroy(AnnotationTerm.read(json.id), printMessage)
     }
 
     /**
@@ -194,8 +195,12 @@ class AnnotationTermService extends ModelService {
     def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
+
+        //TODO: must be re-add in read json data method!
+        def based = domain.userAnnotation
+        based.annotationTerm?.clear()
         //Delete new object
-        AnnotationTerm.unlink(domain.userAnnotation, domain.term, domain.user)
+        deleteDomain(domain)
         //deleteDomain(domain)
         return response
     }

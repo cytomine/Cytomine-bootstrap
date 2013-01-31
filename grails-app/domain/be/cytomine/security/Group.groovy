@@ -14,8 +14,6 @@ class Group extends CytomineDomain {
 
     String name
 
-    static hasMany = [abstractimagegroup: AbstractImageGroup]
-
     static mapping = {
         table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
     }

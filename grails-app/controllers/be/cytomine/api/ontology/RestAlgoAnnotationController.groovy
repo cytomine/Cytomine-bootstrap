@@ -30,7 +30,7 @@ class RestAlgoAnnotationController extends RestController {
     def algoAnnotationService
     def termService
     def imageInstanceService
-    def userService
+    def secUserService
     def projectService
     def cytomineService
     def dataSource
@@ -173,7 +173,7 @@ class RestAlgoAnnotationController extends RestController {
     def listByImageAndUser = {
 
         def image = imageInstanceService.read(params.long('idImage'))
-        def user = userService.read(params.idUser)
+        def user = secUserService.read(params.idUser)
         String bbox = params.bbox
         boolean notReviewedOnly = params.getBoolean("notreviewed")
 

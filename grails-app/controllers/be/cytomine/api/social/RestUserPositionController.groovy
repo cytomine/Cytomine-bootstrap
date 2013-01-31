@@ -14,7 +14,7 @@ class RestUserPositionController extends RestController {
 
     def cytomineService
     def imageInstanceService
-    def userService
+    def secUserService
     def dataSource
     def projectService
 
@@ -69,7 +69,7 @@ class RestUserPositionController extends RestController {
      */
     def lastPositionByUser = {
         ImageInstance image = imageInstanceService.read(params.id)
-        SecUser user = userService.read(params.user)
+        SecUser user = secUserService.read(params.user)
         def userPositions = UserPosition.createCriteria().list(sort : "created", order : "desc", max : 1) {
             eq("user", user)
             eq("image", image)

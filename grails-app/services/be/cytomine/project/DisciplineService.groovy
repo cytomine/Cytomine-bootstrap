@@ -10,6 +10,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class DisciplineService extends ModelService {
 
@@ -70,6 +72,12 @@ class DisciplineService extends ModelService {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        return executeCommand(new DeleteCommand(user: currentUser), json)
+    }
+
+    def delete(Discipline discipline, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${discipline.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -168,6 +176,12 @@ class DisciplineService extends ModelService {
         Discipline discipline = Discipline.get(json.id)
         if (!discipline) throw new ObjectNotFoundException("Discipline " + json.id + " not found")
         return discipline
+    }
+
+    def deleteDependentProject(Discipline discipline, Transaction transaction) {
+        if(Project.findByDiscipline(discipline)) {
+            throw new ConstraintException("Discipline is linked with project. Cannot delete discipline!")
+        }
     }
 
 }

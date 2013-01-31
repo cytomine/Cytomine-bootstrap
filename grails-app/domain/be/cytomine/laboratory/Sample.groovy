@@ -19,8 +19,6 @@ class Sample extends CytomineDomain implements Serializable{
         name(blank: false, unique: true)
     }
 
-    static hasMany = [image: AbstractImage]
-
     /**
      * Thanks to the json, create an new domain of this class
      * Set the new domain id to json.id value

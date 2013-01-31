@@ -7,7 +7,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.Utils
 import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -17,7 +16,7 @@ class RestUserController extends RestController {
     def springSecurityService
     def transactionService
     def cytomineService
-    def userService
+    def secUserService
     def projectService
     def ontologyService
     def imageInstanceService
@@ -30,9 +29,9 @@ class RestUserController extends RestController {
         boolean online = params.boolean('online')
         Project project = projectService.read(params.long('id'))
         if (project && !online) {
-            responseSuccess(userService.listUsers(project))
+            responseSuccess(secUserService.listUsers(project))
         } else if (project && online) {
-            def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
+            def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
             responseSuccess(users)
         } else {
             responseNotFound("User", "Project", params.id)
@@ -45,7 +44,7 @@ class RestUserController extends RestController {
     def showAdminByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
-            responseSuccess(userService.listAdmins(project))
+            responseSuccess(secUserService.listAdmins(project))
         } else {
             responseNotFound("User", "Project", params.id)
         }
@@ -57,7 +56,7 @@ class RestUserController extends RestController {
     def showCreatorByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
-            responseSuccess([userService.listCreator(project)])
+            responseSuccess([secUserService.listCreator(project)])
         } else {
             responseNotFound("User", "Project", params.id)
         }
@@ -80,7 +79,7 @@ class RestUserController extends RestController {
     def showUserByOntology = {
         Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) {
-            responseSuccess(userService.listUsers(ontology))
+            responseSuccess(secUserService.listUsers(ontology))
         } else {
             responseNotFound("User", "Project", params.id)
         }
@@ -92,7 +91,7 @@ class RestUserController extends RestController {
     def showLayerByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
-            responseSuccess(userService.listLayers(project))
+            responseSuccess(secUserService.listLayers(project))
         } else {
             responseNotFound("User", "Project", params.id)
         }
@@ -104,9 +103,9 @@ class RestUserController extends RestController {
      */
     def list = {
         if (params.publicKey != null) {
-            responseSuccess(userService.getByPublicKey(params.publicKey))
+            responseSuccess(secUserService.getByPublicKey(params.publicKey))
         } else {
-            responseSuccess(userService.list())
+            responseSuccess(secUserService.list())
         }
     }
 
@@ -116,7 +115,7 @@ class RestUserController extends RestController {
      * @return user an User into the specified format
      */
     def show = {
-        SecUser user = userService.read(params.long('id'))
+        SecUser user = secUserService.read(params.long('id'))
         if (user) {
             responseSuccess(user)
         } else {
@@ -128,7 +127,7 @@ class RestUserController extends RestController {
      * Get current user info
      */
     def showCurrent = {
-        responseSuccess(userService.readCurrentUser())
+        responseSuccess(secUserService.readCurrentUser())
     }
 
 
@@ -136,21 +135,21 @@ class RestUserController extends RestController {
      * Add a new user
      */
     def add = {
-        add(userService, request.JSON)
+        add(secUserService, request.JSON)
     }
 
     /**
      * Update a user
      */
     def update = {
-        update(userService, request.JSON)
+        update(secUserService, request.JSON)
     }
 
     /**
      * Delete a user
      */
     def delete = {
-        delete(userService, JSON.parse("{id : $params.id}"))
+        delete(secUserService, JSON.parse("{id : $params.id}"))
     }
 
     /**
@@ -159,7 +158,7 @@ class RestUserController extends RestController {
     def addUserToProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        userService.addUserFromProject(user, project, false)
+        secUserService.addUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -172,7 +171,7 @@ class RestUserController extends RestController {
     def deleteUserFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        userService.deleteUserFromProject(user, project, false)
+        secUserService.deleteUserFromProject(user, project, false)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -184,7 +183,7 @@ class RestUserController extends RestController {
     def addUserAdminToProject = {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
-        userService.addUserFromProject(user, project, true)
+        secUserService.addUserFromProject(user, project, true)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -197,7 +196,7 @@ class RestUserController extends RestController {
     def deleteUserAdminFromProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
-        userService.deleteUserFromProject(user, project, true)
+        secUserService.deleteUserFromProject(user, project, true)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -207,7 +206,7 @@ class RestUserController extends RestController {
      * Get all user friend (other user that share same project)
      */
     def listFriends = {
-        SecUser user = userService.get(params.long('id'))
+        SecUser user = secUserService.get(params.long('id'))
         Project project = null
         if (params.long('project')) {
             project = projectService.read(params.long('project'))
@@ -218,18 +217,18 @@ class RestUserController extends RestController {
         if (!includeOffline) {
             if (project) {
                 //get user project online
-                users = userService.getAllFriendsUsersOnline(user, project)
+                users = secUserService.getAllFriendsUsersOnline(user, project)
             } else {
                 //get friends online
-                users = userService.getAllFriendsUsersOnline(user)
+                users = secUserService.getAllFriendsUsersOnline(user)
             }
         } else {
             if (project) {
                 //get all user project list
-                users = userService.listUsers(project)
+                users = secUserService.listUsers(project)
             } else {
                 //get all people that share common project with user
-                users = userService.getAllFriendsUsers(user)
+                users = secUserService.getAllFriendsUsers(user)
             }
         }
         responseSuccess(users)
@@ -244,7 +243,7 @@ class RestUserController extends RestController {
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
 
         //Get all project user online
-        def users = userService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
+        def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
         def usersId = users.collect {it.id}
 
         //Get all user oonline and their pictures

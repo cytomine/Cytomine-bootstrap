@@ -11,8 +11,6 @@ class Relation extends CytomineDomain implements Serializable {
 
     String name
 
-    static hasMany = [relationTerm: RelationTerm]
-
     static constraints = {
         name(unique: true, nullable: false)
     }

@@ -12,16 +12,13 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Transaction
+import grails.converters.JSON
 
 class ImageFilterProjectService extends ModelService {
 
     static transactional = true
-    def aclPermissionFactory
-    def aclService
-    def aclUtilService
     def springSecurityService
-    def imageFilterService
-    def projectService
 
     @Secured(['ROLE_ADMIN'])
     def list() {
@@ -59,7 +56,12 @@ class ImageFilterProjectService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
+        delete(retrieve(json))
+    }
+
+    def delete(ImageFilterProject ifp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{id: ${ifp.id}}")
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
@@ -82,8 +84,7 @@ class ImageFilterProjectService extends ModelService {
      */
     def create(ImageFilterProject domain, boolean printMessage) {
         //Save new object
-        domain = ImageFilterProject.link(domain.id, domain.imageFilter,domain.project)
-
+        saveDomain(domain)
         //Build response message
         return responseService.createResponseMessage(domain, [domain.imageFilter?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
     }
@@ -110,7 +111,7 @@ class ImageFilterProjectService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.imageFilter?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        ImageFilterProject.unlink(domain.imageFilter,domain.project)
+        deleteDomain(domain)
         return response
     }
 
@@ -133,5 +134,8 @@ class ImageFilterProjectService extends ModelService {
         if (!parameter) throw new ObjectNotFoundException("ImageFilterProject " + json.id + " not found")
         return parameter
     }
+
+    def delete
+
 
 }

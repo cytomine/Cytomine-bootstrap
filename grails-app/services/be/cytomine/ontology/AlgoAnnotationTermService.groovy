@@ -22,8 +22,6 @@ class AlgoAnnotationTermService extends ModelService {
     static transactional = true
     def cytomineService
     def commandService
-    def modelService
-    def jobService
 
     boolean saveOnUndoRedoStack = true
 
@@ -65,6 +63,12 @@ class AlgoAnnotationTermService extends ModelService {
         if (!creator)
             json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser), json)
+    }
+
+    def delete(AlgoAnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        def json = JSON.parse("{annotationIdent: ${at.annotationIdent},term: ${at.term.id}, userJob: ${at.userJob.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
     /**

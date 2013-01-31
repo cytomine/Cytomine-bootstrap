@@ -20,49 +20,6 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Add a new filter for a project
-     */
-    static ImageFilterProject link(ImageFilter imageFilter, Project project) {
-        link(null, imageFilter, project)
-    }
-
-    /**
-     * Add a new filter for a project
-     * Put id parameter as new domain id
-     */
-    static ImageFilterProject link(def id , ImageFilter imageFilter, Project project) {
-        def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, project)
-        if (!imageFilterProject) {
-            imageFilterProject = new ImageFilterProject()
-            imageFilterProject.id = id
-            imageFilterProject.imageFilter = imageFilter
-            imageFilterProject.project = project
-            imageFilter?.addToImageFilterProjects(imageFilterProject)
-            project?.addToImageFilterProjects(imageFilterProject)
-            project.refresh()
-            imageFilter.refresh()
-            imageFilterProject.save(flush: true)
-        } else {
-            throw new AlreadyExistException("Image Filter " + imageFilter?.name + " already map with project " + project?.name)
-        }
-        imageFilterProject
-    }
-
-    /**
-     * Remove image filter from project
-     */
-    static void unlink(ImageFilter imageFilter, Project project) {
-        def imageFilterProject = ImageFilterProject.findByImageFilterAndProject(imageFilter, project)
-        if (imageFilterProject) {
-            imageFilter?.removeFromImageFilterProjects(imageFilterProject)
-            project?.removeFromImageFilterProjects(imageFilterProject)
-            imageFilter.refresh()
-            project.refresh()
-            imageFilterProject.delete(flush: true)
-        }
-    }
-
-    /**
      * Thanks to the json, create an new domain of this class
      * Set the new domain id to json.id value
      * @param json JSON with data to create domain

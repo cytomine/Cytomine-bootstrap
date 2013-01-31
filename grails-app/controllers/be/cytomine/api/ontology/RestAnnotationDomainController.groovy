@@ -25,7 +25,7 @@ class RestAnnotationDomainController extends RestController {
     def userAnnotationService
     def termService
     def imageInstanceService
-    def userService
+    def secUserService
     def projectService
     def cytomineService
     def dataSource

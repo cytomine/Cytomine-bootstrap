@@ -4,6 +4,10 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.Transaction
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.hibernate.cfg.NotYetImplementedException
 
 abstract class ModelService {
 
@@ -67,6 +71,23 @@ abstract class ModelService {
      * Execute command with JSON data
      */
     protected executeCommand(Command c, def json) {
+        if(c instanceof DeleteCommand) {
+            def domainToDelete = retrieve(json)
+
+            //Create a backup (for 'undo' op)
+            //We create before for deleteCommand to keep data from HasMany inside json (data will be deleted later)
+            def backup = domainToDelete.encodeAsJSON()
+            c.backup = backup
+
+            //remove all dependent domains
+            def allServiceMethods = this.metaClass.methods*.name
+            allServiceMethods.each {
+                if(it.startsWith("deleteDependent")) {
+                    this."$it"(domainToDelete,c.transaction)
+                }
+            }
+        }
+
         initCommandService()
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
@@ -82,4 +103,10 @@ abstract class ModelService {
         }
 
     }
+
+    protected def retrieve(def json) {
+        throw new NotYetImplementedException("The retrieve method must be implement in service "+ this.class)
+    }
+
+
 }
