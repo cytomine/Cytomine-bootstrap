@@ -34,11 +34,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     static belongsTo = Sample
 
-<<<<<<< .mine
-=======
-    static hasMany = [abstractimagegroup: AbstractImageGroup, storageAbstractImages: StorageAbstractImage, imageProperties: ImageProperty, nestFiles : NestedFile]
-
->>>>>>> .r1989
     static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {

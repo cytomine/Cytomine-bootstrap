@@ -158,7 +158,7 @@ class RelationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
-        destroy(RelationTerm.read(json.id), printMessage)
+        destroy(RelationTerm.get(json.id), printMessage)
     }
 
     /**

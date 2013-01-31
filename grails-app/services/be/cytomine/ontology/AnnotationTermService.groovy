@@ -183,7 +183,7 @@ class AnnotationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
-        destroy(AnnotationTerm.read(json.id), printMessage)
+        destroy(AnnotationTerm.get(json.id), printMessage)
     }
 
     /**
