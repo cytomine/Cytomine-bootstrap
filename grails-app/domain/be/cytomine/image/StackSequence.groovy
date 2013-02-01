@@ -5,7 +5,7 @@ package be.cytomine.image
  */
 class StackSequence {
 
-    static hasMany = [ stacks : ImageStack]
+    static hasMany = [ imageStacks : ImageStack]
 
     static constraints = {
     }

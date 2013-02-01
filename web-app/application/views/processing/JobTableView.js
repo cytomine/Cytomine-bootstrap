@@ -142,7 +142,7 @@ var JobTableView = Backbone.View.extend({
         var colArray = ['<tr>', '<td>' + cellIcon + '</td>', '<td  style="text-align:left;">' + cellId + '</td>', '<td  style="text-align:center;">' + cellNumber + '</td>', '<td  style="text-align:center;">' + cellDate + '</td>', '<td  style="text-align:center;">' + cellState + '</td>', '<td  style="text-align:center;">' + cellRate + '</td>', '<td>' + cellSee + '</td>']
 
         //get all params form job to print in table column
-        var jobParamArray = job.get('jobParameter');
+        var jobParamArray = job.get('jobParameters');
         if (jobParamArray.length == 0) {
             _.each(self.paramsFromSoftwares, function (softParam) {
                 colArray.push('<td></td>')
@@ -246,7 +246,7 @@ var JobTableView = Backbone.View.extend({
                 new JobModel({ id: aData[1]}).fetch({
                     success: function (model, response) {
                         var tableParam = $(self.el).find('#searchJobTable').find('table[id=' + aData[1] + ']');
-                        _.each(model.get('jobParameter'), function (param) {
+                        _.each(model.get('jobParameters'), function (param) {
                             tableParam.append('<tr><td>' + param.name + '</td><td>' + param.value + '</td><td>' + param.type + '</td></tr>');
                         });
                     }

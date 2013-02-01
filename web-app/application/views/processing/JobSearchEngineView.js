@@ -266,7 +266,7 @@ var JobSearchEngineView = Backbone.View.extend({
     },
     getJobParam: function (job, name) {
         var goodParam = undefined;
-        _.each(job.get('jobParameter'), function (param) {
+        _.each(job.get('jobParameters'), function (param) {
             if (param.name == name) {
                 goodParam = param;
             }

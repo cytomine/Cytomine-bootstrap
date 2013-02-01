@@ -155,7 +155,7 @@ class ReviewedAnnotationService extends ModelService {
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, Term term) {
         def reviewed = ReviewedAnnotation.createCriteria().list {
-            createAlias "term", "t"
+            createAlias "terms", "t"
             eq("image", image)
             eq("t.id", term.id)
             order("created", "desc")
@@ -234,7 +234,7 @@ class ReviewedAnnotationService extends ModelService {
     def deleteAnnotation(ReviewedAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
         if (annotation) {
             //remove annotation term
-            annotation.term.clear()
+            annotation.terms.clear()
             annotation.save(flush: true)
         }
         //Delete annotation
@@ -349,7 +349,7 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     def deleteDependentHasManyTerm(ReviewedAnnotation annotation, Transaction transaction) {
-        annotation.term?.clear()
+        annotation.terms?.clear()
      }
 
 }

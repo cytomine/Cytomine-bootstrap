@@ -416,15 +416,15 @@ class UpdateData {
          Term newTerm = BasicInstance.getBasicTermNotExist()
          newTerm.save(flush: true)
 
-         def mapNew = ["geom":newGeom,"user":newUser,"term":newTerm]
-         def mapOld = ["geom":oldGeom,"user":oldUser,"term":oldTerm]
+         def mapNew = ["geom":newGeom,"user":newUser,"terms":newTerm]
+         def mapOld = ["geom":oldGeom,"user":oldUser,"terms":oldTerm]
 
          /* Create a old annotation with point 1111 1111 */
          log.info("create reviewedannotation")
          ReviewedAnnotation annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
          annotationToAdd.location =  new WKTReader().read(oldGeom)
          annotationToAdd.user = oldUser
-         annotationToAdd.addToTerm(oldTerm)
+         annotationToAdd.addToTerms(oldTerm)
          assert (annotationToAdd.save(flush:true) != null)
 
          /* Encode a niew annotation with point 9999 9999 */
@@ -434,7 +434,7 @@ class UpdateData {
          def jsonUpdate = JSON.parse(jsonAnnotation)
          jsonUpdate.location = newGeom
          jsonUpdate.user = newUser.id
-         jsonUpdate.term = [newTerm.id]
+         jsonUpdate.terms = [newTerm.id]
          jsonAnnotation = jsonUpdate.encodeAsJSON()
         return ['oldData':annotation,'newData':jsonAnnotation,'mapOld':mapOld,'mapNew':mapNew]
      }

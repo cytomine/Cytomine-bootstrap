@@ -477,12 +477,12 @@ class RestReviewedAnnotationController extends RestController {
         if(terms!=null) {
             //terms in request param
             terms.each {
-                review.addToTerm(Term.read(Long.parseLong(it+"")))
+                review.addToTerms(Term.read(Long.parseLong(it+"")))
             }
         } else {
             //nothing in param, add term from annotation
             annotation.termsForReview().each {
-                review.addToTerm(it)
+                review.addToTerms(it)
             }
         }
         review.reviewUser = cytomineService.currentUser

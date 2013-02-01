@@ -275,7 +275,7 @@ class RestUserAnnotationController extends RestController {
         //create shared annotation domain
         def sharedAnnotation = new SharedAnnotation(
                 sender: sender,
-                receiver: receivers,
+                receivers: receivers,
                 comment: request.JSON.comment,
                 userAnnotation: annotation
         )
@@ -314,7 +314,7 @@ class RestUserAnnotationController extends RestController {
                 eq("userAnnotation", annotation)
                 or {
                     eq("sender", user)
-                    receiver {
+                    receivers {
                         eq("id", user.id)
                     }
                 }

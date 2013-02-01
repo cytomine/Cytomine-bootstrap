@@ -25,7 +25,7 @@ class AnnotationTermService extends ModelService {
 
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation userAnnotation) {
-        userAnnotation.annotationTerm
+        userAnnotation.annotationTerms
     }
 
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
@@ -198,7 +198,7 @@ class AnnotationTermService extends ModelService {
 
         //TODO: must be re-add in read json data method!
         def based = domain.userAnnotation
-        based.removeFromAnnotationTerm(domain)
+        based.removeFromAnnotationTerms(domain)
         //Delete new object
         deleteDomain(domain)
         //deleteDomain(domain)

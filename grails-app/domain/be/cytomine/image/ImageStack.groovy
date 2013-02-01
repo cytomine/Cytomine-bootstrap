@@ -5,7 +5,7 @@ package be.cytomine.image
  */
 class ImageStack {
 
-    static hasMany = [ images : ImageInstance]
+    static hasMany = [ imageInstances : ImageInstance]
 
     Long timestamp
 

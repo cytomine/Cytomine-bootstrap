@@ -178,7 +178,7 @@ var JobListingView = Backbone.View.extend({
         var i = 0;
         $("#" + subgrid_table_id).jqGrid('clearGridData');
 
-        _.each(self.jobCollection.get(idJob).get('jobParameter'), function (jobparam) {
+        _.each(self.jobCollection.get(idJob).get('jobParameters'), function (jobparam) {
             var data = {name: jobparam.name, value: jobparam.value, type: jobparam.type};
             $("#" + subgrid_table_id).jqGrid('addRowData', i + 1, data);
             i++;

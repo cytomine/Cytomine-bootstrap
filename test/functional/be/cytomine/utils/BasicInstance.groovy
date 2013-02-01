@@ -283,7 +283,7 @@ class BasicInstance {
         checkDomain(term)
         saveDomain(term)
 
-        annotation.addToTerm(term)
+        annotation.addToTerms(term)
         checkDomain(annotation)
         saveDomain(annotation)
         annotation
@@ -1386,7 +1386,7 @@ class BasicInstance {
     static void compareReviewedAnnotation(map, json) {
         assert map.geom.replace(' ', '').equals(json.location.replace(' ', ''))
         assert toLong(map.user.id).equals(toLong(json.user))
-        assert toLong(map.term.id).equals(toLong(json.term[0]))
+        assert toLong(map.terms.id).equals(toLong(json.terms[0]))
     }
 
     /**

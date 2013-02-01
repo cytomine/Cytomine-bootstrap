@@ -294,7 +294,7 @@ var JobSelectionView = Backbone.View.extend({
                 new JobModel({ id: aData[1]}).fetch({
                     success: function (model, response) {
                         var tableParam = $(self.el).find('#selectJobTable').find('table[id=' + aData[1] + ']');
-                        _.each(model.get('jobParameter'), function (param) {
+                        _.each(model.get('jobParameters'), function (param) {
                             console.log("param.value=" + param.value);
                             var value = param.value
                             if (value.length > 50) {

@@ -138,7 +138,7 @@ var LaunchJobView = Backbone.View.extend({
         var job = self.createJobModel(params);
         //create a job, in post data, add param array
 //        console.log("job.set()...");
-//        job.set('jobParameter',params);
+//        job.set('jobParameters',params);
 //        //send job
         console.log("self.saveJobModel(job)...");
         self.saveJobModel(job);

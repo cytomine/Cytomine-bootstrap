@@ -22,16 +22,26 @@ class AdminController {
     }
 
     private def checkDependance() {
+        def domainToSkip = ["Command","AddCommand","EditCommand","DeleteCommand","CommandHistory","RedoStackItem","UndoStackItem"]
+
+        def fixDomainName =
+            ["AnnotationDomain" :
+                    [[name:"UserAnnotation", type:"UserAnnotation"],[name:"AlgoAnnotation", type:"AlgoAnnotation"],[name:"ReviewedAnnotation", type:"ReviewedAnnotation"]],
+             "User" : [[name:"SecUser", type:"SecUser"]],
+             "UserJob" : [[name:"SecUser", type:"SecUser"]],
+             "retrievalProjects" : [[name:"projects", type:"projects"]]
+        ]
+
+
         def allErrors = []
         grailsApplication.getDomainClasses().each { domain ->
+            if(!domainToSkip.contains(domain.name)) {
+                def columnDep = getDependencyColumn(domain,["be.cytomine."])
+                allErrors.addAll(checkServiceMethod(domain,columnDep,fixDomainName))
 
-
-            def columnDep = getDependencyColumn(domain)
-            allErrors.addAll(checkServiceMethod(domain,columnDep))
-
-            def columnDepHasMany = getDependencyColumnHasMany(domain)
-            allErrors.addAll(checkServiceMethodInverse(domain,columnDepHasMany))
-
+                def columnDepHasMany = getDependencyColumn(domain,["java.util.Set","java.util.SortedSet","java.util.List"])
+                allErrors.addAll(checkServiceMethodInverse(domain,columnDepHasMany,fixDomainName))
+            }
         }
 
         println "***********************************************************************"
@@ -52,174 +62,116 @@ class AdminController {
 
     def responseService
 
-    private def getDependencyColumn(def domain) {
-        def columnDep = []
-
-        def domainClass = grailsApplication.getDomainClasses().find {it.name == domain.name}
-        println "****** domainClass=$domainClass"
-
-        def d = new DefaultGrailsDomainClass(domainClass.referenceInstance.class)
-        d.persistentProperties.each {
-            if(it.type.toString().contains("be.cytomine.")) {
-                columnDep << [name:it.name, type:getClassName(it.type.toString())]
-            }
-        }
-        columnDep
-    }
-
-    private def getDependencyColumnHasMany(def domain) {
+    private def getDependencyColumn(def domain, def dependancyFilter) {
         def columnDep = []
 
         def domainClass = grailsApplication.getDomainClasses().find {it.name == domain.name}
 
         def d = new DefaultGrailsDomainClass(domainClass.referenceInstance.class)
-        d.persistentProperties.each {
-            if(it.type.toString().contains("java.util.Set") || it.type.toString().contains("java.util.SortedSet") || it.type.toString().contains("java.util.List")) {
-                columnDep << [name:it.name, type:getClassName(it.type.toString())]
+        d.persistentProperties.each { prop ->
+            boolean contains = false
+            dependancyFilter.each { filter ->
+                contains = contains || prop.toString().contains(filter)
+            }
+            if(contains) {
+                columnDep << [name:prop.name, type:getClassName(prop.type.toString())]
             }
         }
         columnDep
     }
 
+    private boolean deleteDependentMissingMethod(def serviceClass, def methodExpected) {
+        def allServiceMethods = serviceClass.metaClass.methods*.name
+        //if there is no delete method, don't throw error
+        boolean deleteMethodExist = false
 
-    private def checkServiceMethod(def domain, def columns) {
+        boolean isFind = false
+        allServiceMethods.each {
+            if(it==methodExpected) {
+                isFind = true
+            }
+
+            if(it.startsWith("delete")) {
+                deleteMethodExist = true
+            }
+        }
+
+        return deleteMethodExist && !isFind
+
+
+    }
+
+
+    private def checkServiceMethod(def domain, def columns, def fixDomainName) {
         //special domain that we should delete manually (not with deleteDependentXXX method)
-        def domainToSkip = ["Command","AddCommand","EditCommand","DeleteCommand","CommandHistory","RedoStackItem","UndoStackItem"]
-        if(domainToSkip.contains(domain.name)) {
-            return []
-        }
-
-
         def allErrors = []
         def fixColumn = []
 
         columns.each {
-            println it.type
-            if(it.type=="AnnotationDomain") {
-                fixColumn << [name:"UserAnnotation", type:"UserAnnotation"]
-                fixColumn << [name:"AlgoAnnotation", type:"AlgoAnnotation"]
-                fixColumn << [name:"ReviewedAnnotation", type:"ReviewedAnnotation"]
-            }else if(it.type=="User") {
-                fixColumn << [name:"SecUser", type:"SecUser"]
-            }else if(it.type=="UserJob") {
-                fixColumn << [name:"SecUser", type:"SecUser"]
-            }else {
+            if(fixDomainName.keySet().contains(it.type)) {
+                fixDomainName.get(it.type).each {
+                    fixColumn << it
+                }
+            } else {
                 fixColumn << it
             }
         }
 
         def methodExpected = "deleteDependent"+domain.name
-        println "****** methodExpected=" + methodExpected
 
         fixColumn.each {
             String name = it.name
             String type = it.type
 
-            println "****** name=" + name
-            println grailsApplication.getServiceClasses().collect{it.name}
             def serviceClass = grailsApplication.getServiceClasses().find {it.name.toLowerCase() == type.toLowerCase()}
 
             if(!serviceClass) {
                 allErrors << "Service ${type}Service must exist and must contains $methodExpected($type,transaction)!!!"
             } else {
-
-                println "****** serviceClass=" + serviceClass
-                def allServiceMethods = serviceClass.metaClass.methods*.name
-
-                //if there is no delete method, don't throw error
-                boolean deleteMethodExist = false
-
-                boolean isFind = false
-                allServiceMethods.each {
-                    //println it + " vs " + methodExpected + " => " + (it==methodExpected)
-                    if(it==methodExpected) {
-                        isFind = true
-                    }
-
-                    if(it.startsWith("delete")) {
-                        deleteMethodExist = true
-                    }
-                }
-
-                if(deleteMethodExist && !isFind) {
+                if(deleteDependentMissingMethod(serviceClass,methodExpected)) {
                     allErrors << "Service ${type}Service must implement $methodExpected($type,transaction)!!!"
                 }
-
-
             }
-
         }
         allErrors
     }
 
 
 
-    private def checkServiceMethodInverse(def domain, def columns) {
-        //special domain that we should delete manually (not with deleteDependentXXX method)
-        def domainToSkip = ["Command","AddCommand","EditCommand","DeleteCommand","CommandHistory","RedoStackItem","UndoStackItem"]
-        if(domainToSkip.contains(domain.name)) {
-            return []
-        }
-
+    private def checkServiceMethodInverse(def domain, def columns,def fixDomainName) {
 
         def allErrors = []
         def fixColumn = []
 
         columns.each {
-            println it.type
-            if(it.type=="AnnotationDomain") {
-                fixColumn << [name:it.name, type:"UserAnnotation"]
-                fixColumn << [name:it.name, type:"AlgoAnnotation"]
-                fixColumn << [name:it.name, type:"ReviewedAnnotation"]
-            }else if(it.type=="User") {
-                fixColumn << [name:it.name, type:"SecUser"]
-            }else if(it.type=="UserJob") {
-                fixColumn << [name:it.name, type:"SecUser"]
-            }else {
+            if(fixDomainName.keySet().contains(it.type)) {
+                fixDomainName.get(it.type).each {
+                    fixColumn << it
+                }
+            } else {
                 fixColumn << it
             }
         }
 
-
-
         fixColumn.each {
 
-            def methodExpected = "deleteDependentHasMany" + it.name.substring(0,1).toUpperCase() + it.name.substring(1)
-            println "****** methodExpected=" + methodExpected
-            String name = it.name
+            def methodExpected1 = "deleteDependentHasMany" + it.name.substring(0,1).toUpperCase() + it.name.substring(1)
+            def methodExpected2 = "deleteDependentHasMany" + domain.name
+            String name = it.name.substring(0,it.name.size()-1)
             String type = domain.name
 
-            println "****** name=" + name
-            println grailsApplication.getServiceClasses().collect{it.name}
             def serviceClass = grailsApplication.getServiceClasses().find {it.name.toLowerCase() == type.toLowerCase()}
 
             if(!serviceClass) {
-                allErrors << "Service ${type}Service must exist and must contains $methodExpected($type,transaction)!!!"
+                allErrors << "Service ${type}Service must exist and must contains $methodExpected1($type,transaction)!!!"
+                allErrors << "Service ${name}Service must exist and must contains $methodExpected2($type,transaction)!!!"
             } else {
-
-                println "****** serviceClass=" + serviceClass
-                def allServiceMethods = serviceClass.metaClass.methods*.name
-
-                //if there is no delete method, don't throw error
-                boolean deleteMethodExist = false
-
-                boolean isFind = false
-                allServiceMethods.each {
-                    //println it + " vs " + methodExpected + " => " + (it==methodExpected)
-                    if(it==methodExpected) {
-                        isFind = true
-                    }
-
-                    if(it.startsWith("delete")) {
-                        deleteMethodExist = true
-                    }
+                if(deleteDependentMissingMethod(serviceClass,methodExpected1)) {
+                    allErrors << "Service ${type}Service must implement $methodExpected1($type,transaction)!!!"
                 }
-
-                if(deleteMethodExist && !isFind) {
-                    allErrors << "Service ${type}Service must implement $methodExpected($type,transaction)!!!"
+                if(deleteDependentMissingMethod(serviceClass,methodExpected2)) {
+                    allErrors << "Service ${name}Service must implement $methodExpected2($type,transaction)!!!"
                 }
-
-
             }
 
         }

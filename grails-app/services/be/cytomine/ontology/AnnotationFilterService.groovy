@@ -195,4 +195,32 @@ class AnnotationFilterService extends ModelService {
             destroy(it, true)
         }
     }
+
+
+    def deleteDependentHasManyTerms(AnnotationFilter project, Transaction transaction) {
+        project.terms?.clear()
+    }
+
+
+
+
+//        def deleteDependentHasManyTerms(AnnotationFilter project, Transaction transaction) {
+//            //remove Retrieval-project where this project is set
+//           def criteria = Project.createCriteria()
+//            List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
+//              retrievalProjects {
+//                  eq('id', project.id)
+//              }
+//            }
+//
+//            projectsThatUseThisProjectForRetrieval.each {
+//                it.refresh()
+//                it.removeFromRetrievalProjects(project)
+//                it.save(flush: true)
+//            }
+//
+//
+//            project.retrievalProjects?.clear()
+//    }
+
 }

@@ -67,8 +67,8 @@ class Job extends CytomineDomain  {
     /**
      * Job Parameters lists
      */
-    SortedSet jobParameter
-    static hasMany = [jobParameter: JobParameter]
+    SortedSet jobParameters
+    static hasMany = [jobParameters: JobParameter]
 
     static constraints = {
         progress(min: 0, max: 100)
@@ -161,7 +161,7 @@ class Job extends CytomineDomain  {
                 UserJob user = UserJob.findByJob(it)
                 job.username = user?.humanUsername()
                 job.userJob = user.id
-                job.jobParameter =  it.jobParameter
+                job.jobParameters =  it.jobParameters
             } catch (Exception e) {
                 log.info e
             }

@@ -251,7 +251,7 @@ var JobComparatorView = Backbone.View.extend({
         //print data from project image table
         var tbody = elemParent.find('#runParamsTable').find("tbody");
 
-        _.each(job.get('jobParameter'), function (param) {
+        _.each(job.get('jobParameters'), function (param) {
             tbody.append('<tr><td>' + param.name + '</td><td>' + self.getJobParamValue(param) + '</td><td>' + param.type + '</td></tr>');
         });
         elemParent.find('#runParamsTable').dataTable({

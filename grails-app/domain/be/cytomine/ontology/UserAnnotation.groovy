@@ -20,7 +20,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
     User user
     Integer countReviewedAnnotations = 0
 
-    static hasMany = [ annotationTerm: AnnotationTerm ]
+    static hasMany = [ annotationTerms: AnnotationTerm ]
 
     static constraints = {
     }
@@ -30,7 +30,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
           columns {
               location type: org.hibernatespatial.GeometryUserType
           }
-          annotationTerm fetch: 'join'
+          annotationTerms fetch: 'join'
          wktLocation(type: 'text')
       }
 
@@ -56,7 +56,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      * @return Terms list
      */
     def terms() {
-        return annotationTerm.collect {
+        return annotationTerms.collect {
             it.term
         }
     }
@@ -69,7 +69,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         if (user.algo()) {
             return AlgoAnnotationTerm.findAllByAnnotationIdent(this.id).collect{it.term?.id}.unique()
         } else {
-            return annotationTerm.collect{it.term?.id}.unique()
+            return annotationTerms.collect{it.term?.id}.unique()
         }
 
     }
@@ -113,7 +113,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      */
     def usersIdByTerm() {
         def results = []
-        annotationTerm.each { annotationTerm ->
+        annotationTerms.each { annotationTerm ->
             def map = [:]
             map.id = annotationTerm.id
             map.term = annotationTerm.term?.id

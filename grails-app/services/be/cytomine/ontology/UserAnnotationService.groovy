@@ -82,7 +82,7 @@ class UserAnnotationService extends ModelService {
         //Get all annotation from this project with this term
         def criteria = UserAnnotation.withCriteria() {
             eq('project', project)
-            annotationTerm {
+            annotationTerms {
                 eq('term', realTerm)
                 inList('user.id', userList)
             }
@@ -118,7 +118,7 @@ class UserAnnotationService extends ModelService {
         } else {
             String request
             if (multipleTerm)
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                         " FROM user_annotation a, annotation_term at2, annotation_term at3\n" +
                         " WHERE a.project_id = " + project.id + "\n" +
                         " AND a.id = at2.user_annotation_id\n" +
@@ -129,7 +129,7 @@ class UserAnnotationService extends ModelService {
                         (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
                         " ORDER BY id desc, term"
             else if (noTerm)
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,null as term, null as annotationTerm,null as userTerm,a.wkt_location as location  \n" +
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,null as term, null as annotationTerms,null as userTerm,a.wkt_location as location  \n" +
                         " FROM user_annotation a LEFT JOIN (SELECT * from annotation_term x where x.user_id IN (" + userList.join(",") + ")) at ON a.id = at.user_annotation_id \n" +
                         " WHERE a.project_id = " + project.id + "\n" +
                         " AND at.id IS NULL\n" +
@@ -137,7 +137,7 @@ class UserAnnotationService extends ModelService {
                         (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
                         " ORDER BY id desc, term"
             else
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                         " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id \n" +
                         " WHERE a.project_id = " + project.id + "\n" +
                         " AND a.user_id IN (" + userList.join(",") + ") \n" +
@@ -157,7 +157,7 @@ class UserAnnotationService extends ModelService {
      */
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listLight(ImageInstance image, SecUser user) {
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
                 " AND a.user_id = " + user.id + "\n" +
@@ -200,7 +200,7 @@ class UserAnnotationService extends ModelService {
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             listForUserJob(project, term, userList, imageInstanceList)
         } else {
-            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                     " FROM user_annotation a, annotation_term at,annotation_term at2,annotation_term at3\n" +
                     " WHERE a.id = at.user_annotation_id \n" +
                     " AND a.project_id = " + project.id + "\n" +
@@ -216,7 +216,7 @@ class UserAnnotationService extends ModelService {
 //
 //    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
 //    def listLight(Project project) {
-//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
 //                " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
 //                " WHERE a.project_id = " + project.id + "\n"+
 //                " ORDER BY id desc, term"
@@ -242,7 +242,7 @@ class UserAnnotationService extends ModelService {
      */
     @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listLight(ImageInstance image) {
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerm,at2.user_id as userTerm,a.wkt_location as location  \n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
                 " ORDER BY id desc, term"
@@ -602,7 +602,7 @@ class UserAnnotationService extends ModelService {
                         url: UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl, it.id),
                         imageURL: UrlApi.getAnnotationURL(cytomineBaseUrl, it.project, it.image, it.id),
                         term: (it.term ? [it.term] : []),
-                        userByTerm: (it.term ? [[id: it.annotationTerm, term: it.term, user: [it.userTerm]]] : []),
+                        userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
                         location: it.location
                 ]
             } else {
@@ -613,7 +613,7 @@ class UserAnnotationService extends ModelService {
                         data.last().userByTerm.last().user.add(it.userTerm)
                         data.last().userByTerm.last().user.unique()
                     } else {
-                        data.last().userByTerm.add([id: it.annotationTerm, term: it.term, user: [it.userTerm]])
+                        data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
                     }
                 }
             }
@@ -682,7 +682,7 @@ class UserAnnotationService extends ModelService {
     }
 
     def deleteDependentHasManyAnnotationTerm(UserAnnotation ua, Transaction transaction) {
-        ua.annotationTerm?.clear()
+        ua.annotationTerms?.clear()
     }
 
 }

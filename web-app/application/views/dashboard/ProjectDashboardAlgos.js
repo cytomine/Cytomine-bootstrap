@@ -381,7 +381,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         //print data from project image table
         var tbody = $('#selectRunParamsTable').find("tbody");
 
-        _.each(job.get('jobParameter'), function (param) {
+        _.each(job.get('jobParameters'), function (param) {
 
             tbody.append('<tr><td>' + param.name + '</td><td id="' + param.id + '"><div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div></td><td>' + param.type + '</td></tr>');
             window.app.controllers.dashboard.printJobParameterValue(param, $('#selectRunParamsTable').find("tbody").find("td#" + param.id), 100);

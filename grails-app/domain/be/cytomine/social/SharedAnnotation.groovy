@@ -29,7 +29,7 @@ class SharedAnnotation extends CytomineDomain {
      */
     UserAnnotation userAnnotation
 
-    static hasMany = [receiver : User]
+    static hasMany = [receivers : User]
 
     static constraints = {
         comment(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)
@@ -54,7 +54,7 @@ class SharedAnnotation extends CytomineDomain {
             returnArray['comment'] = it.comment
             returnArray['sender'] = it.sender.toString()
             returnArray['userannotation'] = it.userAnnotation.id
-            returnArray['receiver'] = it.receiver?.collect { it.toString() }
+            returnArray['receivers'] = it.receivers?.collect { it.toString() }
             returnArray['created'] = it.created?.time?.toString()
             returnArray['updated'] = it.updated?.time?.toString()
             return returnArray

@@ -93,8 +93,8 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
     void testListReviewedAnnotationByProjectAndUserAndImage() {
         def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
-        println "annotation.term="+annotation.term
-        println "annotation.term="+annotation.term.id
+        println "annotation.term="+annotation.terms
+        println "annotation.term="+annotation.terms.id
         println "project.term="+annotation.project.ontology.terms()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
@@ -128,8 +128,8 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkDomain(anotherTerm)
         BasicInstance.saveDomain(anotherTerm)
 
-        if(annotationNotCriteria.term) annotationNotCriteria.term.clear()
-        annotationNotCriteria.addToTerm(anotherTerm)
+        if(annotationNotCriteria.terms) annotationNotCriteria.terms.clear()
+        annotationNotCriteria.addToTerms(anotherTerm)
 
         BasicInstance.checkDomain(annotationNotCriteria)
         BasicInstance.saveDomain(annotationNotCriteria)
@@ -585,8 +585,8 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
-        assert json.reviewedannotation.term !=null
-        assert json.reviewedannotation.term.size()==1
+        assert json.reviewedannotation.terms !=null
+        assert json.reviewedannotation.terms.size()==1
 
         def idReviewAnnotation = json.reviewedannotation.id
         result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -629,8 +629,8 @@ class ReviewedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.reviewedannotation.parentIdent.toString()) == annotation.id
-        assert json.reviewedannotation.term !=null
-        assert json.reviewedannotation.term.size()==1
+        assert json.reviewedannotation.terms !=null
+        assert json.reviewedannotation.terms.size()==1
     }
 
     void testRemoveReviewForAnnotationNotReviewed() {

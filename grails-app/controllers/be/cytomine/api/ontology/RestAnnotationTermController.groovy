@@ -81,7 +81,7 @@ class RestAnnotationTermController extends RestController {
         Term term = Term.read(params.idterm)
         def annotations = []
         UserAnnotation.findAllByImage(ImageInstance.read(params.idimageinstance)).each { annotation ->
-            annotation.annotationTerm.each { annotationTerm ->
+            annotation.annotationTerms.each { annotationTerm ->
                 if (annotationTerm.getTerm() == term) {
                     annotations << annotation
                 }

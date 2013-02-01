@@ -17,7 +17,7 @@ import org.apache.log4j.Logger
  */
 class ReviewedAnnotation extends AnnotationDomain implements Serializable {
 
-    static hasMany = [ term: Term ]
+    static hasMany = [ terms: Term ]
 
     /**
      * Annotation that has been reviewed (just keep a link)
@@ -49,13 +49,13 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
           columns {
               location type: org.hibernatespatial.GeometryUserType
           }
-        term fetch: 'join'
+        terms fetch: 'join'
         wktLocation(type: 'text')
 
      }
 
     public String toString() {
-         return "ReviewedAnnotation" + " " + parentClassName + ":" + parentIdent + " with term " + term + " from userjob " + user + " and  project " + project
+         return "ReviewedAnnotation" + " " + parentClassName + ":" + parentIdent + " with term " + terms + " from userjob " + user + " and  project " + project
     }
 
     /**
@@ -85,7 +85,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
      * @return Terms lists
      */
     def terms() {
-        return term
+        return terms
     }
 
     /**
@@ -174,17 +174,17 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              domain.status = JSONUtils.getJSONAttrInteger(json, 'status', 0)
 
 
-             if(domain.term) {
+             if(domain.terms) {
                  //remove all review term
-                 domain.term.clear()
+                 domain.terms.clear()
              }
 
-             if (json.term == null || json.term.equals("null")) {
+             if (json.terms == null || json.terms.equals("null")) {
                  throw new WrongArgumentException("Term list was not found")
              }
 
-             json.term.each {
-                 domain.addToTerm(Term.read(it))
+             json.terms.each {
+                 domain.addToTerms(Term.read(it))
              }
 
              if (!domain.location) {
@@ -227,7 +227,8 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['centroid'] = annotation.getCentroid()
              returnArray['created'] = annotation.created?.time?.toString()
              returnArray['updated'] = annotation.updated?.time?.toString()
-             returnArray['term'] = annotation.termsId()
+             returnArray['terms'] = annotation.termsId()
+             returnArray['term'] = returnArray['terms']
              returnArray['similarity'] = annotation.similarity
              returnArray['rate'] = annotation.rate
              returnArray['idTerm'] = annotation.idTerm
