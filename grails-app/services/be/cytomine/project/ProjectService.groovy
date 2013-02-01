@@ -114,22 +114,7 @@ class ProjectService extends ModelService {
     def add(def json,SecurityCheck security) {
         SecUser currentUser = cytomineService.getCurrentUser()
         checkRetrievalConsistency(json)
-        def response = executeCommand(new AddCommand(user: currentUser), json)
-
-        //add or delete RetrievalProject
-        Project project = response.object
-        if(!json.retrievalProjects.toString().equals("null")) {
-            project.refresh()
-            json.retrievalProjects.each { idProject ->
-                Long proj = Long.parseLong(idProject.toString())
-                Project projectRetrieval = proj==-1 ? project : Project.read(proj)
-                if(projectRetrieval) {
-                    project.retrievalProjects.add(projectRetrieval)
-                }
-            }
-            project.save(flush: true)
-        }
-        return response
+        return executeCommand(new AddCommand(user: currentUser), json)
     }
 
     /**
@@ -140,42 +125,9 @@ class ProjectService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectWrite() or hasRole('ROLE_ADMIN')")
     def update(def json, SecurityCheck security) {
-
         checkRetrievalConsistency(json)
         SecUser currentUser = cytomineService.getCurrentUser()
-        def response = executeCommand(new EditCommand(user: currentUser), json)
-        //Validate and save domain
-
-        Project project = Project.get(json.id)
-        //update RetrievalProject
-        if(!json.retrievalProjects.toString().equals("null")) {
-            List<Long> newProjectRetrievalList = json.retrievalProjects.collect{
-                Long.parseLong(it.toString())
-            }
-            List<Long> oldProjectRetrievalList = project.retrievalProjects.collect {it.id}
-            log.info "newProjectRetrievalList = "  + newProjectRetrievalList
-            log.info "oldProjectRetrievalList = "  + oldProjectRetrievalList
-
-            List<Long> shouldBeAdded = CollectionUtils.subtract(newProjectRetrievalList,oldProjectRetrievalList)
-            List<Long> shouldBeRemoved = CollectionUtils.subtract(oldProjectRetrievalList,newProjectRetrievalList)
-            log.info "shouldBeAdded = " + shouldBeAdded
-            log.info "shouldBeRemoved = " + shouldBeRemoved
-            log.info "project="+project.retrievalProjects.collect{it.id}
-            shouldBeAdded.each {
-                log.info "add="+Project.read(it).id
-                project.retrievalProjects.add(Project.read(it))
-
-            }
-            shouldBeRemoved.each {
-                log.info "rem="+Project.read(it).id
-                project.retrievalProjects.remove(Project.read(it))
-            }
-            log.info "project="+project.retrievalProjects.collect{it.id}
-            project.save(flush: true)
-            project.refresh()
-            log.info "project="+project.retrievalProjects.collect{it.id}
-         }
-        return response
+        return executeCommand(new EditCommand(user: currentUser), json)
     }
 
     /**
@@ -435,5 +387,24 @@ class ProjectService extends ModelService {
         UserAnnotation.findAllByProject(project).each {
             userAnnotationService.delete(it,transaction, false)
         }
+    }
+
+    def deleteDependentHasManyRetrievalProjects(Project project, Transaction transaction) {
+        //remove Retrieval-project where this project is set
+       def criteria = Project.createCriteria()
+        List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
+          retrievalProjects {
+              eq('id', project.id)
+          }
+        }
+
+        projectsThatUseThisProjectForRetrieval.each {
+            it.refresh()
+            it.removeFromRetrievalProjects(project)
+            it.save(flush: true)
+        }
+
+
+        project.retrievalProjects?.clear()
     }
 }

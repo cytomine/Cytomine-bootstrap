@@ -19,7 +19,6 @@ class RestProjectController extends RestController {
 
     def springSecurityService
     def projectService
-    def disciplineService
     def ontologyService
     def cytomineService
     def transactionService

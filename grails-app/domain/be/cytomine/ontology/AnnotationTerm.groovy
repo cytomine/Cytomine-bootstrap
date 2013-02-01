@@ -105,4 +105,18 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     public SecUser userDomainCreator() {
         return user;
     }
+
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
+    void checkAlreadyExist() {
+        AnnotationTerm.withNewSession {
+            if(userAnnotation && term && user) {
+                AnnotationTerm atAlreadyExist = AnnotationTerm.findByUserAnnotationAndTermAndUser(userAnnotation,term,user)
+                if (atAlreadyExist != null && (atAlreadyExist.id != id)) {
+                    throw new AlreadyExistException("Annotation-Term with annotation ${userAnnotation.id} and term ${term.id} and ${user.id})")
+                }
+            }
+        }
+    }
 }

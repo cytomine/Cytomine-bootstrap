@@ -159,6 +159,17 @@ class Project extends CytomineDomain implements Serializable {
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
+        if(!json.retrievalProjects.toString().equals("null")) {
+            domain.retrievalProjects?.clear()
+            json.retrievalProjects.each { idProject ->
+                Long proj = Long.parseLong(idProject.toString())
+                //-1 = project himself, project has no id when client send request
+                Project projectRetrieval = (proj==-1 ? domain : Project.read(proj))
+                if(projectRetrieval) {
+                    ((Project)domain).addToRetrievalProjects(projectRetrieval)
+                }
+            }
+        }
         return domain;
     }
 

@@ -198,7 +198,7 @@ class AnnotationTermService extends ModelService {
 
         //TODO: must be re-add in read json data method!
         def based = domain.userAnnotation
-        based.annotationTerm?.clear()
+        based.removeFromAnnotationTerm(domain)
         //Delete new object
         deleteDomain(domain)
         //deleteDomain(domain)
