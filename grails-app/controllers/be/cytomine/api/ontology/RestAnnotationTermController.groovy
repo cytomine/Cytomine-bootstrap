@@ -13,6 +13,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
+import be.cytomine.ontology.AnnotationTerm
 
 /**
  * Controller that handle link between an annotation and a term
@@ -81,7 +82,7 @@ class RestAnnotationTermController extends RestController {
         Term term = Term.read(params.idterm)
         def annotations = []
         UserAnnotation.findAllByImage(ImageInstance.read(params.idimageinstance)).each { annotation ->
-            annotation.annotationTerms.each { annotationTerm ->
+            AnnotationTerm.findAllByUserAnnotation(annotation).each { annotationTerm ->
                 if (annotationTerm.getTerm() == term) {
                     annotations << annotation
                 }

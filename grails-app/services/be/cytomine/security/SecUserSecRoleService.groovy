@@ -17,6 +17,8 @@ class SecUserSecRoleService extends ModelService {
     def commandService
     def modelService
 
+    def transactionService
+
     @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
         SecUserSecRole.findAllBySecUser(user)
@@ -47,14 +49,13 @@ class SecUserSecRoleService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return delete(retrieve(json),transactionService.start())
     }
 
     def delete(SecUserSecRole userRole, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{user: ${userRole.secUser.id}, role: ${userRole.secRole.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
     }
 
     /**

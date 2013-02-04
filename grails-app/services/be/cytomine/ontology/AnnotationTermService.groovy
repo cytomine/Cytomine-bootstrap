@@ -25,7 +25,7 @@ class AnnotationTermService extends ModelService {
 
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation userAnnotation) {
-        userAnnotation.annotationTerms
+        AnnotationTerm.findAllByUserAnnotation(userAnnotation)
     }
 
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
@@ -70,7 +70,7 @@ class AnnotationTermService extends ModelService {
     def delete(AnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{userannotation: ${at.userAnnotation.id}, term: ${at.term.id}, user: ${at.user.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
 
@@ -90,12 +90,14 @@ class AnnotationTermService extends ModelService {
         Transaction transaction = transactionService.start()
 
         //Delete all annotation term
-        deleteAnnotationTermFromUser(annotation, currentUser, currentUser, transaction)
-
+        def annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, currentUser)
+        log.info "Delete old annotationTerm= " + annotationTerm.size()
+        annotationTerm.each { annotterm ->
+            log.info "unlink annotterm:" + annotterm.id
+            this.delete(annotterm,transaction,true)
+        }
         //Add annotation term
-        def result = addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
-
-        return result
+        return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
     }
 
     /**
@@ -108,18 +110,6 @@ class AnnotationTermService extends ModelService {
         return result
     }
 
-    /**
-     * Delete all term linked by user for this annotation
-     */
-    def deleteAnnotationTermFromUser(UserAnnotation annotation, User user, User currentUser, Transaction transaction) {
-        //Delete all annotation term
-        def annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, user)
-        log.info "Delete old annotationTerm= " + annotationTerm.size()
-        annotationTerm.each { annotterm ->
-            log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false, transaction)
-        }
-    }
 
     /**
      * Delete all term linked with this annotation
@@ -195,10 +185,6 @@ class AnnotationTermService extends ModelService {
     def destroy(AnnotationTerm domain, boolean printMessage) {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
-
-        //TODO: must be re-add in read json data method!
-        def based = domain.userAnnotation
-        based.removeFromAnnotationTerms(domain)
         //Delete new object
         deleteDomain(domain)
         //deleteDomain(domain)

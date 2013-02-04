@@ -77,7 +77,7 @@ class JobParameterService extends ModelService {
     def delete(JobParameter jp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${jp.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

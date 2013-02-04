@@ -84,7 +84,7 @@ class AnnotationFilterService extends ModelService {
     def delete(AnnotationFilter af, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${af.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

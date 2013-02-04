@@ -56,7 +56,7 @@ class UserGroupService extends ModelService {
     def delete(UserGroup ug, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{group: ${ug.group.id},user:${ug.user.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

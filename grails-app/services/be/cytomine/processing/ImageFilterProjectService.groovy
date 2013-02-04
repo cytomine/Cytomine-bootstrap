@@ -62,7 +62,7 @@ class ImageFilterProjectService extends ModelService {
     def delete(ImageFilterProject ifp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${ifp.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

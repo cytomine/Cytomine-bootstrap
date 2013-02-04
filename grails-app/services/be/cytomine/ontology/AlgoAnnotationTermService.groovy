@@ -67,8 +67,8 @@ class AlgoAnnotationTermService extends ModelService {
 
     def delete(AlgoAnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{annotationIdent: ${at.annotationIdent},term: ${at.term.id}, userJob: ${at.userJob.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        def json = JSON.parse("{annotationIdent: ${at.annotationIdent},term: ${at.term?.id}, userJob: ${at.userJob.id}}")
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

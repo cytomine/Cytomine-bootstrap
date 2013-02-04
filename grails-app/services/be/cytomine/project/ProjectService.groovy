@@ -148,7 +148,7 @@ class ProjectService extends ModelService {
            linkProject must be false, special case because we delete project in this command
            If this command will be linked with the deleted project, we will have an database error (foreign key)
          */
-        return executeCommand(new DeleteCommand(user: currentUser,linkProject:false), json)
+        return executeCommand(new DeleteCommand(user: currentUser,linkProject:false,transaction:transaction), json)
     }
 
     /**

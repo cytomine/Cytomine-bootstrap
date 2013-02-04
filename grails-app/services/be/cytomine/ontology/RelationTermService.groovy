@@ -100,7 +100,7 @@ class RelationTermService extends ModelService {
     def delete(RelationTerm rt, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{relation: ${rt.relation.id}, term1:${rt.term1.id}, term2:${rt.term2.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

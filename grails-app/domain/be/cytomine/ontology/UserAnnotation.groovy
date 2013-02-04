@@ -20,8 +20,6 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
     User user
     Integer countReviewedAnnotations = 0
 
-    static hasMany = [ annotationTerms: AnnotationTerm ]
-
     static constraints = {
     }
 
@@ -30,7 +28,6 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
           columns {
               location type: org.hibernatespatial.GeometryUserType
           }
-          annotationTerms fetch: 'join'
          wktLocation(type: 'text')
       }
 
@@ -56,8 +53,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      * @return Terms list
      */
     def terms() {
-        return annotationTerms.collect {
-            it.term
+        if(this.version) {
+            AnnotationTerm.findAllByUserAnnotation(this).collect {it.term}
+        } else {
+            return []
         }
     }
 
@@ -69,7 +68,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         if (user.algo()) {
             return AlgoAnnotationTerm.findAllByAnnotationIdent(this.id).collect{it.term?.id}.unique()
         } else {
-            return annotationTerms.collect{it.term?.id}.unique()
+            return terms().collect{it.id}.unique()
         }
 
     }
@@ -113,16 +112,18 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      */
     def usersIdByTerm() {
         def results = []
-        annotationTerms.each { annotationTerm ->
-            def map = [:]
-            map.id = annotationTerm.id
-            map.term = annotationTerm.term?.id
-            map.user = [annotationTerm.user?.id]
-            def item = results.find { it.term == annotationTerm.term?.id }
-            if (!item) {
-                results << map
-            } else {
-                item.user.add(annotationTerm.user.id)
+        if(this.version) {
+            AnnotationTerm.findAllByUserAnnotation(this).each { annotationTerm ->
+                def map = [:]
+                map.id = annotationTerm.id
+                map.term = annotationTerm.term?.id
+                map.user = [annotationTerm.user?.id]
+                def item = results.find { it.term == annotationTerm.term?.id }
+                if (!item) {
+                    results << map
+                } else {
+                    item.user.add(annotationTerm.user.id)
+                }
             }
         }
         results

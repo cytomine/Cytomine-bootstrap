@@ -79,7 +79,7 @@ class JobDataService extends ModelService {
     def delete(JobData jobData, Transaction transaction, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${jobData.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

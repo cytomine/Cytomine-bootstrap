@@ -64,15 +64,14 @@ class SoftwareProjectService extends ModelService{
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) throws CytomineException {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return delete(retrieve(json),transactionService.start())
     }
 
 
     def delete(SoftwareProject sp, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${sp.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

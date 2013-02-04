@@ -255,7 +255,7 @@ class SecUserService extends ModelService {
     def delete(SecUser user, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${user.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
@@ -529,5 +529,18 @@ class SecUserService extends ModelService {
             }
         }
     }
+
+    def deleteDependentHasManyAnnotationFilter(SecUser user, Transaction transaction) {
+        def criteria = AnnotationFilter.createCriteria()
+        def results = criteria.list {
+          users {
+             inList("id", user.id)
+          }
+        }
+        results.each {
+            it.removeFromUsers(user)
+            it.save()
+        }
+     }
 
 }

@@ -20,6 +20,7 @@ class DisciplineService extends ModelService {
     def commandService
     def responseService
     def modelService
+    def transactionService
 
 
     boolean saveOnUndoRedoStack = true
@@ -71,14 +72,13 @@ class DisciplineService extends ModelService {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security) {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return delete(retrieve(json),transactionService.start())
     }
 
     def delete(Discipline discipline, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${discipline.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

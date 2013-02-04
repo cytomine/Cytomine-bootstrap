@@ -64,7 +64,7 @@ class AbstractImageGroupService extends ModelService {
     def delete(AbstractImageGroup aig, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{abstractimage: ${aig.abstractimage.id},group:${aig.group.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**

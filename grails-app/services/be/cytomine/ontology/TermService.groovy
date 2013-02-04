@@ -168,9 +168,10 @@ class TermService extends ModelService {
     }
 
     def delete(Term term, Transaction transaction = null, boolean printMessage = true) {
+        log.info "Delete term "
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${term.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser, transaction:transaction), json)
     }
 
     /**
@@ -266,8 +267,6 @@ class TermService extends ModelService {
      */
     def destroy(Term domain, boolean printMessage) {
         //Build response message
-        if (!AlgoAnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has suggested term")
-        if (!AnnotationTerm.findAllByTerm(domain).isEmpty()) throw new ConstraintException("Term " + domain.id + " has userannotation term")
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name, domain.ontology?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         deleteDomain(domain)
@@ -321,9 +320,11 @@ class TermService extends ModelService {
 
     def deleteDependentAlgoAnnotationTerm(Term term, Transaction transaction) {
         AlgoAnnotationTerm.findAllByTerm(term).each {
+            println "${it.annotationIdent}-${it.term?.id}-${it.userJob?.id}"
             algoAnnotationTermService.delete(it,transaction,false)
         }
         AlgoAnnotationTerm.findAllByExpectedTerm(term).each {
+            println "${it.annotationIdent}-${it.term?.id}-${it.userJob?.id}"
             algoAnnotationTermService.delete(it,transaction,false)
         }
     }
@@ -342,5 +343,31 @@ class TermService extends ModelService {
             relationTermService.delete(it,transaction,false)
         }
     }
+
+    def deleteDependentHasManyReviewedAnnotation(Term term, Transaction transaction) {
+        def criteria = ReviewedAnnotation.createCriteria()
+        def results = criteria.list {
+            terms {
+             inList("id", term.id)
+            }
+        }
+
+        if(!results.isEmpty()) {
+            throw new ConstraintException("Term is linked with validate annotation. Cannot delete term!")
+        }
+     }
+
+    def deleteDependentHasManyAnnotationFilter(Term term, Transaction transaction) {
+        def criteria = AnnotationFilter.createCriteria()
+        def results = criteria.list {
+          users {
+             inList("id", term.id)
+          }
+        }
+        results.each {
+            it.removeFromTerms(term)
+            it.save()
+        }
+     }
 
 }

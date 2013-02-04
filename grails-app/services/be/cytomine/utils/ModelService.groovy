@@ -83,6 +83,7 @@ abstract class ModelService {
             def allServiceMethods = this.metaClass.methods*.name
             allServiceMethods.each {
                 if(it.startsWith("deleteDependent")) {
+                    log.info("$it => transaction=${c.transaction}")
                     this."$it"(domainToDelete,c.transaction)
                 }
             }

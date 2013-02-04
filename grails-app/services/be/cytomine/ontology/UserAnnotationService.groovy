@@ -80,23 +80,20 @@ class UserAnnotationService extends ModelService {
         SecUser user = UserJob.findByJob(job)
 
         //Get all annotation from this project with this term
-        def criteria = UserAnnotation.withCriteria() {
-            eq('project', project)
-            annotationTerms {
-                eq('term', realTerm)
-                inList('user.id', userList)
-            }
-            projections {
-                groupProperty("id")
-            }
-        }
+        def annotationFromProjectWithTerm = UserAnnotation.executeQuery(
+                "SELECT ua " +
+                "FROM UserAnnotation ua, AnnotationTerm at " +
+                "WHERE ua.id = at.userAnnotation.id " +
+                "AND ua.project = :project " +
+                "AND at.term = :realTerm " +
+                "AND at.user.id IN (:userList)", [userList: userList, realTerm: realTerm, project: project])
 
         def algoAnnotationsTerm = AnnotationTerm.executeQuery("SELECT ua " +
                 "FROM AlgoAnnotationTerm aat, UserAnnotation ua " +
                 "WHERE aat.userJob = :user " +
                 "AND aat.term = :suggestedTerm " +
                 "AND aat.annotationIdent = ua.id " +
-                "AND aat.annotationIdent IN (:annotations)", [user: user, suggestedTerm: suggestedTerm, annotations: criteria])
+                "AND aat.annotationIdent IN (:annotations)", [user: user, suggestedTerm: suggestedTerm, annotations: annotationFromProjectWithTerm.collect {it.id}.unique()])
 
         return algoAnnotationsTerm
     }
@@ -395,7 +392,7 @@ class UserAnnotationService extends ModelService {
     def delete(UserAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${annotation.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
@@ -674,15 +671,17 @@ class UserAnnotationService extends ModelService {
         }
     }
 
+    def deleteDependentReviewedAnnotation(UserAnnotation ua, Transaction transaction) {
+        if(ReviewedAnnotation.findByParentIdent(ua.id)) {
+            throw new ConstraintException("This annotation has been validate by ${ReviewedAnnotation.findByParentIdent(ua.id).user.username}. Cannot delete it!")
+         }
+     }
+
     def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction) {
         //TODO: we should implement a full service for sharedannotation and delete them if annotation is deleted
         if(SharedAnnotation.findByUserAnnotation(ua)) {
             throw new ConstraintException("There are some comments on this annotation. Cannot delete it!")
         }
-    }
-
-    def deleteDependentHasManyAnnotationTerm(UserAnnotation ua, Transaction transaction) {
-        ua.annotationTerms?.clear()
     }
 
 }
