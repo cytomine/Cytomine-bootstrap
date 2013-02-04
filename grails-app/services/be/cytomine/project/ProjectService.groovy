@@ -26,6 +26,10 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import grails.converters.JSON
+import be.cytomine.social.UserPosition
+import be.cytomine.image.UploadedFile
+import be.cytomine.Exception.ConstraintException
+import be.cytomine.social.LastConnection
 
 class ProjectService extends ModelService {
 
@@ -388,7 +392,7 @@ class ProjectService extends ModelService {
         }
     }
 
-    def deleteDependentHasManyRetrievalProjects(Project project, Transaction transaction) {
+    def deleteDependentHasManyProject(Project project, Transaction transaction) {
         //remove Retrieval-project where this project is set
        def criteria = Project.createCriteria()
         List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
@@ -406,4 +410,30 @@ class ProjectService extends ModelService {
 
         project.retrievalProjects?.clear()
     }
+
+    def deleteDependentUserPosition(Project project, Transaction transaction) {
+        UserPosition.findAllByProject(project).each {
+              it.delete()
+        }
+    }
+
+    def deleteDependentTask(Project project, Transaction transaction) {
+        Task.findAllByProject(project).each {
+              it.delete()
+        }
+    }
+
+    def deleteDependentUploadedFile(Project project, Transaction transaction) {
+        //TODO:: implemente delete cascade (after implementing service for upload file)
+        if(UploadedFile.findAllByProject(project)) {
+            throw new ConstraintException("This project has some uploaded files! You cannot delete it!")
+        }
+    }
+
+    def deleteDependentLastConnection(Project project, Transaction transaction) {
+        LastConnection.findAllByProject(project).each {
+              it.delete()
+        }
+    }
+
 }

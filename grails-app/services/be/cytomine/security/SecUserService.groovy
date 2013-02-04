@@ -548,6 +548,15 @@ class SecUserService extends ModelService {
     def deleteDependentSharedAnnotation(SecUser user, Transaction transaction) {
         if(user instanceof User) {
             //TODO:: implement cascade deleteting/update for shared annotation
+            if(SharedAnnotation.findAllBySender(user)) {
+               throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
+            }
+        }
+    }
+
+    def deleteDependentHasManySharedAnnotation(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            //TODO:: implement cascade deleteting/update for shared annotation
             def criteria = SharedAnnotation.createCriteria()
             def results = criteria.list {
               receivers {
@@ -555,7 +564,7 @@ class SecUserService extends ModelService {
               }
             }
 
-            if(SharedAnnotation.findAllBySender(user) || !results.isEmpty()) {
+            if(!results.isEmpty()) {
                throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
             }
         }
