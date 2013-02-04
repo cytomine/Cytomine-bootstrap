@@ -41,6 +41,28 @@ class BasicInstance {
 
     private static Log log = LogFactory.getLog(BasicInstance.class)
 
+
+    static boolean checkIfDomainExist(def domain, boolean exist=true) {
+        try {
+            domain.refresh()
+        } catch(Exception e) {}
+       assert ((domain.read(domain.id)!=null) == exist)
+    }
+
+    static void checkIfDomainsExist(def domains) {
+        domains.each {
+            checkIfDomainExist(it,true)
+        }
+    }
+
+    static void checkIfDomainsNotExist(def domains) {
+        domains.each {
+            checkIfDomainExist(it,false)
+        }
+    }
+
+
+
     /**
      * Check if a domain is valide during test
      * @param domain Domain to check
