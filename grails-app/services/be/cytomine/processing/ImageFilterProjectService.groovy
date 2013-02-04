@@ -111,7 +111,7 @@ class ImageFilterProjectService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.imageFilter?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

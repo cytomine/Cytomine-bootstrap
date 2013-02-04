@@ -513,7 +513,7 @@ class UserAnnotationService extends ModelService {
         response.data['annotation'] = response.data.userannotation
         response.data.remove('userannotation')
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

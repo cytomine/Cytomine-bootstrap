@@ -88,7 +88,7 @@ class Ontology extends CytomineDomain implements Serializable {
      * @return Ontology projects
      */
     def projects() {
-        if(this.version){
+        if(this.version!=null){
             Project.findAllByOntology(this)
         } else {
             return []

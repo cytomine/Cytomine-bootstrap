@@ -129,7 +129,7 @@ class DisciplineService extends ModelService {
         }
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

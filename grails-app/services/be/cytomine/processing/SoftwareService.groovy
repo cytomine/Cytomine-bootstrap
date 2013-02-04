@@ -3,7 +3,7 @@ package be.cytomine.processing
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.WrongArgumentException
+
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
@@ -136,7 +136,7 @@ class SoftwareService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

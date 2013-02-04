@@ -158,7 +158,7 @@ class AlgoAnnotationTermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

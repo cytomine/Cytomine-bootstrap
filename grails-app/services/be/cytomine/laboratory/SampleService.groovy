@@ -12,10 +12,11 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.ontology.ReviewedAnnotation
+
 import be.cytomine.command.Transaction
-import be.cytomine.ontology.AlgoAnnotationTerm
+
 import grails.converters.JSON
+import be.cytomine.Exception.ConstraintException
 
 class SampleService extends ModelService {
 
@@ -136,7 +137,7 @@ class SampleService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 
@@ -190,6 +191,13 @@ class SampleService extends ModelService {
     def deleteDependentAbstractImage(Sample sample, Transaction transaction) {
         AbstractImage.findAllBySample(sample).each {
             abstractImageService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentSource(Sample sample, Transaction transaction) {
+        //TODO: implement source cascade delete (first impl source command delete)
+        if(Source.findAllBySample(sample)) {
+            throw new ConstraintException("Sample has source. Cannot delete sample!")
         }
     }
 

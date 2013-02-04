@@ -143,7 +143,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServers() {
         println "### not mocking method"
-        if(!this.version) return null
+        if(this.version==null) return null
         def sai = StorageAbstractImage.findAllByAbstractImage(this)
         if (!sai.isEmpty()) {
 

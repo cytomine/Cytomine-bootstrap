@@ -6,7 +6,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.springframework.security.access.prepost.PreAuthorize
 
-class TaskService {
+class TaskService extends ModelService {
 
     def cytomineService
 

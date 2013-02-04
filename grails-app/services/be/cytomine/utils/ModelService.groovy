@@ -37,7 +37,7 @@ abstract class ModelService {
     /**
      * Delete a domain from database
      */
-    def deleteDomain(def oldObject) {
+    def removeDomain(def oldObject) {
         try {
             oldObject.refresh()
             oldObject.delete(flush: true, failOnError: true)
@@ -45,7 +45,6 @@ abstract class ModelService {
             log.error e.toString()
             throw new InvalidRequestException(e.toString())
         }
-
     }
 
     /**

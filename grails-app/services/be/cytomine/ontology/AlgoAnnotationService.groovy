@@ -460,7 +460,7 @@ class AlgoAnnotationService extends ModelService {
         response.data.remove('algoannotation')
 
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

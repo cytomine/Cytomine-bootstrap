@@ -11,8 +11,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 
 import be.cytomine.utils.ModelService
-import groovy.sql.Sql
-import org.apache.commons.collections.CollectionUtils
+
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
@@ -251,8 +250,8 @@ class ProjectService extends ModelService {
         log.info "createResponseMessage"
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        log.info "deleteDomain"
-        deleteDomain(domain)
+        log.info "removeDomain"
+        removeDomain(domain)
         log.info "response"
         return response
     }

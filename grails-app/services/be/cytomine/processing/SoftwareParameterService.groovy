@@ -128,7 +128,7 @@ class SoftwareParameterService extends ModelService{
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.name, domain.type, domain.software?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

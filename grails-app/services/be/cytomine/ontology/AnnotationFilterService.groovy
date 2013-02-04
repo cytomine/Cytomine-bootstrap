@@ -132,7 +132,7 @@ class AnnotationFilterService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 
@@ -195,12 +195,15 @@ class AnnotationFilterService extends ModelService {
             destroy(it, true)
         }
     }
-
-
-    def deleteDependentHasManyTerms(AnnotationFilter project, Transaction transaction) {
-        project.terms?.clear()
-    }
-
+//
+//
+//    def deleteDependentHasManyTerms(AnnotationFilter project, Transaction transaction) {
+//        project.terms?.clear()
+//    }
+//
+//    def deleteDependentHasManySecUser(AnnotationFilter project, Transaction transaction) {
+//        project
+//    }
 
 
 

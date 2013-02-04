@@ -27,7 +27,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
     Long countImageReviewedAnnotations = 0L
 
     //stack stuff
-    ImageStack stack
     Integer zIndex
     Integer channel
 
@@ -42,7 +41,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         countImageAnnotations nullable: true
 
         //stack stuff
-        stack(nullable: true)
+//        stack(nullable: true)
         zIndex(nullable: true) //order in z-stack referenced by stack
         channel(nullable: true)  //e.g. fluo channel
         reviewStart nullable: true

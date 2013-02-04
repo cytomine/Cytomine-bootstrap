@@ -87,7 +87,6 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationTerm.class)
         JSON.registerObjectMarshaller(AnnotationTerm) {
             def returnArray = [:]
-            //returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['userannotation'] = it.userAnnotation?.id
             returnArray['term'] = it.term?.id

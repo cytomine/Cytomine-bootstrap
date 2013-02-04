@@ -10,7 +10,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
-import be.cytomine.processing.JobParameter
+
 import be.cytomine.command.Transaction
 import grails.converters.JSON
 import be.cytomine.security.UserGroup
@@ -112,7 +112,7 @@ class AbstractImageGroupService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

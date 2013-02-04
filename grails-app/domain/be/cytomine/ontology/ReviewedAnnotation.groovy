@@ -117,7 +117,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
      * Not usefull for this domain, but we must implement this abstract method
      */
     List<Term> termsForReview() {
-        term
+        terms
     }
 
 

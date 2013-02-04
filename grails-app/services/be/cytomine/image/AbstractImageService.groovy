@@ -375,7 +375,7 @@ class AbstractImageService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

@@ -450,7 +450,7 @@ class RestAlgoAnnotationController extends RestController {
                 algoAnnotationService.saveDomain(based)
                 //remove old annotation with data
                 AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotationIdent = :annotation", [annotation: compared.id])
-                algoAnnotationService.deleteDomain(compared)
+                algoAnnotationService.removeDomain(compared)
 
             }
         }

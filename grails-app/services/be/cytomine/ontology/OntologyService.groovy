@@ -14,7 +14,7 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
-import be.cytomine.Exception.WrongArgumentException
+
 import grails.converters.JSON
 
 class OntologyService extends ModelService {
@@ -172,7 +172,7 @@ class OntologyService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

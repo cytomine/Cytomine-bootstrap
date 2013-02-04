@@ -64,12 +64,6 @@ class Job extends CytomineDomain  {
 
     static belongsTo = [software: Software]
 
-    /**
-     * Job Parameters lists
-     */
-    SortedSet jobParameters
-    static hasMany = [jobParameters: JobParameter]
-
     static constraints = {
         progress(min: 0, max: 100)
         project(nullable:true)
@@ -161,11 +155,19 @@ class Job extends CytomineDomain  {
                 UserJob user = UserJob.findByJob(it)
                 job.username = user?.humanUsername()
                 job.userJob = user.id
-                job.jobParameters =  it.jobParameters
+                job.jobParameters = it.parameters()
             } catch (Exception e) {
                 log.info e
             }
             return job
+        }
+    }
+
+    public List<JobParameter> parameters() {
+        if(this.version!=null) {
+            return JobParameter.findAllByJob(this,[sort: created])
+        } else {
+            return []
         }
     }
 

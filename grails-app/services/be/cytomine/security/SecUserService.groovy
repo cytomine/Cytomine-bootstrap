@@ -25,10 +25,12 @@ import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.social.SharedAnnotation
+
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.social.UserPosition
 import be.cytomine.image.UploadedFile
+import be.cytomine.social.SharedAnnotation
+import be.cytomine.Exception.ConstraintException
 
 class SecUserService extends ModelService {
 
@@ -360,7 +362,7 @@ class SecUserService extends ModelService {
         }
 
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 
@@ -542,5 +544,21 @@ class SecUserService extends ModelService {
             it.save()
         }
      }
+
+    def deleteDependentSharedAnnotation(SecUser user, Transaction transaction) {
+        if(user instanceof User) {
+            //TODO:: implement cascade deleteting/update for shared annotation
+            def criteria = SharedAnnotation.createCriteria()
+            def results = criteria.list {
+              receivers {
+                 inList("id", user.id)
+              }
+            }
+
+            if(SharedAnnotation.findAllBySender(user) || !results.isEmpty()) {
+               throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
+            }
+        }
+    }
 
 }

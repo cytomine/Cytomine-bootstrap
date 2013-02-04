@@ -1,6 +1,5 @@
 package be.cytomine.processing
 
-import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityCheck
@@ -119,7 +118,7 @@ class SoftwareProjectService extends ModelService{
         //Build response message
         def response = responseService.createResponseMessage(domain,  [domain.software?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

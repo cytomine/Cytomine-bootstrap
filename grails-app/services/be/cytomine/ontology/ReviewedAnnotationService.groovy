@@ -291,7 +291,7 @@ class ReviewedAnnotationService extends ModelService {
         log.info "destroy remove " + domain.id
         def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

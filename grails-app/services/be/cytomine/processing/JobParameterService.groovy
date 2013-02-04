@@ -133,7 +133,7 @@ class JobParameterService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.value, domain.softwareParameter?.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

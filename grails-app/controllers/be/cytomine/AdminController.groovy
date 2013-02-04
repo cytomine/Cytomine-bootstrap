@@ -91,7 +91,7 @@ class AdminController {
         println "SERVICE=${serviceClass}"
         boolean isFind = false
         allServiceMethods.each {
-            println "it=$it"
+            println "it=$it methodExpected=$methodExpected"
             if(it==methodExpected && !printAll) {
                 isFind = true
             }
@@ -159,15 +159,13 @@ class AdminController {
         }
 
         fixColumn.each {
-            println "it.name=${it.name}"
             String fixName = it.name.substring(0,it.name.size()-1)
             if(fixDomainName.keySet().contains(fixName)) {
                 fixName = fixDomainName.get(fixName).first().name
             }
-            println "fixName=${fixName}"
 
 
-            def methodExpected1 = "deleteDependentHasMany" + fixName.substring(0,1).toUpperCase() + fixName.substring(1)
+//            def methodExpected1 = "deleteDependentHasMany" + fixName.substring(0,1).toUpperCase() + fixName.substring(1)
             def methodExpected2 = "deleteDependentHasMany" + domain.name
 
 
@@ -175,16 +173,26 @@ class AdminController {
 
             String type = domain.name
 
-            def serviceClass = grailsApplication.getServiceClasses().find{fixName.toLowerCase() == type.toLowerCase()}
 
-            if(!serviceClass) {
-                allErrors << "Service ${type.substring(0,1).toUpperCase() + type.substring(1)}Service must exist and must contains $methodExpected1($type,transaction)!!!"
+//            def serviceClass1 = grailsApplication.getServiceClasses().find{
+//                it.name.toLowerCase() == type.toLowerCase()
+//            }
+            def serviceClass2 = grailsApplication.getServiceClasses().find{
+                it.name.toLowerCase() == name.toLowerCase()
+            }
+
+//            if(!serviceClass1) {
+//                allErrors << "Service ${type.substring(0,1).toUpperCase() + type.substring(1)}Service must exist and must contains $methodExpected1($type,transaction)!!!"
+//            } else
+            if(!serviceClass2) {
+
+
                 allErrors << "Service ${name.substring(0,1).toUpperCase() + name.substring(1)}Service must exist and must contains $methodExpected2($type,transaction)!"
             } else {
-                if(deleteDependentMissingMethod(serviceClass,methodExpected1)) {
-                    allErrors << "Service ${type.substring(0,1).toUpperCase() + type.substring(1)}Service must implement $methodExpected1($type,transaction)!!!"
-                }
-                if(deleteDependentMissingMethod(serviceClass,methodExpected2)) {
+//                if(deleteDependentMissingMethod(serviceClass1,methodExpected1)) {
+//                    allErrors << "Service ${type.substring(0,1).toUpperCase() + type.substring(1)}Service must implement $methodExpected1($type,transaction)!!!"
+//                }
+                if(deleteDependentMissingMethod(serviceClass2,methodExpected2)) {
                     allErrors << "Service ${name.substring(0,1).toUpperCase() + name.substring(1)}Service must implement $methodExpected2($type,transaction)!"
                 }
             }

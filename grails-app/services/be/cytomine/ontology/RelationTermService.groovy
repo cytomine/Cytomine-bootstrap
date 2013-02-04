@@ -11,8 +11,6 @@ import be.cytomine.utils.ModelService
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.security.UserJob
-import be.cytomine.image.ImageInstance
 
 class RelationTermService extends ModelService {
 
@@ -171,7 +169,7 @@ class RelationTermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-        deleteDomain(domain)
+        removeDomain(domain)
         return response
     }
 

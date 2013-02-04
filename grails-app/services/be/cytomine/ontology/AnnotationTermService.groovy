@@ -186,8 +186,8 @@ class AnnotationTermService extends ModelService {
         //Build response message
         def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
         //Delete new object
-        deleteDomain(domain)
-        //deleteDomain(domain)
+        removeDomain(domain)
+        //removeDomain(domain)
         return response
     }
 
