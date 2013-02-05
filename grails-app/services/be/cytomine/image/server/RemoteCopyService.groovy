@@ -1,8 +1,4 @@
 package be.cytomine.image.server
-
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.UploadedFile
-
 /**
  * TODO: refactoring + doc + test
  */
@@ -10,14 +6,8 @@ class RemoteCopyService {
 
     static transactional = false
 
-    def copy(Storage storage, AbstractImage image, UploadedFile uploadedFile, boolean deleteAfterCopy) {
+    def copy(String localFile,String remotePath,String remoteFile, Storage storage, boolean deleteAfterCopy) {
         def ant = new AntBuilder()
-        def remoteFile = storage.getBasePath() + uploadedFile.getConvertedFilename()
-        log.info "REMOTE FILE = " + remoteFile
-        def remotePath = new File(remoteFile).getParent()
-        log.info "REMOTE PATH = " + remotePath
-        def localFile = uploadedFile.getPath() + "/" + uploadedFile.getConvertedFilename()
-        log.info "LOCAL FILE = " + localFile
         def username = storage.getUsername()
         def ip = storage.getIp()
         def port = storage.getPort()

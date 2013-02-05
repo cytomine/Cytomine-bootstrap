@@ -8,9 +8,14 @@ import javax.mail.internet.MimeMessage
 
 class MailService {
 
+    static String DEFAULT_EMAIL = "cytomine.ulg@gmail.com"
+
     static transactional = false
 
-    def send(String from, String[] to, String cc, String subject, String message, attachment) {
+    def send(String from, String[] to, String cc, String subject, String message, def attachment) {
+
+        if (!from) from = DEFAULT_EMAIL
+
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.starttls.required","true");
@@ -21,7 +26,7 @@ class MailService {
         //Create Mail Sender
         def sender = new JavaMailSenderImpl()
         sender.setJavaMailProperties(props)
-        sender.setUsername("cytomine.ulg@gmail.com")
+        sender.setUsername(DEFAULT_EMAIL)
         sender.setPassword("C3=8wj9R")
         sender.setDefaultEncoding("UTF-8")
         MimeMessage mail = sender.createMimeMessage()

@@ -10,7 +10,4 @@ class StorageAbstractImage extends CytomineDomain{
     Storage storage
     AbstractImage abstractImage
 
-    static mapping = {
-        version false
-    }
 }

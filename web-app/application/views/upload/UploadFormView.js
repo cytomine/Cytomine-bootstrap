@@ -6,7 +6,8 @@ var UploadFormView = Backbone.View.extend({
         convertedLabel: '<span class="label label-info">TO DEPLOY</span>',
         deployedLabel: '<span class="label label-success">DEPLOYED</span>',
         errorConvertLabel: '<span class="label label-important">ERROR CONVERT</span>',
-        uncompressed : '<span class="label label-success">UNCOMPRESSED</span>'
+        uncompressed : '<span class="label label-success">UNCOMPRESSED</span>',
+        to_deploy : '<span class="label label-info">TO DEPLOY</span>'
     },
     fileUploadErrors: {
         maxFileSize: 'File is too big',
@@ -570,6 +571,8 @@ var UploadFormView = Backbone.View.extend({
             return this.statusLabels.errorConvertLabel;
         } else if (model.uncompressed) {
             return this.statusLabels.uncompressed;
+        } else if (model.to_deploy) {
+            return this.statusLabels.to_deploy;
         }
 
         return "?";//this.statusLabels.deployedLabel;

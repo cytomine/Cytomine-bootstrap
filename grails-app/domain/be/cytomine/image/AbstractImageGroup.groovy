@@ -2,7 +2,6 @@ package be.cytomine.image
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.Group
 import grails.converters.JSON
 import org.apache.log4j.Logger
@@ -13,7 +12,7 @@ import org.apache.log4j.Logger
  */
 class AbstractImageGroup extends CytomineDomain implements Serializable {
 
-    AbstractImage abstractimage
+    AbstractImage abstractImage
     Group group
 
     static mapping = {
@@ -39,8 +38,8 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
      * @return The created domain
      */
     static AbstractImageGroup createFromData(def json) {
-        def abstractimageGroup = new AbstractImageGroup()
-        insertDataIntoDomain(abstractimageGroup, json)
+        def abstractImageGroup = new AbstractImageGroup()
+        insertDataIntoDomain(abstractImageGroup, json)
     }
 
     /**
@@ -50,7 +49,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */
     static AbstractImageGroup insertDataIntoDomain(def domain, def json) {
-        domain.abstractimage = AbstractImage.get(json.abstractimage.toString())
+        domain.abstractImage = AbstractImage.get(json.abstractImage.toString())
         domain.group = Group.get(json.group.toString())
         return domain;
     }
@@ -62,9 +61,9 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
      */
     def getCallBack() {
         HashMap<String, Object> callback = new HashMap<String, Object>();
-        callback.put("abstractimageID", this.abstractimage.id)
-        callback.put("groupID", this.group.id)
-        callback.put("imageID", this.abstractimage.id)
+        callback.put("abstractImageID", this.abstractImage.id)
+        callback.put("groupID", this.group.id)        
+        callback.put("imageID", this.abstractImage.id)
         return callback
     }
 
@@ -79,7 +78,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
             def returnArray = [:]
             returnArray['class'] = it.class
             returnArray['id'] = it.id
-            returnArray['abstractimage'] = it.abstractimage?.id
+            returnArray['abstractImage'] = it.abstractImage?.id
             returnArray['group'] = it.group?.id
             return returnArray
         }
@@ -90,10 +89,10 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
      */
     void checkAlreadyExist() {
         AbstractImageGroup.withNewSession {
-            if(abstractimage && group) {
-                AbstractImageGroup aig = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage,group)
+            if(abstractImage && group) {
+                AbstractImageGroup aig = AbstractImageGroup.findByAbstractImageAndGroup(abstractImage,group)
                 if(aig!=null && (aig.id!=id))  {
-                    throw new AlreadyExistException("AbstractImageGroup with image=${abstractimage.id} and group ${group.id} already exist!")
+                    throw new AlreadyExistException("AbstractImageGroup with image=${abstractImage.id} and group ${group.id} already exist!")
                 }
             }
         }

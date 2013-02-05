@@ -1,3 +1,9 @@
+import be.cytomine.image.Mime
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.ImageServerStorage
+import be.cytomine.image.server.MimeImageServer
+import be.cytomine.image.server.Storage
+import be.cytomine.security.SecUser
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -47,7 +53,6 @@ class BootStrap {
     def dataSource
 
 
-
     static def development = "development"
     static def production = "production"
     static def test = "test"
@@ -57,12 +62,6 @@ class BootStrap {
     def init = { servletContext ->
 
 
-//        println "******************************"
-//        JobDataBinaryValue.findAllByJobData(JobData.list().first()).each {
-//            println "* youyhouuu!"
-//        }
-
-
         //Register API Authentifier
         log.info "Current directory2="+new File( 'test.html' ).absolutePath
 
@@ -70,6 +69,7 @@ class BootStrap {
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
 
         log.info "GrailsUtil.environment= " + GrailsUtil.environment + " BootStrap.development=" + BootStrap.development
+
         if (GrailsUtil.environment == BootStrap.development) { //scripts are not present in productions mode
             compileJS();
         }
@@ -106,43 +106,69 @@ class BootStrap {
         }
 
         //toVersion1()
-
+        toVersion1_ben()
     }
-
-
-
-
-
 
     def userService
     def permissionService
+    def fileSystemService
 
+    private def toVersion1_ben() {
+        SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        //a image server has now many storage
+        for (imageServer in ImageServer.findAll()) {
+            ImageServerStorage imageServerStorage = ImageServerStorage.findByImageServer(imageServer)
+            if (!imageServerStorage) {
+                imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : imageServer.getStorage())
+                imageServerStorage.save(flush : true)
+            }
+        }
+        //create storage for each user
+        for (user in User.findAll()) {
+            if (!Storage.findByOwner(user)) {
 
+                String storage_base_path = grailsApplication.config.storage_path
+                println "storage_base_path : $storage_base_path"
+                String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
+                long timestamp = new Date().getTime()
+                String user_home = System.getProperty("user.home")
+                log.info "user_home $user_home"
+                Storage storage = new Storage(
+                        name: "storage_"+ timestamp,
+                        basePath: remotePath,
+                        ip: "139.165.108.28",
+                        username: "storage_cytomine",
+                        password: "bioinfo;3u54",
+                        publicKey: null,
+                        //publicKey: "$user_home/.ssh/id_rsa",
+                        port: 22,
+                        owner: user
+                )
 
+                if (storage.validate()) {
+                    storage.save()
+                    permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
+                    fileSystemService.makeRemoteDirectory(
+                            storage.getIp(),
+                            storage.getPort(),
+                            storage.getUsername(),
+                            storage.getPassword(),
+                            storage.getPublicKey(),
+                            storage.getBasePath())
 
-//    private def getDependencyColumn(def domain) {
-//        def tableName = GrailsDomainBinder.getMapping(domain.class).table.name
-//        def columnDep = []
-//        new Sql(dataSource).eachRow("select column_name,* from information_schema.columns where table_name = '$tableName' order by ordinal_position") {
-//           if(it[0].toString().endsWith("_id")) {
-//               columnDep << it[0]
-//           }
-//        }
-//        return columnDep
-//    }
-//
-//    private def check
+                    for (imageServer in ImageServer.findAll()) {
+                        ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
+                        imageServerStorage.save(flush : true)
+                    }
+                } else {
+                    storage.errors.each {
+                        log.error it
+                    }
+                }
+            }
 
-
-
-
-
-
-
-
-
-
-
+        }
+    }
 
     private def toVersion1() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
@@ -194,10 +220,10 @@ class BootStrap {
     def createUsers() {
 
         def usersSamples = [
-                    [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[name : "GIGA"]], password : 'rM$2011', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                    [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'lR$2011', color : "#00FF00", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                    [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[name : "GIGA"]], password : 'sB$2011', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]]
-                       ]
+                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[name : "GIGA"]], password : 'rM$2011', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
+                [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'lR$2011', color : "#00FF00", roles : ["ROLE_USER", "ROLE_ADMIN"]],
+                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[name : "GIGA"]], password : 'sB$2011', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]]
+        ]
 
         SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
         SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
@@ -282,7 +308,7 @@ class BootStrap {
         def relationSamples = [
                 [name: RelationTerm.names.PARENT],
                 [name: RelationTerm.names.SYNONYM]
-            ]
+        ]
 
         log.info "createRelation"
         relationSamples.each { item ->

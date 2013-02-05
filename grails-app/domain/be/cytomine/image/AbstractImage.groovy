@@ -5,8 +5,8 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.image.acquisition.Instrument
-import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
@@ -143,16 +143,17 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServers() {
         println "### not mocking method"
-        if(this.version==null) return null
-        def sai = StorageAbstractImage.findAllByAbstractImage(this)
-        if (!sai.isEmpty()) {
-
-            def imageServers = ImageServer.createCriteria().list {
-                eq("available", true)
-                inList("storage", sai.collect { it.storage })
-                inList("id", MimeImageServer.findAllByMime(this.getMime()).collect {it.imageServer.id}.unique())
+        def storages = StorageAbstractImage.findAllByAbstractImage(this).collect { it.storage }
+        if (!storages.isEmpty()) {
+            def imageServersIdByStorage = ImageServerStorage.findAllByStorageInList(storages).collect { it.imageServer }.collect { it.id }
+            def imageServersIdByMime = MimeImageServer.findAllByMime(this.getMime()).collect {it.imageServer.id}.unique()
+            def imageServersId  = imageServersIdByMime.intersect(imageServersIdByStorage)
+            if (!imageServersId.isEmpty()) {
+                return ImageServer.createCriteria().list {
+                    eq("available", true)
+                    inList("id", imageServersId)
+                }
             }
-            return imageServers
         }
         return null
     }
@@ -178,13 +179,12 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServers[index].className)
-        String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(), imageServers[index].getStorage().getBasePath() + getPath())
+        String url = resolver.getMetaDataURL(imageServers[index].getBaseUrl(), [imageServers[index].getStorage().getBasePath(), getPath()].join(File.separator))
         return url
     }
 
     def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
         def imageServers = getImageServers()
-        println "imageServers=$imageServers"
         if (imageServers == null || imageServers.size() == 0) {
             return null
         }
@@ -196,7 +196,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         String path = getPath()
         int widthImg =  this.getWidth()
         int heightImg = this.getHeight()
-        resolver.getCropURL(baseUrl, basePath + path, topLeftX, topLeftY, width, height, widthImg, heightImg, desiredWidth, desiredHeight)
+        resolver.getCropURL(baseUrl, [basePath, path].join(File.separator), topLeftX, topLeftY, width, height, widthImg, heightImg, desiredWidth, desiredHeight)
     }
 
     def getCropURL(int topLeftX, int topLeftY, int width, int height) {
@@ -213,6 +213,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         def imageServers = getImageServers()
         if (imageServers == null || imageServers.size() == 0 || width == null || height == null) return null
         Resolver resolver = Resolver.getResolver(imageServers[0].className)
-        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), imageServers[0].getStorage().getBasePath() + getPath(), width, height)
+        return resolver.getZoomLevels(imageServers[0].getBaseUrl(), [imageServers[0].getStorage().getBasePath(), getPath()].join(File.separator), width, height)
     }
 }

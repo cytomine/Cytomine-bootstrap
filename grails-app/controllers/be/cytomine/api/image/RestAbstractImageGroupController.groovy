@@ -6,7 +6,7 @@ import be.cytomine.security.Group
 import grails.converters.JSON
 
 /**
- * Controller that handle operation on security access to abstractimage domain.
+ * Controller that handle operation on security access to abstractImage domain.
  * An abstract image may be visible by some groups.
  */
 class RestAbstractImageGroupController extends RestController {
@@ -16,14 +16,14 @@ class RestAbstractImageGroupController extends RestController {
     def groupService
 
     /**
-     * Show a link between an abstractimage and a group
+     * Show a link between an abstract image and a group
      */
     def show = {
-        AbstractImage abstractimage = abstractImageService.read(params.long('idabstractimage'))
+        AbstractImage abstractImage = abstractImageService.read(params.long('idabstractimage'))
         Group group = groupService.read(params.long('idgroup'))
-        if (abstractimage && group) {
-            def abstractimageGroup = abstractImageGroupService.get(abstractimage, group)
-            if (abstractimageGroup) responseSuccess(abstractimageGroup)
+        if (abstractImage && group) {
+            def abstractImageGroup = abstractImageGroupService.get(abstractImage, group)
+            if (abstractImageGroup) responseSuccess(abstractImageGroup)
             else responseNotFound("AbstractImageGroup", "Group", "AbstractImage", params.idgroup, params.idabstractimage)
         }
         else {

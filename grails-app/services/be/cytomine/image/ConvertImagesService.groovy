@@ -51,7 +51,7 @@ class ConvertImagesService {
         if (!mainUploadedFile) return null //ok, it's not a special file
 
         //create nested file
-        mainUploadedFile.setStatus(UploadedFile.CONVERTED)
+        mainUploadedFile.setStatus(UploadedFile.TO_DEPLOY)
         mainUploadedFile.setConverted(true)
         mainUploadedFile.save()
         uploadedFiles << mainUploadedFile
@@ -94,11 +94,11 @@ class ConvertImagesService {
         pathsAndExtensions.each { it ->
 
             UploadedFile new_uploadedFile = createNewUploadedFile(uploadedFile, it, currentUser, null)
-
+            uploadedFiles << new_uploadedFile
             if (new_uploadedFile.validate()){
-                new_uploadedFile = handleSingleFile(new_uploadedFile, currentUser)
-                if (new_uploadedFile.getStatus() == UploadedFile.CONVERTED) {
-                    uploadedFiles << new_uploadedFile
+                UploadedFile converted_uploadedFile = handleSingleFile(new_uploadedFile, currentUser)
+                if (converted_uploadedFile != new_uploadedFile && converted_uploadedFile.getStatus() == UploadedFile.TO_DEPLOY) {
+                    uploadedFiles << converted_uploadedFile
                 }
             } else {
                 uploadedFile.errors.each {
@@ -116,7 +116,6 @@ class ConvertImagesService {
         println "createNewUploadedFile $absolutePath"
         String filename = absolutePath.substring(parentUploadedFile.getPath().length(), absolutePath.length())
         if (!contentType) {
-            MockMultipartFile multipartFile = new MockMultipartFile(absolutePath, new File(absolutePath).getBytes())
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
             contentType = mimeTypesMap.getContentType(absolutePath)
         }
@@ -132,50 +131,65 @@ class ConvertImagesService {
         )
     }
 
-    private def handleSingleFile(UploadedFile uploadedFile, SecUser currentUser) {
+    private UploadedFile handleSingleFile(UploadedFile uploadedFile, SecUser currentUser) {
 
         //Check if file must be converted or not...
         if (!UploadedFile.mimeToConvert.contains(uploadedFile.getExt())) {
-            log.info uploadedFile.getFilename() + " : CONVERTED"
-            uploadedFile.setStatus(UploadedFile.CONVERTED)
+            log.info uploadedFile.getFilename() + " : TO_DEPLOY"
+            uploadedFile.setStatus(UploadedFile.TO_DEPLOY)
             uploadedFile.setConverted(false)
-            uploadedFile.setConvertedExt(uploadedFile.getExt())
-            uploadedFile.setConvertedFilename(uploadedFile.getFilename())
+            uploadedFile.save()
+            return uploadedFile
+            /*uploadedFile.setConvertedExt(uploadedFile.getExt())
+            uploadedFile.setConvertedFilename(uploadedFile.getFilename())*/
         } else {
             log.info "convert $uploadedFile"
             //..if yes. Convert it
             String convertFileName = uploadedFile.getFilename()
             convertFileName = convertFileName[0 .. (convertFileName.size() - uploadedFile.getExt().size() - 2)]
             convertFileName = convertFileName + "_converted.tif"
-            String contextPath = uploadedFile.getPath().endsWith("/") ?  uploadedFile.getPath() :  uploadedFile.getPath() + "/"
-            String originalFilenameFullPath = contextPath + uploadedFile.getFilename()
-            String convertedFilenameFullPath = contextPath + convertFileName
 
-            uploadedFile.setConvertedFilename(convertFileName)
-            uploadedFile.setConvertedExt("tiff")
+            String originalFilenameFullPath = [ uploadedFile.getPath(), uploadedFile.getFilename()].join(File.separator)
+            String convertedFilenameFullPath = [ uploadedFile.getPath(), convertFileName].join(File.separator)
 
 
             try {
 
                 Boolean success = vipsify(originalFilenameFullPath, convertedFilenameFullPath)
                 if (success) {
+                    UploadedFile convertUploadedFile = new UploadedFile(
+                            originalFilename: uploadedFile.getOriginalFilename(),
+                            filename : convertFileName,
+                            path : uploadedFile.getPath(),
+                            ext : "tiff",
+                            size : new File(convertedFilenameFullPath).size(),
+                            contentType : "image/tiff",
+                            project : uploadedFile.getProject(),
+                            user : currentUser,
+                            status: UploadedFile.TO_DEPLOY
+                    )
                     uploadedFile.setConverted(true)
                     uploadedFile.setStatus(UploadedFile.CONVERTED)
-
+                    /*uploadedFile.setConvertedFilename(convertFileName)
+                    uploadedFile.setConvertedExt("tiff")*/
+                    uploadedFile.save()
+                    convertUploadedFile.save()
+                    return convertUploadedFile
                 } else {
                     uploadedFile.setConverted(false)
                     uploadedFile.setStatus(UploadedFile.ERROR_CONVERT)
+                    return uploadedFile
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace()
                 uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
+                uploadedFile.save()
+                return uploadedFile
             }
 
         }
-        uploadedFile.save()
-        return uploadedFile
+
     }
 
     private def vipsify(String originalFilenameFullPath, String convertedFilenameFullPath) {

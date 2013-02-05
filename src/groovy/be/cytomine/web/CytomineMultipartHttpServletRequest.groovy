@@ -20,14 +20,13 @@ public class CytomineMultipartHttpServletRequest extends CommonsMultipartResolve
     static final String FILE_SIZE_EXCEEDED_ERROR = "fileSizeExceeded"
 
     public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) {
-        println "===MultipartHttpServletRequest==="
         try {
-            println "===SUPER===MultipartHttpServletRequest==="
             return super.resolveMultipart(request)
         } catch (MaxUploadSizeExceededException e) {
-            println "===CATCH===MultipartHttpServletRequest==="
             request.setAttribute(FILE_SIZE_EXCEEDED_ERROR, true)
             return new DefaultMultipartHttpServletRequest(request, new LinkedMultiValueMap(), [:])
+        } catch (org.springframework.web.multipart.MultipartException e) {
+            //upload cancelled by client
         }
     }
 }

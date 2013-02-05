@@ -29,8 +29,8 @@ class GroupService extends ModelService {
     }
 
     //TODO:: security!
-    def list(AbstractImage abstractimage) {
-        return AbstractImageGroup.findAllByAbstractimage(abstractimage).collect{it.group}
+    def list(AbstractImage abstractImage) {
+        return AbstractImageGroup.findAllByAbstractImage(abstractImage).collect{it.group}
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

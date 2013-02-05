@@ -12,7 +12,7 @@ class ImageServer extends CytomineDomain {
     String url
     String service
     String className
-    Storage storage
+    Storage storage //deprecated
     Boolean available
 
     static constraints = {

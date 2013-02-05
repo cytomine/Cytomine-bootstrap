@@ -30,7 +30,6 @@
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 
 
-<!--<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css"/>-->
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap.css"/>
 <style type="text/css">
 body {
@@ -39,6 +38,7 @@ body {
 }
 </style>
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
+<!--<link rel="stylesheet" href="css/darkstrap-v0.9.0.css"/>-->
 
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>

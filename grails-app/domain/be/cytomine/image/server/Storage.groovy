@@ -1,5 +1,7 @@
 package be.cytomine.image.server
 
+import be.cytomine.security.SecUser
+
 /**
  * TODOSTEVBEN: doc
  */
@@ -7,21 +9,25 @@ class Storage {
 
     String name
     String basePath
-    String serviceUrl
+
+    SecUser owner
+
+    //ssh config
     String ip
     String username
     String password
+    String publicKey
     Integer port
 
     static constraints = {
-        name(maxSize: 8, unique: true) //ais storage max length
+        name(unique: false)
         basePath(nullable: false, blank: false)
-        serviceUrl(nullable: false, blank: false)
+        username(nullable: false)
+        password(nullable: true)
+        publicKey(nullable : true)
     }
 
-    String toString() {
-        name + "(" + serviceUrl + " : " + basePath + ")"
-    }
+
 
 
 }

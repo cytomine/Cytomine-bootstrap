@@ -67,7 +67,7 @@ class AbstractImageService extends ModelService {
     //TODO: secure!
     def list(Group group) {
         AbstractImageGroup.findAllByGroup(group).collect{
-            it.abstractimage
+            it.abstractImage
         }
     }
 
@@ -108,7 +108,7 @@ class AbstractImageService extends ModelService {
             def imageGroup = AbstractImageGroup.createCriteria().list {
                 inList("group.id", userGroup.collect {it.group.id})
                 projections {
-                    groupProperty('abstractimage.id')
+                    groupProperty('abstractImage.id')
                 }
             }
             log.info "imageGroup=" + imageGroup.size()
@@ -252,7 +252,7 @@ class AbstractImageService extends ModelService {
     def imageservers(def id) {
         AbstractImage image = read(id)
         def urls = image.getImageServers().collect {
-            it.getZoomifyUrl() + image.getPath() + "/"
+            [it.getZoomifyUrl(), image.getPath()].join(File.separator) + "/"
         }
         def result = [:]
         result.imageServersURLs = urls
@@ -265,7 +265,6 @@ class AbstractImageService extends ModelService {
     def thumb(def id) {
         println "thumb=$id"
         AbstractImage image = AbstractImage.read(id)
-        println "thumb=${image.getThumbURL()}"
         try {
             return image.getThumbURL()
         } catch (Exception e) {

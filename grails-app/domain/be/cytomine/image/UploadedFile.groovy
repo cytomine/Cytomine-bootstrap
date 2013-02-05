@@ -13,13 +13,14 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
     public static allowedMime = ["svs", "opt", "jp2"]
     public static zipMime = ["zip"]
-    public static mimeToConvert = ["jpg", "png", "tiff", "tif","pgm"]//, "ndpi"]
+    public static mimeToConvert = ["jpg", "jpeg", "png", "tiff", "tif","pgm"]//, "ndpi"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1
     public static int DEPLOYED = 2
     public static int ERROR_FORMAT = 3
     public static int ERROR_CONVERT = 4
     public static int UNCOMPRESSED = 5
+    public static int TO_DEPLOY = 6
 
     SecUser user
     Project project
@@ -71,12 +72,13 @@ class UploadedFile extends CytomineDomain implements Serializable{
             returnArray['error_format'] = (it.status == UploadedFile.ERROR_FORMAT)
             returnArray['error_convert'] = (it.status == UploadedFile.ERROR_CONVERT)
             returnArray['uncompressed'] = (it.status == UploadedFile.UNCOMPRESSED)
+            returnArray['to_deploy'] = (it.status == UploadedFile.TO_DEPLOY)
             return returnArray
         }
     }
 
     def getAbsolutePath() {
-        String contextPath = this.path.endsWith("/") ?  this.path :  this.path + "/"
-        return contextPath + this.filename
+        return [ this.path, this.filename].join(File.separator)
     }
+
 }

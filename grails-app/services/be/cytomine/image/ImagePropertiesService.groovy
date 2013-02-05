@@ -28,7 +28,7 @@ class ImagePropertiesService implements Serializable{
         def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
         def imageServer = imageServers.get(index)
         Resolver resolver = Resolver.getResolver(imageServer.className)
-        def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
+        def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), [imageServer.getStorage().getBasePath(),image.getPath()].join(File.separator))
         log.info image.getFilename() + " : " + propertiesURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(propertiesURL)
@@ -89,7 +89,7 @@ class ImagePropertiesService implements Serializable{
         log.info "resolver="+resolver
         log.info "storage="+imageServer.getStorage()
         log.info "image="+image
-        def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), imageServer.getStorage().getBasePath() + image.getPath())
+        def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), [imageServer.getStorage().getBasePath(),image.getPath()].join(File.separator))
         log.info "metadataURL="+metadaURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(metadaURL)

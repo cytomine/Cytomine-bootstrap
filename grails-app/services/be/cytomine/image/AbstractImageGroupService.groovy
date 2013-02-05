@@ -26,7 +26,7 @@ class AbstractImageGroupService extends ModelService {
     def transactionService
 
     def get(AbstractImage abstractimage, Group group) {
-        AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
+        AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)
     }
 
     @Secured(['ROLE_USER'])
@@ -62,7 +62,7 @@ class AbstractImageGroupService extends ModelService {
 
     def delete(AbstractImageGroup aig, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{abstractimage: ${aig.abstractimage.id},group:${aig.group.id}}")
+        def json = JSON.parse("{abstractimage: ${aig.abstractImage.id},group:${aig.group.id}}")
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
@@ -87,7 +87,7 @@ class AbstractImageGroupService extends ModelService {
         //Save new object
         saveDomain(domain)
         //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Add", domain.getCallBack())
+        return responseService.createResponseMessage(domain, [domain.id, domain.abstractImage.filename, domain.group.name], printMessage, "Add", domain.getCallBack())
     }
 
     /**
@@ -109,7 +109,7 @@ class AbstractImageGroupService extends ModelService {
      */
     def destroy(AbstractImageGroup domain, boolean printMessage) {
         //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractimage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
+        def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractImage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
         //Delete object
         removeDomain(domain)
         return response
@@ -133,9 +133,9 @@ class AbstractImageGroupService extends ModelService {
     def retrieve(JSONObject json) {
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)
         Group group = Group.get(json.group)
-        AbstractImageGroup domain = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
+        AbstractImageGroup domain = AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)
         if (!domain) {
-            throw new ObjectNotFoundException("AbstractImageGroup group=${json.group} image=${json.abstractimage} not found")
+            throw new ObjectNotFoundException("AbstractImageGroup group=${json.group} image=${json.abstractImage} not found")
         }
         return domain
     }

@@ -10,7 +10,7 @@ class ZipService {
         String destPath = parentPath.endsWith("/") ?  parentPath :  parentPath + "/" + timestamp.toString()
 
         /* Create and temporary directory which will contains the archive content */
-        fileSystemService.makeDirectory(destPath)
+        fileSystemService.makeLocalDirectory(destPath)
 
         /* Get extension of filename in order to choose the uncompressor */
         String ext = FilesUtils.getExtensionFromFilename(absolutePath).toLowerCase()
