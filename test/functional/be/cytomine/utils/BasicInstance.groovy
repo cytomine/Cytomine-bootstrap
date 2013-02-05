@@ -551,20 +551,20 @@ class BasicInstance {
 
     static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
         log.debug "createOrGetBasicAbstractImageGroup()"
-        def abstractimage = getBasicAbstractImageNotExist()
-        abstractimage.save(flush: true)
-        assert abstractimage != null
+        def abstractImage = getBasicAbstractImageNotExist()
+        abstractImage.save(flush: true)
+        assert abstractImage != null
         def group = getBasicGroupNotExist()
         group.save(flush: true)
         assert group != null
-        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
-        assert abstractimageGroup == null
+        def abstractImageGroup = AbstractImageGroup.findByAbstractImageAndGroup(abstractImage, group)
+        assert abstractImageGroup == null
 
-        if (!abstractimageGroup) {
-            abstractimageGroup = new AbstractImageGroup(abstractimage:abstractimage, group:group)
-            saveDomain(abstractimageGroup)
+        if (!abstractImageGroup) {
+            abstractImageGroup = new AbstractImageGroup(abstractImage:abstractImage, group:group)
+            saveDomain(abstractImageGroup)
         }
-        abstractimageGroup
+        abstractImageGroup
     }
 
     static AbstractImageGroup getBasicAbstractImageGroupNotExist(String method) {
@@ -572,11 +572,11 @@ class BasicInstance {
         def group = getBasicGroupNotExist()
         group.save(flush: true)
         assert group != null
-        def abstractimage = getBasicAbstractImageNotExist()
-        abstractimage.save(flush: true)
-        assert abstractimage != null
-        def abstractimageGroup = new AbstractImageGroup(abstractimage: abstractimage, group: group)
-        abstractimageGroup
+        def abstractImage = getBasicAbstractImageNotExist()
+        abstractImage.save(flush: true)
+        assert abstractImage != null
+        def abstractImageGroup = new AbstractImageGroup(abstractImage: abstractImage, group: group)
+        abstractImageGroup
     }
 
     static ProcessingServer createOrGetBasicProcessingServer() {
@@ -731,14 +731,14 @@ class BasicInstance {
     }
 
     static SoftwareProject createSoftwareProject(Software software, Project project) {
-        SoftwareProject softProj = SoftwareProject.findBySoftwareAndProject(software,project)
-        if(softProj) return softProj
+        SoftwareProject softwareProject = SoftwareProject.findBySoftwareAndProject(software,project)
+        if(softwareProject) return softwareProject
         else {
-            softProj = new SoftwareProject(project: project, software: software)
-            checkDomain(softProj)
-            saveDomain(softProj)
+            softwareProject = new SoftwareProject(project: project, software: software)
+            checkDomain(softwareProject)
+            saveDomain(softwareProject)
         }
-        softProj
+        softwareProject
     }
 
 
@@ -770,15 +770,15 @@ class BasicInstance {
         def job = createOrGetBasicJob()
         def softwareParam = createOrGetBasicSoftwareParameter()
 
-        def jobparameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
-        if (!jobparameter) {
+        def jobParameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
+        if (!jobParameter) {
 
-            jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-            checkDomain(jobparameter)
-            saveDomain(jobparameter)
+            jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+            checkDomain(jobParameter)
+            saveDomain(jobParameter)
         }
-        assert jobparameter != null
-        jobparameter
+        assert jobParameter != null
+        jobParameter
     }
 
     static JobParameter getBasicJobParameterNotExist() {
@@ -788,9 +788,9 @@ class BasicInstance {
         job.save(flush:true)
         softwareParam.save(flush:true)
 
-        def jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-        checkDomain(jobparameter)
-        jobparameter
+        def jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+        checkDomain(jobParameter)
+        jobParameter
     }
     
     static Ontology createOrGetBasicOntology() {
@@ -1150,7 +1150,6 @@ class BasicInstance {
             bidon = new Storage()
             bidon.name = "bidon"
             bidon.basePath = "storagepath"
-            bidon.serviceUrl = "http://storage.url.com"
             bidon.ip = "192.168.0.0"
             bidon.username = "toto"
             bidon.password = "pass"

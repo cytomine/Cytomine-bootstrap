@@ -45,8 +45,8 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testGetAbstractImageGroupWithCredential() {
-        def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
-        def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractImage.id,abstractimageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def abstractImageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def result = AbstractImageGroupAPI.show(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(200, result.code)
     }
 
@@ -85,11 +85,11 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testAddAbstractImageGroupWithGroupNotExist() {
-        def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-        abstractimageGroupToAdd.discard()
-        def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
+        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        abstractImageGroupToAdd.discard()
+        def jsonUpdate = JSON.parse(abstractImageGroupToAdd.encodeAsJSON())
         jsonUpdate.group = -99
-        def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractImage.id,-99,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AbstractImageGroupAPI.create(abstractImageGroupToAdd.abstractImage.id,-99,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(400, result.code)
     }
 
@@ -103,8 +103,8 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
     }
 
     void testDeleteAbstractImageGroupNotExist() {
-        def abstractimageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-        assert abstractimageGroupToDelete.save(flush: true)  != null
+        def abstractImageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        assert abstractImageGroupToDelete.save(flush: true)  != null
         def result = AbstractImageGroupAPI.delete(-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }

@@ -62,8 +62,8 @@ class AbstractImageTests extends functionaltestplugin.FunctionalTestCase{
   }
 
     void testListImagesDatatable() {
-        def image = BasicInstance.createOrGetBasicAbstractImage()
-        AbstractImageGroup aig = new AbstractImageGroup(abstractimage: image,group:Group.findByName(Infos.GOODLOGIN))
+        def abstractImage = BasicInstance.createOrGetBasicAbstractImage()
+        AbstractImageGroup aig = new AbstractImageGroup(abstractImage: abstractImage,group:Group.findByName(Infos.GOODLOGIN))
         BasicInstance.saveDomain(aig)
         def result = AbstractImageAPI.list(true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
