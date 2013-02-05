@@ -21,6 +21,8 @@ import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.impl.client.BasicAuthCache
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.BasicHttpContext
+import org.apache.http.params.HttpParams
+import org.apache.http.params.HttpConnectionParams
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,7 +38,7 @@ class HttpClient {
     BasicHttpContext localcontext
     URL URL
     HttpResponse response
-    int timeout = 2500;
+    int timeout = 30000;
 
     private Log log = LogFactory.getLog(HttpClient.class)
 
@@ -62,8 +64,11 @@ class HttpClient {
         localcontext = new BasicHttpContext();
         localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
         // Set credentials
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(username, password);
-        client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(username, password)
+        HttpParams params = client.getParams()
+        HttpConnectionParams.setConnectionTimeout(params, timeout)
+        HttpConnectionParams.setSoTimeout(params, timeout)
+        client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds)
     }
 
     /**
