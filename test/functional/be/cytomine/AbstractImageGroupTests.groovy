@@ -18,18 +18,18 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 
 
-  void testListAbstractImageGroupByAbstractImageWithCredential() {
-    AbstractImage abstractimage = BasicInstance.createOrGetBasicAbstractImage()
-    def result = AbstractImageGroupAPI.listByImage(abstractimage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200, result.code)
-    def json = JSON.parse(result.data)
-    assert json instanceof JSONArray
-  }
+    void testListAbstractImageGroupByAbstractImageWithCredential() {
+        AbstractImage abstractImage = BasicInstance.createOrGetBasicAbstractImage()
+        def result = AbstractImageGroupAPI.listByImage(abstractImage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
 
-  void testListAbstractImageGroupByAbstractImageWithAbstractImageNotExist() {
-      def result = AbstractImageGroupAPI.listByImage(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
-  }
+    void testListAbstractImageGroupByAbstractImageWithAbstractImageNotExist() {
+        def result = AbstractImageGroupAPI.listByImage(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
 
 //    void testListAbstractImageGroupByGroupWithCredential() {
 //      Group group = BasicInstance.createOrGetBasicGroup()
@@ -40,66 +40,66 @@ class AbstractImageGroupTests extends functionaltestplugin.FunctionalTestCase {
 //    }
 
     void testListAbstractImageGroupByGroupWithGroupNotExist() {
-      def result = AbstractImageGroupAPI.listByGroup(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
-    }
-
-  void testGetAbstractImageGroupWithCredential() {
-    def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
-      def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
-  }
-
-    void testGetAbstractImageGroupWithCredentialNotExist() {
-      def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
-        def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AbstractImageGroupAPI.listByGroup(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assertEquals(404, result.code)
     }
 
-  void testAddAbstractImageGroupCorrect() {
-    def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-    abstractimageGroupToAdd.discard()
-    String json = abstractimageGroupToAdd.encodeAsJSON()
-    def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-    assertEquals(200, result.code)
-    result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-    assertEquals(200, result.code)
-  }
+    void testGetAbstractImageGroupWithCredential() {
+        def abstractimageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def result = AbstractImageGroupAPI.show(abstractimageGroupToAdd.abstractImage.id,abstractimageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
 
-   void testAddAbstractImageGroupAlreadyExist() {
-    def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupAlreadyExist")
-    abstractimageGroupToAdd.save(flush:true)
-    abstractimageGroupToAdd.discard()
-    String json = abstractimageGroupToAdd.encodeAsJSON()
-     def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,abstractimageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-     assertEquals(409, result.code)
-  }
+    void testGetAbstractImageGroupWithCredentialNotExist() {
+        def abstractImageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def result = AbstractImageGroupAPI.show( abstractImageGroupToAdd.abstractImage.id,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assertEquals(404, result.code)
+    }
+
+    void testAddAbstractImageGroupCorrect() {
+        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        abstractImageGroupToAdd.discard()
+        String json = abstractImageGroupToAdd.encodeAsJSON()
+        def result = AbstractImageGroupAPI.create(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+        result = AbstractImageGroupAPI.show(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(200, result.code)
+    }
+
+    void testAddAbstractImageGroupAlreadyExist() {
+        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupAlreadyExist")
+        abstractImageGroupToAdd.save(flush:true)
+        abstractImageGroupToAdd.discard()
+        String json = abstractImageGroupToAdd.encodeAsJSON()
+        def result = AbstractImageGroupAPI.create(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(409, result.code)
+    }
 
     void testAddAbstractImageGroupWithAbstractImageNotExist() {
-      def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-      abstractimageGroupToAdd.discard()
-      def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
-      jsonUpdate.abstractimage = -99
-      def result = AbstractImageGroupAPI.create(-99,abstractimageGroupToAdd.group.id,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(400, result.code)
+        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        abstractImageGroupToAdd.discard()
+        def jsonUpdate = JSON.parse(abstractImageGroupToAdd.encodeAsJSON())
+        jsonUpdate.abstractimage = -99
+        def result = AbstractImageGroupAPI.create(-99,abstractImageGroupToAdd.group.id,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
     }
 
     void testAddAbstractImageGroupWithGroupNotExist() {
-      def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-      abstractimageGroupToAdd.discard()
-      def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
-      jsonUpdate.group = -99
-      def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractimage.id,-99,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(400, result.code)
+        def abstractimageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        abstractimageGroupToAdd.discard()
+        def jsonUpdate = JSON.parse(abstractimageGroupToAdd.encodeAsJSON())
+        jsonUpdate.group = -99
+        def result = AbstractImageGroupAPI.create(abstractimageGroupToAdd.abstractImage.id,-99,jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(400, result.code)
     }
 
     void testDeleteAbstractImageGroup() {
-        def abstractimageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
-        assert abstractimageGroupToDelete.save(flush: true)  != null
-        def result = AbstractImageGroupAPI.delete(abstractimageGroupToDelete.abstractimage.id,abstractimageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def abstractImageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        assert abstractImageGroupToDelete.save(flush: true)  != null
+        def result = AbstractImageGroupAPI.delete(abstractImageGroupToDelete.abstractImage.id,abstractImageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assertEquals(200, result.code)
-        def showResult = AbstractImageGroupAPI.show(abstractimageGroupToDelete.abstractimage.id,abstractimageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, showResult.code)        
+        def showResult = AbstractImageGroupAPI.show(abstractImageGroupToDelete.abstractImage.id,abstractImageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assertEquals(404, showResult.code)
     }
 
     void testDeleteAbstractImageGroupNotExist() {
