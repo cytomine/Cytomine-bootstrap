@@ -212,6 +212,10 @@ class RetrievalService {
         }
     }
 
+    public static def deleteContainerAsynchronous(String id) {
+        deleteContainerAsynchronous(Long.parseLong(id))
+    }
+
     public static def deleteContainerAsynchronous(Long id) {
         Logger.getLogger(this).info("delete asynchronous")
         Asynchronizer.withAsynchronizer() {

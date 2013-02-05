@@ -16,6 +16,7 @@ import grails.converters.JSON
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Task
 
 class TermService extends ModelService {
 
@@ -36,12 +37,6 @@ class TermService extends ModelService {
 
     def initialize() { this.secUserService = grailsApplication.mainContext.secUserService }
 
-
-
-
-
-
-    final boolean saveOnUndoRedoStack = true
 
     /**
      * List all term, Only for admin
@@ -175,56 +170,6 @@ class TermService extends ModelService {
     }
 
     /**
-     * Delete a term from database
-     * This method should delete all data linked with the term: annotation-term, annotation filter, ...
-     * @param idTerm Term id to delete
-     * @param currentUser User that delete term
-     * @param printMessage Flag to tell the client to print a confirmation message
-     * @param transaction Transaction that will packed the command
-     * @return Response structure
-     */
-    def deleteTerm(def idTerm, User currentUser, boolean printMessage, Transaction transaction) throws CytomineException {
-        log.info "Delete term: " + idTerm
-        Term term = Term.read(idTerm)
-        if (term) {
-            //Delete Annotation-Filters before deleting Term
-            annotationFilterService.deleteFiltersFromTerm(term)
-
-            //Delete Annotation-Term before deleting Term
-            annotationTermService.deleteAnnotationTermFromAllUser(term, currentUser, transaction)
-
-            //Delete Suggested-Term before deleting Term
-            algoAnnotationTermService.deleteAlgoAnnotationTermFromAllUser(term, currentUser, transaction)
-
-            //Delete relation-Term before deleting Term
-            relationTermService.deleteRelationTermFromTerm(term, currentUser, transaction)
-        }
-        //Delete term
-        def json = JSON.parse("{id : $idTerm}")
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage), json)
-    }
-
-    /**
-     * Delete a term from database, juste delete term and its relation
-     * @param idTerm Term id to delete
-     * @param currentUser User that delete term
-     * @param printMessage Flag to tell the client to print a confirmation message
-     * @param transaction Transaction that will packed the command
-     * @return Response structure
-     */
-    def deleteTermRestricted(def idTerm, User currentUser, boolean printMessage, Transaction transaction) throws CytomineException {
-        log.info "Delete term: " + idTerm
-        Term term = Term.read(idTerm)
-        if (term) {
-            //Delete relation-Term before deleting Term
-            relationTermService.deleteRelationTermFromTerm(term, currentUser, transaction)
-        }
-        //Delete term
-        def json = JSON.parse("{id : $idTerm}")
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage, transaction: transaction), json)
-    }
-
-    /**
      * Create new domain in database
      * @param json JSON data for the new domain
      * @param printMessage Flag to specify if confirmation message must be show in client
@@ -318,7 +263,7 @@ class TermService extends ModelService {
         return term
     }
 
-    def deleteDependentAlgoAnnotationTerm(Term term, Transaction transaction) {
+    def deleteDependentAlgoAnnotationTerm(Term term, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByTerm(term).each {
             println "${it.annotationIdent}-${it.term?.id}-${it.userJob?.id}"
             algoAnnotationTermService.delete(it,transaction,false)
@@ -329,13 +274,13 @@ class TermService extends ModelService {
         }
     }
 
-    def deleteDependentAnnotationTerm(Term term, Transaction transaction) {
+    def deleteDependentAnnotationTerm(Term term, Transaction transaction, Task task = null) {
         AnnotationTerm.findAllByTerm(term).each {
             annotationTermService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentRelationTerm(Term term, Transaction transaction) {
+    def deleteDependentRelationTerm(Term term, Transaction transaction, Task task = null) {
         RelationTerm.findAllByTerm1(term).each {
             relationTermService.delete(it,transaction,false)
         }
@@ -344,7 +289,7 @@ class TermService extends ModelService {
         }
     }
 
-    def deleteDependentHasManyReviewedAnnotation(Term term, Transaction transaction) {
+    def deleteDependentHasManyReviewedAnnotation(Term term, Transaction transaction, Task task = null) {
         def criteria = ReviewedAnnotation.createCriteria()
         def results = criteria.list {
             terms {
@@ -357,7 +302,7 @@ class TermService extends ModelService {
         }
      }
 
-    def deleteDependentHasManyAnnotationFilter(Term term, Transaction transaction) {
+    def deleteDependentHasManyAnnotationFilter(Term term, Transaction transaction, Task task = null) {
         def criteria = AnnotationFilter.createCriteria()
         def results = criteria.list {
           users {

@@ -15,6 +15,7 @@ class DeleteCommand extends Command {
      */
     boolean linkProject = true
 
+
     /**
      * Process an Add operation for this command
      * @return Message

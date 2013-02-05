@@ -16,12 +16,11 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class SoftwareService extends ModelService {
 
     static transactional = true
-
-    final boolean saveOnUndoRedoStack = true
 
     def cytomineService
     def transactionService
@@ -86,7 +85,7 @@ class SoftwareService extends ModelService {
     def delete(Software software, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${software.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
     /**
@@ -185,19 +184,19 @@ class SoftwareService extends ModelService {
         return software
     }
 
-    def deleteDependentSoftwareParameter(Software software, Transaction transaction) {
+    def deleteDependentSoftwareParameter(Software software, Transaction transaction, Task task = null) {
         SoftwareParameter.findAllBySoftware(software).each {
             softwareParameterService.delete(it,transaction, false)
         }
     }
 
-    def deleteDependentJob(Software software, Transaction transaction) {
+    def deleteDependentJob(Software software, Transaction transaction, Task task = null) {
         Job.findAllBySoftware(software).each {
             jobService.delete(it,transaction, false)
         }
     }
 
-    def deleteDependentSoftwareProject(Software software, Transaction transaction) {
+    def deleteDependentSoftwareProject(Software software, Transaction transaction, Task task = null) {
         SoftwareProject.findAllBySoftware(software).each {
             softwareProjectService.delete(it,transaction, false)
         }

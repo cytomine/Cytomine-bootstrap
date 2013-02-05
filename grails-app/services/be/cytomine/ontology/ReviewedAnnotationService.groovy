@@ -20,6 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Task
 
 class ReviewedAnnotationService extends ModelService {
 
@@ -33,8 +34,6 @@ class ReviewedAnnotationService extends ModelService {
     def modelService
     def simplifyGeometryService
     def dataSource
-
-    boolean saveOnUndoRedoStack = true
 
     ReviewedAnnotation get(def id) {
         def annotation = ReviewedAnnotation.get(id)
@@ -224,26 +223,6 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     /**
-     * Delete a reviewed annotation from database
-     * @param annotation Annotation to delete
-     * @param currentUser User that will be the deleter user
-     * @param printMessage Flag to tell the client to print confirmation message or not
-     * @param transaction Transaction that will pack the delete command
-     * @return Result structure
-     */
-    def deleteAnnotation(ReviewedAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-        if (annotation) {
-            //remove annotation term
-            annotation.terms.clear()
-            annotation.save(flush: true)
-        }
-        //Delete annotation
-        def json = JSON.parse("{id: $annotation.id}")
-        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-        return result
-    }
-
-    /**
      * Create new domain in database
      * @param json JSON data for the new domain
      * @param printMessage Flag to specify if confirmation message must be show in client
@@ -342,13 +321,13 @@ class ReviewedAnnotationService extends ModelService {
         return annotation
     }
 
-    def deleteDependentAlgoAnnotationTerm(ReviewedAnnotation annotation, Transaction transaction) {
+    def deleteDependentAlgoAnnotationTerm(ReviewedAnnotation annotation, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id).each {
             algoAnnotationTermService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentHasManyTerm(ReviewedAnnotation annotation, Transaction transaction) {
+    def deleteDependentHasManyTerm(ReviewedAnnotation annotation, Transaction transaction, Task task = null) {
         annotation.terms?.clear()
      }
 

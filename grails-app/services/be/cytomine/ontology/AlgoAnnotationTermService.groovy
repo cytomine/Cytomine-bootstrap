@@ -23,8 +23,6 @@ class AlgoAnnotationTermService extends ModelService {
     def cytomineService
     def commandService
 
-    boolean saveOnUndoRedoStack = true
-
     @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(AnnotationDomain annotation) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
@@ -69,48 +67,6 @@ class AlgoAnnotationTermService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{annotationIdent: ${at.annotationIdent},term: ${at.term?.id}, userJob: ${at.userJob.id}}")
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
-    }
-
-    /**
-     * Delete an algo annotation term
-     * @param idAnnotation Annotation id
-     * @param idTerm Term id
-     * @param idUserJob User id
-     * @param currentUser Current user for this operation
-     * @param transaction Transaction that will packed the delete command
-     * @return Response structure
-     */
-    def deleteAlgoAnnotationTerm(def idAnnotation, def idTerm, def idUserJob, User currentUser, Transaction transaction) {
-        def json = JSON.parse("{annotation: $idAnnotation, term: $idTerm, userJob: $idUserJob}")
-        return executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-    }
-
-    /**
-     * Delete all algo annotation for an annotation
-     */
-    def deleteAlgoAnnotationTermFromAllUser(AnnotationDomain annotation, User currentUser, Transaction transaction) {
-        //Delete all annotation term
-        def suggestedterm = AlgoAnnotationTerm.findAllByAnnotationIdent(annotation)
-        log.info "Delete old suggestedterm= " + suggestedterm.size()
-
-        suggestedterm.each { sugterm ->
-            log.info "unlink sugterm:" + sugterm.id
-            deleteAlgoAnnotationTerm(sugterm.retrieveAnnotationDomain().id, sugterm.term.id, sugterm.userJob.id, currentUser, transaction)
-        }
-    }
-
-    /**
-     * Delete all algo annotation for a term
-     */
-    def deleteAlgoAnnotationTermFromAllUser(Term term, User currentUser, Transaction transaction) {
-        //Delete all annotation term
-        def algoannotationterm = AlgoAnnotationTerm.findAllByTerm(term)
-        log.info "Delete old algoannotationterm= " + algoannotationterm.size()
-
-        algoannotationterm.each { algoterm ->
-            log.info "unlink sugterm:" + algoterm.id
-            deleteAlgoAnnotationTerm(algoterm.retrieveAnnotationDomain().id, algoterm.term.id, algoterm.userJob.id, currentUser, transaction)
-        }
     }
 
     /**

@@ -21,12 +21,11 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.command.Task
 
 class AlgoAnnotationService extends ModelService {
 
     static transactional = true
-
-    boolean saveOnUndoRedoStack = true
 
     def cytomineService
     def transactionService
@@ -35,6 +34,7 @@ class AlgoAnnotationService extends ModelService {
     def responseService
     def simplifyGeometryService
     def dataSource
+    def reviewedAnnotationService
 
 
     AlgoAnnotation get(def id) {
@@ -378,29 +378,10 @@ class AlgoAnnotationService extends ModelService {
     }
 
     def delete(AlgoAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
+        log.info "Delete AlgoAnnotation ${annotation.id}"
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${annotation.id}}")
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
-    }
-
-    /**
-     * Delete algo annotation
-     * This method may delete DATA link with this annotation (AlgoAnnotationTerm,...)
-     * The printMessage flag will tell client to show/hide feeback message.
-     * @param annotation Annotation to delete
-     * @param currentUser User that will delete annotation
-     * @param printMessage Flat to tell client to print or not message
-     * @param transaction Transaction that will packed the delete command
-     * @return Command result
-     */
-    def deleteAnnotation(AnnotationDomain annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-        if (annotation) {
-            //TODO:: delete all domain that reference the deleted domain
-        }
-        //Delete annotation
-        def json = JSON.parse("{id: $annotation.id}")
-        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-        return result
     }
 
     /**
@@ -515,9 +496,15 @@ class AlgoAnnotationService extends ModelService {
     }
 
 
-    def deleteDependentAlgoAnnotationTerm(AlgoAnnotation ao, Transaction transaction) {
+    def deleteDependentAlgoAnnotationTerm(AlgoAnnotation ao, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(ao.id).each {
             algoAnnotationTermService.delete(it,transaction,false)
+        }
+    }
+
+    def deleteDependentReviewedAnnotation(AlgoAnnotation aa, Transaction transaction, Task task = null) {
+        ReviewedAnnotation.findAllByParentIdent(aa.id).each {
+            reviewedAnnotationService.delete(it,transaction,false)
         }
     }
 }

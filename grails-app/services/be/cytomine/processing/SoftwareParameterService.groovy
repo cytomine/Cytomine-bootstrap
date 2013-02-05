@@ -12,12 +12,11 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class SoftwareParameterService extends ModelService{
 
    static transactional = true
-
-    boolean saveOnUndoRedoStack = true
 
     def cytomineService
     def transactionService
@@ -178,7 +177,7 @@ class SoftwareParameterService extends ModelService{
     }
 
 
-    def deleteDependentJobParameter(SoftwareParameter sp, Transaction transaction) {
+    def deleteDependentJobParameter(SoftwareParameter sp, Transaction transaction, Task task = null) {
         JobParameter.findAllBySoftwareParameter(sp).each {
             jobParameterService.delete(it,transaction,false)
         }

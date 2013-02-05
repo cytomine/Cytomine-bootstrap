@@ -37,6 +37,7 @@ class Task extends CytomineDomain{
 
     static constraints = {
         progress(range: 0..100)
+        project(nullable: true)
     }
 
     static mapping = {

@@ -20,7 +20,6 @@ class AbstractImageGroupService extends ModelService {
     /**
      * CRUD operation for this domain will be undo/redo-able
      */
-    boolean saveOnUndoRedoStack = true
 
     def cytomineService
     def responseService

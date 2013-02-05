@@ -8,6 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.cfg.NotYetImplementedException
+import be.cytomine.command.Task
 
 abstract class ModelService {
 
@@ -17,7 +18,8 @@ abstract class ModelService {
     def commandService
     def cytomineService
     def grailsApplication
-    boolean saveOnUndoRedoStack
+    def taskService
+    boolean saveOnUndoRedoStack = true
 
     /**
      * Save a domain on database, throw error if cannot save
@@ -69,7 +71,7 @@ abstract class ModelService {
     /**
      * Execute command with JSON data
      */
-    protected executeCommand(Command c, def json) {
+    protected executeCommand(Command c, def json, Task task = null) {
         if(c instanceof DeleteCommand) {
             def domainToDelete = retrieve(json)
 
@@ -80,19 +82,30 @@ abstract class ModelService {
 
             //remove all dependent domains
             def allServiceMethods = this.metaClass.methods*.name
+            int numberOfDirectDependence = 0
+            def dependencyMethodName = []
+
             allServiceMethods.each {
                 if(it.startsWith("deleteDependent")) {
-                    log.info("$it => transaction=${c.transaction}")
-                    this."$it"(domainToDelete,c.transaction)
+                    numberOfDirectDependence++
+                    dependencyMethodName << "$it"
                 }
             }
+
+            dependencyMethodName.eachWithIndex { method, index ->
+                taskService.updateTask(task, (int)((double)index/(double)numberOfDirectDependence)*100, "")
+                this."$method"(domainToDelete,c.transaction,task)
+            }
+
+            task
+
         }
 
         initCommandService()
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "commandService=" + commandService + " c=" + c + " json=" + json
+        log.info "${getServiceName()} commandService=" + commandService + " c=" + c + " json=" + json
         return commandService.processCommand(c, json)
     }
 

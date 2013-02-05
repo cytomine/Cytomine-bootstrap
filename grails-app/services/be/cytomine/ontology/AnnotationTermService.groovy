@@ -21,8 +21,6 @@ class AnnotationTermService extends ModelService {
     def commandService
     def responseService
 
-    boolean saveOnUndoRedoStack = true
-
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation userAnnotation) {
         AnnotationTerm.findAllByUserAnnotation(userAnnotation)
@@ -100,42 +98,6 @@ class AnnotationTermService extends ModelService {
         return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
     }
 
-    /**
-     * Delete annotation-term
-     * This method should delete all domain linked with annotation-term
-     */
-    def deleteAnnotationTerm(def idAnnotation, def idTerm, def idUser, User currentUser, boolean printMessage, Transaction transaction) {
-        def json = JSON.parse("{userannotation: $idAnnotation, term: $idTerm, user: $idUser}")
-        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-        return result
-    }
-
-
-    /**
-     * Delete all term linked with this annotation
-     */
-    def deleteAnnotationTermFromAllUser(UserAnnotation annotation, User currentUser, Transaction transaction) {
-        //Delete all annotation term
-        def annotationTerms = AnnotationTerm.findAllByUserAnnotation(annotation)
-        log.info "Delete old annotationTerm= " + annotationTerms.size()
-        annotationTerms.each { annotationTerm ->
-            log.info "unlink annotterm:" + annotationTerm.id
-            deleteAnnotationTerm(annotationTerm.userAnnotation.id, annotationTerm.term.id, annotationTerm.user.id, currentUser, false, transaction)
-        }
-    }
-
-    /**
-     * Delete all term linked by user for this term
-     */
-    def deleteAnnotationTermFromAllUser(Term term, User currentUser, Transaction transaction) {
-        //Delete all annotation term
-        def annotationTerm = AnnotationTerm.findAllByTerm(term)
-        log.info "Delete old annotationTerm= " + annotationTerm.size()
-        annotationTerm.each { annotterm ->
-            log.info "unlink annotterm:" + annotterm.id
-            deleteAnnotationTerm(annotterm.userAnnotation.id, annotterm.term.id, annotterm.user.id, currentUser, false, transaction)
-        }
-    }
 
     /**
      * Create new domain in database

@@ -18,13 +18,13 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.command.Task
 
 /**
  * TODO:: refactor + doc!!!!!!!
  */
 class ImageInstanceService extends ModelService {
 
-    boolean saveOnUndoRedoStack = true
     static transactional = true
 
     def cytomineService
@@ -289,25 +289,25 @@ class ImageInstanceService extends ModelService {
         return imageInstance
     }
 
-    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction) {
+    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         AlgoAnnotation.findAllByImage(image).each {
              algoAnnotationService.delete(it,transaction)
         }
     }
 
-    def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction) {
+    def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         ReviewedAnnotation.findAllByImage(image).each {
             reviewedAnnotationService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction) {
+    def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         UserAnnotation.findAllByImage(image).each {
             userAnnotationService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentUserPosition(ImageInstance image,Transaction transaction) {
+    def deleteDependentUserPosition(ImageInstance image,Transaction transaction, Task task = null) {
         UserPosition.findAllByImage(image).each {
             it.delete()
         }

@@ -23,6 +23,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ConstraintException
+import be.cytomine.command.Task
 
 class UserAnnotationService extends ModelService {
 
@@ -36,8 +37,7 @@ class UserAnnotationService extends ModelService {
     def modelService
     def simplifyGeometryService
     def dataSource
-
-    boolean saveOnUndoRedoStack = true
+    def reviewedAnnotationService
 
 
     UserAnnotation get(def id) {
@@ -396,31 +396,6 @@ class UserAnnotationService extends ModelService {
     }
 
     /**
-     * Delete a user annotation and domain that reference it
-     * @param annotation Annotation to delete
-     * @param currentUser User that delete annotation
-     * @param printMessage Flag to tells client to print or not confirmation message
-     * @param transaction Transaction that packed command
-     * @return Response structure
-     */
-    def deleteAnnotation(UserAnnotation annotation, SecUser currentUser, boolean printMessage, Transaction transaction) {
-
-        if (annotation) {
-            //Delete Annotation-Term before deleting Annotation
-            annotationTermService.deleteAnnotationTermFromAllUser(annotation, currentUser, transaction)
-            //Delete Shared annotation:
-            def sharedAnnotation = SharedAnnotation.findAllByUserAnnotation(annotation)
-            sharedAnnotation.each {
-                it.delete()
-            }
-        }
-        //Delete annotation
-        def json = JSON.parse("{id: $annotation.id}")
-        def result = executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
-        return result
-    }
-
-    /**
      * Add annotation to retrieval server for similar annotation listing and term suggestion
      */
     private indexRetrievalAnnotation(Long id) {
@@ -659,25 +634,25 @@ class UserAnnotationService extends ModelService {
         data
     }
 
-    def deleteDependentAlgoAnnotationTerm(UserAnnotation ua, Transaction transaction) {
+    def deleteDependentAlgoAnnotationTerm(UserAnnotation ua, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(ua.id).each {
             algoAnnotationTermService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentAnnotationTerm(UserAnnotation ua, Transaction transaction) {
+    def deleteDependentAnnotationTerm(UserAnnotation ua, Transaction transaction, Task task = null) {
         AnnotationTerm.findAllByUserAnnotation(ua).each {
             annotationTermService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentReviewedAnnotation(UserAnnotation ua, Transaction transaction) {
-        if(ReviewedAnnotation.findByParentIdent(ua.id)) {
-            throw new ConstraintException("This annotation has been validate by ${ReviewedAnnotation.findByParentIdent(ua.id).user.username}. Cannot delete it!")
-         }
+    def deleteDependentReviewedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {
+        ReviewedAnnotation.findAllByParentIdent(ua.id).each {
+            reviewedAnnotationService.delete(it,transaction,false)
+        }
      }
 
-    def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction) {
+    def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {
         //TODO: we should implement a full service for sharedannotation and delete them if annotation is deleted
         if(SharedAnnotation.findByUserAnnotation(ua)) {
             throw new ConstraintException("There are some comments on this annotation. Cannot delete it!")

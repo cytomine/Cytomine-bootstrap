@@ -414,7 +414,7 @@ class SecUserService extends ModelService {
 
 
 
-    def deleteDependentAlgoAnnotation(SecUser user, Transaction transaction) {
+    def deleteDependentAlgoAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof UserJob) {
             AlgoAnnotation.findAllByUser((UserJob)user).each {
                 algoAnnotationService.delete(it,transaction, false)
@@ -422,7 +422,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentAlgoAnnotationTerm(SecUser user, Transaction transaction) {
+    def deleteDependentAlgoAnnotationTerm(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof UserJob) {
             AlgoAnnotationTerm.findAllByUserJob((UserJob)user).each {
                 algoAnnotationTermService.delete(it,transaction, false)
@@ -430,7 +430,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentAnnotationFilter(SecUser user, Transaction transaction) {
+    def deleteDependentAnnotationFilter(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             AnnotationFilter.findAllByUser(user).each {
                 annotationFilterService.delete(it,transaction, false)
@@ -438,7 +438,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentAnnotationTerm(SecUser user, Transaction transaction) {
+    def deleteDependentAnnotationTerm(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             AnnotationTerm.findAllByUser(user).each {
                 annotationTermService.delete(it,transaction, false)
@@ -446,7 +446,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentImageInstance(SecUser user, Transaction transaction) {
+    def deleteDependentImageInstance(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             ImageInstance.findAllByUser(user).each {
                 imageInstanceService.delete(it,transaction, false)
@@ -454,7 +454,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentOntology(SecUser user, Transaction transaction) {
+    def deleteDependentOntology(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             Ontology.findAllByUser(user).each {
                 ontologyService.delete(it,transaction, false)
@@ -462,7 +462,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentReviewedAnnotation(SecUser user, Transaction transaction) {
+    def deleteDependentReviewedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             ReviewedAnnotation.findAllByUser(user).each {
                 reviewedAnnotationService.delete(it,transaction, false)
@@ -470,13 +470,13 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentSecUserSecRole(SecUser user, Transaction transaction) {
+    def deleteDependentSecUserSecRole(SecUser user, Transaction transaction, Task task = null) {
         SecUserSecRole.findAllBySecUser(user).each {
             secUserSecRoleService.delete(it,transaction, false)
         }
     }
 
-    def deleteDependentUserAnnotation(SecUser user, Transaction transaction) {
+    def deleteDependentUserAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserAnnotation.findAllByUser(user).each {
                 userAnnotationService.delete(it,transaction, false)
@@ -484,7 +484,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentUserGroup(SecUser user, Transaction transaction) {
+    def deleteDependentUserGroup(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserGroup.findAllByUser((User)user).each {
                 userGroupService.delete(it,transaction, false)
@@ -492,7 +492,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentUserPosition(SecUser user, Transaction transaction) {
+    def deleteDependentUserPosition(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserPosition.findAllByUser((User)user).each {
                 it.delete()
@@ -500,7 +500,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentUserJob(SecUser user, Transaction transaction) {
+    def deleteDependentUserJob(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserJob.findAllByUser((User)user).each {
                 delete(it,transaction,false)
@@ -508,7 +508,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentUploadedFile(SecUser user, Transaction transaction) {
+    def deleteDependentUploadedFile(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UploadedFile.findAllByUser((User)user).each {
                 it.delete()
@@ -516,7 +516,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentTask(SecUser user, Transaction transaction) {
+    def deleteDependentTask(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             Task.findAllByUser((User)user).each {
                 it.delete()
@@ -524,7 +524,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentLastConnection(SecUser user, Transaction transaction) {
+    def deleteDependentLastConnection(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             LastConnection.findAllByUser((User)user).each {
                 it.delete()
@@ -532,7 +532,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentHasManyAnnotationFilter(SecUser user, Transaction transaction) {
+    def deleteDependentHasManyAnnotationFilter(SecUser user, Transaction transaction, Task task = null) {
         def criteria = AnnotationFilter.createCriteria()
         def results = criteria.list {
           users {
@@ -545,7 +545,7 @@ class SecUserService extends ModelService {
         }
      }
 
-    def deleteDependentSharedAnnotation(SecUser user, Transaction transaction) {
+    def deleteDependentSharedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             //TODO:: implement cascade deleteting/update for shared annotation
             if(SharedAnnotation.findAllBySender(user)) {
@@ -554,7 +554,7 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentHasManySharedAnnotation(SecUser user, Transaction transaction) {
+    def deleteDependentHasManySharedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             //TODO:: implement cascade deleteting/update for shared annotation
             def criteria = SharedAnnotation.createCriteria()

@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import be.cytomine.api.RestController
 import be.cytomine.security.SecUser
+import be.cytomine.Exception.ObjectNotFoundException
 
 /**
  * Controller for command.
@@ -61,7 +62,12 @@ class CommandController extends RestController {
                 //browse all command and undo it while its the same transaction
                 log.debug "Undo stack transaction:" + firstTransaction + " VS " + undoStack?.transaction?.id
                 if (!undoStack.transaction || firstTransaction != undoStack.transaction.id) break;
+                if(undoStack.getCommand().refuseUndo) {
+                    responseError(new ObjectNotFoundException("You cannot delete your last operation!")) //undo delete project is not possible
+                    return
+                }
                 result = undoStack.getCommand().undo()
+                log.info "Undo stack transaction: UNDO " + undoStack?.command?.actionMessage
                 results << result.data
                 noError = noError && (result.status == 200 || result.status == 201)
                 moveToRedoStack(undoStack)

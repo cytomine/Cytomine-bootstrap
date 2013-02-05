@@ -12,6 +12,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class DisciplineService extends ModelService {
 
@@ -21,9 +22,6 @@ class DisciplineService extends ModelService {
     def responseService
     def modelService
     def transactionService
-
-
-    boolean saveOnUndoRedoStack = true
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def list() {
@@ -178,7 +176,7 @@ class DisciplineService extends ModelService {
         return discipline
     }
 
-    def deleteDependentProject(Discipline discipline, Transaction transaction) {
+    def deleteDependentProject(Discipline discipline, Transaction transaction, Task task = null) {
         if(Project.findByDiscipline(discipline)) {
             throw new ConstraintException("Discipline is linked with project. Cannot delete discipline!")
         }

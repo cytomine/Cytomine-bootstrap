@@ -6,7 +6,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.springframework.security.access.prepost.PreAuthorize
 
-class TaskService extends ModelService {
+class TaskService  {
 
     def cytomineService
 
@@ -41,6 +41,16 @@ class TaskService extends ModelService {
         task.validate()
         task.save(flush: true)
         task
+    }
+
+    /**
+     * Update task status, don't change progress
+     * @param task Task to update
+     * @param comment Comment for the new task status
+     */
+    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
+    def updateTask(Task task, String comment) {
+        updateTask(task,(task? task.progress : -1),comment)
     }
 
     /**

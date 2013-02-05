@@ -12,6 +12,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import be.cytomine.image.AbstractImageGroup
+import be.cytomine.command.Task
 
 class GroupService extends ModelService {
 
@@ -185,13 +186,13 @@ class GroupService extends ModelService {
         return group
     }
 
-    def deleteDependentAbstractImageGroup(Group group, Transaction transaction) {
+    def deleteDependentAbstractImageGroup(Group group, Transaction transaction, Task task = null) {
         AbstractImageGroup.findAllByGroup(group).each {
             abstractImageGroupService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentUserGroup(Group group, Transaction transaction) {
+    def deleteDependentUserGroup(Group group, Transaction transaction, Task task = null) {
         UserGroup.findAllByGroup(group).each {
             userGroupService.delete(it, transaction, false)
         }

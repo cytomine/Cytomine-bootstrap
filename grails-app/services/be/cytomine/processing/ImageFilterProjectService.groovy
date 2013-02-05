@@ -134,8 +134,4 @@ class ImageFilterProjectService extends ModelService {
         if (!parameter) throw new ObjectNotFoundException("ImageFilterProject " + json.id + " not found")
         return parameter
     }
-
-    def delete
-
-
 }

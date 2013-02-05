@@ -22,8 +22,6 @@ class RelationTermService extends ModelService {
     def modelService
     def transactionService
 
-    final boolean saveOnUndoRedoStack = true
-
     /**
      * Get a relation term
      */
@@ -99,28 +97,6 @@ class RelationTermService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{relation: ${rt.relation.id}, term1:${rt.term1.id}, term2:${rt.term2.id}}")
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
-    }
-
-    /**
-     * Delete a relation term from database
-     * This method must delete all domain linked with this relation term
-     */
-    def deleteRelationTerm(def idRelation, def idTerm1, def idTerm2, User currentUser, boolean printMessage, Transaction transaction) {
-        def json = JSON.parse("{relation: $idRelation, term1: $idTerm1, term2: $idTerm2}")
-        return executeCommand(new DeleteCommand(user: currentUser, printMessage: printMessage, transaction: transaction), json)
-    }
-
-    /**
-     * Delete all relation term for a specific term
-     */
-    def deleteRelationTermFromTerm(Term term, User currentUser, Transaction transaction) {
-        def relationTerm = RelationTerm.findAllByTerm1OrTerm2(term, term)
-        log.info "relationTerm= " + relationTerm.size()
-
-        relationTerm.each { relterm ->
-            log.info "unlink relterm:" + relationTerm.id
-            deleteRelationTerm(relterm.relation.id, relterm.term1.id, relterm.term2.id, currentUser, false, transaction)
-        }
     }
 
     /**

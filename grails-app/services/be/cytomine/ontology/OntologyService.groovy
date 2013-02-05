@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class OntologyService extends ModelService {
 
@@ -27,8 +28,6 @@ class OntologyService extends ModelService {
     def cytomineService
     def modelService
     def aclUtilService
-
-    boolean saveOnUndoRedoStack = true
 
     Ontology read(def id) {
         def ontology = Ontology.read(id)
@@ -223,13 +222,13 @@ class OntologyService extends ModelService {
         return ontology
     }
 
-    def deleteDependentTerm(Ontology ontology, Transaction transaction) {
+    def deleteDependentTerm(Ontology ontology, Transaction transaction, Task task = null) {
         Term.findAllByOntology(ontology).each {
             termService.delete(it,transaction, false)
         }
     }
 
-    def deleteDependentProject(Ontology ontology, Transaction transaction) {
+    def deleteDependentProject(Ontology ontology, Transaction transaction, Task task = null) {
         if(Project.findByOntology(ontology)) {
             throw new ConstraintException("Ontology is linked with project. Cannot delete ontology!")
         }

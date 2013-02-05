@@ -25,8 +25,10 @@ class AdminController {
     boolean printAll = false
 
     private def checkDependance() {
+        //domain to skip when checking dependence
         def domainToSkip = ["Command","AddCommand","EditCommand","DeleteCommand","CommandHistory","RedoStackItem","UndoStackItem"]
 
+        //change domain name if necessary
         def fixDomainName =
             ["AnnotationDomain" : [[name:"UserAnnotation", type:"UserAnnotation"],[name:"AlgoAnnotation", type:"AlgoAnnotation"],[name:"ReviewedAnnotation", type:"ReviewedAnnotation"]],
              "User" : [[name:"SecUser", type:"SecUser"]],

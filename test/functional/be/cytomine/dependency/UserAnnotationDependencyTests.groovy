@@ -7,6 +7,14 @@ import be.cytomine.test.http.TermAPI
 import be.cytomine.utils.BasicInstance
 import be.cytomine.ontology.*
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.processing.ImageFilterProject
+import be.cytomine.image.ImageInstance
+import be.cytomine.processing.Job
+import be.cytomine.processing.SoftwareProject
+import be.cytomine.social.LastConnection
+import be.cytomine.security.User
+import be.cytomine.command.Task
+import be.cytomine.social.UserPosition
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,8 +73,25 @@ class UserAnnotationDependencyTests extends functionaltestplugin.FunctionalTestC
         algoAnnotationTerm1.annotation = annotation
         BasicInstance.saveDomain(algoAnnotationTerm1)
 
-        return [annotation,at,algoAnnotationTerm1]
+        ReviewedAnnotation ra = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ra.project = project
+        ra.putParentAnnotation(annotation)
+        ra.terms?.clear()
+        ra.addToTerms(at.term)
+        BasicInstance.checkDomain(ra)
+        BasicInstance.saveDomain(ra)
+        ra.project = project
+        ra.putParentAnnotation(annotation)
+        BasicInstance.saveDomain(ra)
+
+        return [annotation,at,algoAnnotationTerm1,ra]
     }
+
+
+
+
+
+
 
 
 }

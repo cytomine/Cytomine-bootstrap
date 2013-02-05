@@ -46,6 +46,7 @@ class BasicInstance {
         try {
             domain.refresh()
         } catch(Exception e) {}
+        log.info "Check if domain ${domain.class} exist=${exist}"
        assert ((domain.read(domain.id)!=null) == exist)
     }
 
@@ -81,6 +82,7 @@ class BasicInstance {
      */
     static void saveDomain(def domain) {
         log.debug "#### saveDomain=" + domain.class
+        checkDomain(domain)
         if(!domain.save(flush: true)) {
             log.warn domain.class+".errors=" + domain.errors
             assert false

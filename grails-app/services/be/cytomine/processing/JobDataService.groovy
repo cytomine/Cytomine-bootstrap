@@ -11,6 +11,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class JobDataService extends ModelService {
 
@@ -178,7 +179,7 @@ class JobDataService extends ModelService {
         return jobdata
     }
 
-    def deleteDependentJobDataBinaryValue(JobData jobData, Transaction transaction) {
+    def deleteDependentJobDataBinaryValue(JobData jobData, Transaction transaction, Task task = null) {
         println "jobData=$jobData"
         if(jobData.value) {
             jobData.value.delete()

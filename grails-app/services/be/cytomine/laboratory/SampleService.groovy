@@ -17,12 +17,11 @@ import be.cytomine.command.Transaction
 
 import grails.converters.JSON
 import be.cytomine.Exception.ConstraintException
+import be.cytomine.command.Task
 
 class SampleService extends ModelService {
 
     static transactional = true
-
-    boolean saveOnUndoRedoStack = true
 
     def modelService
     def cytomineService
@@ -188,13 +187,13 @@ class SampleService extends ModelService {
         return sample
     }
 
-    def deleteDependentAbstractImage(Sample sample, Transaction transaction) {
+    def deleteDependentAbstractImage(Sample sample, Transaction transaction, Task task = null) {
         AbstractImage.findAllBySample(sample).each {
             abstractImageService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentSource(Sample sample, Transaction transaction) {
+    def deleteDependentSource(Sample sample, Transaction transaction, Task task = null) {
         //TODO: implement source cascade delete (first impl source command delete)
         if(Source.findAllBySample(sample)) {
             throw new ConstraintException("Sample has source. Cannot delete sample!")

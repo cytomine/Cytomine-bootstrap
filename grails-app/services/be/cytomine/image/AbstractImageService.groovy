@@ -20,6 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class AbstractImageService extends ModelService {
 
@@ -424,31 +425,36 @@ class AbstractImageService extends ModelService {
         return image
     }
 
-    def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction) {
+    def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction,Task task=null) {
+        if(task) {
+            def nb = AbstractImageGroup.countByAbstractimage(ai)
+            taskService.updateTask(task,"Delete $nb link to group")
+        }
+
         AbstractImageGroup.findAllByAbstractimage(ai).each {
             abstractImageGroupService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentImageInstance(AbstractImage ai, Transaction transaction) {
+    def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
         ImageInstance.findAllByBaseImage(ai).each {
             imageInstanceService.delete(it,transaction,false)
         }
     }
 
-    def deleteDependentImageProperty(AbstractImage ai, Transaction transaction) {
+    def deleteDependentImageProperty(AbstractImage ai, Transaction transaction,Task task=null) {
         //TODO: implement imagePropertyService with command
         imagePropertiesService.clear(ai)
     }
 
-    def deleteDependentNestedFile(AbstractImage ai, Transaction transaction) {
+    def deleteDependentNestedFile(AbstractImage ai, Transaction transaction,Task task=null) {
         //TODO: implement this with command (nestedFileService should be create)
         NestedFile.findAllByAbstractImage(ai).each {
             it.delete(flush: true)
         }
     }
 
-    def deleteDependentStorageAbstractImage(AbstractImage ai, Transaction transaction) {
+    def deleteDependentStorageAbstractImage(AbstractImage ai, Transaction transaction,Task task=null) {
         //TODO: implement this with command (storage abst image should be create)
         StorageAbstractImage.findAllByAbstractImage(ai).each {
             it.delete(flush: true)

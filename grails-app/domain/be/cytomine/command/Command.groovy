@@ -15,7 +15,6 @@ import org.codehaus.groovy.grails.web.json.JSONElement
  */
 class Command extends CytomineDomain {
 
-    def messageSource
     def modelService
     def responseService
 
@@ -67,9 +66,12 @@ class Command extends CytomineDomain {
      */
     String serviceName
 
-    static mapping = {
-        version: false
-    }
+    /**
+     * If command is save on undo stack, refuse undo
+     * Usefull for project delete (cannot undo)
+     */
+    boolean refuseUndo = false
+
     static constraints = {
         data(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)
         actionMessage(nullable: true)

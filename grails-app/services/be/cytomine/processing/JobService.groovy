@@ -18,6 +18,7 @@ import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 class JobService extends ModelService {
 
@@ -387,19 +388,19 @@ class JobService extends ModelService {
     }
 
 
-    def deleteDependentJobParameter(Job job, Transaction transaction) {
+    def deleteDependentJobParameter(Job job, Transaction transaction, Task task = null) {
         JobParameter.findAllByJob(job).each {
             jobParameterService.delete(it, transaction, false)
         }
     }
 
-    def deleteDependentJobData(Job job, Transaction transaction) {
+    def deleteDependentJobData(Job job, Transaction transaction, Task task = null) {
         JobData.findAllByJob(job).each {
             jobDataService.delete(it, transaction, false)
         }
     }
 
-    def deleteDependentUserJob(Job job, Transaction transaction) {
+    def deleteDependentUserJob(Job job, Transaction transaction, Task task = null) {
         UserJob.findAllByJob(job).each {
             secUserService.delete(it, transaction, false)
         }

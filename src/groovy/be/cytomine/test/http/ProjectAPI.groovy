@@ -3,6 +3,7 @@ package be.cytomine.test.http
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
 import grails.converters.JSON
+import be.cytomine.command.Task
 
 /**
  * User: lrollus
@@ -59,8 +60,8 @@ class ProjectAPI extends DomainAPI {
         return doPUT(URL,jsonProject,username,password)
     }
 
-    static def delete(def id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json"
+    static def delete(def id, String username, String password, Task task = null) {
+        String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json" + (task ? "?task=${task.id}" :"")
         return doDELETE(URL,username,password)
     }
 
