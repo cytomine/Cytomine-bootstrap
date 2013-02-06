@@ -202,6 +202,14 @@ class BootStrap {
         }
     }
 
+
+
+
+
+
+
+
+
     private def compileJS() {
         log.info "========= C O M P I L E == J S ========= "
         ViewPortToBuildXML.process()

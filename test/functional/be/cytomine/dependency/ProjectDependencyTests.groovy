@@ -2,9 +2,8 @@ package be.cytomine.dependency
 
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
-import be.cytomine.test.http.OntologyAPI
-import be.cytomine.test.http.TermAPI
-import be.cytomine.utils.BasicInstance
+
+import be.cytomine.test.BasicInstance
 import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.image.ImageInstance
@@ -15,8 +14,7 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.command.Task
 import be.cytomine.social.UserPosition
 import be.cytomine.test.http.ProjectAPI
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
+
 import be.cytomine.image.UploadedFile
 import be.cytomine.Exception.ConstraintException
 

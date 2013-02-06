@@ -1,8 +1,8 @@
 package be.cytomine.security
 
 import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.utils.BasicInstance
-import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.test.BasicInstance
+
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON

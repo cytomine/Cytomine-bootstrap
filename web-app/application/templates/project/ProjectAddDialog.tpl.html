@@ -14,38 +14,47 @@
         <form id="login-form-add-project">
             <fieldset title="Step 1" style="margin: auto; height: 300px;">
                 <legend>Project information</legend>
-                <div class="control-group">
-                    <label class="control-label" for="project-name">Name</label>
 
-                    <div class="controls">
-                        <input class="input-xlarge focused" id="project-name" type="text"
-                               placeholder="Your project name">
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="choiceListDiscipline">Discipline</label>
+                <div style="width:100%;">
+                    <div style="width:50%;float:left;">
+                        <div class="control-group">
+                            <label class="control-label" for="project-name">Name</label>
 
-                    <div class="controls">
-                        <div id="choiceListDiscipline">
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                            <div class="controls">
+                                <input class="input-xlarge focused" id="project-name" type="text"
+                                       placeholder="Your project name">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="choiceListDiscipline">Discipline</label>
+
+                            <div class="controls">
+                                <div id="choiceListDiscipline">
+                                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                                </div>
+
+                            </div>
                         </div>
 
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="choiceListOntology">Ontology</label>
+                    <div style="width:50%;float:left;">
+                        <div class="control-group">
+                            <label class="control-label" for="choiceListOntology">Ontology</label>
 
-                    <div class="controls">
-                        <div id="choiceListOntology">
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                            <div class="controls">
+                                <div id="choiceListOntology">
+                                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                                </div>
+
+                                <br>
+                                <button id="createOntologyWithProjectName" type="button" class="btn btn-inverse">Create empty
+                                    ontology with project name
+                                </button>
+                            </div>
                         </div>
-
-                        <br>
-                        <button id="createOntologyWithProjectName" type="button" class="btn btn-inverse">Create empty
-                            ontology with project name
-                        </button>
                     </div>
                 </div>
+
                 <br>
             </fieldset>
 
@@ -61,13 +70,17 @@
             <fieldset title="Step 3" style="margin: auto;height: 300px;">
                 <legend>Retrieval info</legend>
                 <div id="retrievalGroup">
+                    <div class="alert alert-info">
+                        Retrieval is the system that can provide "suggested terms" for an annotation.
+                        You can choose which project will be used to create the learning set.
+                    </div>
                     <input type="radio" id="retrievalProjectAll" name="retrievalProjectGroup" value="all" checked>
-                    Enable retrieval search on all projects (same ontology)<br> <br>
-                    <input type="radio" id="retrievalProjectSome" name="retrievalProjectGroup" value="some"> Enable
-                    retrieval search for selected projects <br>
+                    Enable retrieval search on all projects (with the same ontology)<br> <br>
+                    <input type="radio" id="retrievalProjectSome" name="retrievalProjectGroup" value="some">
+                    Enable retrieval search for selected projects <br>
                     <select multiple="multiple" id="retrievalproject" style="width:500px;display:none;"></select><br>
-                    <input type="radio" id="retrievalProjectNone" name="retrievalProjectGroup" value="none"> Disable
-                    retrieval search <br>
+                    <input type="radio" id="retrievalProjectNone" name="retrievalProjectGroup" value="none">
+                    Disable retrieval search <br>
                 </div>
                 <br>
             </fieldset>

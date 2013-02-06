@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import grails.converters.JSON

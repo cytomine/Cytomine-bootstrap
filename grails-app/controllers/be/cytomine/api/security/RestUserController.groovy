@@ -158,7 +158,9 @@ class RestUserController extends RestController {
     def addUserToProject = {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
+        log.info "addUserToProject project=${project} user=${user}"
         secUserService.addUserFromProject(user, project, false)
+        log.info "addUserToProject ok"
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)

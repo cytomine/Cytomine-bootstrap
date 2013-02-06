@@ -269,15 +269,21 @@ class SecUserService extends ModelService {
      */
     @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     def addUserFromProject(SecUser user, Project project, boolean admin) {
+            log.info "service.addUserFromProject"
             if (project) {
-                log.debug "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+                log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
                 if(admin) {
                     permissionService.addPermission(project,user.username,ADMINISTRATION)
-                    permissionService.addPermission(project.ontology,user.username,READ)
+                    //permissionService.addPermission(project.ontology,user.username,READ)
                 }
                 else {
-                    permissionService.addPermission(project,user.username,READ)
-                    permissionService.addPermission(project.ontology,user.username,READ)
+                    synchronized (this.getClass()) {
+                        log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+                        permissionService.addPermission(project,user.username,READ)
+                        log.info "addUserFromProject ontology=" + project.ontology + " username=" + user?.username + " ADMIN=" + admin
+                        permissionService.addPermission(project.ontology,user.username,READ)
+                    }
+
                 }
             }
         [data: [message: "OK"], status: 201]

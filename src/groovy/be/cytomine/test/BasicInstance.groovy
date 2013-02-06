@@ -1,4 +1,4 @@
-package be.cytomine.utils
+package be.cytomine.test
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
@@ -18,11 +18,11 @@ import be.cytomine.processing.*
 import be.cytomine.security.*
 import be.cytomine.laboratory.Sample
 import be.cytomine.AnnotationDomain
-import be.cytomine.test.Infos
+
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.test.http.ReviewedAnnotationAPI
+
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.MimeImageServer
@@ -551,20 +551,20 @@ class BasicInstance {
 
     static AbstractImageGroup createOrGetBasicAbstractImageGroup() {
         log.debug "createOrGetBasicAbstractImageGroup()"
-        def abstractImage = getBasicAbstractImageNotExist()
-        abstractImage.save(flush: true)
-        assert abstractImage != null
+        def abstractimage = getBasicAbstractImageNotExist()
+        abstractimage.save(flush: true)
+        assert abstractimage != null
         def group = getBasicGroupNotExist()
         group.save(flush: true)
         assert group != null
-        def abstractImageGroup = AbstractImageGroup.findByAbstractImageAndGroup(abstractImage, group)
-        assert abstractImageGroup == null
+        def abstractimageGroup = AbstractImageGroup.findByAbstractimageAndGroup(abstractimage, group)
+        assert abstractimageGroup == null
 
-        if (!abstractImageGroup) {
-            abstractImageGroup = new AbstractImageGroup(abstractImage:abstractImage, group:group)
-            saveDomain(abstractImageGroup)
+        if (!abstractimageGroup) {
+            abstractimageGroup = new AbstractImageGroup(abstractimage:abstractimage, group:group)
+            saveDomain(abstractimageGroup)
         }
-        abstractImageGroup
+        abstractimageGroup
     }
 
     static AbstractImageGroup getBasicAbstractImageGroupNotExist(String method) {
@@ -572,11 +572,11 @@ class BasicInstance {
         def group = getBasicGroupNotExist()
         group.save(flush: true)
         assert group != null
-        def abstractImage = getBasicAbstractImageNotExist()
-        abstractImage.save(flush: true)
-        assert abstractImage != null
-        def abstractImageGroup = new AbstractImageGroup(abstractImage: abstractImage, group: group)
-        abstractImageGroup
+        def abstractimage = getBasicAbstractImageNotExist()
+        abstractimage.save(flush: true)
+        assert abstractimage != null
+        def abstractimageGroup = new AbstractImageGroup(abstractimage: abstractimage, group: group)
+        abstractimageGroup
     }
 
     static ProcessingServer createOrGetBasicProcessingServer() {
@@ -731,14 +731,14 @@ class BasicInstance {
     }
 
     static SoftwareProject createSoftwareProject(Software software, Project project) {
-        SoftwareProject softwareProject = SoftwareProject.findBySoftwareAndProject(software,project)
-        if(softwareProject) return softwareProject
+        SoftwareProject softProj = SoftwareProject.findBySoftwareAndProject(software,project)
+        if(softProj) return softProj
         else {
-            softwareProject = new SoftwareProject(project: project, software: software)
-            checkDomain(softwareProject)
-            saveDomain(softwareProject)
+            softProj = new SoftwareProject(project: project, software: software)
+            checkDomain(softProj)
+            saveDomain(softProj)
         }
-        softwareProject
+        softProj
     }
 
 
@@ -770,15 +770,15 @@ class BasicInstance {
         def job = createOrGetBasicJob()
         def softwareParam = createOrGetBasicSoftwareParameter()
 
-        def jobParameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
-        if (!jobParameter) {
+        def jobparameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
+        if (!jobparameter) {
 
-            jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-            checkDomain(jobParameter)
-            saveDomain(jobParameter)
+            jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+            checkDomain(jobparameter)
+            saveDomain(jobparameter)
         }
-        assert jobParameter != null
-        jobParameter
+        assert jobparameter != null
+        jobparameter
     }
 
     static JobParameter getBasicJobParameterNotExist() {
@@ -788,9 +788,9 @@ class BasicInstance {
         job.save(flush:true)
         softwareParam.save(flush:true)
 
-        def jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
-        checkDomain(jobParameter)
-        jobParameter
+        def jobparameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
+        checkDomain(jobparameter)
+        jobparameter
     }
     
     static Ontology createOrGetBasicOntology() {
@@ -1150,6 +1150,7 @@ class BasicInstance {
             bidon = new Storage()
             bidon.name = "bidon"
             bidon.basePath = "storagepath"
+            bidon.serviceUrl = "http://storage.url.com"
             bidon.ip = "192.168.0.0"
             bidon.username = "toto"
             bidon.password = "pass"

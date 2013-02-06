@@ -80,6 +80,9 @@ class Command extends CytomineDomain {
         transaction(nullable: true)
     }
 
+    static mapping = {
+    }
+
     /**
      * Load domaine service thanks to its name
      */

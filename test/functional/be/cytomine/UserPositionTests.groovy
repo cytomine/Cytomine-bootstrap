@@ -1,15 +1,11 @@
 package be.cytomine
 
-import be.cytomine.processing.Software
 import be.cytomine.test.Infos
-import be.cytomine.test.http.SoftwareAPI
-import be.cytomine.test.http.SoftwareParameterAPI
-import be.cytomine.test.http.SoftwareProjectAPI
-import be.cytomine.utils.BasicInstance
-import be.cytomine.utils.UpdateData
+
+import be.cytomine.test.BasicInstance
+
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
+
 import be.cytomine.test.http.UserPositionAPI
 
 /**

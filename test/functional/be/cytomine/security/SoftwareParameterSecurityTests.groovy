@@ -2,8 +2,8 @@ package be.cytomine.security
 
 import be.cytomine.processing.Software
 import be.cytomine.test.Infos
-import be.cytomine.test.http.SoftwareAPI
-import be.cytomine.utils.BasicInstance
+
+import be.cytomine.test.BasicInstance
 import grails.converters.JSON
 import be.cytomine.test.http.SoftwareParameterAPI
 

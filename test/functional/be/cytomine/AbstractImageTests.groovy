@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.image.AbstractImage
 
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
 import grails.converters.JSON

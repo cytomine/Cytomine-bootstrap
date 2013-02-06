@@ -2,19 +2,10 @@ package be.cytomine.dependency
 
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
-import be.cytomine.test.http.OntologyAPI
-import be.cytomine.test.http.TermAPI
-import be.cytomine.utils.BasicInstance
+
+import be.cytomine.test.BasicInstance
 import be.cytomine.ontology.*
 import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.processing.ImageFilterProject
-import be.cytomine.image.ImageInstance
-import be.cytomine.processing.Job
-import be.cytomine.processing.SoftwareProject
-import be.cytomine.social.LastConnection
-import be.cytomine.security.User
-import be.cytomine.command.Task
-import be.cytomine.social.UserPosition
 
 /**
  * Created by IntelliJ IDEA.

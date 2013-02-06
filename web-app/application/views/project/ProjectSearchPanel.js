@@ -116,10 +116,26 @@ var ProjectSearchPanel = Backbone.View.extend({
             }
 
         });
+
+        minNumberOfImage = self.changeMaxValueToZero(minNumberOfImage);
+        maxNumberOfImage = self.changeMaxValueToZero(maxNumberOfImage);
+        minNumberOfSlide = self.changeMaxValueToZero(minNumberOfSlide);
+        maxNumberOfSlide = self.changeMaxValueToZero(maxNumberOfSlide);
+        minNumberOfAnnotation = self.changeMaxValueToZero(minNumberOfAnnotation);
+        maxNumberOfAnnotation = self.changeMaxValueToZero(maxNumberOfAnnotation);
+
         //create slider
         self.createSliderWithoutAmountPrint(self.sliderNumberOfImagesElem, self.labelNumberOfImagesElem, minNumberOfImage, maxNumberOfImage);
         self.createSliderWithoutAmountPrint(self.sliderNumberOfSlidesElem, self.labelNumberOfSlidesElem, minNumberOfSlide, maxNumberOfSlide);
         self.createSliderWithoutAmountPrint(self.sliderNumberOfAnnotationsElem, self.labelNumberOfAnnotationsElem, minNumberOfAnnotation, maxNumberOfAnnotation);
+    },
+    changeMaxValueToZero : function(value) {
+       if(value==Number.MAX_VALUE) {
+           return 0;
+       } else {
+           return value;
+       }
+
     },
     /**
      * Create autocomplete project name box in the textbox

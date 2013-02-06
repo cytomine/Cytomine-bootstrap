@@ -68,14 +68,6 @@ class CommandService {
             ch.save();
             log.info "Save on undo stack: ${c.saveOnUndoRedoStack}"  + " transaction " + c.transaction?.id
 
-
-
-
-
-
-
-
-
             if (c.saveOnUndoRedoStack) {
                 log.debug "Save..."
                 def item = new UndoStackItem(command: c, user: c.user, transaction: c.transaction)
@@ -83,20 +75,6 @@ class CommandService {
                 item.save(flush: true,failOnError: true)
                 log.info "Item = ${item}"
             }
-
-            println "***********************************************"
-            println "***********************************************"
-            println "***********************************************"
-            UndoStackItem.list([max: 50, sort: 'id']).each {
-                println it.command.actionMessage + " " + it.command.actionMessage + " " + it.command.transaction
-            }
-            println "***********************************************"
-            println "***********************************************"
-            println "***********************************************"
-
-
-
-
         }
         log.debug "result.status=" + result.status
         return result

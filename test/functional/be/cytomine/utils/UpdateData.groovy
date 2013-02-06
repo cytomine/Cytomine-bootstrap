@@ -27,6 +27,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.ontology.AnnotationFilter
+import be.cytomine.test.BasicInstance
 
 /**
  * User: lrollus

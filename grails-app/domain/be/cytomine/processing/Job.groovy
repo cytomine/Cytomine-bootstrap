@@ -70,7 +70,6 @@ class Job extends CytomineDomain  {
         statusComment(nullable:true)
         status(range: 0..6)
         rate(nullable: true)
-        dataDeleted(nullable:true)
     }
 
     static mapping = {

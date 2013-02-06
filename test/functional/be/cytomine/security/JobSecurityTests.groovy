@@ -1,11 +1,10 @@
 package be.cytomine.security
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
-import be.cytomine.test.http.ImageInstanceAPI
+
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import grails.converters.JSON
 import be.cytomine.processing.Job
 import be.cytomine.test.http.JobAPI

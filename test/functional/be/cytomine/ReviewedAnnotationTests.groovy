@@ -4,7 +4,7 @@ import be.cytomine.image.ImageInstance
 
 import be.cytomine.ontology.UserAnnotation
 
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 
 import grails.converters.JSON

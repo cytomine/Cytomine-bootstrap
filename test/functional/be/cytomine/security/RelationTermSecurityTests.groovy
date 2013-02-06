@@ -1,11 +1,10 @@
 package be.cytomine.security
 
-import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
-import be.cytomine.test.http.OntologyAPI
+
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import grails.converters.JSON
 import be.cytomine.test.http.RelationTermAPI
 import be.cytomine.ontology.RelationTerm

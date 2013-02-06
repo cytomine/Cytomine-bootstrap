@@ -1,9 +1,8 @@
 package be.cytomine
 
-import be.cytomine.project.Discipline
 import be.cytomine.test.Infos
-import be.cytomine.test.http.DisciplineAPI
-import be.cytomine.utils.BasicInstance
+
+import be.cytomine.test.BasicInstance
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray

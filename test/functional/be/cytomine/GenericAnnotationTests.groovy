@@ -5,7 +5,7 @@ import be.cytomine.ontology.AlgoAnnotationTerm
 
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 
 import grails.converters.JSON

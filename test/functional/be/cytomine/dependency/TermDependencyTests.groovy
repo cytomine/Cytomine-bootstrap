@@ -1,21 +1,16 @@
 package be.cytomine.dependency
 
-import be.cytomine.security.Group
 import be.cytomine.test.Infos
-import be.cytomine.test.http.GroupAPI
-import be.cytomine.utils.BasicInstance
-import be.cytomine.utils.UpdateData
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
+
+import be.cytomine.test.BasicInstance
+
 import be.cytomine.project.Project
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.test.http.RelationTermAPI
-import be.cytomine.test.http.AnnotationTermAPI
+
 import be.cytomine.test.http.TermAPI
 import be.cytomine.ontology.Ontology
 import be.cytomine.test.http.OntologyAPI

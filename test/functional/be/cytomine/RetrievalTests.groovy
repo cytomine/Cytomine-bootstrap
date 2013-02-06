@@ -2,11 +2,7 @@ package be.cytomine
 
 import be.cytomine.test.Infos
 
-import grails.converters.JSON
-
 import be.cytomine.test.http.RetrievalAPI
-import be.cytomine.utils.RetrievalHttpUtils
-import be.cytomine.utils.BasicInstance
 
 /**
  * Created by IntelliJ IDEA.

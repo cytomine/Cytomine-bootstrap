@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.JobData
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobDataAPI
 import grails.converters.JSON

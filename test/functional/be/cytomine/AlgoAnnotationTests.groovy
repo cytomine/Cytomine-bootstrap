@@ -8,7 +8,7 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.utils.BasicInstance
+import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.AlgoAnnotationAPI

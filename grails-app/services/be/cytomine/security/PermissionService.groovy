@@ -26,21 +26,24 @@ class PermissionService {
         addPermission(domain, username, aclPermissionFactory.buildFromMask(permission))
     }
 
-    synchronized void addPermission(def domain, String username, Permission permission) {
-        log.info "Add Permission " +  permission.mask + " for " + username + " to " + domain.class + " " + domain.id
+    void addPermission(def domain, String username, Permission permission) {
+        synchronized (this.getClass()) {
+            log.info "Add Permission " +  permission.mask + " for " + username + " to " + domain.class + " " + domain.id
 
-        ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
-        try {
-            MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
-        } catch (NotFoundException nfe) {
-            aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
+            ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
+            try {
+                MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
+            } catch (NotFoundException nfe) {
+                aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
+            }
+
+            println "${domain.class} ${domain.id} ${domain.version}"
+            println "${username} ${SecUser.findByUsername(username)} ${SecUser.findByUsername(username).version}"
+
+            log.info "Try to add permission..."
+            aclUtilService.addPermission(domain, username, permission)
+            log.info "Permission added..."
         }
-
-        println "${domain.class} ${domain.id} ${domain.version}"
-        println "${username} ${SecUser.findByUsername(username)} ${SecUser.findByUsername(username).version}"
-
-        aclUtilService.addPermission(domain, username, permission)
-        log.info "Permission added"
     }
 
     synchronized void deletePermission(CytomineDomain domain, String username, Permission permission) {

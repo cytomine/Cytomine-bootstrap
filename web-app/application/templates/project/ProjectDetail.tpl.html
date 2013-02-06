@@ -25,6 +25,12 @@
                             class="badge badge-warning"><%= numberOfJobAnnotations %></span> <% } else { %><span
                             class="badge badge-success"><%= numberOfJobAnnotations %></span> <% } %>
                 </li>
+                <li>Number of validated annotations : <% if (numberOfReviewedAnnotations == 0) { %> <span
+                        class="badge badge-error"><%= numberOfReviewedAnnotations %></span> <% } else if
+                    (numberOfJobAnnotations < 250) { %><span
+                            class="badge badge-warning"><%= numberOfReviewedAnnotations %></span> <% } else { %><span
+                            class="badge badge-success"><%= numberOfReviewedAnnotations %></span> <% } %>
+                </li>
             </ul>
         </div>
     </div>
