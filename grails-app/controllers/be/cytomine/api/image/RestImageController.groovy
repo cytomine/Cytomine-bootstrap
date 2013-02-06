@@ -120,8 +120,8 @@ class RestImageController extends RestController {
     /**
      * Get all image servers URL for an image
      */
-    def imageservers = {
-        responseSuccess(abstractImageService.imageservers(params.long('id')))
+    def imageServers = {
+        responseSuccess(abstractImageService.imageServers(params.long('id')))
     }
 
     /**
@@ -129,7 +129,6 @@ class RestImageController extends RestController {
      */
     def thumb = {
         def url = abstractImageService.thumb(params.long('id'))
-        println "controller.url=$url"
         responseImage(url)
     }
 
@@ -247,24 +246,9 @@ class RestImageController extends RestController {
                 }
                 return cropURL
             } catch (Exception e) {
-                e.printStackTrace()
                 log.error("GetCrop:" + e)
                 return null
             }
-        }
-    }
-
-    /**
-     * TODOSTEVBEN: doc
-     */
-    def slidingWindow = {
-        int width = params.width != null ? Integer.parseInt(params.width) : 1000
-        int height = params.height != null ? Integer.parseInt(params.width) : 1000
-        float overlapX = params.overlapX != null ? Float.parseFloat(params.overlapX) : 0
-        float overlapY = params.overlapY != null ? Float.parseFloat(params.overlapY) : 0
-        AbstractImage image = abstractImageService.read(params.long('id'))
-        if (image) {
-            responseSuccess(abstractImageService.slidingWindow(image, [ width : width, height : height, overlapX : overlapX, overlapY : overlapY]))
         }
     }
 }

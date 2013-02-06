@@ -58,7 +58,7 @@ class Job extends CytomineDomain  {
     /**
      * Flag to see if data generate by this job are deleted
      */
-    boolean dataDeleted
+    boolean dataDeleted = false
 
     static transients = ["url"]
 

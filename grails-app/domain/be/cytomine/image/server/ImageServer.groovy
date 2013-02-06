@@ -12,13 +12,11 @@ class ImageServer extends CytomineDomain {
     String url
     String service
     String className
-    Storage storage //deprecated
     Boolean available
 
     static constraints = {
         name blank: false
         url blank: false
-        storage nullable: true
         available nullable: false
     }
 
@@ -28,9 +26,5 @@ class ImageServer extends CytomineDomain {
 
     def getBaseUrl() {
         return url + service
-    }
-
-    def getZoomifyUrl() {
-        return url + service + "?zoomify=" + storage.getBasePath()
     }
 }

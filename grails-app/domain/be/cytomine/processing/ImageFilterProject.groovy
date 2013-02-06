@@ -72,7 +72,7 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
             returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['imageFilter'] = it.imageFilter?.id
-            returnArray['processingServer'] = it.imageFilter?.processingServer?.url
+            returnArray['processingServer'] = it.imageFilter?.processingServer
             returnArray['baseUrl'] = it.imageFilter?.baseUrl
             returnArray['name'] = it.imageFilter?.name
             returnArray['project'] = it.project?.id

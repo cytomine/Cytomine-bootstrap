@@ -70,7 +70,7 @@ class Command extends CytomineDomain {
      * If command is save on undo stack, refuse undo
      * Usefull for project delete (cannot undo)
      */
-    boolean refuseUndo = false
+    Boolean refuseUndo = false
 
     static constraints = {
         data(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)

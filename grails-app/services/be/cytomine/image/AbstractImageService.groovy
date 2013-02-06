@@ -242,21 +242,20 @@ class AbstractImageService extends ModelService {
     /**
      * Get a single property thx to its id
      */
-    def imageProperty(def imageproperty) {
-        return ImageProperty.findById(imageproperty)
+    def imageProperty(def imageProperty) {
+        return ImageProperty.findById(imageProperty)
     }
 
     /**
      * Get all image servers for an image id
      */
-    def imageservers(def id) {
+    def imageServers(def id) {
         AbstractImage image = read(id)
-        def urls = image.getImageServers().collect {
-            [it.getZoomifyUrl(), image.getPath()].join(File.separator) + "/"
+        def urls = []
+        for (imageServerStorage in image.getImageServersStorage()) {
+            urls << [imageServerStorage.getZoomifyUrl(), image.getPath()].join(File.separator) + "/"
         }
-        def result = [:]
-        result.imageServersURLs = urls
-        return result
+        return [imageServersURLs : urls]
     }
 
     /**
@@ -307,28 +306,6 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    /**
-     * TODOSTEVBEN: doc
-     */
-    def slidingWindow(AbstractImage abstractImage, parameters) {
-        def windows = []
-        int windowWidth = parameters.width
-        int windowHeight = parameters.height
-        int stepX = parameters.width * (1 - parameters.overlapX)
-        //int stepY = parameters.height * (1 - parameters.overlapY)
-        for (int y = 0; y < abstractImage.getHeight(); y +=  stepY) {
-            for (int x = 0; x < abstractImage.getWidth(); x += stepX) {
-                int x_window = x
-                int y_window =  y
-                int width = windowWidth + Math.min(0, (abstractImage.getWidth() - (x_window + windowWidth)))
-                int height = windowHeight + Math.min(0, (abstractImage.getHeight() - (y_window + windowHeight)))
-                int invertedY =  abstractImage.getHeight() - y_window //for IIP
-                String url = abstractImage.getCropURL(x_window, invertedY, width, height)
-                windows << [ x : x_window, y : y_window, width : width, height : height, image : url]
-            }
-        }
-        windows
-    }
 
     /**
      * Create new domain in database

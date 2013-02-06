@@ -2,6 +2,9 @@ package be.cytomine.image
 
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.ImageServerStorage
+import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.server.resolvers.Resolver
 import org.apache.http.HttpEntity
 import org.apache.http.client.methods.HttpGet
@@ -23,12 +26,13 @@ class ImagePropertiesService implements Serializable{
     }
 
     def populate(AbstractImage image) {
-        Collection<ImageServer> imageServers = image.getImageServers()
-        if (imageServers == null || imageServers.size() == 0) return
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        def imageServer = imageServers.get(index)
-        Resolver resolver = Resolver.getResolver(imageServer.className)
-        def propertiesURL = resolver.getPropertiesURL(imageServer.getBaseUrl(), [imageServer.getStorage().getBasePath(),image.getPath()].join(File.separator))
+        Collection<ImageServerStorage> imageServerStorages = image.getImageServersStorage()
+        if (imageServerStorages == null || imageServerStorages.size() == 0) return
+        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
+        def imageServerStorage = imageServerStorages.get(index)
+        Resolver resolver = Resolver.getResolver(imageServerStorage.imageServer.className)
+        Storage storage = StorageAbstractImage.findAllByAbstractImage(image).first().storage
+        def propertiesURL = resolver.getPropertiesURL(imageServerStorage.imageServer.getBaseUrl(), [storage.getBasePath(),image.getPath()].join(File.separator))
         log.info image.getFilename() + " : " + propertiesURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(propertiesURL)
@@ -44,7 +48,6 @@ class ImagePropertiesService implements Serializable{
                 //if (args[0].contains("Error/")) return
                 def property = new ImageProperty(key: args[0], value: args[1], image: image)
                 property.save();
-                image.addToImageProperties(property)
             }
             image.save()
         } catch (java.net.SocketTimeoutException e) {
@@ -79,17 +82,18 @@ class ImagePropertiesService implements Serializable{
     }
 
     private def extractUsefulTif(AbstractImage image) {
-        Collection<ImageServer> imageServers = image.getImageServers()
-        if (imageServers == null || imageServers.size() == 0) return
-        def index = (Integer) Math.round(Math.random() * (imageServers.size() - 1)) //select an url randomly
-        def imageServer = imageServers.get(index)
-        log.info "imageServer="+imageServer
-         log.info "imageServerclassName="+imageServer.className
-        Resolver resolver = Resolver.getResolver(imageServer.className)
+        Collection<ImageServerStorage> imageServerStorages = image.getImageServersStorage()
+        if (imageServerStorages == null || imageServerStorages.size() == 0) return
+        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
+        def imageServerStorage = imageServerStorages.get(index)
+        log.info "imageServer="+imageServerStorage
+         log.info "imageServerclassName="+imageServerStorage.imageServer.className
+        Resolver resolver = Resolver.getResolver(imageServerStorage.imageServer.className)
         log.info "resolver="+resolver
-        log.info "storage="+imageServer.getStorage()
         log.info "image="+image
-        def metadaURL = resolver.getMetaDataURL(imageServer.getBaseUrl(), [imageServer.getStorage().getBasePath(),image.getPath()].join(File.separator))
+        Storage storage = StorageAbstractImage.findAllByAbstractImage(image).first().storage
+        log.info "storage="+storage
+        def metadaURL = resolver.getMetaDataURL(imageServerStorage.imageServer.getBaseUrl(), [storage.getBasePath(),image.getPath()].join(File.separator))
         log.info "metadataURL="+metadaURL
         DefaultHttpClient httpClient = new DefaultHttpClient()
         URI _url = new URI(metadaURL)

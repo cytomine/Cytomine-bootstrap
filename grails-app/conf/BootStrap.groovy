@@ -119,8 +119,8 @@ class BootStrap {
         for (imageServer in ImageServer.findAll()) {
             ImageServerStorage imageServerStorage = ImageServerStorage.findByImageServer(imageServer)
             if (!imageServerStorage) {
-                imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : imageServer.getStorage())
-                imageServerStorage.save(flush : true)
+                //imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : imageServer.getStorage())
+                //imageServerStorage.save(flush : true)
             }
         }
         //create storage for each user

@@ -57,4 +57,5 @@ class StorageService {
     def read(def id) {
         Storage.read(id)
     }
+
 }

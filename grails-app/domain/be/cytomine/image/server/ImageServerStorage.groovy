@@ -9,4 +9,8 @@ package be.cytomine.image.server
 class ImageServerStorage {
     ImageServer imageServer
     Storage storage
+
+    def getZoomifyUrl() {
+        return imageServer.url + imageServer.service + "?zoomify=" + storage.getBasePath()
+    }
 }
