@@ -5,6 +5,7 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
+import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 
@@ -1130,18 +1131,27 @@ class BasicInstance {
 
     static ImageServer createOrGetBasicImageServer() {
         log.debug "createOrGetBasicImageServer()"
-        def bidon = ImageServer.findByName("bidon")
-        if (!bidon) {
-            bidon = new ImageServer()
-            bidon.name ="bidon"
-            bidon.url = "http://bidon.server.com/"
-            bidon.service = "service"
-            bidon.className = "Sample"
-            bidon.available = true
-            bidon.storage = createOrGetBasicStorage()
-            BasicInstance.saveDomain(bidon)
+
+        def imageServer = ImageServer.findByName("bidon")
+        if (!imageServer) {
+            imageServer = new ImageServer()
+            imageServer.name ="bidon"
+            imageServer.url = "http://bidon.server.com/"
+            imageServer.service = "service"
+            imageServer.className = "Sample"
+            imageServer.available = true
+            BasicInstance.saveDomain(imageServer)
         }
-        bidon
+        def storage = Storage.findByName("bidon")
+        if (!storage)
+            storage = createOrGetBasicStorage()
+        def imageServerStorage = ImageServerStorage.findByImageServerAndStorage(imageServer, storage)
+        if (!imageServerStorage) {
+            imageServerStorage = new ImageServerStorage(imageServer: imageServer, storage : storage)
+            BasicInstance.saveDomain(imageServerStorage)
+        }
+
+        imageServer
     }
 
     static Storage createOrGetBasicStorage() {

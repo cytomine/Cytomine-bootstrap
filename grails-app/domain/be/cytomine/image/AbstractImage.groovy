@@ -143,15 +143,25 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServersStorage() {
         println "### not mocking method"
-        def mimeImageServer = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}
-        def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
-        if (mimeImageServer.isEmpty() || storageAbstractImage.isEmpty()) return []
-        else {
-            ImageServerStorage.createCriteria().list {
-                inList("imageServer",  mimeImageServer)
-                inList("storage", storageAbstractImage )
+        try {
+            def mimeImageServer = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}
+            def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
+            if (mimeImageServer.isEmpty() || storageAbstractImage.isEmpty()) return []
+            else {
+                return ImageServerStorage.createCriteria().list {
+                    inList("imageServer",  mimeImageServer)
+                    inList("storage", storageAbstractImage )
+                }
             }
+        } catch (Exception e) {
+            //may appear during tests
+            //this method does not work with an unsaved domain or a domain instance with transients values
+            //find another way to handle the error ?
+            log.error "cannot get imageServerStorage from AbstractImage $this"
+            return null
         }
+
+
 
     }
 
