@@ -17,24 +17,24 @@ import be.cytomine.utils.UpdateData
  * Time: 16:16
  * To change this template use File | Settings | File Templates.
  */
-class JobDataTests extends functionaltestplugin.FunctionalTestCase {
+class JobDataTests  {
 
     void testListJobDataWithCredential() {
         def result = JobDataAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListJobDataWithoutCredential() {
         def result = JobDataAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
-        assertEquals(401, result.code)
+        assert 401 == result.code
     }
 
     void testShowJobDataWithCredential() {
         JobData jobdata = BasicInstance.createOrGetBasicJobData()
         def result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -42,31 +42,31 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
     void testListJobDataByJob() {
         JobData jobdata = BasicInstance.createOrGetBasicJobData()
         def result = JobDataAPI.listByJob(jobdata.job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListJobDataByJobNotExist() {
         def result = JobDataAPI.listByJob(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
     void testAddJobDataCorrect() {
         def jobdataToAdd = BasicInstance.getBasicJobDataNotExist()
         def result = JobDataAPI.create(jobdataToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         JobData jobdata = result.data
         result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testEditJobDataCorrect() {
         JobData jobdataToAdd = BasicInstance.createOrGetBasicJobData()
         def data = UpdateData.createUpdateSet(jobdataToAdd)
         def result = JobDataAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idJobData = json.jobdata.id
@@ -85,21 +85,21 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.key = null
         jsonJobData = jsonUpdate.encodeAsJSON()
         def result = JobDataAPI.update(jobdataToAdd.id, jsonJobData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testDeleteJobData() {
         def jobdataToDelete = BasicInstance.getBasicJobDataNotExist()
         assert jobdataToDelete.save(flush: true) != null
         def result = JobDataAPI.delete(jobdataToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def showResult = JobDataAPI.show(jobdataToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, showResult.code)
+        assert 404 == showResult.code
     }
 
     void testDeleteJobDataNotExist() {
         def result = JobDataAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     //testUpload + download from database
@@ -114,14 +114,14 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
 
         //upload file
          def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //download file
         result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //check if byte[] are equals
-        assertEquals testData, result.data
+        assert testData==result.data
     }
 
     //testUpload + download from filesystem
@@ -136,24 +136,22 @@ class JobDataTests extends functionaltestplugin.FunctionalTestCase {
 
         //upload file
          def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //download file
         result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //check if byte[] are equals
-        assertEquals testData, result.data
+        assert testData==result.data
         ConfigurationHolder.config.cytomine.jobdata.filesystem = false
     }
 
     protected void tearDown() {
-        super.tearDown();
         ConfigurationHolder.config.cytomine.jobdata.filesystem = false
     }
 
     protected void setUp() {
-        super.tearDown();
         ConfigurationHolder.config.cytomine.jobdata.filesystem = true
     }
 

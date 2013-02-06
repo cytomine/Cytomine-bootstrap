@@ -16,46 +16,46 @@ import be.cytomine.utils.UpdateData
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class GroupTests extends functionaltestplugin.FunctionalTestCase {
+class GroupTests  {
 
   void testListGroup() {
       def result = GroupAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testShowGroup() {
       def result = GroupAPI.show(BasicInstance.createOrGetBasicGroup().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
 
       result = GroupAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testAddGroupCorrect() {
       def groupToAdd = BasicInstance.getBasicGroupNotExist()
       def result = GroupAPI.create(groupToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       int idGroup = result.data.id
 
       result = GroupAPI.show(idGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
 
   void testAddGroupAlreadyExist() {
       def groupToAdd = BasicInstance.createOrGetBasicGroup()
       def result = GroupAPI.create(groupToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
 
   void testUpdateGroupCorrect() {
       Group groupToAdd = BasicInstance.createOrGetBasicGroup()
       def data = UpdateData.createUpdateSet(groupToAdd)
       def result = GroupAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
@@ -71,7 +71,7 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.id = -99
       jsonGroup = jsonUpdate.encodeAsJSON()
       def result = GroupAPI.update(-99, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testUpdateGroupWithNameAlreadyExist() {
@@ -84,7 +84,7 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.name = groupWithOldName.name
       jsonGroup = jsonUpdate.encodeAsJSON()
       def result = GroupAPI.update(groupToEdit.id, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
 
   void testDeleteGroup() {
@@ -92,14 +92,14 @@ class GroupTests extends functionaltestplugin.FunctionalTestCase {
       assert groupToDelete.save(flush: true)!= null
       def id = groupToDelete.id
       def result = GroupAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       def showResult = GroupAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, showResult.code)
+      assert 404 == showResult.code
   }
 
   void testDeleteGroupNotExist() {
       def result = GroupAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 }

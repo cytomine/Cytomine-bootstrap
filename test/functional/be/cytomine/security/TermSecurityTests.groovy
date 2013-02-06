@@ -29,19 +29,19 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //Create new term (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def termToAdd = BasicInstance.getBasicTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Term term = result.data
       println "term="+term
       println "term.id="+term.id
       //check if admin user can access/update/delete
-      assertEquals(200, TermAPI.show(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, TermAPI.update(term.id,term.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
-      assertEquals(200, TermAPI.delete(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == TermAPI.show(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == TermAPI.delete(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testTermSecurityForTermCreator() {
@@ -51,18 +51,18 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //Create new Term (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def termToAdd = BasicInstance.getBasicTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Term term = result.data
 
       //check if user 1 can access/update/delete
-      assertEquals(200, TermAPI.show(term.id,USERNAME1,PASSWORD1).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME1,PASSWORD1).data)))
-      assertEquals(200, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME1,PASSWORD1).code)
-      assertEquals(200, TermAPI.delete(term.id,USERNAME1,PASSWORD1).code)
+      assert (200 == TermAPI.show(term.id,USERNAME1,PASSWORD1).code)
+      assert (true ==TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME1,PASSWORD1).data)))
+      assert (200 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAME1,PASSWORD1).code)
+      assert (200 == TermAPI.delete(term.id,USERNAME1,PASSWORD1).code)
   }
 
   void testTermSecurityForProjectUser() {
@@ -74,11 +74,11 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //Create new Term (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def termToAdd = BasicInstance.getBasicTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def term = result.data
 
       Project project = BasicInstance.createBasicProjectNotExist()
@@ -87,29 +87,29 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       //check if user 2 can access/update/delete
-      assertEquals(200, TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
-      assertTrue(TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).data)))
-      assertEquals(403, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (200 == TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
+      assert (true ==TermAPI.containsInJSONList(term.id,JSON.parse(TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).data)))
+      assert (403 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
 
       //remove right to user2
       resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,USERNAME1,PASSWORD1)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       //check if user 2 cannot access/update/delete
-      assertEquals(403, TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.listByOntology(term.ontology.id,USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete term
       def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resDelProj.code)
+      assert (200 == resDelProj.code)
 
 
-      assertEquals(403, TermAPI.delete(term.id,USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.delete(term.id,USERNAME2,PASSWORD2).code)
   }
 
   void testTermSecurityForSimpleUser() {
@@ -121,17 +121,17 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //Create new Term (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def termToAdd = BasicInstance.getBasicTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Term term = result.data
 
       //check if user 2 cannot access/update/delete
-      assertEquals(403, TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, TermAPI.delete(term.id,USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == TermAPI.delete(term.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -142,16 +142,16 @@ class TermSecurityTests extends SecurityTestsAbstract {
 
       //Create new Term (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def termToAdd = BasicInstance.getBasicTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Term term = result.data
       //check if user 2 cannot access/update/delete
-      assertEquals(401, TermAPI.show(term.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, TermAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, TermAPI.update(term.id,term.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, TermAPI.delete(term.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == TermAPI.show(term.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == TermAPI.list(USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == TermAPI.delete(term.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 }

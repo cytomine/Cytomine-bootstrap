@@ -14,7 +14,7 @@ import be.cytomine.test.http.UserAnnotationAPI
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class UserAnnotationDependencyTests extends functionaltestplugin.FunctionalTestCase {
+class UserAnnotationDependencyTests  {
 
 
     void testUserAnnotationDependency() {
@@ -26,20 +26,20 @@ class UserAnnotationDependencyTests extends functionaltestplugin.FunctionalTestC
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assertEquals(200, UserAnnotationAPI.delete(annotation.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.delete(annotation.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assertEquals(200, UserAnnotationAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
 
         //check if all dependency are aivalable
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assertEquals(200, UserAnnotationAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)

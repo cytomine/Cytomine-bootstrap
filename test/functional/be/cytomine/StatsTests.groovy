@@ -15,7 +15,7 @@ import be.cytomine.project.Project
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class StatsTests extends functionaltestplugin.FunctionalTestCase {
+class StatsTests  {
 
     private void doGET(String URL, int expect) {
         HttpClient client = new HttpClient();
@@ -24,7 +24,7 @@ class StatsTests extends functionaltestplugin.FunctionalTestCase {
         int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
-        assertEquals(expect,code)
+        assert expect==code
     }
 
     void testRetrievalAVG() {

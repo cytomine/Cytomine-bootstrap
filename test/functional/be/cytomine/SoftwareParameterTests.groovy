@@ -16,11 +16,11 @@ import be.cytomine.utils.UpdateData
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
+class SoftwareParameterTests  {
 
     void testListSoftwareParameterWithCredential() {
           def result = SoftwareParameterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONArray
       }
@@ -28,16 +28,16 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
       void testListSoftwareParameterBySoftware() {
           SoftwareParameter softwareparameter = BasicInstance.createOrGetBasicSoftwareParameter()
           def result = SoftwareParameterAPI.listBySoftware(softwareparameter.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONArray
           result = SoftwareParameterAPI.listBySoftware(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(404, result.code)
+          assert 404 == result.code
       }
   
       void testShowSoftwareParameterWithCredential() {
           def result = SoftwareParameterAPI.show(BasicInstance.createOrGetBasicSoftwareParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
       }
@@ -45,18 +45,18 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
       void testAddSoftwareParameterCorrect() {
           def softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
           def result = SoftwareParameterAPI.create(softwareparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
           int idSoftwareParameter = result.data.id
     
           result = SoftwareParameterAPI.show(idSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
       }
 
       void testUpdateSoftwareParameterCorrect() {
           SoftwareParameter softwareparameterToAdd = BasicInstance.createOrGetBasicSoftwareParameter()
           def data = UpdateData.createUpdateSet(softwareparameterToAdd)
           def result = SoftwareParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
       }
@@ -70,7 +70,7 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
           jsonUpdate.id = -99
           jsonSoftwareParameter = jsonUpdate.encodeAsJSON()
           def result = SoftwareParameterAPI.update(-99, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(404, result.code)
+          assert 404 == result.code
       }
   
       void testUpdateSoftwareParameterWithBadSoftware() {
@@ -81,7 +81,7 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
           jsonUpdate.software = -99
           jsonSoftwareParameter = jsonUpdate.encodeAsJSON()
           def result = SoftwareParameterAPI.update(softwareparameterToAdd.id, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(400, result.code)
+          assert 400 == result.code
       }
   
       void testDeleteSoftwareParameter() {
@@ -89,14 +89,14 @@ class SoftwareParameterTests extends functionaltestplugin.FunctionalTestCase {
           assert softwareparameterToDelete.save(flush: true)!= null
           def id = softwareparameterToDelete.id
           def result = SoftwareParameterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(200, result.code)
+          assert 200 == result.code
   
           def showResult = SoftwareParameterAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(404, showResult.code)
+          assert 404 == showResult.code
       }
   
       void testDeleteSoftwareParameterNotExist() {
           def result = SoftwareParameterAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-          assertEquals(404, result.code)
+          assert 404 == result.code
       }
 }

@@ -28,7 +28,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //Add image instance to project
@@ -36,14 +36,14 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       image.project = project
       //check if admin user can access/update/delete
       result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       image = result.data
-      assertEquals(200, ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 == ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
       result = ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
-      assertEquals(200, result.code)
-      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
-      assertEquals(200, ImageInstanceAPI.update(image.id,image.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
-      assertEquals(200, ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert 200 == result.code
+      assert (true ==ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
+      assert (200 == ImageInstanceAPI.update(image.id,image.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
   }
 
   void testImageInstanceSecurityForProjectUser() {
@@ -57,11 +57,11 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
       def resAddUser = ProjectAPI.addUserProject(project.id,user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       Infos.printRight(project)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
 
       //Add image instance to project
       ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
@@ -69,14 +69,14 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
 
       //check if user 2 can access/update/delete
       result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       image = result.data
-      assertEquals(200, ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (200 == ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
       result = ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(200, result.code)
-      assertTrue(ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
-      //assertEquals(200, ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
-      assertEquals(200, ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert 200 == result.code
+      assert (true ==ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
+      //assert (200 == ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
+      assert (200 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
   }
 
   void testImageInstanceSecurityForSimpleUser() {
@@ -90,7 +90,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //Add image instance to project
@@ -99,17 +99,17 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
 
       //check if simple  user can access/update/delete
       result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(403, result.code)
+      assert (403 == result.code)
       image = result.data
 
       image = BasicInstance.createOrGetBasicImageInstance()
       image.project = project
       image.save(flush:true)
 
-      assertEquals(403, ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
-      assertEquals(403,ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
-      //assertEquals(403, ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
-      assertEquals(403, ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 == ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      //assert (403 == ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
+      assert (403 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
   }
 
 }

@@ -15,19 +15,19 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  * Time: 16:16
  * To change this template use File | Settings | File Templates.
  */
-class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
+class RetrievalProjectTests  {
 
     void testListRetrievalProjectWithCredential() {
         Project project = BasicInstance.createOrGetBasicProject()
         def result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListRetrievalProjecNotExist() {
         def result = ProjectAPI.listRetrieval(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testAddProjectRetrievalWithoutFlag() {
@@ -38,13 +38,13 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalProjects = null
 
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
-        assertEquals(true, project.retrievalAllOntology)
-        assertEquals(false, project.retrievalDisable)
+        assert true==project.retrievalAllOntology
+        assert false==project.retrievalDisable
     }
 
     void testAddProjectRetrievalWithRetrievalDisable() {
@@ -55,13 +55,13 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalProjects = null
 
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
-        assertEquals(false, project.retrievalAllOntology)
-        assertEquals(true, project.retrievalDisable)
+        assert false==project.retrievalAllOntology
+        assert true==project.retrievalDisable
     }
 
     void testAddProjectRetrievalWithRetrievalAllOntology() {
@@ -72,13 +72,13 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalProjects = null
 
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
-        assertEquals(true, project.retrievalAllOntology)
-        assertEquals(false, project.retrievalDisable)
+        assert true==project.retrievalAllOntology
+        assert false==project.retrievalDisable
     }
 
     void testAddProjectRetrievalWithRetrievalSomeProject() {
@@ -90,13 +90,13 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
 
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
         assert ProjectAPI.containsInJSONList(BasicInstance.createOrGetBasicProjectWithRight().id,json)
@@ -110,7 +110,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalAllOntology = true
         json.retrievalProjects = null
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
 
         projectToAdd = BasicInstance.getBasicProjectNotExist()
         json = JSON.parse(projectToAdd.encodeAsJSON())
@@ -118,7 +118,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalAllOntology = false
         json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
         result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
 
         projectToAdd = BasicInstance.getBasicProjectNotExist()
         json = JSON.parse(projectToAdd.encodeAsJSON())
@@ -126,7 +126,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         json.retrievalAllOntology = true
         json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
         result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
 
     }
 
@@ -142,23 +142,23 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
 
         //create project
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
 
         //list retrieval project and check that project is there
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
         assert ProjectAPI.containsInJSONList(projectRetrieval.id,json)
 
         //delete 1 retrieval project
         result = ProjectAPI.delete(projectRetrieval.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //list retrieval project and check that project is not there
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
         assert !ProjectAPI.containsInJSONList(projectRetrieval.id,json)
@@ -182,7 +182,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
@@ -217,7 +217,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"," + projectRetrieval2.id +"]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
@@ -255,7 +255,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
@@ -293,7 +293,7 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonProject.retrievalProjects = new JSONArray("[]")
 
         def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
@@ -319,6 +319,6 @@ class RetrievalProjectTests extends functionaltestplugin.FunctionalTestCase {
 
         //delete 1 retrieval project
         def result = ProjectAPI.delete(projectToAdd.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 }

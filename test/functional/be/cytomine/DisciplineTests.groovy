@@ -16,23 +16,23 @@ import be.cytomine.utils.UpdateData
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
+class DisciplineTests  {
 
   void testListDisciplineWithCredential() {
       def result = DisciplineAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testListDisciplineWithoutCredential() {
       def result = DisciplineAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
-      assertEquals(401, result.code)
+      assert 401 == result.code
   }
 
   void testShowDisciplineWithCredential() {
       def result = DisciplineAPI.show(BasicInstance.createOrGetBasicDiscipline().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
@@ -40,29 +40,29 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
   void testAddDisciplineCorrect() {
       def disciplineToAdd = BasicInstance.getBasicDisciplineNotExist()
       def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       int idDiscipline = result.data.id
 
       result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
 
       result = DisciplineAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
 
   void testAddDisciplineAlreadyExist() {
       def disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
       def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
 
   void testUpdateDisciplineCorrect() {
@@ -70,7 +70,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
 
       def data = UpdateData.createUpdateSet(disciplineToAdd)
       def result = DisciplineAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idDiscipline = json.discipline.id
@@ -80,12 +80,12 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
       BasicInstance.compareDiscipline(data.mapNew, json)
 
       showResult = DisciplineAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       BasicInstance.compareDiscipline(data.mapOld, JSON.parse(showResult.data))
 
       showResult = DisciplineAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       BasicInstance.compareDiscipline(data.mapNew, JSON.parse(showResult.data))
   }
@@ -101,7 +101,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.id = -99
       jsonDiscipline = jsonUpdate.encodeAsJSON()
       def result = DisciplineAPI.update(-99, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testUpdateDisciplineWithNameAlreadyExist() {
@@ -114,7 +114,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.name = disciplineWithOldName.name
       jsonDiscipline = jsonUpdate.encodeAsJSON()
       def result = DisciplineAPI.update(disciplineToEdit.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
     
     void testEditDisciplineWithBadName() {
@@ -125,7 +125,7 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.name = null
         jsonDiscipline = jsonUpdate.encodeAsJSON()
         def result = DisciplineAPI.update(disciplineToAdd.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
   void testDeleteDiscipline() {
@@ -133,34 +133,34 @@ class DisciplineTests extends functionaltestplugin.FunctionalTestCase {
       assert disciplineToDelete.save(flush: true)!= null
       def id = disciplineToDelete.id
       def result = DisciplineAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       def showResult = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, showResult.code)
+      assert 404 == showResult.code
 
       result = DisciplineAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testDeleteDisciplineNotExist() {
       def result = DisciplineAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testDeleteDisciplineWithProject() {
       def project = BasicInstance.createOrGetBasicProject()
       def disciplineToDelete = project.discipline
       def result = DisciplineAPI.delete(disciplineToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(400, result.code)
+      assert 400 == result.code
   }
 
 }

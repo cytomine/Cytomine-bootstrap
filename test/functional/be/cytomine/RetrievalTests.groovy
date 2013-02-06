@@ -8,7 +8,7 @@ import be.cytomine.test.http.RetrievalAPI
  * Created by IntelliJ IDEA.
  * User: lrollus
  */
-class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
+class RetrievalTests  {
 
 
     //Mock doesn't work with bamboo sometimes...
@@ -29,7 +29,7 @@ class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
 //        }
 //
 //        def result = RetrievalAPI.getResults(annotation1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assertEquals(200,result.code)
+//        assert 200 == result.code
 //        println result.data
 //        def json = JSON.parse(result.data)
 //        assertEquals(3-1,json.annotation.size())
@@ -43,7 +43,7 @@ class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
 //        }
 //        def annotation = BasicInstance.createOrGetBasicUserAnnotation()
 //        def result = RetrievalAPI.getResults(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assertEquals(200,result.code)
+//        assert 200 == result.code
 //        println result.data
 //        def json = JSON.parse(result.data)
 //        assertEquals(0,json.annotation.size())
@@ -51,6 +51,6 @@ class RetrievalTests extends functionaltestplugin.FunctionalTestCase {
 
     void testRetrievalWithAnnotationNotExist() {
         def result = RetrievalAPI.getResults(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404,result.code)
+        assert 404 == result.code
     }
 }

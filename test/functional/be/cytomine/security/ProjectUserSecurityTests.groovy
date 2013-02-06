@@ -27,14 +27,14 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if admin can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 ==ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
       //check if admin can delete user 2 in project
-      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
   }
 
@@ -51,14 +51,14 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if user1 can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
+      assert (200 ==ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
 
       //check if user1 can delete user 2 in project
-      assertEquals(200,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
+      assert (200 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1).code)
 
   }
 
@@ -78,20 +78,20 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if user1 can add user 2 in project
-      assertEquals(200,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 ==ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
 
       //check if user2 cannot add user 3 in project
-      assertEquals(403,ProjectAPI.addUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ProjectAPI.addUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 can delete himself project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
   }
 
@@ -108,14 +108,14 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if user2 cannot add user 3 in project
-      assertEquals(403,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(403,ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
   }
 
@@ -130,14 +130,14 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if user2 cannot add user 3 in project
-      assertEquals(401,ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
+      assert (401 ==ProjectAPI.addUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
 
       //check if user2 cannot delete user 3 in project
-      assertEquals(401,ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
+      assert (401 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAMEBAD,SecurityTestsAbstract.PASSWORDBAD).code)
 
   }
 }

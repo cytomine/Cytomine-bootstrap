@@ -32,16 +32,16 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
         annotationTerm.userAnnotation  = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotationTerm = result.data
 
         //Get/List annotation-term with cytomine admin
-        assertEquals(200, AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
         result = AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
-        assertTrue(AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
         //Delete annotation 2 with cytomine admin
-        assertEquals(200, AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
 
 
     }
@@ -60,16 +60,16 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         annotationTerm.userAnnotation = annotation
         annotationTerm.user = User.findByUsername(SecurityTestsAbstract.USERNAME1)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotationTerm = result.data
 
         //Get/List annotation-term with cytomine admin
-        assertEquals(200, AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
         result = AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
-        assertTrue(AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
         //Delete annotation 2 with cytomine admin
-        assertEquals(200, AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
     }
 
     void testAnnotationTermSecurityForProjectUser() {
@@ -85,7 +85,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
 
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(annotation.project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, resAddUser.code)
+        assert 200 == resAddUser.code
 
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
@@ -93,16 +93,16 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         BasicInstance.saveDomain(annotationTerm.term)
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotationTerm = result.data
 
         //Get/List annotation-term with cytomine admin
-        assertEquals(200, AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (200 == AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
         result = AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(200, result.code)
-        assertTrue(AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
         //Delete annotation 2 with cytomine admin
-        assertEquals(403, AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
     void testAnnotationTermSecurityForUser() {
@@ -119,16 +119,16 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotationTerm = result.data
 
         //Get/List annotation-term with cytomine admin
-        assertEquals(403, AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
         result = AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(403, result.code)
-        //assertTrue(AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
+        assert (403 == result.code)
+        //assert (true ==AnnotationTermAPI.containsInJSONList(annotationTerm.id, JSON.parse(result.data)))
         //Delete annotation 2 with cytomine admin
-        assertEquals(403, AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
     void testAnnotationTermSecurityForAnonymous() {
@@ -142,12 +142,12 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotationTerm = result.data
 
         //Get/List annotation-term with cytomine admin
-        assertEquals(401, AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == AnnotationTermAPI.showAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == AnnotationTermAPI.listAnnotationTermByAnnotation(annotationTerm.userAnnotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == AnnotationTermAPI.deleteAnnotationTerm(annotationTerm.userAnnotation.id,annotationTerm.term.id,annotationTerm.user.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
     }
 }

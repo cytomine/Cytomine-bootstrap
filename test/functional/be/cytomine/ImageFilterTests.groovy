@@ -16,23 +16,23 @@ import be.cytomine.test.http.ImageFilterProjectAPI
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class ImageFilterTests extends functionaltestplugin.FunctionalTestCase {
+class ImageFilterTests  {
 
   void testListImageFilterWithCredential() {
       def result = ImageFilterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testShowImageFilterWithCredential() {
       def result = ImageFilterAPI.show(BasicInstance.createOrGetBasicImageFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
 
       result = ImageFilterAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   /*
@@ -40,7 +40,7 @@ class ImageFilterTests extends functionaltestplugin.FunctionalTestCase {
   */
     void testListImageFilterProject() {
         def result = ImageFilterProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -48,14 +48,14 @@ class ImageFilterTests extends functionaltestplugin.FunctionalTestCase {
     void testAddImageFilterProject() {
         def ifp = BasicInstance.getBasicImageFilterProjectNotExist()
         def result = ImageFilterProjectAPI.create(ifp.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testDeleteImageFilterProject() {
        def ifp = BasicInstance.getBasicImageFilterProjectNotExist()
        ifp.save(flush: true)
         def result = ImageFilterProjectAPI.delete(ifp.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
 

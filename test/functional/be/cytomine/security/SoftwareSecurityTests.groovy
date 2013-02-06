@@ -26,14 +26,14 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
 
       //Create new software (user1)
       def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Software software = result.data
 
       //check if admin user can access/update/delete
-      assertEquals(200, SoftwareAPI.show(software.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(SoftwareAPI.containsInJSONList(software.id,JSON.parse(SoftwareAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
-      assertEquals(200, SoftwareAPI.delete(software.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == SoftwareAPI.show(software.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==SoftwareAPI.containsInJSONList(software.id,JSON.parse(SoftwareAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == SoftwareAPI.delete(software.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testSoftwareSecurityForSoftwareCreator() {
@@ -43,14 +43,14 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
 
       //Create new Software (user1)
       def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Software software = result.data
 
       //check if user 1 can access/update/delete
-      assertEquals(200, SoftwareAPI.show(software.id,USERNAME1,PASSWORD1).code)
-      assertTrue(SoftwareAPI.containsInJSONList(software.id,JSON.parse(SoftwareAPI.list(USERNAME1,PASSWORD1).data)))
-      assertEquals(200, SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAME1,PASSWORD1).code)
-      assertEquals(200, SoftwareAPI.delete(software.id,USERNAME1,PASSWORD1).code)
+      assert (200 == SoftwareAPI.show(software.id,USERNAME1,PASSWORD1).code)
+      assert (true ==SoftwareAPI.containsInJSONList(software.id,JSON.parse(SoftwareAPI.list(USERNAME1,PASSWORD1).data)))
+      assert (200 == SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAME1,PASSWORD1).code)
+      assert (200 == SoftwareAPI.delete(software.id,USERNAME1,PASSWORD1).code)
   }
 
   void testSoftwareSecurityForSimpleUser() {
@@ -62,13 +62,13 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
 
       //Create new Software (user1)
       def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Software software = result.data
       Infos.printRight(software)
       //check if user 2 cannot access/update/delete
-      assertEquals(200, SoftwareAPI.show(software.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, SoftwareAPI.delete(software.id,USERNAME2,PASSWORD2).code)
+      assert (200 == SoftwareAPI.show(software.id,USERNAME2,PASSWORD2).code)
+      assert (403 == SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == SoftwareAPI.delete(software.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -79,13 +79,13 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
 
       //Create new Software (user1)
       def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Software software = result.data
       Infos.printRight(software)
       //check if user 2 cannot access/update/delete
-      assertEquals(401, SoftwareAPI.show(software.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareAPI.delete(software.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareAPI.show(software.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareAPI.list(USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareAPI.update(software.id,software.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareAPI.delete(software.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 }

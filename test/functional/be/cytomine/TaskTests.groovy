@@ -25,7 +25,7 @@ import be.cytomine.test.http.TaskAPI
  * Time: 16:16
  * To change this template use File | Settings | File Templates.
  */
-class TaskTests extends functionaltestplugin.FunctionalTestCase {
+class TaskTests  {
 
     void testShowTask() {
         println "test task"
@@ -41,7 +41,7 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
 
         def result = TaskAPI.show(task.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         println "task.json="+json
@@ -56,7 +56,7 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
     void testShowTaskNotExist() {
         def result = TaskAPI.show(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testTask() {
@@ -73,7 +73,7 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
     void testAddTask() {
         Project project = BasicInstance.createOrGetBasicProject()
         def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
 
         assert json instanceof JSONObject
@@ -85,7 +85,7 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
 
     void testAddTaskProjectNotFound() {
         def result = TaskAPI.create(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testConcreteTask() {
@@ -108,13 +108,13 @@ class TaskTests extends functionaltestplugin.FunctionalTestCase {
         AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
 
         def result = TaskAPI.create(job.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def jsonTask = JSON.parse(result.data)
 
 
         //delete all job data
         result = JobAPI.deleteAllJobData(job.id, jsonTask.task.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         def task = Task.read(jsonTask.task.id)
         task.refresh()

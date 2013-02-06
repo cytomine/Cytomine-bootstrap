@@ -17,28 +17,28 @@ import be.cytomine.security.SecUserSecRole
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class UserRoleTests extends functionaltestplugin.FunctionalTestCase {
+class UserRoleTests  {
 
   void testListSecRole() {
       def result = UserRoleAPI.listRole(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
     void testListRoleUser() {
         def result = UserRoleAPI.listByUser(BasicInstance.newUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testShowRoleUser() {
         def result = UserRoleAPI.show(BasicInstance.newUser.id,SecRole.findByAuthority("ROLE_USER").id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = UserRoleAPI.show(BasicInstance.newUser.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
@@ -48,7 +48,7 @@ class UserRoleTests extends functionaltestplugin.FunctionalTestCase {
       def json = "{user : $idUser, role: $idRole}"
 
       def result = UserRoleAPI.create(idUser,idRole,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
 
   void testDeleteUserRole() {
@@ -60,10 +60,10 @@ class UserRoleTests extends functionaltestplugin.FunctionalTestCase {
       def idRole = role.id
 
       def result = UserRoleAPI.delete(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = UserRoleAPI.show(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
 
 
   }

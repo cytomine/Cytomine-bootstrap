@@ -33,7 +33,7 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       def rel = BasicInstance.getBasicRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
 
       println "result=${result.data}"
@@ -47,9 +47,9 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
       //check if admin user can access/update/delete
-      assertEquals(200, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testRelationTermSecurityForOntologyCreator() {
@@ -61,15 +61,15 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       def rel = BasicInstance.getBasicRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
 
       //check if user 1 can access/update/delete
-      assertEquals(200, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME1,PASSWORD1).code)
-      assertTrue(RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAME1,PASSWORD1).data)))
-      assertEquals(200, RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME1,PASSWORD1).code)
+      assert (200 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME1,PASSWORD1).code)
+      assert (true ==RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAME1,PASSWORD1).data)))
+      assert (200 == RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME1,PASSWORD1).code)
   }
 
   void testRelationTermSecurityForProjectUser() {
@@ -83,7 +83,7 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       def rel = BasicInstance.getBasicRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
@@ -94,29 +94,29 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       Infos.printRight(relationterm)
       //check if user 2 can access/update/delete
-      assertEquals(200, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
-      assertTrue(RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAME2,PASSWORD2).data)))
+      assert (200 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
+      assert (true ==RelationTermAPI.containsInJSONList(relationterm.id,JSON.parse(RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAME2,PASSWORD2).data)))
 
 
       //remove right to user2
       resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
 
       Infos.printRight(relationterm)
       //check if user 2 cannot access/update/delete
-      assertEquals(403, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
+      assert (403 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete relationterm
       def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resDelProj.code)
+      assert (200 == resDelProj.code)
 
 
-      assertEquals(403, RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
+      assert (403 == RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
   }
 
   void testRelationTermSecurityForSimpleUser() {
@@ -130,13 +130,13 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       def rel = BasicInstance.getBasicRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
       //check if user 2 cannot access/update/delete
-      assertEquals(403, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
+      assert (403 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
+      assert (403 == RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -149,13 +149,13 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       def rel = BasicInstance.getBasicRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
       //check if user 2 cannot access/update/delete
-      assertEquals(401, RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == RelationTermAPI.listByTermAll(relationterm.term1.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == RelationTermAPI.delete(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 }

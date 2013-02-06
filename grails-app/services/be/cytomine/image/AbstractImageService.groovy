@@ -147,7 +147,7 @@ class AbstractImageService extends ModelService {
         AbstractImage abstractImage = res.object
         Group group = Group.findByName(currentUser.getUsername())
 
-        AbstractImageGroup aig = new AbstractImageGroup(abstractimage: abstractImage,group:group)
+        AbstractImageGroup aig = new AbstractImageGroup(abstractImage: abstractImage,group:group)
         aig.save(flush:true,failOnError: true)
 
         json.storage.each { storageID ->
@@ -403,11 +403,11 @@ class AbstractImageService extends ModelService {
 
     def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction,Task task=null) {
         if(task) {
-            def nb = AbstractImageGroup.countByAbstractimage(ai)
+            def nb = AbstractImageGroup.countByAbstractImage(ai)
             taskService.updateTask(task,"Delete $nb link to group")
         }
 
-        AbstractImageGroup.findAllByAbstractimage(ai).each {
+        AbstractImageGroup.findAllByAbstractImage(ai).each {
             abstractImageGroupService.delete(it,transaction,false)
         }
     }

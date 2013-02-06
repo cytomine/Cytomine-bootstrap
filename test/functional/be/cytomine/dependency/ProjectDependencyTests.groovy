@@ -25,7 +25,7 @@ import be.cytomine.Exception.ConstraintException
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class ProjectDependencyTests extends functionaltestplugin.FunctionalTestCase {
+class ProjectDependencyTests  {
 
     void testProjectDependency() {
         //create a term and all its dependence domain
@@ -34,13 +34,13 @@ class ProjectDependencyTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assertEquals(200, ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create) => CANNOT UNDO DELETE PROJECT!
-        assertEquals(404, ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
     }
 
 
@@ -57,13 +57,13 @@ class ProjectDependencyTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assertEquals(200, ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD,task).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD,task).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create) => CANNOT UNDO DELETE PROJECT!
-        assertEquals(404, ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         task.refresh()
         println "###############################################"
@@ -85,7 +85,7 @@ class ProjectDependencyTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkIfDomainsExist([file])
 
         //try to delete term
-        assertEquals(ConstraintException.CODE, ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsExist(dependentDomain)

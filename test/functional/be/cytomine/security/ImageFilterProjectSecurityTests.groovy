@@ -34,24 +34,24 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject1 = result.data
 
         //Add imageFilterProject 2 with user 1
         ImageFilterProject imageFilterProject2 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject2.project = project
         result = ImageFilterProjectAPI.create(imageFilterProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject2 = result.data
 
         //Get/List imageFilterProject with cytomine admin
         result = ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         log.info "JSON.parse(result.data)="+JSON.parse(result.data)
-        assertTrue(ImageFilterProjectAPI.containsInJSONList(imageFilterProject2.id, JSON.parse(result.data)))
+        assert (true ==ImageFilterProjectAPI.containsInJSONList(imageFilterProject2.id, JSON.parse(result.data)))
 
         //Delete imageFilterProject 2 with cytomine admin
-        assertEquals(200, ImageFilterProjectAPI.delete(imageFilterProject2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == ImageFilterProjectAPI.delete(imageFilterProject2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
     }
 
     void testimageFilterProjectSecurityForProjectUserAndimageFilterProjectAdmin() {
@@ -66,16 +66,16 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         ImageFilterProject imageFilterProject2 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject2.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject2 = result.data
 
         //Get/List imageFilterProject 2 with user 1
         result = ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
-        assertTrue(ImageFilterProjectAPI.containsInJSONList(imageFilterProject2.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==ImageFilterProjectAPI.containsInJSONList(imageFilterProject2.id, JSON.parse(result.data)))
 
         //Delete imageFilterProject 2 with user 1
-        assertEquals(200, ImageFilterProjectAPI.delete(imageFilterProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == ImageFilterProjectAPI.delete(imageFilterProject2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
     }
 
     void testimageFilterProjectSecurityForProjectUser() {
@@ -93,22 +93,22 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         Infos.printRight(project)
-        assertEquals(200, resAddUser.code)
+        assert 200 == resAddUser.code
 
         //Add imageFilterProject 1 with user 1
         ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject1 = result.data
 
         //Get/List imageFilterProject 1 with user 2
         result = ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(200, result.code)
-        assertTrue(ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
 
         //Delete imageFilterProject 1 with user 2
-        assertEquals(200, ImageFilterProjectAPI.delete(imageFilterProject1.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (200 == ImageFilterProjectAPI.delete(imageFilterProject1.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
 
@@ -127,16 +127,16 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject1 = result.data
 
         //Get/List imageFilterProject 1 with user 2
         result = ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(403, result.code)
-        //assertTrue(ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
+        assert (403 == result.code)
+        //assert (true ==ImageFilterProjectAPI.containsInJSONList(imageFilterProject1.id, JSON.parse(result.data)))
 
         //Delete imageFilterProject 1 with user 2
-        assertEquals(403, ImageFilterProjectAPI.delete(imageFilterProject1.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ImageFilterProjectAPI.delete(imageFilterProject1.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
 
@@ -154,12 +154,12 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         imageFilterProject.project = project
         imageFilterProject.project = image.project
         def result = ImageFilterProjectAPI.create(imageFilterProject.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         imageFilterProject = result.data
 
         //Get/List imageFilterProject 1 with user 2
-        assertEquals(401, ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, ImageFilterProjectAPI.delete(imageFilterProject.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ImageFilterProjectAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ImageFilterProjectAPI.delete(imageFilterProject.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
     }
 
 }

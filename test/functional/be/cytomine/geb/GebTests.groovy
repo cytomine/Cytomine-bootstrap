@@ -4,6 +4,10 @@ import geb.junit4.*
 import org.junit.Test
 import geb.Page
 import geb.Browser
+import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.Infos
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * User: lrollus
@@ -45,12 +49,20 @@ class GebTests extends GebReportingTest{
 //
 //     }
 
+    void testListProjectWithCredential() {
+        def result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONArray
+    }
+
 
      @Test
      void checkGoogle() {
 
 
 Browser.drive {
+    println "toto!!!"
     go "http://google.com/ncr"
 
       // make sure we actually got to the page
@@ -144,4 +156,4 @@ Browser.drive {
 ////        link { $('a') }
 //    }
 
-}
+//}

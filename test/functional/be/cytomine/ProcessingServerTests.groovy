@@ -15,18 +15,18 @@ import be.cytomine.test.http.ProcessingServerAPI
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class ProcessingServerTests extends functionaltestplugin.FunctionalTestCase {
+class ProcessingServerTests  {
 
   void testListProcessingServerWithCredential() {
       def result = ProcessingServerAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testShowProcessingServerWithCredential() {
       def result = ProcessingServerAPI.show(BasicInstance.createOrGetBasicProcessingServer().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }

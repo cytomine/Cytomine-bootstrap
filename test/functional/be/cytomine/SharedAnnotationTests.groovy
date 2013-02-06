@@ -15,12 +15,12 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  * Time: 9:01
  * To change this template use File | Settings | File Templates.
  */
-class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
+class SharedAnnotationTests  {
 
     void testGetAnnotationCommentWithCredential() {
         def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
         def result = AnnotationCommentAPI.show(sharedAnnotation.userAnnotation.id, sharedAnnotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -28,12 +28,12 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAnnotationCommentsByAnnotationWithCredential() {
         def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
         def result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = AnnotationCommentAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testAddAnnotationComments() {
@@ -43,6 +43,6 @@ class SharedAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         json.message = "message for test mail"
         json.users = [User.findByUsername('rmaree').id]
         def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 }

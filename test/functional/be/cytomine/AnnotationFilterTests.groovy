@@ -17,33 +17,33 @@ import be.cytomine.ontology.AnnotationFilter
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
+class AnnotationFilterTests  {
     
 
   void testListAnnotationFilterByProject() {
       def result = AnnotationFilterAPI.listByProject(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
 
       result = AnnotationFilterAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
     void testListAnnotationFilterByOntology() {
         def result = AnnotationFilterAPI.listByOntology(BasicInstance.createOrGetBasicProject().ontology.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = AnnotationFilterAPI.listByOntology(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
   void testShowAnnotationFilterWithCredential() {
       def result = AnnotationFilterAPI.show(BasicInstance.createOrGetBasicAnnotationFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
@@ -51,11 +51,11 @@ class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
   void testAddAnnotationFilterCorrect() {
       def annotationfilterToAdd = BasicInstance.getBasicAnnotationFilterNotExist()
       def result = AnnotationFilterAPI.create(annotationfilterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       int idAnnotationFilter = result.data.id
 
       result = AnnotationFilterAPI.show(idAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
 
   void testUpdateAnnotationFilterCorrect() {
@@ -63,7 +63,7 @@ class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
 
       def data = UpdateData.createUpdateSet(annotationfilterToAdd)
       def result = AnnotationFilterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idAnnotationFilter = json.annotationfilter.id
@@ -84,7 +84,7 @@ class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.id = -99
       jsonAnnotationFilter = jsonUpdate.encodeAsJSON()
       def result = AnnotationFilterAPI.update(-99, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
     void testEditAnnotationFilterWithBadName() {
@@ -95,7 +95,7 @@ class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.name = null
         jsonAnnotationFilter = jsonUpdate.encodeAsJSON()
         def result = AnnotationFilterAPI.update(annotationfilterToAdd.id, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
   void testDeleteAnnotationFilter() {
@@ -103,14 +103,14 @@ class AnnotationFilterTests extends functionaltestplugin.FunctionalTestCase {
       assert annotationfilterToDelete.save(flush: true)!= null
       def id = annotationfilterToDelete.id
       def result = AnnotationFilterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       def showResult = AnnotationFilterAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, showResult.code)
+      assert 404 == showResult.code
   }
 
   void testDeleteAnnotationFilterNotExist() {
       def result = AnnotationFilterAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 }

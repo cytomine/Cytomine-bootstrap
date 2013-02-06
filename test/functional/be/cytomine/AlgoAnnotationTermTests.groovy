@@ -14,12 +14,12 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  * Time: 9:31
  * To change this template use File | Settings | File Templates.
  */
-class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
+class AlgoAnnotationTermTests  {
 
     void testListAlgoAnnotationTerm() {
         def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
         def result = AnnotationTermAPI.listAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.userJob.username,"PasswordUserJob")
-        assertEquals(200,result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
     }
 
@@ -27,7 +27,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     void testGetAlgoAnnotationTermWithCredential() {
         def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
         def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
-        assertEquals(200,result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -37,7 +37,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
         def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
 
         def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,null,annotationTermToAdd.userJob.username,"PasswordUserJob")
-        assertEquals(200,result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -49,7 +49,7 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
         annotationTermToAdd.discard()
         String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
         def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,annotationTermToAdd.userJob.username,"PasswordUserJob")
-        assertEquals(200,result.code)
+        assert 200 == result.code
         log.info "1="+annotationTermToAdd.retrieveAnnotationDomain().id
         log.info "2="+annotationTermToAdd.term.id
         log.info "3="+annotationTermToAdd.userJob.id
@@ -60,6 +60,6 @@ class AlgoAnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
                 annotationTermToAdd.userJob.username,
                 "PasswordUserJob"
         )
-        assertEquals(200,result.code)
+        assert 200 == result.code
     }
 }

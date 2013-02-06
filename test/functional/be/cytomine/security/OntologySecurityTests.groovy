@@ -28,7 +28,7 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //Create new ontology (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Ontology ontology = result.data
       println "ontology="+ontology
       println "ontology.id="+ontology.id
@@ -36,10 +36,10 @@ class OntologySecurityTests extends SecurityTestsAbstract {
       Infos.printUserRight(user1)
       Infos.printUserRight(admin)
       //check if admin user can access/update/delete
-      assertEquals(200, OntologyAPI.show(ontology.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
-      assertEquals(200, OntologyAPI.delete(ontology.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == OntologyAPI.show(ontology.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == OntologyAPI.delete(ontology.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testOntologySecurityForOntologyCreator() {
@@ -49,14 +49,14 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //Create new Ontology (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Ontology ontology = result.data
 
       //check if user 1 can access/update/delete
-      assertEquals(200, OntologyAPI.show(ontology.id,USERNAME1,PASSWORD1).code)
-      assertTrue(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME1,PASSWORD1).data)))
-      assertEquals(200, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME1,PASSWORD1).code)
-      assertEquals(200, OntologyAPI.delete(ontology.id,USERNAME1,PASSWORD1).code)
+      assert (200 == OntologyAPI.show(ontology.id,USERNAME1,PASSWORD1).code)
+      assert (true ==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME1,PASSWORD1).data)))
+      assert (200 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME1,PASSWORD1).code)
+      assert (200 == OntologyAPI.delete(ontology.id,USERNAME1,PASSWORD1).code)
   }
 
   void testOntologySecurityForProjectUser() {
@@ -70,7 +70,7 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //Create new Ontology (user1)
       def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Ontology ontology = result.data
 
       Project project = BasicInstance.createBasicProjectNotExist()
@@ -79,32 +79,32 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       Infos.printRight(ontology)
       //check if user 2 can access/update/delete
-      assertEquals(200, OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
-      assertTrue(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (200 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+      assert (true ==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
 
       //remove right to user2
       resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,USERNAME1,PASSWORD1)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
 
       Infos.printRight(ontology)
       //check if user 2 cannot access/update/delete
-      assertEquals(403, OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
-      assertFalse(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+      assert(false==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete ontology
       def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200, resDelProj.code)
+      assert (200 == resDelProj.code)
 
 
-      assertEquals(403, OntologyAPI.delete(ontology.id,USERNAME2,PASSWORD2).code)
+      assert (403 == OntologyAPI.delete(ontology.id,USERNAME2,PASSWORD2).code)
   }
 
   void testOntologySecurityForSimpleUser() {
@@ -116,14 +116,14 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //Create new Ontology (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Ontology ontology = result.data
       Infos.printRight(ontology)
       //check if user 2 cannot access/update/delete
-      assertEquals(403, OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
-      assertFalse(OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, OntologyAPI.delete(ontology.id,USERNAME2,PASSWORD2).code)
+      assert (403 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+      assert (false==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == OntologyAPI.delete(ontology.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -134,13 +134,13 @@ class OntologySecurityTests extends SecurityTestsAbstract {
 
       //Create new Ontology (user1)
       def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Ontology ontology = result.data
       Infos.printRight(ontology)
       //check if user 2 cannot access/update/delete
-      assertEquals(401, OntologyAPI.show(ontology.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, OntologyAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, OntologyAPI.delete(ontology.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == OntologyAPI.show(ontology.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == OntologyAPI.list(USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == OntologyAPI.delete(ontology.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 }

@@ -16,50 +16,50 @@ import be.cytomine.ontology.Relation
  * Time: 11:01
  * To change this template use File | Settings | File Templates.
  */
-class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
+class RelationTermTests {
 
     void testShowRelationTerm() {
         RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
         def result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
         result = RelationTermAPI.show(-99,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         result = RelationTermAPI.show(relationTerm.relation.id,-99,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListRelation() {
         def result = RelationTermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
     
   void testListRelationTermByTerm1() {
       def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
 
       result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
     void testListRelationTermByTerm2() {
         def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
     
     void testListRelationTermByRelation() {
         def result = RelationTermAPI.listByRelation(BasicInstance.createOrGetBasicRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -67,17 +67,17 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
 
     void testListRelationTermByTerm() {
         def result = RelationTermAPI.listByTermAll(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = RelationTermAPI.listByTermAll(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListRelationTermByRelationParent() {
         def result = RelationTermAPI.listByRelation(null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -96,23 +96,23 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
 
       def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       //int idRelationTerm = result.data.id
 
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
 
       result = RelationTermAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
   }
 
@@ -128,7 +128,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
         jsonRelationTerm = json.toString()
 
         def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         //int idRelationTerm = result.data.id
 
     }
@@ -144,7 +144,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
 
       def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
 
   void testAddRelationTermWithRelationNotExist() {
@@ -157,7 +157,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
     jsonRelationTerm = json.toString()
 
       def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(400, result.code)
+      assert 400 == result.code
   }
 
   void testAddRelationTermWithTerm1NotExist() {
@@ -170,7 +170,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
   
         def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
   }
 
   void testAddRelationTermWithTerm2NotExist() {
@@ -183,7 +183,7 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       jsonRelationTerm = json.toString()
   
         def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
   }
 
   void testDeleteRelationTerm() {
@@ -194,22 +194,22 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
       int idTerm1 = relationtermToDelete.term1.id
       int idTerm2 = relationtermToDelete.term2.id
       def result = RelationTermAPI.delete(relationtermToDelete.relation.id,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       def showResult = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, showResult.code)
+      assert 404 == showResult.code
 
       result = RelationTermAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
     void testDeleteRelationTermDefaultParent() {
@@ -217,13 +217,13 @@ class RelationTermTests extends functionaltestplugin.FunctionalTestCase{
         relationtermToDelete.relation = Relation.findByName(RelationTerm.names.PARENT)
         assert relationtermToDelete.save(flush: true)  != null
         def result = RelationTermAPI.delete(null,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
     }
 
   void testDeleteRelationTermNotExist() {
       def result = RelationTermAPI.delete(-99,-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
 

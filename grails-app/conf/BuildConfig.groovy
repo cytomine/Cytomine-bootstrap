@@ -63,7 +63,7 @@ grails.project.dependency.resolution = {
 
         test ':code-coverage:1.2'
         test ':selenium-rc:1.0.2'
-        test ':functional-test:2.0.RC1'
+//        test ':functional-test:2.0.RC1'
 
         test(":spock:0.7") {
           exclude "spock-grails-support"

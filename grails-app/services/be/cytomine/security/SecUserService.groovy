@@ -273,8 +273,10 @@ class SecUserService extends ModelService {
             if (project) {
                 log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
                 if(admin) {
-                    permissionService.addPermission(project,user.username,ADMINISTRATION)
-                    //permissionService.addPermission(project.ontology,user.username,READ)
+                    synchronized (this.getClass()) {
+                     permissionService.addPermission(project,user.username,ADMINISTRATION)
+                     permissionService.addPermission(project.ontology,user.username,READ)
+                    }
                 }
                 else {
                     synchronized (this.getClass()) {

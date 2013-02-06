@@ -18,58 +18,58 @@ import be.cytomine.utils.UpdateData
  * Time: 9:31
  * To change this template use File | Settings | File Templates.
  */
-class TermTests extends functionaltestplugin.FunctionalTestCase {
+class TermTests  {
 
 
   void testListOntologyTermByOntologyWithCredential() {
       Ontology ontology = BasicInstance.createOrGetBasicOntology()
       def result = TermAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testListTermOntologyByOntologyWithOntologyNotExist() {
       def result = TermAPI.listByOntology(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
     void testListOntologyTermByProjectWithCredential() {
         Project project = BasicInstance.createOrGetBasicProject()
         def result = TermAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListTermOntologyByProjectWithProjectNotExist() {
         def result = TermAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testStatTerm() {
         def result = TermAPI.statsTerm(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testStatTermNotExist() {
         def result = TermAPI.statsTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
   void testListTermWithCredential() {
       def result = TermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testShowTermWithCredential() {
       def result = TermAPI.show(BasicInstance.createOrGetBasicTerm().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
@@ -77,23 +77,23 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
   void testAddTermCorrect() {
       def termToAdd = BasicInstance.getBasicTermNotExist()
       def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       int idTerm = result.data.id
 
       result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = TermAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
 
       result = TermAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
     
     void testAddTermMultipleCorrect() {
@@ -103,20 +103,20 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
         terms << JSON.parse(termToAdd1.encodeAsJSON())
         terms << JSON.parse(termToAdd2.encodeAsJSON())
         def result = TermAPI.create(terms.encodeAsJSON() , Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }    
 
     void testAddTermAlreadyExist() {
        def termToAdd = BasicInstance.createOrGetBasicTerm()
        def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(409, result.code)
+       assert 409 == result.code
    }
  
    void testUpdateTermCorrect() {
        Term termToAdd = BasicInstance.createOrGetBasicTerm()
        def data = UpdateData.createUpdateSet(termToAdd)
        def result = TermAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject
        int idTerm = json.term.id
@@ -126,12 +126,12 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
        BasicInstance.compareTerm(data.mapNew, json)
  
        showResult = TermAPI.undo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        BasicInstance.compareTerm(data.mapOld, JSON.parse(showResult.data))
  
        showResult = TermAPI.redo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        BasicInstance.compareTerm(data.mapNew, JSON.parse(showResult.data))
    }
@@ -147,7 +147,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
        jsonUpdate.id = -99
        jsonTerm = jsonUpdate.encodeAsJSON()
        def result = TermAPI.update(-99, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
  
    void testUpdateTermWithNameAlreadyExist() {
@@ -161,7 +161,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
        jsonUpdate.name = termWithOldName.name
        jsonTerm = jsonUpdate.encodeAsJSON()
        def result = TermAPI.update(termToEdit.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(409, result.code)
+       assert 409 == result.code
    }
      
      void testEditTermWithBadName() {
@@ -172,7 +172,7 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
          jsonUpdate.name = null
          jsonTerm = jsonUpdate.encodeAsJSON()
          def result = TermAPI.update(termToAdd.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assertEquals(400, result.code)
+         assert 400 == result.code
      }
  
    void testDeleteTerm() {
@@ -180,26 +180,26 @@ class TermTests extends functionaltestplugin.FunctionalTestCase {
        assert termToDelete.save(flush: true)!= null
        def id = termToDelete.id
        def result = TermAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        def showResult = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, showResult.code)
+       assert 404 == showResult.code
  
        result = TermAPI.undo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = TermAPI.redo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
  
    void testDeleteTermNotExist() {
        def result = TermAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
 }

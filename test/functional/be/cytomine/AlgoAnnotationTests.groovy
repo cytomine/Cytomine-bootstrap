@@ -26,12 +26,12 @@ import be.cytomine.utils.UpdateData
  * Time: 9:01
  * To change this template use File | Settings | File Templates.
  */
-class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
+class AlgoAnnotationTests  {
 
     void testGetAlgoAnnotationWithCredential() {
         def annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -39,7 +39,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAlgoAnnotationWithCredential() {
         BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -47,20 +47,20 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAlgoAnnotationByImageWithCredential() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByImage(annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListAlgoAnnotationByImageNotExistWithCredential() {
         def result = AlgoAnnotationAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListAlgoAnnotationByProjectWithCredential() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -68,24 +68,24 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAlgoAnnotationByProjectWithOffset() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id,true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
     }
 
     void testListAlgoAnnotationByProjectNotExistWithCredential() {
         def result = AlgoAnnotationAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListAlgoAnnotationByProjecImageAndUsertWithCredential() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = AlgoAnnotationAPI.listByProject(-99, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListAlgoAnnotationByImageAndUserWithCredential() {
@@ -95,26 +95,26 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
 
         def result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         String bbox = "1,1,10000,10000"
 
         result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
@@ -122,11 +122,11 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAlgoAnnotationByProjectAndTermAndUserWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json instanceof JSONArray
         result = AlgoAnnotationAPI.listByProjectAndTerm(-99, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         json = JSON.parse(result.data)
     }
 
@@ -140,23 +140,23 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
                 Infos.GOODLOGIN,
                 Infos.GOODPASSWORD
         )
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
     }
     
     void testListAlgoAnnotationByProjectAndTermWithUserNullWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, -99, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assertEquals(404, result.code)
+         assert 404 == result.code
     }
 
     void testListAlgoAnnotationByProjectAndTermAndUserAndImageWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json instanceof JSONArray
     }
@@ -164,14 +164,14 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
     void testListAlgoAnnotationyProjectAndUsersWithCredential() {
         AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
     }
     
     void testDownloadAlgoAnnotationDocument() {
         AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
         def result = AlgoAnnotationAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationCorrect() {
@@ -179,23 +179,23 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         UserJob user = annotationToAdd.user
         try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
         def result = AlgoAnnotationAPI.create(annotationToAdd.encodeAsJSON(),user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idAnnotation = result.data.id
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(404, result.code)
+        assert 404 == result.code
 
         result = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationMultipleCorrect() {
@@ -210,7 +210,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
         def result = AlgoAnnotationAPI.create(annotations.encodeAsJSON() , user1.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationCorrectWithoutProject() {
@@ -220,7 +220,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationCorrectWithTerm() {
@@ -235,23 +235,23 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         annotationWithTerm.term = [idTerm1, idTerm2]
 
         def result = AlgoAnnotationAPI.create(annotationWithTerm.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idAnnotation = result.data.id
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(404, result.code)
+        assert 404 == result.code
 
         result = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationWithoutProject() {
@@ -262,7 +262,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         updateAnnotation.project = null
 
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddAlgoAnnotationBadGeom() {
@@ -277,7 +277,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         updateAnnotation.term = [idTerm1, idTerm2]
 
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testAddAlgoAnnotationBadGeomEmpty() {
@@ -287,7 +287,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testAddAlgoAnnotationBadGeomNull() {
@@ -297,7 +297,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testAddAlgoAnnotationImageNotExist() {
@@ -307,7 +307,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testEditAlgoAnnotation() {
@@ -316,7 +316,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = AlgoAnnotationAPI.update(data.oldData.id, data.newData,user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idAnnotation = json.annotation.id
@@ -326,12 +326,12 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.compareAnnotation(data.mapNew, json)
 
         showResult = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
     }
@@ -344,7 +344,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
         jsonAnnotation.id = "-99"
         def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), user.username,'PasswordUserJob')
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testEditAlgoAnnotationWithBadGeometry() {
@@ -354,7 +354,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
         def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testDeleteAlgoAnnotation() {
@@ -364,27 +364,27 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def id = annotationToDelete.id
         def result = AlgoAnnotationAPI.delete(id, user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         def showResult = AlgoAnnotationAPI.show(id, user.username,'PasswordUserJob')
-        assertEquals(404, showResult.code)
+        assert 404 == showResult.code
 
         result = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(id, user.username,'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = AlgoAnnotationAPI.show(id, user.username,'PasswordUserJob')
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testDeleteAlgoAnnotationNotExist() {
         def result = AlgoAnnotationAPI.delete(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testDeleteAlgoAnnotationWithData() {
@@ -393,7 +393,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         def annotationToDelete = annotTerm.retrieveAnnotationDomain()
         def result = AlgoAnnotationAPI.delete(annotationToDelete.id,user.username,'PasswordUserJob')
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testListingAlgoAnnotationWithoutTermAlgo() {
@@ -434,7 +434,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         //list annotation without term with this user
         def result = AlgoAnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
@@ -443,7 +443,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         //list annotation without term with this user
         result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
@@ -494,7 +494,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         //list annotation without term with this user
         def result = AlgoAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
@@ -503,7 +503,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
 
         //list annotation without term with this user
         result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
@@ -515,11 +515,11 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         def a1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
         def result
         result = AlgoAnnotationAPI.union(-99,a1.retrieveAnnotationDomain().user.id,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,-99,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
         result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,a1.retrieveAnnotationDomain().user.id,-99,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testUnionAlgoAnnotationByProjectWithCredential() {
@@ -548,7 +548,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
     }
@@ -579,7 +579,7 @@ class AlgoAnnotationTests extends functionaltestplugin.FunctionalTestCase {
         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
     }

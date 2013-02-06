@@ -16,23 +16,23 @@ import be.cytomine.laboratory.Sample
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class SampleTests extends functionaltestplugin.FunctionalTestCase {
+class SampleTests  {
 
   void testListSampleWithCredential() {
       def result = SampleAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
   }
 
   void testListSampleWithoutCredential() {
       def result = SampleAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
-      assertEquals(401, result.code)
+      assert 401 == result.code
   }
 
   void testShowSampleWithCredential() {
       def result = SampleAPI.show(BasicInstance.createOrGetBasicSample().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
@@ -40,29 +40,29 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
   void testAddSampleCorrect() {
       def sampleToAdd = BasicInstance.getBasicSampleNotExist()
       def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       int idSample = result.data.id
 
       result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
 
       result = SampleAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
   }
 
   void testAddSampleAlreadyExist() {
       def sampleToAdd = BasicInstance.createOrGetBasicSample()
       def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
 
   void testUpdateSampleCorrect() {
@@ -70,7 +70,7 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
 
       def data = UpdateData.createUpdateSet(sampleToAdd)
       def result = SampleAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idSample = json.sample.id
@@ -80,12 +80,12 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
       BasicInstance.compareSample(data.mapNew, json)
 
       showResult = SampleAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       BasicInstance.compareSample(data.mapOld, JSON.parse(showResult.data))
 
       showResult = SampleAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       BasicInstance.compareSample(data.mapNew, JSON.parse(showResult.data))
   }
@@ -101,7 +101,7 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.id = -99
       jsonSample = jsonUpdate.encodeAsJSON()
       def result = SampleAPI.update(-99, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testUpdateSampleWithNameAlreadyExist() {
@@ -114,7 +114,7 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
       jsonUpdate.name = sampleWithOldName.name
       jsonSample = jsonUpdate.encodeAsJSON()
       def result = SampleAPI.update(sampleToEdit.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(409, result.code)
+      assert 409 == result.code
   }
     
     void testEditSampleWithBadName() {
@@ -125,7 +125,7 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.name = null
         jsonSample = jsonUpdate.encodeAsJSON()
         def result = SampleAPI.update(sampleToAdd.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
   void testDeleteSample() {
@@ -133,26 +133,26 @@ class SampleTests extends functionaltestplugin.FunctionalTestCase {
       assert sampleToDelete.save(flush: true)!= null
       def id = sampleToDelete.id
       def result = SampleAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       def showResult = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, showResult.code)
+      assert 404 == showResult.code
 
       result = SampleAPI.undo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.redo()
-      assertEquals(200, result.code)
+      assert 200 == result.code
 
       result = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 
   void testDeleteSampleNotExist() {
       def result = SampleAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assertEquals(404, result.code)
+      assert 404 == result.code
   }
 }

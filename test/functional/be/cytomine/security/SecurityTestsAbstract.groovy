@@ -9,7 +9,7 @@ import be.cytomine.test.BasicInstance
  * Time: 11:08
  * To change this template use File | Settings | File Templates.
  */
-class SecurityTestsAbstract extends functionaltestplugin.FunctionalTestCase {
+class SecurityTestsAbstract  {
 
     /**
      * Security test

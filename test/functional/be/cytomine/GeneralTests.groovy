@@ -16,7 +16,7 @@ import be.cytomine.ontology.UserAnnotation
  * Time: 9:01
  * To change this template use File | Settings | File Templates.
  */
-class GeneralTests extends functionaltestplugin.FunctionalTestCase {
+class GeneralTests  {
 
     def aclService
     def aclUtilService
@@ -50,7 +50,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         client.disconnect();
 
         log.info("check response")
-        assertEquals(true, code != 413)
+        assert code != 413
         def json = JSON.parse(response)
     }
 
@@ -58,23 +58,23 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
 
         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idAnnotation = result.data.id
 
         result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = UserAnnotationAPI.undo()
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
 
         result = UserAnnotationAPI.redo()
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         /*
         * Get the last 3 commands: it must be "REDO ADD ANNOTATION", "UNDO ADD ANNOTATION" and "ADD ANNOTATION"
@@ -88,7 +88,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
-        assertEquals(200, code)
+        assert 200 == code
         def json = JSON.parse(response)
         assert json instanceof JSONArray
 
@@ -101,7 +101,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         client.get()
         int code = client.getResponseCode()
         client.disconnect();
-        assertEquals(404, code)
+        assert 404 == code
     }
 
     void testMultipleAuthConnexion() {
@@ -147,7 +147,7 @@ class GeneralTests extends functionaltestplugin.FunctionalTestCase {
         client.post(json)
         int code = client.getResponseCode()
         client.disconnect();
-        assertEquals(200, code)
+        assert 200 == code
     }
 
 }

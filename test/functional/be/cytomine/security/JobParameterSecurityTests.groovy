@@ -29,7 +29,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //Add jobParameter instance to project
@@ -38,14 +38,14 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
 
       //check if admin user can access/update/delete
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       jobParameter = result.data
-      assertEquals(200, JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 == JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
       result = JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
-      assertEquals(200, result.code)
-      assertTrue(JobParameterAPI.containsInJSONList(jobParameter.id,JSON.parse(result.data)))
-      assertEquals(200, JobParameterAPI.update(jobParameter.id,jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
-      assertEquals(200, JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert 200 == result.code
+      assert (true ==JobParameterAPI.containsInJSONList(jobParameter.id,JSON.parse(result.data)))
+      assert (200 == JobParameterAPI.update(jobParameter.id,jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
+      assert (200 == JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
   }
 
   void testJobParameterSecurityForProjectUser() {
@@ -59,13 +59,13 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //add right to user 2
       def resAddUser = ProjectAPI.addUserProject(project.id,user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       Infos.printRight(project)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
 
       //Add jobParameter instance to project
       JobParameter jobParameter = BasicInstance.getBasicJobParameterNotExist()
@@ -73,14 +73,14 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       jobParameter.job.save(flush: true)
       //check if user 2 can access/update/delete
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       jobParameter = result.data
-      assertEquals(200, JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (200 == JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
       result = JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(200, result.code)
-      assertTrue(JobParameterAPI.containsInJSONList(jobParameter.id,JSON.parse(result.data)))
-      //assertEquals(200, JobParameterAPI.update(jobParameter,USERNAME2,PASSWORD2).code)
-      assertEquals(200, JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert 200 == result.code
+      assert (true ==JobParameterAPI.containsInJSONList(jobParameter.id,JSON.parse(result.data)))
+      //assert (200 == JobParameterAPI.update(jobParameter,USERNAME2,PASSWORD2).code)
+      assert (200 == JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
   }
 
   void testJobParameterSecurityForSimpleUser() {
@@ -94,7 +94,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //Add jobParameter instance to project
@@ -104,15 +104,15 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       //check if simple user can access/update/delete
       println "1111111111111111111111"
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
-      assertEquals(403, result.code)
+      assert (403 == result.code)
 
       BasicInstance.saveDomain(jobParameter)
 
       println "2222222222222222222"
-      assertEquals(403, JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
-      assertEquals(403,JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
-      //assertEquals(403, JobParameterAPI.update(jobParameter,USERNAME2,PASSWORD2).code)
-      assertEquals(403, JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 == JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 ==JobParameterAPI.listByJob(jobParameter.job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      //assert (403 == JobParameterAPI.update(jobParameter,USERNAME2,PASSWORD2).code)
+      assert (403 == JobParameterAPI.delete(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
   }
 
 }

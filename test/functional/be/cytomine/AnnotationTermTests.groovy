@@ -17,40 +17,40 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  * Time: 10:58
  * To change this template use File | Settings | File Templates.
  */
-class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
+class AnnotationTermTests  {
 
   void testGetAnnotationTermWithCredential() {
     User currentUser = User.findByUsername(Infos.GOODLOGIN)
     def annotationTermToAdd = BasicInstance.createOrGetBasicAnnotationTerm()
     def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.userAnnotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json instanceof JSONObject
   }
 
   void testListAnnotationTermByAnnotationWithCredential() {
     def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json instanceof JSONArray
 
     result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(404,result.code)
+    assert 404 == result.code
   }
 
     void testListAnnotationTermByAnnotationWithCredentialWithUser() {
       def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200,result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
 
       result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(404,result.code)
+      assert 404 == result.code
     }
 
     void testListAnnotationTermByUserNotWithCredential() {
       def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200,result.code)
+      assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONArray
     }
@@ -61,7 +61,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     annotationTermToAdd.discard()
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     AnnotationTerm annotationTerm = result.data
     Long idAnnotation = annotationTerm.userAnnotation.id
@@ -69,20 +69,20 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.undo()
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(404,result.code)
+    assert 404 == result.code
 
     result = AnnotationTermAPI.redo()
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
   }
 
@@ -92,7 +92,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
       annotationTermToAdd.discard()
       String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
       def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD,true)
-      assertEquals(200,result.code)
+      assert 200 == result.code
 
       AnnotationTerm annotationTerm = result.data
       Long idAnnotation = annotationTerm.userAnnotation.id
@@ -100,20 +100,20 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
       log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
       result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200,result.code)
+      assert 200 == result.code
 
       result = AnnotationTermAPI.undo()
-      assertEquals(200,result.code)
+      assert 200 == result.code
 
       result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(404,result.code)
+      assert 404 == result.code
 
       result = AnnotationTermAPI.redo()
-      assertEquals(200,result.code)
+      assert 200 == result.code
 
       log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
       result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assertEquals(200,result.code)
+      assert 200 == result.code
 
     }
 
@@ -123,7 +123,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     //annotationTermToAdd is in database, we will try to add it twice
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(409,result.code)
+    assert 409 == result.code
   }
 
   void testAddAnnotationTermWithAnnotationNotExist() {
@@ -133,7 +133,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     jsonUpdate.userannotation = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(400,result.code)
+    assert 400 == result.code
   }
 
   void testAddAnnotationTermWithTermNotExist() {
@@ -143,7 +143,7 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     jsonUpdate.term = -99
     jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(400,result.code)
+    assert 400 == result.code
   }
 
   void testDeleteAnnotationTerm() {
@@ -155,27 +155,27 @@ class AnnotationTermTests extends functionaltestplugin.FunctionalTestCase {
     int idUser = currentUser.id
 
     def result = AnnotationTermAPI.deleteAnnotationTerm(idAnnotation,idTerm,idUser,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,idUser,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(404,result.code)
+    assert 404 == result.code
 
     result = AnnotationTermAPI.undo()
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.redo()
-    assertEquals(200,result.code)
+    assert 200 == result.code
 
     result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(404,result.code)
+    assert 404 == result.code
 
   }
 
   void testDeleteAnnotationTermNotExist() {
     def result = AnnotationTermAPI.deleteAnnotationTerm(-99,-99,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assertEquals(404,result.code)
+    assert 404 == result.code
   }
 }

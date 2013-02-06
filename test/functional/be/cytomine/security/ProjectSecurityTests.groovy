@@ -26,16 +26,16 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
        Infos.printRight(project)
       Infos.printUserRight(user1)
        Infos.printUserRight(admin)
       //check if admin user can access/update/delete
-      assertEquals(200, ProjectAPI.show(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
-      assertEquals(200, ProjectAPI.delete(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == ProjectAPI.show(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == ProjectAPI.delete(project.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testProjectSecurityForProjectCreator() {
@@ -45,14 +45,14 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //check if user 1 can access/update/delete
-      assertEquals(200, ProjectAPI.show(project.id,USERNAME1,PASSWORD1).code)
-      assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME1,PASSWORD1).data)))
-      assertEquals(200, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME1,PASSWORD1).code)
-      assertEquals(200, ProjectAPI.delete(project.id,USERNAME1,PASSWORD1).code)
+      assert (200 == ProjectAPI.show(project.id,USERNAME1,PASSWORD1).code)
+      assert (true ==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME1,PASSWORD1).data)))
+      assert (200 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME1,PASSWORD1).code)
+      assert (200 == ProjectAPI.delete(project.id,USERNAME1,PASSWORD1).code)
   }
 
   void testProjectSecurityForProjectUser() {
@@ -64,32 +64,32 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
 
       //Add right to user2
       def resAddUser = ProjectAPI.addUserProject(project.id,user2.id,USERNAME1,PASSWORD1)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
       //log.info "AFTER:"+user2.getAuthorities().toString()
 
       Infos.printRight(project)
       //check if user 2 can access/update/delete
-      assertEquals(200, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
-      assertTrue(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
+      assert (200 == ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
+      assert (true ==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
 
 
       //remove right to user2
       resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,USERNAME1,PASSWORD1)
-      assertEquals(200, resAddUser.code)
+      assert 200 == resAddUser.code
 
       Infos.printRight(project)
       //check if user 2 cannot access/update/delete
-      assertEquals(403, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
-      assertFalse(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
-      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
+      assert (403 == ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
+      assert (false == ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
   }
 
   void testProjectSecurityForSimpleUser() {
@@ -101,15 +101,15 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
       Infos.printRight(project)
       //check if user 2 cannot access/update/delete
-      assertEquals(403, ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
-      assertFalse(ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
+      assert (403 == ProjectAPI.show(project.id,USERNAME2,PASSWORD2).code)
+      assert(false==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME2,PASSWORD2).data)))
       Infos.printRight(project)
-      assertEquals(403, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
+      assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -120,14 +120,14 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       Project project = result.data
       Infos.printRight(project)
       //check if user 2 cannot access/update/delete
-      assertEquals(401, ProjectAPI.show(project.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, ProjectAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, ProjectAPI.delete(project.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == ProjectAPI.show(project.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == ProjectAPI.list(USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == ProjectAPI.update(project.id,project.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == ProjectAPI.delete(project.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 
   void testAddProjectGrantAdminUndoRedo() {

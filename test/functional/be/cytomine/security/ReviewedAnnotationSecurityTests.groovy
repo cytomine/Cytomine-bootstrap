@@ -36,7 +36,7 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation1.image = image
         annotation1.project = project
         def result = ReviewedAnnotationAPI.create(annotation1.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation1 = result.data
 
         //Add annotation 2 with user 1
@@ -45,21 +45,21 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation2.project = project
         Infos.printRight(annotation2.project)
         result = ReviewedAnnotationAPI.create(annotation2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation2 = result.data
 
         //Get/List annotation with cytomine admin
-        assertEquals(200, ReviewedAnnotationAPI.show(annotation2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == ReviewedAnnotationAPI.show(annotation2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
         result = ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         log.info "JSON.parse(result.data)="+JSON.parse(result.data)
-        assertTrue(ReviewedAnnotationAPI.containsInJSONList(annotation2.id, JSON.parse(result.data)))
+        assert (true ==ReviewedAnnotationAPI.containsInJSONList(annotation2.id, JSON.parse(result.data)))
 
         //update annotation 2 with cytomine admin
-        assertEquals(200, ReviewedAnnotationAPI.update(annotation2.id,annotation2.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == ReviewedAnnotationAPI.update(annotation2.id,annotation2.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
 
         //Delete annotation 2 with cytomine admin
-        assertEquals(200, ReviewedAnnotationAPI.delete(annotation2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
+        assert (200 == ReviewedAnnotationAPI.delete(annotation2.id, SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN).code)
 
 
     }
@@ -77,21 +77,21 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation.image = image
         annotation.project = image.project
         def result = ReviewedAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation = result.data
 
         //Get/List annotation 1 with user 1
-        assertEquals(200, ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
         result = ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
-        assertTrue(ReviewedAnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==ReviewedAnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
 
         //update annotation 1 with user 1
         annotation.refresh()
-        assertEquals(200, ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
 
         //Delete annotation 1 with user 1
-        assertEquals(200, ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        assert (200 == ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
     }
 
     void testAnnotationSecurityForProjectUser() {
@@ -108,27 +108,27 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         //Add project right for user 2
         def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Infos.printRight(project)
-        assertEquals(200, resAddUser.code)
+        assert 200 == resAddUser.code
 
         //Add annotation 1 with user 1
         ReviewedAnnotation annotation = BasicInstance.getBasicReviewedAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
         def result = ReviewedAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation = result.data
 
         //Get/List annotation 1 with user 2
-        assertEquals(200, ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (200 == ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
         result = ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(200, result.code)
-        assertTrue(ReviewedAnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
+        assert 200 == result.code
+        assert (true ==ReviewedAnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
 
         //update annotation 1 with user 2
-        assertEquals(403, ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
 
         //Delete annotation 1 with user 2
-        assertEquals(403, ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
 
@@ -148,19 +148,19 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation.image = image
         annotation.project = image.project
         def result = ReviewedAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation = result.data
 
         //Get/List annotation 1 with user 2
-        assertEquals(403, ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
         result = ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
-        assertEquals(403, result.code)
+        assert (403 == result.code)
 
         //update annotation 1 with user 2
-        assertEquals(403, ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
 
         //Delete annotation 1 with user 2
-        assertEquals(403, ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
+        assert (403 == ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2).code)
     }
 
 
@@ -178,14 +178,14 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation.image = image
         annotation.project = image.project
         def result = ReviewedAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         annotation = result.data
 
         //Get/List annotation 1 with user 2
-        assertEquals(401, ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
-        assertEquals(401, ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ReviewedAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ReviewedAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ReviewedAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
+        assert (401 == ReviewedAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
     }
 
 }

@@ -23,7 +23,7 @@ import be.cytomine.ontology.ReviewedAnnotation
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class TermDependencyTests extends functionaltestplugin.FunctionalTestCase {
+class TermDependencyTests  {
 
 //Service TermService must implement deleteDependentAlgoAnnotationTerm(Term,transaction)!!!
 //Service TermService must implement deleteDependentAlgoAnnotationTerm(Term,transaction)!!!
@@ -44,20 +44,20 @@ class TermDependencyTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assertEquals(200, TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assertEquals(200, TermAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
 
         //check if all dependency are aivalable
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assertEquals(200, TermAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
@@ -80,7 +80,7 @@ class TermDependencyTests extends functionaltestplugin.FunctionalTestCase {
 
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
-        assertEquals(400, TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert(400 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         BasicInstance.checkIfDomainsExist(dependentDomain)
     }
@@ -97,20 +97,20 @@ class TermDependencyTests extends functionaltestplugin.FunctionalTestCase {
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assertEquals(200, OntologyAPI.delete(ontology.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == OntologyAPI.delete(ontology.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assertEquals(200, OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
 
         //check if all dependency are aivalable
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assertEquals(200, OntologyAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == OntologyAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstance.checkIfDomainsNotExist(dependentDomain)

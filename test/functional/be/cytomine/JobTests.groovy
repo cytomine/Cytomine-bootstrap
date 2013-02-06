@@ -23,11 +23,11 @@ import be.cytomine.utils.UpdateData
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class JobTests extends functionaltestplugin.FunctionalTestCase {
+class JobTests  {
 
     void testListJobWithCredential() {
         def result = JobAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
@@ -35,28 +35,28 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
     void testListJobBySoftwareAndProjectWithCredential() {
         Job job = BasicInstance.createOrGetBasicJob()
         def result = JobAPI.listBySoftwareAndProject(job.software.id,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
 
         result = JobAPI.listBySoftwareAndProject(-99,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
-        assertEquals(404, result.code)
+        assert 404 == result.code
 
         result = JobAPI.listBySoftwareAndProject(job.software.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListJobBySoftwareAndProjectWithCredentialLight() {
         Job job = BasicInstance.createOrGetBasicJob()
         def result = JobAPI.listBySoftwareAndProject(job.software.id,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testShowJobWithCredential() {
         def result = JobAPI.show(BasicInstance.createOrGetBasicJob().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -64,11 +64,11 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
     void testAddJobCorrect() {
         def jobToAdd = BasicInstance.getBasicJobNotExist()
         def result = JobAPI.create(jobToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idJob = result.data.id
   
         result = JobAPI.show(idJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddJobWithBadSoftware() {
@@ -79,14 +79,14 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.software = -99
         jsonJob = jsonUpdate.encodeAsJSON()
         def result = JobAPI.update(jobToAdd.id, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testUpdateJobCorrect() {
         Job jobToAdd = BasicInstance.createOrGetBasicJob()
         def data = UpdateData.createUpdateSet(jobToAdd)
         def result = JobAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -100,7 +100,7 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.id = -99
         jsonJob = jsonUpdate.encodeAsJSON()
         def result = JobAPI.update(-99, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testUpdateJobWithBadSoftware() {
@@ -111,7 +111,7 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.software = -99
         jsonJob = jsonUpdate.encodeAsJSON()
         def result = JobAPI.update(jobToAdd.id, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
     void testDeleteJob() {
@@ -119,31 +119,31 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
         assert jobToDelete.save(flush: true)!= null
         def id = jobToDelete.id
         def result = JobAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         def showResult = JobAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, showResult.code)
+        assert 404 == showResult.code
     }
 
     void testDeleteJobNotExist() {
         def result = JobAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
     void testListJobData() {
         Job job = BasicInstance.createOrGetBasicJob()
         def result = JobAPI.listAllJobData(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         result = JobAPI.listAllJobData(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
     void testDeleteAllJobDataJobNotExist() {
         def result = JobAPI.deleteAllJobData(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testDeleteAllJobData() {
@@ -179,7 +179,7 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
 
         //delete all job data
         def result = JobAPI.deleteAllJobData(job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         //count data = 0-0
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 0
@@ -213,7 +213,7 @@ class JobTests extends functionaltestplugin.FunctionalTestCase {
 
         //delete all job data
         def result = JobAPI.deleteAllJobData(job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
     }
 
 

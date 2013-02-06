@@ -33,14 +33,14 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
 
       //Create new software param (user1)
       def result = SoftwareParameterAPI.create(softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       softwareParameter = result.data
 
       //check if admin user can access/update/delete
-      assertEquals(200, SoftwareParameterAPI.show(softwareParameter.id,USERNAMEADMIN,PASSWORDADMIN).code)
-      assertTrue(SoftwareParameterAPI.containsInJSONList(softwareParameter.id,JSON.parse(SoftwareParameterAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
-      assertEquals(200, SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
-      assertEquals(200, SoftwareParameterAPI.delete(softwareParameter.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == SoftwareParameterAPI.show(softwareParameter.id,USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (true ==SoftwareParameterAPI.containsInJSONList(softwareParameter.id,JSON.parse(SoftwareParameterAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
+      assert (200 == SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
+      assert (200 == SoftwareParameterAPI.delete(softwareParameter.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
   void testSoftwareParameterSecurityForSoftwareCreator() {
@@ -57,13 +57,13 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
 
       //Create new software param (user1)
       def result = SoftwareParameterAPI.create(softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       softwareParameter = result.data
 
       //check if user 1 can access/update/delete
-      assertEquals(200, SoftwareParameterAPI.show(softwareParameter.id,USERNAME1,PASSWORD1).code)
-      assertEquals(200, SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1).code)
-      assertEquals(200, SoftwareParameterAPI.delete(softwareParameter.id,USERNAME1,PASSWORD1).code)
+      assert (200 == SoftwareParameterAPI.show(softwareParameter.id,USERNAME1,PASSWORD1).code)
+      assert (200 == SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1).code)
+      assert (200 == SoftwareParameterAPI.delete(softwareParameter.id,USERNAME1,PASSWORD1).code)
   }
 
   void testSoftwareParameterSecurityForSimpleUser() {
@@ -82,12 +82,12 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
 
       //Create new software param (user1)
       def result = SoftwareParameterAPI.create(softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       softwareParameter = result.data
       //check if user 2 cannot access/update/delete
-      assertEquals(200, SoftwareParameterAPI.show(softwareParameter.id,USERNAME2,PASSWORD2).code)
-      assertEquals(403, SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAME2,PASSWORD2).code)
-      assertEquals(403, SoftwareParameterAPI.delete(softwareParameter.id,USERNAME2,PASSWORD2).code)
+      assert (200 == SoftwareParameterAPI.show(softwareParameter.id,USERNAME2,PASSWORD2).code)
+      assert (403 == SoftwareParameterAPI.update(softwareParameter.id,softwareParameter.encodeAsJSON(),USERNAME2,PASSWORD2).code)
+      assert (403 == SoftwareParameterAPI.delete(softwareParameter.id,USERNAME2,PASSWORD2).code)
 
   }
 
@@ -105,12 +105,12 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
 
       //Create new software param (user1)
       def result = SoftwareParameterAPI.create(softwareParameter.encodeAsJSON(),USERNAME1,PASSWORD1)
-      assertEquals(200, result.code)
+      assert 200 == result.code
       softwareParameter = result.data
       //check if user 2 cannot access/update/delete
-      assertEquals(401, SoftwareParameterAPI.show(softwareParameter.id,USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareParameterAPI.list(USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareParameterAPI.update(softwareParameter.id,software.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
-      assertEquals(401, SoftwareParameterAPI.delete(softwareParameter.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareParameterAPI.show(softwareParameter.id,USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareParameterAPI.list(USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareParameterAPI.update(softwareParameter.id,software.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
+      assert (401 == SoftwareParameterAPI.delete(softwareParameter.id,USERNAMEBAD,PASSWORDBAD).code)
   }
 }

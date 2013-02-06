@@ -15,7 +15,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  * Time: 11:23
  * To change this template use File | Settings | File Templates.
  */
-class RelationTests extends functionaltestplugin.FunctionalTestCase{
+class RelationTests {
 
   void testListRelationWithCredential() {
 
@@ -29,7 +29,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
     client.disconnect();
 
     log.info("check response:"+response)
-    assertEquals(200,code)
+      assert 200==code
     def json = JSON.parse(response)
     assert json instanceof JSONArray
   }
@@ -48,7 +48,7 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
       client.disconnect();
 
       log.info("check response:"+response)
-      assertEquals(200,code)
+        assert 200==code
       def json = JSON.parse(response)
       assert json instanceof JSONObject
     }
@@ -65,6 +65,6 @@ class RelationTests extends functionaltestplugin.FunctionalTestCase{
       client.disconnect();
 
       log.info("check response:"+response)
-      assertEquals(404,code)
+        assert 404==code
     }
 }

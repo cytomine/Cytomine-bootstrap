@@ -18,23 +18,23 @@ import be.cytomine.utils.UpdateData
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
+class SoftwareTests  {
 
     void testListSoftwareWithCredential() {
        def result = SoftwareAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONArray
    }
  
    void testListSoftwareWithoutCredential() {
        def result = SoftwareAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
-       assertEquals(401, result.code)
+       assert 401 == result.code
    }
  
    void testShowSoftwareWithCredential() {
        def result = SoftwareAPI.show(BasicInstance.createOrGetBasicSoftware().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject
    }
@@ -42,36 +42,36 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
    void testAddSoftwareCorrect() {
        def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
        def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
        int idSoftware = result.data.id
  
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.undo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
  
        result = SoftwareAPI.redo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
    }
  
    void testAddSoftwareAlreadyExist() {
        def softwareToAdd = BasicInstance.createOrGetBasicSoftware()
        def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(409, result.code)
+       assert 409 == result.code
    }
  
    void testUpdateSoftwareCorrect() {
        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
        def data = UpdateData.createUpdateSet(softwareToAdd)
        def resultBase = SoftwareAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, resultBase.code)
+       assert 200==resultBase.code
        def json = JSON.parse(resultBase.data)
        assert json instanceof JSONObject
        int idSoftware = json.software.id
@@ -81,7 +81,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        BasicInstance.compareSoftware(data.mapNew, json)
 
        def result = SoftwareAPI.undo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        System.out.println("toto="+showResult);
        System.out.println("toto="+showResult.data);
@@ -90,7 +90,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        BasicInstance.compareSoftware(data.mapOld, JSON.parse(showResult.data))
 
        result = SoftwareAPI.redo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        BasicInstance.compareSoftware(data.mapNew, JSON.parse(showResult.data))
    }
@@ -106,7 +106,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        jsonUpdate.id = -99
        jsonSoftware = jsonUpdate.encodeAsJSON()
        def result = SoftwareAPI.update(-99, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
  
    void testUpdateSoftwareWithNameAlreadyExist() {
@@ -119,7 +119,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        jsonUpdate.name = softwareWithOldName.name
        jsonSoftware = jsonUpdate.encodeAsJSON()
        def result = SoftwareAPI.update(softwareToEdit.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(409, result.code)
+       assert 409 == result.code
    }
      
      void testEditSoftwareWithBadName() {
@@ -130,7 +130,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
          jsonUpdate.name = null
          jsonSoftware = jsonUpdate.encodeAsJSON()
          def result = SoftwareAPI.update(softwareToAdd.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assertEquals(400, result.code)
+         assert 400 == result.code
      }
  
    void testDeleteSoftware() {
@@ -139,33 +139,33 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
        assert softwareToDelete!= null
        def id = softwareToDelete.id
        def result = SoftwareAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        def showResult = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, showResult.code)
+       assert 404 == showResult.code
  
        result = SoftwareAPI.undo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.redo()
-       assertEquals(200, result.code)
+       assert 200 == result.code
  
        result = SoftwareAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
  
    void testDeleteSoftwareNotExist() {
        def result = SoftwareAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(404, result.code)
+       assert 404 == result.code
    }
  
    void testDeleteSoftwareWithProject() {
        def softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
        def result = SoftwareAPI.delete(softwareProject.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       assertEquals(200, result.code)
+       assert 200 == result.code
    }
 
     void testDeleteSoftwareWithJob() {
@@ -199,7 +199,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
          */
         Software softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
         def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idSoftware = result.data.id
 
         /*
@@ -213,7 +213,7 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
         String jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
         result = SoftwareParameterAPI.create(jsonSoftwareparameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         /*
         * test add software parameter T
@@ -226,21 +226,21 @@ class SoftwareTests extends functionaltestplugin.FunctionalTestCase {
         println("softwareparameterToAdd.version=" + softwareparameterToAdd.version)
         jsonSoftwareparameter = softwareparameterToAdd.encodeAsJSON()
         result = SoftwareParameterAPI.create(jsonSoftwareparameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
 
         /*
         * test add software parameter project x
         */
         def SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
         result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         int idSoftwareProject = result.data.id
         /*
         * test add software parameter project y
         */
         SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
         result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         idSoftwareProject = result.data.id
     }
 }

@@ -16,7 +16,7 @@ import be.cytomine.test.http.UserAnnotationAPI
  * Time: 9:01
  * To change this template use File | Settings | File Templates.
  */
-class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
+class MultithreadingTests  {
 
     void testMultithreadAnnotationAdd() {
 
@@ -33,7 +33,7 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
 
         for(int i=0;i<nbThread;i++) {
            ts[i].join()
-           assertEquals(200, ts[i].code)
+           assert 200==ts[i].code
         }
     }
 
@@ -50,7 +50,7 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
         }
         for(int i=0;i<nbThread;i++) {
            ts[i].join()
-           assertEquals(200, ts[i].code)
+            assert 200==ts[i].code
         }
     }
 
@@ -68,7 +68,7 @@ class MultithreadingTests extends functionaltestplugin.FunctionalTestCase {
 
         for(int i=0;i<nbThread;i++) {
            ts[i].join()
-           assertEquals(200, ts[i].code)
+            assert 200==ts[i].code
         }
     }
 }

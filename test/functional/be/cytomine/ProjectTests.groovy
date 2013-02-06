@@ -23,24 +23,24 @@ import be.cytomine.utils.UpdateData
  * Time: 16:16
  * To change this template use File | Settings | File Templates.
  */
-class ProjectTests extends functionaltestplugin.FunctionalTestCase {
+class ProjectTests  {
 
     void testListProjectWithCredential() {
         def result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListProjectWithoutCredential() {
         def result = ProjectAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
-        assertEquals(401, result.code)
+        assert 401 == result.code
     }
 
     void testShowProjectWithCredential() {
         Project project = BasicInstance.createOrGetBasicProjectWithRight()
         def result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
@@ -49,51 +49,51 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         Project project = BasicInstance.createOrGetBasicProject()
         User user = BasicInstance.createOrGetBasicUser()
         def result = ProjectAPI.listByUser(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListProjectByUserNotExist() {
         def result = ProjectAPI.listByUser(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
     void testListProjectByOntology() {
         Ontology ontology = BasicInstance.createOrGetBasicOntology()
         def result = ProjectAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListProjectByOntologyNotExist() {
         def result = ProjectAPI.listByOntology(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testListProjectBySoftware() {
         Software software = BasicInstance.createOrGetBasicSoftware()
         User user = BasicInstance.createOrGetBasicUser()
         def result = ProjectAPI.listBySoftware(software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONArray
     }
 
     void testListProjectBySoftwareNotExist() {
         def result = ProjectAPI.listBySoftware(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testAddProjectCorrect() {
         def projectToAdd = BasicInstance.getBasicProjectNotExist()
         def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
     }
 
     void testAddProjectWithNameAlreadyExist() {
@@ -101,14 +101,14 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         String jsonProject = projectToAdd.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
         def result = ProjectAPI.create(jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(409, result.code)
+        assert 409 == result.code
     }
 
     void testEditProjectCorrect() {
         Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
         def data = UpdateData.createUpdateSet(projectToAdd)
         def result = ProjectAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
@@ -125,7 +125,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.name = null
         jsonProject = jsonUpdate.encodeAsJSON()
         def result = ProjectAPI.update(projectToAdd.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(400, result.code)
+        assert 400 == result.code
 
     }
 
@@ -140,7 +140,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.name = projectWithOldName.name
         jsonProject = jsonUpdate.encodeAsJSON()
         def result = ProjectAPI.update(projectToEdit.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(409, result.code)
+        assert 409 == result.code
     }
 
     void testEditProjectNotExist() {
@@ -154,7 +154,7 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         jsonUpdate.id = -99
         jsonProject = jsonUpdate.encodeAsJSON()
         def result = ProjectAPI.update(-99, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
     void testDeleteProject() {
@@ -162,14 +162,14 @@ class ProjectTests extends functionaltestplugin.FunctionalTestCase {
         assert projectToDelete.save(flush: true) != null
 
         def result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(200, result.code)
+        assert 200 == result.code
         def showResult = ProjectAPI.show(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, showResult.code)
+        assert 404 == showResult.code
     }
 
     void testDeleteProjectNotExist() {
         def result = ProjectAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assertEquals(404, result.code)
+        assert 404 == result.code
     }
 
 
