@@ -1,5 +1,7 @@
 package be.cytomine.api
 
+import grails.util.Holders
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -10,14 +12,16 @@ package be.cytomine.api
  */
 class UrlApi {
 
+    def grailsApplication
+
     /**
      * Return cytomine url to get an image metadata
      * @param url Cytomine base url
      * @param idImage Image id
      * @return full cytomine url
      */
-    static def getMetadataURLWithImageId(String url,Long idImage) {
-        return url + "/api/image/"+idImage+"/metadata.json"
+    static def getMetadataURLWithImageId(Long idImage) {
+        return "${serverUrl()}/api/image/$idImage/metadata.json"
     }
 
     /**
@@ -26,8 +30,8 @@ class UrlApi {
      * @param idAnnotation Annotation id
      * @return full cytomine url
      */
-    static def getUserAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
-        return url+'/api/userannotation/' + idAnnotation +'/crop.jpg'
+    static def getUserAnnotationCropWithAnnotationId(Long idAnnotation) {
+        return "${serverUrl()}/api/userannotation/$idAnnotation/crop.jpg"
     }
 
     /**
@@ -37,8 +41,8 @@ class UrlApi {
      * @param maxWidthOrHeight Max size for the downloaded picture
      * @return full cytomine url
      */
-    static def getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
-        return url+'/api/userannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    static def getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(Long idAnnotation, int maxWidthOrHeight) {
+        return "${serverUrl()}/api/userannotation/$idAnnotation/crop.jpg?max_size=$maxWidthOrHeight"
     }
 
     /**
@@ -47,8 +51,8 @@ class UrlApi {
      * @param idAnnotation Annotation id
      * @return full cytomine url
      */
-    static def getAlgoAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
-        return url+'/api/algoannotation/' + idAnnotation +'/crop.jpg'
+    static def getAlgoAnnotationCropWithAnnotationId(Long idAnnotation) {
+        return "${serverUrl()}/api/algoannotation/idAnnotation/crop.jpg"
     }
 
     /**
@@ -57,8 +61,8 @@ class UrlApi {
      * @param idAnnotation Annotation id
      * @return full cytomine url
      */
-    static def getAnnotationMinCropWithAnnotationId(String url,Long idAnnotation) {
-        return url+'/api/annotation/' + idAnnotation +'/cropMin.jpg'
+    static def getAnnotationMinCropWithAnnotationId(Long idAnnotation) {
+        return "${serverUrl()}/api/annotation/$idAnnotation/cropMin.jpg"
     }
 
     /**
@@ -68,8 +72,8 @@ class UrlApi {
      * @param maxWidthOrHeight Max size for the downloaded picture
      * @return full cytomine url
      */
-    static def getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
-        return url+'/api/algoannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    static def getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(Long idAnnotation, int maxWidthOrHeight) {
+        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg?max_size=$maxWidthOrHeight"
     }
 
     /**
@@ -78,8 +82,8 @@ class UrlApi {
      * @param idAnnotation Annotation id
      * @return full cytomine url
      */
-    static def getReviewedAnnotationCropWithAnnotationId(String url,Long idAnnotation) {
-        return url+'/api/reviewedannotation/' + idAnnotation +'/crop.jpg'
+    static def getReviewedAnnotationCropWithAnnotationId(Long idAnnotation) {
+        return "${serverUrl()}/api/reviewedannotation/$idAnnotation/crop.jpg"
     }
 
     /**
@@ -89,8 +93,8 @@ class UrlApi {
      * @param maxWidthOrHeight Max size for the downloaded picture
      * @return full cytomine url
      */
-    static def getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(String url, Long idAnnotation, int maxWidthOrHeight) {
-        return url+'/api/reviewedannotation/' + idAnnotation +'/crop.jpg?max_size='+maxWidthOrHeight
+    static def getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(Long idAnnotation, int maxWidthOrHeight) {
+        return "${serverUrl()}/api/reviewedannotation/$idAnnotation/crop.jpg?max_size=$maxWidthOrHeight"
     }
 
     /**
@@ -101,7 +105,32 @@ class UrlApi {
      * @param idAnnotation Annotation id
      * @return full cytomine url
      */
-    static def getAnnotationURL(String url,Long idProject, Long idImage, Long idAnnotation) {
-        return  url + '/#tabs-image-' + idProject + "-" + idImage + "-" +  idAnnotation
+    static def getAnnotationURL(Long idProject, Long idImage, Long idAnnotation) {
+        return  "${serverUrl()}/#tabs-image-$idProject-$idImage-$idAnnotation"
+    }
+
+    /**
+     * Return cytomine url to access to an image with the UI client
+     * @param url Cytomine base url
+     * @param idProject Project id
+     * @param idImage Image id
+     * @return full cytomine url
+     */
+    static def getBrowseImageInstanceURL(Long idProject, Long idImage) {
+        return  "${serverUrl()}/#tabs-image-$idProject-$idImage-"
+    }
+
+    /**
+     * Return cytomine url to access an image thumb
+     * @param url  Cytomine base url
+     * @param idImage Image id
+     * @return full cytomine url
+     */
+    static def getAbstractImageThumbURL(Long idImage) {
+        return  "${serverUrl()}/api/image/$idImage/thumb.png"
+    }
+
+    static def serverUrl() {
+        Holders.getGrailsApplication().config.grails.serverURL
     }
 }

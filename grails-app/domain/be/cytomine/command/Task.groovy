@@ -47,9 +47,8 @@ class Task extends CytomineDomain{
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Task.class)
         JSON.registerObjectMarshaller(Task) {
             def returnArray = [:]

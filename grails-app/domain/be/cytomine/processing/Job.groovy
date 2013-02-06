@@ -132,9 +132,8 @@ class Job extends CytomineDomain  {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
         JSON.registerObjectMarshaller(Job) {
             def job = [:]

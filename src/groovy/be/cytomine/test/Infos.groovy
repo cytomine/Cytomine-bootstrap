@@ -1,13 +1,12 @@
 package be.cytomine.test
 
+import grails.util.Holders
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.User
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -24,13 +23,9 @@ import static org.springframework.security.acls.domain.BasePermission.*
  */
 class Infos {
 
-    def aclService
-    def aclUtilService
-    def objectIdentityRetrievalStrategy
-    def sessionFactory
     def springSecurityService
 
-    public static String CYTOMINEURL = ConfigurationHolder.config.grails.serverURL + "/"
+    public static String CYTOMINEURL = Holders.getGrailsApplication().config.grails.serverURL + "/"
 
     public static String GOODLOGIN = "lrollus"
     public static String GOODPASSWORD = 'lR$2011'
@@ -64,13 +59,13 @@ class Infos {
     static void addUserRight(User user, Project project) {
         long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         aclUtilService.addPermission project, user.username, ADMINISTRATION
         aclUtilService.addPermission project.ontology, user.username, READ
         aclUtilService.addPermission project.ontology, user.username, WRITE
         aclUtilService.addPermission project.ontology, user.username, DELETE
 
-        def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
+        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
     }
@@ -79,12 +74,12 @@ class Infos {
         long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
-        def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         aclUtilService.addPermission ontology, user.username, READ
         aclUtilService.addPermission ontology, user.username, WRITE
         aclUtilService.addPermission ontology, user.username, DELETE
 
-        def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
+        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
     }
@@ -93,13 +88,13 @@ class Infos {
         long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
-        def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         aclUtilService.addPermission software, user.username, ADMINISTRATION
         aclUtilService.addPermission software, user.username, READ
         aclUtilService.addPermission software, user.username, WRITE
         aclUtilService.addPermission software, user.username, DELETE
 
-        def sessionFactory = ApplicationHolder.application.getMainContext().getBean("sessionFactory")
+        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()
         SCH.clearContext()
     }
@@ -110,7 +105,7 @@ class Infos {
      * @param domain Domain to check
      */
     static void printRight(def domain) {
-        def aclUtilService = ApplicationHolder.application.getMainContext().getBean("aclUtilService")
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         if(!AclObjectIdentity.findByObjectId(domain.id)) return
         def acl = aclUtilService.readAcl(domain)
 

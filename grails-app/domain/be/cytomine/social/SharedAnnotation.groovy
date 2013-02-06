@@ -4,8 +4,8 @@ import be.cytomine.CytomineDomain
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
 import grails.converters.JSON
+import grails.util.Holders
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * A shared annotation is a comment on a specific annotation
@@ -32,7 +32,7 @@ class SharedAnnotation extends CytomineDomain {
     static hasMany = [receivers : User]
 
     static constraints = {
-        comment(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)
+        comment(type: 'text', maxSize: Holders.getGrailsApplication().config.cytomine.maxRequestSize, nullable: true)
     }
     
     String toString() {
@@ -42,9 +42,8 @@ class SharedAnnotation extends CytomineDomain {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
 
         Logger.getLogger(this).info("Register custom JSON renderer for " + SharedAnnotation.class)
         JSON.registerObjectMarshaller(SharedAnnotation) {

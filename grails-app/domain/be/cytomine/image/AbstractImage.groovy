@@ -113,9 +113,8 @@ class AbstractImage extends CytomineDomain implements Serializable {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
 
         Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)
         JSON.registerObjectMarshaller(AbstractImage) {
@@ -136,7 +135,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
             returnArray['resolution'] = it.resolution
             returnArray['magnification'] = it.magnification
             returnArray['thumb'] = it.getThumbURL()
-            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(cytomineBaseUrl,it.id)
+            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
             return returnArray
         }
     }

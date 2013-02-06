@@ -24,15 +24,6 @@ import be.cytomine.processing.Software
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
-
-import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsDomainBinder
-import groovy.sql.Sql
-
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.processing.JobDataBinaryValue
-import be.cytomine.processing.JobData
 import be.cytomine.security.UserGroup
 
 /**

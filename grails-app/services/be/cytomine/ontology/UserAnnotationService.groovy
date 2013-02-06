@@ -569,10 +569,10 @@ class UserAnnotationService extends ModelService {
                         created: it.created,
                         updated: it.updated,
                         reviewed: (it.countReviewedAnnotations > 0),
-                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl, it.id),
-                        smallCropURL: UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl, it.id, 256),
-                        url: UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl, it.id),
-                        imageURL: UrlApi.getAnnotationURL(cytomineBaseUrl, it.project, it.image, it.id),
+                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                        smallCropURL: UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
+                        url: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                        imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
                         term: (it.term ? [it.term] : []),
                         userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
                         location: it.location
@@ -628,7 +628,7 @@ class UserAnnotationService extends ModelService {
 
             long idAnnotation = it[0]
             long idContainer = it[1]
-            def url = UrlApi.getAnnotationMinCropWithAnnotationId(cytomineBaseUrl, idAnnotation)
+            def url = UrlApi.getAnnotationMinCropWithAnnotationId(idAnnotation)
             data << [id: idAnnotation, container: idContainer, url: url]
         }
         data

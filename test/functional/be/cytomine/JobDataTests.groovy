@@ -5,7 +5,7 @@ import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobDataAPI
 import grails.converters.JSON
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import grails.util.Holders
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import be.cytomine.utils.UpdateData
@@ -104,7 +104,7 @@ class JobDataTests  {
 
     //testUpload + download from database
     void testDataInDatabase() {
-        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+        Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = false
         //create jobdata
         JobData jobData = BasicInstance.getBasicJobDataNotExist()
         jobData.filename = "test.data"
@@ -126,7 +126,7 @@ class JobDataTests  {
 
     //testUpload + download from filesystem
     void testDataInFileSystem() {
-        ConfigurationHolder.config.cytomine.jobdata.filesystem = true
+        Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = true
         //create jobdata
         JobData jobData = BasicInstance.getBasicJobDataNotExist()
         jobData.filename = "test.data"
@@ -144,15 +144,15 @@ class JobDataTests  {
 
         //check if byte[] are equals
         assert testData==result.data
-        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+        Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = false
     }
 
     protected void tearDown() {
-        ConfigurationHolder.config.cytomine.jobdata.filesystem = false
+        Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = false
     }
 
     protected void setUp() {
-        ConfigurationHolder.config.cytomine.jobdata.filesystem = true
+        Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = true
     }
 
 

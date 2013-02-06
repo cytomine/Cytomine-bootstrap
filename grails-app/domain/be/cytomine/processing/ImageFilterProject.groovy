@@ -63,9 +63,8 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilterProject.class)
         JSON.registerObjectMarshaller(ImageFilterProject) {
             def returnArray = [:]

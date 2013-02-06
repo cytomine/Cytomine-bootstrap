@@ -203,9 +203,8 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-     static void registerMarshaller(String cytomineBaseUrl) {
+     static void registerMarshaller() {
          Logger.getLogger(this).info("Register custom JSON renderer for " + ReviewedAnnotation.class)
          JSON.registerObjectMarshaller(ReviewedAnnotation) { ReviewedAnnotation annotation ->
              def returnArray = [:]
@@ -234,9 +233,9 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['idTerm'] = annotation.idTerm
              returnArray['idExpectedTerm'] = annotation.idExpectedTerm
              returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-             returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
-             returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-             returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
+             returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(annotation.id, 256)
+             returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(annotation.id)
+             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.project?.id, imageinstance.id, annotation.id)
              returnArray['reviewed'] = true
              return returnArray
          }

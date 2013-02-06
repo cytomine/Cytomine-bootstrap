@@ -4,8 +4,8 @@ import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import grails.util.Holders
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**
@@ -73,7 +73,7 @@ class Command extends CytomineDomain {
     Boolean refuseUndo = false
 
     static constraints = {
-        data(type: 'text', maxSize: ConfigurationHolder.config.cytomine.maxRequestSize, nullable: true)
+        data(type: 'text', maxSize: Holders.getGrailsApplication().config.cytomine.maxRequestSize, nullable: true)
         actionMessage(nullable: true)
         project(nullable: true)
         serviceName(nullable: true)
@@ -119,9 +119,8 @@ class Command extends CytomineDomain {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info "Register custom JSON renderer for " + Command.class
         JSON.registerObjectMarshaller(Command) {
             def returnArray = [:]

@@ -105,7 +105,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      * @return Full CROP Url
      */
     def getCropUrl(String cytomineUrl) {
-        UrlApi.getUserAnnotationCropWithAnnotationId(cytomineUrl,id)
+        UrlApi.getUserAnnotationCropWithAnnotationId(id)
     }
 
     /**
@@ -186,9 +186,8 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + UserAnnotation.class)
         JSON.registerObjectMarshaller(UserAnnotation) { annotation ->
             def returnArray = [:]
@@ -213,10 +212,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             returnArray['rate'] = annotation.rate
             returnArray['idTerm'] = annotation.idTerm
             returnArray['idExpectedTerm'] = annotation.idExpectedTerm
-            returnArray['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(cytomineBaseUrl,annotation.id, 256)
-            returnArray['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(cytomineBaseUrl,imageinstance.project?.id, imageinstance.id, annotation.id)
+            returnArray['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(annotation.id)
+            returnArray['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(annotation.id, 256)
+            returnArray['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(annotation.id)
+            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.project?.id, imageinstance.id, annotation.id)
             returnArray['reviewed'] = annotation.hasReviewedAnnotation()
             return returnArray
         }

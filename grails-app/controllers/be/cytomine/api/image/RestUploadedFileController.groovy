@@ -1,7 +1,9 @@
 package be.cytomine.api.image
 
 import be.cytomine.api.RestController
+import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
 import be.cytomine.project.Project
@@ -135,30 +137,6 @@ class RestUploadedFileController extends RestController {
                 log.info abstractImage
             }
 
-            //send email
-            User recipient = null
-            if (currentUser instanceof User) {
-                recipient = (User) currentUser
-            } else if (currentUser instanceof UserJob) {
-                UserJob userJob = (UserJob) currentUser
-                recipient = userJob.getUser()
-            }
-            StringBuffer message = new StringBuffer()
-            message.append("images:<br/>")
-            abstractImagesCreated.each { abstractImage ->
-                message.append(abstractImage.getFilename())
-                message.append("<br />")
-            }
-            message.append("files:<br/>")
-            deployedFiles.each { deployedFile ->
-                message.append(deployedFile.getFilename())
-                message.append("<br />")
-            }
-            if (recipient) {
-                String[] recipients = [recipient.getEmail()]
-                mailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
-            }
-
 
             //delete main uploaded file
             if (!deployedFiles.contains(uploadedFile)) {
@@ -183,6 +161,40 @@ class RestUploadedFileController extends RestController {
                 }
             } catch (Exception  e){
 
+            }
+
+            //send email
+            User recipient = null
+            if (currentUser instanceof User) {
+                recipient = (User) currentUser
+            } else if (currentUser instanceof UserJob) {
+                UserJob userJob = (UserJob) currentUser
+                recipient = userJob.getUser()
+            }
+            StringBuffer message = new StringBuffer()
+            message.append("images:<br/>")
+            abstractImagesCreated.each { abstractImage ->
+                for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
+                    String url = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
+                    message.append(url)
+                    message.append("<br />")
+                    url = UrlApi.getAbstractImageThumbURL(abstractImage.id)
+                    message.append(url)
+                    message.append("<br />")
+
+                }
+                //UrlApi.getBrowseImageInstanceURL(grailsApplication.config.grails.serverURL, )
+                message.append(abstractImage.getFilename())
+                message.append("<br />")
+            }
+            message.append("files:<br/>")
+            deployedFiles.each { deployedFile ->
+                message.append(deployedFile.getFilename())
+                message.append("<br />")
+            }
+            if (recipient) {
+                String[] recipients = [recipient.getEmail()]
+                mailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
             }
 
         })

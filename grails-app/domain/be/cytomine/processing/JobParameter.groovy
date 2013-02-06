@@ -85,9 +85,8 @@ class JobParameter extends CytomineDomain implements Comparable {
     /**
      * Define fields available for JSON response
      * This Method is called during application start
-     * @param cytomineBaseUrl Cytomine base URL (from config file)
      */
-    static void registerMarshaller(String cytomineBaseUrl) {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
         JSON.registerObjectMarshaller(JobParameter) {
             def jobParameter = [:]
