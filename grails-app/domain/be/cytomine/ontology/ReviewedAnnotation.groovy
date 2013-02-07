@@ -232,7 +232,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['rate'] = annotation.rate
              returnArray['idTerm'] = annotation.idTerm
              returnArray['idExpectedTerm'] = annotation.idExpectedTerm
-             returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(cytomineBaseUrl,annotation.id)
+             returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(annotation.id)
              returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(annotation.id, 256)
              returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(annotation.id)
              returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.project?.id, imageinstance.id, annotation.id)

@@ -549,7 +549,6 @@ class UserAnnotationService extends ModelService {
         long lastAnnotationId = -1
         long lastTermId = -1
 
-        def cytomineBaseUrl = grailsApplication.config.grails.serverURL
         new Sql(dataSource).eachRow(request) {
             /**
              * If an annotation has n multiple term, it will be on "n" lines.
@@ -623,7 +622,6 @@ class UserAnnotationService extends ModelService {
      */
     private def selectUserAnnotationLightForRetrieval(String request) {
         def data = []
-        def cytomineBaseUrl = grailsApplication.config.grails.serverURL
         new Sql(dataSource).eachRow(request) {
 
             long idAnnotation = it[0]
