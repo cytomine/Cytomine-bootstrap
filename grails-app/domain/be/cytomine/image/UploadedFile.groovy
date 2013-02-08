@@ -7,7 +7,9 @@ import grails.converters.JSON
 import org.apache.log4j.Logger
 
 /**
- * TODOSTEVBEN: doc
+ * An UploadedFile is a file uploaded through the API.
+ * Uploaded are temporaly instances, files related to them are placed
+ * in a buffer space before being converted into the right format and copied to the storages
  */
 class UploadedFile extends CytomineDomain implements Serializable{
 
@@ -51,8 +53,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
      * Define fields available for JSON response
      * This Method is called during application start
      */
-     static void registerMarshaller() {
-         Logger.getLogger(this).info("Register custom JSON renderer for " + UploadedFile.class)
+    static void registerMarshaller() {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + UploadedFile.class)
         JSON.registerObjectMarshaller(UploadedFile) {
             def returnArray = [:]
             returnArray['class'] = it.class

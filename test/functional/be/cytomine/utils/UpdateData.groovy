@@ -2,7 +2,7 @@ package be.cytomine.utils
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Instrument
-
+import be.cytomine.image.server.Storage
 import be.cytomine.laboratory.Sample
 import be.cytomine.security.User
 import be.cytomine.image.Mime
@@ -33,7 +33,7 @@ import be.cytomine.test.BasicInstance
  * User: lrollus
  * Date: 8/01/13
  * GIGA-ULg
- * 
+ *
  */
 class UpdateData {
 
@@ -191,57 +191,77 @@ class UpdateData {
     static def createUpdateSet(Discipline discipline) {
         log.info "update discipline"
         String oldName = "NAME1"
-         String newName = "NAME2"
-         def mapNew = ["name":newName]
-         def mapOld = ["name":oldName]
-         /* Create a Name1 discipline */
-         Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
-         disciplineToAdd.name = oldName
-         assert (disciplineToAdd.save(flush:true) != null)
-         /* Encode a niew discipline Name2*/
-         Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
-         def jsonDiscipline = disciplineToEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonDiscipline)
-         jsonUpdate.name = newName
-         jsonDiscipline = jsonUpdate.encodeAsJSON()
+        String newName = "NAME2"
+        def mapNew = ["name":newName]
+        def mapOld = ["name":oldName]
+        /* Create a Name1 discipline */
+        Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+        disciplineToAdd.name = oldName
+        assert (disciplineToAdd.save(flush:true) != null)
+        /* Encode a niew discipline Name2*/
+        Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
+        def jsonDiscipline = disciplineToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonDiscipline)
+        jsonUpdate.name = newName
+        jsonDiscipline = jsonUpdate.encodeAsJSON()
         return ['oldData':discipline,'newData':jsonDiscipline,'mapOld':mapOld,'mapNew':mapNew]
     }
-    
+
+    static def createUpdateSet(Storage storage) {
+        log.info ("update storage")
+        String oldName = "NAME1"
+        String newName = "NAME2"
+        def mapNew = ["name":newName]
+        def mapOld = ["name":oldName]
+        /* Create a Name1 sample */
+        Storage storageToAdd = BasicInstance.createOrGetBasicStorage()
+        storageToAdd.name = oldName
+        assert (storageToAdd.save(flush:true) != null)
+        /* Encode a new sample Name2*/
+        Storage storageToEdit = Storage.get(storageToAdd.id)
+        def jsonSample = storageToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonSample)
+        jsonUpdate.name = newName
+        jsonSample = jsonUpdate.encodeAsJSON()
+        return ['oldData':storage,'newData':jsonSample,'mapOld':mapOld,'mapNew':mapNew]
+
+    }
+
     static def createUpdateSet(Sample sample) {
         log.info "update sample"
         String oldName = "NAME1"
-         String newName = "NAME2"
-         def mapNew = ["name":newName]
-         def mapOld = ["name":oldName]
-         /* Create a Name1 sample */
-         Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
-         sampleToAdd.name = oldName
-         assert (sampleToAdd.save(flush:true) != null)
-         /* Encode a niew sample Name2*/
-         Sample sampleToEdit = Sample.get(sampleToAdd.id)
-         def jsonSample = sampleToEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonSample)
-         jsonUpdate.name = newName
-         jsonSample = jsonUpdate.encodeAsJSON()
+        String newName = "NAME2"
+        def mapNew = ["name":newName]
+        def mapOld = ["name":oldName]
+        /* Create a Name1 sample */
+        Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
+        sampleToAdd.name = oldName
+        assert (sampleToAdd.save(flush:true) != null)
+        /* Encode a niew sample Name2*/
+        Sample sampleToEdit = Sample.get(sampleToAdd.id)
+        def jsonSample = sampleToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonSample)
+        jsonUpdate.name = newName
+        jsonSample = jsonUpdate.encodeAsJSON()
         return ['oldData':sample,'newData':jsonSample,'mapOld':mapOld,'mapNew':mapNew]
-    }    
+    }
 
 
     static def createUpdateSet(Group group) {
         String oldName = "NAME1"
-         String newName = "NAME2"
-         def mapNew = ["name":newName]
-         def mapOld = ["name":oldName]
-         /* Create a Name1 group */
-         Group groupToAdd = BasicInstance.createOrGetBasicGroup()
-         groupToAdd.name = oldName
-         assert (groupToAdd.save(flush:true) != null)
-         /* Encode a niew group Name2*/
-         Group groupToEdit = Group.get(groupToAdd.id)
-         def jsonGroup = groupToEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonGroup)
-         jsonUpdate.name = newName
-         jsonGroup = jsonUpdate.encodeAsJSON()
+        String newName = "NAME2"
+        def mapNew = ["name":newName]
+        def mapOld = ["name":oldName]
+        /* Create a Name1 group */
+        Group groupToAdd = BasicInstance.createOrGetBasicGroup()
+        groupToAdd.name = oldName
+        assert (groupToAdd.save(flush:true) != null)
+        /* Encode a niew group Name2*/
+        Group groupToEdit = Group.get(groupToAdd.id)
+        def jsonGroup = groupToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonGroup)
+        jsonUpdate.name = newName
+        jsonGroup = jsonUpdate.encodeAsJSON()
         return ['oldData':group,'newData':jsonGroup,'mapOld':mapOld,'mapNew':mapNew]
     }
 
@@ -353,19 +373,19 @@ class UpdateData {
     static def createUpdateSet(Ontology ontology) {
         log.info "update ontology"
         String oldName = "NAME1"
-         String newName = "NAME2"
-         def mapNew = ["name":newName]
-         def mapOld = ["name":oldName]
-         /* Create a Name1 ontology */
-         Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
-         ontologyToAdd.name = oldName
-         assert (ontologyToAdd.save(flush:true) != null)
-         /* Encode a niew ontology Name2*/
-         Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-         def jsonOntology = ontologyToEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonOntology)
-         jsonUpdate.name = newName
-         jsonOntology = jsonUpdate.encodeAsJSON()
+        String newName = "NAME2"
+        def mapNew = ["name":newName]
+        def mapOld = ["name":oldName]
+        /* Create a Name1 ontology */
+        Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        ontologyToAdd.name = oldName
+        assert (ontologyToAdd.save(flush:true) != null)
+        /* Encode a niew ontology Name2*/
+        Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
+        def jsonOntology = ontologyToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonOntology)
+        jsonUpdate.name = newName
+        jsonOntology = jsonUpdate.encodeAsJSON()
         return ['oldData':ontology,'newData':jsonOntology,'mapOld':mapOld,'mapNew':mapNew]
     }
 
@@ -405,40 +425,40 @@ class UpdateData {
 
 
     static def createUpdateSet(ReviewedAnnotation annotation) {
-         log.info "update reviewedannotation:" + annotation
+        log.info "update reviewedannotation:" + annotation
 
-         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
-         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
+        String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
+        String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-         User oldUser = annotation.user
-         User newUser = annotation.user
+        User oldUser = annotation.user
+        User newUser = annotation.user
 
-         Term oldTerm = BasicInstance.createOrGetBasicTerm()
-         Term newTerm = BasicInstance.getBasicTermNotExist()
-         newTerm.save(flush: true)
+        Term oldTerm = BasicInstance.createOrGetBasicTerm()
+        Term newTerm = BasicInstance.getBasicTermNotExist()
+        newTerm.save(flush: true)
 
-         def mapNew = ["geom":newGeom,"user":newUser,"terms":newTerm]
-         def mapOld = ["geom":oldGeom,"user":oldUser,"terms":oldTerm]
+        def mapNew = ["geom":newGeom,"user":newUser,"terms":newTerm]
+        def mapOld = ["geom":oldGeom,"user":oldUser,"terms":oldTerm]
 
-         /* Create a old annotation with point 1111 1111 */
-         log.info("create reviewedannotation")
-         ReviewedAnnotation annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
-         annotationToAdd.location =  new WKTReader().read(oldGeom)
-         annotationToAdd.user = oldUser
-         annotationToAdd.addToTerms(oldTerm)
-         assert (annotationToAdd.save(flush:true) != null)
+        /* Create a old annotation with point 1111 1111 */
+        log.info("create reviewedannotation")
+        ReviewedAnnotation annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+        annotationToAdd.location =  new WKTReader().read(oldGeom)
+        annotationToAdd.user = oldUser
+        annotationToAdd.addToTerms(oldTerm)
+        assert (annotationToAdd.save(flush:true) != null)
 
-         /* Encode a niew annotation with point 9999 9999 */
-         ReviewedAnnotation annotationToEdit = ReviewedAnnotation.get(annotationToAdd.id)
-         def jsonEdit = annotationToEdit
-         def jsonAnnotation = jsonEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonAnnotation)
-         jsonUpdate.location = newGeom
-         jsonUpdate.user = newUser.id
-         jsonUpdate.terms = [newTerm.id]
-         jsonAnnotation = jsonUpdate.encodeAsJSON()
+        /* Encode a niew annotation with point 9999 9999 */
+        ReviewedAnnotation annotationToEdit = ReviewedAnnotation.get(annotationToAdd.id)
+        def jsonEdit = annotationToEdit
+        def jsonAnnotation = jsonEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonAnnotation)
+        jsonUpdate.location = newGeom
+        jsonUpdate.user = newUser.id
+        jsonUpdate.terms = [newTerm.id]
+        jsonAnnotation = jsonUpdate.encodeAsJSON()
         return ['oldData':annotation,'newData':jsonAnnotation,'mapOld':mapOld,'mapNew':mapNew]
-     }
+    }
 
     static def createUpdateSet(Software software) {
         log.info "update software"
@@ -449,18 +469,18 @@ class UpdateData {
 
         def mapNew = ["name": newName,"serviceName" : newNameService]
         def mapOld = ["name": oldName,"serviceName" : oldNameService]
-         /* Create a Name1 software */
-         Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
-         softwareToAdd.name = oldName
+        /* Create a Name1 software */
+        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+        softwareToAdd.name = oldName
         softwareToAdd.serviceName = oldNameService
-         assert (softwareToAdd.save(flush:true) != null)
-         /* Encode a niew software Name2*/
-         Software softwareToEdit = Software.get(softwareToAdd.id)
-         def jsonSoftware = softwareToEdit.encodeAsJSON()
-         def jsonUpdate = JSON.parse(jsonSoftware)
-         jsonUpdate.name = newName
+        assert (softwareToAdd.save(flush:true) != null)
+        /* Encode a niew software Name2*/
+        Software softwareToEdit = Software.get(softwareToAdd.id)
+        def jsonSoftware = softwareToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonSoftware)
+        jsonUpdate.name = newName
         jsonUpdate.serviceName = newNameService
-         jsonSoftware = jsonUpdate.encodeAsJSON()
+        jsonSoftware = jsonUpdate.encodeAsJSON()
         return ['oldData':software,'newData':jsonSoftware,'mapOld':mapOld,'mapNew':mapNew]
     }
 

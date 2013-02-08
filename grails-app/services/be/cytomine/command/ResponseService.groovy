@@ -39,7 +39,7 @@ class ResponseService {
         params.put('printMessage', printMessage)
         params.put(objectName.toLowerCase(), JSON.parse((String)object.encodeAsJSON()))
 
-        return [data: params, status: 200, object:object];
+        return [data: params, status: 200, object:object]
     }
 
     /**

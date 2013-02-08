@@ -166,6 +166,35 @@ class SecurityCheck {
         return ontology.checkPermission(permission)
     }
 
+    /**
+     * Check if current user has read right in the ontology of the domain (set in constructor)
+     */
+    boolean checkStorageAccess() {
+        checkStoragePermission("READ")
+    }
+
+    /**
+     * Check if current user has write right in the ontology of the domain (set in constructor)
+     */
+    boolean checkStorageWrite() {
+        checkStoragePermission("WRITE")
+    }
+
+    /**
+     * Check if current user has delete right in the ontology of the domain (set in constructor)
+     */
+    boolean checkStorageDelete() {
+        checkStoragePermission("DELETE")
+    }
+
+    private boolean checkStoragePermission(String permission) {
+        def storage = domain.storageDomain()
+        if(!storage) {
+            throw new ObjectNotFoundException("Storage from domain ${domain} was not found! Unable to process storage auth checking")
+        }
+        return storage.checkPermission(permission)
+    }
+    
 
     /**
      * Check if current user has read right in the software of the domain

@@ -120,9 +120,9 @@ class RestUploadedFileController extends RestController {
             uploadedFiles.each {
                 UploadedFile new_uploadedFile = (UploadedFile) it
                 if (new_uploadedFile.status == UploadedFile.TO_DEPLOY)
-                    abstractImagesCreated << deployImagesService.deployUploadedFile(new_uploadedFile, Storage.findAllByOwner(currentUser), currentUser)
+                    abstractImagesCreated << deployImagesService.deployUploadedFile(new_uploadedFile, Storage.findAllByUser(currentUser), currentUser)
                 if (new_uploadedFile.status == UploadedFile.CONVERTED)
-                    deployImagesService.copyUploadedFile(new_uploadedFile, Storage.findAllByOwner(currentUser), currentUser)
+                    deployImagesService.copyUploadedFile(new_uploadedFile, Storage.findAllByUser(currentUser), currentUser)
 
                 deployedFiles << new_uploadedFile
             }

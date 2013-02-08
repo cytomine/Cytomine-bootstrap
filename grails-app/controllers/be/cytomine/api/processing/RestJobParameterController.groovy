@@ -39,7 +39,6 @@ class RestJobParameterController extends RestController {
      * Get a job parameter
      */
     def show = {
-        println "66666666666666666666666666"
         JobParameter jobParameter = jobParameterService.read(params.long('id'))
         if (jobParameter) {
             responseSuccess(jobParameter)

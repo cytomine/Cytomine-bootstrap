@@ -11,7 +11,6 @@ import be.cytomine.project.Project
 
 import be.cytomine.social.SharedAnnotation
 import com.vividsolutions.jts.io.WKTReader
-import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -20,11 +19,9 @@ import be.cytomine.processing.*
 import be.cytomine.security.*
 import be.cytomine.laboratory.Sample
 import be.cytomine.AnnotationDomain
-import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.MimeImageServer
@@ -1162,13 +1159,21 @@ class BasicInstance {
             bidon.name = "bidon"
             bidon.basePath = "storagepath"
             bidon.ip = "192.168.0.0"
-            bidon.username = "toto"
-            bidon.password = "pass"
-            bidon.owner = User.findByUsername(Infos.GOODLOGIN)
+            bidon.user = User.findByUsername(Infos.GOODLOGIN)
             bidon.port = 123
             BasicInstance.saveDomain(bidon)
         }
         return bidon
+    }
+
+    static Storage getBasicStorageNotExist() {
+        log.debug "createOrGetBasicStorageNotExist()"
+        def random = new Random()
+        def randomInt = random.nextInt()
+        def randomName = "$randomInt"
+        Storage storage = new Storage(name: randomName, basePath: randomName, ip: randomName, port: 22, user: User.findByUsername(Infos.GOODLOGIN))
+        checkDomain(storage)
+        storage
     }
 
 
@@ -1478,6 +1483,16 @@ class BasicInstance {
      * @param json New Data
      */
     static void compareSample(map, json) {
+        assert map.name.equals(json.name)
+    }
+
+    /**
+     * Compare Storage expected data (in map) to Storage new data (json)
+     * This method is used in update test method to check if data are well changed
+     * @param map Excpected data
+     * @param json New Data
+     */
+    static void compareStorage(map, json) {
         assert map.name.equals(json.name)
     }
 

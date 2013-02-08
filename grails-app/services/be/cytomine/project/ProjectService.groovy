@@ -90,7 +90,7 @@ class ProjectService extends ModelService {
         SoftwareProject.findAllBySoftware(software).collect {it.project}
     }
 
-    List<Project> getProjectList(SecUser user) {
+    private List<Project> getProjectList(SecUser user) {
         //faster method
         return Project.executeQuery(
                 "select distinct project "+

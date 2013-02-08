@@ -40,12 +40,5 @@ class UrlMappings {
         "/api/export/exportimages"(controller: "export") {
             action = [GET:"exportimages"]
         }
-
-        "/api/storage" (controller:"restStorage") {
-            //to do
-        }
-        "/api/storage/$id" (controller:"restStorage") {
-            //to do
-        }
     }
 }

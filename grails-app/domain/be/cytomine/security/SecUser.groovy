@@ -24,7 +24,7 @@ class SecUser extends CytomineDomain implements Serializable {
     static constraints = {
         username blank: false, unique: true
         password blank: false
-        newPassword(nullable : true, black : false)
+        newPassword(nullable : true, blank : false)
         id unique: true
     }
 

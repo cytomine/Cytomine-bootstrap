@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityCheck
@@ -88,7 +89,7 @@ class SecUserService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listUsers(Project project) {
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
-            "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
+                "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
@@ -102,7 +103,7 @@ class SecUserService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listAdmins(Project project) {
         def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
-            "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.mask = 16 and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
+                "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.mask = 16 and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
@@ -194,8 +195,8 @@ class SecUserService extends ModelService {
     List<SecUser> getAllFriendsUsers(SecUser user) {
         AclSid sid = AclSid.findBySid(user.username)
         List<SecUser> users = SecUser.executeQuery(
-            "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
-            "where aclEntry.aclObjectIdentity in (select  aclEntry.aclObjectIdentity from aclEntry where sid = ${sid.id}) and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and aclSid.id!=${sid.id}")
+                "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
+                        "where aclEntry.aclObjectIdentity in (select  aclEntry.aclObjectIdentity from aclEntry where sid = ${sid.id}) and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and aclSid.id!=${sid.id}")
 
         return users
     }
@@ -205,7 +206,7 @@ class SecUserService extends ModelService {
      */
     @PreAuthorize("#user.id == principal.id or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllFriendsUsersOnline(SecUser user) {
-       return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
+        return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
     }
 
     /**
@@ -214,7 +215,7 @@ class SecUserService extends ModelService {
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllFriendsUsersOnline(SecUser user, Project project) {
         //no need to make insterect because getAllOnlineUsers(project) contains only friends users
-       return getAllOnlineUsers(project)
+        return getAllOnlineUsers(project)
     }
 
     /**
@@ -270,25 +271,25 @@ class SecUserService extends ModelService {
      */
     @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     def addUserFromProject(SecUser user, Project project, boolean admin) {
-            log.info "service.addUserFromProject"
-            if (project) {
-                log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
-                if(admin) {
-                    synchronized (this.getClass()) {
-                     permissionService.addPermission(project,user.username,ADMINISTRATION)
-                     permissionService.addPermission(project.ontology,user.username,READ)
-                    }
-                }
-                else {
-                    synchronized (this.getClass()) {
-                        log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
-                        permissionService.addPermission(project,user.username,READ)
-                        log.info "addUserFromProject ontology=" + project.ontology + " username=" + user?.username + " ADMIN=" + admin
-                        permissionService.addPermission(project.ontology,user.username,READ)
-                    }
-
+        log.info "service.addUserFromProject"
+        if (project) {
+            log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+            if(admin) {
+                synchronized (this.getClass()) {
+                    permissionService.addPermission(project,user.username,ADMINISTRATION)
+                    permissionService.addPermission(project.ontology,user.username,READ)
                 }
             }
+            else {
+                synchronized (this.getClass()) {
+                    log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+                    permissionService.addPermission(project,user.username,READ)
+                    log.info "addUserFromProject ontology=" + project.ontology + " username=" + user?.username + " ADMIN=" + admin
+                    permissionService.addPermission(project.ontology,user.username,READ)
+                }
+
+            }
+        }
         [data: [message: "OK"], status: 201]
     }
 
@@ -301,21 +302,21 @@ class SecUserService extends ModelService {
      */
     @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
-            if (project) {
-                log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
-                if(admin) {
-                    //TODO:: a user admin can remove another admin user?
-                    permissionService.deletePermission(project,user.username,ADMINISTRATION)
-                    //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                    permissionService.deletePermission(project.ontology,user.username,READ)
-                }
-                else {
-                    permissionService.deletePermission(project,user.username,READ)
-                    //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                    permissionService.deletePermission(project.ontology,user.username,READ)
-                }
+        if (project) {
+            log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
+            if(admin) {
+                //TODO:: a user admin can remove another admin user?
+                permissionService.deletePermission(project,user.username,ADMINISTRATION)
+                //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
+                permissionService.deletePermission(project.ontology,user.username,READ)
             }
-       [data: [message: "OK"], status: 201]
+            else {
+                permissionService.deletePermission(project,user.username,READ)
+                //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
+                permissionService.deletePermission(project.ontology,user.username,READ)
+            }
+        }
+        [data: [message: "OK"], status: 201]
     }
 
     /**
@@ -536,21 +537,25 @@ class SecUserService extends ModelService {
     def deleteDependentHasManyAnnotationFilter(SecUser user, Transaction transaction, Task task = null) {
         def criteria = AnnotationFilter.createCriteria()
         def results = criteria.list {
-          users {
-             inList("id", user.id)
-          }
+            users {
+                inList("id", user.id)
+            }
         }
         results.each {
             it.removeFromUsers(user)
             it.save()
         }
-     }
+    }
+
+    def deleteDependentStorage(SecUser user,Transaction transaction, Task task = null) {
+        //throw new CytomineMethodNotYetImplementedException("choose what to do for storage")
+    }
 
     def deleteDependentSharedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             //TODO:: implement cascade deleteting/update for shared annotation
             if(SharedAnnotation.findAllBySender(user)) {
-               throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
+                throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
             }
         }
     }
@@ -560,13 +565,13 @@ class SecUserService extends ModelService {
             //TODO:: implement cascade deleteting/update for shared annotation
             def criteria = SharedAnnotation.createCriteria()
             def results = criteria.list {
-              receivers {
-                 inList("id", user.id)
-              }
+                receivers {
+                    inList("id", user.id)
+                }
             }
 
             if(!results.isEmpty()) {
-               throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
+                throw new ConstraintException("This user has send/receive annotation comments. We cannot delete it! ")
             }
         }
     }

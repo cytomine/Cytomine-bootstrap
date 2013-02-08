@@ -120,7 +120,7 @@ class BootStrap {
         }
         //create storage for each user
         for (user in User.findAll()) {
-            if (!Storage.findByOwner(user)) {
+            if (!Storage.findByUser(user)) {
 
                 String storage_base_path = grailsApplication.config.storage_path
                 println "storage_base_path : $storage_base_path"
@@ -134,10 +134,10 @@ class BootStrap {
                         ip: "139.165.108.28",
                         username: "storage_cytomine",
                         password: "bioinfo;3u54",
-                        publicKey: null,
-                        //publicKey: "$user_home/.ssh/id_rsa",
+                        keyFile: null,
+                        //keyFile: "$user_home/.ssh/id_rsa",
                         port: 22,
-                        owner: user
+                        user: user
                 )
 
                 if (storage.validate()) {
@@ -148,7 +148,7 @@ class BootStrap {
                             storage.getPort(),
                             storage.getUsername(),
                             storage.getPassword(),
-                            storage.getPublicKey(),
+                            storage.getKeyFile(),
                             storage.getBasePath())
 
                     for (imageServer in ImageServer.findAll()) {

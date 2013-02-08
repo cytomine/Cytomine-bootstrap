@@ -1,30 +1,152 @@
 package be.cytomine.image.server
 
+import be.cytomine.CytomineDomain
+import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
+import be.cytomine.utils.JSONUtils
+import grails.converters.JSON
+import org.apache.log4j.Logger
 
 /**
- * TODOSTEVBEN: doc
+ * A storage is a remote file repository
+ * It contains the network configuration, the credentials
+ * and the remote path of the remote machine
  */
-class Storage {
+class Storage extends CytomineDomain {
 
     String name
     String basePath
 
-    SecUser owner
+    SecUser user //the creator, who got rights administration on the domain
 
-    //ssh config
     String ip
     String username
     String password
-    String publicKey
+    String keyFile
     Integer port
+
+    String newUsername
+    String newPassword
+    String newKeyFile
+
 
     static constraints = {
         name(unique: false)
         basePath(nullable: false, blank: false)
-        username(nullable: false)
+        username(nullable: true)
         password(nullable: true)
-        publicKey(nullable : true)
+        keyFile(nullable : true)
+        newUsername(nullable : true, blank : false)
+        newPassword(nullable : true, blank : false)
+        newKeyFile(nullable : true, blank : false)
+    }
+
+    static transients = ['newUsername', 'newPassword', 'newKeyFile']
+
+    static void registerMarshaller() {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Storage.class)
+        JSON.registerObjectMarshaller(Storage) {
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['created'] = it.created ? it.created.time.toString() : null
+            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            returnArray['basePath'] = it.basePath
+            returnArray['user'] = it.user.id
+            returnArray['ip'] = it.ip
+            returnArray['port'] = it.port
+            returnArray['username'] = it.username
+            //we exclude credentials information (password, keys) from marshaller
+            return returnArray
+        }
+    }
+
+    def beforeUpdate() {
+        super.beforeUpdate()
+        if (newUsername) {
+            username = newUsername
+        }
+        if (newPassword) {
+            password = newPassword
+        }
+        if (newKeyFile) {
+            keyFile = newKeyFile
+        }
+    }
+
+    public boolean equals(Object o) {
+        if (!o) {
+            return false
+        } else {
+            try {
+                return ((Storage) o).getId() == this.getId()
+            } catch (Exception e) {
+                return false
+            }
+        }
+
+    }
+
+    /**
+     * Thanks to the json, create an new domain of this class
+     * Set the new domain id to json.id value
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Storage createFromDataWithId(def json) {
+        def domain = createFromData(json)
+        try {domain.id = json.id} catch (Exception e) {}
+        return domain
+    }
+
+    /**
+     * Thanks to the json, create a new domain of this class
+     * If json.id is set, the method ignore id
+     * @param json JSON with data to create domain
+     * @return The created domain
+     */
+    static Storage createFromData(def json) {
+        Storage storage = new Storage()
+        insertDataIntoDomain(storage, json)
+        return storage
+    }
+
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static Storage insertDataIntoDomain(def domain, def json) {
+        println("insertDataIntoDomain $domain $json")
+        domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
+        domain.basePath = JSONUtils.getJSONAttrStr(json, 'basePath',true)
+        domain.ip = JSONUtils.getJSONAttrStr(json, 'ip',true)
+        domain.port = JSONUtils.getJSONAttrInteger(json, 'port', 22)
+        domain.created = JSONUtils.getJSONAttrDate(json, 'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), false)
+        if (json.username && domain.username != null) {
+            domain.newUsername = JSONUtils.getJSONAttrStr(json,'username') //storage is updated
+        } else if (json.keyFile) {
+            domain.username = JSONUtils.getJSONAttrStr(json,'username') //storage is created
+        }
+        if (json.password && domain.password != null) {
+            domain.newPassword = JSONUtils.getJSONAttrStr(json,'password') //storage is updated
+        } else if (json.password) {
+            domain.password = JSONUtils.getJSONAttrStr(json,'password') //storage is created
+        }
+        if (json.keyFile && domain.keyFile != null) {
+            domain.newKeyFile = JSONUtils.getJSONAttrStr(json,'keyFile') //storage is updated
+        } else if (json.keyFile) {
+            domain.password = JSONUtils.getJSONAttrStr(json,'keyFile') //storage is created
+        }
+        return domain
+    }
+
+    public Storage storageDomain() {
+        this
     }
 
 

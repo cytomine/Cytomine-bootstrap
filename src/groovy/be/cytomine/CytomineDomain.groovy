@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
@@ -20,7 +21,6 @@ abstract class CytomineDomain  implements Comparable{
     def springSecurityService
     def cytomineService
     def sequenceService
-    def securityService
 
     static def grailsApplication
     Long id
@@ -74,7 +74,7 @@ abstract class CytomineDomain  implements Comparable{
      * @return Domain project
      */
     public Project projectDomain() {
-        return null;
+        return null
     }
 
     /**
@@ -84,7 +84,7 @@ abstract class CytomineDomain  implements Comparable{
      * @return Domain user
      */
     public SecUser userDomainCreator() {
-        return null;
+        return null
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class CytomineDomain  implements Comparable{
      * @return Domain ontology
      */
     public Ontology ontologyDomain() {
-        return null;
+        return null
     }
 
     /**
@@ -104,7 +104,17 @@ abstract class CytomineDomain  implements Comparable{
      * @return Domain software
      */
     public Software softwareDomain() {
-        return null;
+        return null
+    }
+
+    /**
+     * Return domain storage
+     * By default, a domain has no project linked
+     * You need to override storageDomain() in domain class
+     * @return Domain software
+     */
+    public Storage storageDomain() {
+        return null
     }
 
     /**
