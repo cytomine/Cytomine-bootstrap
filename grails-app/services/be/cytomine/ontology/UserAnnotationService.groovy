@@ -23,7 +23,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ConstraintException
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class UserAnnotationService extends ModelService {
 

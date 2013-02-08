@@ -20,7 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
 import be.cytomine.command.Transaction
 import grails.converters.JSON
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class AbstractImageService extends ModelService {
 

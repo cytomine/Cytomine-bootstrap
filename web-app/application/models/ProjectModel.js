@@ -10,10 +10,17 @@ var ProjectModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/project';
         var format = '.json';
+        if (this.task != null && this.task != undefined) {
+            format = format+"?task="+this.task
+        }
         if (this.isNew()) {
             return base + format;
         }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    },
+    initialize: function (options) {
+        this.id = options.id;
+        this.task = options.task;
     }
 });
 

@@ -25,6 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import be.cytomine.security.UserGroup
+import groovy.sql.Sql
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 /**
  * Bootstrap contains code that must be execute during application (re)start
@@ -40,6 +42,7 @@ class BootStrap {
     def grantService
     def userGroupService
     def termService
+    def tableService
 
     def dataSource
 
@@ -70,6 +73,7 @@ class BootStrap {
         triggerService.initTrigger()
         indexService.initIndex()
         grantService.initGrant()
+        tableService.initTable()
 
         termService.initialize()
 
@@ -97,7 +101,7 @@ class BootStrap {
         }
 
         //toVersion1()
-        toVersion1_ben()
+        //toVersion1_ben()
     }
 
     def userService
@@ -212,6 +216,8 @@ class BootStrap {
     }
 
     private def initData(String env) {
+        new Sql(dataSource).executeUpdate("DELETE FROM task_comment")
+        new Sql(dataSource).executeInsert("DELETE FROM task")
         createUsers()
         createRelation()
     }

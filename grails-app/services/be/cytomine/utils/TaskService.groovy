@@ -1,10 +1,10 @@
 package be.cytomine.utils
 
-import be.cytomine.SecurityCheck
-import be.cytomine.command.Task
+
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.springframework.security.access.prepost.PreAuthorize
+import be.cytomine.test.BasicInstance
 
 class TaskService  {
 
@@ -13,18 +13,12 @@ class TaskService  {
     static transactional = true
 
     def get(def id) {
-        def task = Task.get(id)
-        if(task) {
-            SecurityCheck.checkReadAuthorization(task.project)
-        }
+        Task task = new Task().getFromDatabase(id)
         task
     }
 
     def read(def id) {
-        def task = Task.get(id)
-        if(task) {
-            SecurityCheck.checkReadAuthorization(task.project)
-        }
+        Task task = new Task().getFromDatabase(id)
         task
     }
 
@@ -36,11 +30,10 @@ class TaskService  {
      */
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def createNewTask(Project project, SecUser user) {
-        Task task = new Task(project: project, user: user)
+        Task task = new Task(projectIdent: project?.id, userIdent: user.id)
         //task.addToComments("Task started...")
-        task.validate()
-        task.save(flush: true)
-        task
+        task = task.saveOnDatabase()
+        return task
     }
 
     /**
@@ -48,7 +41,7 @@ class TaskService  {
      * @param task Task to update
      * @param comment Comment for the new task status
      */
-    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def updateTask(Task task, String comment) {
         updateTask(task,(task? task.progress : -1),comment)
     }
@@ -59,15 +52,17 @@ class TaskService  {
      * @param progress New progress value (0-100)
      * @param comment Comment for the new task status
      */
-    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def updateTask(Task task, int progress, String comment) {
-        if(!task) {
-            log.info "task is null, ignore task"
-            return
-        }
-        task.progress = progress
-        if(comment!=null && !comment.equals("")) task.addToComments(comment)
-        task.save(flush: true)
+            if(!task) {
+                //log.info "task is null, ignore task"
+                return
+            }
+            log.info "Progress = $progress"
+            task.progress = progress
+            task.addComment(comment)
+            task = task.saveOnDatabase()
+            return task
     }
 
     /**
@@ -75,18 +70,15 @@ class TaskService  {
      * @param task Task to close
      * @return Closed task
      */
-    @PreAuthorize("#task==null or #task.user.id == principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def finishTask(Task task) {
         if(!task) {
             log.info "task is null, ignore task"
             return
         }
         task.progress = 100
-        task.addToComments("Task completed...")
-        task.validate()
-        task.save(flush: true)
-        log.info "task.id="+task.id
-        log.info "task.progress="+task.progress
+        updateTask(task,100,"Task completed...")
+        task = get(task.id)
         task
     }
 }

@@ -31,6 +31,7 @@ import be.cytomine.social.UserPosition
 import be.cytomine.image.UploadedFile
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.Exception.ConstraintException
+import be.cytomine.utils.Task
 
 class SecUserService extends ModelService {
 
@@ -519,14 +520,6 @@ class SecUserService extends ModelService {
     def deleteDependentUploadedFile(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UploadedFile.findAllByUser((User)user).each {
-                it.delete()
-            }
-        }
-    }
-
-    def deleteDependentTask(SecUser user, Transaction transaction, Task task = null) {
-        if(user instanceof User) {
-            Task.findAllByUser((User)user).each {
                 it.delete()
             }
         }

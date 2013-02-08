@@ -455,8 +455,9 @@ var ReviewPanel = SideBarPanel.extend({
             window.app.view.message("Annotation", "You must add at least one layer!", "error");
         } else {
             new TaskModel({project: self.model.get('project')}).save({}, {
-                    success: function (task, response) {
-                        console.log("task=" + task);
+                    success: function (taskResponse, response) {
+                        var task = taskResponse.get('task').id;
+                        console.log("task=" + task.get('task').id);
 
 
                         $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
@@ -464,7 +465,7 @@ var ReviewPanel = SideBarPanel.extend({
                         $("#taskreview" + self.model.id).show();
 
 
-                        var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
+                        var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, false);
 
                         new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).save({}, {
                             success: function (model, response) {
@@ -513,14 +514,15 @@ var ReviewPanel = SideBarPanel.extend({
             var x = window.confirm("Are you sure you to reject all annotation from these layers?")
             if (x) {
                 new TaskModel({project: self.model.get('project')}).save({}, {
-                        success: function (task, response) {
+                        success: function (taskResponse, response) {
+                            var task = taskResponse.get('task').id;
                             console.log("task=" + task);
 
                             $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
                             $("#reviewChoice" + self.model.id).hide();
                             $("#taskreview" + self.model.id).show();
 
-                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, true);
+                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, false);
 
                             new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).destroy({
                                 success: function (model, response) {

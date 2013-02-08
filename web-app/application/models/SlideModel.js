@@ -50,10 +50,10 @@ var SlideCollection = Backbone.Collection.extend({
     CLASS_NAME: "be.cytomine.image.Sample",
     url: function () {
         if (this.page == null) {
-            return 'api/currentuser/sample.json';
+            return 'api/sample.json';
         }
         else {
-            return 'api/currentuser/sample.json?page=' + this.page + '&limit=';
+            return 'api/sample.json?page=' + this.page + '&limit=';
         }
 
         //Request URL:http://localhost:8080/cytomine-web/api/currentuser/image.json?_search=false&nd=1310463777413&rows=10&page=1&sidx=filename&sord=asc

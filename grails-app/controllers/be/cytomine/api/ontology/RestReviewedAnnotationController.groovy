@@ -6,7 +6,7 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation

@@ -20,7 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class ReviewedAnnotationService extends ModelService {
 

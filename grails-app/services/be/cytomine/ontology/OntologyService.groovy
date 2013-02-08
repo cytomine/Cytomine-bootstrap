@@ -16,7 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 
 import grails.converters.JSON
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class OntologyService extends ModelService {
 

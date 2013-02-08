@@ -17,7 +17,7 @@ import be.cytomine.command.Transaction
 
 import grails.converters.JSON
 import be.cytomine.Exception.ConstraintException
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class SampleService extends ModelService {
 

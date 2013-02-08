@@ -11,7 +11,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class JobDataService extends ModelService {
 

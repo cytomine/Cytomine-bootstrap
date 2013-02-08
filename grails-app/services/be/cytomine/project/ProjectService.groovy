@@ -28,8 +28,9 @@ import be.cytomine.ontology.UserAnnotation
 import grails.converters.JSON
 import be.cytomine.social.UserPosition
 import be.cytomine.image.UploadedFile
-import be.cytomine.Exception.ConstraintException
+
 import be.cytomine.social.LastConnection
+import be.cytomine.utils.Task
 
 class ProjectService extends ModelService {
 
@@ -364,7 +365,7 @@ class ProjectService extends ModelService {
         }
     }
 
-    def deleteDependentAlgoAnnotation(Project project, Transaction transaction,Task, task=null) {
+    def deleteDependentAlgoAnnotation(Project project, Transaction transaction,Task task=null) {
 
         taskService.updateTask(task,task? "Delete ${AlgoAnnotation.countByProject(project)} annotations from algo":"")
 
@@ -448,21 +449,21 @@ class ProjectService extends ModelService {
               it.delete()
         }
     }
-
-    def deleteDependentTask(Project project, Transaction transaction,Task task=null) {
-
-        taskService.updateTask(task,task? "Delete ${Task.countByProject(project)} user position information":"")
-
-        Task.findAllByProject(project).each {
-            //Task from param will loose project link too...
-            it.project = null
-        }
-    }
+//
+//    def deleteDependentTask(Project project, Transaction transaction,Task task=null) {
+//
+//        taskService.updateTask(task,task? "Delete ${Task.countByProject(project)} user position information":"")
+//
+//        Task.findAllByProjectIdent(project).each {
+//            //Task from param will loose project link too...
+//            it.project = null
+//        }
+//    }
 
     def deleteDependentUploadedFile(Project project, Transaction transaction,Task task=null) {
         //TODO:: implemente delete cascade (after implementing service for upload file)
-        if(UploadedFile.findAllByProject(project)) {
-            throw new ConstraintException("This project has some uploaded files! You cannot delete it!")
+        UploadedFile.findAllByProject(project).each() {
+            it.project = null
         }
     }
 

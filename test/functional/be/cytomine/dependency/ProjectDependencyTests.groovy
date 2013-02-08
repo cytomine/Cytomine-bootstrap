@@ -11,7 +11,7 @@ import be.cytomine.processing.Job
 import be.cytomine.social.LastConnection
 import be.cytomine.security.User
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 import be.cytomine.social.UserPosition
 import be.cytomine.test.http.ProjectAPI
 
@@ -51,8 +51,8 @@ class ProjectDependencyTests  {
         //create a term and all its dependence domain
         def dependentDomain = createProjectWithDependency()
         def project = dependentDomain.first()
-        Task task = new Task(user:User.findByUsername(Infos.GOODLOGIN),project:project)
-        BasicInstance.saveDomain(task)
+        Task task = new Task(userIdent: User.findByUsername(Infos.GOODLOGIN).id,projectIdent: project.id)
+        task = task.saveOnDatabase()
 
         BasicInstance.checkIfDomainsExist(dependentDomain)
 
@@ -65,32 +65,32 @@ class ProjectDependencyTests  {
         //undo op (re create) => CANNOT UNDO DELETE PROJECT!
         assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
-        task.refresh()
+        task = task.getFromDatabase(task.id)
         println "###############################################"
-        println task.comments.join("\n")
+        println task.getLastComments(9999).join("\n")
         println "###############################################"
 
     }
 
-
-    void testProjectDependencyWithErrorRecovering() {
-        //create a term and all its dependence domain
-        def dependentDomain = createProjectWithDependency()
-        def project = dependentDomain.first()
-        BasicInstance.checkIfDomainsExist(dependentDomain)
-
-        UploadedFile file = new UploadedFile(user:User.findByUsername(Infos.GOODLOGIN), project: project,filename:"x",originalFilename:"y",convertedFilename:"z",convertedExt:"a",ext:"b",path:"c",contentType:"d")
-        BasicInstance.saveDomain(file)
-
-        BasicInstance.checkIfDomainsExist([file])
-
-        //try to delete term
-        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
-
-        //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsExist(dependentDomain)
-        BasicInstance.checkIfDomainsExist([file])
-    }
+//
+//    void testProjectDependencyWithErrorRecovering() {
+//        //create a term and all its dependence domain
+//        def dependentDomain = createProjectWithDependency()
+//        def project = dependentDomain.first()
+//        BasicInstance.checkIfDomainsExist(dependentDomain)
+//
+//        UploadedFile file = new UploadedFile(user:User.findByUsername(Infos.GOODLOGIN), project: project,filename:"x",originalFilename:"y",convertedFilename:"z",convertedExt:"a",ext:"b",path:"c",contentType:"d")
+//        BasicInstance.saveDomain(file)
+//
+//        BasicInstance.checkIfDomainsExist([file])
+//
+//        //try to delete term
+//        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+//
+//        //check if all dependency are not aivalable
+//        BasicInstance.checkIfDomainsExist(dependentDomain)
+//        BasicInstance.checkIfDomainsExist([file])
+//    }
 
 
 
@@ -167,9 +167,6 @@ class ProjectDependencyTests  {
         //Not recoverable domain (cannot retrieve it with undo delete)
         LastConnection lc = new LastConnection(project: project, user:  User.findByUsername(Infos.GOODLOGIN))
         BasicInstance.saveDomain(lc)
-
-        Task task = new Task(project: project, user: User.findByUsername(Infos.GOODLOGIN))
-        BasicInstance.saveDomain(task)
 
         UserPosition up = new UserPosition(project: project, user: User.findByUsername(Infos.GOODLOGIN), image: ia)
         BasicInstance.saveDomain(up)

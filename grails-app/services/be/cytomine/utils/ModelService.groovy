@@ -5,10 +5,9 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
 import be.cytomine.command.DeleteCommand
-import be.cytomine.command.Transaction
-import org.codehaus.groovy.grails.web.json.JSONObject
+
 import org.hibernate.cfg.NotYetImplementedException
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 abstract class ModelService {
 
@@ -72,6 +71,7 @@ abstract class ModelService {
      * Execute command with JSON data
      */
     protected executeCommand(Command c, def json, Task task = null) {
+        log.info "==========> ${this} delete"
         if(c instanceof DeleteCommand) {
             def domainToDelete = retrieve(json)
 
@@ -93,7 +93,13 @@ abstract class ModelService {
             }
 
             dependencyMethodName.eachWithIndex { method, index ->
+                log.info "====================> call ${method} with task ${task}"
+//                log.info "index = $index"
+//                log.info "numberOfDirectDependence = $numberOfDirectDependence"
+//                log.info "((double)index/(double)numberOfDirectDependence) = ${((double)index/(double)numberOfDirectDependence)}"
+//                log.info "(int)((double)index/(double)numberOfDirectDependence)*100 = ${(int)((double)index/(double)numberOfDirectDependence)*100}"
                 taskService.updateTask(task, (int)((double)index/(double)numberOfDirectDependence)*100, "")
+//                log.info "delete!"
                 this."$method"(domainToDelete,c.transaction,task)
             }
 

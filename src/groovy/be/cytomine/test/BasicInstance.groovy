@@ -14,6 +14,7 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.security.*
@@ -1051,6 +1052,7 @@ class BasicInstance {
     }
 
     static User createOrGetBasicUser(String username, String password) {
+        def springSecurityService = ApplicationHolder.application.getMainContext().getBean("springSecurityService")
         log.debug "createOrGetBasicUser()"
         def user = SecUser.findByUsername(username)
         if (!user) {

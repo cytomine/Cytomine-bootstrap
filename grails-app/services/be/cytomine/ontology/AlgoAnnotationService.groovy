@@ -21,7 +21,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 class AlgoAnnotationService extends ModelService {
 

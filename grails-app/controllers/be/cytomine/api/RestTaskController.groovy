@@ -1,6 +1,6 @@
 package be.cytomine.api
 
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 
@@ -21,7 +21,7 @@ class RestTaskController extends RestController {
     def show = {
         Task task = taskService.read(params.long('id'))
         if (task) {
-            responseSuccess(task)
+            responseSuccess(task.getMap())
         } else {
             responseNotFound("Task", params.id)
         }
@@ -37,7 +37,7 @@ class RestTaskController extends RestController {
             responseNotFound("Project", params.project)
         } else {
             Task task = taskService.createNewTask(project,user)
-            responseSuccess([task:task])
+            responseSuccess([task:task.getMap()])
         }
     }
 }

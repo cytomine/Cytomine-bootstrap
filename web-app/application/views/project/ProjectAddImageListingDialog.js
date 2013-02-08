@@ -153,7 +153,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         }
 
 
-        $("#" + self.listmanageall).jqGrid('setGridParam', {url: "api/currentuser/image.json?filename=" + searchText + "&createdstart=" + dateTimestampStart + "&createdstop=" + dateTimestampEnd, page: 1}).trigger("reloadGrid");
+        $("#" + self.listmanageall).jqGrid('setGridParam', {url: "api/image.json?filename=" + searchText + "&createdstart=" + dateTimestampStart + "&createdstop=" + dateTimestampEnd, page: 1}).trigger("reloadGrid");
 
 
     },
@@ -289,7 +289,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var thumbColName = 'thumb';
         $("#" + self.listmanageall).jqGrid({
             datatype: "json",
-            url: 'api/currentuser/image.json',
+            url: 'api/image.json',
             width: jqGridWidth,
             height: 500,
             colNames: ['id', thumbColName, 'filename', 'mime', 'created'],

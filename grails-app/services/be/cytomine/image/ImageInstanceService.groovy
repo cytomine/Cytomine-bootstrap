@@ -18,7 +18,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 
 /**
  * TODO:: refactor + doc!!!!!!!

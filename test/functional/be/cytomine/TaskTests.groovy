@@ -15,8 +15,9 @@ import be.cytomine.security.UserJob
 import be.cytomine.ontology.AlgoAnnotationTerm
 
 import be.cytomine.test.http.JobAPI
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 import be.cytomine.test.http.TaskAPI
+import be.cytomine.utils.TaskComment
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,15 +30,14 @@ class TaskTests  {
 
     void testShowTask() {
         println "test task"
-        Task task = new Task(project: BasicInstance.createOrGetBasicProject(),user:  BasicInstance.createOrGetBasicUser())
+        Task task = new Task(projectIdent: BasicInstance.createOrGetBasicProject().id,userIdent:  BasicInstance.createOrGetBasicUser().id)
         task.progress = 50
-        task.addToComments("First step...")
-        task.addToComments("Second step...")
-        BasicInstance.checkDomain(task)
-        BasicInstance.saveDomain(task)
+        task = task.saveOnDatabase()
+        task.addComment("First step...")
+        task.addComment("Second step...")
 
         println "task.progress="+task.progress
-        println "task.comments="+task.comments
+        println "task.comments="+task.getMap()
 
 
         def result = TaskAPI.show(task.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -47,11 +47,11 @@ class TaskTests  {
         println "task.json="+json
         assert json.progress == 50
         assert json.comments.size()==2
-        assert json.comments[0].equals("First step...")
-        assert json.comments[1].equals("Second step...")
+        assert json.comments[1].equals("First step...")
+        assert json.comments[0].equals("Second step...")
 
-        assert json.project == task.project.id
-        assert json.user == task.user.id
+        assert json.project == task.projectIdent
+        assert json.user == task.userIdent
     }
 
     void testShowTaskNotExist() {
@@ -60,14 +60,12 @@ class TaskTests  {
     }
 
     void testTask() {
-        Task task = new Task(project: BasicInstance.createOrGetBasicProject(),user:  BasicInstance.createOrGetBasicUser())
+        Task task = new Task(projectIdent: BasicInstance.createOrGetBasicProject().id,userIdent:  BasicInstance.createOrGetBasicUser().id)
         assert task.progress==0
-        assert task.comments==null
-        task.comments = new ArrayList<String>()
-        task.addToComments("First step...")
-        task.addToComments("Second step...")
-        task.save(flush: true)
-        assert task.comments.size()==2
+        task = task.saveOnDatabase()
+        task.addComment("First step...")
+        task.addComment("Second step...")
+        assert task.getLastComments(5).size()==2
     }
 
     void testAddTask() {
@@ -116,8 +114,7 @@ class TaskTests  {
         result = JobAPI.deleteAllJobData(job.id, jsonTask.task.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
-        def task = Task.read(jsonTask.task.id)
-        task.refresh()
+        def task = new Task().getFromDatabase(jsonTask.task.id)
         assert task.progress==100
     }
 

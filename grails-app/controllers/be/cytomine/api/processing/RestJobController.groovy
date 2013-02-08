@@ -4,7 +4,7 @@ import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
-import be.cytomine.command.Task
+import be.cytomine.utils.Task
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.processing.Job
