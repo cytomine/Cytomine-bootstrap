@@ -19,7 +19,6 @@ class RelationTermService extends ModelService {
     def springSecurityService
     def commandService
     def cytomineService
-    def modelService
     def transactionService
 
     /**

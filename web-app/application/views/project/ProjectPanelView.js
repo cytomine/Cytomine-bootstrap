@@ -160,6 +160,13 @@ var ProjectPanelView = Backbone.View.extend({
                 $('#delete-project-confirm').remove();
                 return false;
             });
+            $('#delete-project-confirm').find("a.close").click(function() {
+                $('#delete-project-confirm').modal("hide");
+                $('#delete-project-confirm').remove();
+                return false;
+            });
+
+
             $("#closeProjectDeleteConfirmDialog").click(function () {
 
                 new TaskModel({project: self.model.id}).save({}, {

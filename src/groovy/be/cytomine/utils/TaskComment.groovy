@@ -19,6 +19,8 @@ class TaskComment {
     Long timestamp
 
     def saveOnDatabase() {
-        new Sql(Holders.grailsApplication.mainContext.dataSource).executeInsert("INSERT INTO task_comment (taskIdent,comment,timestamp) VALUES ($taskIdent,$comment,$timestamp)")
+        Sql sql = Task.createSQLDB()
+        sql.executeInsert("INSERT INTO task_comment (taskIdent,comment,timestamp) VALUES ($taskIdent,$comment,$timestamp)")
+        Task.closeSQL(sql)
     }
 }

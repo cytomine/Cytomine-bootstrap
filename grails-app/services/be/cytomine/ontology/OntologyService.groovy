@@ -26,7 +26,6 @@ class OntologyService extends ModelService {
     def commandService
     def termService
     def cytomineService
-    def modelService
     def aclUtilService
 
     Ontology read(def id) {

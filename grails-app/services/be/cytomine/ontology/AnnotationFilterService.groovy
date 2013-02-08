@@ -19,7 +19,6 @@ class AnnotationFilterService extends ModelService {
     static transactional = true
 
     def cytomineService
-    def modelService
     def transactionService
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")

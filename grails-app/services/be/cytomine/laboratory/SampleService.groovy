@@ -23,7 +23,6 @@ class SampleService extends ModelService {
 
     static transactional = true
 
-    def modelService
     def cytomineService
     def abstractImageService
     def transactionService

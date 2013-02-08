@@ -147,6 +147,7 @@ class RestProjectController extends RestController {
             Task task = taskService.read(params.getLong("task"))
             log.info "task ${task} is find for id = ${params.getLong("task")}"
             def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
+            log.info "project = ${domain}"
             def result = projectService.delete(JSON.parse("{id : $params.id}"),new SecurityCheck(domain),task)
             //delete container in retrieval
             try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}

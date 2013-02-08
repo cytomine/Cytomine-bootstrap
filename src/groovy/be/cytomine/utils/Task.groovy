@@ -44,38 +44,46 @@ class Task {
     def getLastComments(int max) {
         //sql request retrieve n last comments for task
         def data = []
-        new Sql(Holders.grailsApplication.mainContext.dataSource).eachRow("SELECT comment FROM task_comment where taskIdent = ${id} order by timestamp desc limit $max") {
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT comment FROM task_comment where taskIdent = ${id} order by timestamp desc limit $max") {
             data << it[0]
         }
+        closeSQL(sql)
         data
     }
 
     Task saveOnDatabase() {
         println AH.application.mainContext.dataSource
         boolean isAlreadyInDatabase = false
-        new Sql(Holders.grailsApplication.mainContext.dataSource).eachRow("SELECT id FROM task where id = ${id}") {
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT id FROM task where id = ${id}") {
             isAlreadyInDatabase = true
         }
 
         if(!isAlreadyInDatabase) {
             id = AH.application.mainContext.sequenceService.generateID()
-            new Sql(Holders.grailsApplication.mainContext.dataSource).executeInsert("INSERT INTO task (id,progress,projectIdent,userIdent) VALUES ($id,$progress,$projectIdent,$userIdent)")
+            sql.executeInsert("INSERT INTO task (id,progress,projectIdent,userIdent) VALUES ($id,$progress,$projectIdent,$userIdent)")
         } else {
-            new Sql(Holders.grailsApplication.mainContext.dataSource).executeInsert("UPDATE task set progress=${progress} WHERE id=$id")
+            sql.executeUpdate("UPDATE task set progress=${progress} WHERE id=$id")
+            println "UPDATE task set progress=${progress} WHERE id=$id"
+            println getFromDatabase(id).progress
         }
+        closeSQL(sql)
         getFromDatabase(id)
 
     }
 
     def getFromDatabase(def id) {
         Task task = null
-        new Sql(Holders.grailsApplication.mainContext.dataSource).eachRow("SELECT id,progress,projectIdent,userIdent FROM task where id = ${id}") {
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT id,progress,projectIdent,userIdent FROM task where id = ${id}") {
             task = new Task()
             task.id = it[0]
             task.progress = it[1]
             task.projectIdent = it[2]
             task.userIdent = it[3]
         }
+        closeSQL(sql)
         return task
     }
 
@@ -84,6 +92,17 @@ class Task {
             TaskComment taskComment = new TaskComment(taskIdent: id,comment: comment,timestamp: new Date().getTime())
             taskComment.saveOnDatabase()
         }
+    }
+
+
+    static Sql createSQLDB() {
+        def db = [url:Holders.config.dataSource.url, user:Holders.config.dataSource.username, password:Holders.config.dataSource.password, driver:Holders.config.dataSource.driverClassName]
+        def sql = Sql.newInstance(db.url, db.user, db.password, db.driver)
+        return sql
+    }
+
+    static closeSQL(Sql sql) {
+        sql.close()
     }
 
 }

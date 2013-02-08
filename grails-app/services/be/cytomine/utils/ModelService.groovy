@@ -92,14 +92,9 @@ abstract class ModelService {
                 }
             }
 
-            dependencyMethodName.eachWithIndex { method, index ->
+            dependencyMethodName.unique().eachWithIndex { method, index ->
                 log.info "====================> call ${method} with task ${task}"
-//                log.info "index = $index"
-//                log.info "numberOfDirectDependence = $numberOfDirectDependence"
-//                log.info "((double)index/(double)numberOfDirectDependence) = ${((double)index/(double)numberOfDirectDependence)}"
-//                log.info "(int)((double)index/(double)numberOfDirectDependence)*100 = ${(int)((double)index/(double)numberOfDirectDependence)*100}"
                 taskService.updateTask(task, (int)((double)index/(double)numberOfDirectDependence)*100, "")
-//                log.info "delete!"
                 this."$method"(domainToDelete,c.transaction,task)
             }
 
