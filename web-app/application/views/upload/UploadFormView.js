@@ -681,6 +681,7 @@ var UploadFormView = Backbone.View.extend({
 
         var linkProjectSelect = $("#linkProjectSelect");
         var linkWithProject = $("#linkWithProject");
+        var linkStorageSelect = $("#linkStorageSelect");
         linkProjectSelect.attr("disabled", "disabled");
         linkWithProject.removeAttr("checked");
 
@@ -698,6 +699,15 @@ var UploadFormView = Backbone.View.extend({
                 collection.each(function (project) {
                     var selectOption = _.template(optionTpl, project.toJSON());
                     linkProjectSelect.append(selectOption);
+                });
+            }
+        });
+        new StorageCollection().fetch({
+            success: function (collection, response) {
+                var optionTpl = "<option value='<%= id %>'><%= name %></option>";
+                collection.each(function (storage) {
+                    var selectOption = _.template(optionTpl, storage.toJSON());
+                    linkStorageSelect.append(selectOption);
                 });
             }
         });
@@ -725,7 +735,8 @@ var UploadFormView = Backbone.View.extend({
                 if (linkWithProject.attr("checked") == "checked") {
                     idProject = linkProjectSelect.val();
                 }
-                data.formData = {idProject: idProject};
+                var idStorage = linkStorageSelect.val();
+                data.formData = {idProject: idProject, idStorage : idStorage};
                 return true;
             });
             $('#fileupload').bind('fileuploadsend', function (e, data) {

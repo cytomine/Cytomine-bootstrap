@@ -351,7 +351,7 @@ ApplicationView.prototype.message = function (title, message, type) {
     $("#alerts").append(_.template(tpl, { alert: title, message: message, timestamp: timestamp, type: type}));
     setTimeout(function () {
         $("#alert" + timestamp).remove();
-    }, 2000);
+    }, 3000);
 
 }
 
