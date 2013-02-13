@@ -67,24 +67,13 @@ class ImageInstance extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static ImageInstance createFromData(def json) {
-        def image = new ImageInstance()
-        try {image.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(image, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static ImageInstance insertDataIntoDomain(def domain, def json) {
+    static ImageInstance insertDataIntoDomain(def json, def domain = new ImageInstance()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.created = JSONUtils.getJSONAttrDate(json, "created")
         domain.updated = JSONUtils.getJSONAttrDate(json, "updated")
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), false)

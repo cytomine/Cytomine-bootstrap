@@ -20,25 +20,14 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static SoftwareProject createFromData(def json) {
-        def softwareProject = new SoftwareProject()
-        try {softwareProject.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(softwareProject, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static SoftwareProject insertDataIntoDomain(def domain, def json) {
+    static SoftwareProject insertDataIntoDomain(def json,def domain=new SoftwareProject()) {
         try {
+            domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
             domain.software = JSONUtils.getJSONAttrDomain(json.software, "id", new Software(), true)
             domain.project = JSONUtils.getJSONAttrDomain(json.project, "id", new Project(), true)
         }

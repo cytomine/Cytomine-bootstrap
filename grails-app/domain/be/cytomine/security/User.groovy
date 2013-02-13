@@ -59,18 +59,6 @@ class User extends SecUser {
     boolean algo() {
         return false
     }
-
-    /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static User createFromData(def json) {
-        def user = new User()
-        try {user.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(user, json)
-    }
     
     /**
      * Insert JSON data into domain in param
@@ -78,7 +66,8 @@ class User extends SecUser {
      * @param json JSON containing data
      * @return Domain with json data filled
      */         
-    static User insertDataIntoDomain(def domain, def json) {
+    static User insertDataIntoDomain(def json, def domain = new User()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.username = JSONUtils.getJSONAttrStr(json,'username')
         domain.firstname = JSONUtils.getJSONAttrStr(json,'firstname')
         domain.lastname = JSONUtils.getJSONAttrStr(json,'lastname')

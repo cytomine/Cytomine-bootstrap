@@ -327,7 +327,7 @@ class SecUserService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(User.createFromData(json), printMessage)
+        create(User.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -407,7 +407,7 @@ class SecUserService extends ModelService {
      * @return new domain
      */
     User createFromJSON(def json) {
-        return User.createFromData(json)
+        return User.insertDataIntoDomain(json)
     }
 
     /**

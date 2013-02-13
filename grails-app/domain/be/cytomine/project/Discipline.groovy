@@ -50,24 +50,13 @@ class Discipline extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Discipline createFromData(def json) {
-        def discipline = new Discipline()
-        try {discipline.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(discipline, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Discipline insertDataIntoDomain(def domain, def json) {
+    static Discipline insertDataIntoDomain(def json, def domain = new Discipline()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         return domain;
     }

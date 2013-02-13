@@ -95,7 +95,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AnnotationFilter.createFromData(json), printMessage)
+        create(AnnotationFilter.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -167,7 +167,7 @@ class AnnotationFilterService extends ModelService {
      * @return new domain
      */
     AnnotationFilter createFromJSON(def json) {
-        return AnnotationFilter.createFromData(json)
+        return AnnotationFilter.insertDataIntoDomain(json)
     }
 
     /**

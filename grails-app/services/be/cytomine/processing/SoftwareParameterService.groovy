@@ -90,7 +90,7 @@ class SoftwareParameterService extends ModelService{
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(SoftwareParameter.createFromData(json), printMessage)
+        create(SoftwareParameter.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -162,7 +162,7 @@ class SoftwareParameterService extends ModelService{
      * @return new domain
      */
     SoftwareParameter createFromJSON(def json) {
-        return SoftwareParameter.createFromData(json)
+        return SoftwareParameter.insertDataIntoDomain(json)
     }
 
     /**

@@ -42,24 +42,13 @@ class UserGroup {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static UserGroup createFromData(def json) {
-        def userGroup = new UserGroup()
-        try {userGroup.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(userGroup, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static UserGroup insertDataIntoDomain(def domain, def json) {
+    static UserGroup insertDataIntoDomain(def json, def domain = new UserGroup()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.group = JSONUtils.getJSONAttrDomain(json, "group", new Group(), true)
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
         return domain

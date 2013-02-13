@@ -89,26 +89,13 @@ class Storage extends CytomineDomain {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Storage createFromData(def json) {
-        Storage storage = new Storage()
-        try {storage.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(storage, json)
-        return storage
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Storage insertDataIntoDomain(def domain, def json) {
-        println("insertDataIntoDomain $domain $json")
+    static Storage insertDataIntoDomain(def json,def domain = new Storage()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
         domain.basePath = JSONUtils.getJSONAttrStr(json, 'basePath',true)
         domain.ip = JSONUtils.getJSONAttrStr(json, 'ip',true)

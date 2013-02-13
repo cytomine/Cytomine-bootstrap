@@ -55,7 +55,7 @@ abstract class ModelService {
      */
     protected def fillDomainWithData(def object, def json) {
         def domain = object.get(json.id)
-        domain = object.insertDataIntoDomain(domain, json)
+        domain = object.insertDataIntoDomain(json,domain)
         domain.id = json.id
         return domain
     }

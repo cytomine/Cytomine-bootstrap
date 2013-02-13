@@ -230,7 +230,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(ReviewedAnnotation.createFromData(json), printMessage)
+        create(ReviewedAnnotation.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -305,7 +305,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return new domain
      */
     ReviewedAnnotation createFromJSON(def json) {
-        return ReviewedAnnotation.createFromData(json)
+        return ReviewedAnnotation.insertDataIntoDomain(json)
     }
 
     /**

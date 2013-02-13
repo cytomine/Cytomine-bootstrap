@@ -89,24 +89,13 @@ class Job extends CytomineDomain  {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Job createFromData(def json) {
-        def job = new Job()
-        try {job.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(job, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */    
-    static def insertDataIntoDomain(def domain, def json) {
+    static def insertDataIntoDomain(def json,def domain = new Job()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.status = JSONUtils.getJSONAttrInteger(json, 'status', 0)
         domain.progress = JSONUtils.getJSONAttrInteger(json, 'progress', 0)
         domain.statusComment = JSONUtils.getJSONAttrStr(json, 'statusComment')

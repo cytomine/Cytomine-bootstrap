@@ -67,7 +67,7 @@ class SecUserSecRoleService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(SecUserSecRole.createFromData(json), printMessage)
+        create(SecUserSecRole.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -92,7 +92,7 @@ class SecUserSecRoleService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def destroy(def json, boolean printMessage) {
-        destroy(SecUserSecRole.createFromData(json), printMessage)
+        destroy(SecUserSecRole.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -115,7 +115,7 @@ class SecUserSecRoleService extends ModelService {
      * @return new domain
      */
     SecUserSecRole createFromJSON(def json) {
-        return SecUserSecRole.createFromData(json)
+        return SecUserSecRole.insertDataIntoDomain(json)
     }
 
     /**

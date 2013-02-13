@@ -87,7 +87,7 @@ class DisciplineService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Discipline.createFromData(json), printMessage)
+        create(Discipline.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -162,7 +162,7 @@ class DisciplineService extends ModelService {
      * @return new domain
      */
     Discipline createFromJSON(def json) {
-        return Discipline.createFromData(json)
+        return Discipline.insertDataIntoDomain(json)
     }
 
     /**

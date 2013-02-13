@@ -77,7 +77,7 @@ class AlgoAnnotationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AlgoAnnotationTerm.createFromData(json), printMessage)
+        create(AlgoAnnotationTerm.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -124,7 +124,7 @@ class AlgoAnnotationTermService extends ModelService {
      * @return new domain
      */
     AlgoAnnotationTerm createFromJSON(def json) {
-        return AlgoAnnotationTerm.createFromData(json)
+        return AlgoAnnotationTerm.insertDataIntoDomain(json)
     }
 
     /**

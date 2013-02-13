@@ -129,7 +129,7 @@ class OntologyService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Ontology.createFromData(json), printMessage)
+        create(Ontology.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -205,7 +205,7 @@ class OntologyService extends ModelService {
      * @return new domain
      */
     Ontology createFromJSON(def json) {
-        return Ontology.createFromData(json)
+        return Ontology.insertDataIntoDomain(json)
     }
 
     /**

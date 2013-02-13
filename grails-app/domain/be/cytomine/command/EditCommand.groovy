@@ -41,7 +41,7 @@ class EditCommand extends Command {
         //Retrieve domain to update it
         def updatedDomain = service.retrieve(json)
         def oldDomain = updatedDomain.encodeAsJSON()
-        updatedDomain.insertDataIntoDomain(updatedDomain, json)
+        updatedDomain.insertDataIntoDomain(json,updatedDomain)
         //Init command info
         setProject(updatedDomain?.projectDomain())
         def response = service.edit(updatedDomain, printMessage)

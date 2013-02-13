@@ -108,7 +108,7 @@ class AnnotationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AnnotationTerm.createFromData(json), printMessage)
+        create(AnnotationTerm.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -160,7 +160,7 @@ class AnnotationTermService extends ModelService {
      * @return new domain
      */
     AnnotationTerm createFromJSON(def json) {
-        return AnnotationTerm.createFromData(json)
+        return AnnotationTerm.insertDataIntoDomain(json)
     }
 
     /**

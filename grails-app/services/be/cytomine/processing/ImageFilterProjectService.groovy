@@ -74,7 +74,7 @@ class ImageFilterProjectService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(ImageFilterProject.createFromData(json), printMessage)
+        create(ImageFilterProject.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -122,7 +122,7 @@ class ImageFilterProjectService extends ModelService {
      * @return new domain
      */
     ImageFilterProject createFromJSON(def json) {
-        return ImageFilterProject.createFromData(json)
+        return ImageFilterProject.insertDataIntoDomain(json)
     }
 
     /**

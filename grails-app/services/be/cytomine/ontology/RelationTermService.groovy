@@ -107,7 +107,7 @@ class RelationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(RelationTerm.createFromData(json), printMessage)
+        create(RelationTerm.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -155,7 +155,7 @@ class RelationTermService extends ModelService {
      * @return new domain
      */
     RelationTerm createFromJSON(def json) {
-        return RelationTerm.createFromData(json)
+        return RelationTerm.insertDataIntoDomain(json)
     }
 
     /**

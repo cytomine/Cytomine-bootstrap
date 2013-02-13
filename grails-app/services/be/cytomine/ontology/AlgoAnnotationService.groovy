@@ -392,7 +392,7 @@ class AlgoAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AlgoAnnotation.createFromData(json), printMessage)
+        create(AlgoAnnotation.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -481,7 +481,7 @@ class AlgoAnnotationService extends ModelService {
      * @return new domain
      */
     AlgoAnnotation createFromJSON(def json) {
-        return AlgoAnnotation.createFromData(json)
+        return AlgoAnnotation.insertDataIntoDomain(json)
     }
 
     /**

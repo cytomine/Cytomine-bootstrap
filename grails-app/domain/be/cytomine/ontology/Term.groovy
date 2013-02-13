@@ -70,24 +70,13 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Term createFromData(def json) throws CytomineException {
-        def term = new Term()
-        try {term.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(term, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Term insertDataIntoDomain(def domain, def json) throws CytomineException {
+    static Term insertDataIntoDomain(def json, def domain = new Term()) throws CytomineException {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json,'name')
         domain.created = JSONUtils.getJSONAttrDate(json,'created')
         domain.updated = JSONUtils.getJSONAttrDate(json,'updated')

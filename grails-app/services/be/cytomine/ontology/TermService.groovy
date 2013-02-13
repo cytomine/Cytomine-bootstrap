@@ -177,7 +177,7 @@ class TermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Term.createFromData(json), printMessage)
+        create(Term.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -249,7 +249,7 @@ class TermService extends ModelService {
      * @return new domain
      */
     Term createFromJSON(def json) {
-        return Term.createFromData(json)
+        return Term.insertDataIntoDomain(json)
     }
 
     /**

@@ -98,7 +98,7 @@ class GroupService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Group.createFromData(json), printMessage)
+        create(Group.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -170,7 +170,7 @@ class GroupService extends ModelService {
      * @return new domain
      */
     Group createFromJSON(def json) {
-        return Group.createFromData(json)
+        return Group.insertDataIntoDomain(json)
     }
 
     /**

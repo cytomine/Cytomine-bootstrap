@@ -19,26 +19,14 @@ class Sample extends CytomineDomain implements Serializable{
         name(blank: false, unique: true)
     }
 
-
-    /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Sample createFromData(def json) {
-        def image = new Sample()
-        try {image.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(image, json)
-    }
-
     /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Sample insertDataIntoDomain(def domain, def json) {
+    static Sample insertDataIntoDomain(def json,def domain = new Sample()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json,'name')
         domain.created = JSONUtils.getJSONAttrDate(json,'created')
         domain.updated = JSONUtils.getJSONAttrDate(json,'updated')

@@ -98,7 +98,7 @@ class StorageService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Storage.createFromData(json), printMessage)
+        create(Storage.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -170,7 +170,7 @@ class StorageService extends ModelService {
      * @return new domain
      */
     Storage createFromJSON(def json) {
-        return Storage.createFromData(json)
+        return Storage.insertDataIntoDomain(json)
     }
 
    void deleteDependentImageServerStorage(Storage storage, Transaction transaction, Task task = null){

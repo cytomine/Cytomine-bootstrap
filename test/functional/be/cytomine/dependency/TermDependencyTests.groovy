@@ -113,7 +113,10 @@ class TermDependencyTests  {
         BasicInstance.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assert (200 == OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        def res = OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert (200 == res.code)
+        println "*************** coco"
+        println res.data
 
 
         //check if all dependency are aivalable

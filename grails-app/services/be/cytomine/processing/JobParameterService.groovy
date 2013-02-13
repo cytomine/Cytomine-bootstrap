@@ -97,7 +97,7 @@ class JobParameterService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(JobParameter.createFromData(json), printMessage)
+        create(JobParameter.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -169,7 +169,7 @@ class JobParameterService extends ModelService {
      * @return new domain
      */
     JobParameter createFromJSON(def json) {
-        return JobParameter.createFromData(json)
+        return JobParameter.insertDataIntoDomain(json)
     }
 
     /**

@@ -200,7 +200,7 @@ class ImageInstanceService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(ImageInstance.createFromData(json), printMessage)
+        create(ImageInstance.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -272,7 +272,7 @@ class ImageInstanceService extends ModelService {
      * @return new domain
      */
     ImageInstance createFromJSON(def json) {
-        return ImageInstance.createFromData(json)
+        return ImageInstance.insertDataIntoDomain(json)
     }
 
     /**

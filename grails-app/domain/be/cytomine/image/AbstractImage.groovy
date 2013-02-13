@@ -61,18 +61,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
     }
 
-    /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     * @throws CytomineException Error during domain creation
-     */
-    static AbstractImage createFromData(def json) throws CytomineException {
-        def image = new AbstractImage()
-        try {image.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(image, json)
-    }
 
     /**
      * Insert JSON data into domain in param
@@ -81,7 +69,8 @@ class AbstractImage extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      * @throws CytomineException Error during properties copy (wrong argument,...)
      */
-    static AbstractImage insertDataIntoDomain(def domain, def json) throws CytomineException {
+    static AbstractImage insertDataIntoDomain(def json,def domain = new AbstractImage()) throws CytomineException {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
         domain.path = JSONUtils.getJSONAttrStr(json,'path')
         domain.height = JSONUtils.getJSONAttrInteger(json,'height',-1)

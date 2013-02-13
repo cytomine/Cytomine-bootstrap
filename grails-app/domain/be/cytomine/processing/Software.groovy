@@ -78,24 +78,13 @@ class Software extends CytomineDomain {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Software createFromData(def json) {
-        def software = new Software()
-        try {software.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(software, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Software insertDataIntoDomain(def domain, def json) {
+    static Software insertDataIntoDomain(def json,def domain=new Software()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         domain.description = JSONUtils.getJSONAttrStr(json, 'description')
         domain.serviceName = JSONUtils.getJSONAttrStr(json, 'serviceName',true)

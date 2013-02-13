@@ -20,25 +20,14 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static ImageFilterProject createFromData(def json) {
-        def imageFilterProject = new ImageFilterProject()
-        try {imageFilterProject.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(imageFilterProject, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static ImageFilterProject insertDataIntoDomain(def domain, def json) {
+    static ImageFilterProject insertDataIntoDomain(def json, def domain = new ImageFilterProject()) {
         try {
+            domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
             domain.imageFilter = JSONUtils.getJSONAttrDomain(json, "imageFilter", new ImageFilter(), true)
             domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
         }

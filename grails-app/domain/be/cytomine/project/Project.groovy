@@ -116,24 +116,13 @@ class Project extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Project createFromData(def json) {
-        def project = new Project()
-        try {project.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(project, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */           
-    static Project insertDataIntoDomain(def domain, def json) {
+    static Project insertDataIntoDomain(def json,def domain = new Project()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
         domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
         domain.discipline = JSONUtils.getJSONAttrDomain(json, "discipline", new Discipline(), false)

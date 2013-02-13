@@ -27,24 +27,13 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static RelationTerm createFromData(def json) {
-        def relationTerm = new RelationTerm()
-        try {relationTerm.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(relationTerm, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static RelationTerm insertDataIntoDomain(def domain, def json) {
+    static RelationTerm insertDataIntoDomain(def json, def domain = new RelationTerm()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.relation = JSONUtils.getJSONAttrDomain(json, "relation", new Relation(), true)
         domain.term1 = JSONUtils.getJSONAttrDomain(json, "term1", new Term(), true)
         domain.term2 = JSONUtils.getJSONAttrDomain(json, "term2", new Term(), true)

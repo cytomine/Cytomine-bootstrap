@@ -23,24 +23,13 @@ class Group extends CytomineDomain {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static Group createFromData(def json) {
-        def group = new Group()
-        try {group.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(group, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static Group insertDataIntoDomain(def domain, def json) {
+    static Group insertDataIntoDomain(def json,def domain=new Group()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json,'name',true)
         return domain;
     }

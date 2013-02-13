@@ -41,24 +41,13 @@ class JobParameter extends CytomineDomain implements Comparable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static JobParameter createFromData(def json) {
-        def jobParameter = new JobParameter()
-        try {jobParameter.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(jobParameter, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static JobParameter insertDataIntoDomain(def domain, def json) {
+    static JobParameter insertDataIntoDomain(def json,def domain=new JobParameter()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.value = JSONUtils.getJSONAttrStr(json, 'value')
         domain.job = JSONUtils.getJSONAttrDomain(json, "job", new Job(), true)
         domain.softwareParameter = JSONUtils.getJSONAttrDomain(json, "softwareParameter", new SoftwareParameter(), true)

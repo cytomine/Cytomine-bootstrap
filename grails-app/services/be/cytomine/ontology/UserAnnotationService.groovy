@@ -441,7 +441,7 @@ class UserAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(UserAnnotation.createFromData(json), printMessage)
+        create(UserAnnotation.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -526,7 +526,7 @@ class UserAnnotationService extends ModelService {
      * @return new domain
      */
     UserAnnotation createFromJSON(def json) {
-        return UserAnnotation.createFromData(json)
+        return UserAnnotation.insertDataIntoDomain(json)
     }
 
     /**

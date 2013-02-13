@@ -24,24 +24,13 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static AnnotationTerm createFromData(def json) {
-        def annotationTerm = new AnnotationTerm()
-        try {annotationTerm.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(annotationTerm, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static AnnotationTerm insertDataIntoDomain(def domain, def json) {
+    static AnnotationTerm insertDataIntoDomain(def json, def domain = new AnnotationTerm()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
         domain.userAnnotation = JSONUtils.getJSONAttrDomain(json, "userannotation", new UserAnnotation(), true)

@@ -97,24 +97,13 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create a new domain of this class
-     * If json.id is set, the method ignore id
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static AlgoAnnotationTerm createFromData(def json) {
-        def algoAnnotationTerm = new AlgoAnnotationTerm()
-        try {algoAnnotationTerm.id = json.id} catch (Exception e) {}
-        insertDataIntoDomain(algoAnnotationTerm, json)
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
      */
-    static AlgoAnnotationTerm insertDataIntoDomain(def domain, def json) {
+    static AlgoAnnotationTerm insertDataIntoDomain(def json, def domain = new AlgoAnnotationTerm()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         //Extract and read the correct annotation
         Long annotationId = JSONUtils.getJSONAttrLong(json, 'annotationIdent', -1)
         if (annotationId == -1) {

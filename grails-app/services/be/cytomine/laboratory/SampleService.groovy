@@ -98,7 +98,7 @@ class SampleService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Sample.createFromData(json), printMessage)
+        create(Sample.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -170,7 +170,7 @@ class SampleService extends ModelService {
      * @return new domain
      */
     Sample createFromJSON(def json) {
-        return Sample.createFromData(json)
+        return Sample.insertDataIntoDomain(json)
     }
 
     /**

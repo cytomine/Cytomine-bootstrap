@@ -95,7 +95,7 @@ class SoftwareService extends ModelService {
      * @return response
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Software.createFromData(json), printMessage)
+        create(Software.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -170,7 +170,7 @@ class SoftwareService extends ModelService {
      * @return new domain
      */
     Software createFromJSON(def json) {
-        return Software.createFromData(json)
+        return Software.insertDataIntoDomain(json)
     }
 
     /**

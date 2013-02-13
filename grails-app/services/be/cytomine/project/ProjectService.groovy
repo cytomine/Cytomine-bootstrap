@@ -162,7 +162,7 @@ class ProjectService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Project.createFromData(json), printMessage)
+        create(Project.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -291,7 +291,7 @@ class ProjectService extends ModelService {
      * @return new domain
      */
     Project createFromJSON(def json) {
-        return Project.createFromData(json)
+        return Project.insertDataIntoDomain(json)
     }
 
     /**

@@ -75,7 +75,7 @@ class AbstractImageGroupService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AbstractImageGroup.createFromData(json), printMessage)
+        create(AbstractImageGroup.insertDataIntoDomain(json), printMessage)
     }
 
     /**
@@ -122,7 +122,7 @@ class AbstractImageGroupService extends ModelService {
      * @return new domain
      */
     AbstractImageGroup createFromJSON(def json) {
-        return AbstractImageGroup.createFromData(json)
+        return AbstractImageGroup.insertDataIntoDomain(json)
     }
 
     /**
