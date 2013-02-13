@@ -51,6 +51,6 @@ class RestSampleController extends RestController {
      * Delete sample
      */
     def delete = {
-        delete(sampleService, JSON.parse("{id : $params.id}"))
+        delete(sampleService, JSON.parse("{id : $params.id}"),null)
     }
 }

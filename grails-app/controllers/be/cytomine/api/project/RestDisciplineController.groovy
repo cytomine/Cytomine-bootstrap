@@ -49,7 +49,7 @@ class RestDisciplineController extends RestController {
      * Delete discipline
      */
     def delete = {
-        delete(disciplineService, JSON.parse("{id : $params.id}"))
+        delete(disciplineService, JSON.parse("{id : $params.id}"),null)
     }
 
 }

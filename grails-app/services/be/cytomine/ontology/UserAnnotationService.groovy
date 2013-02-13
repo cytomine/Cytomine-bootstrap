@@ -383,7 +383,7 @@ class UserAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         def result = delete(retrieve(json),transactionService.start())
         try {if (json.id) deleteRetrievalAnnotation(json.id) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
         return result
@@ -441,7 +441,7 @@ class UserAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(UserAnnotation.createFromDataWithId(json), printMessage)
+        create(UserAnnotation.createFromData(json), printMessage)
     }
 
     /**

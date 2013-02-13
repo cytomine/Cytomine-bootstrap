@@ -67,7 +67,7 @@ class RestJobDataController extends RestController {
      * Delete file description
      */
     def delete = {
-        delete(jobDataService, JSON.parse("{id : $params.id}"))
+        delete(jobDataService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**

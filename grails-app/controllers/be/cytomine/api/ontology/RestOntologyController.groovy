@@ -2,6 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
+import be.cytomine.utils.Task
 import grails.converters.JSON
 
 /**
@@ -13,6 +14,7 @@ class RestOntologyController extends RestController {
     def ontologyService
     def cytomineService
     def termService
+    def taskService
 
     /**
      * List all ontology visible for the current user
@@ -48,6 +50,7 @@ class RestOntologyController extends RestController {
     }
 
     def delete = {
-        delete(ontologyService, JSON.parse("{id : $params.id}"))
+        Task task = taskService.read(params.getLong("task"))
+        delete(ontologyService, JSON.parse("{id : $params.id}"),task)
     }
 }

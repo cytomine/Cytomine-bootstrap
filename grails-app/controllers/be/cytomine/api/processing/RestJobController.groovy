@@ -117,7 +117,7 @@ class RestJobController extends RestController {
      * Delete a job
      */
     def delete = {
-        delete(jobService, JSON.parse("{id : $params.id}"))
+        delete(jobService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**

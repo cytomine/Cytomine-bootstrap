@@ -123,7 +123,7 @@ class RestAlgoAnnotationController extends RestController {
      */
     def delete = {
         def json = JSON.parse("{id : $params.id}")
-        delete(algoAnnotationService, json)
+        delete(algoAnnotationService, json,null)
     }
 
     /**

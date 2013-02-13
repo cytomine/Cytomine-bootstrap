@@ -184,7 +184,7 @@ class RestReviewedAnnotationController extends RestController {
      * Delete reviewed annotation
      */
     def delete = {
-        delete(reviewedAnnotationService, JSON.parse("{id : $params.id}"))
+        delete(reviewedAnnotationService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**

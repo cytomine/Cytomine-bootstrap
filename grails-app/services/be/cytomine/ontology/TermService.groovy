@@ -158,7 +158,7 @@ class TermService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkOntologyDelete()  or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) throws CytomineException {
+    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
         return delete(retrieve(json), transactionService.start())
     }
 
@@ -177,7 +177,7 @@ class TermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Term.createFromDataWithId(json), printMessage)
+        create(Term.createFromData(json), printMessage)
     }
 
     /**
@@ -264,19 +264,18 @@ class TermService extends ModelService {
     }
 
     def deleteDependentAlgoAnnotationTerm(Term term, Transaction transaction, Task task = null) {
-        AlgoAnnotationTerm.findAllByTerm(term).each {
-            println "${it.annotationIdent}-${it.term?.id}-${it.userJob?.id}"
-            algoAnnotationTermService.delete(it,transaction,false)
-        }
-        AlgoAnnotationTerm.findAllByExpectedTerm(term).each {
-            println "${it.annotationIdent}-${it.term?.id}-${it.userJob?.id}"
-            algoAnnotationTermService.delete(it,transaction,false)
+        def nbreAlgoAnnotation = AlgoAnnotationTerm.countByTermOrExpectedTerm(term,term)
+
+        if (nbreAlgoAnnotation>0) {
+            throw new ConstraintException("Term is still linked with ${nbreAlgoAnnotation} annotations created by job. Cannot delete term!")
         }
     }
 
     def deleteDependentAnnotationTerm(Term term, Transaction transaction, Task task = null) {
-        AnnotationTerm.findAllByTerm(term).each {
-            annotationTermService.delete(it,transaction,false)
+        def nbreUserAnnotation = AnnotationTerm.countByTerm(term,term)
+
+        if (nbreUserAnnotation>0) {
+            throw new ConstraintException("Term is still linked with ${nbreUserAnnotation} annotations created by user. Cannot delete term!")
         }
     }
 
@@ -298,7 +297,7 @@ class TermService extends ModelService {
         }
 
         if(!results.isEmpty()) {
-            throw new ConstraintException("Term is linked with validate annotation. Cannot delete term!")
+            throw new ConstraintException("Term is linked with ${results.size()} validate annotations. Cannot delete term!")
         }
      }
 

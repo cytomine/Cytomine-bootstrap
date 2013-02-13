@@ -98,7 +98,7 @@ class StorageService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Storage.createFromDataWithId(json), printMessage)
+        create(Storage.createFromData(json), printMessage)
     }
 
     /**

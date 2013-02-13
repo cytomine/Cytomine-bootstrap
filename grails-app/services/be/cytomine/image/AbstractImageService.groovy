@@ -194,7 +194,7 @@ class AbstractImageService extends ModelService {
      * @param json JSON that was passed in request parameter
      * @return Response structure (created domain data,..)
      */
-    def delete(def json,SecurityCheck security) throws CytomineException {
+    def delete(def json,SecurityCheck security, Task task = null) throws CytomineException {
 //        transactionService.start()
 //        SecUser currentUser = cytomineService.getCurrentUser()
 //        AbstractImage abstractImage = read(json.id)
@@ -315,7 +315,7 @@ class AbstractImageService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AbstractImage.createFromDataWithId(json), printMessage)
+        create(AbstractImage.createFromData(json), printMessage)
     }
 
     /**

@@ -380,7 +380,7 @@ class RestUserAnnotationController extends RestController {
      */
     def delete = {
         def json = JSON.parse("{id : $params.id}")
-        delete(userAnnotationService, json)
+        delete(userAnnotationService, json,null)
     }
 
     /**

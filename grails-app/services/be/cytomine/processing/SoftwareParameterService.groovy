@@ -72,7 +72,7 @@ class SoftwareParameterService extends ModelService{
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkSoftwareDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) throws CytomineException {
+    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
         delete(retrieve(json))
     }
 
@@ -90,7 +90,7 @@ class SoftwareParameterService extends ModelService{
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(SoftwareParameter.createFromDataWithId(json), printMessage)
+        create(SoftwareParameter.createFromData(json), printMessage)
     }
 
     /**

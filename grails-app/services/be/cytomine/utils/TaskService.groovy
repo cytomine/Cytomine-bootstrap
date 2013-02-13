@@ -28,7 +28,7 @@ class TaskService  {
      * @param user User that create the task
      * @return Task created
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     def createNewTask(Project project, SecUser user) {
         Task task = new Task(projectIdent: project?.id, userIdent: user.id)
         //task.addToComments("Task started...")

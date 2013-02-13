@@ -67,6 +67,6 @@ class RestGroupController extends RestController {
      * Delete a group
      */
     def delete = {
-        delete(groupService, JSON.parse("{id : $params.id}"))
+        delete(groupService, JSON.parse("{id : $params.id}"),null)
     }
 }

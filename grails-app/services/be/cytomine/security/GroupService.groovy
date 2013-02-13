@@ -79,7 +79,7 @@ class GroupService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         return delete(retrieve(json), transactionService.start())
     }
 
@@ -98,7 +98,7 @@ class GroupService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Group.createFromDataWithId(json), printMessage)
+        create(Group.createFromData(json), printMessage)
     }
 
     /**

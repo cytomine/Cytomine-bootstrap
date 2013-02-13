@@ -135,7 +135,7 @@ class JobService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
 //        SecUser currentUser = cytomineService.getCurrentUser()
 //        def userJob = UserJob.findByJob(Job.read(json.id))
 //        if(userJob) {
@@ -166,7 +166,7 @@ class JobService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Job.createFromDataWithId(json), printMessage)
+        create(Job.createFromData(json), printMessage)
     }
 
     /**

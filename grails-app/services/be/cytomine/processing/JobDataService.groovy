@@ -73,7 +73,7 @@ class JobDataService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         delete(retrieve(json), transactionService.start())
     }
 
@@ -91,7 +91,7 @@ class JobDataService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(JobData.createFromDataWithId(json), printMessage)
+        create(JobData.createFromData(json), printMessage)
     }
 
     /**

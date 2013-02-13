@@ -81,7 +81,7 @@ class RestAnnotationFilterController extends RestController {
      * Delete an annotation filter
      */
     def delete = {
-        delete(annotationFilterService,  JSON.parse("{id : $params.id}"))
+        delete(annotationFilterService,  JSON.parse("{id : $params.id}"),null)
     }
 
 }

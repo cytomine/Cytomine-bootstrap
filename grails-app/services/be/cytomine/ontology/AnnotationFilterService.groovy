@@ -9,6 +9,7 @@ import be.cytomine.command.EditCommand
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
@@ -75,7 +76,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) throws CytomineException {
+    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
         return delete(retrieve(json),transactionService.start())
     }
 
@@ -94,7 +95,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AnnotationFilter.createFromDataWithId(json), printMessage)
+        create(AnnotationFilter.createFromData(json), printMessage)
     }
 
     /**

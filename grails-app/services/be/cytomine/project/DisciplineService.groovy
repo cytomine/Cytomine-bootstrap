@@ -69,7 +69,7 @@ class DisciplineService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         return delete(retrieve(json),transactionService.start())
     }
 
@@ -87,7 +87,7 @@ class DisciplineService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Discipline.createFromDataWithId(json), printMessage)
+        create(Discipline.createFromData(json), printMessage)
     }
 
     /**

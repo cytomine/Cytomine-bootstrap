@@ -100,7 +100,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def delete = {
-        delete(imageInstanceService, JSON.parse("{id : $params.id}"))
+        delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
     }
 
     def window = {

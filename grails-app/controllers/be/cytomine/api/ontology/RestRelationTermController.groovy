@@ -117,6 +117,6 @@ class RestRelationTermController extends RestController {
             relation = relationService.getRelationParent()
 
         def json = JSON.parse("{relation: ${relation ? relation.id : -1}, term1: $params.idterm1, term2: $params.idterm2}")
-        delete(relationTermService, json)
+        delete(relationTermService, json,null)
     }
 }

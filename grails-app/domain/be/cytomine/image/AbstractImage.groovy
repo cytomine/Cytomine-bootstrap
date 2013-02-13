@@ -62,19 +62,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create an new domain of this class
-     * Set the new domain id to json.id value
-     * @param json JSON with data to create domain
-     * @return The created domain
-     * @throws CytomineException Error during domain creation
-     */
-    static AbstractImage createFromDataWithId(def json) throws CytomineException {
-        def domain = createFromData(json)
-        try {domain.id = json.id} catch (Exception e) {}
-        return domain
-    }
-
-    /**
      * Thanks to the json, create a new domain of this class
      * If json.id is set, the method ignore id
      * @param json JSON with data to create domain
@@ -83,6 +70,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
      */
     static AbstractImage createFromData(def json) throws CytomineException {
         def image = new AbstractImage()
+        try {image.id = json.id} catch (Exception e) {}
         insertDataIntoDomain(image, json)
     }
 

@@ -162,7 +162,7 @@ class ProjectService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Project.createFromDataWithId(json), printMessage)
+        create(Project.createFromData(json), printMessage)
     }
 
     /**

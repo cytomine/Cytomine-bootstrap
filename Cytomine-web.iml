@@ -81,8 +81,6 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sf.ezmorph/ezmorph/jars/ezmorph-1.0.6.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sf.json-lib/json-lib/jars/json-lib-2.3-jdk15.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/asm/asm-tree/jars/asm-tree-3.0.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.cobertura/cobertura/jars/cobertura-1.9.4.1.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/xerces/xercesImpl/jars/xercesImpl-2.8.1.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.nekohtml/nekohtml/jars/nekohtml-1.9.9.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.0.1.jar!/" />
@@ -106,9 +104,9 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Cytomine-web-grailsPlugins" />
     <orderEntry type="library" name="grails-2.2.0" level="application" />
     <orderEntry type="module" module-name="cytomine-web-grailsPlugins" />
+    <orderEntry type="module" module-name="Cytomine-web-grailsPlugins" />
   </component>
 </module>
 

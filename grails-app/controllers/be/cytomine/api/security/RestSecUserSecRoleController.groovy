@@ -51,7 +51,7 @@ class RestSecUserSecRoleController extends RestController {
      * Delete a role from a user
      */
     def delete = {
-        delete(secUserSecRoleService, JSON.parse("{user : $params.user, role: $params.role}"))
+        delete(secUserSecRoleService, JSON.parse("{user : $params.user, role: $params.role}"),null)
     }
 
 }

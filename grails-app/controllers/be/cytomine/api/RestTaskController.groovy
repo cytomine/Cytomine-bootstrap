@@ -33,11 +33,7 @@ class RestTaskController extends RestController {
     def add = {
         Project project = projectService.read(request.JSON.project)
         SecUser user = cytomineService.getCurrentUser()
-        if(!project) {
-            responseNotFound("Project", params.project)
-        } else {
-            Task task = taskService.createNewTask(project,user)
-            responseSuccess([task:task.getMap()])
-        }
+        Task task = taskService.createNewTask(project,user)
+        responseSuccess([task:task.getMap()])
     }
 }

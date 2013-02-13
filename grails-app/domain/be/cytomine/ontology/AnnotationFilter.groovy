@@ -26,19 +26,6 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Thanks to the json, create an new domain of this class
-     * Set the new domain id to json.id value
-     * @param json JSON with data to create domain
-     * @return The created domain
-     * @throws CytomineException Error during domain creation
-     */
-    static AnnotationFilter createFromDataWithId(def json) throws CytomineException {
-        def annotationFilter = createFromData(json)
-        try {annotationFilter.id = json.id} catch (Exception e) {}
-        return annotationFilter
-    }
-
-    /**
      * Thanks to the json, create a new domain of this class
      * If json.id is set, the method ignore id
      * @param json JSON with data to create domain
@@ -46,6 +33,7 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
      */
     static AnnotationFilter createFromData(def json) throws CytomineException {
         def term = new AnnotationFilter()
+        try {term.id = json.id} catch (Exception e) {}
         insertDataIntoDomain(term, json)
     }
 

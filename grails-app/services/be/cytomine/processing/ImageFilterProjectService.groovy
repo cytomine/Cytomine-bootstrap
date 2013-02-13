@@ -1,5 +1,6 @@
 package be.cytomine.processing
 
+import be.cytomine.utils.Task
 import grails.plugins.springsecurity.Secured
 
 import be.cytomine.Exception.CytomineException
@@ -55,7 +56,7 @@ class ImageFilterProjectService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) throws CytomineException {
+    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
         delete(retrieve(json))
     }
 
@@ -73,7 +74,7 @@ class ImageFilterProjectService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(ImageFilterProject.createFromDataWithId(json), printMessage)
+        create(ImageFilterProject.createFromData(json), printMessage)
     }
 
     /**

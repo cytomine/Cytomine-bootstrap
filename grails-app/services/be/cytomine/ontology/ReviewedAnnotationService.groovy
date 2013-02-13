@@ -212,7 +212,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         return delete(retrieve(json),transactionService.start())
     }
 
@@ -230,7 +230,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(ReviewedAnnotation.createFromDataWithId(json), printMessage)
+        create(ReviewedAnnotation.createFromData(json), printMessage)
     }
 
     /**

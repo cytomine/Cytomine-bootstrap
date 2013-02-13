@@ -69,20 +69,6 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return isRoot
     }
 
-
-    /**
-     * Thanks to the json, create an new domain of this class
-     * Set the new domain id to json.id value
-     * @param json JSON with data to create domain
-     * @return The created domain
-     * @throws CytomineException Error during domain creation
-     */
-    static Term createFromDataWithId(def json) throws CytomineException {
-        def term = createFromData(json)
-        try {term.id = json.id} catch (Exception e) {}
-        return term
-    }
-
     /**
      * Thanks to the json, create a new domain of this class
      * If json.id is set, the method ignore id
@@ -91,6 +77,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
      */
     static Term createFromData(def json) throws CytomineException {
         def term = new Term()
+        try {term.id = json.id} catch (Exception e) {}
         insertDataIntoDomain(term, json)
     }
 

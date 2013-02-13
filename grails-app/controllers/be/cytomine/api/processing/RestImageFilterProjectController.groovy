@@ -44,7 +44,7 @@ class RestImageFilterProjectController extends RestController {
      * Delete an image filter from a project
      */
     def delete = {
-        delete(imageFilterProjectService, JSON.parse("{id : $params.id}"))
+        delete(imageFilterProjectService, JSON.parse("{id : $params.id}"),null)
     }
 
 }

@@ -111,14 +111,14 @@ class OntologyService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkOntologyDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) throws CytomineException {
-        return delete(retrieve(json),transactionService.start())
+    def delete(def json, SecurityCheck security,Task task = null) throws CytomineException {
+        return delete(retrieve(json),transactionService.start(),true,task)
     }
 
-    def delete(Ontology ontology, Transaction transaction = null, boolean printMessage = true) {
+    def delete(Ontology ontology, Transaction transaction = null, boolean printMessage = true,Task task = null) {
         SecUser currentUser = cytomineService.getCurrentUser()
         def json = JSON.parse("{id: ${ontology.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json,task)
     }
 
     /**
@@ -129,7 +129,7 @@ class OntologyService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(Ontology.createFromDataWithId(json), printMessage)
+        create(Ontology.createFromData(json), printMessage)
     }
 
     /**

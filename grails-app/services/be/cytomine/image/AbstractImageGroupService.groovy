@@ -8,6 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.annotation.Secured
 
@@ -55,7 +56,7 @@ class AbstractImageGroupService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @Secured(['ROLE_ADMIN'])
-    def delete(def json,SecurityCheck security) throws CytomineException {
+    def delete(def json,SecurityCheck security, Task task = null) throws CytomineException {
         Transaction transaction = transactionService.start()
         delete(retrieve(json),transaction)
     }
@@ -74,7 +75,7 @@ class AbstractImageGroupService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AbstractImageGroup.createFromDataWithId(json), printMessage)
+        create(AbstractImageGroup.createFromData(json), printMessage)
     }
 
     /**

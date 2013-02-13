@@ -166,7 +166,7 @@ class RestAnnotationTermController extends RestController {
         }
         def idUser = params.idUser!=null ? params.idUser : cytomineService.getCurrentUser().id
         def json = JSON.parse("{userannotation: $params.idannotation, term: $params.idterm, user: $idUser}")
-        delete(annotationTermService, json)
+        delete(annotationTermService, json,null)
     }
 
     /**

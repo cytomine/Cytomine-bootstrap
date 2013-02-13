@@ -61,7 +61,7 @@ class RestSoftwareController extends RestController {
      * Delete software
      */
     def delete = {
-        delete(softwareService, JSON.parse("{id : $params.id}"))
+        delete(softwareService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**

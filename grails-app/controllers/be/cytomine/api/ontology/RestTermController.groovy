@@ -85,7 +85,7 @@ class RestTermController extends RestController {
      * Delete a term
      */
     def delete = {
-        delete(termService, JSON.parse("{id : $params.id}"))
+        delete(termService, JSON.parse("{id : $params.id}"),null)
     }
 
 }

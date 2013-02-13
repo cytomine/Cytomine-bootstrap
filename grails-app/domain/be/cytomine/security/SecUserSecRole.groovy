@@ -33,17 +33,6 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         instance ? instance.delete(flush: flush) : false
     }
 
-    /**
-     * Thanks to the json, create an new domain of this class
-     * Set the new domain id to json.id value
-     * @param json JSON with data to create domain
-     * @return The created domain
-     */
-    static SecUserSecRole createFromDataWithId(def json) {
-        def domain = createFromData(json)
-        try {domain.id = json.id} catch (Exception e) {}
-        return domain
-    }
 
     /**
      * Thanks to the json, create a new domain of this class
@@ -52,7 +41,9 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
      * @return The created domain
      */
     static SecUserSecRole createFromData(def json) {
-        insertDataIntoDomain(new SecUserSecRole(), json)
+        def secUserSecRole = new SecUserSecRole()
+        try {secUserSecRole.id = json.id} catch (Exception e) {}
+        insertDataIntoDomain(secUserSecRole, json)
     }
 
     /**

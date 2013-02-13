@@ -8,6 +8,7 @@ import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
@@ -88,7 +89,7 @@ class RelationTermService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkOntologyAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         return delete(retrieve(json), transactionService.start())
     }
 
@@ -106,7 +107,7 @@ class RelationTermService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(RelationTerm.createFromDataWithId(json), printMessage)
+        create(RelationTerm.createFromData(json), printMessage)
     }
 
     /**

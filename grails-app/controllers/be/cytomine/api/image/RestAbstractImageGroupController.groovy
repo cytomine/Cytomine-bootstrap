@@ -42,6 +42,6 @@ class RestAbstractImageGroupController extends RestController {
      * Remove a group from an abstract image
      */
     def delete = {
-        delete(abstractImageGroupService, JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}"))
+        delete(abstractImageGroupService, JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}"),null)
     }
 }

@@ -6,6 +6,7 @@ import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
@@ -48,7 +49,7 @@ class UserGroupService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         return delete(retrieve(json),transactionService.start())
     }
 

@@ -81,11 +81,6 @@ class TaskTests  {
         assert json.task.project == project.id
     }
 
-    void testAddTaskProjectNotFound() {
-        def result = TaskAPI.create(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assert 404 == result.code
-    }
-
     void testConcreteTask() {
         //create a job
         Job job = BasicInstance.getBasicJobNotExist()

@@ -111,21 +111,11 @@ var OntologyPanelView = Backbone.View.extend({
             }});
         return false;
     },
-
-
     deleteTerm: function () {
         var self = this;
         var idTerm = self.getCurrentTermId();
         var term = window.app.models.terms.get(idTerm);
-        new AnnotationCollection({term: idTerm}).fetch({
-            success: function (collection, response) {
-                if (collection.length == 0) {
-                    self.buildDeleteTermConfirmDialog(term);
-                }
-                else {
-                    self.buildDeleteTermWithAnnotationConfirmDialog(term, collection.length);
-                }
-            }});
+        self.buildDeleteTermConfirmDialog(term);
     },
     editOntology: function () {
         var self = this;
@@ -133,37 +123,6 @@ var OntologyPanelView = Backbone.View.extend({
         self.editOntologyDialog = new EditOntologyDialog({ontologyPanel: self, el: self.el, model: self.model}).render();
     },
     deleteOntology: function () {
-        var self = this;
-        //check if projects has this ontology
-        new ProjectCollection({ontology: self.model.id}).fetch({
-            success: function (collection, response) {
-                if (collection.length > 0) {
-                    self.refuseDeleteOntology(collection.length);
-                }
-                else {
-                    self.acceptDeleteOntology();
-                }
-            }})
-    },
-    refuseDeleteOntology: function (numberOfProject) {
-        var self = this;
-        require(["text!application/templates/ontology/OntologyDeleteRefuseDialog.tpl.html"], function (tpl) {
-            var dialog = new ConfirmDialogView({
-                el: '#dialogsDeleteOntologyRefuse',
-                template: _.template(tpl, {name: self.model.get('name'), numberOfProject: numberOfProject}),
-                dialogAttr: {
-                    backdrop: false,
-                    dialogID: '#delete-ontology-refuse'
-                }
-            }).render();
-            $("#deleteRefuseOntologyButton").click(function () {
-                $('#delete-ontology-refuse').modal("hide");
-                $('#delete-ontology-refuse').remove();
-                return false;
-            });
-        });
-    },
-    acceptDeleteOntology: function () {
         var self = this;
         require(["text!application/templates/ontology/OntologyDeleteConfirmDialog.tpl.html"], function (tpl) {
             new ConfirmDialogView({
@@ -174,17 +133,45 @@ var OntologyPanelView = Backbone.View.extend({
                     dialogID: '#delete-ontology-confirm'
                 }
             }).render();
+
             $('#deleteOntologyButton').click(function () {
-                self.model.destroy({
-                    success: function (model, response) {
-                        self.container.refresh();
-                        $('#delete-ontology-confirm').modal("hide");
-                        $('#delete-ontology-confirm').remove();
-                    }, error: function (model, response) {
-                        var json = $.parseJSON(response.responseText);
-                    }});
+                new TaskModel({project: self.model.id}).save({}, {
+                         success: function (taskResponse, response) {
+                             var task = taskResponse.get('task');
+
+                             console.log("task"+task.id);
+                             var timer = window.app.view.printTaskEvolution(task, $("#deleteOntologyDialogContent"), 1000);
+
+
+                             new OntologyModel({id: self.model.id,task: task.id}).destroy(
+                                 {
+                                     success: function (model, response) {
+                                         window.app.view.message("Project", response.message, "success");
+                                         self.container.refresh(null)
+                                         clearInterval(timer);
+                                         $('#delete-ontology-confirm').modal("hide");
+                                         $('#delete-ontology-confirm').remove();
+
+                                     },
+                                     error: function (model, response) {
+                                         window.app.view.message("Ontology", "Errors!", "error");
+                                         clearInterval(timer);
+                                         var json = $.parseJSON(response.responseText);
+                                         window.app.view.message("Ontology", json.errors[0], "error");
+                                     }
+                                 }
+                             );
+                             return false;
+                         },
+                         error: function (model, response) {
+                             var json = $.parseJSON(response.responseText);
+                             window.app.view.message("Task", json.errors, "error");
+                         }
+                     }
+                 );
                 return false;
             });
+
             $('#closeDeleteOntologyDialog').click(function () {
                 $('#delete-ontology-confirm').modal('hide');
                 $('#delete-ontology-confirm').modal('remove');
@@ -193,6 +180,27 @@ var OntologyPanelView = Backbone.View.extend({
 
         });
     },
+//    refuseDeleteOntology: function (numberOfProject) {
+//        var self = this;
+//        require(["text!application/templates/ontology/OntologyDeleteRefuseDialog.tpl.html"], function (tpl) {
+//            var dialog = new ConfirmDialogView({
+//                el: '#dialogsDeleteOntologyRefuse',
+//                template: _.template(tpl, {name: self.model.get('name'), numberOfProject: numberOfProject}),
+//                dialogAttr: {
+//                    backdrop: false,
+//                    dialogID: '#delete-ontology-refuse'
+//                }
+//            }).render();
+//            $("#deleteRefuseOntologyButton").click(function () {
+//                $('#delete-ontology-refuse').modal("hide");
+//                $('#delete-ontology-refuse').remove();
+//                return false;
+//            });
+//        });
+//    },
+//    acceptDeleteOntology: function () {
+//
+//    },
     selectTerm: function (idTerm) {
         var self = this;
         self.$tree.dynatree("getTree").activateKey(idTerm);
@@ -215,36 +223,6 @@ var OntologyPanelView = Backbone.View.extend({
             });
             $('#deleteTermButton').click(function () {
                 self.removeTerm(term, '#delete-term-confirm');
-                return false;
-            });
-        });
-    },
-    /**
-     * TODO: This method can be merge with  buildDeleteTermWithoutAnnotationConfirmDialog
-     * But it's now separete to allow modify with delete term with annotation (which is critical)
-     * @param term
-     * @param numberOfAnnotation
-     */
-    buildDeleteTermWithAnnotationConfirmDialog: function (term, numberOfAnnotation) {
-        var self = this;
-        require(["text!application/templates/ontology/OntologyDeleteTermWithAnnotationConfirmDialog.tpl.html"], function (tpl) {
-            var dialog = new ConfirmDialogView({
-                el: '#dialogsTerm',
-                template: _.template(tpl, {term: term.get('name'), ontology: self.model.get('name'), numberOfAnnotation: numberOfAnnotation}),
-                dialogAttr: {
-                    backdrop: false,
-                    dialogID: '#delete-term-with-annotation-confirm',
-                    close: function (event) {
-                    }
-                }
-            }).render();
-            $('#closeDeleteTermDialog').click(function () {
-                $('#delete-term-with-annotation-confirm').modal('hide');
-                $('#delete-term-with-annotation-confirm').remove();
-                return false;
-            });
-            $('#deleteTermButton').click(function () {
-                self.removeTerm(term, "#delete-term-with-annotation-confirm");
                 return false;
             });
         });

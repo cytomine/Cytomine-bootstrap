@@ -149,7 +149,7 @@ class RestUserController extends RestController {
      * Delete a user
      */
     def delete = {
-        delete(secUserService, JSON.parse("{id : $params.id}"))
+        delete(secUserService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**

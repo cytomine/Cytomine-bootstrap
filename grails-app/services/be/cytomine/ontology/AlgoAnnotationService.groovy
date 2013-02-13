@@ -370,7 +370,7 @@ class AlgoAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     @PreAuthorize("#security.checkCurrentUserCreator(principal.id)   or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security) {
+    def delete(def json, SecurityCheck security, Task task = null) {
         //Start transaction
         Transaction transaction = transactionService.start()
         def result = delete(retrieve(json),transaction)
@@ -392,7 +392,7 @@ class AlgoAnnotationService extends ModelService {
      * @return Response structure (status, object data,...)
      */
     def create(JSONObject json, boolean printMessage) {
-        create(AlgoAnnotation.createFromDataWithId(json), printMessage)
+        create(AlgoAnnotation.createFromData(json), printMessage)
     }
 
     /**

@@ -13,7 +13,7 @@ import be.cytomine.DependencyController
  */
 class GenericDependencyTests {
 
-    void testProjectDependency() {
+    void testMissingDeleteMethodDependency() {
         def controller = new DependencyController()
         controller.checkDependance()
     }

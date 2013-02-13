@@ -3,6 +3,7 @@ package be.cytomine.api
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityCheck
 import be.cytomine.test.HttpClient
+import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.converters.XML
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -73,10 +74,10 @@ class RestController {
      * @param json JSON data
      * @return response
      */
-    public Object delete(def service, def json) {
+    public Object delete(def service, def json,Task task) {
         try {
             def domain = service.retrieve(json)
-            def result = service.delete(json,new SecurityCheck(domain))
+            def result = service.delete(json,new SecurityCheck(domain),task)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

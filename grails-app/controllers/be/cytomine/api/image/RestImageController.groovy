@@ -78,7 +78,7 @@ class RestImageController extends RestController {
      * TODO:: how to manage security here?
      */
     def delete = {
-        delete(abstractImageService, JSON.parse("{id : $params.id}"))
+        delete(abstractImageService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**
