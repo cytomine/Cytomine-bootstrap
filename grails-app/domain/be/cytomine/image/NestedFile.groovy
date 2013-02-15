@@ -18,5 +18,6 @@ class NestedFile {
         originalFilename(blank: false)
         filename(blank: false)
         data(nullable : true)
+        size(nullable : true)
     }
 }

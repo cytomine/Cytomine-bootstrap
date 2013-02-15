@@ -1,9 +1,15 @@
+import be.cytomine.image.AbstractImage
+import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.Mime
+import be.cytomine.image.NestedFile
+import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.security.SecUser
+
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -101,21 +107,174 @@ class BootStrap {
         }
 
         //toVersion1()
-        //toVersion1_ben()
+        if (GrailsUtil.environment != BootStrap.test) {
+            getAbstractImageNestedFiles()
+            initUserIntoAbstractImage()
+            initUserStorages()
+            generateCopyToStorageScript()
+        }
+
+
+
     }
 
     def userService
     def permissionService
     def fileSystemService
+    def imagePropertiesService
 
-    private def toVersion1_ben() {
+    private def initUserIntoAbstractImage() {
+        SecUser defaultUser = SecUser.findByUsername("rmaree")
+        AbstractImage.list().each {
+            if (!it.user) {
+                log.info "abstractImage $it.filename"
+                AbstractImageGroup abstractImageGroup = AbstractImageGroup.findByAbstractImage(it)
+                if (!abstractImageGroup) {
+                    it.user = defaultUser
+                } else {
+                    ArrayList<UserGroup> userGroups = UserGroup.findAllByGroup(abstractImageGroup.group)
+                    if (!userGroups || userGroups.size() < 1) {
+                        log.error ("can't find user fom group $abstractImageGroup.group.name")
+                        it.user = defaultUser
+                    }
+                    else {
+                        it.user = userGroups.first().user
+                    }
+                }
+                it.user.save()
+            }
+        }
+    }
+
+    private def generateCopyToStorageScript() {
+        File f = new File("/tmp/generateCopyToStorageScript.sh")
+        Storage originStorage = Storage.findByName("cytomine")
+        String originPath = null
+        Storage destStorage = null
+        String destPath = null
+        String cmd = null
+        String dirParent = null
+        AbstractImage.list().each {
+            destStorage = Storage.findByUser(it.user)
+            originPath = [originStorage.getBasePath(), it.getFilename()].join(File.separator)
+            destPath = [destStorage.getBasePath(), it.getFilename()].join(File.separator)
+            dirParent = new File(destPath).getParent()
+            cmd = "mkdir $dirParent;cp $originPath $destPath;"
+            f << cmd
+            NestedFile.findAllByAbstractImage(it).each { nestedFile ->
+                originPath = [originStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
+                destPath = [destStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
+                dirParent = new File(destPath).getParent()
+                cmd = "mkdir $dirParent;cp $originPath $destPath;"
+                f << cmd
+            }
+
+        }
+
+    }
+
+    private def getAbstractImageNestedFiles() {
+
+        //VMS files
+        AbstractImage.findAllByMime(Mime.findByExtension("vms")).each {
+            if (NestedFile.findAllByAbstractImage(it)?.size() > 0) return //already done for this image
+
+            ArrayList<StorageAbstractImage> storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(it)
+            if (!storageAbstractImage || storageAbstractImage.size() < 1) {
+                log.error "cannot get storage for $it.filename"
+                return
+            }
+            Storage storage = storageAbstractImage.first().storage
+            log.info "extract nested files of $it.filename"
+            ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("Error")
+            if (properties && properties.size() > 0) {
+                imagePropertiesService.clear(it)
+                imagePropertiesService.populate(it)
+            }
+            properties = ImageProperty.findAllByKeyLikeAndImage("hamamatsu.ImageFile%", it)
+            String parent = new File([storage.getBasePath(), it.getFilename()].join(File.separator)).getParent()
+
+            properties.each { property ->
+                String path = [parent, property.value].join(File.separator)
+                log.info "add nested file $path"
+                new NestedFile(originalFilename: path, filename: path, abstractImage: it, data: null).save(flush : true)
+            }
+            //hamamatsu.MacroImage
+            ImageProperty property = ImageProperty.findByKeyLikeAndImage("hamamatsu.MacroImage%", it)
+            if (property) {
+                String path = [parent, property.value].join(File.separator)
+                log.info "add nested file $path"
+                new NestedFile(originalFilename: path, filename: path, abstractImage: it, data: null).save(flush : true)
+            } else {
+                log.error "can't file hamamatsu.MacroImage for $it.filename"
+            }
+            //hamamatsu.MapFile
+            property = ImageProperty.findByKeyLikeAndImage("hamamatsu.MapFile%", it)
+            if (property) {
+                String path = [parent, property.value].join(File.separator)
+                log.info "add nested file $path"
+                new NestedFile(originalFilename: path, filename: path, abstractImage: it, data: null).save(flush : true)
+            } else {
+                log.error "can't file hamamatsu.MapFile for $it.filename"
+            }
+            //hamamatsu.OptimisationFile
+            property = ImageProperty.findByKeyLikeAndImage("hamamatsu.OptimisationFile%", it)
+            if (property) {
+                String path = [parent, property.value].join(File.separator)
+                log.info "add nested file $path"
+                new NestedFile(originalFilename: path, filename: path, abstractImage: it, data: null).save(flush : true)
+            } else {
+                log.error "can't file hamamatsu.OptimisationFile for $it.filename"
+            }
+        }
+
+        //mrxs files
+        AbstractImage.findAllByMime(Mime.findByExtension("mrxs")).each {
+            if (NestedFile.findAllByAbstractImage(it)?.size() > 0) return //already done for this image
+
+            ArrayList<StorageAbstractImage> storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(it)
+            if (!storageAbstractImage || storageAbstractImage.size() < 1) {
+                log.error "cannot get storage for $it.filename"
+                return
+            }
+            Storage storage = storageAbstractImage.first().storage
+            log.info "extract nested files of $it.filename"
+            ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("Error")
+            if (properties && properties.size() > 0) {
+                imagePropertiesService.clear(it)
+                imagePropertiesService.populate(it)
+            }
+            properties = ImageProperty.findAllByKeyLikeAndImage("mirax.DATAFILE.FILE%", it)
+            String parent = new File([storage.getBasePath(), it.getFilename()].join(File.separator)).getParent()
+            String fileWithoutExtension = it.getFilename().substring(0, it.getFilename().length()-5)
+            properties.each { property ->
+                if (property.key != "mirax.DATAFILE.FILE_COUNT") {
+                    String path = [fileWithoutExtension, property.value].join(File.separator)
+                    log.info "add nested file -> $path"
+                    new NestedFile(originalFilename: path, filename: path, abstractImage: it, data: null).save(flush : true)
+                }
+            }
+            //Slidedat.ini
+            String slidedatPath = [fileWithoutExtension, "Slidedat.ini"].join(File.separator)
+            log.info "add nested file $slidedatPath"
+            new NestedFile(originalFilename: slidedatPath, filename: slidedatPath, abstractImage: it, data: null).save(flush : true)
+            //Index.dat
+            String index = [fileWithoutExtension, "Index.dat"].join(File.separator)
+            log.info "add nested file $index"
+            new NestedFile(originalFilename: index, filename: index, abstractImage: it, data: null).save(flush : true)
+
+        }
+
+    }
+
+    private def initUserStorages() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         //a image server has now many storage
         for (imageServer in ImageServer.findAll()) {
             ImageServerStorage imageServerStorage = ImageServerStorage.findByImageServer(imageServer)
             if (!imageServerStorage) {
-                //imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : imageServer.getStorage())
-                //imageServerStorage.save(flush : true)
+                imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : Storage.findByName("cytomine"))
+                imageServerStorage.save(flush : true)
             }
         }
         //create storage for each user
@@ -125,17 +284,14 @@ class BootStrap {
                 String storage_base_path = grailsApplication.config.storage_path
                 println "storage_base_path : $storage_base_path"
                 String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
-                long timestamp = new Date().getTime()
-                String user_home = System.getProperty("user.home")
-                log.info "user_home $user_home"
+
                 Storage storage = new Storage(
-                        name: "storage_"+ timestamp,
+                        name: "$user.username storage",
                         basePath: remotePath,
                         ip: "139.165.108.28",
                         username: "storage_cytomine",
                         password: "bioinfo;3u54",
                         keyFile: null,
-                        //keyFile: "$user_home/.ssh/id_rsa",
                         port: 22,
                         user: user
                 )
@@ -143,14 +299,14 @@ class BootStrap {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-                    fileSystemService.makeRemoteDirectory(
+                    /*fileSystemService.makeRemoteDirectory(
                             storage.getIp(),
                             storage.getPort(),
                             storage.getUsername(),
                             storage.getPassword(),
                             storage.getKeyFile(),
                             storage.getBasePath())
-
+                     */
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
                         imageServerStorage.save(flush : true)

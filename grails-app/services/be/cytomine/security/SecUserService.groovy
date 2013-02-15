@@ -486,6 +486,10 @@ class SecUserService extends ModelService {
         }
     }
 
+    def deleteDependentAbstractImage(SecUser user, Transaction transaction, Task task = null) {
+        //:to do implemented this ? allow this or not ?
+    }
+
     def deleteDependentUserAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserAnnotation.findAllByUser(user).each {

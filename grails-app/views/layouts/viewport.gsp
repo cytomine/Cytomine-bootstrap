@@ -44,6 +44,7 @@ body {
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
+<!--<link rel='stylesheet' href='http://danneu.com/bag/darkstrap/css/darkstrap.css' type='text/css'/>-->
 
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -151,6 +152,7 @@ body {
     <script type="text/javascript" src="application/models/SoftwareModel.js" ></script>
     <script type="text/javascript" src="application/models/PingModel.js" ></script>
     <script type="text/javascript" src="application/models/TaskModel.js" ></script>
+    <script type="text/javascript" src="application/models/StorageModel.js" ></script>
 
     <!-- View -->
     <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>

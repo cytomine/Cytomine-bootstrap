@@ -10,6 +10,7 @@ import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
+import be.cytomine.security.SecUser
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
@@ -31,6 +32,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
     Integer height
     Integer magnification
     Double resolution
+    SecUser user //owner
 
     static belongsTo = Sample
 
@@ -47,6 +49,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         height(nullable: true)
         resolution(nullable: true)
         magnification(nullable: true)
+        user(nullable: true)
     }
 
     public beforeInsert() {

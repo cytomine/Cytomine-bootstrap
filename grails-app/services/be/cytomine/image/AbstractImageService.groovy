@@ -46,7 +46,12 @@ class AbstractImageService extends ModelService {
 
     //TODO: secure! ACL
     AbstractImage read(def id) {
-        AbstractImage.read(id)
+        AbstractImage abstractImage = AbstractImage.read(id)
+        if (abstractImage && !abstractImage) {
+
+            //SecurityCheck.checkReadAuthorization(image.project)
+        }
+        abstractImage
     }
 
     //TODO: secure! ACL

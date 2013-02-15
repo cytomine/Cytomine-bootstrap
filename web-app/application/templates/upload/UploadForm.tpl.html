@@ -1,11 +1,7 @@
 <div class="container-fluid">
-
-    <div class="widget-header">
-        <i class="icon-upload"></i>
-
-        <h3>Upload</h3>
-    </div>
-    <div class="widget-content" style="padding: 10px;">
+    <div style="padding: 10px;" class="well">
+        <i class="icon-upload"></i> <h3> Upload</h3>
+        <hr />
         <div class="alert alert-block">
             <h4 class="alert-heading">Important notes !</h4>
             <ul>
@@ -25,6 +21,13 @@
         <form class="form-horizontal" id="fileupload" action="api/uploadedfile" method="POST"
               enctype="multipart/form-data">
             <fieldset>
+                <div class="control-group">
+                    <label class="control-label">Storage</label>
+                    <div class="controls">
+                        <select class="span3" id="linkStorageSelect">
+                        </select>
+                    </div>
+                </div>
                 <div class="control-group">
                     <label class="control-label">Project</label>
 
@@ -81,12 +84,9 @@
 
 
     <div style="margin-top: 30px;margin-bottom: 30px;">
-        <div class="widget-header">
-            <i class="icon-list-alt"></i>
-
-            <h3>Uploaded files</h3>
-        </div>
-        <div class="widget-content" style="padding: 10px;">
+        <div class="well" style="padding: 10px;">
+            <i class="icon-list-alt"></i> <h3> Uploaded files</h3>
+            <hr />
             <p><a id="refreshUploadedFiles" class="btn" href="#"><i class="icon icon-refresh"/> Refresh</a></p>
 
             <div id="loadingUploadedFiles" class="alert alert-info"><i class="icon-refresh"/> Loading...</div>

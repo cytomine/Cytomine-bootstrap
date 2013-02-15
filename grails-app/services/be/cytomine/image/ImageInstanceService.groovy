@@ -140,49 +140,7 @@ class ImageInstanceService extends ModelService {
      */
     @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
     def delete(def json, SecurityCheck security, Task task = null) {
-
-        Transaction transaction = transactionService.start()
-//        SecUser currentUser = cytomineService.getCurrentUser()
-//        //Read image
-//        ImageInstance imageInstance = retrieve(json)
-//
-//        if(imageInstance && imageInstance.reviewStart!=null)
-//            throw new ConstraintException("You cannot remove an image instance that is review or has been reviewed...")
-//
-//        //TODO: create a special method to delete all data recursively
-//        /* Delete social stuff */
-//        UserPosition.findAllByImage(imageInstance).each { userPosition ->
-//            userPosition.delete()
-//        }
-//        FollowRequest.findAllByImage(imageInstance).each { followRequest ->
-//            followRequest.delete()
-//        }
-//        //Delete each annotation from image (if possible)
-//        if (imageInstance) {
-//            log.info "Delete userAnnotation from image"
-//            def userAnnotations = UserAnnotation.findAllByImage(imageInstance)
-//            userAnnotations.each { annotation ->
-//                userAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
-//            }
-//            log.info "Delete algoAnnotations from image"
-//            def algoAnnotations = AlgoAnnotation.findAllByImage(imageInstance)
-//            algoAnnotations.each { annotation ->
-//                algoAnnotationService.deleteAnnotation(annotation, currentUser, false,transaction)
-//            }
-//        }
-//        //Delete image
-//        log.info "Delete image"
-//        Long id = imageInstance?.id
-//        if (!imageInstance) throw new ObjectNotFoundException("Image Instance $json.idproject - $json.idimage not found")
-//        def jsonImage = JSON.parse("{id : $id}")
-//        def result = executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), jsonImage)
-//
-//        //Stop transaction
-//        transactionService.stop()
-//
-//        return result
-
-        return delete(retrieve(json),transaction)
+        return delete(retrieve(json),transactionService.start())
     }
 
     def delete(ImageInstance image, Transaction transaction = null, boolean printMessage = true) {

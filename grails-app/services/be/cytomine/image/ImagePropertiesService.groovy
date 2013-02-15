@@ -47,6 +47,7 @@ class ImagePropertiesService implements Serializable{
                 if (args.length != 2) return
                 //if (args[0].contains("Error/")) return
                 def property = new ImageProperty(key: args[0], value: args[1], image: image)
+                log.info("new property, $args[0] => $args[1]")
                 property.save();
             }
             image.save()
