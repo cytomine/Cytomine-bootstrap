@@ -201,4 +201,5 @@ class Project extends CytomineDomain implements Serializable {
      public Project projectDomain() {
         return this
     }
+
 }

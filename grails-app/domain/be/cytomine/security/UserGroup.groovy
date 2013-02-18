@@ -1,5 +1,6 @@
 package be.cytomine.security
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
@@ -11,16 +12,12 @@ import org.apache.log4j.Logger
  * A group is a set of user
  * UserGroup is the link between a group and a user in database
  */
-class UserGroup {
+class UserGroup extends CytomineDomain {
 
     User user
     Group group
 
     static belongsTo = [user: User,group: Group]
-
-    static mapping = {
-        version false
-    }
 
     int hashCode() {
         def builder = new HashCodeBuilder()
@@ -62,7 +59,7 @@ class UserGroup {
         Logger.getLogger(this).info("Register custom JSON renderer for " + UserGroup.class)
         JSON.registerObjectMarshaller(UserGroup) {
             def returnArray = [:]
-            returnArray['id'] = it.hashCode()
+            returnArray['id'] = it.id
             returnArray['user'] = it.user.id
             returnArray['group'] = it.group.id
             return returnArray

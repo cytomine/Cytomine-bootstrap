@@ -21,6 +21,10 @@ class ImageFilterProjectService extends ModelService {
     static transactional = true
     def springSecurityService
 
+    def currentDomain() {
+        return ImageFilterProject
+    }
+
     @Secured(['ROLE_ADMIN'])
     def list() {
         return ImageFilterProject.list()
@@ -66,73 +70,7 @@ class ImageFilterProjectService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(ImageFilterProject.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(ImageFilterProject domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.imageFilter?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        log.info "JSON="+json
-        destroy(ImageFilterProject.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(ImageFilterProject domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain,  [domain.imageFilter?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    ImageFilterProject createFromJSON(def json) {
-        return ImageFilterProject.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        ImageFilterProject parameter = ImageFilterProject.get(json.id)
-        if (!parameter) throw new ObjectNotFoundException("ImageFilterProject " + json.id + " not found")
-        return parameter
+    def getStringParamsI18n(def domain) {
+        return [domain.imageFilter?.name, domain.project?.name]
     }
 }

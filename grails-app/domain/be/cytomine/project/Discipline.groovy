@@ -60,4 +60,5 @@ class Discipline extends CytomineDomain implements Serializable{
         domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         return domain;
     }
+
 }

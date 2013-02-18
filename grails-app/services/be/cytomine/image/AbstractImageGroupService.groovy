@@ -23,8 +23,11 @@ class AbstractImageGroupService extends ModelService {
      */
 
     def cytomineService
-    def responseService
     def transactionService
+
+    def currentDomain() {
+        return AbstractImageGroup
+    }
 
     def get(AbstractImage abstractimage, Group group) {
         AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)
@@ -67,70 +70,16 @@ class AbstractImageGroupService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(AbstractImageGroup.insertDataIntoDomain(json), printMessage)
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.abstractImage.filename, domain.group.name]
     }
 
     /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(AbstractImageGroup domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.abstractImage.filename, domain.group.name], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(retrieve(json), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(AbstractImageGroup domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.abstractImage.filename, domain.group.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    AbstractImageGroup createFromJSON(def json) {
-        return AbstractImageGroup.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     * TODO: secure!
-     */
+      * Retrieve domain thanks to a JSON object
+      * @param json JSON with new domain info
+      * @return domain retrieve thanks to json
+      * TODO: secure!
+      */
     def retrieve(JSONObject json) {
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)
         Group group = Group.get(json.group)
@@ -140,4 +89,5 @@ class AbstractImageGroupService extends ModelService {
         }
         return domain
     }
+
 }

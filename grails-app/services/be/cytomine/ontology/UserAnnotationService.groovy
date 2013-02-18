@@ -33,12 +33,15 @@ class UserAnnotationService extends ModelService {
     def annotationTermService
     def retrievalService
     def algoAnnotationTermService
-    def responseService
     def modelService
     def simplifyGeometryService
     def dataSource
     def reviewedAnnotationService
 
+
+    def currentDomain() {
+        return UserAnnotation
+    }
 
     UserAnnotation get(def id) {
         def annotation = UserAnnotation.get(id)
@@ -433,112 +436,26 @@ class UserAnnotationService extends ModelService {
         }
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(UserAnnotation.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(UserAnnotation domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
-
-        //we store data into annotation instead of userannotation
+    def afterAdd(def domain, def response) {
         response.data['annotation'] = response.data.userannotation
         response.data.remove('userannotation')
-
-        return response
     }
 
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(UserAnnotation.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(UserAnnotation domain, boolean printMessage) {
-        //Build response message
-        log.info "destroy remove " + domain.id
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
-        //we store data into annotation instead of userannotation
+    def afterDelete(def domain, def response) {
         response.data['annotation'] = response.data.userannotation
         response.data.remove('userannotation')
-        //Delete object
-        removeDomain(domain)
-        return response
     }
 
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new UserAnnotation(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(UserAnnotation domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
-        //we store data into annotation instead of userannotation
+    def afterUpdate(def domain, def response) {
         response.data['annotation'] = response.data.userannotation
         response.data.remove('userannotation')
-        //Save update
-        saveDomain(domain)
-        return response
     }
 
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    UserAnnotation createFromJSON(def json) {
-        return UserAnnotation.insertDataIntoDomain(json)
+    def getStringParamsI18n(def domain) {
+        return [domain.user.toString(), domain.image?.baseImage?.filename]
     }
 
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        UserAnnotation annotation = UserAnnotation.get(json.id)
-        if (!annotation) throw new ObjectNotFoundException("UserAnnotation " + json.id + " not found")
-        return annotation
-    }
+
 
     /**
      * Execute request and format result into a list of map

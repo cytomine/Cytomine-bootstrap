@@ -1,13 +1,18 @@
 package be.cytomine.utils
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.Command
 import grails.util.GrailsNameUtils
 import be.cytomine.command.DeleteCommand
-
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.cfg.NotYetImplementedException
 import be.cytomine.utils.Task
+import org.springframework.security.acls.domain.BasePermission
+import be.cytomine.ontology.Ontology
 
 abstract class ModelService {
 
@@ -118,9 +123,160 @@ abstract class ModelService {
 
     }
 
-    protected def retrieve(def json) {
-        throw new NotYetImplementedException("The retrieve method must be implement in service "+ this.class)
+//    protected def retrieve(def json) {
+//        throw new NotYetImplementedException("The retrieve method must be implement in service "+ this.class)
+//    }
+    /**
+     * Retrieve domain thanks to a JSON object
+     * @param json JSON with new domain info
+     * @return domain retrieve thanks to json
+     */
+    def retrieve(JSONObject json) {
+        println "retrieve json $json"
+        CytomineDomain domain = currentDomain().get(json.id)
+        if (!domain) {
+            throw new ObjectNotFoundException("${currentDomain().class} " + json.id + " not found")
+        }
+        return domain
     }
 
+
+
+    /**
+     * Create domain from JSON object
+     * @param json JSON with new domain info
+     * @return new domain
+     */
+    CytomineDomain createFromJSON(def json) {
+        return currentDomain().insertDataIntoDomain(json)
+    }
+
+
+
+
+    /**
+     * Create new domain in database
+     * @param json JSON data for the new domain
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * Usefull when we create a lot of data, just print the root command message
+     * @return Response structure (status, object data,...)
+     */
+    def create(JSONObject json, boolean printMessage) {
+        create(currentDomain().insertDataIntoDomain(json), printMessage)
+    }
+
+    /**
+     * Create new domain in database
+     * @param domain Domain to store
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
+    def create(CytomineDomain domain, boolean printMessage) {
+        //Save new object
+        beforeAdd(domain)
+        saveDomain(domain)
+
+        def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Add", domain.getCallBack())
+        afterAdd(domain,response)
+        //Build response message
+        return response
+    }
+
+
+    /**
+     * Edit domain from database
+     * @param json domain data in json
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
+    def edit(JSONObject json, boolean printMessage) {
+        //Rebuilt previous state of object that was previoulsy edited
+        edit(fillDomainWithData(currentDomain().newInstance(), json), printMessage)
+    }
+
+    /**
+     * Edit domain from database
+     * @param domain Domain to update
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
+    def edit(CytomineDomain domain, boolean printMessage) {
+        //Build response message
+        def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
+        //Save update
+        beforeUpdate(domain)
+        saveDomain(domain)
+        afterUpdate(domain,response)
+        return response
+    }
+
+
+
+
+
+    /**
+     * Destroy domain from database
+     * @param json JSON with domain data (to retrieve it)
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
+    def destroy(JSONObject json, boolean printMessage) {
+        //Get object to delete
+        destroy(currentDomain().get(json.id), printMessage)
+    }
+
+    /**
+     * Destroy domain from database
+     * @param domain Domain to remove
+     * @param printMessage Flag to specify if confirmation message must be show in client
+     * @return Response structure (status, object data,...)
+     */
+    def destroy(CytomineDomain domain, boolean printMessage) {
+        //Build response message
+        def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Delete", domain.getCallBack())
+        beforeDelete(domain)
+        //Delete object
+        removeDomain(domain)
+        afterDelete(domain,response)
+        return response
+    }
+
+
+    def beforeAdd(def domain) {
+
+    }
+
+    def beforeDelete(def domain) {
+
+    }
+
+    def beforeUpdate(def domain) {
+
+    }
+
+    def afterAdd(def domain, def response) {
+
+    }
+
+    def afterDelete(def domain, def response) {
+
+    }
+
+    def afterUpdate(def domain, def response) {
+
+    }
+
+
+    def currentDomain() {
+        throw new ServerException("currentDomain must be implemented!")
+    }
+
+
+    def aclUtilService
+
+
+    def getStringParamsI18n(def domain) {
+        throw new ServerException("getStringParamsI18n must be implemented for $this!")
+    }
 
 }

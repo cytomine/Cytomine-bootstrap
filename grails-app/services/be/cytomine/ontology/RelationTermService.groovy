@@ -22,6 +22,10 @@ class RelationTermService extends ModelService {
     def cytomineService
     def transactionService
 
+    def currentDomain() {
+        return RelationTerm
+    }
+
     /**
      * Get a relation term
      */
@@ -99,71 +103,16 @@ class RelationTermService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(RelationTerm.insertDataIntoDomain(json), printMessage)
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.relation.name, domain.term1.name, domain.term2.name]
     }
 
     /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(RelationTerm domain, boolean printMessage) {
-        //Build response message
-        log.debug "domain=" + domain + " responseService=" + responseService
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Add", domain.getCallBack())
-        //Save new object
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(def json, boolean printMessage) {
-        destroy(RelationTerm.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(RelationTerm domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.relation.name, domain.term1.name, domain.term2.name], printMessage, "Delete", domain.getCallBack())
-        //Delete new object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    RelationTerm createFromJSON(def json) {
-        return RelationTerm.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(def json) {
+      * Retrieve domain thanks to a JSON object
+      * @param json JSON with new domain info
+      * @return domain retrieve thanks to json
+      */
+    def retrieve(JSONObject json) {
         Relation relation = Relation.get(json.relation)
         Term term1 = Term.get(json.term1)
         Term term2 = Term.get(json.term2)
@@ -173,6 +122,4 @@ class RelationTermService extends ModelService {
         }
         return relationTerm
     }
-
-
 }

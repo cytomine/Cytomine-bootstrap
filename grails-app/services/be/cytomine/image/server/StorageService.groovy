@@ -8,6 +8,7 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
+import be.cytomine.security.UserGroup
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -20,6 +21,10 @@ class StorageService extends ModelService {
     def transactionService
 
     static transactional = true
+
+    def currentDomain() {
+        return Storage
+    }
 
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list() {
@@ -79,98 +84,8 @@ class StorageService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser), json)
     }
 
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        Storage storage = Storage.get(json.id)
-        if (!storage) throw new ObjectNotFoundException("Storage " + json.id + " not found")
-        return storage
-    }
-
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(Storage.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(Storage domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(Storage.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(Storage domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Storage(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(Storage domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    Storage createFromJSON(def json) {
-        return Storage.insertDataIntoDomain(json)
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.name]
     }
 
    void deleteDependentImageServerStorage(Storage storage, Transaction transaction, Task task = null){

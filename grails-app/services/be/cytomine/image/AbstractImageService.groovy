@@ -29,12 +29,15 @@ class AbstractImageService extends ModelService {
     def commandService
     def cytomineService
     def imagePropertiesService
-    def responseService
     def transactionService
     def storageService
     def abstractImageGroupService
     def groupService
     def imageInstanceService
+
+    def currentDomain() {
+        return AbstractImage
+    }
 
     /**
      * List all images (only for admin!)
@@ -311,99 +314,8 @@ class AbstractImageService extends ModelService {
         }
     }
 
-
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(AbstractImage.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(AbstractImage domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(AbstractImage.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(AbstractImage domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new AbstractImage(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(AbstractImage domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.filename], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    AbstractImage createFromJSON(def json) {
-        return AbstractImage.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        AbstractImage image = AbstractImage.get(json.id)
-        if (!image) throw new ObjectNotFoundException("Image " + json.id + " not found")
-        return image
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.filename]
     }
 
     def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction,Task task=null) {

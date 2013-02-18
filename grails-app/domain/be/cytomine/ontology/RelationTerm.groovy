@@ -79,4 +79,5 @@ class RelationTerm extends CytomineDomain implements Serializable {
         }
     }
 
+
 }

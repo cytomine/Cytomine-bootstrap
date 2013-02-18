@@ -23,6 +23,10 @@ class AlgoAnnotationTermService extends ModelService {
     def cytomineService
     def commandService
 
+    def currentDomain() {
+        return AlgoAnnotationTerm
+    }
+
     @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(AnnotationDomain annotation) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
@@ -65,81 +69,28 @@ class AlgoAnnotationTermService extends ModelService {
 
     def delete(AlgoAnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{annotationIdent: ${at.annotationIdent},term: ${at.term?.id}, userJob: ${at.userJob.id}}")
+        def json = JSON.parse("{id: ${at.id}}")
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(AlgoAnnotationTerm.insertDataIntoDomain(json), printMessage)
+    def afterAdd(def domain, def response) {
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('algoannotation')
     }
 
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(AlgoAnnotationTerm domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.term?.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Add", domain.getCallBack())
+    def afterDelete(def domain, def response) {
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('algoannotation')
     }
 
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(AlgoAnnotationTerm.get(json.id), printMessage)
+    def afterUpdate(def domain, def response) {
+        response.data['annotation'] = response.data.userannotation
+        response.data.remove('algoannotation')
     }
 
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(AlgoAnnotationTerm domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
 
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    AlgoAnnotationTerm createFromJSON(def json) {
-        return AlgoAnnotationTerm.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        //Retrieve domain
-        Long idAnnotation = Long.parseLong(json.annotationIdent + "")
-        Term term = Term.read(json.term)
-        UserJob userJob = UserJob.read(json.userJob)
-        AlgoAnnotationTerm domain = AlgoAnnotationTerm.findWhere(annotationIdent: idAnnotation, term: term, userJob: userJob)
-        if (!domain) throw new ObjectNotFoundException("SuggestedTerm was not found with annotation:$json.annotationIdent,term:$term,userJob:$userJob")
-        return domain
+    def getStringParamsI18n(def domain) {
+        return [domain.term.name, domain.retrieveAnnotationDomain().id, domain.userJob]
     }
 
     /**

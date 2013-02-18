@@ -15,10 +15,6 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
     SecUser secUser
     SecRole secRole
 
-    static mapping = {
-        id composite: ['secRole', 'secUser']
-        version false
-    }
 
     static SecUserSecRole get(long secUserId, long secRoleId) {
         SecUserSecRole.findBySecRoleAndSecUser(SecRole.get(secRoleId),SecUser.get(secUserId))
@@ -54,7 +50,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         Logger.getLogger(this).info("Register custom JSON renderer for " + SecUserSecRole.class)
         JSON.registerObjectMarshaller(SecUserSecRole) {
             def returnArray = [:]
-            returnArray['id'] = it.hashCode()
+            returnArray['id'] = it.id
             returnArray['user'] = it.secUser.id
             returnArray['role'] = it.secRole.id
             return returnArray

@@ -29,11 +29,14 @@ class ImageInstanceService extends ModelService {
 
     def cytomineService
     def transactionService
-    def responseService
     def userAnnotationService
     def algoAnnotationService
     def dataSource
     def reviewedAnnotationService
+
+    def currentDomain() {
+        return ImageInstance
+    }
 
     def read(def id) {
         def image = ImageInstance.read(id)
@@ -149,102 +152,8 @@ class ImageInstanceService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(ImageInstance.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(ImageInstance domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(ImageInstance.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(ImageInstance domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new ImageInstance(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(ImageInstance domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.baseImage?.filename, domain.project.name], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    ImageInstance createFromJSON(def json) {
-        return ImageInstance.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        ImageInstance imageInstance
-        imageInstance = ImageInstance.read(json.id)
-        if (!imageInstance) {
-            throw new ObjectNotFoundException("ImageInstance " + json.id + " not found")
-        }
-        return imageInstance
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.baseImage?.filename, domain.project.name]
     }
 
     def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {

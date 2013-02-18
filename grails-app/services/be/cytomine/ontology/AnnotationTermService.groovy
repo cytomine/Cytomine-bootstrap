@@ -20,7 +20,10 @@ class AnnotationTermService extends ModelService {
     def cytomineService
     def transactionService
     def commandService
-    def responseService
+
+    def currentDomain() {
+        return AnnotationTerm
+    }
 
     @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation userAnnotation) {
@@ -99,76 +102,16 @@ class AnnotationTermService extends ModelService {
         return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
     }
 
-
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(AnnotationTerm.insertDataIntoDomain(json), printMessage)
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username]
     }
 
     /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(AnnotationTerm domain, boolean printMessage) {
-        //Build response message
-        log.debug "domain=" + domain + " responseService=" + responseService
-        //Save new object
-        //modelService.saveDomain(domain)
-        saveDomain(domain)
-
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Add", domain.getCallBack())
-
-        return response
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(def json, boolean printMessage) {
-        destroy(AnnotationTerm.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(AnnotationTerm domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.userAnnotation.id, domain.term.name, domain.user?.username], printMessage, "Delete", domain.getCallBack())
-        //Delete new object
-        removeDomain(domain)
-        //removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    AnnotationTerm createFromJSON(def json) {
-        return AnnotationTerm.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(def json) {
+      * Retrieve domain thanks to a JSON object
+      * @param json JSON with new domain info
+      * @return domain retrieve thanks to json
+      */
+    def retrieve(JSONObject json) {
         UserAnnotation annotation = UserAnnotation.get(json.userannotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)

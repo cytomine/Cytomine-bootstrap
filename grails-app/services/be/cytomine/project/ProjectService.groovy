@@ -51,6 +51,10 @@ class ProjectService extends ModelService {
     def reviewedAnnotationService
     def userAnnotationService
 
+    def currentDomain() {
+        Project
+    }
+
     def read(def id) {
         def project = Project.read(id)
         if(project) {
@@ -154,79 +158,13 @@ class ProjectService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,linkProject:false,transaction:transaction,refuseUndo:true), json,task)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(Project.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(Project domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
+    def afterAdd(Project domain, def response) {
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
-        //add permission on project
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
-//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.READ)
-//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.WRITE)
-//        aclUtilService.addPermission(domain.ontology, cytomineService.currentUser.username, BasePermission.DELETE)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
 
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(Project.get(json.id), printMessage)
-    }
 
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(Project domain, boolean printMessage) {
-        //Build response message
-        log.info "destroy project"
-//
-//        //remove Retrieval-project where this project is set
-//       def criteria = Project.createCriteria()
-//        List<Project> projectsThatUseThisProjectForRetrieval = criteria.list {
-//          retrievalProjects {
-//              eq('id', domain.id)
-//          }
-//        }
-//
-//        projectsThatUseThisProjectForRetrieval.each {
-//            it.refresh()
-//            it.removeFromRetrievalProjects(domain)
-//            it.save(flush: true)
-//        }
-//
-//        ImageFilterProject.findAllByProject(domain).each {
-//            it.delete()
-//        }
-//
-//        //remove retrieval-project of this project
-//        //domain.retrievalProjects.clear()
-//
-        //Delete all command / command history from project
+    def beforeDelete(Project domain) {
         CommandHistory.findAllByProject(domain).each { it.delete() }
         Command.findAllByProject(domain).each {
             it
@@ -234,75 +172,10 @@ class ProjectService extends ModelService {
             RedoStackItem.findAllByCommand(it).each { it.delete()}
             it.delete()
         }
-//        log.info "command deleted"
-//        UploadedFile.findAllByProject(domain).each { uploadedFile ->
-//            uploadedFile.delete()
-//        }
-//
-//        LastConnection.findAllByProject(domain).each {
-//            it.delete()
-//        }
-//
-//        UserPosition.findAllByProject(domain).each {
-//            it.delete()
-//        }
-//
-//        Task.findAllByProject(domain).each {
-//            it.delete()
-//        }
-
-        log.info "createResponseMessage"
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        log.info "removeDomain"
-        removeDomain(domain)
-        log.info "response"
-        return response
     }
 
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Project(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(Project project, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(project, [project.id, project.name], printMessage, "Edit", project.getCallBack())
-        //Save update
-        saveDomain(project)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    Project createFromJSON(def json) {
-        return Project.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        Project project = Project.get(json.id)
-        if (!project) throw new ObjectNotFoundException("Project " + json.id + " not found")
-        return project
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.name]
     }
 
     /**

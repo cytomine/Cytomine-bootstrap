@@ -29,6 +29,10 @@ class SoftwareService extends ModelService {
     def jobService
     def softwareProjectService
 
+    def currentDomain() {
+        Software
+    }
+
     def read(def id) {
         //TODO: check authorization?
         Software.read(id)
@@ -88,100 +92,13 @@ class SoftwareService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(Software.insertDataIntoDomain(json), printMessage)
-    }
 
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(Software domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Add user creator as ontology admin
+    def afterAdd(def domain, def response) {
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Add", domain.getCallBack())
     }
 
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(Software.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(Software domain, boolean printMessage) {
-        if (domain && Job.findAllBySoftware(domain).size() > 0) throw new ConstraintException("Software is still map with job")
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new Software(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(Software domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.id, domain.name], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    Software createFromJSON(def json) {
-        return Software.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        Software software = Software.get(json.id)
-        if (!software) throw new ObjectNotFoundException("Software " + json.id + " not found")
-        return software
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.name]
     }
 
     def deleteDependentSoftwareParameter(Software software, Transaction transaction, Task task = null) {

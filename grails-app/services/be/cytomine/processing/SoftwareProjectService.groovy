@@ -21,7 +21,10 @@ class SoftwareProjectService extends ModelService{
     def cytomineService
     def transactionService
     def modelService
-    def responseService
+
+    def currentDomain() {
+        return SoftwareProject
+    }
 
     def read(def id) {
         def sp = SoftwareProject.get(id)
@@ -72,72 +75,8 @@ class SoftwareProjectService extends ModelService{
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Restore domain which was previously deleted
-     * @param json domain info
-     * @param printMessage print message or not
-     * @return response
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(SoftwareProject.insertDataIntoDomain(json), printMessage)
-    }
 
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(SoftwareProject domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        return responseService.createResponseMessage(domain, [domain.software?.name, domain.project?.name], printMessage, "Add", domain.getCallBack())
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        log.info "JSON="+json
-        destroy(SoftwareProject.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(SoftwareProject domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain,  [domain.software?.name, domain.project?.name], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    SoftwareProject createFromJSON(def json) {
-        return SoftwareProject.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        SoftwareProject parameter = SoftwareProject.get(json.id)
-        if (!parameter) throw new ObjectNotFoundException("SoftwareProject " + json.id + " not found")
-        return parameter
+    def getStringParamsI18n(def domain) {
+        return [domain.software?.name, domain.project?.name]
     }
 }

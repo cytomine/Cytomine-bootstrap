@@ -30,10 +30,13 @@ class ReviewedAnnotationService extends ModelService {
     def annotationTermService
     def retrievalService
     def algoAnnotationTermService
-    def responseService
     def modelService
     def simplifyGeometryService
     def dataSource
+
+    def currentDomain() {
+        return ReviewedAnnotation
+    }
 
     ReviewedAnnotation get(def id) {
         def annotation = ReviewedAnnotation.get(id)
@@ -222,103 +225,8 @@ class ReviewedAnnotationService extends ModelService {
         return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
     }
 
-    /**
-     * Create new domain in database
-     * @param json JSON data for the new domain
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * Usefull when we create a lot of data, just print the root command message
-     * @return Response structure (status, object data,...)
-     */
-    def create(JSONObject json, boolean printMessage) {
-        create(ReviewedAnnotation.insertDataIntoDomain(json), printMessage)
-    }
-
-    /**
-     * Create new domain in database
-     * @param domain Domain to store
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def create(ReviewedAnnotation domain, boolean printMessage) {
-        //Save new object
-        saveDomain(domain)
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Add", domain.getCallBack())
-
-        return response
-    }
-
-    /**
-     * Destroy domain from database
-     * @param json JSON with domain data (to retrieve it)
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(JSONObject json, boolean printMessage) {
-        //Get object to delete
-        destroy(ReviewedAnnotation.get(json.id), printMessage)
-    }
-
-    /**
-     * Destroy domain from database
-     * @param domain Domain to remove
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def destroy(ReviewedAnnotation domain, boolean printMessage) {
-        //Build response message
-        log.info "destroy remove " + domain.id
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Delete", domain.getCallBack())
-        //Delete object
-        removeDomain(domain)
-        return response
-    }
-
-    /**
-     * Edit domain from database
-     * @param json domain data in json
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(JSONObject json, boolean printMessage) {
-        //Rebuilt previous state of object that was previoulsy edited
-        edit(fillDomainWithData(new ReviewedAnnotation(), json), printMessage)
-    }
-
-    /**
-     * Edit domain from database
-     * @param domain Domain to update
-     * @param printMessage Flag to specify if confirmation message must be show in client
-     * @return Response structure (status, object data,...)
-     */
-    def edit(ReviewedAnnotation domain, boolean printMessage) {
-        //Build response message
-        def response = responseService.createResponseMessage(domain, [domain.user.toString(), domain.image?.baseImage?.filename], printMessage, "Edit", domain.getCallBack())
-        //Save update
-        saveDomain(domain)
-        return response
-    }
-
-    /**
-     * Create domain from JSON object
-     * @param json JSON with new domain info
-     * @return new domain
-     */
-    ReviewedAnnotation createFromJSON(def json) {
-        return ReviewedAnnotation.insertDataIntoDomain(json)
-    }
-
-    /**
-     * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
-     * @return domain retrieve thanks to json
-     */
-    def retrieve(JSONObject json) {
-        ReviewedAnnotation annotation = ReviewedAnnotation.get(json.id)
-        if (!annotation) {
-            throw new ObjectNotFoundException("ReviewedAnnotation " + json.id + " not found")
-        }
-        return annotation
+    def getStringParamsI18n(def domain) {
+        return [domain.user.toString(), domain.image?.baseImage?.filename]
     }
 
     def deleteDependentAlgoAnnotationTerm(ReviewedAnnotation annotation, Transaction transaction, Task task = null) {
