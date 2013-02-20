@@ -22,6 +22,8 @@ import be.cytomine.utils.Task
 class OntologyService extends ModelService {
 
     static transactional = true
+    boolean saveOnUndoRedoStack = true
+
     def springSecurityService
     def transactionService
     def termService

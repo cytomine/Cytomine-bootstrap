@@ -94,6 +94,22 @@ var ProjectDashboardView = Backbone.View.extend({
         }
 
     },
+    refreshAnnotationsProperties: function () {
+        console.log("ProjectDashboardView");
+        var self = this;
+
+        if (this.projectDashboardAnnotationsProperties == null) {
+            this.projectDashboardAnnotationsProperties = new ProjectDashboardAnnotationsProperties({ model: this.model, el: this.el});
+            this.projectDashboardAnnotationsProperties.render(function () {
+                self.projectDashboardAnnotationsProperties.checkTermsAndUsers(terms, users);
+            });
+        } else {
+            this.projectDashboardAnnotationsProperties.checkTermsAndUsers(terms, users);
+        }
+
+    },
+
+
     /**
      * Refresh all information for this project
      */

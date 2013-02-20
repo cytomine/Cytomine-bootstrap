@@ -108,11 +108,13 @@ class BootStrap {
 
         //toVersion1()
         if (GrailsUtil.environment != BootStrap.test) {
-            getAbstractImageNestedFiles()
-            initUserIntoAbstractImage()
-            initUserStorages()
-            generateCopyToStorageScript()
+//            getAbstractImageNestedFiles()
+//            initUserIntoAbstractImage()
+//            initUserStorages()
+//            generateCopyToStorageScript()
         }
+
+        createSimpleUsers()
 
 
 
@@ -122,6 +124,8 @@ class BootStrap {
     def permissionService
     def fileSystemService
     def imagePropertiesService
+
+
 
     private def initUserIntoAbstractImage() {
         SecUser defaultUser = SecUser.findByUsername("rmaree")
@@ -377,6 +381,89 @@ class BootStrap {
         createUsers()
         createRelation()
     }
+
+
+
+
+
+    def createSimpleUsers() {
+
+        def usersSamples = [
+                [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]]
+        ]
+
+        SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
+        SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
+        usersSamples.each { item ->
+            User user = User.findByUsername(item.username)
+            if (user)  return
+            user = new User(
+                    username: item.username,
+                    firstname: item.firstname,
+                    lastname: item.lastname,
+                    email: item.email,
+                    color: item.color,
+                    password: item.password,
+                    enabled: true)
+            user.generateKeys()
+
+
+            log.info "Before validating ${user.username}..."
+            if (user.validate()) {
+                log.info "Creating user ${user.username}..."
+
+                try {user.save(flush: true) } catch(Exception e) {println e}
+                log.info "Save ${user.username}..."
+
+                /* Create a special group the user */
+                def userGroupName = item.username
+                def userGroup = [
+                        [name: userGroupName]
+                ]
+                createGroups(userGroup)
+                Group group = Group.findByName(userGroupName)
+                UserGroup ug = new UserGroup(user:user, group:group)
+                ug.save(flush:true,failOnError: true)
+
+                /* Handle groups */
+                item.group.each { elem ->
+                    def newGroup = [
+                            [name: elem.name]
+                    ]
+                    createGroups(newGroup)
+                    log.info "Fetch group " + elem.name
+                    group = Group.findByName(elem.name)
+                    ug = new UserGroup(user:user, group:group)
+                    ug.save(flush:true,failOnError: true)
+                }
+
+                /* Add Roles */
+                item.roles.each { authority ->
+                    log.info "Add SecRole " + authority + " for user " + user.username
+                    SecRole secRole = SecRole.findByAuthority(authority)
+                    if (secRole) SecUserSecRole.create(user, secRole)
+                }
+
+            } else {
+                log.info("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
+                user.errors.each {
+                    err -> log.info err
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     def createUsers() {
 

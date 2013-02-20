@@ -30,6 +30,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
 
         self.ontology = window.app.status.currentOntologyModel;
 
+        $(self.el).find("input.allAnnotationsCheckbox,input.onlyReviewedAnnotationsCheckbox").change(function () {
+            self.refreshSelectedTermsWithUserFilter();
+        });
+
+
         $(self.el).find("input.undefinedAnnotationsCheckbox").change(function () {
             if ($(this).attr("checked") == "checked") {
                 self.refreshAnnotations(-1, self.selectedUsers, self.selectedJobs, self.selectedImages);
@@ -63,8 +68,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             children: window.app.status.currentOntologyModel.toJSON(),
             onSelect: function (select, node) {
                 //if(!self.activeEvent) return;
+                console.log("On select!!!!!");
                 if (node.isSelected()) {
                     self.selectedTerm.push(node.data.key);
+                    console.log("refresh annotation for term "+node.data.key);
                     self.refreshAnnotations(node.data.key, self.selectedUsers, self.selectedJobs, self.selectedImages);
                     $("#tabsterm-panel-" + self.model.id + "-" + node.data.key).show();
 
@@ -608,7 +615,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var users = this.selectedUsers.join(",");
         var terms = this.selectedTerm.join(",");
         var images = this.selectedImages.join(",");
-        var suffix = "&users=" + users + "&terms=" + terms + "&images=" + images;
+        var suffix = "&users=" + users + "&terms=" + terms + "&images=" + images + "&reviewed="+ ($('input[name=annotationClass]:checked').val() == "inReviewed");
         $("#downloadAnnotationsCSV").attr("href", "/api/project/" + this.model.id + "/annotation/download?format=csv" + suffix);
         $("#downloadAnnotationsExcel").attr("href", "/api/project/" + this.model.id + "/annotation/download?format=xls" + suffix);
         $("#downloadAnnotationsPDF").attr("href", "/api/project/" + this.model.id + "/annotation/download?format=pdf" + suffix);
@@ -690,6 +697,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
      * @param term annotation term to be refresh (all = 0)
      */
     refreshAnnotations: function (term, users, jobs, images) {
+        console.log("refreshAnnotations");
         this.printAnnotationThumb(term, "#tabsterm-" + this.model.id + "-" + term, users, jobs, images);
     },
     clearAnnotations: function (term) {
@@ -716,6 +724,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     printAnnotationThumb: function (idTerm, $elem, users, jobs, images) {
         var self = this;
+        console.log("printAnnotationThumb");
         //TODO: problem avec $elem!
 
 
@@ -736,7 +745,11 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         //print loading info
         $($elem).parent().find("h4").append('<div class="alert alert-info"><i class="icon-refresh" /> Loading...</div>');
 
-        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, users: usersFilter, images: imagesFilter});
+        var reviewedRadioValue = $('input[name=annotationClass]:checked').val();
+        var reviewed = reviewedRadioValue == "inReviewed"
+        console.log("reviewed:"+reviewed);
+
+        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, users: usersFilter, images: imagesFilter,reviewed:reviewed});
 
         $($elem).empty();
         self.annotationsViews[idTerm] = new AnnotationView({

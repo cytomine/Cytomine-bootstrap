@@ -274,6 +274,39 @@ var EditProjectDialog = Backbone.View.extend({
             projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
         }
 
+
+        var projectOldUsers = []; //[a,b,c]
+        var projectNewUsers = null;  //[a,b,x]
+        var projectAddUser = null;
+        var projectDeleteUser = null;
+        var jsonuser = [];
+
+        window.app.models.projectUser.each(function (user) {
+            jsonuser.push(user.id);
+        });
+
+        _.each(jsonuser,
+            function (user) {
+                projectOldUsers.push(user)
+            });
+        projectOldUsers.sort();
+        projectNewUsers = users;
+        projectNewUsers.sort();
+        //var diff = self.diffArray(projectOldUsers,projectNewUsers);
+        projectAddUser = self.diffArray(projectNewUsers, projectOldUsers); //[x] must be added
+        projectDeleteUser = self.diffArray(projectOldUsers, projectNewUsers); //[c] must be deleted
+        console.log("projectOldUsers=" + projectOldUsers);
+        console.log("projectNewUsers=" + projectNewUsers);
+        console.log("projectAddUser=" + projectAddUser);
+        console.log("projectDeleteUser=" + projectDeleteUser);
+
+
+
+        self.initProgressBar();
+        var totalOperation = projectAddUser.length + projectDeleteUser.length + 1; //N users +1 for project creation
+        self.changeProgressBarStatus((1/totalOperation)*100);
+
+
         //edit project
         var project = self.model;
         project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval});
@@ -285,35 +318,6 @@ var EditProjectDialog = Backbone.View.extend({
                     window.app.view.message("Project", response.message, "success");
 
                     var id = response.project.id;
-
-                    //create user-project "link"
-
-                    var projectOldUsers = []; //[a,b,c]
-                    var projectNewUsers = null;  //[a,b,x]
-                    var projectAddUser = null;
-                    var projectDeleteUser = null;
-
-                    var jsonuser = [];
-
-                    window.app.models.projectUser.each(function (user) {
-                        jsonuser.push(user.id);
-                    });
-
-                    _.each(jsonuser,
-                        function (user) {
-                            projectOldUsers.push(user)
-                        });
-                    projectOldUsers.sort();
-                    projectNewUsers = users;
-                    projectNewUsers.sort();
-                    //var diff = self.diffArray(projectOldUsers,projectNewUsers);
-                    projectAddUser = self.diffArray(projectNewUsers, projectOldUsers); //[x] must be added
-                    projectDeleteUser = self.diffArray(projectOldUsers, projectNewUsers); //[c] must be deleted
-                    console.log("projectOldUsers=" + projectOldUsers);
-                    console.log("projectNewUsers=" + projectNewUsers);
-                    console.log("projectAddUser=" + projectAddUser);
-                    console.log("projectDeleteUser=" + projectDeleteUser);
-
 
                     /*_.each(projectOldUsers,function(user){
 
@@ -332,10 +336,12 @@ var EditProjectDialog = Backbone.View.extend({
                         new ProjectUserModel({project: id, user: user}).save({}, {
                             success: function (model, response) {
                                 self.addDeleteUserProjectCallback(total, ++counter);
+                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
                             }, error: function (model, response) {
-
+                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
                                 var json = $.parseJSON(response.responseText);
                                 window.app.view.message("User", json.errors[0], "error");
+
                             }});
                     });
                     _.each(projectDeleteUser, function (user) {
@@ -343,8 +349,9 @@ var EditProjectDialog = Backbone.View.extend({
                         new ProjectUserModel({id: 1, project: id, user: user}).destroy({
                             success: function (model, response) {
                                 self.addDeleteUserProjectCallback(total, ++counter);
+                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
                             }, error: function (model, response) {
-
+                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
                                 var json = $.parseJSON(response.responseText);
                                 window.app.view.message("User", json.errors[0], "error");
                             }});
@@ -362,6 +369,22 @@ var EditProjectDialog = Backbone.View.extend({
                 }
             }
         );
+    },
+    initProgressBar : function() {
+        console.log("initProgressBar");
+        var divToFill = $("#login-form-edit-project");
+        divToFill.empty();
+        $("#login-form-edit-project-titles").empty();
+        divToFill.append('' +
+            '<br><br><div id="progressBarEditProject" class="progress progress-striped active">' +
+            '   <div class="bar" style="width:0%;"></div>' +
+            '</div><br><br>');
+        $("#editproject").find(".modal-footer").empty();
+    },
+    changeProgressBarStatus: function(progress) {
+        console.log("changeProgressBarStatus:"+progress);
+        var progressBar = $("#progressBarEditProject").find(".bar");
+        progressBar.css("width",progress+"%");
     },
     addDeleteUserProjectCallback: function (total, counter) {
         if (counter < total) {

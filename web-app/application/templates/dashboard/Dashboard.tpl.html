@@ -134,6 +134,18 @@
                         <p></p>
 
                         <h3>Filters</h3></p>
+
+
+
+                        <div style="padding-left: 30px;">
+                            <input class="allAnnotationsCheckbox" type="radio" name="annotationClass" value="notInReviewed" checked>
+                            <span class="label label-success">Search in user/algo annotations</span>
+                            <br>
+                            <input class="onlyReviewedAnnotationsCheckbox" type="radio" name="annotationClass" value="inReviewed">
+                            <span class="label label-success">Search in validate annotations</span>
+                        </div>
+                        <hr/>
+
                         <div id="treeImageListing" class="tree"></div>
                         <ul style="display : inline;">
                             <li style="display : inline;">
@@ -144,10 +156,14 @@
                             </li>
                         </ul>
                         <hr/>
-                        <div style="padding-left: 30px;"><input class="undefinedAnnotationsCheckbox" type="checkbox">
-                            <span class="label label-important">Annotations without terms</span></div>
-                        <div style="padding-left: 30px;"><input class="multipleAnnotationsCheckbox" type="checkbox">
-                            <span class="label label-important">Annotations with several terms</span></div>
+                        <div style="padding-left: 30px;">
+                            <input class="undefinedAnnotationsCheckbox" type="checkbox">
+                            <span class="label label-important">Annotations without terms</span>
+                        </div>
+                        <div style="padding-left: 30px;">
+                            <input class="multipleAnnotationsCheckbox" type="checkbox">
+                            <span class="label label-important">Annotations with several terms</span>
+                        </div>
                         <hr/>
                         <div id="treeAnnotationListing" class="tree"></div>
                         <ul style="display : inline;">
@@ -237,6 +253,9 @@
         </div>
         <!--/row-->
     </div>
+</div>
+<div class="tab-pane" id="tabs-annotationsproperties-<%= id %>" style="overflow : auto;">
+
 </div>
 <div class="tab-pane" id="tabs-config-<%= id %>" style="overflow : auto;padding: 20px;">
     <div class="container-fluid">

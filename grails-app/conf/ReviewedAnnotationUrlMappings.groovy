@@ -22,7 +22,7 @@ class ReviewedAnnotationUrlMappings {
          }
 
         //?params.users+images+terms+conflict
-        "/api/project/$idProject/reviewedannotation"(controller: "restReviewedAnnotation"){
+        "/api/project/$idproject/reviewedannotation"(controller: "restReviewedAnnotation"){
              action = [GET:"listByProjectImageTermAndUser"]
          }
         "/api/imageinstance/$idImage/reviewedannotation"(controller: "restReviewedAnnotation"){

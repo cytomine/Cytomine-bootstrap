@@ -283,6 +283,7 @@ var AddProjectDialog = Backbone.View.extend({
             '<br><br><div id="progressBarCreateProject" class="progress progress-striped active">' +
             '   <div class="bar" style="width:0%;"></div>' +
             '</div><br><br>');
+        $("#addproject").find(".modal-footer").empty();
     },
     changeProgressBarStatus: function(progress) {
         console.log("changeProgressBarStatus:"+progress);

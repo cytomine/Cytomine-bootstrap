@@ -117,6 +117,7 @@ var ImageThumbView = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
                 self.render();
+                window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-';
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

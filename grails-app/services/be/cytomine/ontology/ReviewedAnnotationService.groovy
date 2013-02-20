@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityCheck
+import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
@@ -172,6 +173,77 @@ class ReviewedAnnotationService extends ModelService {
                 .add(Restrictions.eq("image", image))
                 .list()
     }
+
+    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at2.term_id as term, at2.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
+                " FROM reviewed_annotation a, reviewed_annotation_term at,reviewed_annotation_term at2,reviewed_annotation_term at3\n" +
+                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
+                " AND a.project_id = " + project.id + "\n" +
+                " AND at3.term_id = " + term.id + "\n" +
+                " AND a.id = at2.reviewed_annotation_terms_id\n" +
+                " AND a.id = at3.reviewed_annotation_terms_id\n" +
+                " AND a.user_id IN (" + userList.collect {it}.join(",") + ") \n" +
+                (allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                " ORDER BY id desc, term"
+        selectReviewedAnnotationFull(request)
+    }
+
+    /**
+     * Execute request and format result into a list of map
+     */
+    private def selectReviewedAnnotationFull(String request) {
+        log.info "REQUEST=" + request
+        def data = []
+        long lastAnnotationId = -1
+        long lastTermId = -1
+
+        new Sql(dataSource).eachRow(request) {
+            /**
+             * If an annotation has n multiple term, it will be on "n" lines.
+             * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
+             * For the other lines, we add term data to the last annotation
+             */
+            if (it.id != lastAnnotationId) {
+                data << [
+                        'class': 'be.cytomine.ontology.ReviewedAnnotation',
+                        id: it.id,
+                        image: it.image,
+                        geometryCompression: it.geometryCompression,
+                        project: it.project,
+                        container: it.project,
+                        user: it.user,
+                        nbComments: it.nbComments,
+                        created: it.created,
+                        updated: it.updated,
+                        reviewed: (it.countReviewedAnnotations > 0),
+                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                        smallCropURL: UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
+                        url: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
+                        imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
+                        term: (it.term ? [it.term] : []),
+                        userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
+                        location: it.location
+                ]
+            } else {
+                if (it.term) {
+                    data.last().term.add(it.term)
+                    data.last().term.unique()
+                    if (it.term == lastTermId) {
+                        data.last().userByTerm.last().user.add(it.userTerm)
+                        data.last().userByTerm.last().user.unique()
+                    } else {
+                        data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
+                    }
+                }
+            }
+            lastTermId = it.term
+            lastAnnotationId = it.id
+        }
+        data
+    }
+
 
     /**
      * Add the new domain with JSON data

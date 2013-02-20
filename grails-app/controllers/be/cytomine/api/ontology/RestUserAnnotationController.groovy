@@ -158,6 +158,8 @@ class RestUserAnnotationController extends RestController {
             responseNotFound("Project", params.long('id'))
         }
 
+        //users=9331125,16&terms=-1,-2,9331340,9331346&images=9331299
+
         def users = []
         if (params.users != null && params.users != "") {
             params.users.split(",").each { id ->
@@ -179,6 +181,7 @@ class RestUserAnnotationController extends RestController {
         def termsName = Term.findAllByIdInList(terms).collect { it.toString() }
         def usersName = SecUser.findAllByIdInList(users).collect { it.toString() }
         def imageInstances = ImageInstance.findAllByIdInList(images)
+
 
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;

@@ -78,11 +78,16 @@ class RestAnnotationDomainController extends RestController {
 
         Project project = projectService.read(params.long('idproject'))
 
-        List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
-        if (!userList.isEmpty() && userList.get(0)?.algo()) {
-            forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
+        if(params.getBoolean('reviewed')) {
+            println "restReviewedAnnotation.listAnnotationByProjectAndTerm"
+            forward(controller: "restReviewedAnnotation", action: "listAnnotationByProjectAndTerm")
         } else {
-            forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
+            List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
+            if (!userList.isEmpty() && userList.get(0)?.algo()) {
+                forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
+            } else {
+                forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
+            }
         }
     }
 
@@ -98,10 +103,15 @@ class RestAnnotationDomainController extends RestController {
             }
         }
 
-        if (!users.isEmpty() && SecUser.read(users.first()).algo()) {
-            forward(controller: "restAlgoAnnotation", action: "downloadDocumentByProject")
+        if(params.getBoolean('reviewed')) {
+            println "restReviewedAnnotation.downloadDocumentByProject"
+            forward(controller: "restReviewedAnnotation", action: "downloadDocumentByProject")
         } else {
-            forward(controller: "restUserAnnotation", action: "downloadDocumentByProject")
+            if (!users.isEmpty() && SecUser.read(users.first()).algo()) {
+                forward(controller: "restAlgoAnnotation", action: "downloadDocumentByProject")
+            } else {
+                forward(controller: "restUserAnnotation", action: "downloadDocumentByProject")
+            }
         }
     }
 

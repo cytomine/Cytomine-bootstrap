@@ -253,10 +253,11 @@ var ReviewPanel = SideBarPanel.extend({
         } else {
             //image is validate
             var panel = $("#" + self.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-            panel.find('#showReviewLayer' + self.model.id).attr("disabled", "disabled")
+            panel.find('#showReviewLayer' + self.model.id).attr("disabled", "disabled");
             panel.find("#addReviewLayers" + self.model.id).attr("disabled", "disabled");
             panel.find("select").attr("disabled", "disabled");
             panel.find("#reviewMultiple" + self.model.id).attr("disabled", "disabled");
+            panel.find("#unReviewMultiple" + self.model.id).attr("disabled", "disabled");
             panel.find("#reviewValidate" + self.model.id).hide();
             panel.find("#reviewUnValidate" + self.model.id).show();
 
@@ -456,8 +457,8 @@ var ReviewPanel = SideBarPanel.extend({
         } else {
             new TaskModel({project: self.model.get('project')}).save({}, {
                     success: function (taskResponse, response) {
-                        var task = taskResponse.get('task').id;
-                        console.log("task=" + task.get('task').id);
+                        var task = taskResponse.get('task');
+                        console.log("task=" + task);
 
 
                         $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
@@ -515,7 +516,7 @@ var ReviewPanel = SideBarPanel.extend({
             if (x) {
                 new TaskModel({project: self.model.get('project')}).save({}, {
                         success: function (taskResponse, response) {
-                            var task = taskResponse.get('task').id;
+                            var task = taskResponse.get('task');
                             console.log("task=" + task);
 
                             $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');

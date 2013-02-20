@@ -15,6 +15,10 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
     SecUser secUser
     SecRole secRole
 
+    static mapping = {
+        id generator: "assigned"
+    }
+
 
     static SecUserSecRole get(long secUserId, long secRoleId) {
         SecUserSecRole.findBySecRoleAndSecUser(SecRole.get(secRoleId),SecUser.get(secUserId))

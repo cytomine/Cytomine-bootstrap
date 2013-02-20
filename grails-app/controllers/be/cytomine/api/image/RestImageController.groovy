@@ -25,8 +25,9 @@ class RestImageController extends RestController {
      * List all abstract image available on cytomine
      */
     def list = {
+        println "list..."
         SecUser user = cytomineService.getCurrentUser()
-        if(params.getBoolean('datatable')) {
+        if(params.rows!=null) {
             responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         } else {
             response(abstractImageService.list(user))

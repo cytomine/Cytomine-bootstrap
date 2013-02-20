@@ -86,6 +86,10 @@ var ProjectDashboardStats = Backbone.View.extend({
         var data = new google.visualization.DataTable();
         var cpt = -1;
         var first = collection.at(0);
+        if(first==undefined) {    //afficher no data to display
+            $("#userAnnotationsChart").html(this.noDataAlert);
+            return
+        }
 
         //init users
         data.addColumn('string', 'Terms');

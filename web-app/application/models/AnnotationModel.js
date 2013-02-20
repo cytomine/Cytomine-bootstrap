@@ -69,7 +69,7 @@ var AnnotationCollection = Backbone.Collection.extend({
 
         //construct queryString
         var queryString = "";
-        if (this.offset) {
+        if (this.offset!=undefined) {
             queryString = queryString + "&offset=" + this.offset;
         }
         if (this.maxResult) {
@@ -83,13 +83,23 @@ var AnnotationCollection = Backbone.Collection.extend({
         if (this.user != undefined) {
             return "api/user/" + this.user + "/imageinstance/" + this.image + "/annotation.json?" + queryString;
         } else if (this.term != undefined && this.project != undefined) {
+            console.log("a="+queryString);
             if (this.users) {
                 queryString += "&users=" + this.users.join('_');
             }
+            console.log("b="+queryString);
+
             if (this.images) {
                 queryString += "&images=" + this.images.join('_');
             }
+            console.log("c="+this.term);
+
+            if(this.reviewed) {
+                queryString += "&reviewed="+this.reviewed
+            }
+
             if (this.term < "0") { //annotations without terms (-1), annotations with multiple terms (-2)
+                console.log("term < 0 ");
                 if (this.term == -1) {
                     queryString += "&noTerm=true";
                 } else if (this.term == -2) {
@@ -100,18 +110,24 @@ var AnnotationCollection = Backbone.Collection.extend({
             if (this.suggestTerm != undefined) { //ask annotation with suggest term diff than correct term
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?suggestTerm=" + this.suggestTerm + "&job=" + this.job + queryString;
             }
+            console.log("****************************");
+            console.log(this.term >= "0");
+            console.log(this.users == undefined);
+            console.log(this.images == undefined);
+            console.log("****************************");
 
             if (this.term >= "0" && this.users == undefined && this.images == undefined) {
                 return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + queryString;
             }
             if (this.term >= "0" && this.users != undefined && this.images == undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + queryString;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?" + queryString;
             }
             if (this.term >= "0" && this.users == undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images=" + images + queryString;
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images=" + this.images + queryString;
             }
             if (this.term >= "0" && this.users != undefined && this.images != undefined) {
-                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + users + "&images=" + images + queryString;
+                console.log("api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + this.users + "&images=" + this.images + queryString);
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + this.users + "&images=" + this.images + queryString;
             }
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/annotation.json";
@@ -135,9 +151,11 @@ var AnnotationCollection = Backbone.Collection.extend({
         this.suggestTerm = options.suggestTerm;
         this.job = options.job;
         this.notReviewedOnly = options.notReviewedOnly;
+        this.reviewed = options.reviewed
     },
     build: function () {
         var self = this;
+        console.log(self);
         var model = self.at(0);
         var coll = model.get("collection");
         this.remove(self.models);

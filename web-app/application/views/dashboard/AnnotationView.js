@@ -16,7 +16,8 @@ var AnnotationView = Backbone.View.extend({
 
         self.model.offset = (self.page) * self.nb_thumb_by_page;
         self.model.maxResult = self.nb_thumb_by_page;
-
+        console.log("************************");
+        console.log(self.model);
         self.model.fetch({
             success: function (collection, response) {
                 $(self.el).empty();

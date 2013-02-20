@@ -1,9 +1,10 @@
-<div style="border: 1px solid; border-color: <%= colorStyle %>;width : 100px; height: 100px;position: relative;text-align: center;">
+<div id="mainAnnotationThumb-<%= id %>" style="border: 3px solid; border-color: <%= colorStyle %>;width : 100px; height: 100px;position: relative;text-align: center; <%= backgroundcolor%>;">
 
     <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
-        <img id='AnnotationThumbCrop-<%= id %>' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|'
-             style="max-height:100px; max-width:100px;"/>
+        <img id='AnnotationThumbCrop-<%= id %>' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|' style="max-height:100px; max-width:100px;"/>
     </a>
+
+
 
     <% if (ratePourcent) { %>
     <div style="position: absolute;width : 100px; bottom : 1px; left : 0px;">
@@ -12,8 +13,9 @@
     <% } %>
     <div style="position: absolute;right : 0px;top : 0px;margin: auto;">
         <div class="btn-group dropup">
-            <a class="btn btn-mini dropdown-toggle " id="drop4" role="button" data-toggle="dropdown" href="#"><span
-                    class="caret"></span></a>
+            <a class="btn btn-mini dropdown-toggle " id="drop4" role="button" data-toggle="dropdown" href="#">
+                <span class="caret"></span>
+            </a>
             <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="drop4">
                 <% if (!sameUser) { %>
                 <li><a href="#copy-annotation/<%= id %>"> Copy </a></li>

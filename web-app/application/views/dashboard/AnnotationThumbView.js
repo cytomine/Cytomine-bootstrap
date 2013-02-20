@@ -17,17 +17,18 @@ var AnnotationThumbView = Backbone.View.extend({
             if (annotation.get("rate") != undefined && !isNaN(annotation.get("rate"))) {
                 ratePourcent = Math.round(annotation.get("rate") * 10000) / 100 + "%";
             }
-            ;
 
             var colorStyle = undefined;
             if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) {
                 colorStyle = "#cccccc";
-            }
-            else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
+            } else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
                 colorStyle = "#F89406"
             }
-            ;
 
+            var backgroundcolor = "";
+            if(annotation.get('reviewed')) {
+                backgroundcolor = "background-color: #008000;"
+            }
 
             //if user job, construct link to the job
             var jobLink = null;
@@ -45,7 +46,9 @@ var AnnotationThumbView = Backbone.View.extend({
                 sameUser: (window.app.status.user.id == annotation.get("user")),
                 ratePourcent: ratePourcent,
                 colorStyle: colorStyle,
-                jobLink: jobLink
+                jobLink: jobLink,
+                backgroundcolor : backgroundcolor,
+                nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0
             });
 
 
