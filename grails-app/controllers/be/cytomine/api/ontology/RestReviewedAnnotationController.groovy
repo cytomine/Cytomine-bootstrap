@@ -110,12 +110,12 @@ class RestReviewedAnnotationController extends RestController {
      * List all reviewed annotation by project
      */
     def listByProject = {
-        Project project = projectService.read(params.long('idProject'))
+        Project project = projectService.read(params.long('idproject'))
         if (project) {
             responseSuccess(reviewedAnnotationService.list(project))
         }
         else {
-            responseNotFound("Project", params.idProject)
+            responseNotFound("Project", params.idproject)
         }
     }
 
@@ -151,7 +151,7 @@ class RestReviewedAnnotationController extends RestController {
                    }
                }
            } else {
-               responseNotFound("Project", params.idProject)
+               responseNotFound("Project", params.idproject)
            }
         }
     }
@@ -587,25 +587,11 @@ class RestReviewedAnnotationController extends RestController {
             response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")
 
 
-
-//            def annotations = ReviewedAnnotation.withCriteria {
-//                  eq("project", project)
-//                  inList("image", imageInstances)
-//                  inList("user.id", users)
-//                    terms {
-//                        eq("id",1)
-//                  }
-//            }
-
-
-
             def annotations = ReviewedAnnotation.executeQuery(
                'select distinct a ' +
                'from ReviewedAnnotation a inner join a.terms terms ' +
                'where a.project = :project and a.image.id in (:images) and a.user.id in (:users) and terms.id in (:terms)',
             [project: project, images: images, users: users, terms: terms])
-
-
 
 
             def exportResult = []
