@@ -114,7 +114,6 @@
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardStats.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardImages.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js"/>
-<fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotationsProperties.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardConfig.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobListingView.js"/>

@@ -146,8 +146,8 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
-        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
-        assert 200 == result.code
+        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
+        assert 403 == result.code
         annotation = result.data
 
         //Get/List annotation 1 with user 2

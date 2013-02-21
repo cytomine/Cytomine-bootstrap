@@ -171,7 +171,6 @@ body {
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardStats.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardImages.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotations.js" ></script>
-    <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotationsProperties.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAlgos.js" ></script>
     <script type="text/javascript" src="application/views/dashboard/ProjectDashboardConfig.js" ></script>
 

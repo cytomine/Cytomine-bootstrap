@@ -44,7 +44,7 @@ class TermSecurityTests extends SecurityTestsAbstract {
       assert (200 == TermAPI.delete(term.id,USERNAMEADMIN,PASSWORDADMIN).code)
   }
 
-  void testTermSecurityForTermCreator() {
+  void testTermSecurityForOntologyCreator() {
 
       //Get user1
       User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
@@ -65,7 +65,7 @@ class TermSecurityTests extends SecurityTestsAbstract {
       assert (200 == TermAPI.delete(term.id,USERNAME1,PASSWORD1).code)
   }
 
-  void testTermSecurityForProjectUser() {
+  void testTermSecurityForOntologyUser() {
 
       //Get user1
       User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)

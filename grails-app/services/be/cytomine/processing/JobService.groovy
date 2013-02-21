@@ -163,7 +163,7 @@ class JobService extends ModelService {
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.id, domain.class.toString()]
+        return [domain.id, domain.software.name]
     }
 
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
