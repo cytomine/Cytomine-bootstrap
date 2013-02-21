@@ -42,10 +42,16 @@ class SecurityCheck {
      * Check if current user has read right in the project id
      */
     public static boolean checkProjectAccess(def id) {
+        println "checkProjectAccess="+id
         def project = Project.read(id)
+        println "project="+project
         if(!project) {
             throw new ObjectNotFoundException("Project $id was not found! Unable to process project auth checking")
         }
+        println "permission="+project.checkReadPermission()
+        println "2**************"
+        Infos.printRight(project)
+        println "2**************"
         return project.checkReadPermission()
     }
 

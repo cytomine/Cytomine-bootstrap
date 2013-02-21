@@ -296,7 +296,7 @@ class UserAnnotationService extends ModelService {
      * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_USER')")
+    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
     def add(def json, SecurityCheck security) {
 
         SecUser currentUser = cytomineService.getCurrentUser()
