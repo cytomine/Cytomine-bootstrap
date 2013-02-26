@@ -38,7 +38,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListUserAnnotationByImageWithCredential() {
@@ -46,7 +46,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByImage(annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListUserAnnotationByImageNotExistWithCredential() {
@@ -59,7 +59,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAnnotationAPI.listByProject(annotation.project.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -76,7 +76,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
 
@@ -87,7 +87,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAnnotationAPI.listByImageAndUser(-99, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -126,7 +126,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
 
     void testListUserAnnotationyProjectAndUsersWithCredential() {
@@ -134,7 +134,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
     
     void testDownloadUserAnnotationDocument() {
@@ -369,7 +369,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
@@ -379,7 +379,7 @@ class UserAnnotationTests  {
         result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
@@ -428,7 +428,7 @@ class UserAnnotationTests  {
         def result = UserAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
@@ -438,7 +438,7 @@ class UserAnnotationTests  {
         result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)

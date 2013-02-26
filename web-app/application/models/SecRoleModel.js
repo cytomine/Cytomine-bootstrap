@@ -11,7 +11,7 @@ var SecRoleModel = Backbone.Model.extend({
 
 });
 
-var SecRoleCollection = Backbone.Collection.extend({
+var SecRoleCollection = PaginatedCollection.extend({
     model: SecRoleModel,
 
     url: function () {

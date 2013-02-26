@@ -22,7 +22,7 @@ class SoftwareParameterTests  {
           def result = SoftwareParameterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
-          assert json instanceof JSONArray
+          assert json.collection instanceof JSONArray
       }
   
       void testListSoftwareParameterBySoftware() {
@@ -30,7 +30,7 @@ class SoftwareParameterTests  {
           def result = SoftwareParameterAPI.listBySoftware(softwareparameter.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
-          assert json instanceof JSONArray
+          assert json.collection instanceof JSONArray
           result = SoftwareParameterAPI.listBySoftware(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 404 == result.code
       }

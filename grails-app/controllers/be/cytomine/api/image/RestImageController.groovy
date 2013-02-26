@@ -30,7 +30,7 @@ class RestImageController extends RestController {
         if(params.rows!=null) {
             responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         } else {
-            response(abstractImageService.list(user))
+            responseSuccess(abstractImageService.list(user))
         }
     }
 
@@ -103,7 +103,7 @@ class RestImageController extends RestController {
      * Extract image properties from file
      */
     def imageProperties = {
-        response(abstractImageService.imageProperties(params.long('id')))
+        responseSuccess(abstractImageService.imageProperties(params.long('id')))
     }
 
     /**

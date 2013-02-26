@@ -170,7 +170,38 @@ class RestController {
      * @param data Message content
      */
     protected def responseSuccess(data) {
-        response(data)
+        if(data instanceof List) {
+            return responseList(data)
+        } else if(data instanceof Collection) {
+            List list = []
+            list.addAll(data)
+            return responseList(list)
+        }
+        else {
+            response(data)
+        }
+    }
+
+    protected def responseList(List list) {
+
+        Integer offset = params.offset != null ? params.getInt('offset') : 0
+        Integer max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
+
+        List subList
+        if (offset >= list.size()) {
+            subList = []
+        } else {
+            def maxForCollection = Math.min(list.size() - offset, max)
+            subList = list.subList(offset,offset + maxForCollection)
+        }
+
+        println "total=${list.size()}"
+        println "max=$max"
+        println "totalPages=${Math.ceil(list.size()/max)}"
+
+        responseSuccess ([collection: subList, offset: offset, size: list.size(), totalPages: Math.ceil(list.size()/max)])
+
+
     }
 
     /**

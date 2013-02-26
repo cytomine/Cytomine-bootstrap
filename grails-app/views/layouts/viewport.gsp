@@ -71,6 +71,9 @@ body {
     <!-- Core Libs -->
     <script type="text/javascript" src="lib/underscore.js"></script>
     <script type="text/javascript" src="lib/backbone.js"></script>
+    <script type="text/javascript" src="lib/backbone.paginator.js"></script>
+
+
     <script type="text/javascript" src="lib/json2.js"></script>
 
     <!-- Phono -->
@@ -131,6 +134,9 @@ body {
     <script type="text/javascript" src="application/controllers/AccountController.js" ></script>
     <script type="text/javascript" src="application/controllers/PhonoController.js" ></script>
     <!-- Models -->
+
+    <script type="text/javascript" src="application/models/PaginatorModel.js" ></script>
+
     <script type="text/javascript" src="application/models/UploadedFileModel.js" ></script>
     <script type="text/javascript" src="application/models/AnnotationsFilterModel.js" ></script>
     <script type="text/javascript" src="application/models/ImageModel.js" ></script>

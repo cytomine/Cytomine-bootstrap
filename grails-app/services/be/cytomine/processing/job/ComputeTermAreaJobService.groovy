@@ -24,30 +24,30 @@ class ComputeTermAreaJobService extends AbstractJobService{
 
     def execute(Job job) {
 
-        String applicPath = "algo/computeTermArea/computeTermArea.jar"
-
         //get job params
         String[] jobParams = getParametersValues(job)
-        String[] args = new String[jobParams.length+7]
+
+        String[] mainArgs = createArgsArray(job)
+        String[] allArgs = new String[mainArgs.length+jobParams.length+2]
+
+        int index = 0
+        mainArgs.each {
+            allArgs[index] = mainArgs[index]
+            index++
+        }
         //build software params
-        args[0] = "java"
-        args[1] = "-Xmx1G"
-        args[2] = "-cp"
-        args[3] = applicPath
-        args[4] = "ComputeArea"
+        allArgs[index++] = job.id
+        allArgs[index++] = UserJob.findByJob(job).id
 
-        args[5] = job.id
-        args[6] = UserJob.findByJob(job).id
-
-
-        for(int i=0;i<jobParams.length;i++) {
-            args[i+7] = jobParams[i]
+        jobParams.each {
+            allArgs[index++] = it
         }
 
+        println "allArgs=$allArgs"
 
-        printStartJobInfo(job,args)
-        launchAndWaitSoftware(args,job)
-        printStopJobInfo(job,args)
+        printStartJobInfo(job,allArgs)
+        launchAndWaitSoftware(allArgs,job)
+        printStopJobInfo(job,allArgs)
     }
 
     @Override

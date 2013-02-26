@@ -51,7 +51,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListReviewedAnnotationByProject() {
@@ -59,7 +59,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
     }
 
@@ -80,7 +80,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
         assert !ReviewedAnnotationAPI.containsInJSONList(annotationNotCriteria.id,json)
     }
@@ -99,7 +99,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
     }
 
@@ -137,7 +137,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,annotation.termsId().first(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
         assert !ReviewedAnnotationAPI.containsInJSONList(annotationNotCriteria.id,json)
     }
@@ -154,7 +154,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByImage(annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
     }
 
@@ -185,7 +185,7 @@ class ReviewedAnnotationTests  {
         def result = ReviewedAnnotationAPI.listByImageAndUser(annotation.image.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
     }
 
@@ -397,7 +397,7 @@ class ReviewedAnnotationTests  {
 //        def result = ReviewedAnnotationAPI.addForJob(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
 //        assert 200 == result.code
 //        def json = JSON.parse(result.data)
-//        assert json instanceof JSONArray
+//        assert json.collection instanceof JSONArray
 //        assert json.size()==1
 //        //a3 shouldn't be reviewed (because no term), and should be in response with all annotation not reviewed
 //        assert json.get(0)["id"]==a3.id
@@ -776,8 +776,8 @@ class ReviewedAnnotationTests  {
         result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-        assert json.size()==1
+        assert json.collection instanceof JSONArray
+        assert json.collection.size()==1
     }
 
     void testReviewAllJobLayer() {
@@ -794,8 +794,8 @@ class ReviewedAnnotationTests  {
         result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-        assert json.size()==1
+        assert json.collection instanceof JSONArray
+        assert json.collection.size()==1
     }
 
 

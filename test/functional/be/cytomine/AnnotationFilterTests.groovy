@@ -24,7 +24,7 @@ class AnnotationFilterTests  {
       def result = AnnotationFilterAPI.listByProject(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
 
       result = AnnotationFilterAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
@@ -34,7 +34,7 @@ class AnnotationFilterTests  {
         def result = AnnotationFilterAPI.listByOntology(BasicInstance.createOrGetBasicProject().ontology.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = AnnotationFilterAPI.listByOntology(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

@@ -48,7 +48,7 @@ var JobModel = Backbone.Model.extend({
 });
 
 // define our collection
-var JobCollection = Backbone.Collection.extend({
+var JobCollection = PaginatedCollection.extend({
     model: JobModel,
 
     url: function () {

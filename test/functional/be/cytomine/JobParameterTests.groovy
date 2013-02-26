@@ -22,7 +22,7 @@ class JobParameterTests  {
          def result = JobParameterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
-         assert json instanceof JSONArray
+         assert json.collection instanceof JSONArray
      }
  
      void testListJobParameterByJob() {
@@ -30,7 +30,7 @@ class JobParameterTests  {
          def result = JobParameterAPI.listByJob(jobparameter.job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
-         assert json instanceof JSONArray
+         assert json.collection instanceof JSONArray
 
         result = JobParameterAPI.listByJob(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 404 == result.code

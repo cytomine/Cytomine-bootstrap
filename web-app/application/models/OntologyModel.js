@@ -25,7 +25,7 @@ var OntologyModel = Backbone.Model.extend({
 
 
 // define our collection
-var OntologyCollection = Backbone.Collection.extend({
+var OntologyCollection = PaginatedCollection.extend({
     model: OntologyModel,
     CLASS_NAME: "be.cytomine.ontology.Ontology",
     url: function () {

@@ -9,14 +9,14 @@ var ImageFilterModel = Backbone.Model.extend({
     }
 });
 
-var ImageFilterCollection = Backbone.Collection.extend({
+var ImageFilterCollection = PaginatedCollection.extend({
     model: ImageFilterModel,
     url: function () {
         return 'api/imagefilter.json';
     }
 });
 
-var ProjectImageFilterModel = Backbone.Model.extend({
+var ProjectImageFilterModel = PaginatedCollection.extend({
     url: function () {
         var base = 'api/imagefilterproject';
         var format = '.json';
@@ -30,7 +30,7 @@ var ProjectImageFilterModel = Backbone.Model.extend({
     }
 });
 
-var ProjectImageFilterCollection = Backbone.Collection.extend({
+var ProjectImageFilterCollection = PaginatedCollection.extend({
     model: ImageFilterModel,
     url: function () {
         return "api/project/" + this.project + "/imagefilterproject.json";

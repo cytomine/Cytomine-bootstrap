@@ -22,7 +22,7 @@ class OntologyTests  {
         def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
   
     void testListOntologyWithoutCredential() {
@@ -34,7 +34,7 @@ class OntologyTests  {
         def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
   
     void testShowOntologyWithCredential() {

@@ -41,6 +41,14 @@ class CommandHistory extends CytomineDomain {
         Logger.getLogger(this).info("Register custom JSON renderer for " + CommandHistory.class)
         JSON.registerObjectMarshaller(CommandHistory) {
             def returnArray = [:]
+            println "*****************"
+            println it
+            println it.properties
+
+            it.properties.each {
+                println it.key + "=" + it.value
+            }
+
             returnArray['id'] = it.id
             returnArray['class'] = it.class
             returnArray['command'] = it.command

@@ -11,7 +11,7 @@ class RestProcessingServerController extends RestController {
     def processingServerService
 
     def list = {
-        response(processingServerService.list())
+        responseSuccess(processingServerService.list())
     }
 
     def show = {

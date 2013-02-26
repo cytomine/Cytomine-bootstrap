@@ -26,7 +26,7 @@ class TermTests  {
       def result = TermAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
   void testListTermOntologyByOntologyWithOntologyNotExist() {
@@ -39,7 +39,7 @@ class TermTests  {
         def result = TermAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListTermOntologyByProjectWithProjectNotExist() {
@@ -51,7 +51,7 @@ class TermTests  {
         def result = TermAPI.statsTerm(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testStatTermNotExist() {
@@ -64,7 +64,7 @@ class TermTests  {
       def result = TermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
   void testShowTermWithCredential() {

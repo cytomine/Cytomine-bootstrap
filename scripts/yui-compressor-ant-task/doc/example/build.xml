@@ -79,6 +79,7 @@
 <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/AccountController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/PhonoController.js"/>
+<fileset dir="${src.dir}" includes="application/models/PaginatorModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/UploadedFileModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ImageModel.js"/>

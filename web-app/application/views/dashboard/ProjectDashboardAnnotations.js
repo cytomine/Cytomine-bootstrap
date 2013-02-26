@@ -749,7 +749,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var reviewed = reviewedRadioValue == "inReviewed"
         console.log("reviewed:"+reviewed);
 
-        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, users: usersFilter, images: imagesFilter,reviewed:reviewed});
+        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, users: usersFilter, images: imagesFilter,reviewed:reviewed, max: 30});
 
         $($elem).empty();
         self.annotationsViews[idTerm] = new AnnotationView({

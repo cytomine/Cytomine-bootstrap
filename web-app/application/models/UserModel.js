@@ -36,7 +36,7 @@ var UserModel = Backbone.Model.extend({
 });
 
 
-var UserFriendCollection = Backbone.Collection.extend({
+var UserFriendCollection = PaginatedCollection.extend({
     model: UserModel,
     url: function () {
         return "api/user/" + this.id + "/friends.json";
@@ -53,7 +53,7 @@ var UserFriendCollection = Backbone.Collection.extend({
     }
 });
 
-var UserOnlineCollection = Backbone.Collection.extend({
+var UserOnlineCollection = PaginatedCollection.extend({
     model: UserModel,
     url: function () {
         return "api/project/" + this.project + "/online/user.json";
@@ -90,18 +90,27 @@ var UserCollection = Backbone.Collection.extend({
         this.admin = options.admin;
         this.creator = options.creator;
         this.online = options.online;
-    }, comparator: function (user) {
-        if (user.get("lastname") != undefined) {
-            return user.get("lastname") + " " + user.get("firstname")
-        }
-        else {
-            return user.get("username").toLowerCase();
-        }
     }
+//    ,
+//    comparator: function (user) {
+//        console.log("1:");
+//        console.log(user) ;
+//        if (user.get("lastname") != undefined) {
+//            return user.get("lastname") + " " + user.get("firstname")
+//        }
+//        else {
+//            console.log("2:");
+//            console.log(user);
+//
+//            console.log("3:");
+//            console.log(this);
+//            return user.get("username").toLowerCase();
+//        }
+//    }
 });
 
 
-var UserLayerCollection = Backbone.Collection.extend({
+var UserLayerCollection = PaginatedCollection.extend({
     url: function () {
         if (this.project != undefined) {
             return "api/project/" + this.project + "/userlayer.json";
@@ -129,7 +138,7 @@ var UserSecRole = Backbone.Model.extend({
 
 
 // define our collection
-var UserJobCollection = Backbone.Collection.extend({
+var UserJobCollection = PaginatedCollection.extend({
     model: UserModel,
     url: function () {
         if (this.project && !this.tree && !this.image) {

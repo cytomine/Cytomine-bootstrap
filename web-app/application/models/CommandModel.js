@@ -26,7 +26,7 @@ var CommandModel = Backbone.Model.extend({
 
 
 // define our collection
-var CommandCollection = Backbone.Collection.extend({
+var CommandCollection = PaginatedCollection.extend({
     model: CommandModel,
 
     url: function () {

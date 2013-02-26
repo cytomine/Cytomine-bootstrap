@@ -215,7 +215,6 @@ class StatsController extends RestController {
             def term = item[1]
             result.get(term).value++;
         }
-
         responseSuccess(result.values())
     }
 

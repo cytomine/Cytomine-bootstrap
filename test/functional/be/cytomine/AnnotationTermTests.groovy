@@ -32,7 +32,7 @@ class AnnotationTermTests  {
     def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 200 == result.code
     def json = JSON.parse(result.data)
-    assert json instanceof JSONArray
+    assert json.collection instanceof JSONArray
 
     result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 404 == result.code
@@ -42,7 +42,7 @@ class AnnotationTermTests  {
       def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
 
       result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 404 == result.code
@@ -52,7 +52,7 @@ class AnnotationTermTests  {
       def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
     }
 
   void testAddAnnotationTermCorrect() {

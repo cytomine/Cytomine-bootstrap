@@ -21,7 +21,7 @@ class SoftwareProjectTests  {
          def result = SoftwareProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
-         assert json instanceof JSONArray
+         assert json.collection instanceof JSONArray
      }
  
      void testListSoftwareProjectByProject() {
@@ -29,7 +29,7 @@ class SoftwareProjectTests  {
          def result = SoftwareProjectAPI.listByProject(softwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
-         assert json instanceof JSONArray
+         assert json.collection instanceof JSONArray
 
          result = SoftwareProjectAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 404 == result.code
@@ -40,7 +40,7 @@ class SoftwareProjectTests  {
         def result = SoftwareProjectAPI.listBySoftware(softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testStatsSoftwareProject() {

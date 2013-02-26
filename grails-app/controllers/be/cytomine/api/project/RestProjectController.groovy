@@ -27,6 +27,8 @@ class RestProjectController extends RestController {
     def imageInstanceService
     def taskService
 
+
+
     /**
      * List all project available for the current user
      */

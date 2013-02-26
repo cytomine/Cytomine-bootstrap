@@ -150,6 +150,7 @@ var ProjectView = Backbone.View.extend({
         self.projectList = [];
 
         //print each project panel
+
         self.model.each(function (project) {
             var panel = new ProjectPanelView({
                 model: project,

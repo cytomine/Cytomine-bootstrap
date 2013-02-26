@@ -252,8 +252,9 @@ var ProjectDashboardView = Backbone.View.extend({
         }
         else if (command.serviceName == "reviewedAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
             var cropStyle = "";
-            var cropURL = jsonCommand.newAnnotation.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newAnnotation.id, idImage: jsonCommand.newAnnotation.image, imageFilename: jsonCommand.newAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            console.log(jsonCommand);
+            var cropURL = jsonCommand.newReviewedAnnotation.cropURL;
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newReviewedAnnotation.id, idImage: jsonCommand.newReviewedAnnotation.image, imageFilename: jsonCommand.newReviewedAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
         else if (command.serviceName == "reviewedAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
             var cropStyle = "";

@@ -17,7 +17,7 @@ var DisciplineModel = Backbone.Model.extend({
 });
 
 // define our collection
-var DisciplineCollection = Backbone.Collection.extend({
+var DisciplineCollection = PaginatedCollection.extend({
     model: DisciplineModel,
     CLASS_NAME: "be.cytomine.project.Discipline",
     url: function () {

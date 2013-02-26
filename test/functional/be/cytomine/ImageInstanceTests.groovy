@@ -24,7 +24,7 @@ class ImageInstanceTests  {
         def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = ImageInstanceAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -36,7 +36,7 @@ class ImageInstanceTests  {
         def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListImagesInstanceWithTreeStructure() {

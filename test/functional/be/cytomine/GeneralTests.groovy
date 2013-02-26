@@ -90,7 +90,7 @@ class GeneralTests  {
         client.disconnect();
         assert 200 == code
         def json = JSON.parse(response)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
     }
 

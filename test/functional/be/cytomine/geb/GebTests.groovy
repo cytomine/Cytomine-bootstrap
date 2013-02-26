@@ -53,7 +53,7 @@ class GebTests extends GebReportingTest{
         def result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
 

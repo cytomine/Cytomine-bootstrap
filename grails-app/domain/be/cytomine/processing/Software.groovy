@@ -40,10 +40,16 @@ class Software extends CytomineDomain {
      */
     String description
 
+    /**
+     * Command to execute software
+     */
+    String executeCommand
+
     static constraints = {
         name(nullable: false, unique: true)
         resultName(nullable:true)
         description(nullable:true, blank : false)
+        executeCommand(nullable: true)
     }
 
     static mapping = {

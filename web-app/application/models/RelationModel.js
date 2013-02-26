@@ -24,7 +24,7 @@ var RelationTermModel = Backbone.Model.extend({
     }
 });
 
-var RelationTermCollection = Backbone.Collection.extend({
+var RelationTermCollection = PaginatedCollection.extend({
     model: RelationTermModel,
     url: function () {
         if (this.term != undefined) {

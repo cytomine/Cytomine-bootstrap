@@ -40,7 +40,7 @@ var ProjectUserModel = Backbone.Model.extend({
 });
 
 
-var OntologyProjectModel = Backbone.Collection.extend({
+var OntologyProjectModel = PaginatedCollection.extend({
     model: ProjectModel,
     url: function () {
         return "api/ontology/" + this.ontology + "/project.json";
@@ -50,10 +50,11 @@ var OntologyProjectModel = Backbone.Collection.extend({
     }
 });
 
-// define our collection
-var ProjectCollection = Backbone.Collection.extend({
-    model: ProjectModel,
 
+// define our collection
+var ProjectCollection = PaginatedCollection.extend({
+    model: ProjectModel,
+    fullSize : -1,
     url: function () {
         if (this.user != undefined) {
             return "api/user/" + this.user + "/project.json";

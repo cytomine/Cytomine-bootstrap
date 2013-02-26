@@ -71,11 +71,13 @@ class RestUserAnnotationController extends RestController {
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
             def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-            if (params.offset != null) {
-                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-            } else {
-                responseSuccess(list)
-            }
+//            if (params.offset != null) {
+//                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
+//            } else {
+//                responseSuccess(list)
+//            }
+            println "1=$list"
+            responseList(list)
         } else {
             responseNotFound("Project", params.id)
         }
@@ -127,11 +129,15 @@ class RestUserAnnotationController extends RestController {
                 } else {
                     list = userAnnotationService.list(project, term, userList, imageInstanceList)
                 }
-                if (params.offset != null) {
-                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-                } else {
-                    responseSuccess(list)
-                }
+//                if (params.offset != null) {
+                    //responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
+                println "1=$list"
+                list = mergeResults(list)
+                println "2=$list"
+                responseList(list)
+//                } else {
+//                    responseSuccess(list)
+//                }
             }
             else {
                 Term suggestedTerm = termService.read(params.suggestTerm)

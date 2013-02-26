@@ -5,7 +5,7 @@ var SuggestedAnnotationTermModel = Backbone.Model.extend({
     }
 });
 
-var SuggestedAnnotationTermCollection = Backbone.Collection.extend({
+var SuggestedAnnotationTermCollection = PaginatedCollection.extend({
     model: SuggestedAnnotationTermModel,
     url: function () {
         return "api/project/" + this.project + "/annotation/term/suggest.json?max=" + this.max;
@@ -19,7 +19,7 @@ var SuggestedAnnotationTermCollection = Backbone.Collection.extend({
     }
 });
 
-var SuggestedTermCollection = Backbone.Collection.extend({
+var SuggestedTermCollection = PaginatedCollection.extend({
     model: SuggestedAnnotationTermModel,
     url: function () {
         return "api/project/" + this.project + "/term/suggest.json";

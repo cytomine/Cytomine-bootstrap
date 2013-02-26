@@ -36,7 +36,7 @@ var AnnotationTermModel = Backbone.Model.extend({
     }
 });
 
-var AnnotationTermCollection = Backbone.Collection.extend({
+var AnnotationTermCollection = PaginatedCollection.extend({
     model: TermModel,
     url: function () {
         console.log("this.idUser=" + this.idUser + " this.idNotThisUser=" + this.idNotThisUser);
@@ -69,7 +69,7 @@ var RelationTermModel = Backbone.Model.extend({
     }
 });
 
-var RelationTermCollection = Backbone.Collection.extend({
+var RelationTermCollection = PaginatedCollection.extend({
     model: TermModel,
     url: function () {
         return 'api/annotation/' + this.idAnnotation + '/term.json';
@@ -82,7 +82,7 @@ var RelationTermCollection = Backbone.Collection.extend({
 
 
 // define our collection
-var TermCollection = Backbone.Collection.extend({
+var TermCollection = PaginatedCollection.extend({
     model: TermModel,
     CLASS_NAME: "be.cytomine.ontology.Term",
     url: function () {

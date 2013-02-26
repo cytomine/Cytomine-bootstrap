@@ -11,7 +11,7 @@ var UploadedFileModel = Backbone.Model.extend({
 });
 
 
-var UploadedFileCollection = Backbone.Collection.extend({
+var UploadedFileCollection = PaginatedCollection.extend({
     model: UploadedFileModel,
     initialize: function (options) {
         if (!options) {

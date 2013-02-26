@@ -25,7 +25,7 @@ class UserTests  {
         def result = UserAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListUserWithKey() {
@@ -86,12 +86,12 @@ class UserTests  {
         def result = UserAPI.list(project.id,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(project.id,"project","user",true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -102,7 +102,7 @@ class UserTests  {
         def result = UserAPI.list(project.id,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -113,7 +113,7 @@ class UserTests  {
         def result = UserAPI.list(project.id,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -124,7 +124,7 @@ class UserTests  {
         def result = UserAPI.list(project.ontology.id,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -135,7 +135,7 @@ class UserTests  {
         def result = UserAPI.list(project.ontology.id,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -146,7 +146,7 @@ class UserTests  {
         def result = UserAPI.list(project.id,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = UserAPI.list(-99,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

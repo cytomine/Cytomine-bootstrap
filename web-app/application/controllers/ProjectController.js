@@ -25,11 +25,12 @@ var ProjectController = Backbone.Router.extend({
             window.app.view.showComponent(window.app.view.components.project);
         }
 
+
         window.app.models.projects.fetch({
-            success: function (collection, response) {
-                projects = collection;
+            success: function (collection1, response) {
+                projects = collection1;
                 loadHandler();
-            }});
+        }});
     },
 
     project: function (callback) {

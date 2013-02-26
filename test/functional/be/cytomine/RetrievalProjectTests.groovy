@@ -22,7 +22,7 @@ class RetrievalProjectTests  {
         def result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListRetrievalProjecNotExist() {
@@ -98,7 +98,7 @@ class RetrievalProjectTests  {
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ProjectAPI.containsInJSONList(BasicInstance.createOrGetBasicProjectWithRight().id,json)
     }
 
@@ -149,7 +149,7 @@ class RetrievalProjectTests  {
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert ProjectAPI.containsInJSONList(projectRetrieval.id,json)
 
         //delete 1 retrieval project
@@ -160,7 +160,7 @@ class RetrievalProjectTests  {
         result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert !ProjectAPI.containsInJSONList(projectRetrieval.id,json)
 
     }

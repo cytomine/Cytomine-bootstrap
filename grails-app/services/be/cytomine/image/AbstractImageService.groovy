@@ -113,25 +113,35 @@ class AbstractImageService extends ModelService {
 
             def userGroup = abstractImageGroupService.list(user)
             log.info "userGroup=" + userGroup.size()
-            def imageGroup = AbstractImageGroup.createCriteria().list {
-                inList("group.id", userGroup.collect {it.group.id})
-                projections {
-                    groupProperty('abstractImage.id')
+            if(!userGroup.isEmpty()) {
+                def imageGroup = AbstractImageGroup.createCriteria().list {
+                    inList("group.id", userGroup.collect {it.group.id})
+                    projections {
+                        groupProperty('abstractImage.id')
+                    }
                 }
-            }
-            log.info "imageGroup=" + imageGroup.size()
+                log.info "imageGroup=" + imageGroup.size()
 
-            log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
-            PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
-                inList("id", imageGroup)
-                ilike("filename", "%" + filenameSearch + "%")
-                between('created', dateAddedStart, dateAddedStop)
+                log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
+                PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
+                    inList("id", imageGroup)
+                    ilike("filename", "%" + filenameSearch + "%")
+                    between('created', dateAddedStart, dateAddedStop)
 
+                }
+                data.page = page + ""
+                data.records = results.totalCount
+                data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
+                data.rows = results.list
+            } else {
+                //GORM GOTCHA: list in inList cannot be empty
+                data.page = page + ""
+                data.records = 0
+                data.total = 0
+                data.rows = []
             }
-            data.page = page + ""
-            data.records = results.totalCount
-            data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
-            data.rows = results.list
+
+
         }
         else {
             data = list(user)
@@ -353,8 +363,4 @@ class AbstractImageService extends ModelService {
             it.delete(flush: true)
         }
     }
-
-
-
-
 }

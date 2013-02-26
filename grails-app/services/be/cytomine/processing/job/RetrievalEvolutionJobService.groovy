@@ -29,31 +29,28 @@ class RetrievalEvolutionJobService extends AbstractJobService{
 
     def execute(Job job) {
 
-        String applicPath = "algo/retrievalSuggest/ValidateAnnotationAlgo.jar"
-
-        //get job params
         String[] jobParams = getParametersValues(job)
-        String[] args = new String[jobParams.length+8]
+        String[] mainArgs = createArgsArray(job)
+        String[] allArgs = new String[mainArgs.length+jobParams.length+2]
+
+        int index = 0
+        mainArgs.each {
+            allArgs[index] = mainArgs[index]
+            index++
+        }
         //build software params
-        args[0] = "java"
-        args[1] = "-Djava.library.path=/usr/local/lib"
-        args[2] = "-Xmx2G"
-        args[3] = "-cp"
-        args[4] = applicPath
-        args[5] = "retrieval.algo.suggestAnnotation.SuggestAnnotationEvolution"
+        allArgs[index++] = job.id
+        allArgs[index++] = UserJob.findByJob(job).id
 
-        args[6] = job.software.id
-        args[7] = UserJob.findByJob(job).user.id
-
-        log.info "command="+ Arrays.toString(args)
-        for(int i=0;i<jobParams.length;i++) {
-            args[i+8] = jobParams[i]
+        jobParams.each {
+            allArgs[index++] = it
         }
 
+        println "allArgs=$allArgs"
 
-        printStartJobInfo(job,args)
-        launchAndWaitSoftware(args,job)
-        printStopJobInfo(job,args)
+        printStartJobInfo(job,allArgs)
+        launchAndWaitSoftware(allArgs,job)
+        printStopJobInfo(job,allArgs)
     }
     
     def listAVGEvolution(Job job) {

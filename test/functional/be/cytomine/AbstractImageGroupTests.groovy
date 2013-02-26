@@ -23,7 +23,7 @@ class AbstractImageGroupTests {
         def result = AbstractImageGroupAPI.listByImage(abstractImage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListAbstractImageGroupByAbstractImageWithAbstractImageNotExist() {
@@ -36,7 +36,7 @@ class AbstractImageGroupTests {
 //      def result = AbstractImageGroupAPI.listByGroup(group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
 //      assert 200 == result.code
 //      def json = JSON.parse(result.data)
-//      assert json instanceof JSONArray
+//      assert json.collection instanceof JSONArray
 //    }
 
     void testListAbstractImageGroupByGroupWithGroupNotExist() {

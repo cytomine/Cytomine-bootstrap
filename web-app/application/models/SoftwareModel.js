@@ -10,7 +10,7 @@ var SoftwareModel = Backbone.Model.extend({
 });
 
 // define our collection
-var SoftwareCollection = Backbone.Collection.extend({
+var SoftwareCollection = PaginatedCollection.extend({
     model: SoftwareModel,
     CLASS_NAME: "be.cytomine.processing.Software",
     url: function () {
@@ -33,7 +33,7 @@ var SoftwareCollection = Backbone.Collection.extend({
 });
 
 // define our collection
-var SoftwareParameterModelCollection = Backbone.Collection.extend({
+var SoftwareParameterModelCollection = PaginatedCollection.extend({
     model: SoftwareModel,
     sortAttribut: null,
     url: function () {
@@ -70,7 +70,7 @@ var SoftwareProjectModel = Backbone.Model.extend({
     }
 });
 
-var SoftwareProjectCollection = Backbone.Collection.extend({
+var SoftwareProjectCollection = PaginatedCollection.extend({
     model: SoftwareProjectModel,
     url: function () {
         if (this.project != null) {

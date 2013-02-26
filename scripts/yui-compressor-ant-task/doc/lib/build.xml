@@ -67,6 +67,7 @@
 <fileset dir="${src.dir}" includes="lib/bootstrap-2.1.1/js/bootstrap.js"/>
 <fileset dir="${src.dir}" includes="lib/underscore.js"/>
 <fileset dir="${src.dir}" includes="lib/backbone.js"/>
+<fileset dir="${src.dir}" includes="lib/backbone.paginator.js"/>
 <fileset dir="${src.dir}" includes="lib/json2.js"/>
 <fileset dir="${src.dir}" includes="lib/fileupload/vendor/jquery.ui.widget.js"/>
 <fileset dir="${src.dir}" includes="lib/fileupload/jquery.iframe-transport.js"/>

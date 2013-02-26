@@ -11,7 +11,7 @@ var StorageModel = Backbone.Model.extend({
     }
 });
 
-var StorageCollection = Backbone.Collection.extend({
+var StorageCollection = PaginatedCollection.extend({
     model: StorageModel,
     url: function () {
         return 'api/storage.json';

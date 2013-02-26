@@ -34,7 +34,7 @@ var ImageMetadataModel = Backbone.Model.extend({
     }
 });
 
-var ImagePropertyCollection = Backbone.Collection.extend({
+var ImagePropertyCollection = PaginatedCollection.extend({
     initialize: function (options) {
         this.image = options.image;
     },
@@ -47,7 +47,7 @@ var ImagePropertyCollection = Backbone.Collection.extend({
 });
 
 // define our collection
-var ImageCollection = Backbone.Collection.extend({
+var ImageCollection = PaginatedCollection.extend({
     model: ImageModel,
     url: function () {
         if (this.project != undefined) {
@@ -89,7 +89,7 @@ var ImageInstanceModel = Backbone.Model.extend({
 });
 
 // define our collection
-var ImageInstanceCollection = Backbone.Collection.extend({
+var ImageInstanceCollection = PaginatedCollection.extend({
     model: ImageModel,
     url: function () {
         if (this.inf != undefined && this.sup != undefined) {

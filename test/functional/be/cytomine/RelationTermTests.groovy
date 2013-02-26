@@ -37,14 +37,14 @@ class RelationTermTests {
         def result = RelationTermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
     
   void testListRelationTermByTerm1() {
       def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
 
       result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
@@ -54,14 +54,14 @@ class RelationTermTests {
         def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
     
     void testListRelationTermByRelation() {
         def result = RelationTermAPI.listByRelation(BasicInstance.createOrGetBasicRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
 
@@ -69,7 +69,7 @@ class RelationTermTests {
         def result = RelationTermAPI.listByTermAll(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = RelationTermAPI.listByTermAll(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -79,7 +79,7 @@ class RelationTermTests {
         def result = RelationTermAPI.listByRelation(null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
   void testAddRelationTermCorrect() {

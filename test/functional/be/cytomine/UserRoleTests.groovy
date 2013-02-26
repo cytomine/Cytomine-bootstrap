@@ -23,14 +23,14 @@ class UserRoleTests  {
       def result = UserRoleAPI.listRole(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
     void testListRoleUser() {
         def result = UserRoleAPI.listByUser(BasicInstance.newUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testShowRoleUser() {

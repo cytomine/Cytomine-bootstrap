@@ -149,7 +149,7 @@ var StatsRetrievalEvolutionModel = Backbone.Model.extend({
 
 
 // define our collection
-var StatsTermCollection = Backbone.Collection.extend({
+var StatsTermCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {
@@ -168,7 +168,7 @@ var StatsTermCollection = Backbone.Collection.extend({
 });
 
 // define our collection
-var StatsUserCollection = Backbone.Collection.extend({
+var StatsUserCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {
@@ -181,7 +181,7 @@ var StatsUserCollection = Backbone.Collection.extend({
     }
 });
 
-var StatsUserAnnotationCollection = Backbone.Collection.extend({
+var StatsUserAnnotationCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {
@@ -194,7 +194,7 @@ var StatsUserAnnotationCollection = Backbone.Collection.extend({
     }
 });
 
-var StatsTermSlideCollection = Backbone.Collection.extend({
+var StatsTermSlideCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {
@@ -207,7 +207,7 @@ var StatsTermSlideCollection = Backbone.Collection.extend({
     }
 });
 
-var StatsUserSlideCollection = Backbone.Collection.extend({
+var StatsUserSlideCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {
@@ -220,7 +220,7 @@ var StatsUserSlideCollection = Backbone.Collection.extend({
     }
 });
 
-var StatsAnnotationEvolutionCollection = Backbone.Collection.extend({
+var StatsAnnotationEvolutionCollection = PaginatedCollection.extend({
     model: StatsModel,
 
     url: function () {

@@ -50,7 +50,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
 
         result = AnnotationDomainAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -63,7 +63,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWidthAnnotationUser() {
@@ -71,7 +71,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
 
@@ -80,7 +80,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationByImageAndUserWithCredentialWithAnnotationUser() {
@@ -88,7 +88,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
 
@@ -98,7 +98,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationByProjectAndTermAndUserWithCredentialForAnnotationUser() {
@@ -107,7 +107,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
 
 
@@ -117,7 +117,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationUser() {
@@ -126,7 +126,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        //assert json instanceof JSONArray
+        //assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationByProjectWithSuggestTerm() {
@@ -150,7 +150,7 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert AnnotationDomainAPI.containsInJSONList(annotation.id,json)
 
         //create annotation
@@ -171,7 +171,7 @@ class GenericAnnotationTests  {
         result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation2.project.id, annotationTerm2.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
         assert !AnnotationDomainAPI.containsInJSONList(annotation2.id,json)
     }
 

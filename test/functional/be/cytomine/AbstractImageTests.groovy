@@ -58,7 +58,7 @@ class AbstractImageTests {
       def result = AbstractImageAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
     void testListImagesDatatable() {
@@ -80,7 +80,7 @@ class AbstractImageTests {
       def result = AbstractImageAPI.listByProject(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
   void testListAnnotationsByProjectNoExistWithCredential() {
@@ -113,9 +113,9 @@ class AbstractImageTests {
         def result = AbstractImageAPI.getInfo(image.id,"property",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
-        assert json.size()>0
-        assert json[0].key.equals(ImageProperty.findByImage(image).first().key)
+        assert json.collection instanceof JSONArray
+        assert json.collection.size()>0
+        assert json.collection[0].key.equals(ImageProperty.findByImage(image).first().key)
     }
 
     void testGetImageProperty() {

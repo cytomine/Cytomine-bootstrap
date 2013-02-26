@@ -40,10 +40,9 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         String[] jobParams = getParameters(job)
         String[] args = new String[jobParams.length+2]
         //build software params
-        args[0] = "python"
-        args[1] =  "algo/pyxit/pyxit.py"
+        args[0] = job.software.executeCommand
         for(int i=0;i<jobParams.length;i++) {
-            args[i+2] = jobParams[i]
+            args[i+1] = jobParams[i]
         }
         printStartJobInfo(job,args)
         launchAndWaitSoftware(args,job)

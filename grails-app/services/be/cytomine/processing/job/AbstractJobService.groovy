@@ -173,4 +173,9 @@ abstract class AbstractJobService {
      */
     public abstract def execute(Job job);
 
+    protected def createArgsArray(Job job) {
+        String[] args = job.software.executeCommand.split(" ")
+        return args
+    }
+
 }

@@ -22,7 +22,7 @@ class ImageFilterTests  {
       def result = ImageFilterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
-      assert json instanceof JSONArray
+      assert json.collection instanceof JSONArray
   }
 
   void testShowImageFilterWithCredential() {
@@ -42,7 +42,7 @@ class ImageFilterTests  {
         def result = ImageFilterProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
-        assert json instanceof JSONArray
+        assert json.collection instanceof JSONArray
     }
 
     void testAddImageFilterProject() {

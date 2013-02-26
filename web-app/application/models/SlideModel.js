@@ -32,7 +32,7 @@ var ProjectSlideModel = Backbone.Model.extend({
     }
 });
 
-var ProjectSlideCollection = Backbone.Collection.extend({
+var ProjectSlideCollection = PaginatedCollection.extend({
     model: SlideModel,
     url: function () {
         return 'api/project/' + this.idProject + '/sample.json';
@@ -45,7 +45,7 @@ var ProjectSlideCollection = Backbone.Collection.extend({
 
 
 // define our collection
-var SlideCollection = Backbone.Collection.extend({
+var SlideCollection = PaginatedCollection.extend({
     model: SlideModel,
     CLASS_NAME: "be.cytomine.image.Sample",
     url: function () {
