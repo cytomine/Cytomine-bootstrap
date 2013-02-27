@@ -559,6 +559,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     },
     initSelectJobs: function () {
         var self = this;
+
+        console.log("#########################");
+        console.log("#########################");
+        console.log("#########################");
+        console.log(window.app.models.projectUserJobTree.toJSON());
+
         $(self.el).find('#treeJobListing').dynatree({
             checkbox: true,
             selectMode: 2,
@@ -593,7 +599,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         self.jobTreeLoaded = true;
         //expand root node
         var rootNode = $("#treeJobListing").dynatree("getTree").getNodeByKey(self.model.id);
-        rootNode.expand(true);
+        if(rootNode) rootNode.expand(true);
     },
     /**
      * Add the the tab with term info
