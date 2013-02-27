@@ -4,6 +4,7 @@ var ExplorerController = Backbone.Router.extend({
 
     routes: {
         "tabs-annotation-:idAnnotation": "browseAnnotation",
+        "tabs-image-:idProject-:idImage-": "browse",
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
         "tabs-review-:idProject-:idImage-": "review",
         "close": "close"
@@ -28,6 +29,9 @@ var ExplorerController = Backbone.Router.extend({
                 self.browse(model.get("project"), model.get("image"), idAnnotation);
             }
         });
+    },
+    browse: function (idProject, idImage) {
+        this.browse(idProject,idImage,"");
     },
     browse: function (idProject, idImage, idAnnotation) {
         console.log("browse2");
