@@ -64,19 +64,10 @@ class RestUserAnnotationController extends RestController {
         Project project = projectService.read(params.long('id'))
         if (project) {
 
-            Integer offset = params.offset != null ? params.getInt('offset') : 0
-            Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
-
             List<Long> userList = paramsService.getParamsUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
             def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-//            if (params.offset != null) {
-//                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-//            } else {
-//                responseSuccess(list)
-//            }
-            println "1=$list"
             responseList(list)
         } else {
             responseNotFound("Project", params.id)
@@ -110,8 +101,6 @@ class RestUserAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'))
-        Integer offset = params.offset != null ? params.getInt('offset') : 0
-        Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
         if (term == null) {
             responseNotFound("Term", params.idterm)
@@ -129,24 +118,13 @@ class RestUserAnnotationController extends RestController {
                 } else {
                     list = userAnnotationService.list(project, term, userList, imageInstanceList)
                 }
-//                if (params.offset != null) {
-                    //responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-                println "1=$list"
                 list = mergeResults(list)
-                println "2=$list"
                 responseList(list)
-//                } else {
-//                    responseSuccess(list)
-//                }
             }
             else {
                 Term suggestedTerm = termService.read(params.suggestTerm)
                 def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
-                if (params.offset != null) {
-                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-                } else {
-                    responseSuccess(list)
-                }
+                responseSuccess(list)
             }
         }
     }

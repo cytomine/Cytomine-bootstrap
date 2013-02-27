@@ -119,6 +119,19 @@ var ReviewPanel = SideBarPanel.extend({
         self.reviewLayer.removeSelection();
         self.addToListLayer(layer);
 
+        console.log("*********** Layer");
+        console.log(layer);
+        console.log("*********** User");
+        console.log(user);
+        console.log("*********** self.userLayers");
+        console.log(self.userLayers);
+        console.log("*********** self.userJobLayers");
+        console.log(self.userJobLayers);
+        console.log("*********** self.userLayers.get(layer)");
+        console.log(self.userLayers.get(layer));
+        console.log("*********** self.userJobLayers.get(layer)");
+        console.log(self.userJobLayers.get(layer));
+
         var user = self.userLayers.get(layer);
         if (user == undefined) {
             user = self.userJobLayers.get(layer);
@@ -500,6 +513,7 @@ var ReviewPanel = SideBarPanel.extend({
         }
     },
     deleteAllReviewAnnotation: function () {
+        console.log("deleteAllReviewAnnotation");
         var self = this;
 
         var layers = _.map(_.filter(self.printedLayer, function (num) {
@@ -509,52 +523,71 @@ var ReviewPanel = SideBarPanel.extend({
         });
 
         if (layers.length == 0) {
+
             window.app.view.message("Annotation", "You must add at least one layer!", "error");
         } else {
 
-            var x = window.confirm("Are you sure you to reject all annotation from these layers?")
-            if (x) {
-                new TaskModel({project: self.model.get('project')}).save({}, {
-                        success: function (taskResponse, response) {
-                            var task = taskResponse.get('task');
-                            console.log("task=" + task);
+            require(["text!application/templates/review/ConfirmUnreviewDialog.tpl.html"], function (tpl) {
 
-                            $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
-                            $("#reviewChoice" + self.model.id).hide();
-                            $("#taskreview" + self.model.id).show();
+                   var dialog = new ConfirmDialogView({
+                       el: '#dialogs',
+                       template: _.template(tpl, {}),
+                       dialogAttr: {
+                           dialogID: "#unreview-confirm",
+                           backdrop: false
+                       }
+                   }).render();
 
-                            var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, false);
+                   $('#unreview-confirm').find(".confirm").click(function () {
+                       new TaskModel({project: self.model.get('project')}).save({}, {
+                               success: function (taskResponse, response) {
+                                   var task = taskResponse.get('task');
 
-                            new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).destroy({
-                                success: function (model, response) {
-                                    clearInterval(timer);
-                                    $("#taskreview" + self.model.id).empty();
-                                    $("#taskreview" + self.model.id).hide();
-                                    $("#reviewChoice" + self.model.id).show();
-                                    window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
-                                    _.each(self.printedLayer, function (layer) {
-                                        layer.vectorsLayer.refresh();
-                                    });
-                                },
-                                error: function (model, response) {
-                                    console.log("AnnotationImageReviewedModel error");
-                                    var json = $.parseJSON(response.responseText);
-                                    window.app.view.message("Annotation", json.errors, "error");
-                                    $("#taskreview" + self.model.id).empty();
-                                    $("#taskreview" + self.model.id).hide();
-                                    $("#reviewChoice" + self.model.id).show();
-                                    clearInterval(timer);
+                                   $("#taskreview" + self.model.id).append('<div id="task-' + task.id + '"></div>');
+                                   $("#reviewChoice" + self.model.id).hide();
+                                   $("#taskreview" + self.model.id).show();
 
-                                }});
+                                   var timer = window.app.view.printTaskEvolution(task, $("#taskreview" + self.model.id).find("#task-" + task.id), 2000, false);
 
-                        },
-                        error: function (model, response) {
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Task", json.errors, "error");
-                        }
-                    }
-                );
-            }
+                                   new AnnotationImageReviewedModel({image: self.model.id, layers: layers, task: task.id}).destroy({
+                                       success: function (model, response) {
+                                           clearInterval(timer);
+                                           $("#taskreview" + self.model.id).empty();
+                                           $("#taskreview" + self.model.id).hide();
+                                           $("#reviewChoice" + self.model.id).show();
+                                           window.app.view.message("Annotation", "All visible annotations are rejected!", "success");
+                                           _.each(self.printedLayer, function (layer) {
+                                               layer.vectorsLayer.refresh();
+                                           });
+
+                                       },
+                                       error: function (model, response) {
+                                           console.log("AnnotationImageReviewedModel error");
+                                           var json = $.parseJSON(response.responseText);
+                                           window.app.view.message("Annotation", json.errors, "error");
+                                           $("#taskreview" + self.model.id).empty();
+                                           $("#taskreview" + self.model.id).hide();
+                                           $("#reviewChoice" + self.model.id).show();
+                                           clearInterval(timer);
+
+                                       }});
+                                   dialog.close();
+
+                               },
+                               error: function (model, response) {
+                                   var json = $.parseJSON(response.responseText);
+                                   window.app.view.message("Task", json.errors, "error");
+                               }
+                           }
+                       );
+                   });
+
+                   $('#unreview-confirm').find(".cancel").click(function () {
+                       dialog.close();
+                   });
+            });
+
+
 
         }
     },

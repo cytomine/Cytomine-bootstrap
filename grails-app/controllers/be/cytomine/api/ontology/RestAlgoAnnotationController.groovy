@@ -147,19 +147,12 @@ class RestAlgoAnnotationController extends RestController {
         Project project = projectService.read(params.long('id'))
 
         if (project) {
-            Integer offset = params.offset != null ? params.getInt('offset') : 0
-            Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
             //retrieve all image/user for the filter
             List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
 
             def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"))
-            if (params.offset != null) {
-                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-            }
-            else {
-                responseSuccess(list)
-            }
+            responseSuccess(list)
         }
         else {
             responseNotFound("Project", params.id)
@@ -195,8 +188,6 @@ class RestAlgoAnnotationController extends RestController {
 
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'))
-        Integer offset = params.offset != null ? params.getInt('offset') : 0
-        Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
         if (project) {
 
@@ -207,12 +198,7 @@ class RestAlgoAnnotationController extends RestController {
                 responseNotFound("Term", params.idterm)
             } else if (!params.suggestTerm) {
                 def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList)
-                if (params.offset != null) {
-                    responseSuccess([size: list.size(), collection: mergeResults(substract(list, offset, max))])
-                }
-                else {
-                    responseSuccess(list)
-                }
+                responseSuccess(list)
             }
         } else {
             responseNotFound("Project", params.id)

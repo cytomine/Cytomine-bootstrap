@@ -64,7 +64,7 @@ var UserOnlineCollection = PaginatedCollection.extend({
 });
 
 // define our collection
-var UserCollection = Backbone.Collection.extend({
+var UserCollection = PaginatedCollection.extend({
     model: UserModel,
     url: function () {
         if (this.project != undefined && this.admin == true) {

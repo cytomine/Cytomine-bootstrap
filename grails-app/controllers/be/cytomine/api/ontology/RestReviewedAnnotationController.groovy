@@ -129,8 +129,6 @@ class RestReviewedAnnotationController extends RestController {
         } else {
            Project project = projectService.read(params.long('idproject'))
            if (project) {
-               Integer offset = params.offset != null ? params.getInt('offset') : 0
-               Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
                List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
                List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images,project)
@@ -144,11 +142,7 @@ class RestReviewedAnnotationController extends RestController {
                    responseNotFound("Term", params.terms)
                } else {
                    def list = reviewedAnnotationService.list(project, userList, imageInstanceList, termList)
-                   if (params.offset != null) {
-                       responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-                   } else {
-                       responseSuccess(list)
-                   }
+                   responseSuccess(list)
                }
            } else {
                responseNotFound("Project", params.idproject)
@@ -160,8 +154,6 @@ class RestReviewedAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'))
-        Integer offset = params.offset != null ? params.getInt('offset') : 0
-        Integer max = params.max != null ? params.getInt('max') : Integer.MAX_VALUE
 
         if (term == null) {
             responseNotFound("Term", params.idterm)
@@ -178,11 +170,7 @@ class RestReviewedAnnotationController extends RestController {
             } else {
                 list = reviewedAnnotationService.list(project, term, userList, imageInstanceList)
             }
-            if (params.offset != null) {
-                responseSuccess([size: list.size(), collection: substract(list, offset, max)])
-            } else {
-                responseSuccess(list)
-            }
+            responseSuccess(list)
         }
     }
 
