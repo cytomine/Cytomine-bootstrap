@@ -34,6 +34,19 @@ class DomainAPI {
         return find
     }
 
+    static boolean containsStringInJSONList(String key, def list) {
+        println "Search $key in ${list}"
+        list = list.collection
+        if (list == []) return false
+        boolean find = false
+        list.each { item ->
+            String strItem = item
+            if (strItem.equals(key)) {find = true}
+        }
+        return find
+    }
+
+
     /**
      * Make undo request to cytomine server
      */

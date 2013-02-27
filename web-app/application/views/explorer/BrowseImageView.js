@@ -24,6 +24,7 @@ var BrowseImageView = Backbone.View.extend({
         this.annotationsPanel = null;
         this.ontologyPanel = null;
         this.reviewPanel = null;
+        this.annotationProperties = null;
         this.map = null;
         //this.nbDigitialZoom = Math.round(Math.log(80 / this.model.get('magnification')) / Math.log(2));//max zoom desired is 80X
         this.nbDigitialZoom = 0; //TMP DISABLED DUE TO OPENLAYERS BUG. http://dev.cytomine.be/jira/browse/CYTO-613
@@ -421,6 +422,15 @@ var BrowseImageView = Backbone.View.extend({
             userJobLayers: self.userJobForImage
         }).render();
     },
+    createAnnotationPropertiesPanel : function() {
+      //annotationProperties
+        var self = this;
+        this.annotationProperties = new AnnotationPropertyPanel({
+            browseImageView: self,
+            model: self.model,
+            el: self.el
+        }).render();
+    },
     createInformationPanel: function () {
         var self = this;
         this.informationsPanel = new InformationsPanel({
@@ -554,6 +564,8 @@ var BrowseImageView = Backbone.View.extend({
             });
             self.initOntology();
             window.app.view.applyPreferences();
+
+            self.createAnnotationPropertiesPanel();
 
 
             var baseLayer = new OpenLayers.Layer.Zoomify(

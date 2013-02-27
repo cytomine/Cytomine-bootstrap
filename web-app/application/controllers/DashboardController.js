@@ -7,6 +7,8 @@ var DashboardController = Backbone.Router.extend({
         "tabs-imagesarray-:project": "imagesarray",
         "tabs-annotations-:project-:terms-:users": "annotations",
         "tabs-annotations-:project": "annotations",
+        "tabs-annotationsproperties-:project-:annotations": "annotationsproperties",
+        "tabs-annotationsproperties-:project": "annotationsproperties",
         "tabs-dashboard-:project": "dashboard",
         "tabs-config-:project": "config",
         "tabs-algos-:project-:software-:job": "algos",
@@ -75,6 +77,25 @@ var DashboardController = Backbone.Router.extend({
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href=#tabs-annotations-' + window.app.status.currentProject + ']').click();
             self.view.refreshAnnotations(terms, users);
+            window.app.controllers.browse.tabs.triggerRoute = true;
+
+        };
+        this.init(project, func);
+    },
+    annotationsproperties: function (project) {
+        this.annotationsproperties(project, 0);
+    },
+    annotationsproperties: function (project, annotations) {
+        this.annotationsproperties(project, annotations);
+    },
+    annotationsproperties: function (project, annotations) {
+        console.log("controller.annotationsproperties: " + project + "-" + annotations);
+        var self = this;
+        var func = function () {
+            window.app.controllers.browse.tabs.triggerRoute = false;
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a[href=#tabs-annotationsproperties-' + window.app.status.currentProject + ']').click();
+            self.view.refreshAnnotationsProperties(annotations);
             window.app.controllers.browse.tabs.triggerRoute = true;
 
         };

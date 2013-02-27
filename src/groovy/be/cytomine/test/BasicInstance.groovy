@@ -950,6 +950,54 @@ class BasicInstance {
         mime
     }
 
+
+    static AnnotationProperty createAnnotationProperty(AnnotationDomain annotation) {
+        AnnotationProperty ap = BasicInstance.getBasicAnnotationPropertyNotExist()
+        ap.annotationIdent = annotation.id
+        ap.annotationClassName = annotation.class.getName()
+        ap.annotation = annotation
+        BasicInstance.checkDomain(ap)
+        BasicInstance.saveDomain(ap)
+        ap
+    }
+
+
+   //peut deja exister
+    //doit etre créer si n'existe pas
+    //doit etre sauver
+    static AnnotationProperty createOrGetBasicAnnotationProperty() {
+        log.debug "createOrGetBasicAnnotationProperty()"
+        def annotation = createOrGetBasicUserAnnotation()
+        def annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,'MyKeyBasic')
+        if (!annotationProperty) {
+            annotationProperty = new AnnotationProperty(annotation: annotation, key: 'MyKeyBasic', value:"MyValueBasic")
+            saveDomain(annotationProperty)
+        }
+        assert annotationProperty != null
+
+        annotationProperty
+    }
+
+    //doit pas exister (pas violer les contraintes)
+    //doit pas être sauver
+    static AnnotationProperty getBasicAnnotationPropertyNotExist() {
+        log.debug "getBasicAnnotationProperty()"
+        def annotation = createOrGetBasicUserAnnotation()
+        def random = new Random()
+        def randomLong = random.nextLong()
+        def annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,randomLong + "")
+        while (annotationProperty) {
+            randomLong = random.nextLong()
+            annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,randomLong + "")
+        }
+        annotationProperty = new AnnotationProperty(annotation: annotation, key: randomLong,value: "MyValueBasic")
+        checkDomain(annotationProperty)
+        annotationProperty
+    }
+
+
+
+
     static Instrument createOrGetBasicScanner() {
 
         log.debug "createOrGetBasicScanner()"
@@ -1552,6 +1600,11 @@ class BasicInstance {
     static void compareSoftware(map, json) {
         assert map.name.equals(json.name)
         assert map.serviceName.equals(json.serviceName)
+    }
+
+    static void compareAnnotationProperty(map, json) {
+        assert map.value.equals(json.value)
+        assert map.key.equals(json.key)
     }
 
 

@@ -4,6 +4,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.server.Storage
 import be.cytomine.laboratory.Sample
+import be.cytomine.ontology.AnnotationProperty
 import be.cytomine.security.User
 import be.cytomine.image.Mime
 import grails.converters.JSON
@@ -616,6 +617,31 @@ class UpdateData {
         jsonUpdate.username = newUsername
         jsonUser = jsonUpdate.encodeAsJSON()
         return ['oldData':user,'newData':jsonUser,'mapOld':mapOld,'mapNew':mapNew]
+    }
+
+  static def createUpdateSet(AnnotationProperty annotationProperty) {
+        log.info "update annotationProperty"
+
+        String oldKey = "Key1"
+        String newKey = "Key2"
+        String oldValue = "Value1"
+        String newValue = "Value2"
+
+        def mapNew = ["value":newValue,"key":newKey]
+        def mapOld = ["value":oldValue,"key":oldKey]
+
+        AnnotationProperty annotationPropertyToAdd = BasicInstance.createOrGetBasicAnnotationProperty()
+        annotationPropertyToAdd.value = oldValue
+        assert (annotationPropertyToAdd.save(flush: true) != null)
+
+        AnnotationProperty annotationPropertyToEdit = AnnotationProperty.get(annotationPropertyToAdd.id)
+        def json = annotationPropertyToEdit.encodeAsJSON()
+        def jsonUpdate = JSON.parse(json)
+        jsonUpdate.key = newKey
+        jsonUpdate.value = newValue
+        json = jsonUpdate.encodeAsJSON()
+
+        return ['oldData' : annotationProperty, 'newData' : json, 'mapOld': mapOld, 'mapNew' : mapNew]
     }
 }
 

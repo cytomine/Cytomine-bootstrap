@@ -576,4 +576,11 @@ class UserAnnotationService extends ModelService {
         }
     }
 
+    def deleteDependentAnnotationProperty(UserAnnotation ua, Transaction transaction, Task task = null) {
+        AnnotationProperty.findAllByAnnotationIdent(ua.id).each {
+            annotationPropertyService.delete(it,transaction,false)
+        }
+
+    }
+
 }

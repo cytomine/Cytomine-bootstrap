@@ -94,6 +94,17 @@ var ProjectDashboardView = Backbone.View.extend({
         }
 
     },
+    refreshAnnotationsProperties: function (annotation) {
+        console.log("ProjectDashboardView");
+        var self = this;
+
+        if (this.projectDashboardAnnotationsProperties == null) {
+            this.projectDashboardAnnotationsProperties = new ProjectDashboardAnnotationsProperties({ model: this.model, el: this.el, idAnnotation: annotation});
+            this.projectDashboardAnnotationsProperties.render();
+        } else {
+            this.projectDashboardAnnotationsProperties.refresh(annotation)
+        }
+    },
     /**
      * Refresh all information for this project
      */

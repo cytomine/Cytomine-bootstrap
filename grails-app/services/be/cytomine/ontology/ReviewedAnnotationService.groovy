@@ -311,4 +311,11 @@ class ReviewedAnnotationService extends ModelService {
         annotation.terms?.clear()
      }
 
+    def deleteDependentAnnotationProperty(ReviewedAnnotation ra, Transaction transaction, Task task = null) {
+        AnnotationProperty.findAllByAnnotationIdent(ra.id).each {
+            annotationPropertyService.delete(it,transaction,false)
+        }
+
+    }
+
 }

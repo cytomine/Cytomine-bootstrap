@@ -102,6 +102,7 @@
 <fileset dir="${src.dir}" includes="application/models/PingModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/TaskModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/StorageModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/AnnotationPropertyModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>
@@ -117,6 +118,7 @@
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardConfig.js"/>
+<fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotationsProperties.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobListingView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobComparatorView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSelectionView.js"/>
@@ -142,6 +144,7 @@
 <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/ReviewPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/InformationsPanel.js"/>
+<fileset dir="${src.dir}" includes="application/views/explorer/AnnotationPropertyPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageThumbView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageSelectView.js"/>

@@ -419,4 +419,11 @@ class AlgoAnnotationService extends ModelService {
             reviewedAnnotationService.delete(it,transaction,false)
         }
     }
+
+    def deleteDependentAnnotationProperty(AlgoAnnotation aa, Transaction transaction, Task task = null) {
+        AnnotationProperty.findAllByAnnotationIdent(aa.id).each {
+            annotationPropertyService.delete(it,transaction,false)
+        }
+
+    }
 }
