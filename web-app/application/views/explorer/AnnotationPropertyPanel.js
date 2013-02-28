@@ -27,15 +27,15 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         var select = $(this.el).find("#selectLayersAnnotationProperty");
         select.empty();
 
-
-        new AnnotationPropertyKeys({idImage: '16833'}).fetch({
-            success: function (collection, response) {
-                keyAnnotationProperty = collection;
-                collection.each(function(model) {
-                    console.log("ICI");
-                })
-            }
-        });
+//
+//        new AnnotationPropertyKeys({idImage: '16833'}).fetch({
+//            success: function (collection, response) {
+//                keyAnnotationProperty = collection;
+//                collection.each(function(model) {
+//                    console.log("ICI");
+//                })
+//            }
+//        });
     },
 
     /**

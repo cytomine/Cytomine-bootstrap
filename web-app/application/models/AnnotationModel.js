@@ -84,12 +84,7 @@ var AnnotationCollection = PaginatedCollection.extend({
              console.log("AnnotationPaginator.url");
             //construct queryString
             var queryString = "";
-            if (this.offset!=undefined) {
-                queryString = queryString + "&offset=" + this.offset;
-            }
-            if (this.maxResult) {
-                queryString = queryString + "&max=" + this.maxResult;
-            }
+
             if (this.notReviewedOnly) {
                 queryString = queryString + "&notreviewed=" + this.notReviewedOnly;
             }

@@ -379,6 +379,7 @@ var BrowseImageView = Backbone.View.extend({
      */
     reviewLayer: null,
     addVectorLayer: function (layer, userID) {
+        console.log("addVectorLayer");
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
 

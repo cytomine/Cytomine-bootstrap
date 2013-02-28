@@ -60,6 +60,7 @@ var ProjectDashboardAnnotationsProperties = Backbone.View.extend({
         var select = $(this.el).find("#AnnotationSelect");
         select.empty();
         select.attr("disabled", "disabled");
+        console.log("Get annotation for properties");
         new AnnotationCollection({project: self.model.id}).fetch({
             success: function (collection, response) {
                 idAnnotationCollection = collection;

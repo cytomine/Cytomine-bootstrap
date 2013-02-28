@@ -71,7 +71,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
     updateOnlineUsers: function (onlineUsers) {
         var self = this;
         var userList = $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers");
-        var projectUsers = _.pluck(window.app.models.projectUser, 'id');
+        var projectUsers = _.pluck(window.app.models.projectUser.models, 'id');
         //check if the the user we are following is always connected, if not disconneted
         if (!_.include(onlineUsers, self.userFollowed)) {
             userList.find("li[data-id=" + self.userFollowed + "]").find('input.followUser').removeAttr('checked');

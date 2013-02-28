@@ -6,6 +6,7 @@ var AnnotationStatus = {
 }
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
+    console.log(annotation);
     var location = annotation.location || annotation.get('location');
 
     var terms = annotation.term || annotation.get('term');
@@ -34,7 +35,8 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
     read: function (collection) {
         var self = this;
         var features = [];
-        _.each(collection, function (annotation) {
+        var nestedCollection = collection.collection;
+        _.each(nestedCollection, function (annotation) {
             if (_.indexOf(self.annotationLayer.featuresHidden, annotation.id) != -1) {
                 return;
             }
@@ -113,6 +115,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         annotationsCollection = new AnnotationReviewedCollection({image: this.imageID, term: undefined, map: browseImageView}).url().replace("json", "jsonp");
     }
 
+    console.log("Get annotations for layers:"+annotationsCollection);
 
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
@@ -408,6 +411,7 @@ AnnotationLayer.prototype = {
     loadAnnotations: function (browseImageView) {
 
         var self = this;
+        console.log("loadAnnotations="+this.vectorsLayer.protocol.options);
         browseImageView.addVectorLayer(this, this.userID);
         browseImageView.layerLoadedCallback(self);
     },
