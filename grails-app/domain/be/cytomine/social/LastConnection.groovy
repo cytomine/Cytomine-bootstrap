@@ -22,5 +22,6 @@ class LastConnection extends CytomineDomain{
 
     static mapping = {
         id(generator: 'assigned', unique: true)
+        sort "id"
     }
 }

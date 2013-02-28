@@ -50,6 +50,7 @@ class JobData extends CytomineDomain {
     static mapping = {
         value lazy: false
         id generator: "assigned"
+        sort "id"
     }
 
     /**

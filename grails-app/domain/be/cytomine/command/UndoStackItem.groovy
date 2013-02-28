@@ -33,6 +33,7 @@ class UndoStackItem extends CytomineDomain {
     static belongsTo = [user: User, command: Command]
 
     static mapping = {
+        sort "id"
         user index: 'undostackitem_user_index'
     }
 

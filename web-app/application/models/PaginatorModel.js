@@ -12,23 +12,24 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
         }
     },
     parse: function (response) {
+        var self = this;
         // Be sure to change this based on how your results
         // are structured (e.g d.results is Netflix specific)
-        if(response.collection) {
+        console.log(response);
+        if(response.collection!=undefined) {
+            console.log(response.collection);
             var collection = response.collection;
             //Normally this.totalPages would equal response.d.__count
             //but as this particular NetFlix request only returns a
             //total count of items for the search, we divide.
 
-            console.log(response);
-
             this.totalPages = response.totalPages;
-            this.fullSize = response.size;
+            this.fullSize = response.size;;
             return collection;
         }
-
         return response;
     },
+
 //    url : function() {
 //
 //    },

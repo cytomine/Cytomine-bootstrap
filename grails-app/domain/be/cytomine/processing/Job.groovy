@@ -75,6 +75,7 @@ class Job extends CytomineDomain  {
     static mapping = {
         tablePerHierarchy(true)
         id(generator: 'assigned', unique: true)
+        sort "id"
     }
 
     public beforeInsert() {

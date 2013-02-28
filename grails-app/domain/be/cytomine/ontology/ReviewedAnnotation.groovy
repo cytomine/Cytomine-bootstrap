@@ -51,6 +51,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
           }
         terms fetch: 'join'
         wktLocation(type: 'text')
+        sort "id"
 
      }
 

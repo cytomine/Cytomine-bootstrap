@@ -26,6 +26,7 @@ class JobParameter extends CytomineDomain implements Comparable {
     static mapping = {
         id generator: "assigned"
         softwareParameter fetch: 'join'
+        sort "id"
     }
 
     /**

@@ -31,6 +31,7 @@ class SecUser extends CytomineDomain implements Serializable {
     static mapping = {
         password column: '`password`'
         id(generator: 'assigned', unique: true)
+        sort "id"
     }
 
 

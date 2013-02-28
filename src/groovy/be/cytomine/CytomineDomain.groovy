@@ -30,6 +30,7 @@ abstract class CytomineDomain  implements Comparable{
     static mapping = {
         tablePerHierarchy false
         id generator: "assigned"
+        sort "id"
     }
 
     static constraints = {

@@ -17,6 +17,7 @@ class AbstractImageGroup extends CytomineDomain implements Serializable {
     Group group
 
     static mapping = {
+        sort "id"
         id(generator: 'assigned', unique: true)
     }
 

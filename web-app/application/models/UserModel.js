@@ -90,24 +90,24 @@ var UserCollection = PaginatedCollection.extend({
         this.admin = options.admin;
         this.creator = options.creator;
         this.online = options.online;
-    }
-//    ,
-//    comparator: function (user) {
-//        console.log("1:");
-//        console.log(user) ;
-//        if (user.get("lastname") != undefined) {
-//            return user.get("lastname") + " " + user.get("firstname")
-//        }
-//        else {
-//            console.log("2:");
-//            console.log(user);
-//
-//            console.log("3:");
-//            console.log(this);
-//            return user.get("username").toLowerCase();
-//        }
-//    }
+    },
+    comparator: function (user) {
+            if (user.get("lastname") != undefined) {
+                return user.get("lastname") + " " + user.get("firstname")
+            }
+            else {
+                if(user.get("username")==undefined) {
+                    return -1;
+                } else{
+                    return user.get("username").toLowerCase();
+                }
+            }
+     }
 });
+
+
+
+
 
 
 var UserLayerCollection = PaginatedCollection.extend({

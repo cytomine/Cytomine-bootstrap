@@ -17,6 +17,7 @@ class SoftwareProject extends CytomineDomain implements Serializable{
 
     static mapping = {
         id(generator: 'assigned', unique: true)
+        sort "id"
     }
 
     /**

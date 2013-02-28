@@ -11,12 +11,9 @@ class Instrument extends CytomineDomain {
     String brand
     String model
 
-    static constraints = {
-        id(generator: 'assigned', unique: true)
-    }
-
     static mapping = {
         id generator: "assigned"
+        sort "id"
     }
 
     String toString() {

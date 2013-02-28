@@ -38,6 +38,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             location type: org.hibernatespatial.GeometryUserType
         }
         wktLocation(type: 'text')
+        sort "id"
     }
 
     def beforeInsert() {

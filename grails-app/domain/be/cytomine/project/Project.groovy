@@ -92,6 +92,7 @@ class Project extends CytomineDomain implements Serializable {
         id generator: "assigned"
         ontology fetch: 'join'
         discipline fetch: 'join'
+        sort "id"
     }
 
     String toString() {

@@ -52,6 +52,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
     static mapping = {
         id generator: "assigned"
         baseImage fetch: 'join'
+        sort "id"
     }
 
     /**

@@ -28,6 +28,7 @@ class JobDataBinaryValue extends CytomineDomain {
     }
     static mapping = {
         id generator: "assigned"
+        sort "id"
     }
 
     public beforeValidate() {

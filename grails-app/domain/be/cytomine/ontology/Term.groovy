@@ -28,6 +28,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
     static mapping = {
         id(generator: 'assigned', unique: true)
+        sort "id"
     }
 
     /**

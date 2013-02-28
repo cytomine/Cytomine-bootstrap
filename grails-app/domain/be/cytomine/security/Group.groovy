@@ -16,6 +16,7 @@ class Group extends CytomineDomain {
 
     static mapping = {
         table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
+        sort "id"
     }
 
     static constraints = {

@@ -51,7 +51,7 @@ class AnnotationPropertyTests {
 
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
-        AnnotationPropertyAPI.containsStringInJSONList(annotationProperty.key,json);
+        assert AnnotationPropertyAPI.containsStringInJSONList(annotationProperty.key,json);
         println("JSON - project: " + json)
     }
 

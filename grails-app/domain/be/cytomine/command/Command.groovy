@@ -81,6 +81,7 @@ class Command extends CytomineDomain {
     }
 
     static mapping = {
+        sort "id"
     }
 
     /**

@@ -71,6 +71,8 @@ var ProjectCollection = PaginatedCollection.extend({
         }
     },
     comparator: function (project) {
+        console.log("COMPARATOR PROJECT");
+        console.log(project);
         return project.get("name");
     }
 });
