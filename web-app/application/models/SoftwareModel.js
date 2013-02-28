@@ -22,6 +22,7 @@ var SoftwareCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (!options) {
             return;
         }
@@ -42,6 +43,7 @@ var SoftwareParameterModelCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (!options) {
             return;
         }
@@ -84,6 +86,7 @@ var SoftwareProjectCollection = PaginatedCollection.extend({
         if (!options) {
             return;
         }
+        this.initPaginator(options);
         this.project = options.project;
     }
 });

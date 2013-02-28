@@ -165,6 +165,7 @@ var AnnotationReviewedCollection = PaginatedCollection.extend({
         return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.image = options.image;//one image
         this.map = options.map;
     },
@@ -217,6 +218,7 @@ var AnnotationRetrievalModel = Backbone.Model.extend({
 var AnnotationRetrievalCollection = PaginatedCollection.extend({
     model: AnnotationModel,
     initialize: function (options) {
+        this.initPaginator(options);
         this.annotation = options.annotation;
     },
     comparator: function (annotation) {
@@ -242,6 +244,7 @@ var AnnotationCommentModel = Backbone.Model.extend({
 var AnnotationCommentCollection = PaginatedCollection.extend({
     model: AnnotationCommentModel,
     initialize: function (options) {
+        this.initPaginator(options);
         this.annotation = options.annotation;
     },
     url: function () {

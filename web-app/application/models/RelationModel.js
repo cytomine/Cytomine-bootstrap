@@ -35,6 +35,7 @@ var RelationTermCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.relation = options.relation;
         this.term = options.term;
     }

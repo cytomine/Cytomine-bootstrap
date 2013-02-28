@@ -48,6 +48,7 @@ var AnnotationTermCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.idAnnotation = options.idAnnotation;
         this.idUser = options.idUser;
 
@@ -75,6 +76,7 @@ var RelationTermCollection = PaginatedCollection.extend({
         return 'api/annotation/' + this.idAnnotation + '/term.json';
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.idAnnotation = options.idAnnotation;
 
     }
@@ -100,6 +102,7 @@ var TermCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.idOntology = options.idOntology;
         this.idAnnotation = options.idAnnotation;
         this.idProject = options.idProject;

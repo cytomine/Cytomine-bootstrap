@@ -19,6 +19,7 @@ var AnnotationPropertyModel = Backbone.Model.extend({
 var AnnotationPropertyCollection = PaginatedCollection.extend({
     model: AnnotationPropertyModel,
     initialize: function (options) {
+        this.initPaginator(options);
         this.idAnnotation = options.idAnnotation;
     },
     url: function () {
@@ -33,6 +34,7 @@ var AnnotationPropertyCollection = PaginatedCollection.extend({
 var AnnotationPropertyKeysCollection = PaginatedCollection.extend({
    model: AnnotationPropertyModel,
     initialize: function (options) {
+        this.initPaginator(options);
         this.idProject = options.idProject;
         this.idImage = options.idImage;
     },

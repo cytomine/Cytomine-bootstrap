@@ -162,6 +162,7 @@ var StatsTermCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.term = options.term;
     }
@@ -177,6 +178,7 @@ var StatsUserCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -190,6 +192,7 @@ var StatsUserAnnotationCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -203,6 +206,7 @@ var StatsTermSlideCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -216,6 +220,7 @@ var StatsUserSlideCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -229,6 +234,7 @@ var StatsAnnotationEvolutionCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.daysRange = options.daysRange;
         this.term = options.term;

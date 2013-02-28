@@ -14,6 +14,7 @@ var AnnotationFilterModel = Backbone.Model.extend({
 var AnnotationFilterCollection = PaginatedCollection.extend({
     model: AnnotationFilterModel,
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project
     },
     url: function () {

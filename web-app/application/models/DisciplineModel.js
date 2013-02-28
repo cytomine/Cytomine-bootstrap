@@ -24,6 +24,7 @@ var DisciplineCollection = PaginatedCollection.extend({
         return "api/discipline.json";
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (options != undefined) {
             this.light = options.light;
         }

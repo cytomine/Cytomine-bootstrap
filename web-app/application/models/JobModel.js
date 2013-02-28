@@ -54,8 +54,7 @@ var JobCollection = PaginatedCollection.extend({
     url: function () {
         if (this.project != undefined && this.software != undefined) {
             var l = this.light == undefined ? "" : "&light=" + this.light;
-            var m = this.max == undefined ? "" : "&max=" + this.max;
-            return "api/project/" + this.project + "/job.json?software=" + this.software + l + m;
+            return "api/project/" + this.project + "/job.json?software=" + this.software + l;
         } else if (this.project != undefined) {
             return "api/project/" + this.project + "/job.json";
         } else {
@@ -63,10 +62,10 @@ var JobCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.software = options.software;
         this.light = options.light;
-        this.max = options.max;
     },
     comparator: function (job) {
         return -job.get("id");

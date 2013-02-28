@@ -42,6 +42,7 @@ var UserFriendCollection = PaginatedCollection.extend({
         return "api/user/" + this.id + "/friends.json";
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.id = options.id;
     }, comparator: function (user) {
         if (user.get("lastname") != undefined) {
@@ -59,6 +60,7 @@ var UserOnlineCollection = PaginatedCollection.extend({
         return "api/project/" + this.project + "/online/user.json";
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -85,6 +87,7 @@ var UserCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.ontology = options.ontology;
         this.admin = options.admin;
@@ -117,6 +120,7 @@ var UserLayerCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });
@@ -155,6 +159,7 @@ var UserJobCollection = PaginatedCollection.extend({
         return this.get('softwareName');
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.image = options.image;
         this.tree = options.tree || false;

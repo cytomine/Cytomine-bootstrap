@@ -36,7 +36,6 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                     $(self.el).append('<div class="alert alert-info" style="width : 50%; margin:auto; margin-top : 30px;">No software available for this project</div>');
                     return;
                 }
-
                 if (self.idSoftware == undefined) {
                     var lastSoftware = collection.last();
                     self.idSoftware = lastSoftware.id;

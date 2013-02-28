@@ -16,7 +16,8 @@ var StorageCollection = PaginatedCollection.extend({
     url: function () {
         return 'api/storage.json';
     },
-    initialize: function (options) {        
+    initialize: function (options) {
+        this.initPaginator(options);
     },
     comparator: function (storage) {
         return storage.get("name");

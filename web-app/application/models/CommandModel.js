@@ -37,6 +37,7 @@ var CommandCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (!options) {
             return;
         }

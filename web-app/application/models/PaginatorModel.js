@@ -7,8 +7,9 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
       return this.paginator_ui.perPage;
     },
     initPaginator: function (options) {
+        if(!options)  return;
         if(options.max) {
-            this.paginator_ui.perPage = options.max
+            this.paginator_ui.perPage = options.max;
         }
     },
     parse: function (response) {

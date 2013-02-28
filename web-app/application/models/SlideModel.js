@@ -38,6 +38,7 @@ var ProjectSlideCollection = PaginatedCollection.extend({
         return 'api/project/' + this.idProject + '/sample.json';
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.idProject = options.idProject;
 
     }
@@ -59,6 +60,7 @@ var SlideCollection = PaginatedCollection.extend({
         //Request URL:http://localhost:8080/cytomine-web/api/currentuser/image.json?_search=false&nd=1310463777413&rows=10&page=1&sidx=filename&sord=asc
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.page = options.page;
         this.limit = options.limit;
         this.sidx = options.sidx;

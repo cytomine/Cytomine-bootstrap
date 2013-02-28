@@ -14,6 +14,7 @@ class RestAnnotationPropertyController extends RestController {
     def annotationPropertyService
     def cytomineService
     def projectService
+    def imageInstanceService
 
     /**
      * List all annotationProperty visible for the current user
@@ -37,27 +38,15 @@ class RestAnnotationPropertyController extends RestController {
     }
 
     def listKey = {
-        def idProject = params.long('idProject')
-        def idImage = params.long('idImage')
+        Project project = projectService.read(params.long('idProject'))
+        ImageInstance image = imageInstanceService.read(params.long('idImage'))
 
-        println params
-        println idProject
-        println idImage
-
-        if (idProject != null) {
-            Project project = projectService.read(idProject)
-            if (project) {
-                responseSuccess(annotationPropertyService.listKeys(project, null))
-            } else {
-                responseNotFound("AnnotationProperty - Project", params.idProject)
-            }
-        } else if (idImage != null) {
-            ImageInstance image = ImageInstance.findById(idImage)
-            if (image) {
-                responseSuccess(annotationPropertyService.listKeys(null, image))
-            } else {
-                responseNotFound("AnnotationProperty - Image", params.idImage)
-            }
+        if(image) {
+            responseSuccess(annotationPropertyService.listKeys(null, image))
+        } else if(project) {
+            responseSuccess(annotationPropertyService.listKeys(project, null))
+        } else {
+            responseNotFound("AnnotationProperty","Image/Project", params.idImage+"/"+params.idProject)
         }
     }
 

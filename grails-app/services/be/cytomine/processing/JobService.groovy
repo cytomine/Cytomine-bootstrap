@@ -54,8 +54,8 @@ class JobService extends ModelService {
      * Light flag allow to get a light list with only main job properties
      */
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Project project, boolean light, def max) {
-        def jobs = Job.findAllByProject(project, [max: max, sort: "created", order: "desc"])
+    def list(Project project, boolean light) {
+        def jobs = Job.findAllByProject(project, [sort: "created", order: "desc"])
         if(!light) {
             return jobs
         } else {
@@ -68,8 +68,8 @@ class JobService extends ModelService {
      * Light flag allow to get a light list with only main job properties
      */
     @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Software software, Project project, boolean light, def max) {
-        def jobs = Job.findAllBySoftwareAndProject(software, project, [max: max, sort: "created", order: "desc"])
+    def list(Software software, Project project, boolean light) {
+        def jobs = Job.findAllBySoftwareAndProject(software, project, [sort: "created", order: "desc"])
         if(!light) {
             jobs.each {
                 //compute success rate if not yet done

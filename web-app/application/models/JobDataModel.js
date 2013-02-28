@@ -29,6 +29,7 @@ var JobDataCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.job = options.job;
         this.task = options.task;
     }

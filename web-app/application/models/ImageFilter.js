@@ -13,10 +13,13 @@ var ImageFilterCollection = PaginatedCollection.extend({
     model: ImageFilterModel,
     url: function () {
         return 'api/imagefilter.json';
+    },
+    initialize: function (options) {
+        this.initPaginator(options);
     }
 });
 
-var ProjectImageFilterModel = PaginatedCollection.extend({
+var ProjectImageFilterModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/imagefilterproject';
         var format = '.json';
@@ -36,6 +39,7 @@ var ProjectImageFilterCollection = PaginatedCollection.extend({
         return "api/project/" + this.project + "/imagefilterproject.json";
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
     }
 });

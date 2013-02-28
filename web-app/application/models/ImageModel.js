@@ -36,6 +36,7 @@ var ImageMetadataModel = Backbone.Model.extend({
 
 var ImagePropertyCollection = PaginatedCollection.extend({
     initialize: function (options) {
+        this.initPaginator(options);
         this.image = options.image;
     },
     url: function () {
@@ -101,6 +102,7 @@ var ImageInstanceCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.project = options.project;
         this.tree = options.tree != undefined && options.tree == true;
         this.inf = options.inf;

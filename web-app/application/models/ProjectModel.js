@@ -46,6 +46,7 @@ var OntologyProjectModel = PaginatedCollection.extend({
         return "api/ontology/" + this.ontology + "/project.json";
     },
     initialize: function (options) {
+        this.initPaginator(options);
         this.ontology = options.ontology;
     }
 });
@@ -65,6 +66,7 @@ var ProjectCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (options != undefined) {
             this.user = options.user;
             this.ontology = options.ontology;

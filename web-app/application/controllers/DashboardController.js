@@ -12,8 +12,8 @@ var DashboardController = Backbone.Router.extend({
         "tabs-dashboard-:project": "dashboard",
         "tabs-config-:project": "config",
         "tabs-algos-:project-:software-:job": "algos",
-        "tabs-algos-:project-:software": "algos",
-        "tabs-algos-:project": "algos"
+        "tabs-algos-:project-:software-": "algos",
+        "tabs-algos-:project-": "algos"
     },
 
     init: function (project, callback) {

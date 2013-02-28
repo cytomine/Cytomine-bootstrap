@@ -36,6 +36,7 @@ var OntologyCollection = PaginatedCollection.extend({
         }
     },
     initialize: function (options) {
+        this.initPaginator(options);
         if (options != undefined) {
             this.light = options.light;
         }
