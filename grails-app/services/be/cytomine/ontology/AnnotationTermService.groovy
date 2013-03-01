@@ -111,7 +111,7 @@ class AnnotationTermService extends ModelService {
       * @param json JSON with new domain info
       * @return domain retrieve thanks to json
       */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         UserAnnotation annotation = UserAnnotation.get(json.userannotation)
         Term term = Term.get(json.term)
         User user = User.get(json.user)

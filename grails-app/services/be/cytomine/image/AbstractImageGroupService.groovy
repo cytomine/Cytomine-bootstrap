@@ -80,7 +80,7 @@ class AbstractImageGroupService extends ModelService {
       * @return domain retrieve thanks to json
       * TODO: secure!
       */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         AbstractImage abstractimage = AbstractImage.get(json.abstractimage)
         Group group = Group.get(json.group)
         AbstractImageGroup domain = AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)

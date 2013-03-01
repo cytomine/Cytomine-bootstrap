@@ -153,7 +153,12 @@ class BootStrap {
     }
 
     private def generateCopyToStorageScript() {
-        File f = new File("/tmp/generateCopyToStorageScript.sh")
+        String scriptFilename = "/tmp/generateCopyToStorageScript.sh"
+        File f = new File(scriptFilename)
+        if (f.exists()) {
+            f.delete()
+            f = new File(scriptFilename)
+        }
         Storage originStorage = Storage.findByName("cytomine")
         String originPath = null
         Storage destStorage = null
@@ -162,22 +167,24 @@ class BootStrap {
         String dirParent = null
         AbstractImage.list().each {
             destStorage = Storage.findByUser(it.user)
-            originPath = [originStorage.getBasePath(), it.getFilename()].join(File.separator)
-            destPath = [destStorage.getBasePath(), it.getFilename()].join(File.separator)
+            originPath = [originStorage.getBasePath(), it.getPath()].join(File.separator)
+            destPath = [destStorage.getBasePath(), it.getPath()].join(File.separator)
             dirParent = new File(destPath).getParent()
-            cmd = "mkdir $dirParent;cp $originPath $destPath;"
+            cmd = "mkdir -p \"$dirParent\";cp \"$originPath\" \"$destPath\";"
             f << cmd
             NestedFile.findAllByAbstractImage(it).each { nestedFile ->
                 originPath = [originStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
                 destPath = [destStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
                 dirParent = new File(destPath).getParent()
-                cmd = "mkdir $dirParent;cp $originPath $destPath;"
+                cmd = "mkdir -p \"$dirParent\";cp \"$originPath\" \"$destPath\";"
                 f << cmd
             }
 
         }
 
     }
+
+    def abstractImageService
 
     private def getAbstractImageNestedFiles() {
 
@@ -188,17 +195,19 @@ class BootStrap {
             ArrayList<StorageAbstractImage> storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(it)
             if (!storageAbstractImage || storageAbstractImage.size() < 1) {
                 log.error "cannot get storage for $it.filename"
+                abstractImageService.delete(AbstractImage.read(it.id), null, false)
                 return
             }
             Storage storage = storageAbstractImage.first().storage
             log.info "extract nested files of $it.filename"
-            ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("Error")
+            ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("%Error%")
             if (properties && properties.size() > 0) {
                 imagePropertiesService.clear(it)
                 imagePropertiesService.populate(it)
             }
             properties = ImageProperty.findAllByKeyLikeAndImage("hamamatsu.ImageFile%", it)
-            String parent = new File([storage.getBasePath(), it.getFilename()].join(File.separator)).getParent()
+            String parent = new File(it.getPath()).getParent()
+            if (!parent) parent = ""
 
             properties.each { property ->
                 String path = [parent, property.value].join(File.separator)
@@ -251,8 +260,8 @@ class BootStrap {
                 imagePropertiesService.populate(it)
             }
             properties = ImageProperty.findAllByKeyLikeAndImage("mirax.DATAFILE.FILE%", it)
-            String parent = new File([storage.getBasePath(), it.getFilename()].join(File.separator)).getParent()
-            String fileWithoutExtension = it.getFilename().substring(0, it.getFilename().length()-5)
+
+            String fileWithoutExtension = it.getPath().substring(0, it.getPath().length()-5)
             properties.each { property ->
                 if (property.key != "mirax.DATAFILE.FILE_COUNT") {
                     String path = [fileWithoutExtension, property.value].join(File.separator)

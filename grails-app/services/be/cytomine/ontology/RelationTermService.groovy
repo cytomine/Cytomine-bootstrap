@@ -112,7 +112,7 @@ class RelationTermService extends ModelService {
       * @param json JSON with new domain info
       * @return domain retrieve thanks to json
       */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         Relation relation = Relation.get(json.relation)
         Term term1 = Term.get(json.term1)
         Term term2 = Term.get(json.term2)

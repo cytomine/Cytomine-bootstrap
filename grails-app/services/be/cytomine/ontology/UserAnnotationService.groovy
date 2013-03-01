@@ -253,7 +253,7 @@ class UserAnnotationService extends ModelService {
 
 
     private def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-        //TODO: mus be improved!!!!!!!!!!
+        //TODO: must be improved!!!!!!!!!!
         if (userList.isEmpty()) return []
         if (imageInstanceList.isEmpty()) return []
         if (imageInstanceList.size() == project.countImages) {

@@ -127,15 +127,14 @@ class Software extends CytomineDomain {
             software.description = it.description
             try {
                 software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "index",order: "asc"])
-                software.numberOfJob = Job.countBySoftware(it);
-                software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH);
-                software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE);
-                software.numberOfRunning = Job.countBySoftwareAndStatus(it,Job.RUNNING);
-                software.numberOfSuccess = Job.countBySoftwareAndStatus(it,Job.SUCCESS);
-                software.numberOfFailed = Job.countBySoftwareAndStatus(it,Job.FAILED);
-                software.numberOfIndeterminate = Job.countBySoftwareAndStatus(it,Job.INDETERMINATE);
-                software.numberOfWait = Job.countBySoftwareAndStatus(it,Job.WAIT);
-
+                software.numberOfJob = Job.countBySoftware(it)
+                software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH)
+                software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE)
+                software.numberOfRunning = Job.countBySoftwareAndStatus(it,Job.RUNNING)
+                software.numberOfSuccess = Job.countBySoftwareAndStatus(it,Job.SUCCESS)
+                software.numberOfFailed = Job.countBySoftwareAndStatus(it,Job.FAILED)
+                software.numberOfIndeterminate = Job.countBySoftwareAndStatus(it,Job.INDETERMINATE)
+                software.numberOfWait = Job.countBySoftwareAndStatus(it,Job.WAIT)
             } catch(Exception e) { log.info e; e.printStackTrace()}
 
             return software

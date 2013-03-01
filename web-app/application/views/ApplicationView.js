@@ -14,7 +14,7 @@ var ApplicationView = Backbone.View.extend({
     intervals: [], //references to followInterval, positionInterval...
     isMobile: ( navigator.userAgent.match(/iPad/i) != null ),
     panelsConfiguration: [
-        /*{key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},*/
+        {key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},
         {key: "sidebar-map-right", linkID: "toggle-sidebar-map-right", name: "Panels", className: ["sidebar-map-right"], value: { visible: true}}
     ],
     events: {
@@ -346,8 +346,11 @@ ApplicationView.prototype.message = function (title, message, type) {
         message.responseText && (message = message.responseText);
     }
 
-    var tpl = '<div style="min-width: 200px" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
+    var tpl = '<div style="width : 400px;" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
+    var left = ($(window).width() / 2 - 200);
+    $("#alerts").empty();
+    $("#alerts").css("left", left);
     $("#alerts").append(_.template(tpl, { alert: title, message: message, timestamp: timestamp, type: type}));
     setTimeout(function () {
         $("#alert" + timestamp).remove();

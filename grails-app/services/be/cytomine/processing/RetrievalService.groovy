@@ -1,6 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ServerException
 import be.cytomine.SecurityCheck
 import be.cytomine.image.server.RetrievalServer
@@ -113,10 +114,16 @@ class RetrievalService {
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         def response = RetrievalHttpUtils.getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(grailsApplication.config.grails.serverURL),projectSearch)
         println "response=$response"
-        def json = JSON.parse(response)
-        println "json=$json"
-        def result =  readRetrievalResponse(searchAnnotation,json)
-        return result
+        try {
+            def json = JSON.parse(response)
+            println "json=$json"
+            def result =  readRetrievalResponse(searchAnnotation,json)
+            return result
+        } catch (org.codehaus.groovy.grails.web.json.JSONException exception) { //server did not respond => 404
+            throw new ObjectNotFoundException("Retrieval : object not found")
+        }
+
+
     }
 
     private def readRetrievalResponse(AnnotationDomain searchAnnotation,def responseJSON) {

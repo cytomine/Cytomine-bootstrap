@@ -6,6 +6,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.server.ImageServerStorage
+import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 
@@ -421,6 +422,18 @@ class BasicInstance {
         checkDomain(image)
         saveDomain(image)
         image
+    }
+
+    static StorageAbstractImage createOrGetBasicStorageAbstractImage() {
+        def storage = BasicInstance.createOrGetBasicStorage()
+        def abstractImage = BasicInstance.createOrGetBasicAbstractImage()
+        StorageAbstractImage sai = StorageAbstractImage.findByStorageAndAbstractImage(storage, abstractImage)
+        if (!sai) {
+            sai = new StorageAbstractImage(storage : storage, abstractImage : abstractImage)
+            checkDomain(sai)
+            saveDomain(sai)
+        }
+        sai
     }
 
     static AbstractImage getBasicAbstractImageNotExist() {

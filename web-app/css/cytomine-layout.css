@@ -170,15 +170,23 @@ div .annotationsPanel {
     overflow: hidden;
 }
 
+
+
+
 .tree > ul.dynatree-container a
     /*, ul.dynatree-container a:visited*/
 {
-    color: white; /* inherit doesn't work on IE */
+    color: black; /* inherit doesn't work on IE */
     text-decoration: none;
     vertical-align: top;
     margin: 0px;
     margin-left: 3px;
     /*	outline: 0; /* @ Firefox, prevent dotted border after click */
+}
+
+.tree-white > ul.dynatree-container a
+{
+    color: white; /* inherit doesn't work on IE */
 }
 
 .tree > ul.dynatree-container a:hover
@@ -192,6 +200,11 @@ div .annotationsPanel {
 
 span.dynatree-active a
 {
+    background-image: none !important;
+    color: black !important; /* @ IE6 */
+}
+
+.tree-white > span.dynatree-active a {
     background-image: none !important;
     color: white !important; /* @ IE6 */
 }
@@ -255,7 +268,7 @@ div.olControlOverviewMapElement img {
 
 #alerts {
     position: absolute;
-    right: 20px;
+    /*left is set dynamically */
     bottom : 10px;
     z-index: 2200;
 }

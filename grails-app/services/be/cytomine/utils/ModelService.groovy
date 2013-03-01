@@ -128,10 +128,10 @@ abstract class ModelService {
 //    }
     /**
      * Retrieve domain thanks to a JSON object
-     * @param json JSON with new domain info
+     * @param map MAP with new domain info
      * @return domain retrieve thanks to json
      */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         println "retrieve json $json"
         CytomineDomain domain = currentDomain().get(json.id)
         if (!domain) {
@@ -161,7 +161,7 @@ abstract class ModelService {
      * Usefull when we create a lot of data, just print the root command message
      * @return Response structure (status, object data,...)
      */
-    def create(JSONObject json, boolean printMessage) {
+    def create(Map json, boolean printMessage) {
         create(currentDomain().insertDataIntoDomain(json), printMessage)
     }
 
@@ -189,7 +189,7 @@ abstract class ModelService {
      * @param printMessage Flag to specify if confirmation message must be show in client
      * @return Response structure (status, object data,...)
      */
-    def edit(JSONObject json, boolean printMessage) {
+    def edit(Map json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
         edit(fillDomainWithData(currentDomain().newInstance(), json), printMessage)
     }
@@ -220,7 +220,7 @@ abstract class ModelService {
      * @param printMessage Flag to specify if confirmation message must be show in client
      * @return Response structure (status, object data,...)
      */
-    def destroy(JSONObject json, boolean printMessage) {
+    def destroy(Map json, boolean printMessage) {
         //Get object to delete
         destroy(currentDomain().get(json.id), printMessage)
     }

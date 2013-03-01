@@ -21,6 +21,8 @@ class DeployImagesService {
     def cytomineService
     def imageInstanceService
     def storageService
+    def storageAbstractImageService
+
     static transactional = true
 
     UploadedFile copyUploadedFile(UploadedFile uploadedFile, Collection<Storage> storages, SecUser currentUser) {
@@ -88,7 +90,8 @@ class DeployImagesService {
             storages.each { storage ->
                 println "storage=$storage"
                 println "abstractImage="+abstractImage.version
-                StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+                storageAbstractImageService.add([storage : storage.id, abstractImage : abstractImage.id] as JSON, new SecurityCheck(storage))
+                //StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
                 sai.save(flush: true,failOnError: true)
             }
 

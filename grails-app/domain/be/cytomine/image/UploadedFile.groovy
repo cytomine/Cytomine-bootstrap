@@ -25,7 +25,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
     public static int TO_DEPLOY = 6
 
     SecUser user
-    Project project
+    String[] projects //projects ids that we have to link with the new file
+    String[] storages //storage ids on which we have to upload files
     String filename
     String originalFilename
     String convertedFilename
@@ -43,7 +44,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
     Boolean converted = false
 
     static constraints = {
-        project (nullable : true)
+        projects nullable: true
+        storages nullable: false
         convertedFilename (nullable: true)
         convertedExt (nullable: true)
         parent(nullable : true)
@@ -61,7 +63,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
             returnArray['created'] = it.created ? it.created.time.toString() : null
             returnArray['id'] = it.id
             returnArray['user'] = it.user.id
-            returnArray['project'] = it.project?.id
+            returnArray['projects'] = it.projects
+            returnArray['storages'] = it.storages
             returnArray['filename'] = it.filename
             returnArray['originalFilename'] = it.originalFilename
             returnArray['ext'] = it.ext

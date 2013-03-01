@@ -72,7 +72,7 @@ class UserGroupService extends ModelService {
       * @param json JSON with new domain info
       * @return domain retrieve thanks to json
       */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         User user = User.read(json.user)
         Group group = Group.read(json.group)
         UserGroup domain = UserGroup.findByUserAndGroup(user, group)

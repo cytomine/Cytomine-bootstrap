@@ -342,7 +342,7 @@ class SecUserService extends ModelService {
       * @param json JSON with new domain info
       * @return domain retrieve thanks to json
       */
-    def retrieve(JSONObject json) {
+    def retrieve(Map json) {
         SecUser user = SecUser.get(json.id)
         if (!user) throw new ObjectNotFoundException("User " + json.id + " not found")
         return user

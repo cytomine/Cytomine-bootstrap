@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
@@ -191,6 +192,14 @@ class SecurityCheck {
      */
     boolean checkStorageDelete() {
         checkStoragePermission("DELETE")
+    }
+
+    boolean checkStorageWrite(def id) {
+        def storage = Storage.read(id)
+        if(!storage) {
+            throw new ObjectNotFoundException("Storage ${id} was not found! Unable to process storae auth checking")
+        }
+        return storage.checkWritePermission()
     }
 
     private boolean checkStoragePermission(String permission) {

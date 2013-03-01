@@ -687,7 +687,7 @@ AnnotationLayer.prototype = {
                 length += " pixels";
             }
             var content = _.template(tpl, {length: length});
-            self.popup = new OpenLayers.Popup("chicken",
+            self.popup = new OpenLayers.Popup("measure",
                 new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
                 new OpenLayers.Size(200, 60),
                 content,
@@ -801,6 +801,7 @@ AnnotationLayer.prototype = {
 
     },
     removeAnnotation: function (feature) {
+        feature.destroyPopup();
         var idAnnotation = feature.attributes.idAnnotation;
         this.removeFeature(feature);
         this.controls.select.unselectAll();

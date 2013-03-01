@@ -72,7 +72,7 @@ class SecUserSecRoleService extends ModelService {
        * @param json JSON with new domain info
        * @return domain retrieve thanks to json
        */
-     def retrieve(JSONObject json) {
+     def retrieve(Map json) {
          SecUser user = SecUser.read(json.user)
          SecRole role = SecRole.read(json.role)
          SecUserSecRole domain = SecUserSecRole.findBySecUserAndSecRole(user, role)

@@ -58,7 +58,7 @@ body {
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-    <script type="text/javascript" src="lib/OpenLayers-2.12/OpenLayers.custom.js"></script>
+    <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>
 
 <g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
 
