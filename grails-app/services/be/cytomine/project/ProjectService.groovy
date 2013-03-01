@@ -333,13 +333,6 @@ class ProjectService extends ModelService {
 //        }
 //    }
 
-    def deleteDependentUploadedFile(Project project, Transaction transaction,Task task=null) {
-        //TODO:: implemente delete cascade (after implementing service for upload file)
-        UploadedFile.findAllByProject(project).each() {
-            it.project = null
-        }
-    }
-
     def deleteDependentLastConnection(Project project, Transaction transaction,Task task=null) {
 
         taskService.updateTask(task,task? "Delete ${LastConnection.countByProject(project)} connection information":"")
