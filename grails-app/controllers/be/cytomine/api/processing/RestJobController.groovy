@@ -74,7 +74,7 @@ class RestJobController extends RestController {
         } else if (!project) {
             responseNotFound("Job", "Project", params.idProject)
         } else {
-            responseSuccess(jobService.list(software, project,false,Integer.MAX_VALUE))
+            responseSuccess(jobService.list(software, project,false))
         }
     }
 

@@ -16,9 +16,7 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
         var self = this;
         // Be sure to change this based on how your results
         // are structured (e.g d.results is Netflix specific)
-        console.log(response);
         if(response.collection!=undefined) {
-            console.log(response.collection);
             var collection = response.collection;
             //Normally this.totalPages would equal response.d.__count
             //but as this particular NetFlix request only returns a
