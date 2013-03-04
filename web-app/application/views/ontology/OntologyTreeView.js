@@ -136,7 +136,7 @@ var OntologyTreeView = Backbone.View.extend({
     check: function (idTerm) {
         var self = this;
         self.activeEvent = false;
-        (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
+        $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
             if (node.data.key == idTerm) {
                 node.select(true);
             }
@@ -146,7 +146,7 @@ var OntologyTreeView = Backbone.View.extend({
     uncheck: function (idTerm) {
         var self = this;
         self.activeEvent = false;
-        (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
+        $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
             if (node.data.key == idTerm) {
                 node.select(false);
             }
@@ -192,7 +192,7 @@ var OntologyTreeView = Backbone.View.extend({
     },
     getTermsChecked: function () {
         var terms = [];
-        (this.el).find('.tree').dynatree("getRoot").visit(function (node) {
+        $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
             if (node.isSelected()) {
                 terms.push(node.data.key);
             }
