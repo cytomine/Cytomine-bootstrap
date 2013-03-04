@@ -8,6 +8,7 @@ import be.cytomine.test.BasicInstance
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationPropertyAPI
 import be.cytomine.utils.UpdateData
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -163,6 +164,51 @@ class AnnotationPropertyTests {
         jsonUpdate.id = -99
         jsonAnnotationProperty = jsonUpdate.encodeAsJSON()
         def result = AnnotationPropertyAPI.update(-99, jsonAnnotationProperty, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+    void testSelectCenterAnnotationCorrect() {
+        AnnotationProperty annotationProperty = BasicInstance.createOrGetBasicAnnotationProperty()
+        def user = BasicInstance.createOrGetBasicUser()
+        def image = BasicInstance.createOrGetBasicImageInstance()
+
+        def annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
+        annotation.user = user
+        annotation.image = image
+        annotationProperty.annotation = annotation;
+        annotationProperty.key = "TestCytomine"
+        annotationProperty.value = "ValueTestCytomine"
+        assert annotationProperty.save(flush: true) != null
+        assert annotation.save(flush: true)  != null
+
+        def result = AnnotationPropertyAPI.listAnnotationCenterPosition(user.id, image.id, "0,0,1000,1000","TestCytomine", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        println result
+    }
+
+    void testSelectCenterAnnotationNotCorrect() {
+        AnnotationProperty annotationProperty = BasicInstance.createOrGetBasicAnnotationProperty()
+        def user = BasicInstance.createOrGetBasicUser()
+        def image = BasicInstance.createOrGetBasicImageInstance()
+
+        def annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
+        annotation.user = user
+        annotation.image = image
+        annotationProperty.annotation = annotation;
+        annotationProperty.key = "TestCytomine"
+        annotationProperty.value = "ValueTestCytomine"
+        assert annotationProperty.save(flush: true) != null
+        assert annotation.save(flush: true)  != null
+
+        //Error IdUser
+        def result = AnnotationPropertyAPI.listAnnotationCenterPosition(-99, image.id, "0,0,1000,1000","TestCytomine", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+
+        //Error IdImage
+        result = AnnotationPropertyAPI.listAnnotationCenterPosition(user.id, -99, "0,0,1000,1000","TestCytomine", Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 

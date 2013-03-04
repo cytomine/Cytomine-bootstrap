@@ -11,6 +11,9 @@ class AnnotationPropertyUrlMappings
         "/api/annotationproperty/key"(controller:"restAnnotationProperty"){
             action = [GET:"listKey"]
         }
+        "/api/user/$idUser/imageinstance/$idImage/annotationposition"(controller:"restAnnotationProperty"){
+            action = [GET:"listAnnotationPosition"]
+        }
         "/api/annotation/$idAnnotation/annotationproperty"(controller: "restAnnotationProperty"){
             action = [GET:"listByAnnotation"]
         }

@@ -9,13 +9,16 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
+import groovy.sql.Sql
 
 class AnnotationPropertyService extends ModelService {
 
     static transactional = true
     def cytomineService
     def transactionService
+    def dataSource
 
     def currentDomain() {
         return AnnotationProperty;
@@ -30,78 +33,47 @@ class AnnotationPropertyService extends ModelService {
     }
 
     private List<String> listKeys(Project project, ImageInstance image) {
-        //def keys = []
-        //def listAllAnnotations = []
 
-        //Requete SQL
-        if (project) {
+        String request = "SELECT DISTINCT ap.key " +
+                "FROM annotation_property as ap, user_annotation as ua " +
+                "WHERE ap.annotation_ident = ua.id " +
+                (project? "AND ua.project_id = '"+ project.id + "' " : "") +
+                (image? "AND ua.image_id = '"+ image.id + "' " : "") +
+                "UNION " +
+                "SELECT DISTINCT ap1.key " +
+                "FROM annotation_property as ap1, algo_annotation as aa " +
+                "WHERE ap1.annotation_ident = aa.id " +
+                (project? "AND aa.project_id = '"+ project.id + "' " : "") +
+                (image? "AND aa.image_id = '"+ image.id + "' " : "") +
+                "UNION " +
+                "SELECT DISTINCT ap2.key " +
+                "FROM annotation_property as ap2, reviewed_annotation as ra " +
+                "WHERE ap2.annotation_ident = ra.id " +
+                (project? "AND ra.project_id = '"+ project.id + "' " : "") +
+                (image? "AND ra.image_id = '"+ image.id + "' " : "")
 
-            return AnnotationProperty.executeQuery(
-                    "SELECT ap.key " +
-                    "FROM AnnotationProperty as ap, UserAnnotation as ua " +
-                    "WHERE ap.annotationIdent = ua.id " +
-                    (project? "AND ua.project.id = '"+ project.id + "' " : "") +
-                    (image? "AND ua.image.id = '"+ image.id + "' " : "") +
-                    "UNION " +
-                    "SELECT ap1.key " +
-                    "FROM AnnotationProperty as ap1, AlgoAnnotation as aa " +
-                    "WHERE ap1.annotationIdent = aa.id " +
-                    "AND aa.project.id = '"+ project.id + "' " +
-                    "UNION " +
-                    "SELECT ap2.key " +
-                    "FROM AnnotationProperty as ap2, ReviewedAnnotation as ra " +
-                    "WHERE ap2.annotationIdent = ra.id " +
-                    "AND ra.project.id = '"+ project.id + "'")
-        } else {
-            return AnnotationProperty.executeQuery(
-                    "SELECT ap.key " +
-                    "FROM AnnotationProperty as ap, UserAnnotation as ua " +
-                    "WHERE ap.annotationIdent = ua.id " +
-                    "AND ua.image.id = '"+ image.id + "' " +
-                    "UNION " +
-                    "SELECT ap1.key " +
-                    "FROM AnnotationProperty as ap1, AlgoAnnotation as aa " +
-                    "WHERE ap1.annotationIdent = aa.id " +
-                    "AND aa.image.id = '"+ image.id + "' " +
-                    "UNION " +
-                    "SELECT ap2.key " +
-                    "FROM AnnotationProperty as ap2, ReviewedAnnotation as ra " +
-                    "WHERE ap2.annotationIdent = ra.id " +
-                    "AND ra.image.id = '"+ image.id + "' ")
-        }
+        return selectListkey(request)
+    }
 
-        //Chopper les AP en fct des argument & Ajout dans Keys
-        /*if (project)
-        {
-            List<UserAnnotation> userAnnotations = UserAnnotation.findAllByProject(project)
-            List<AlgoAnnotation> algoAnnotations = AlgoAnnotation.findAllByProject(project)
-            List<ReviewedAnnotation> reviewedAnnotations = ReviewedAnnotation.findAllByProject(project)
+    def listAnnotationCenterPosition(SecUser user, ImageInstance image, Geometry boundingbox, String key) {
 
-            //merge in listAllAnnotations
-            listAllAnnotations = userAnnotations + algoAnnotations + reviewedAnnotations
-        } else
-        {
-            List<UserAnnotation> userAnnotations = UserAnnotation.findAllByImage(image)
-            List<AlgoAnnotation> algoAnnotations = AlgoAnnotation.findAllByImage(image)
-            List<ReviewedAnnotation> reviewedAnnotations = ReviewedAnnotation.findAllByImage(image)
+        String request = "SELECT DISTINCT ua.id, ST_CENTROID(ua.location), ap.value " +
+                "FROM user_annotation ua, annotation_property as ap " +
+                "WHERE ap.annotation_ident = ua.id " +
+                "AND ap.key = '"+ key + "' " +
+                "AND ua.image_id = '"+ image.id +"' " +
+                "AND ua.user_id = '"+ user.id +"' " +
+                (boundingbox ? "AND ST_Intersects(ua.location,GeometryFromText('" + boundingbox.toString() + "',0)) " :"") +
+                "UNION " +
+                "SELECT DISTINCT aa.id, ST_CENTROID(aa.location), ap.value " +
+                "FROM algo_annotation aa, annotation_property as ap " +
+                "WHERE ap.annotation_ident = aa.id " +
+                "AND ap.key = '"+ key + "' " +
+                "AND aa.image_id = '"+ image.id +"' " +
+                "AND aa.user_id = '"+ user.id +"' " +
+                (boundingbox ? "AND ST_Intersects(aa.location,GeometryFromText('" + boundingbox.toString() + "',0)) " :"")
 
-            //merge in listAllAnnotations
-            listAllAnnotations = userAnnotations + algoAnnotations + reviewedAnnotations
-        }
-
-
-        for (annotation in listAllAnnotations) {
-            List<AnnotationProperty> annotationProperties = AnnotationProperty.findAllByAnnotationIdent(annotation.id)
-            annotationProperties.each {
-                keys.addAll(it.key)
-            }
-
-        }
-
-        //Unique
-        keys = keys.unique()
-
-        keys*/
+        return selectsql(request)
     }
 
     def read(def id) {
@@ -145,4 +117,25 @@ class AnnotationPropertyService extends ModelService {
         return [domain.key, domain.annotationIdent]
     }
 
+    private def selectListkey(String request) {
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            String key = it[0]
+            data << key
+        }
+        data
+    }
+
+    private def selectsql(String request) {
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+
+            long idAnnotation = it[0]
+            String centre = it[1]
+            String value = it[2]
+
+            data << [idAnnotation: idAnnotation, centre: centre, value: value]
+        }
+        data
+    }
 }

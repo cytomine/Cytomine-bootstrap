@@ -333,6 +333,7 @@ var BrowseImageView = Backbone.View.extend({
             }
 
             self.initAutoAnnoteTools();
+            self.createAnnotationPropertiesPanel();
         }
     },
     /**
@@ -426,10 +427,13 @@ var BrowseImageView = Backbone.View.extend({
     createAnnotationPropertiesPanel : function() {
       //annotationProperties
         var self = this;
+        //Creation du layer AnnotationProperty
+        var layerAnnotProp = new AnnotationPropertyLayer(self.model.get('id'), window.app.status.user.id, self, self.map);
         this.annotationProperties = new AnnotationPropertyPanel({
             browseImageView: self,
             model: self.model,
-            el: self.el
+            el: self.el,
+            layer : layerAnnotProp
         }).render();
     },
     createInformationPanel: function () {
@@ -566,9 +570,6 @@ var BrowseImageView = Backbone.View.extend({
             self.initOntology();
             window.app.view.applyPreferences();
 
-            self.createAnnotationPropertiesPanel();
-
-
             var baseLayer = new OpenLayers.Layer.Zoomify(
                 "Original",
                 zoomify_urls,
@@ -646,6 +647,7 @@ var BrowseImageView = Backbone.View.extend({
             if (!self.review) {
                 self.initWatchOnlineUsersInterval();
             }
+
         }
 
         var t_width = self.model.get("width");

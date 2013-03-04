@@ -53,4 +53,9 @@ class AnnotationPropertyAPI extends DomainAPI {
         return doDELETE(URL,username,password)
     }
 
+    static def listAnnotationCenterPosition(Long idUser, Long idImage, String bbox, String key, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/user/$idUser/imageinstance/$idImage/annotationposition.json?bbox=$bbox,&key=$key"
+        return doGET(URL, username, password)
+    }
+
 }

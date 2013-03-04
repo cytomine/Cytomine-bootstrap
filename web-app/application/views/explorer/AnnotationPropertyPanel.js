@@ -9,6 +9,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     initialize: function (options) {
         this.browseImageView = options.browseImageView;
         this.callback = options.callback;
+        this.layer = options.layer;
     },
     /**
      * Grab the layout and call ask for render
@@ -23,19 +24,37 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         return this;
     },
 
-    initSelect: function (layer, model) {
+    initSelect: function (id) {
         var select = $(this.el).find("#selectLayersAnnotationProperty");
         select.empty();
 
-//
-//        new AnnotationPropertyKeys({idImage: '16833'}).fetch({
-//            success: function (collection, response) {
-//                keyAnnotationProperty = collection;
-//                collection.each(function(model) {
-//                    console.log("ICI");
-//                })
-//            }
-//        });
+        var first = _.template("<option value='<%= id %>'><%= value %></option>", { id : "selectedEmpty", value : "No Key Selected"});
+        select.append(first);
+
+        $.get("api/annotationproperty/key.json?idImage=" + id, function(data) {
+            _.each (data.collection, function (item){
+                var option = _.template("<option value='<%= id %>'><%= value %></option>", { id : item, value : item});
+                select.append(option);
+            })
+
+            SortSelect();
+        });
+
+        var SortSelect = function sortArray(){
+            Liste= new Array();
+            Obj= document.getElementById('selectLayersAnnotationProperty')
+
+            for(i=0;i<Obj.options.length-1;i++){
+                Liste[i]=Obj.options[i+1].text
+            }
+            Liste=Liste.sort()
+
+            for(i=0;i<Obj.options.length-1;i++){
+                Obj.options[i+1].id=Liste[i]
+                Obj.options[i+1].value=Liste[i]
+                Obj.options[i+1].text=Liste[i]
+            }
+        }
     },
 
     /**
@@ -51,7 +70,13 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         var sourceEvent = el.find(".toggle-content");
         this.initToggle(el, elContent, sourceEvent, "annotationPropertyContent");
 
-        self.initSelect();
+        self.initSelect(this.model.get('id'));
 
+        $("#selectLayersAnnotationProperty").click(function() {
+            console.log("click select");
+            console.log(self.layer);
+            console.log("after select");
+            self.layer.loadAnnotationProperty($("#selectLayersAnnotationProperty").val());
+        });
     }
 });

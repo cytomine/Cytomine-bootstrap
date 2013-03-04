@@ -31,6 +31,7 @@ var ExplorerController = Backbone.Router.extend({
         });
     },
     browse: function (idProject, idImage) {
+        console.log("browse1");
         this.browse(idProject,idImage,"");
     },
     browse: function (idProject, idImage, idAnnotation) {

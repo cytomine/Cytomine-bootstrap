@@ -200,6 +200,7 @@ body {
 
     <script type="text/javascript" src="application/views/explorer/SideBarPanel.js" ></script>
     <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
+    <script type="text/javascript" src="application/views/explorer/AnnotationPropertyLayer.js" ></script>
     <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
     <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
     <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>

@@ -50,7 +50,7 @@ class AnnotationProperty extends CytomineDomain implements Serializable{
      */
     void checkAlreadyExist(){
         AnnotationProperty.withNewSession {
-            AnnotationProperty annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotationIdent,key)
+            AnnotationProperty annotationProperty = AnnotationProperty.findByAnnotationIdentAndKeyAndValue(annotationIdent, key, value)
             if (annotationProperty != null && (annotationProperty.id!=id))
             {
                 throw new AlreadyExistException("AnnotationProperty " + annotationProperty.annotationIdent

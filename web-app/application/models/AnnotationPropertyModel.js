@@ -32,7 +32,7 @@ var AnnotationPropertyCollection = PaginatedCollection.extend({
 });
 
 var AnnotationPropertyKeysCollection = PaginatedCollection.extend({
-   model: AnnotationPropertyModel,
+    //model: AnnotationPropertyModel,
     initialize: function (options) {
         this.initPaginator(options);
         this.idProject = options.idProject;
@@ -46,6 +46,25 @@ var AnnotationPropertyKeysCollection = PaginatedCollection.extend({
                 return "api/annotationproperty/key.json?idImage="+this.idImage;
             }
         }
+    }
+});
+
+var AnnotationPropertyTextCollection = PaginatedCollection.extend({
+    initialize: function (options) {
+        this.initPaginator(options);
+        this.idUser = options.idUser;
+        this.idImage = options.idImage;
+        this.key = options.key;
+    },
+    url: function () {
+        if (this.idUser != undefined && this.idImage != undefined) {
+            var offset = "?";
+            if (this.key != undefined) {
+                offset = offset + "key=" + this.key;
+            }
+            return "/api/user/"+this.idUser+"/imageinstance/"+this.idImage+"/annotationposition.json" + offset;
+        }
+        alert(":-(");
     }
 });
 

@@ -6,6 +6,9 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationProperty
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
+import be.cytomine.utils.GeometryUtils
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 
 
@@ -15,6 +18,7 @@ class RestAnnotationPropertyController extends RestController {
     def cytomineService
     def projectService
     def imageInstanceService
+    def secUserService
 
     /**
      * List all annotationProperty visible for the current user
@@ -47,6 +51,25 @@ class RestAnnotationPropertyController extends RestController {
             responseSuccess(annotationPropertyService.listKeys(project, null))
         } else {
             responseNotFound("AnnotationProperty","Image/Project", params.idImage+"/"+params.idProject)
+        }
+    }
+
+    def listAnnotationPosition = {
+        def image = imageInstanceService.read(params.long('idImage'))
+        def user = secUserService.read(params.idUser)
+        if (image && user && params.key) {
+
+            Geometry boundingbox = null
+            if(params.bbox!=null) {
+                boundingbox = GeometryUtils.createBoundingBox(params.bbox)
+            }
+
+            def data = annotationPropertyService.listAnnotationCenterPosition(user, image, boundingbox, params.key)
+            responseSuccess(data)
+        } else if (!user) {
+            responseNotFound("User", params.idUser)
+        } else if (!image) {
+            responseNotFound("Image", params.idImage)
         }
     }
 
