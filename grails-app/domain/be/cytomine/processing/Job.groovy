@@ -76,6 +76,7 @@ class Job extends CytomineDomain  {
         tablePerHierarchy(true)
         id(generator: 'assigned', unique: true)
         sort "id"
+        software fetch: 'join'
     }
 
     public beforeInsert() {
@@ -125,15 +126,22 @@ class Job extends CytomineDomain  {
             job.statusComment = it.statusComment
             job.project = it.project?.id
             job.software = it.software?.id
+            job.softwareName = it.software?.name
             job.rate = it.rate
             job.created = it.created?.time?.toString()
             job.updated = it.updated?.time?.toString()
             job.dataDeleted = it.dataDeleted
+            println "test"
             try {
+                println "1"
                 UserJob user = UserJob.findByJob(it)
+                println "2"
                 job.username = user?.humanUsername()
+                println "3"
                 job.userJob = user.id
+                println "4"
                 job.jobParameters = it.parameters()
+                println "5"
             } catch (Exception e) {
                 log.info e
             }
@@ -143,7 +151,7 @@ class Job extends CytomineDomain  {
 
     public List<JobParameter> parameters() {
         if(this.version!=null) {
-            return JobParameter.findAllByJob(this,[sort: created])
+            return JobParameter.findAllByJob(this,[sort: 'created'])
         } else {
             return []
         }

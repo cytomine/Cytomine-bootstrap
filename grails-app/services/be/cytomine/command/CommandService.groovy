@@ -64,7 +64,7 @@ class CommandService {
                 log.error c.errors.toString()
             }
             c.save()
-            CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project)
+            CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project,user: c.user, message: c.actionMessage)
             ch.save();
             log.info "Save on undo stack: ${c.saveOnUndoRedoStack}"  + " transaction " + c.transaction?.id
 

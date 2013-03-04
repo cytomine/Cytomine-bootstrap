@@ -7,7 +7,9 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     jobSelectView: undefined,
     jobsLight: null,
     initialize: function (options) {
-        this.el = "#tabs-algos-" + this.model.id;
+        if(this.model) {
+            this.el = "#tabs-algos-" + this.model.id;
+        }
         this.idJob = options.idJob;
         this.idSoftware = options.idSoftware;
         this.software = options.software;

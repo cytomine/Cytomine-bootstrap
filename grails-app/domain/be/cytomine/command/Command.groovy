@@ -130,7 +130,7 @@ class Command extends CytomineDomain {
             returnArray['serviceName'] = it.serviceName
             returnArray['action'] = it.actionMessage + " by " + it?.user?.username
             returnArray['data'] = it.data
-            returnArray['user'] = it.user
+            returnArray['user'] = it.user.id
             returnArray['type'] = "UNKNOWN"
             if (it instanceof AddCommand) returnArray['type'] = "ADD"
             else if (it instanceof EditCommand) returnArray['type'] = "EDIT"

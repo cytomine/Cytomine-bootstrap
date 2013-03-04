@@ -150,7 +150,6 @@ var JobTableView = Backbone.View.extend({
         } else {
             for (var i = 0, j = 0; i < self.paramsFromSoftwares.length && j < jobParamArray.length; i++) {
                 if (self.paramsFromSoftwares[i] == jobParamArray[j].name) {
-                    console.log(self.getValueElement(jobParamArray[j]));
                     colArray.push(self.getValueElement(jobParamArray[j]));
                     j++;
                 } else {

@@ -40,5 +40,12 @@ class UrlMappings {
         "/api/export/exportimages"(controller: "export") {
             action = [GET:"exportimages"]
         }
+
+        "/api/project/$id/commandhistory"(controller: "restProject") {
+            action = [GET:"listCommandHistory"]
+        }
+        "/api/commandhistory"(controller: "restProject") {
+            action = [GET:"listCommandHistory"]
+        }
     }
 }

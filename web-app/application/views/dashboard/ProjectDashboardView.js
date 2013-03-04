@@ -188,7 +188,7 @@ var ProjectDashboardView = Backbone.View.extend({
             "text!application/templates/dashboard/CommandGeneric.tpl.html",
             "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
             function (commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
-                var commandCollection = new CommandCollection({project: self.model.get('id'), max: self.maxCommandsView});
+                var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView});
                 var commandCallback = function (collection, response) {
                     $("#lastactionitem").empty();
                     if (collection.size() == 0) {

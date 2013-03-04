@@ -3,6 +3,9 @@ package be.cytomine.api.project
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
+import be.cytomine.api.UrlApi
+import be.cytomine.command.Command
+import be.cytomine.command.CommandHistory
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
@@ -10,6 +13,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 import be.cytomine.utils.Task
+import groovy.sql.Sql
 
 /**
  * Controller for project domain
@@ -26,6 +30,7 @@ class RestProjectController extends RestController {
     def retrievalService
     def imageInstanceService
     def taskService
+    def secUserService
 
 
 
@@ -91,6 +96,57 @@ class RestProjectController extends RestController {
             responseNotFound("Project", params.id)
         }
     }
+
+    def listCommandHistory = {
+        Project project = projectService.read(params.long('id'))
+        Integer offset = params.offset != null ? params.getInt('offset') : 0
+        Integer max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
+        SecUser user = secUserService.read(params.long('user'))
+
+        if (project) {
+            response(findCommandHistory(project,user,max,offset))
+        } else {
+            //no project defined, get all user projects
+            List<Project> projects = projectService.list(cytomineService.currentUser);
+            response(findCommandHistory(projects,user,max,offset))
+        }
+    }
+
+     private def findCommandHistory(Project project,SecUser user, Integer max, Integer offset) {
+        String request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project " +
+                "FROM command_history ch " +
+                "WHERE true  " +
+                (project? "AND ch.project_id =  ${project.id} " : " ") +
+                (user? "AND ch.user_id =  ${user.id} " : " ") +
+                "ORDER BY created desc LIMIT $max OFFSET $offset"
+         doGenericRequest(request)
+     }
+
+    private def findCommandHistory(List<Project> projects,SecUser user, Integer max, Integer offset) {
+       String request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project " +
+               "FROM command_history ch " +
+               "WHERE true  " +
+               (projects? "AND ch.project_id IN (${projects.collect{it.id}.join(",")}) " : " ") +
+               (user? "AND ch.user_id =  ${user.id} " : " ") +
+               "ORDER BY created desc LIMIT $max OFFSET $offset"
+        doGenericRequest(request)
+    }
+
+    def dataSource
+
+    private def doGenericRequest(String request) {
+        log.info "REQUEST=" + request
+        def data = []
+
+        new Sql(dataSource).eachRow(request) {
+            data << [id:it.id,created:it.created,message:it.message,prefix:it.prefixAction,user:it.user,project:it.project]
+
+        }
+        data
+    }
+
+
+
 
     /**
      * Get a project

@@ -24,16 +24,18 @@ var CommandModel = Backbone.Model.extend({
     }
 });
 
-
 // define our collection
-var CommandCollection = PaginatedCollection.extend({
+var CommandHistoryCollection = PaginatedCollection.extend({
     model: CommandModel,
-
     url: function () {
+        var query = ""
+        if(this.user) {
+            query = query+ "?&user="+this.user
+        }
         if (this.project != undefined) {
-            return "api/project/" + this.project + "/last/" + this.max + ".json";
+            return "api/project/" + this.project + "/commandhistory.json"+query;
         } else {
-            return "api/command.json";
+            return "api/commandhistory.json"+query;
         }
     },
     initialize: function (options) {
@@ -44,12 +46,12 @@ var CommandCollection = PaginatedCollection.extend({
         if (options.project != undefined) {
             this.project = options.project;
         }
-        if (options.max != undefined) {
-            this.max = options.max;
+        if (options.user != undefined) {
+            this.user = options.user;
         }
     }
 });
 
-CommandCollection.comparator = function (command) {
+CommandHistoryCollection.comparator = function (command) {
     return command.get("created");
 };

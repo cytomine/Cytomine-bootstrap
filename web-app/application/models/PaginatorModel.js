@@ -23,7 +23,7 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
             //total count of items for the search, we divide.
 
             this.totalPages = response.totalPages;
-            this.fullSize = response.size;;
+            this.fullSize = response.size;
             return collection;
         }
         return response;

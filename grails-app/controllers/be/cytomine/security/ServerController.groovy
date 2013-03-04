@@ -22,7 +22,7 @@ class ServerController {
 
                     Project project
                     if(!jsonContent.project.toString().equals("null"))
-                        project = Project.read(Long.parseLong(jsonContent.project))
+                        project = Project.read(Long.parseLong(jsonContent.project+""))
 
                     if (data.authenticated)  {
                         data.user = springSecurityService.principal.id

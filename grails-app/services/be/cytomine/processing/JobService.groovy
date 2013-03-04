@@ -46,7 +46,7 @@ class JobService extends ModelService {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
-        Job.list()
+        Job.list([sort: "created", order: "desc"])
     }
 
     /**
