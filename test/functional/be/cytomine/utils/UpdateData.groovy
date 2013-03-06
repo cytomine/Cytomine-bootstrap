@@ -399,13 +399,17 @@ class UpdateData {
         Ontology newOtology = BasicInstance.getBasicOntologyNotExist()
         newOtology.save(flush: true)
 
-        def mapNew = ["name": newName, "ontology": newOtology]
-        def mapOld = ["name": oldName, "ontology": oldOtology]
+        String oldDescription = "DescriptionOld"
+        String newDescription = "DescriptionNew"
+
+        def mapNew = ["name": newName, "ontology": newOtology, "description": newDescription]
+        def mapOld = ["name": oldName, "ontology": oldOtology, "description": oldDescription]
 
         def jsonProject = project.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
         jsonUpdate.name = newName
         jsonUpdate.ontology = newOtology.id
+        jsonUpdate.description = newDescription
         jsonProject = jsonUpdate.encodeAsJSON()
         return ['oldData':project,'newData':jsonProject,'mapOld':mapOld,'mapNew':mapNew]
     }

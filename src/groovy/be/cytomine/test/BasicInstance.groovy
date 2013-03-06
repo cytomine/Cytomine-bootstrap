@@ -842,7 +842,7 @@ class BasicInstance {
         def name = "BasicProject".toUpperCase()
         def project = Project.findByName(name)
         if (!project) {
-            project = new Project(name: name, ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline())
+            project = new Project(name: name, ontology: createOrGetBasicOntology(), discipline: createOrGetBasicDiscipline(), description: "BasicDescription")
             checkDomain(project)
             saveDomain(project)
             try {
@@ -871,7 +871,7 @@ class BasicInstance {
             randomInt = random.nextInt()
             project = Project.findByName(randomInt + "")
         }
-        project = new Project(name: randomInt + "", ontology: ontology, discipline: createOrGetBasicDiscipline())
+        project = new Project(name: randomInt + "", ontology: ontology, discipline: createOrGetBasicDiscipline(), description: "BasicDescription" )
         project
     }
 
@@ -1520,6 +1520,7 @@ class BasicInstance {
     static void compareProject(map, json) {
         assert map.name.toUpperCase().equals(json.name)
         assert toLong(map.ontology.id).equals(toLong(json.ontology))
+        assert map.description.equals(json.description)
     }
 
     /**

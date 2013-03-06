@@ -235,6 +235,7 @@ body {
     <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
+    <script type="text/javascript" src="application/views/project/ProjectDescriptionDialog.js" ></script>
 
     <script type="text/javascript" src="application/views/project/ProjectAddImageListingDialog.js" ></script>
     <script type="text/javascript" src="application/views/project/ProjectAddImageThumbDialog.js" ></script>

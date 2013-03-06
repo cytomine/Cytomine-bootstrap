@@ -89,6 +89,7 @@ class ProjectTests  {
 
     void testAddProjectCorrect() {
         def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        projectToAdd.description = "Test de Description..."
         def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         Project project = result.data
@@ -313,6 +314,4 @@ class ProjectTests  {
         assert project.countAnnotations == 0
         assert image.countImageAnnotations == 0
     }
-
-
 }

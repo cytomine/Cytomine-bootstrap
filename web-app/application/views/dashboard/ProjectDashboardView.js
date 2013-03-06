@@ -143,6 +143,10 @@ var ProjectDashboardView = Backbone.View.extend({
         $("#seeUsersProjectList-" + self.model.id).on("click", function () {
             new ProjectUsersDialog({model: self.model, el: $("#explorer")}).render();
         });
+
+        $("#seeDescriptionProject-" + self.model.id).on("click", function () {
+            new ProjectDescriptionDialog({model: self.model, el: $("#explorer")}).render();
+        });
     },
     fetchUsersOnline: function () {
         var self = this;
