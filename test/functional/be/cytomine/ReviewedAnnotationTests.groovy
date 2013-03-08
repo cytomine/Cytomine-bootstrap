@@ -281,17 +281,17 @@ class ReviewedAnnotationTests  {
 
         def showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareReviewedAnnotation(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = ReviewedAnnotationAPI.undo()
         assert 200==showResult.code
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareReviewedAnnotation(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = ReviewedAnnotationAPI.redo()
         assert 200==showResult.code
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareReviewedAnnotation(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
 

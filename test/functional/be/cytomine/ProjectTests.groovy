@@ -115,7 +115,7 @@ class ProjectTests  {
         int idProject = json.project.id
         def showResult = ProjectAPI.show(idProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareProject(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
     }
 
     void testEditProjectWithBadName() {

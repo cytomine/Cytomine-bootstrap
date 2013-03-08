@@ -192,7 +192,7 @@ var ProjectDashboardView = Backbone.View.extend({
             "text!application/templates/dashboard/CommandGeneric.tpl.html",
             "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
             function (commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
-                var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView});
+                var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView, fullData: true});
                 var commandCallback = function (collection, response) {
                     $("#lastactionitem").empty();
                     if (collection.size() == 0) {
@@ -218,13 +218,12 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     decodeCommandAction : function(commandHistory,commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
         var self = this;
-        var command = commandHistory.get("command");
         var action = "undefined"
-        var jsonCommand = $.parseJSON(command.data);
+        var jsonCommand = $.parseJSON(commandHistory.get("data"));
         var dateCreated = new Date();
-        dateCreated.setTime(command.created);
+        dateCreated.setTime(commandHistory.get('created'));
         var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
-        if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
+        if (commandHistory.get('serviceName') == "userAnnotationService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.cropURL;
             action = _.template(commandAnnotationTpl,
@@ -233,24 +232,24 @@ var ProjectDashboardView = Backbone.View.extend({
                     idImage: jsonCommand.image,
                     imageFilename: jsonCommand.imageFilename,
                     icon: "add.png",
-                    text: commandHistory.get("prefixAction") + " " + command.action,
+                    text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'),
                     datestr: dateStr,
                     cropURL: cropURL,
                     cropStyle: cropStyle
                 });
         }
-        else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
+        else if (commandHistory.get('serviceName') == "userAnnotationService" && commandHistory.get('className') == "be.cytomine.command.EditCommand") {
             var cropStyle = "";
             var cropURL = jsonCommand.newUserAnnotation.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newUserAnnotation.id, idImage: jsonCommand.newUserAnnotation.image, imageFilename: jsonCommand.newUserAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newUserAnnotation.id, idImage: jsonCommand.newUserAnnotation.image, imageFilename: jsonCommand.newUserAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
-        else if (command.serviceName == "userAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
+        else if (commandHistory.get('serviceName') == "userAnnotationService" && commandHistory.get('className') == "be.cytomine.command.DeleteCommand") {
             var cropStyle = "";
             var cropURL = jsonCommand.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
         }
-        else if (command.serviceName == "reviewedAnnotationService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
+        else if (commandHistory.get('serviceName') == "reviewedAnnotationService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.cropURL;
             action = _.template(commandAnnotationTpl,
@@ -259,24 +258,23 @@ var ProjectDashboardView = Backbone.View.extend({
                     idImage: jsonCommand.image,
                     imageFilename: jsonCommand.imageFilename,
                     icon: "add.png",
-                    text: commandHistory.get("prefixAction") + " " + command.action,
+                    text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'),
                     datestr: dateStr,
                     cropURL: cropURL,
                     cropStyle: cropStyle
                 });
         }
-        else if (command.serviceName == "reviewedAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
+        else if (commandHistory.get('serviceName') == "reviewedAnnotationService" && commandHistory.get('className') == "be.cytomine.command.EditCommand") {
             var cropStyle = "";
-            console.log(jsonCommand);
             var cropURL = jsonCommand.newReviewedAnnotation.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newReviewedAnnotation.id, idImage: jsonCommand.newReviewedAnnotation.image, imageFilename: jsonCommand.newReviewedAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newReviewedAnnotation.id, idImage: jsonCommand.newReviewedAnnotation.image, imageFilename: jsonCommand.newReviewedAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
-        else if (command.serviceName == "reviewedAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
+        else if (commandHistory.get('serviceName') == "reviewedAnnotationService" && commandHistory.get('className') == "be.cytomine.command.DeleteCommand") {
             var cropStyle = "";
             var cropURL = jsonCommand.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
-        else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
+        else if (commandHistory.get('serviceName') == "algoAnnotationService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.cropURL;
             action = _.template(commandAnnotationTpl,
@@ -285,48 +283,48 @@ var ProjectDashboardView = Backbone.View.extend({
                     idImage: jsonCommand.image,
                     imageFilename: jsonCommand.imageFilename,
                     icon: "add.png",
-                    text: commandHistory.get("prefixAction") + " " + command.action,
+                    text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'),
                     datestr: dateStr,
                     cropURL: cropURL,
                     cropStyle: cropStyle
                 });
         }
-        else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
+        else if (commandHistory.get('serviceName') == "algoAnnotationService" && commandHistory.get('className') == "be.cytomine.command.EditCommand") {
             var cropStyle = "";
             var cropURL = jsonCommand.newAnnotation.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newAnnotation.id, idImage: jsonCommand.newAnnotation.image, imageFilename: jsonCommand.newAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.newAnnotation.id, idImage: jsonCommand.newAnnotation.image, imageFilename: jsonCommand.newAnnotation.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
-        else if (command.serviceName == "algoAnnotationService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
+        else if (commandHistory.get('serviceName') == "algoAnnotationService" && commandHistory.get('className') == "be.cytomine.command.DeleteCommand") {
             var cropStyle = "";
             var cropURL = jsonCommand.cropURL;
-            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandAnnotationTpl, {idProject: self.model.id, idAnnotation: jsonCommand.id, idImage: jsonCommand.image, imageFilename: jsonCommand.imageFilename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
         }
-        else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
-            action = _.template(commandGenericTpl, {icon: "ui-icon-plus", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
+        else if (commandHistory.get('serviceName') == "annotationTermService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
+            action = _.template(commandGenericTpl, {icon: "ui-icon-plus", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, image: ""});
 
         }
-        else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.EditCommand") {
-            action = _.template(commandGenericTpl, {icon: "ui-icon-pencil", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
+        else if (commandHistory.get('serviceName') == "annotationTermService" && commandHistory.get('className') == "be.cytomine.command.EditCommand") {
+            action = _.template(commandGenericTpl, {icon: "ui-icon-pencil", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, image: ""});
 
         }
-        else if (command.serviceName == "annotationTermService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
-            action = _.template(commandGenericTpl, {icon: "ui-icon-trash", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, image: ""});
+        else if (commandHistory.get('serviceName') == "annotationTermService" && commandHistory.get('className') == "be.cytomine.command.DeleteCommand") {
+            action = _.template(commandGenericTpl, {icon: "ui-icon-trash", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, image: ""});
 
         }
-        else if (command.serviceName == "imageInstanceService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
+        else if (commandHistory.get('serviceName') == "imageInstanceService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.thumb;
-            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "add.png", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "add.png", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
         }
-        else if (command.serviceName == "imageInstanceService" && command.CLASSNAME == "be.cytomine.command.DeleteCommand") {
+        else if (commandHistory.get('serviceName') == "imageInstanceService" && commandHistory.get('className') == "be.cytomine.command.DeleteCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.thumb;
-            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + command.action, datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+            action = _.template(commandImageInstanceTpl, {idProject: self.model.id, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
 
         }
-        else if (command.serviceName == "jobService" && command.CLASSNAME == "be.cytomine.command.AddCommand") {
-            action = _.template(commandGenericTpl, {icon: "ui-icon-plus", text: command.action, datestr: dateStr, image: ""});
+        else if (commandHistory.get('serviceName') == "jobService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
+            action = _.template(commandGenericTpl, {icon: "ui-icon-plus", text: commandHistory.get('action'), datestr: dateStr, image: ""});
 
         }
         return action

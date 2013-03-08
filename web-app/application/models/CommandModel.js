@@ -28,9 +28,12 @@ var CommandModel = Backbone.Model.extend({
 var CommandHistoryCollection = PaginatedCollection.extend({
     model: CommandModel,
     url: function () {
-        var query = ""
+        var query = "?"
         if(this.user) {
-            query = query+ "?&user="+this.user
+            query = query+ "&user="+this.user
+        }
+        if(this.fullData) {
+            query = query+ "&fullData="+this.fullData
         }
         if (this.project != undefined) {
             return "api/project/" + this.project + "/commandhistory.json"+query;
@@ -48,6 +51,9 @@ var CommandHistoryCollection = PaginatedCollection.extend({
         }
         if (options.user != undefined) {
             this.user = options.user;
+        }
+        if(options.fullData != undefined) {
+            this.fullData = options.fullData;
         }
     }
 });

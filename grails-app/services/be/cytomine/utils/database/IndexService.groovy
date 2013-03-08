@@ -107,6 +107,7 @@ class IndexService {
             createIndex(statement, "command_history", "project_id");
             createIndex(statement, "command_history", "user_id");
             createIndex(statement, "command_history", "created");
+            createIndex(statement, "command_history", "command_id");
             /**
              * Term
              */

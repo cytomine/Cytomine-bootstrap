@@ -74,7 +74,7 @@ class JobDataTests  {
         json = JSON.parse(showResult.data)
         println "data.mapNew="+data.mapNew
         println "json="+json
-        BasicInstance.compareJobData(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
     }
 
     void testEditJobDataWithBadKey() {

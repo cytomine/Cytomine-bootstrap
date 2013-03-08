@@ -248,17 +248,17 @@ class GenericAnnotationTests  {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo(user.username, Infos.GOODPASSWORDUSERJOB)
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo(user.username, Infos.GOODPASSWORDUSERJOB)
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAnnotationWithGenericCallForUser() {
@@ -272,17 +272,17 @@ class GenericAnnotationTests  {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo()
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo()
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testDeleteAnnotationForAlgo() {

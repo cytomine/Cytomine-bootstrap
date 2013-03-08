@@ -44,9 +44,6 @@ class UpdateData {
         String oldFilename = "oldName"
         String newFilename = "newName"
 
-        String oldGeom = "POINT (1111 1111)"
-        String newGeom = "POINT (9999 9999)"
-
         Instrument oldScanner = BasicInstance.createOrGetBasicScanner()
         Instrument newScanner = BasicInstance.getNewScannerNotExist()
         newScanner.save(flush:true)
@@ -73,8 +70,8 @@ class UpdateData {
         Integer newHeight = 900000
 
 
-        def mapNew = ["filename":newFilename,"geom":newGeom,"scanner":newScanner,"sample":newSlide,"path":newPath,"mime":newMime,"width":newWidth,"height":newHeight,"user":newUser]
-        def mapOld = ["filename":oldFilename,"geom":oldGeom,"scanner":oldScanner,"sample":oldSlide,"path":oldPath,"mime":oldMime,"width":oldWidth,"height":oldHeight,"user":oldUser]
+        def mapNew = ["filename":newFilename,"scanner":newScanner.id,"sample":newSlide.id,"path":newPath,"mime":newMime.id,"width":newWidth,"height":newHeight]
+        def mapOld = ["filename":oldFilename,"scanner":oldScanner.id,"sample":oldSlide.id,"path":oldPath,"mime":oldMime.id,"width":oldWidth,"height":oldHeight]
 
         /* Create a old AbstractImage with point 1111 1111 */
         /* Create a old image */
@@ -115,8 +112,8 @@ class UpdateData {
         UserJob oldUser = annotation.user
         UserJob newUser = annotation.user
 
-        def mapNew = ["geom":newGeom,"user":newUser]
-        def mapOld = ["geom":oldGeom,"user":oldUser]
+        def mapNew = ["location":newGeom,"user":newUser.id]
+        def mapOld = ["location":oldGeom,"user":oldUser.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create algoAnnotation")
@@ -146,8 +143,8 @@ class UpdateData {
         def oldUser = annotation.user
         def newUser = annotation.user
 
-        def mapNew = ["geom":newGeom,"user":newUser]
-        def mapOld = ["geom":oldGeom,"user":oldUser]
+        def mapNew = ["location":newGeom,"user":newUser.id]
+        def mapOld = ["location":oldGeom,"user":oldUser.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create AnnotationDomain")
@@ -281,8 +278,8 @@ class UpdateData {
         User newUser = BasicInstance.getBasicUserNotExist()
         newUser.save(flush: true)
 
-        def mapNew = ["project": newProject, "baseImage": newImage, "user": newUser]
-        def mapOld = ["project": oldProject, "baseImage": oldImage, "user": oldUser]
+        def mapNew = ["project": newProject.id, "baseImage": newImage.id, "user": newUser.id]
+        def mapOld = ["project": oldProject.id, "baseImage": oldImage.id, "user": oldUser.id]
 
 
         /* Create a old image */
@@ -336,8 +333,8 @@ class UpdateData {
         Job newJob = BasicInstance.getBasicJobNotExist()
         newJob.save(flush: true)
 
-        def mapNew = ["key": newName, "job": newJob]
-        def mapOld = ["key": oldName, "job": oldJob]
+        def mapNew = ["key": newName, "job": newJob.id]
+        def mapOld = ["key": oldName, "job": oldJob.id]
 
         def jsonJobData = Jobdata.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJobData)
@@ -402,8 +399,8 @@ class UpdateData {
         String oldDescription = "DescriptionOld"
         String newDescription = "DescriptionNew"
 
-        def mapNew = ["name": newName, "ontology": newOtology, "description": newDescription]
-        def mapOld = ["name": oldName, "ontology": oldOtology, "description": oldDescription]
+        def mapNew = ["name": newName, "ontology": newOtology.id, "description": newDescription]
+        def mapOld = ["name": oldName, "ontology": oldOtology.id, "description": oldDescription]
 
         def jsonProject = project.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
@@ -442,8 +439,8 @@ class UpdateData {
         Term newTerm = BasicInstance.getBasicTermNotExist()
         newTerm.save(flush: true)
 
-        def mapNew = ["geom":newGeom,"user":newUser,"terms":newTerm]
-        def mapOld = ["geom":oldGeom,"user":oldUser,"terms":oldTerm]
+        def mapNew = ["location":newGeom,"user":newUser.id,"terms":[newTerm.id]]
+        def mapOld = ["location":oldGeom,"user":oldUser.id,"terms":[oldTerm.id]]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create reviewedannotation")
@@ -527,8 +524,8 @@ class UpdateData {
         Ontology newOntology = BasicInstance.getBasicOntologyNotExist()
         newOntology.save(flush:true)
 
-        def mapOld = ["name":oldName,"comment":oldComment,"color":oldColor,"ontology":oldOntology]
-        def mapNew = ["name":newName,"comment":newComment,"color":newColor,"ontology":newOntology]
+        def mapOld = ["name":oldName,"comment":oldComment,"color":oldColor,"ontology":oldOntology.id]
+        def mapNew = ["name":newName,"comment":newComment,"color":newColor,"ontology":newOntology.id]
 
 
         /* Create a Name1 term */
@@ -561,8 +558,8 @@ class UpdateData {
         User oldUser = annotation.user
         User newUser = annotation.user
 
-        def mapNew = ["geom":newGeom,"user":newUser]
-        def mapOld = ["geom":oldGeom,"user":oldUser]
+        def mapNew = ["location":newGeom,"user":newUser.id]
+        def mapOld = ["location":oldGeom,"user":oldUser.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create userAnnotation")

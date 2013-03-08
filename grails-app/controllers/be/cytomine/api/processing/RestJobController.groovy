@@ -36,7 +36,8 @@ class RestJobController extends RestController {
      * List all job
      */
     def list = {
-        responseSuccess(jobService.list())
+        def projects = projectService.list(cytomineService.currentUser)
+        responseSuccess(jobService.list(projects))
     }
 
     /**

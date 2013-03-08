@@ -121,7 +121,7 @@ class ImageInstanceTests  {
         int idImageInstance = json.imageinstance.id
         def showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareImageInstance(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = ImageInstanceAPI.undo()
         assert 200==showResult.code
@@ -129,14 +129,14 @@ class ImageInstanceTests  {
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
 
-        BasicInstance.compareImageInstance(data.mapOld, json)
+        BasicInstance.compare(data.mapOld, json)
 
         showResult = ImageInstanceAPI.redo()
         assert 200==showResult.code
 
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareImageInstance(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
     }
 
     void testEditImageInstanceWithBadProject() {

@@ -251,7 +251,7 @@ class AbstractImageTests {
       int id = json.abstractimage.id
       def showResult = AbstractImageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareAbstractImage(data.mapNew, json)
+      BasicInstance.compare(data.mapNew, json)
   }
 
   void testDeleteImage()  {

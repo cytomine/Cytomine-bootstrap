@@ -74,17 +74,17 @@ public class StorageTests {
 
         def showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareStorage(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = StorageAPI.undo()
         assert 200 == result.code
         showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareStorage(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = StorageAPI.redo()
         assert 200 == result.code
         showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareStorage(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testUpdateStorageNotExist() {

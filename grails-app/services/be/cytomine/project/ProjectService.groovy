@@ -76,17 +76,24 @@ class ProjectService extends ModelService {
         //list ALL projects,
         Project.list(sort: "name")
     }
-
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-    def list(Ontology ontology) {
-        //very slow method because it check right access for each project ontology
-        Project.findAllByOntology(ontology)
-    }
+//
+//    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+//    def list(User user) {
+//        //list ALL projects,
+//        Project.list(sort: "name")
+//    }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
         //faster to get it from database table (getProjectList) than PostFilter
         getProjectList(user)
+    }
+
+
+    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
+    def list(Ontology ontology) {
+        //very slow method because it check right access for each project ontology
+        Project.findAllByOntology(ontology)
     }
 
     @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")

@@ -78,7 +78,7 @@ class SoftwareTests  {
  
        def showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compareSoftware(data.mapNew, json)
+       BasicInstance.compare(data.mapNew, json)
 
        def result = SoftwareAPI.undo()
        assert 200 == result.code
@@ -87,12 +87,12 @@ class SoftwareTests  {
        System.out.println("toto="+showResult.data);
        System.out.println("toto="+JSON.parse(showResult.data));
        System.out.println("toto="+JSON.parse(showResult.data).name);
-       BasicInstance.compareSoftware(data.mapOld, JSON.parse(showResult.data))
+       BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
        result = SoftwareAPI.redo()
        assert 200 == result.code
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareSoftware(data.mapNew, JSON.parse(showResult.data))
+       BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateSoftwareNotExist() {

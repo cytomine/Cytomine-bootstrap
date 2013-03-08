@@ -70,7 +70,7 @@ class AnnotationFilterTests  {
 
       def showResult = AnnotationFilterAPI.show(idAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareAnnotationFilter(data.mapNew, json)
+      BasicInstance.compare(data.mapNew, json)
   }
 
   void testUpdateAnnotationFilterNotExist() {

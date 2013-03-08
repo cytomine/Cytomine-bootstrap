@@ -105,22 +105,11 @@ var ActivityView = Backbone.View.extend({
 
     createLastJobPanel : function() {
         var self = this;
-      //jobPanelActivity
-
-
-        //
 
         require(["text!application/templates/activity/LastJobActivity.tpl.html"],
            function (LastJobActivityTpl) {
 
-               $("#jobPanelActivity").empty();
-
-
-               if(self.idProject) {
-                   $("#jobPanelActivity").parent().show();
-                   $("#jobPanelActivity").empty('<div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>');
-
-                   new JobCollection({project: self.idProject, max: 15}).fetch({
+                   new JobCollection({project: self.idProject, max: 20}).fetch({
                        success: function (collection, response) {
                            self.jobs = collection;
                            $("#jobPanelActivity").empty();
@@ -138,12 +127,6 @@ var ActivityView = Backbone.View.extend({
                            })
                        }
                    });
-               } else {
-                   $("#jobPanelActivity").parent().hide();
-               }
-
-
-
          });
     },
 
@@ -194,7 +177,7 @@ var ActivityView = Backbone.View.extend({
             self.idUser = idUser;
             self.idProject = idProj;
 
-            self.createLastJobPanel();
+                self.createLastJobPanel();
         };
 
         nbCollectionToFetch++;
@@ -208,8 +191,11 @@ var ActivityView = Backbone.View.extend({
                }
            });
         }
-        new UserCollection({project: self.model? self.model.id: null}).fetch({
+        var userColl = new UserCollection({project: self.model? self.model.id: null});
+
+        userColl.fetch({
             success: function (collection, response) {
+
                 self.users = collection;
                 collectionFetched(nbCollectionToFetch);
             }

@@ -195,10 +195,6 @@ class RestController {
             subList = list.subList(offset,offset + maxForCollection)
         }
 
-        println "total=${list.size()}"
-        println "max=$max"
-        println "totalPages=${Math.ceil(list.size()/max)}"
-
         responseSuccess ([collection: subList, offset: offset, size: list.size(), totalPages: Math.ceil(list.size()/max)])
 
 

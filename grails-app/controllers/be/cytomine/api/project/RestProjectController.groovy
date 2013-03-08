@@ -44,7 +44,9 @@ class RestProjectController extends RestController {
             responseSuccess(projectService.list())
         } else {
             // better perf with this direct hql request on spring security acl domain table (than post filter)
+            //responseSuccess(projectService.list(user))
             responseSuccess(projectService.getProjectList(user))
+
         }
     }
 
@@ -102,44 +104,56 @@ class RestProjectController extends RestController {
         Integer offset = params.offset != null ? params.getInt('offset') : 0
         Integer max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
         SecUser user = secUserService.read(params.long('user'))
-
+        Boolean fullData = params.getBoolean('fullData')
         if (project) {
-            response(findCommandHistory(project,user,max,offset))
+            response(findCommandHistory([project],user,max,offset,fullData))
         } else {
             //no project defined, get all user projects
             List<Project> projects = projectService.list(cytomineService.currentUser);
-            response(findCommandHistory(projects,user,max,offset))
+            response(findCommandHistory(projects,user,max,offset,fullData))
         }
     }
 
-     private def findCommandHistory(Project project,SecUser user, Integer max, Integer offset) {
-        String request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project " +
-                "FROM command_history ch " +
-                "WHERE true  " +
-                (project? "AND ch.project_id =  ${project.id} " : " ") +
-                (user? "AND ch.user_id =  ${user.id} " : " ") +
-                "ORDER BY created desc LIMIT $max OFFSET $offset"
-         doGenericRequest(request)
-     }
+    private def findCommandHistory(List<Project> projects,SecUser user, Integer max, Integer offset, Boolean fullData) {
 
-    private def findCommandHistory(List<Project> projects,SecUser user, Integer max, Integer offset) {
-       String request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project " +
-               "FROM command_history ch " +
-               "WHERE true  " +
-               (projects? "AND ch.project_id IN (${projects.collect{it.id}.join(",")}) " : " ") +
-               (user? "AND ch.user_id =  ${user.id} " : " ") +
-               "ORDER BY created desc LIMIT $max OFFSET $offset"
-        doGenericRequest(request)
+
+
+       String request;
+
+        if(fullData) {
+            request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project, c.data as data,c.service_name as serviceName, c.class as className, c.action_message as actionMessage, u.username as username " +
+                   "FROM command_history ch, command c, sec_user u " +
+                   "WHERE ch.command_id = c.id AND u.id = ch.user_id " +
+                   (projects? "AND ch.project_id IN (${projects.collect{it.id}.join(",")}) " : " ") +
+                   (user? "AND ch.user_id =  ${user.id} " : " ") +
+                   "ORDER BY created desc LIMIT $max OFFSET $offset"
+        } else {
+            request = "SELECT ch.id as id, ch.created as created, ch.message as message, ch.prefix_action as prefixAction, ch.user_id as user, ch.project_id as project " +
+                   "FROM command_history ch " +
+                   "WHERE true  " +
+                   (projects? "AND ch.project_id IN (${projects.collect{it.id}.join(",")}) " : " ") +
+                   (user? "AND ch.user_id =  ${user.id} " : " ") +
+                   "ORDER BY created desc LIMIT $max OFFSET $offset"
+        }
+
+        doGenericRequest(request,fullData)
     }
 
     def dataSource
 
-    private def doGenericRequest(String request) {
+    private def doGenericRequest(String request,Boolean fullData) {
         log.info "REQUEST=" + request
         def data = []
 
         new Sql(dataSource).eachRow(request) {
-            data << [id:it.id,created:it.created,message:it.message,prefix:it.prefixAction,user:it.user,project:it.project]
+            def line = [id:it.id,created:it.created,message:it.message,prefix:it.prefixAction,prefixAction:it.prefixAction,user:it.user,project:it.project]
+            if(fullData) {
+                line.data = it.data
+                line.serviceName = it.serviceName
+                line.className = it.className
+                line.action = it.actionMessage + " by " + it.username
+            }
+            data << line
 
         }
         data

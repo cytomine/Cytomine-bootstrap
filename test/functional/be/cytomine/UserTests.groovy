@@ -198,7 +198,7 @@ class UserTests  {
   
         def showResult = UserAPI.show(idUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareUser(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
     }
   
     void testUpdateUserNotExist() {

@@ -259,17 +259,17 @@ class UserAnnotationTests  {
 
         def showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = UserAnnotationAPI.undo()
         assert 200 == result.code
         showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = UserAnnotationAPI.redo()
         assert 200 == result.code
         showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditUserAnnotationNotExist() {

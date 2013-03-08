@@ -77,17 +77,17 @@ class SampleTests  {
 
       def showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareSample(data.mapNew, json)
+      BasicInstance.compare(data.mapNew, json)
 
       showResult = SampleAPI.undo()
       assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareSample(data.mapOld, JSON.parse(showResult.data))
+      BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = SampleAPI.redo()
       assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareSample(data.mapNew, JSON.parse(showResult.data))
+      BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateSampleNotExist() {

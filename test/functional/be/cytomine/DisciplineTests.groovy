@@ -77,17 +77,17 @@ class DisciplineTests  {
 
       def showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compareDiscipline(data.mapNew, json)
+      BasicInstance.compare(data.mapNew, json)
 
       showResult = DisciplineAPI.undo()
       assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareDiscipline(data.mapOld, JSON.parse(showResult.data))
+      BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = DisciplineAPI.redo()
       assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compareDiscipline(data.mapNew, JSON.parse(showResult.data))
+      BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateDisciplineNotExist() {

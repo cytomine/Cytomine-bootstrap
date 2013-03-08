@@ -83,17 +83,17 @@ class OntologyTests  {
   
         def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compareOntology(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
   
         showResult = OntologyAPI.undo()
         assert 200 == result.code
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareOntology(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
   
         showResult = OntologyAPI.redo()
         assert 200 == result.code
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compareOntology(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
   
     void testUpdateOntologyNotExist() {

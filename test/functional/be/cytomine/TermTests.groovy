@@ -123,17 +123,17 @@ class TermTests  {
  
        def showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compareTerm(data.mapNew, json)
+       BasicInstance.compare(data.mapNew, json)
  
        showResult = TermAPI.undo()
        assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareTerm(data.mapOld, JSON.parse(showResult.data))
+       BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
  
        showResult = TermAPI.redo()
        assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compareTerm(data.mapNew, JSON.parse(showResult.data))
+       BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateTermNotExist() {

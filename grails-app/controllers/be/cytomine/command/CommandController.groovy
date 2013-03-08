@@ -159,7 +159,7 @@ class CommandController extends RestController {
                 transaction: lastRedoStack.transaction,
         ).save(flush: true)
         //add to history stack
-        new CommandHistory(command: lastRedoStack.getCommand(), prefixAction: "REDO", project: lastRedoStack.getCommand().project,user: UndoStackItem.user,message: UndoStackItem.command.actionMessage).save();
+        new CommandHistory(command: lastRedoStack.getCommand(), prefixAction: "REDO", project: lastRedoStack.getCommand().project,user: lastRedoStack.user,message: lastRedoStack.command.actionMessage).save();
         //delete the redo item
         lastRedoStack.delete(flush: true)
     }

@@ -7,9 +7,12 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
       return this.paginator_ui.perPage;
     },
     initPaginator: function (options) {
+        this.paginator_ui.perPage = 0;
         if(!options)  return;
         if(options.max) {
             this.paginator_ui.perPage = options.max;
+        } else {
+            this.paginator_ui.perPage = 0;
         }
     },
     parse: function (response) {
@@ -60,7 +63,9 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
 //          '$filter': '',
 
           // number of items to return per request/page
-          'max': function() { return this.perPage!=Number.MAX_VALUE ? this.perPage : 0 },
+          'max': function() {
+              return this.perPage!=Number.MAX_VALUE ? this.perPage : 0
+          },
 
           // how many results the request should skip ahead to
           // customize as needed. For the Netflix API, skipping ahead based on

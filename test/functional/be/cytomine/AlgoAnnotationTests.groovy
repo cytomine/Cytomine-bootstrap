@@ -323,17 +323,17 @@ class AlgoAnnotationTests  {
 
         def showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         json = JSON.parse(showResult.data)
-        BasicInstance.compareAnnotation(data.mapNew, json)
+        BasicInstance.compare(data.mapNew, json)
 
         showResult = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
         assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compareAnnotation(data.mapOld, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
         assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compareAnnotation(data.mapNew, JSON.parse(showResult.data))
+        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAlgoAnnotationNotExist() {

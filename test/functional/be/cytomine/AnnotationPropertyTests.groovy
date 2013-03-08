@@ -150,7 +150,7 @@ class AnnotationPropertyTests {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
-        BasicInstance.compareAnnotationProperty(data.mapNew,json.annotationproperty)
+        BasicInstance.compare(data.mapNew,json.annotationproperty)
     }
 
     void testUpdateAnnotationPropertyNotExist() {

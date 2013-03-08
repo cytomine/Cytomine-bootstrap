@@ -44,9 +44,8 @@ class JobService extends ModelService {
         job
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def list() {
-        Job.list([sort: "created", order: "desc"])
+    def list(List<Project> projects) {
+        Job.findAllByProjectInList(projects,[sort: "created", order: "desc"])
     }
 
     /**
