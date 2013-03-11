@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import be.cytomine.test.http.AnnotationTermAPI
@@ -85,7 +85,7 @@ class AnnotationAddConcurrent extends Thread {
     public Integer code = -1
 
     public AnnotationAddConcurrent() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         json = annotationToAdd.encodeAsJSON()
     }
 
@@ -108,7 +108,7 @@ class ImageInstanceAddConcurrent extends Thread {
     public Integer code = -1
 
     public ImageInstanceAddConcurrent() {
-        def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
+        def imageToAdd = BasicInstanceBuilder.getImageInstanceNotExist()
         json = imageToAdd.encodeAsJSON()
     }
 
@@ -131,7 +131,7 @@ class AnnotationTermAddConcurrent extends Thread {
     public Integer code = -1
 
     public AnnotationTermAddConcurrent() {
-        def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermCorrect")
+        def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTermToAdd.discard()
         json = annotationTermToAdd.encodeAsJSON()
     }

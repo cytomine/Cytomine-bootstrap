@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -26,7 +26,7 @@ class ImageFilterTests  {
   }
 
   void testShowImageFilterWithCredential() {
-      def result = ImageFilterAPI.show(BasicInstance.createOrGetBasicImageFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = ImageFilterAPI.show(BasicInstanceBuilder.getImageFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -46,13 +46,13 @@ class ImageFilterTests  {
     }
 
     void testAddImageFilterProject() {
-        def ifp = BasicInstance.getBasicImageFilterProjectNotExist()
+        def ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
         def result = ImageFilterProjectAPI.create(ifp.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testDeleteImageFilterProject() {
-       def ifp = BasicInstance.getBasicImageFilterProjectNotExist()
+       def ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
        ifp.save(flush: true)
         def result = ImageFilterProjectAPI.delete(ifp.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code

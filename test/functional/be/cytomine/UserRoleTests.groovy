@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -27,23 +27,23 @@ class UserRoleTests  {
   }
 
     void testListRoleUser() {
-        def result = UserRoleAPI.listByUser(BasicInstance.newUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserRoleAPI.listByUser(BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testShowRoleUser() {
-        def result = UserRoleAPI.show(BasicInstance.newUser.id,SecRole.findByAuthority("ROLE_USER").id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserRoleAPI.show(BasicInstanceBuilder.user1.id,SecRole.findByAuthority("ROLE_USER").id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
-        result = UserRoleAPI.show(BasicInstance.newUser.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserRoleAPI.show(BasicInstanceBuilder.user1.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
 
   void testAddUseRoleCorrect() {
-      def idUser = BasicInstance.newUser.id
+      def idUser = BasicInstanceBuilder.user1.id
       def idRole = SecRole.findByAuthority("ROLE_USER").id
       def json = "{user : $idUser, role: $idRole}"
 
@@ -52,7 +52,7 @@ class UserRoleTests  {
   }
 
   void testDeleteUserRole() {
-      def user = BasicInstance.createOrGetBasicUser()
+      def user = BasicInstanceBuilder.getUser()
       def role = SecRole.findByAuthority("ROLE_USER")
       def userole = SecUserSecRole.create(user,role,true)
 

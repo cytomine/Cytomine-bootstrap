@@ -4,7 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.processing.JobParameter
 import be.cytomine.test.http.JobParameterAPI
@@ -28,12 +28,12 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add jobParameter instance to project
-      JobParameter jobParameter = BasicInstance.getBasicJobParameterNotExist()
+      JobParameter jobParameter = BasicInstanceBuilder.getJobParameterNotExist()
       jobParameter.job.project = project
 
       //check if admin user can access/update/delete
@@ -58,7 +58,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
@@ -68,7 +68,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       assert 200 == resAddUser.code
 
       //Add jobParameter instance to project
-      JobParameter jobParameter = BasicInstance.getBasicJobParameterNotExist()
+      JobParameter jobParameter = BasicInstanceBuilder.getJobParameterNotExist()
       jobParameter.job.project = project
       jobParameter.job.save(flush: true)
       //check if user 2 can access/update/delete
@@ -93,12 +93,12 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add jobParameter instance to project
-      JobParameter jobParameter = BasicInstance.getBasicJobParameterNotExist()
+      JobParameter jobParameter = BasicInstanceBuilder.getJobParameterNotExist()
       jobParameter.job.project = project
 
       //check if simple user can access/update/delete
@@ -106,7 +106,7 @@ class JobParameterSecurityTests extends SecurityTestsAbstract{
       result = JobParameterAPI.create(jobParameter.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
       assert (403 == result.code)
 
-      BasicInstance.saveDomain(jobParameter)
+      BasicInstanceBuilder.saveDomain(jobParameter)
 
       println "2222222222222222222"
       assert (403 == JobParameterAPI.show(jobParameter.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)

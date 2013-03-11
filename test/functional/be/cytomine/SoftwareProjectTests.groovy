@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareProjectAPI
 import grails.converters.JSON
@@ -25,7 +25,7 @@ class SoftwareProjectTests  {
      }
  
      void testListSoftwareProjectByProject() {
-         SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+         SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
          def result = SoftwareProjectAPI.listByProject(softwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
@@ -36,7 +36,7 @@ class SoftwareProjectTests  {
      }
  
     void testListSoftwareProjectBySoftware() {
-        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+        SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
         def result = SoftwareProjectAPI.listBySoftware(softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -44,14 +44,14 @@ class SoftwareProjectTests  {
     }
 
     void testStatsSoftwareProject() {
-        Job job = BasicInstance.createOrGetBasicJob()
+        Job job = BasicInstanceBuilder.getJob()
         def result = SoftwareProjectAPI.stats(job.project.id,job.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
     }
 
     void testStatsSoftwareProjectNotExist() {
-        SoftwareProject softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+        SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
         def result = SoftwareProjectAPI.stats(-99,softwareProject.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
         result = SoftwareProjectAPI.stats(softwareProject.project.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -61,7 +61,7 @@ class SoftwareProjectTests  {
 
  
      void testAddSoftwareProjectCorrect() {
-         def SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
+         def SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProjectNotExist()
          def result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          int idSoftwareProject = result.data.id
@@ -71,7 +71,7 @@ class SoftwareProjectTests  {
      }
  
      void testAddSoftwareProjectWithBadSoftware() {
-         SoftwareProject SoftwareProjectToAdd = BasicInstance.createOrGetBasicSoftwareProject()
+         SoftwareProject SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProject()
          SoftwareProject SoftwareProjectToEdit = SoftwareProject.get(SoftwareProjectToAdd.id)
          def jsonSoftwareProject = SoftwareProjectToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonSoftwareProject)
@@ -82,7 +82,7 @@ class SoftwareProjectTests  {
      }
 
     void testAddSoftwareProjectWithBadProject() {
-        SoftwareProject SoftwareProjectToAdd = BasicInstance.createOrGetBasicSoftwareProject()
+        SoftwareProject SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProject()
         SoftwareProject SoftwareProjectToEdit = SoftwareProject.get(SoftwareProjectToAdd.id)
         def jsonSoftwareProject = SoftwareProjectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonSoftwareProject)
@@ -94,7 +94,7 @@ class SoftwareProjectTests  {
  
 
      void testDeleteSoftwareProject() {
-         def SoftwareProjectToDelete = BasicInstance.getBasicSoftwareProjectNotExist()
+         def SoftwareProjectToDelete = BasicInstanceBuilder.getSoftwareProjectNotExist()
          assert SoftwareProjectToDelete.save(flush: true)!= null
          def id = SoftwareProjectToDelete.id
          def result = SoftwareProjectAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

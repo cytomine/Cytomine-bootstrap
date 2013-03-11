@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.image.AbstractImage
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageGroupAPI
 import grails.converters.JSON
@@ -19,7 +19,7 @@ class AbstractImageGroupTests {
 
 
     void testListAbstractImageGroupByAbstractImageWithCredential() {
-        AbstractImage abstractImage = BasicInstance.createOrGetBasicAbstractImage()
+        AbstractImage abstractImage = BasicInstanceBuilder.getAbstractImage()
         def result = AbstractImageGroupAPI.listByImage(abstractImage.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -32,7 +32,7 @@ class AbstractImageGroupTests {
     }
 
 //    void testListAbstractImageGroupByGroupWithCredential() {
-//      Group group = BasicInstance.createOrGetBasicGroup()
+//      Group group = BasicInstanceBuilder.getGroup()
 //      def result = AbstractImageGroupAPI.listByGroup(group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
 //      assert 200 == result.code
 //      def json = JSON.parse(result.data)
@@ -45,19 +45,19 @@ class AbstractImageGroupTests {
     }
 
     void testGetAbstractImageGroupWithCredential() {
-        def abstractImageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroup()
         def result = AbstractImageGroupAPI.show(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testGetAbstractImageGroupWithCredentialNotExist() {
-        def abstractImageGroupToAdd = BasicInstance.createOrGetBasicAbstractImageGroup()
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroup()
         def result = AbstractImageGroupAPI.show( abstractImageGroupToAdd.abstractImage.id,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testAddAbstractImageGroupCorrect() {
-        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         abstractImageGroupToAdd.discard()
         String json = abstractImageGroupToAdd.encodeAsJSON()
         def result = AbstractImageGroupAPI.create(abstractImageGroupToAdd.abstractImage.id,abstractImageGroupToAdd.group.id,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -67,7 +67,7 @@ class AbstractImageGroupTests {
     }
 
     void testAddAbstractImageGroupAlreadyExist() {
-        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupAlreadyExist")
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         abstractImageGroupToAdd.save(flush:true)
         abstractImageGroupToAdd.discard()
         String json = abstractImageGroupToAdd.encodeAsJSON()
@@ -76,7 +76,7 @@ class AbstractImageGroupTests {
     }
 
     void testAddAbstractImageGroupWithAbstractImageNotExist() {
-        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         abstractImageGroupToAdd.discard()
         def jsonUpdate = JSON.parse(abstractImageGroupToAdd.encodeAsJSON())
         jsonUpdate.abstractImage = -99
@@ -85,7 +85,7 @@ class AbstractImageGroupTests {
     }
 
     void testAddAbstractImageGroupWithGroupNotExist() {
-        def abstractImageGroupToAdd = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        def abstractImageGroupToAdd = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         abstractImageGroupToAdd.discard()
         def jsonUpdate = JSON.parse(abstractImageGroupToAdd.encodeAsJSON())
         jsonUpdate.group = -99
@@ -94,7 +94,7 @@ class AbstractImageGroupTests {
     }
 
     void testDeleteAbstractImageGroup() {
-        def abstractImageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        def abstractImageGroupToDelete = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         assert abstractImageGroupToDelete.save(flush: true)  != null
         def result = AbstractImageGroupAPI.delete(abstractImageGroupToDelete.abstractImage.id,abstractImageGroupToDelete.group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -103,7 +103,7 @@ class AbstractImageGroupTests {
     }
 
     void testDeleteAbstractImageGroupNotExist() {
-        def abstractImageGroupToDelete = BasicInstance.getBasicAbstractImageGroupNotExist("testAddAbstractImageGroupCorrect")
+        def abstractImageGroupToDelete = BasicInstanceBuilder.getAbstractImageGroupNotExist()
         assert abstractImageGroupToDelete.save(flush: true)  != null
         def result = AbstractImageGroupAPI.delete(-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

@@ -4,7 +4,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.User
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAnnotationAPI
 
@@ -26,7 +26,7 @@ import be.cytomine.utils.UpdateData
 class UserAnnotationTests  {
 
     void testGetUserAnnotationWithCredential() {
-        def annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -34,7 +34,7 @@ class UserAnnotationTests  {
     }
 
     void testListUserAnnotationWithCredential() {
-        BasicInstance.createOrGetBasicUserAnnotation()
+        BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -42,7 +42,7 @@ class UserAnnotationTests  {
     }
 
     void testListUserAnnotationByImageWithCredential() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.listByImage(annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -55,7 +55,7 @@ class UserAnnotationTests  {
     }
 
     void testListUserAnnotationByProjectWithCredential() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -72,7 +72,7 @@ class UserAnnotationTests  {
     }
 
     void testListUserAnnotationByProjecImageAndUsertWithCredential() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -83,7 +83,7 @@ class UserAnnotationTests  {
 
 
     void testListUserAnnotationByImageAndUserWithCredential() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -101,7 +101,7 @@ class UserAnnotationTests  {
 
 
     void testListUserAnnotationByProjectAndTermAndUserWithCredential() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
 
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -115,13 +115,13 @@ class UserAnnotationTests  {
     }
     
     void testListUserAnnotationByProjectAndTermWithUserNullWithCredential() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testListUserAnnotationByProjectAndTermAndUserAndImageWithCredential() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
 
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -130,7 +130,7 @@ class UserAnnotationTests  {
     }
 
     void testListUserAnnotationyProjectAndUsersWithCredential() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -138,13 +138,13 @@ class UserAnnotationTests  {
     }
     
     void testDownloadUserAnnotationDocument() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
         def result = UserAnnotationAPI.downloadDocumentByProject(annotationTerm.userAnnotation.project.id,annotationTerm.userAnnotation.user.id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testAddUserAnnotationCorrect() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
@@ -166,8 +166,8 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationMultipleCorrect() {
-        def annotationToAdd1 = BasicInstance.createOrGetBasicUserAnnotation()
-        def annotationToAdd2 = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd1 = BasicInstanceBuilder.getUserAnnotation()
+        def annotationToAdd2 = BasicInstanceBuilder.getUserAnnotation()
         def annotations = []
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
@@ -176,7 +176,7 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationCorrectWithoutProject() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
         def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -184,9 +184,9 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationCorrectWithTerm() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
-        Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
-        Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
+        Long idTerm1 = BasicInstanceBuilder.getTerm().id
+        Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
 
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
         annotationWithTerm.term = [idTerm1, idTerm2]
@@ -212,12 +212,12 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationBadGeom() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POINT(BAD GEOMETRY)'
 
-        Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
-        Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+        Long idTerm1 = BasicInstanceBuilder.getTerm().id
+        Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
         updateAnnotation.term = [idTerm1, idTerm2]
 
         def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -225,7 +225,7 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationBadGeomEmpty() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
         def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -233,7 +233,7 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationBadGeomNull() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
         def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -241,7 +241,7 @@ class UserAnnotationTests  {
     }
 
     void testAddUserAnnotationImageNotExist() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
         def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -249,7 +249,7 @@ class UserAnnotationTests  {
     }
 
     void testEditUserAnnotation() {
-        UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = UserAnnotationAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -259,21 +259,21 @@ class UserAnnotationTests  {
 
         def showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = UserAnnotationAPI.undo()
         assert 200 == result.code
         showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = UserAnnotationAPI.redo()
         assert 200 == result.code
         showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditUserAnnotationNotExist() {
-        UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         UserAnnotation annotationToEdit = UserAnnotation.get(annotationToAdd.id)
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
         jsonAnnotation.id = "-99"
@@ -282,7 +282,7 @@ class UserAnnotationTests  {
     }
 
     void testEditUserAnnotationWithBadGeometry() {
-        UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
         def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -290,7 +290,7 @@ class UserAnnotationTests  {
     }
 
     void testDeleteUserAnnotation() {
-        def annotationToDelete = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToDelete = BasicInstanceBuilder.getUserAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         def id = annotationToDelete.id
         def result = UserAnnotationAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -318,7 +318,7 @@ class UserAnnotationTests  {
     }
 
     void testDeleteUserAnnotationWithData() {
-        def annotTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        def annotTerm = BasicInstanceBuilder.getAnnotationTerm()
         def annotationToDelete = annotTerm.userAnnotation
         def result = UserAnnotationAPI.delete(annotationToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -326,24 +326,25 @@ class UserAnnotationTests  {
 
     void testListingUserAnnotationWithoutTerm() {
         //create annotation without term
-        User user = BasicInstance.getNewUser()
-        Project project = BasicInstance.createOrGetBasicProjectWithRight()
-        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        User user = BasicInstanceBuilder.getUser()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        Infos.addUserRight(user.username,project)
+        Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
 
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
 
 
-        UserAnnotation annotationWithoutTerm = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotationWithoutTerm = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotationWithoutTerm.project = project
         annotationWithoutTerm.image = image
         annotationWithoutTerm.user = user
         assert annotationWithoutTerm.save(flush: true)
 
-        AnnotationTerm at = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist()
         at.term.ontology = ontology
         at.term.save(flush: true)
         at.user = user
@@ -354,10 +355,10 @@ class UserAnnotationTests  {
         annotationWithTerm.image = image
         assert annotationWithTerm.save(flush: true)
 
-        AnnotationTerm at2 = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm at2 = BasicInstanceBuilder.getAnnotationTermNotExist()
         at2.term.ontology = ontology
         at2.term.save(flush: true)
-        at2.user = BasicInstance.getOldUser()
+        at2.user = BasicInstanceBuilder.getUser()
         at2.save(flush: true)
         UserAnnotation annotationWithTermFromOtherUser = at.userAnnotation
         annotationWithTermFromOtherUser.user = user
@@ -389,25 +390,26 @@ class UserAnnotationTests  {
 
     void testListingUserAnnotationWithSeveralTerm() {
         //create annotation without term
-        User user = BasicInstance.getNewUser()
-        Project project = BasicInstance.createOrGetBasicProjectWithRight()
-        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        User user = BasicInstanceBuilder.getUser()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        Infos.addUserRight(user.username,project)
+        Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
 
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
 
         //annotation with no multiple term
-        UserAnnotation annotationWithNoTerm = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotationWithNoTerm = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotationWithNoTerm.project = project
         annotationWithNoTerm.image = image
         annotationWithNoTerm.user = user
         assert annotationWithNoTerm.save(flush: true)
 
         //annotation with multiple term
-        AnnotationTerm at = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist()
         at.term.ontology = ontology
         at.term.save(flush: true)
         at.user = user
@@ -417,7 +419,7 @@ class UserAnnotationTests  {
         annotationWithMultipleTerm.project = project
         annotationWithMultipleTerm.image = image
         assert annotationWithMultipleTerm.save(flush: true)
-        AnnotationTerm at2 = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm at2 = BasicInstanceBuilder.getAnnotationTermNotExist()
         at2.term.ontology = ontology
         at2.term.save(flush: true)
         at2.user = user
@@ -426,6 +428,7 @@ class UserAnnotationTests  {
 
         //list annotation without term with this user
         def result = UserAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray

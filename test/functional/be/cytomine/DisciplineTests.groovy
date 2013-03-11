@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.project.Discipline
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DisciplineAPI
 import grails.converters.JSON
@@ -31,14 +31,14 @@ class DisciplineTests  {
   }
 
   void testShowDisciplineWithCredential() {
-      def result = DisciplineAPI.show(BasicInstance.createOrGetBasicDiscipline().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.show(BasicInstanceBuilder.getDiscipline().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
 
   void testAddDisciplineCorrect() {
-      def disciplineToAdd = BasicInstance.getBasicDisciplineNotExist()
+      def disciplineToAdd = BasicInstanceBuilder.getDisciplineNotExist()
       def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int idDiscipline = result.data.id
@@ -60,13 +60,13 @@ class DisciplineTests  {
   }
 
   void testAddDisciplineAlreadyExist() {
-      def disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+      def disciplineToAdd = BasicInstanceBuilder.getDiscipline()
       def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }
 
   void testUpdateDisciplineCorrect() {
-      Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+      Discipline disciplineToAdd = BasicInstanceBuilder.getDiscipline()
 
       def data = UpdateData.createUpdateSet(disciplineToAdd)
       def result = DisciplineAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -77,22 +77,22 @@ class DisciplineTests  {
 
       def showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compare(data.mapNew, json)
+      BasicInstanceBuilder.compare(data.mapNew, json)
 
       showResult = DisciplineAPI.undo()
       assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+      BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = DisciplineAPI.redo()
       assert 200 == result.code
       showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+      BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateDisciplineNotExist() {
-      Discipline disciplineWithOldName = BasicInstance.createOrGetBasicDiscipline()
-      Discipline disciplineWithNewName = BasicInstance.getBasicDisciplineNotExist()
+      Discipline disciplineWithOldName = BasicInstanceBuilder.getDiscipline()
+      Discipline disciplineWithNewName = BasicInstanceBuilder.getDisciplineNotExist()
       disciplineWithNewName.save(flush: true)
       Discipline disciplineToEdit = Discipline.get(disciplineWithNewName.id)
       def jsonDiscipline = disciplineToEdit.encodeAsJSON()
@@ -105,8 +105,8 @@ class DisciplineTests  {
   }
 
   void testUpdateDisciplineWithNameAlreadyExist() {
-      Discipline disciplineWithOldName = BasicInstance.createOrGetBasicDiscipline()
-      Discipline disciplineWithNewName = BasicInstance.getBasicDisciplineNotExist()
+      Discipline disciplineWithOldName = BasicInstanceBuilder.getDiscipline()
+      Discipline disciplineWithNewName = BasicInstanceBuilder.getDisciplineNotExist()
       disciplineWithNewName.save(flush: true)
       Discipline disciplineToEdit = Discipline.get(disciplineWithNewName.id)
       def jsonDiscipline = disciplineToEdit.encodeAsJSON()
@@ -118,7 +118,7 @@ class DisciplineTests  {
   }
     
     void testEditDisciplineWithBadName() {
-        Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+        Discipline disciplineToAdd = BasicInstanceBuilder.getDiscipline()
         Discipline disciplineToEdit = Discipline.get(disciplineToAdd.id)
         def jsonDiscipline = disciplineToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonDiscipline)
@@ -129,7 +129,7 @@ class DisciplineTests  {
     }
 
   void testDeleteDiscipline() {
-      def disciplineToDelete = BasicInstance.getBasicDisciplineNotExist()
+      def disciplineToDelete = BasicInstanceBuilder.getDisciplineNotExist()
       assert disciplineToDelete.save(flush: true)!= null
       def id = disciplineToDelete.id
       def result = DisciplineAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -157,7 +157,7 @@ class DisciplineTests  {
   }
 
   void testDeleteDisciplineWithProject() {
-      def project = BasicInstance.createOrGetBasicProject()
+      def project = BasicInstanceBuilder.getProject()
       def disciplineToDelete = project.discipline
       def result = DisciplineAPI.delete(disciplineToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 400 == result.code

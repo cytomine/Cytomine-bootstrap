@@ -4,7 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.test.http.RelationTermAPI
 import be.cytomine.ontology.RelationTerm
@@ -24,13 +24,13 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
   void testRelationTermSecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new relationterm (user1)
-      def rel = BasicInstance.getBasicRelationTermNotExist()
+      def rel = BasicInstanceBuilder.getRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -55,10 +55,10 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
   void testRelationTermSecurityForOntologyCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new RelationTerm (user1)
-      def rel = BasicInstance.getBasicRelationTermNotExist()
+      def rel = BasicInstanceBuilder.getRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -75,12 +75,12 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
   void testRelationTermSecurityForProjectUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new RelationTerm (user1)
-      def rel = BasicInstance.getBasicRelationTermNotExist()
+      def rel = BasicInstanceBuilder.getRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -88,9 +88,9 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       RelationTerm relationterm = RelationTerm.findWhere('relation': Relation.read(json.relationterm.relation), 'term1': Term.read(json.relationterm.term1), 'term2': Term.read(json.relationterm.term2))
       println "relationterm=${relationterm}"
 
-      Project project = BasicInstance.createBasicProjectNotExist()
+      Project project = BasicInstanceBuilder.getProjectNotExist(true)
       project.ontology = relationterm.term1.ontology
-      BasicInstance.saveDomain(project)
+      BasicInstanceBuilder.saveDomain(project)
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -122,12 +122,12 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
   void testRelationTermSecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new RelationTerm (user1)
-      def rel = BasicInstance.getBasicRelationTermNotExist()
+      def rel = BasicInstanceBuilder.getRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -143,10 +143,10 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
   void testRelationTermSecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new RelationTerm (user1)
-      def rel = BasicInstance.getBasicRelationTermNotExist()
+      def rel = BasicInstanceBuilder.getRelationTermNotExist()
       Infos.addUserRight(user1,rel.term1.ontology)
       def result = RelationTermAPI.create(rel.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code

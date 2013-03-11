@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import grails.plugins.selenium.SeleniumAware
 
@@ -9,7 +9,7 @@ import grails.plugins.selenium.SeleniumAware
 public class AbstractWebProject extends AbstractWebCytomine{
 
     void openProjectPageAndWait() {
-        Project project = getBasicProject()
+        Project project = getProject()
         Infos.addUserRight(Infos.GOODLOGIN,project)
         selenium.open("/")
         selenium.waitForTextPresent(project.name.toUpperCase());
@@ -18,8 +18,8 @@ public class AbstractWebProject extends AbstractWebCytomine{
 
     void openAddProjectDialogAndWait() {
         click("id=projectaddbutton")
-        selenium.waitForElementPresent("css=#projectdiscipline > option[value=\""+ getBasicProject().discipline.id + "\"]")
-        selenium.waitForElementPresent("css=#projectontology > option[value=\""+getBasicProject().ontology.id+"\"]")
+        selenium.waitForElementPresent("css=#projectdiscipline > option[value=\""+ getProject().discipline.id + "\"]")
+        selenium.waitForElementPresent("css=#projectontology > option[value=\""+getProject().ontology.id+"\"]")
         selenium.waitForTextPresent("Loïc Rollus")
     }
 
@@ -61,19 +61,19 @@ public class AbstractWebProject extends AbstractWebCytomine{
         }
     }
 
-    Project getBasicProject() {
-        return BasicInstance.createOrGetBasicProject()
+    Project getProject() {
+        return BasicInstanceBuilder.createOrGetBasicProject()
     }
 
-    Project createBasicProjectNotExist() {
-        Project project = BasicInstance.getBasicProjectNotExist()
+    Project getProjectNotExist(true) {
+        Project project = BasicInstanceBuilder.getProjectNotExist()
         project.save(flush: true)
         Infos.addUserRight(Infos.GOODLOGIN,project)
         return project
     }
 
-    Project createBasicProjectNotExist(String name) {
-        Project project = BasicInstance.getBasicProjectNotExist()
+    Project getProjectNotExist(trueString name) {
+        Project project = BasicInstanceBuilder.getProjectNotExist()
         project.name = name
         project.save(flush: true)
         Infos.addUserRight(Infos.GOODLOGIN,project)

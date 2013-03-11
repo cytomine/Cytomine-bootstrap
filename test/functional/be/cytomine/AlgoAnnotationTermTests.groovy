@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.UserJob
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 import be.cytomine.test.http.AnnotationTermAPI
 import grails.converters.JSON
@@ -17,7 +17,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class AlgoAnnotationTermTests  {
 
     void testListAlgoAnnotationTerm() {
-        def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+        def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTerm()
         def result = AnnotationTermAPI.listAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -25,7 +25,7 @@ class AlgoAnnotationTermTests  {
 
 
     void testGetAlgoAnnotationTermWithCredential() {
-        def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+        def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTerm()
         def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,annotationTermToAdd.userJob.id,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -34,7 +34,7 @@ class AlgoAnnotationTermTests  {
 
 
     void testGetAlgoAnnotationTerm() {
-        def annotationTermToAdd = BasicInstance.createOrGetBasicAlgoAnnotationTerm()
+        def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTerm()
 
         def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.retrieveAnnotationDomain().id,annotationTermToAdd.term.id,null,annotationTermToAdd.userJob.username,"PasswordUserJob")
         assert 200 == result.code
@@ -43,7 +43,7 @@ class AlgoAnnotationTermTests  {
     }
 
     void testAddAlgoAnnotationTermCorrect() {
-        def annotationTermToAdd = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         UserJob currentUserJob = annotationTermToAdd.userJob
 
         annotationTermToAdd.discard()

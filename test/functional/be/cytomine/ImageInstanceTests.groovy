@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import grails.converters.JSON
@@ -20,8 +20,8 @@ import be.cytomine.utils.UpdateData
 class ImageInstanceTests  {
 
     void testListImagesInstanceByProject() {
-        BasicInstance.createOrGetBasicImageInstance()
-        def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstanceBuilder.getImageInstance()
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -32,16 +32,16 @@ class ImageInstanceTests  {
 
 
     void testListImagesInstanceByProjectWithBorder() {
-        BasicInstance.createOrGetBasicImageInstance()
-        def result = ImageInstanceAPI.listByProject(BasicInstance.createOrGetBasicProject().id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstanceBuilder.getImageInstance()
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListImagesInstanceWithTreeStructure() {
-        BasicInstance.createOrGetBasicImageInstance()
-        def result = ImageInstanceAPI.listByProjectTree(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstanceBuilder.getImageInstance()
+        def result = ImageInstanceAPI.listByProjectTree(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
     }
@@ -54,7 +54,7 @@ class ImageInstanceTests  {
 
 
     void testGetImageInstanceWithCredential() {
-        def result = ImageInstanceAPI.show(BasicInstance.createOrGetBasicImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.show(BasicInstanceBuilder.getImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -62,7 +62,7 @@ class ImageInstanceTests  {
 
     void testAddImageInstanceCorrect() {
 
-        def result = ImageInstanceAPI.create(BasicInstance.getBasicImageInstanceNotExist().encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist().encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         ImageInstance image = result.data
         Long idImage = image.id
@@ -85,14 +85,14 @@ class ImageInstanceTests  {
     }
 
     void testAddImageInstanceAlreadyExist() {
-        def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
+        def imageToAdd = BasicInstanceBuilder.getImageInstanceNotExist()
         def result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
 
     void testaddImageInstanceWithUnexistingAbstractImage() {
-        def imageToAdd = BasicInstance.getBasicImageInstanceNotExist()
+        def imageToAdd = BasicInstanceBuilder.getImageInstanceNotExist()
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.baseImage = -99
@@ -102,7 +102,7 @@ class ImageInstanceTests  {
     }
 
     void testaddImageInstanceWithUnexistingProject() {
-        def imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+        def imageToAdd = BasicInstanceBuilder.getImageInstance()
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
@@ -112,7 +112,7 @@ class ImageInstanceTests  {
     }
 
     void testEditImageInstance() {
-        ImageInstance imageInstanceToAdd = BasicInstance.createOrGetBasicImageInstance()
+        ImageInstance imageInstanceToAdd = BasicInstanceBuilder.getImageInstance()
         def data = UpdateData.createUpdateSet(imageInstanceToAdd)
         def result = ImageInstanceAPI.update(data.oldData.id, data.newData.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -121,7 +121,7 @@ class ImageInstanceTests  {
         int idImageInstance = json.imageinstance.id
         def showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = ImageInstanceAPI.undo()
         assert 200==showResult.code
@@ -129,18 +129,18 @@ class ImageInstanceTests  {
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
 
-        BasicInstance.compare(data.mapOld, json)
+        BasicInstanceBuilder.compare(data.mapOld, json)
 
         showResult = ImageInstanceAPI.redo()
         assert 200==showResult.code
 
         showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
     }
 
     void testEditImageInstanceWithBadProject() {
-        ImageInstance imageToEdit = BasicInstance.createOrGetBasicImageInstance()
+        ImageInstance imageToEdit = BasicInstanceBuilder.getImageInstance()
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
         def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -148,7 +148,7 @@ class ImageInstanceTests  {
     }
 
     void testEditImageInstanceWithBadUser() {
-        ImageInstance imageToEdit = BasicInstance.createOrGetBasicImageInstance()
+        ImageInstance imageToEdit = BasicInstanceBuilder.getImageInstance()
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.user = -99
@@ -157,7 +157,7 @@ class ImageInstanceTests  {
     }
 
     void testEditImageInstanceWithBadImage() {
-        ImageInstance imageToEdit = BasicInstance.createOrGetBasicImageInstance()
+        ImageInstance imageToEdit = BasicInstanceBuilder.getImageInstance()
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.baseImage = -99
@@ -167,7 +167,7 @@ class ImageInstanceTests  {
     }
 
     void testDeleteImageInstance() {
-        def imageInstanceToDelete = BasicInstance.getBasicImageInstanceNotExist()
+        def imageInstanceToDelete = BasicInstanceBuilder.getImageInstanceNotExist()
         assert imageInstanceToDelete.save(flush: true) != null
         def idImage = imageInstanceToDelete.id
 
@@ -191,22 +191,22 @@ class ImageInstanceTests  {
     }
 
     void testDeleteImageInstanceNoExist() {
-        def imageInstanceToDelete = BasicInstance.getBasicImageInstanceNotExist()
+        def imageInstanceToDelete = BasicInstanceBuilder.getImageInstanceNotExist()
         def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testGetNextImageInstance() {
 
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
 
-        def image1 = BasicInstance.getBasicImageInstanceNotExist()
+        def image1 = BasicInstanceBuilder.getImageInstanceNotExist()
         image1.project = project
-        BasicInstance.saveDomain(image1)
+        BasicInstanceBuilder.saveDomain(image1)
 
-        def image2 = BasicInstance.getBasicImageInstanceNotExist()
+        def image2 = BasicInstanceBuilder.getImageInstanceNotExist()
         image2.project = project
-        BasicInstance.saveDomain(image2)
+        BasicInstanceBuilder.saveDomain(image2)
 
         def result = ImageInstanceAPI.next(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code

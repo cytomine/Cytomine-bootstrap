@@ -28,7 +28,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.ontology.AnnotationFilter
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 /**
  * User: lrollus
@@ -44,24 +44,24 @@ class UpdateData {
         String oldFilename = "oldName"
         String newFilename = "newName"
 
-        Instrument oldScanner = BasicInstance.createOrGetBasicScanner()
-        Instrument newScanner = BasicInstance.getNewScannerNotExist()
+        Instrument oldScanner = BasicInstanceBuilder.getScanner()
+        Instrument newScanner = BasicInstanceBuilder.getNewScannerNotExist()
         newScanner.save(flush:true)
 
-        Sample oldSlide = BasicInstance.createOrGetBasicSlide()
-        Sample newSlide = BasicInstance.getBasicSlideNotExist()
+        Sample oldSlide = BasicInstanceBuilder.getSlide()
+        Sample newSlide = BasicInstanceBuilder.getSlideNotExist()
         newSlide.save(flush:true)
 
-        User oldUser = BasicInstance.createOrGetBasicUser()
-        User newUser = BasicInstance.getBasicUserNotExist()
-        newUser.save(flush:true)
+        User user2 = BasicInstanceBuilder.getUser()
+        User user1 = BasicInstanceBuilder.getUserNotExist()
+        user1.save(flush:true)
 
 
         String oldPath = "oldPath"
         String newPath = "newPath"
 
-        Mime oldMime = BasicInstance.createOrGetBasicMime() //TODO: replace by a mime different with image server
-        Mime newMime = BasicInstance.createOrGetBasicMime()  //jp2
+        Mime oldMime = BasicInstanceBuilder.getMime() //TODO: replace by a mime different with image server
+        Mime newMime = BasicInstanceBuilder.getMime()  //jp2
 
         Integer oldWidth = 1000
         Integer newWidth = 9000
@@ -70,13 +70,13 @@ class UpdateData {
         Integer newHeight = 900000
 
 
-        def mapNew = ["filename":newFilename,"scanner":newScanner.id,"sample":newSlide.id,"path":newPath,"mime":newMime.id,"width":newWidth,"height":newHeight]
-        def mapOld = ["filename":oldFilename,"scanner":oldScanner.id,"sample":oldSlide.id,"path":oldPath,"mime":oldMime.id,"width":oldWidth,"height":oldHeight]
+        def mapNew = ["filename":newFilename,"scanner":newScanner.id,"path":newPath,"mime":newMime.extension,"width":newWidth,"height":newHeight]
+        def mapOld = ["filename":oldFilename,"scanner":oldScanner.id,"path":oldPath,"mime":oldMime.extension,"width":oldWidth,"height":oldHeight]
 
         /* Create a old AbstractImage with point 1111 1111 */
         /* Create a old image */
         log.info("create image")
-        AbstractImage imageToAdd = BasicInstance.createOrGetBasicAbstractImage()
+        AbstractImage imageToAdd = BasicInstanceBuilder.getAbstractImage()
         imageToAdd.filename = oldFilename
         imageToAdd.scanner = oldScanner
         imageToAdd.sample = oldSlide
@@ -109,17 +109,17 @@ class UpdateData {
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-        UserJob oldUser = annotation.user
-        UserJob newUser = annotation.user
+        UserJob user2 = annotation.user
+        UserJob user1 = annotation.user
 
-        def mapNew = ["location":newGeom,"user":newUser.id]
-        def mapOld = ["location":oldGeom,"user":oldUser.id]
+        def mapNew = ["location":newGeom,"user":user1.id]
+        def mapOld = ["location":oldGeom,"user":user2.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create algoAnnotation")
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         annotationToAdd.location =  new WKTReader().read(oldGeom)
-        annotationToAdd.user = oldUser
+        annotationToAdd.user = user2
         assert (annotationToAdd.save(flush:true) != null)
 
         /* Encode a niew annotation with point 9999 9999 */
@@ -128,7 +128,7 @@ class UpdateData {
         def jsonAnnotation = jsonEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotation)
         jsonUpdate.location = newGeom
-        jsonUpdate.user = newUser.id
+        jsonUpdate.user = user1.id
         jsonAnnotation = jsonUpdate.encodeAsJSON()
 
         return ['oldData':annotation,'newData':jsonAnnotation,'mapOld':mapOld,'mapNew':mapNew]
@@ -140,11 +140,11 @@ class UpdateData {
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-        def oldUser = annotation.user
-        def newUser = annotation.user
+        def user2 = annotation.user
+        def user1 = annotation.user
 
-        def mapNew = ["location":newGeom,"user":newUser.id]
-        def mapOld = ["location":oldGeom,"user":oldUser.id]
+        def mapNew = ["location":newGeom,"user":user1.id]
+        def mapOld = ["location":oldGeom,"user":user2.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create AnnotationDomain")
@@ -153,9 +153,9 @@ class UpdateData {
 
         if(annotation instanceof UserAnnotation) {
             log.info("create userAnnotation")
-            UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+            UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
             annotationToAdd.location =  new WKTReader().read(oldGeom)
-            annotationToAdd.user = oldUser
+            annotationToAdd.user = user2
             assert (annotationToAdd.save(flush:true) != null)
 
             /* Encode a niew annotation with point 9999 9999 */
@@ -164,12 +164,12 @@ class UpdateData {
             jsonAnnotation = jsonEdit.encodeAsJSON()
             def jsonUpdate = JSON.parse(jsonAnnotation)
             jsonUpdate.location = newGeom
-            jsonUpdate.user = newUser.id
+            jsonUpdate.user = user1.id
             jsonAnnotation = jsonUpdate.encodeAsJSON()
         } else if(annotation instanceof AlgoAnnotation) {
-            AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+            AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
             annotationToAdd.location =  new WKTReader().read(oldGeom)
-            annotationToAdd.user = oldUser
+            annotationToAdd.user = user2
             assert (annotationToAdd.save(flush:true) != null)
 
             /* Encode a niew annotation with point 9999 9999 */
@@ -178,7 +178,7 @@ class UpdateData {
             jsonAnnotation = jsonEdit.encodeAsJSON()
             def jsonUpdate = JSON.parse(jsonAnnotation)
             jsonUpdate.location = newGeom
-            jsonUpdate.user = newUser.id
+            jsonUpdate.user = user1.id
             jsonAnnotation = jsonUpdate.encodeAsJSON()
         } else {
             throw new Exception("Type is not supported!")
@@ -193,7 +193,7 @@ class UpdateData {
         def mapNew = ["name":newName]
         def mapOld = ["name":oldName]
         /* Create a Name1 discipline */
-        Discipline disciplineToAdd = BasicInstance.createOrGetBasicDiscipline()
+        Discipline disciplineToAdd = BasicInstanceBuilder.getDiscipline()
         disciplineToAdd.name = oldName
         assert (disciplineToAdd.save(flush:true) != null)
         /* Encode a niew discipline Name2*/
@@ -212,7 +212,7 @@ class UpdateData {
         def mapNew = ["name":newName]
         def mapOld = ["name":oldName]
         /* Create a Name1 sample */
-        Storage storageToAdd = BasicInstance.createOrGetBasicStorage()
+        Storage storageToAdd = BasicInstanceBuilder.getStorage()
         storageToAdd.name = oldName
         assert (storageToAdd.save(flush:true) != null)
         /* Encode a new sample Name2*/
@@ -232,7 +232,7 @@ class UpdateData {
         def mapNew = ["name":newName]
         def mapOld = ["name":oldName]
         /* Create a Name1 sample */
-        Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
+        Sample sampleToAdd = BasicInstanceBuilder.getSample()
         sampleToAdd.name = oldName
         assert (sampleToAdd.save(flush:true) != null)
         /* Encode a niew sample Name2*/
@@ -251,7 +251,7 @@ class UpdateData {
         def mapNew = ["name":newName]
         def mapOld = ["name":oldName]
         /* Create a Name1 group */
-        Group groupToAdd = BasicInstance.createOrGetBasicGroup()
+        Group groupToAdd = BasicInstanceBuilder.getGroup()
         groupToAdd.name = oldName
         assert (groupToAdd.save(flush:true) != null)
         /* Encode a niew group Name2*/
@@ -266,27 +266,27 @@ class UpdateData {
 
     static def createUpdateSet(ImageInstance image) {
         log.info "update ImageInstance"
-        Project oldProject = BasicInstance.createOrGetBasicProject()
-        Project newProject = BasicInstance.getBasicProjectNotExist()
+        Project oldProject = BasicInstanceBuilder.getProject()
+        Project newProject = BasicInstanceBuilder.getProjectNotExist()
         newProject.save(flush: true)
 
-        AbstractImage oldImage = BasicInstance.createOrGetBasicAbstractImage()
-        AbstractImage newImage = BasicInstance.getBasicAbstractImageNotExist()
+        AbstractImage oldImage = BasicInstanceBuilder.getAbstractImage()
+        AbstractImage newImage = BasicInstanceBuilder.getAbstractImageNotExist()
         newImage.save(flush: true)
 
-        User oldUser = BasicInstance.createOrGetBasicUser()
-        User newUser = BasicInstance.getBasicUserNotExist()
-        newUser.save(flush: true)
+        User user2 = BasicInstanceBuilder.getUser()
+        User user1 = BasicInstanceBuilder.getUserNotExist()
+        user1.save(flush: true)
 
-        def mapNew = ["project": newProject.id, "baseImage": newImage.id, "user": newUser.id]
-        def mapOld = ["project": oldProject.id, "baseImage": oldImage.id, "user": oldUser.id]
+        def mapNew = ["project": newProject.id, "baseImage": newImage.id, "user": user1.id]
+        def mapOld = ["project": oldProject.id, "baseImage": oldImage.id, "user": user2.id]
 
 
         /* Create a old image */
-        ImageInstance imageToAdd = BasicInstance.createOrGetBasicImageInstance()
+        ImageInstance imageToAdd = BasicInstanceBuilder.getImageInstance()
         imageToAdd.project = oldProject;
         imageToAdd.baseImage = oldImage;
-        imageToAdd.user = oldUser;
+        imageToAdd.user = user2;
         imageToAdd.save(flush: true)
 
         /* Encode a new image to modify */
@@ -296,7 +296,7 @@ class UpdateData {
 
         jsonUpdate.project = newProject.id
         jsonUpdate.baseImage = newImage.id
-        jsonUpdate.user = newUser.id
+        jsonUpdate.user = user1.id
 
         jsonImage = jsonUpdate.encodeAsJSON()
         return ['oldData':image,'newData':jsonUpdate,'mapOld':mapOld,'mapNew':mapNew]
@@ -312,7 +312,7 @@ class UpdateData {
 
         /* Create a Name1 job */
         log.info("create job")
-        Job jobToAdd = BasicInstance.createOrGetBasicJob()
+        Job jobToAdd = BasicInstanceBuilder.getJob()
         jobToAdd.progress = oldProgress
         assert (jobToAdd.save(flush: true) != null)
 
@@ -329,8 +329,8 @@ class UpdateData {
         String oldName = "Name1"
         String newName = Math.random()+""
 
-        Job oldJob = BasicInstance.createOrGetBasicJob()
-        Job newJob = BasicInstance.getBasicJobNotExist()
+        Job oldJob = BasicInstanceBuilder.getJob()
+        Job newJob = BasicInstanceBuilder.getJobNotExist()
         newJob.save(flush: true)
 
         def mapNew = ["key": newName, "job": newJob.id]
@@ -355,7 +355,7 @@ class UpdateData {
 
         /* Create a Name1 jobparameter */
         log.info("create jobparameter")
-        JobParameter jobparameterToAdd = BasicInstance.createOrGetBasicJobParameter()
+        JobParameter jobparameterToAdd = BasicInstanceBuilder.getJobParameter()
         jobparameterToAdd.value = oldValue
         assert (jobparameterToAdd.save(flush: true) != null)
 
@@ -375,7 +375,7 @@ class UpdateData {
         def mapNew = ["name":newName]
         def mapOld = ["name":oldName]
         /* Create a Name1 ontology */
-        Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
         ontologyToAdd.name = oldName
         assert (ontologyToAdd.save(flush:true) != null)
         /* Encode a niew ontology Name2*/
@@ -392,8 +392,8 @@ class UpdateData {
         String oldName = "Name1"
         String newName = Math.random()+""
 
-        Ontology oldOtology = BasicInstance.createOrGetBasicOntology()
-        Ontology newOtology = BasicInstance.getBasicOntologyNotExist()
+        Ontology oldOtology = BasicInstanceBuilder.getOntology()
+        Ontology newOtology = BasicInstanceBuilder.getOntologyNotExist()
         newOtology.save(flush: true)
 
         String oldDescription = "DescriptionOld"
@@ -432,21 +432,21 @@ class UpdateData {
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-        User oldUser = annotation.user
-        User newUser = annotation.user
+        User user2 = annotation.user
+        User user1 = annotation.user
 
-        Term oldTerm = BasicInstance.createOrGetBasicTerm()
-        Term newTerm = BasicInstance.getBasicTermNotExist()
+        Term oldTerm = BasicInstanceBuilder.getTerm()
+        Term newTerm = BasicInstanceBuilder.getTermNotExist()
         newTerm.save(flush: true)
 
-        def mapNew = ["location":newGeom,"user":newUser.id,"terms":[newTerm.id]]
-        def mapOld = ["location":oldGeom,"user":oldUser.id,"terms":[oldTerm.id]]
+        def mapNew = ["location":newGeom,"user":user1.id,"terms":[newTerm.id]]
+        def mapOld = ["location":oldGeom,"user":user2.id,"terms":[oldTerm.id]]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create reviewedannotation")
-        ReviewedAnnotation annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         annotationToAdd.location =  new WKTReader().read(oldGeom)
-        annotationToAdd.user = oldUser
+        annotationToAdd.user = user2
         annotationToAdd.addToTerms(oldTerm)
         assert (annotationToAdd.save(flush:true) != null)
 
@@ -456,7 +456,7 @@ class UpdateData {
         def jsonAnnotation = jsonEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotation)
         jsonUpdate.location = newGeom
-        jsonUpdate.user = newUser.id
+        jsonUpdate.user = user1.id
         jsonUpdate.terms = [newTerm.id]
         jsonAnnotation = jsonUpdate.encodeAsJSON()
         return ['oldData':annotation,'newData':jsonAnnotation,'mapOld':mapOld,'mapNew':mapNew]
@@ -472,7 +472,7 @@ class UpdateData {
         def mapNew = ["name": newName,"serviceName" : newNameService]
         def mapOld = ["name": oldName,"serviceName" : oldNameService]
         /* Create a Name1 software */
-        Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+        Software softwareToAdd = BasicInstanceBuilder.getSoftware()
         softwareToAdd.name = oldName
         softwareToAdd.serviceName = oldNameService
         assert (softwareToAdd.save(flush:true) != null)
@@ -496,7 +496,7 @@ class UpdateData {
 
         /* Create a Name1 softwareparameter */
         log.info("create softwareparameter")
-        SoftwareParameter softwareparameterToAdd = BasicInstance.createOrGetBasicSoftwareParameter()
+        SoftwareParameter softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameter()
         softwareparameterToAdd.name = oldValue
         assert (softwareparameterToAdd.save(flush: true) != null)
 
@@ -520,8 +520,8 @@ class UpdateData {
         String oldColor = "000000"
         String newColor = "FFFFFF"
 
-        Ontology oldOntology = BasicInstance.createOrGetBasicOntology()
-        Ontology newOntology = BasicInstance.getBasicOntologyNotExist()
+        Ontology oldOntology = BasicInstanceBuilder.getOntology()
+        Ontology newOntology = BasicInstanceBuilder.getOntologyNotExist()
         newOntology.save(flush:true)
 
         def mapOld = ["name":oldName,"comment":oldComment,"color":oldColor,"ontology":oldOntology.id]
@@ -530,7 +530,7 @@ class UpdateData {
 
         /* Create a Name1 term */
         log.info("create term")
-        Term termToAdd = BasicInstance.createOrGetBasicTerm()
+        Term termToAdd = BasicInstanceBuilder.getTerm()
         termToAdd.name = oldName
         termToAdd.comment = oldComment
         termToAdd.color = oldColor
@@ -555,17 +555,17 @@ class UpdateData {
         String oldGeom = "POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"
         String newGeom = "POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))"
 
-        User oldUser = annotation.user
-        User newUser = annotation.user
+        User user2 = annotation.user
+        User user1 = annotation.user
 
-        def mapNew = ["location":newGeom,"user":newUser.id]
-        def mapOld = ["location":oldGeom,"user":oldUser.id]
+        def mapNew = ["location":newGeom,"user":user1.id]
+        def mapOld = ["location":oldGeom,"user":user2.id]
 
         /* Create a old annotation with point 1111 1111 */
         log.info("create userAnnotation")
-        UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         annotationToAdd.location =  new WKTReader().read(oldGeom)
-        annotationToAdd.user = oldUser
+        annotationToAdd.user = user2
         assert (annotationToAdd.save(flush:true) != null)
 
         /* Encode a niew annotation with point 9999 9999 */
@@ -574,7 +574,7 @@ class UpdateData {
         def jsonAnnotation = jsonEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotation)
         jsonUpdate.location = newGeom
-        jsonUpdate.user = newUser.id
+        jsonUpdate.user = user1.id
         jsonAnnotation = jsonUpdate.encodeAsJSON()
         return ['oldData':annotation,'newData':jsonAnnotation,'mapOld':mapOld,'mapNew':mapNew]
     }
@@ -591,21 +591,21 @@ class UpdateData {
         String oldEmail = "old@email.com"
         String newEmail = "new@email.com"
 
-        String oldUsername = "Username1"
-        String newUsername = "Username2"
+        String user2name = "Username1"
+        String user1name = "Username2"
 
 
-        def mapOld = ["firstname":oldFirstname,"lastname":oldLastname,"email":oldEmail,"username":oldUsername]
-        def mapNew = ["firstname":newFirstname,"lastname":newLastname,"email":newEmail,"username":newUsername]
+        def mapOld = ["firstname":oldFirstname,"lastname":oldLastname,"email":oldEmail,"username":user2name]
+        def mapNew = ["firstname":newFirstname,"lastname":newLastname,"email":newEmail,"username":user1name]
 
 
         /* Create a Name1 user */
         log.info("create user")
-        User userToAdd = BasicInstance.createOrGetBasicUser()
+        User userToAdd = BasicInstanceBuilder.getUser()
         userToAdd.firstname = oldFirstname
         userToAdd.lastname = oldLastname
         userToAdd.email = oldEmail
-        userToAdd.username = oldUsername
+        userToAdd.username = user2name
         assert (userToAdd.save(flush:true) != null)
 
         /* Encode a niew user Name2*/
@@ -615,7 +615,7 @@ class UpdateData {
         jsonUpdate.firstname = newFirstname
         jsonUpdate.lastname = newLastname
         jsonUpdate.email = newEmail
-        jsonUpdate.username = newUsername
+        jsonUpdate.username = user1name
         jsonUser = jsonUpdate.encodeAsJSON()
         return ['oldData':user,'newData':jsonUser,'mapOld':mapOld,'mapNew':mapNew]
     }
@@ -631,7 +631,7 @@ class UpdateData {
         def mapNew = ["value":newValue,"key":newKey]
         def mapOld = ["value":oldValue,"key":oldKey]
 
-        AnnotationProperty annotationPropertyToAdd = BasicInstance.createOrGetBasicAnnotationProperty()
+        AnnotationProperty annotationPropertyToAdd = BasicInstanceBuilder.getAnnotationProperty()
         annotationPropertyToAdd.value = oldValue
         assert (annotationPropertyToAdd.save(flush: true) != null)
 

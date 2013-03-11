@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.Job
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobAPI
 import grails.converters.JSON
@@ -33,7 +33,7 @@ class JobTests  {
     }
 
     void testListJobBySoftwareAndProjectWithCredential() {
-        Job job = BasicInstance.createOrGetBasicJob()
+        Job job = BasicInstanceBuilder.getJob()
         def result = JobAPI.listBySoftwareAndProject(job.software.id,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -47,7 +47,7 @@ class JobTests  {
     }
 
     void testListJobBySoftwareAndProjectWithCredentialLight() {
-        Job job = BasicInstance.createOrGetBasicJob()
+        Job job = BasicInstanceBuilder.getJob()
         def result = JobAPI.listBySoftwareAndProject(job.software.id,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -55,14 +55,14 @@ class JobTests  {
     }
 
     void testShowJobWithCredential() {
-        def result = JobAPI.show(BasicInstance.createOrGetBasicJob().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobAPI.show(BasicInstanceBuilder.getJob().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
 
     void testAddJobCorrect() {
-        def jobToAdd = BasicInstance.getBasicJobNotExist()
+        def jobToAdd = BasicInstanceBuilder.getJobNotExist()
         def result = JobAPI.create(jobToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idJob = result.data.id
@@ -72,7 +72,7 @@ class JobTests  {
     }
 
     void testAddJobWithBadSoftware() {
-        Job jobToAdd = BasicInstance.createOrGetBasicJob()
+        Job jobToAdd = BasicInstanceBuilder.getJob()
         Job jobToEdit = Job.get(jobToAdd.id)
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
@@ -83,7 +83,7 @@ class JobTests  {
     }
 
     void testUpdateJobCorrect() {
-        Job jobToAdd = BasicInstance.createOrGetBasicJob()
+        Job jobToAdd = BasicInstanceBuilder.getJob()
         def data = UpdateData.createUpdateSet(jobToAdd)
         def result = JobAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -92,7 +92,7 @@ class JobTests  {
     }
 
     void testUpdateJobNotExist() {
-        Job jobWithNewName = BasicInstance.getBasicJobNotExist()
+        Job jobWithNewName = BasicInstanceBuilder.getJobNotExist()
         jobWithNewName.save(flush: true)
         Job jobToEdit = Job.get(jobWithNewName.id)
         def jsonJob = jobToEdit.encodeAsJSON()
@@ -104,7 +104,7 @@ class JobTests  {
     }
 
     void testUpdateJobWithBadSoftware() {
-        Job jobToAdd = BasicInstance.createOrGetBasicJob()
+        Job jobToAdd = BasicInstanceBuilder.getJob()
         Job jobToEdit = Job.get(jobToAdd.id)
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
@@ -115,7 +115,7 @@ class JobTests  {
     }
 
     void testDeleteJob() {
-        def jobToDelete = BasicInstance.getBasicJobNotExist()
+        def jobToDelete = BasicInstanceBuilder.getJobNotExist()
         assert jobToDelete.save(flush: true)!= null
         def id = jobToDelete.id
         def result = JobAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -132,7 +132,7 @@ class JobTests  {
 
 
     void testListJobData() {
-        Job job = BasicInstance.createOrGetBasicJob()
+        Job job = BasicInstanceBuilder.getJob()
         def result = JobAPI.listAllJobData(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
@@ -148,28 +148,25 @@ class JobTests  {
 
     void testDeleteAllJobData() {
         //create a job
-        Job job = BasicInstance.getBasicJobNotExist()
-        BasicInstance.checkDomain(job)
-        BasicInstance.saveDomain(job)
-        BasicInstance.createSoftwareProject(job.software,job.project)
+        Job job = BasicInstanceBuilder.getJobNotExist(true)
+        BasicInstanceBuilder.getSoftwareProjectNotExist(job.software,job.project,true)
 
-        UserJob userJob = BasicInstance.createUserJob()
+        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist(true)
         userJob.job = job
-        userJob.user = BasicInstance.getNewUser()
-        BasicInstance.checkDomain(userJob)
-        BasicInstance.saveDomain(userJob)
+        userJob.user = BasicInstanceBuilder.getUser()
+        BasicInstanceBuilder.saveDomain(userJob)
 
         //add algo-annotation for this job
-        AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)
+        AlgoAnnotation a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist(job,userJob,true)
 
         //add algo-annotation-term for this job
-        AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
+        AlgoAnnotationTerm at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,a1,userJob)
 
         //add job data
-        JobData data1 = BasicInstance.getBasicJobDataNotExist()
+        JobData data1 = BasicInstanceBuilder.getJobDataNotExist()
         data1.job = job
-        BasicInstance.checkDomain(data1)
-        BasicInstance.saveDomain(data1)
+        BasicInstanceBuilder.checkDomain(data1)
+        BasicInstanceBuilder.saveDomain(data1)
 
 
         //count data = 1-1
@@ -190,22 +187,22 @@ class JobTests  {
     void testDeleteAllJobDataWithReviewedAnnotations() {
         //create a job
 
-        UserJob userJob = BasicInstance.createUserJob()
+        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist(true)
         Job job = userJob.job
 
         //add algo-annotation for this job
-        AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)
+        AlgoAnnotation a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist(job,userJob,true,)
 
         //add algo-annotation-term for this job
-        AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
+        AlgoAnnotationTerm at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,a1,userJob)
 
         //add reviewed annotation
-        ReviewedAnnotation reviewed = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation reviewed = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         reviewed.project = job.project
         reviewed.parentIdent = a1.id
         reviewed.parentClassName = a1.class.getName()
-        BasicInstance.checkDomain(reviewed)
-        BasicInstance.saveDomain(reviewed)
+        BasicInstanceBuilder.checkDomain(reviewed)
+        BasicInstanceBuilder.saveDomain(reviewed)
 
         //count data = 1-1
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1

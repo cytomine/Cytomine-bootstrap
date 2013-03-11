@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationCommentAPI
 import grails.converters.JSON
@@ -18,7 +18,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class SharedAnnotationTests  {
 
     void testGetAnnotationCommentWithCredential() {
-        def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
+        def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotation()
         def result = AnnotationCommentAPI.show(sharedAnnotation.userAnnotation.id, sharedAnnotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -26,7 +26,7 @@ class SharedAnnotationTests  {
     }
 
     void testListAnnotationCommentsByAnnotationWithCredential() {
-        def sharedAnnotation = BasicInstance.createOrGetBasicSharedAnnotation()
+        def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotation()
         def result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -37,7 +37,7 @@ class SharedAnnotationTests  {
     }
 
     void testAddAnnotationComments() {
-        def sharedAnnotation = BasicInstance.getBasicSharedAnnotationNotExist()
+        def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotationNotExist()
         def json = JSON.parse((String)sharedAnnotation.encodeAsJSON())
         json.subject = "subject for test mail"
         json.message = "message for test mail"

@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.ontology.Ontology
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.OntologyAPI
 import grails.converters.JSON
@@ -38,14 +38,14 @@ class OntologyTests  {
     }
   
     void testShowOntologyWithCredential() {
-        def result = OntologyAPI.show(BasicInstance.createOrGetBasicOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.show(BasicInstanceBuilder.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
   
     void testAddOntologyCorrect() {
-        def ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
+        def ontologyToAdd = BasicInstanceBuilder.getOntologyNotExist()
         def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idOntology = result.data.id
@@ -67,13 +67,13 @@ class OntologyTests  {
     }
   
     void testAddOntologyAlreadyExist() {
-        def ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        def ontologyToAdd = BasicInstanceBuilder.getOntology()
         def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
   
     void testUpdateOntologyCorrect() {
-        Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+        Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
         def data = UpdateData.createUpdateSet(ontologyToAdd)
         def result = OntologyAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -83,22 +83,22 @@ class OntologyTests  {
   
         def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
   
         showResult = OntologyAPI.undo()
         assert 200 == result.code
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
   
         showResult = OntologyAPI.redo()
         assert 200 == result.code
         showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
   
     void testUpdateOntologyNotExist() {
-        Ontology ontologyWithOldName = BasicInstance.createOrGetBasicOntology()
-        Ontology ontologyWithNewName = BasicInstance.getBasicOntologyNotExist()
+        Ontology ontologyWithOldName = BasicInstanceBuilder.getOntology()
+        Ontology ontologyWithNewName = BasicInstanceBuilder.getOntologyNotExist()
         ontologyWithNewName.save(flush: true)
         Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
         def jsonOntology = ontologyToEdit.encodeAsJSON()
@@ -111,8 +111,8 @@ class OntologyTests  {
     }
   
     void testUpdateOntologyWithNameAlreadyExist() {
-        Ontology ontologyWithOldName = BasicInstance.createOrGetBasicOntology()
-        Ontology ontologyWithNewName = BasicInstance.getBasicOntologyNotExist()
+        Ontology ontologyWithOldName = BasicInstanceBuilder.getOntology()
+        Ontology ontologyWithNewName = BasicInstanceBuilder.getOntologyNotExist()
         ontologyWithNewName.save(flush: true)
         Ontology ontologyToEdit = Ontology.get(ontologyWithNewName.id)
         def jsonOntology = ontologyToEdit.encodeAsJSON()
@@ -124,7 +124,7 @@ class OntologyTests  {
     }
       
       void testEditOntologyWithBadName() {
-          Ontology ontologyToAdd = BasicInstance.createOrGetBasicOntology()
+          Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
           Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
           def jsonOntology = ontologyToEdit.encodeAsJSON()
           def jsonUpdate = JSON.parse(jsonOntology)
@@ -135,7 +135,7 @@ class OntologyTests  {
       }
   
     void testDeleteOntology() {
-        def ontologyToDelete = BasicInstance.getBasicOntologyNotExist()
+        def ontologyToDelete = BasicInstanceBuilder.getOntologyNotExist()
         assert ontologyToDelete.save(flush: true)!= null
         def id = ontologyToDelete.id
         def result = OntologyAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -163,7 +163,7 @@ class OntologyTests  {
     }
   
     void testDeleteOntologyWithProject() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def ontologyToDelete = project.ontology
         def result = OntologyAPI.delete(ontologyToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
@@ -173,7 +173,7 @@ class OntologyTests  {
 
     log.info("create ontology")
     //create project and try to delete his ontology
-    def relationTerm = BasicInstance.getBasicRelationTermNotExist()
+    def relationTerm = BasicInstanceBuilder.getRelationTermNotExist()
     relationTerm.save(flush:true)
     def ontologyToDelete = relationTerm.term1.ontology
     assert ontologyToDelete.save(flush:true)!=null

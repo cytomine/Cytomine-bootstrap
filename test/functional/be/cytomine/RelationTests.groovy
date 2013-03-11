@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.ontology.Relation
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -38,7 +38,7 @@ class RelationTests {
     void testShowRelationWithCredential() {
 
       log.info("show relation")
-        Relation relation = BasicInstance.createOrGetBasicRelation()
+        Relation relation = BasicInstanceBuilder.getRelation()
       String URL = Infos.CYTOMINEURL+"api/relation/${relation.id}.json"
       HttpClient client = new HttpClient();
       client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);

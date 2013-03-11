@@ -1,6 +1,6 @@
 package be.cytomine.security
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,23 +29,23 @@ class SecurityTestsAbstract  {
 
 
     User getUser1() {
-         BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+         BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
     }
 
     User getUser2() {
-         BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+         BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
     }
 
     User getUser3() {
-         BasicInstance.createOrGetBasicUser(USERNAME3,PASSWORD3)
+         BasicInstanceBuilder.getUser(USERNAME3,PASSWORD3)
     }
 
     User getUserAdmin() {
-         BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+         BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
     }
 
     User getUserBad() {
-         BasicInstance.createOrGetBasicUser(USERNAMEBAD,PASSWORDBAD)
+         BasicInstanceBuilder.getUser(USERNAMEBAD,PASSWORDBAD)
     }
 
 }

@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.ontology.Ontology
 import be.cytomine.test.http.OntologyAPI
@@ -21,13 +21,13 @@ class OntologySecurityTests extends SecurityTestsAbstract {
   void testOntologySecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new ontology (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Ontology ontology = result.data
       println "ontology="+ontology
@@ -45,10 +45,10 @@ class OntologySecurityTests extends SecurityTestsAbstract {
   void testOntologySecurityForOntologyCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Ontology (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Ontology ontology = result.data
 
@@ -62,20 +62,20 @@ class OntologySecurityTests extends SecurityTestsAbstract {
   void testOntologySecurityForProjectUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
-      Ontology ontologyToAdd = BasicInstance.getBasicOntologyNotExist()
+      Ontology ontologyToAdd = BasicInstanceBuilder.getOntologyNotExist()
 
       //Create new Ontology (user1)
       def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Ontology ontology = result.data
 
-      Project project = BasicInstance.createBasicProjectNotExist()
+      Project project = BasicInstanceBuilder.getProjectNotExist(true)
       project.ontology = ontology
-      BasicInstance.saveDomain(project)
+      BasicInstanceBuilder.saveDomain(project)
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -110,12 +110,12 @@ class OntologySecurityTests extends SecurityTestsAbstract {
   void testOntologySecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new Ontology (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Ontology ontology = result.data
       Infos.printRight(ontology)
@@ -130,10 +130,10 @@ class OntologySecurityTests extends SecurityTestsAbstract {
   void testOntologySecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Ontology (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Ontology ontology = result.data
       Infos.printRight(ontology)

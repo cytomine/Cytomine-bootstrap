@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.TermAPI
 import grails.converters.JSON
@@ -22,7 +22,7 @@ class TermTests  {
 
 
   void testListOntologyTermByOntologyWithCredential() {
-      Ontology ontology = BasicInstance.createOrGetBasicOntology()
+      Ontology ontology = BasicInstanceBuilder.getOntology()
       def result = TermAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
@@ -35,7 +35,7 @@ class TermTests  {
   }
 
     void testListOntologyTermByProjectWithCredential() {
-        Project project = BasicInstance.createOrGetBasicProject()
+        Project project = BasicInstanceBuilder.getProject()
         def result = TermAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -48,7 +48,7 @@ class TermTests  {
     }
 
     void testStatTerm() {
-        def result = TermAPI.statsTerm(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.statsTerm(BasicInstanceBuilder.getTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -68,14 +68,14 @@ class TermTests  {
   }
 
   void testShowTermWithCredential() {
-      def result = TermAPI.show(BasicInstance.createOrGetBasicTerm().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.show(BasicInstanceBuilder.getTerm().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
 
   void testAddTermCorrect() {
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int idTerm = result.data.id
@@ -97,8 +97,8 @@ class TermTests  {
   }
     
     void testAddTermMultipleCorrect() {
-        def termToAdd1 = BasicInstance.getBasicTermNotExist()
-        def termToAdd2 = BasicInstance.getBasicTermNotExist()
+        def termToAdd1 = BasicInstanceBuilder.getTermNotExist()
+        def termToAdd2 = BasicInstanceBuilder.getTermNotExist()
         def terms = []
         terms << JSON.parse(termToAdd1.encodeAsJSON())
         terms << JSON.parse(termToAdd2.encodeAsJSON())
@@ -107,13 +107,13 @@ class TermTests  {
     }    
 
     void testAddTermAlreadyExist() {
-       def termToAdd = BasicInstance.createOrGetBasicTerm()
+       def termToAdd = BasicInstanceBuilder.getTerm()
        def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 409 == result.code
    }
  
    void testUpdateTermCorrect() {
-       Term termToAdd = BasicInstance.createOrGetBasicTerm()
+       Term termToAdd = BasicInstanceBuilder.getTerm()
        def data = UpdateData.createUpdateSet(termToAdd)
        def result = TermAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
@@ -123,22 +123,22 @@ class TermTests  {
  
        def showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compare(data.mapNew, json)
+       BasicInstanceBuilder.compare(data.mapNew, json)
  
        showResult = TermAPI.undo()
        assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+       BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
  
        showResult = TermAPI.redo()
        assert 200 == result.code
        showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+       BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateTermNotExist() {
-       Term termWithOldName = BasicInstance.createOrGetBasicTerm()
-       Term termWithNewName = BasicInstance.getBasicTermNotExist()
+       Term termWithOldName = BasicInstanceBuilder.getTerm()
+       Term termWithNewName = BasicInstanceBuilder.getTermNotExist()
        termWithNewName.save(flush: true)
        Term termToEdit = Term.get(termWithNewName.id)
        def jsonTerm = termToEdit.encodeAsJSON()
@@ -151,8 +151,8 @@ class TermTests  {
    }
  
    void testUpdateTermWithNameAlreadyExist() {
-       Term termWithOldName = BasicInstance.createOrGetBasicTerm()
-       Term termWithNewName = BasicInstance.getBasicTermNotExist()
+       Term termWithOldName = BasicInstanceBuilder.getTerm()
+       Term termWithNewName = BasicInstanceBuilder.getTermNotExist()
        termWithNewName.ontology = termWithOldName.ontology
        termWithNewName.save(flush: true)
        Term termToEdit = Term.get(termWithNewName.id)
@@ -165,7 +165,7 @@ class TermTests  {
    }
      
      void testEditTermWithBadName() {
-         Term termToAdd = BasicInstance.createOrGetBasicTerm()
+         Term termToAdd = BasicInstanceBuilder.getTerm()
          Term termToEdit = Term.get(termToAdd.id)
          def jsonTerm = termToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonTerm)
@@ -176,7 +176,7 @@ class TermTests  {
      }
  
    void testDeleteTerm() {
-       def termToDelete = BasicInstance.getBasicTermNotExist()
+       def termToDelete = BasicInstanceBuilder.getTermNotExist()
        assert termToDelete.save(flush: true)!= null
        def id = termToDelete.id
        def result = TermAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

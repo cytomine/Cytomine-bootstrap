@@ -2,7 +2,7 @@ package be.cytomine.security
 
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.test.http.SoftwareAPI
 import be.cytomine.processing.Software
@@ -19,13 +19,13 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
   void testSoftwareSecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new software (user1)
-      def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = SoftwareAPI.create(BasicInstanceBuilder.getSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Software software = result.data
 
@@ -39,10 +39,10 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
   void testSoftwareSecurityForSoftwareCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Software (user1)
-      def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = SoftwareAPI.create(BasicInstanceBuilder.getSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Software software = result.data
 
@@ -56,12 +56,12 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
   void testSoftwareSecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new Software (user1)
-      def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = SoftwareAPI.create(BasicInstanceBuilder.getSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Software software = result.data
       Infos.printRight(software)
@@ -75,10 +75,10 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
   void testSoftwareSecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Software (user1)
-      def result = SoftwareAPI.create(BasicInstance.getBasicSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = SoftwareAPI.create(BasicInstanceBuilder.getSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Software software = result.data
       Infos.printRight(software)

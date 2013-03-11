@@ -175,10 +175,13 @@ class AlgoAnnotationTermService extends ModelService {
     ConfusionMatrix computeConfusionMatrix(List<Term> projectTerms, def userJob) {
         Collections.sort(projectTerms);
         def projectTermsId = projectTerms.collect {it.id + ""}
+        println "projectTermsId="+projectTermsId
         ConfusionMatrix matrix = new ConfusionMatrix(projectTermsId);
         def algoAnnotationsTerm = AlgoAnnotationTerm.findAllByUserJob(userJob);
-
+        println "algoAnnotationsTerm="+algoAnnotationsTerm
         algoAnnotationsTerm.each {
+            println "x1-x: " + it.term
+            println "x2-y: " + it.expectedTerm
             if (it.term && it.expectedTerm) matrix.incrementEntry(it.expectedTerm?.id + "", it.term?.id + "")
         }
         return matrix

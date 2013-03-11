@@ -4,7 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.processing.Job
 import be.cytomine.test.http.JobAPI
@@ -28,12 +28,12 @@ class JobSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add job instance to project
-      Job job = BasicInstance.getBasicJobNotExist()
+      Job job = BasicInstanceBuilder.getJobNotExist()
       job.project = project
 
       //check if admin user can access/update/delete
@@ -58,7 +58,7 @@ class JobSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
@@ -68,7 +68,7 @@ class JobSecurityTests extends SecurityTestsAbstract{
       assert 200 == resAddUser.code
 
       //Add job instance to project
-      Job job = BasicInstance.getBasicJobNotExist()
+      Job job = BasicInstanceBuilder.getJobNotExist()
       job.project = project
 
       //check if user 2 can access/update/delete
@@ -93,12 +93,12 @@ class JobSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add job instance to project
-      Job job = BasicInstance.getBasicJobNotExist()
+      Job job = BasicInstanceBuilder.getJobNotExist()
       job.project = project
 
       //check if simple user can access/update/delete
@@ -106,7 +106,7 @@ class JobSecurityTests extends SecurityTestsAbstract{
       assert (403 == result.code)
       job = result.data
 
-      job = BasicInstance.createOrGetBasicJob()
+      job = BasicInstanceBuilder.getJob()
       job.project = project
       job.save(flush:true)
 

@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -21,7 +21,7 @@ class AnnotationFilterTests  {
     
 
   void testListAnnotationFilterByProject() {
-      def result = AnnotationFilterAPI.listByProject(BasicInstance.createOrGetBasicProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.listByProject(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -31,7 +31,7 @@ class AnnotationFilterTests  {
   }
 
     void testListAnnotationFilterByOntology() {
-        def result = AnnotationFilterAPI.listByOntology(BasicInstance.createOrGetBasicProject().ontology.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationFilterAPI.listByOntology(BasicInstanceBuilder.getProject().ontology.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -42,14 +42,14 @@ class AnnotationFilterTests  {
 
 
   void testShowAnnotationFilterWithCredential() {
-      def result = AnnotationFilterAPI.show(BasicInstance.createOrGetBasicAnnotationFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.show(BasicInstanceBuilder.getAnnotationFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
 
   void testAddAnnotationFilterCorrect() {
-      def annotationfilterToAdd = BasicInstance.getBasicAnnotationFilterNotExist()
+      def annotationfilterToAdd = BasicInstanceBuilder.getAnnotationFilterNotExist()
       def result = AnnotationFilterAPI.create(annotationfilterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int idAnnotationFilter = result.data.id
@@ -59,7 +59,7 @@ class AnnotationFilterTests  {
   }
 
   void testUpdateAnnotationFilterCorrect() {
-      AnnotationFilter annotationfilterToAdd = BasicInstance.createOrGetBasicAnnotationFilter()
+      AnnotationFilter annotationfilterToAdd = BasicInstanceBuilder.getAnnotationFilter()
 
       def data = UpdateData.createUpdateSet(annotationfilterToAdd)
       def result = AnnotationFilterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -70,12 +70,12 @@ class AnnotationFilterTests  {
 
       def showResult = AnnotationFilterAPI.show(idAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compare(data.mapNew, json)
+      BasicInstanceBuilder.compare(data.mapNew, json)
   }
 
   void testUpdateAnnotationFilterNotExist() {
-      AnnotationFilter annotationfilterWithOldName = BasicInstance.createOrGetBasicAnnotationFilter()
-      AnnotationFilter annotationfilterWithNewName = BasicInstance.getBasicAnnotationFilterNotExist()
+      AnnotationFilter annotationfilterWithOldName = BasicInstanceBuilder.getAnnotationFilter()
+      AnnotationFilter annotationfilterWithNewName = BasicInstanceBuilder.getAnnotationFilterNotExist()
       annotationfilterWithNewName.save(flush: true)
       AnnotationFilter annotationfilterToEdit = AnnotationFilter.get(annotationfilterWithNewName.id)
       def jsonAnnotationFilter = annotationfilterToEdit.encodeAsJSON()
@@ -88,7 +88,7 @@ class AnnotationFilterTests  {
   }
 
     void testEditAnnotationFilterWithBadName() {
-        AnnotationFilter annotationfilterToAdd = BasicInstance.createOrGetBasicAnnotationFilter()
+        AnnotationFilter annotationfilterToAdd = BasicInstanceBuilder.getAnnotationFilter()
         AnnotationFilter annotationfilterToEdit = AnnotationFilter.get(annotationfilterToAdd.id)
         def jsonAnnotationFilter = annotationfilterToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotationFilter)
@@ -99,7 +99,7 @@ class AnnotationFilterTests  {
     }
 
   void testDeleteAnnotationFilter() {
-      def annotationfilterToDelete = BasicInstance.getBasicAnnotationFilterNotExist()
+      def annotationfilterToDelete = BasicInstanceBuilder.getAnnotationFilterNotExist()
       assert annotationfilterToDelete.save(flush: true)!= null
       def id = annotationfilterToDelete.id
       def result = AnnotationFilterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

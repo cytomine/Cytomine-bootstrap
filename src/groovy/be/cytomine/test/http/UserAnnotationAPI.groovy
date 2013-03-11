@@ -1,6 +1,9 @@
 package be.cytomine.test.http
 
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.project.Project
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -100,6 +103,29 @@ class UserAnnotationAPI extends DomainAPI {
     static def delete(def id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/userannotation/" + id + ".json"
         return doDELETE(URL,username,password)
+    }
+
+    static def buildBasicUserAnnotation(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), username, password)
+        assert 200==result.code
+        Project project = result.data
+
+        //Add image with user 1
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
+        assert 200==result.code
+        image = result.data
+
+        //Add annotation 1 with cytomine admin
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
+        annotation.image = image
+        annotation.project = image.project
+        result = UserAnnotationAPI.create(annotation.encodeAsJSON(), username, password)
+        assert 200==result.code
+        annotation = result.data
+        return annotation
     }
 
 }

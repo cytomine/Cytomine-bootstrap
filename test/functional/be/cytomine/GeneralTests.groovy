@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAnnotationAPI
@@ -55,7 +55,7 @@ class GeneralTests  {
     }
 
     void testLastAction() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
 
         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -105,7 +105,7 @@ class GeneralTests  {
     }
 
     void testMultipleAuthConnexion() {
-        BasicInstance.createOrGetBasicUserAnnotation()
+        BasicInstanceBuilder.getUserAnnotation()
         UserAnnotation annotation = UserAnnotation.list().first()
 
         log.info "show userannotation " + annotation.id
@@ -143,7 +143,7 @@ class GeneralTests  {
         HttpClient client = new HttpClient();
         String url = Infos.CYTOMINEURL + "server/ping.json"
         client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        def json = '{"project": "' + BasicInstance.createOrGetBasicProject().id + '"}'
+        def json = '{"project": "' + BasicInstanceBuilder.getProject().id + '"}'
         client.post(json)
         int code = client.getResponseCode()
         client.disconnect();

@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.JobParameter
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobParameterAPI
 import grails.converters.JSON
@@ -26,7 +26,7 @@ class JobParameterTests  {
      }
  
      void testListJobParameterByJob() {
-         JobParameter jobparameter = BasicInstance.createOrGetBasicJobParameter()
+         JobParameter jobparameter = BasicInstanceBuilder.getJobParameter()
          def result = JobParameterAPI.listByJob(jobparameter.job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
@@ -37,14 +37,14 @@ class JobParameterTests  {
      }
  
      void testShowJobParameterWithCredential() {
-         def result = JobParameterAPI.show(BasicInstance.createOrGetBasicJobParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = JobParameterAPI.show(BasicInstanceBuilder.getJobParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
          assert json instanceof JSONObject
      }
  
      void testAddJobParameterCorrect() {
-         def jobparameterToAdd = BasicInstance.getBasicJobParameterNotExist()
+         def jobparameterToAdd = BasicInstanceBuilder.getJobParameterNotExist()
          def result = JobParameterAPI.create(jobparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          int idJobParameter = result.data.id
@@ -54,7 +54,7 @@ class JobParameterTests  {
      }
  
      void testAddJobParameterWithBadJob() {
-         JobParameter jobparameterToAdd = BasicInstance.createOrGetBasicJobParameter()
+         JobParameter jobparameterToAdd = BasicInstanceBuilder.getJobParameter()
          JobParameter jobparameterToEdit = JobParameter.get(jobparameterToAdd.id)
          def jsonJobParameter = jobparameterToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonJobParameter)
@@ -65,7 +65,7 @@ class JobParameterTests  {
      }
  
      void testUpdateJobParameterCorrect() {
-         JobParameter jobparameterToAdd = BasicInstance.createOrGetBasicJobParameter()
+         JobParameter jobparameterToAdd = BasicInstanceBuilder.getJobParameter()
          def data = UpdateData.createUpdateSet(jobparameterToAdd)
          def result = JobParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
@@ -74,7 +74,7 @@ class JobParameterTests  {
      }
  
      void testUpdateJobParameterNotExist() {
-         JobParameter jobparameterWithNewName = BasicInstance.getBasicJobParameterNotExist()
+         JobParameter jobparameterWithNewName = BasicInstanceBuilder.getJobParameterNotExist()
          jobparameterWithNewName.save(flush: true)
          JobParameter jobparameterToEdit = JobParameter.get(jobparameterWithNewName.id)
          def jsonJobParameter = jobparameterToEdit.encodeAsJSON()
@@ -86,7 +86,7 @@ class JobParameterTests  {
      }
  
      void testUpdateJobParameterWithBadJob() {
-         JobParameter jobparameterToAdd = BasicInstance.createOrGetBasicJobParameter()
+         JobParameter jobparameterToAdd = BasicInstanceBuilder.getJobParameter()
          JobParameter jobparameterToEdit = JobParameter.get(jobparameterToAdd.id)
          def jsonJobParameter = jobparameterToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonJobParameter)
@@ -97,7 +97,7 @@ class JobParameterTests  {
      }
  
      void testDeleteJobParameter() {
-         def jobparameterToDelete = BasicInstance.getBasicJobParameterNotExist()
+         def jobparameterToDelete = BasicInstanceBuilder.getJobParameterNotExist()
          assert jobparameterToDelete.save(flush: true)!= null
          def id = jobparameterToDelete.id
          def result = JobParameterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

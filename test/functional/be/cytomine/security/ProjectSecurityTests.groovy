@@ -1,7 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
@@ -19,13 +19,13 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
   void testProjectSecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Project project = result.data
        Infos.printRight(project)
@@ -41,10 +41,10 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
   void testProjectSecurityForProjectCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
@@ -58,12 +58,12 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
   void testProjectSecurityForProjectUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
@@ -95,12 +95,12 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
   void testProjectSecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Project project = result.data
       Infos.printRight(project)
@@ -116,10 +116,10 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
   void testProjectSecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       Project project = result.data
       Infos.printRight(project)

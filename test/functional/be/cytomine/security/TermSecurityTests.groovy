@@ -4,7 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.Infos
 import be.cytomine.test.http.OntologyAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.ontology.Term
 import be.cytomine.test.http.TermAPI
@@ -22,15 +22,15 @@ class TermSecurityTests extends SecurityTestsAbstract {
   void testTermSecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new term (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -47,12 +47,12 @@ class TermSecurityTests extends SecurityTestsAbstract {
   void testTermSecurityForOntologyCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Term (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -68,22 +68,22 @@ class TermSecurityTests extends SecurityTestsAbstract {
   void testTermSecurityForOntologyUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new Term (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
       def term = result.data
 
-      Project project = BasicInstance.createBasicProjectNotExist()
+      Project project = BasicInstanceBuilder.getProjectNotExist(true)
       project.ontology = termToAdd.ontology
-      BasicInstance.saveDomain(project)
+      BasicInstanceBuilder.saveDomain(project)
 
       //TODO: try with USERNAME1 & PASSWORD1
       def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -115,14 +115,14 @@ class TermSecurityTests extends SecurityTestsAbstract {
   void testTermSecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //Create new Term (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -138,12 +138,12 @@ class TermSecurityTests extends SecurityTestsAbstract {
   void testTermSecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Create new Term (user1)
-      def result = OntologyAPI.create(BasicInstance.getBasicOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+      def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
-      def termToAdd = BasicInstance.getBasicTermNotExist()
+      def termToAdd = BasicInstanceBuilder.getTermNotExist()
       termToAdd.ontology = result.data
       result = TermAPI.create(termToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code

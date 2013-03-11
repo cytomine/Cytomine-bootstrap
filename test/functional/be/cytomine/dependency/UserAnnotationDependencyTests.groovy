@@ -3,7 +3,7 @@ package be.cytomine.dependency
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.ontology.*
 import be.cytomine.test.http.UserAnnotationAPI
 
@@ -19,30 +19,30 @@ class UserAnnotationDependencyTests  {
 
     void testUserAnnotationDependency() {
 
-        def dependentDomain = createAnnotationWithDependency(BasicInstance.createBasicProjectNotExist())
+        def dependentDomain = createAnnotationWithDependency(BasicInstanceBuilder.getProjectNotExist(true))
 
         def annotation = dependentDomain.first()
 
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (200 == UserAnnotationAPI.delete(annotation.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
         assert (200 == UserAnnotationAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
 
         //check if all dependency are aivalable
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
         assert (200 == UserAnnotationAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
     }
 
 
@@ -52,28 +52,28 @@ class UserAnnotationDependencyTests  {
     private def createAnnotationWithDependency(Project project) {
         //create a annotation and all its dependence domain
 
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(project)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,BasicInstanceBuilder.getImageInstance(),true)
 
-        AnnotationTerm at =  BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm at =  BasicInstanceBuilder.getAnnotationTermNotExist()
         at.userAnnotation = annotation
-        BasicInstance.saveDomain(at)
+        BasicInstanceBuilder.saveDomain(at)
 
-        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         algoAnnotationTerm1.term = at.term
         algoAnnotationTerm1.expectedTerm = at.term
         algoAnnotationTerm1.annotation = annotation
-        BasicInstance.saveDomain(algoAnnotationTerm1)
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm1)
 
-        ReviewedAnnotation ra = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation ra = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         ra.project = project
         ra.putParentAnnotation(annotation)
         ra.terms?.clear()
         ra.addToTerms(at.term)
-        BasicInstance.checkDomain(ra)
-        BasicInstance.saveDomain(ra)
+        BasicInstanceBuilder.checkDomain(ra)
+        BasicInstanceBuilder.saveDomain(ra)
         ra.project = project
         ra.putParentAnnotation(annotation)
-        BasicInstance.saveDomain(ra)
+        BasicInstanceBuilder.saveDomain(ra)
 
         return [annotation,at,algoAnnotationTerm1,ra]
     }

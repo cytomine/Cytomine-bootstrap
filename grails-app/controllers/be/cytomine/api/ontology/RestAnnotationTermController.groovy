@@ -42,8 +42,10 @@ class RestAnnotationTermController extends RestController {
                 annotation = algoAnnotationService.read(params.long('idannotation'))
             }
 
-            if (annotation && !params.idUser) {
+            if (annotation && !params.idUser && annotation instanceof UserAnnotation) {
                 responseSuccess(annotationTermService.list(annotation))
+            } else if (annotation && !params.idUser && annotation instanceof AlgoAnnotation) {
+                responseSuccess(algoAnnotationTermService.list(annotation))
             } else if (annotation && params.idUser) {
                 User user = User.read(params.long('idUser'))
                 if (user) {

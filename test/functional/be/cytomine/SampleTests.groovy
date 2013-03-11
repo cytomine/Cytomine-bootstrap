@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.test.Infos
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -31,14 +31,14 @@ class SampleTests  {
   }
 
   void testShowSampleWithCredential() {
-      def result = SampleAPI.show(BasicInstance.createOrGetBasicSample().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.show(BasicInstanceBuilder.getSample().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
 
   void testAddSampleCorrect() {
-      def sampleToAdd = BasicInstance.getBasicSampleNotExist()
+      def sampleToAdd = BasicInstanceBuilder.getSampleNotExist()
       def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int idSample = result.data.id
@@ -60,13 +60,13 @@ class SampleTests  {
   }
 
   void testAddSampleAlreadyExist() {
-      def sampleToAdd = BasicInstance.createOrGetBasicSample()
+      def sampleToAdd = BasicInstanceBuilder.getSample()
       def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }
 
   void testUpdateSampleCorrect() {
-      Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
+      Sample sampleToAdd = BasicInstanceBuilder.getSample()
 
       def data = UpdateData.createUpdateSet(sampleToAdd)
       def result = SampleAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -77,22 +77,22 @@ class SampleTests  {
 
       def showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       json = JSON.parse(showResult.data)
-      BasicInstance.compare(data.mapNew, json)
+      BasicInstanceBuilder.compare(data.mapNew, json)
 
       showResult = SampleAPI.undo()
       assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+      BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = SampleAPI.redo()
       assert 200 == result.code
       showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+      BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
   void testUpdateSampleNotExist() {
-      Sample sampleWithOldName = BasicInstance.createOrGetBasicSample()
-      Sample sampleWithNewName = BasicInstance.getBasicSampleNotExist()
+      Sample sampleWithOldName = BasicInstanceBuilder.getSample()
+      Sample sampleWithNewName = BasicInstanceBuilder.getSampleNotExist()
       sampleWithNewName.save(flush: true)
       Sample sampleToEdit = Sample.get(sampleWithNewName.id)
       def jsonSample = sampleToEdit.encodeAsJSON()
@@ -105,8 +105,8 @@ class SampleTests  {
   }
 
   void testUpdateSampleWithNameAlreadyExist() {
-      Sample sampleWithOldName = BasicInstance.createOrGetBasicSample()
-      Sample sampleWithNewName = BasicInstance.getBasicSampleNotExist()
+      Sample sampleWithOldName = BasicInstanceBuilder.getSample()
+      Sample sampleWithNewName = BasicInstanceBuilder.getSampleNotExist()
       sampleWithNewName.save(flush: true)
       Sample sampleToEdit = Sample.get(sampleWithNewName.id)
       def jsonSample = sampleToEdit.encodeAsJSON()
@@ -118,7 +118,7 @@ class SampleTests  {
   }
     
     void testEditSampleWithBadName() {
-        Sample sampleToAdd = BasicInstance.createOrGetBasicSample()
+        Sample sampleToAdd = BasicInstanceBuilder.getSample()
         Sample sampleToEdit = Sample.get(sampleToAdd.id)
         def jsonSample = sampleToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonSample)
@@ -129,7 +129,7 @@ class SampleTests  {
     }
 
   void testDeleteSample() {
-      def sampleToDelete = BasicInstance.getBasicSampleNotExist()
+      def sampleToDelete = BasicInstanceBuilder.getSampleNotExist()
       assert sampleToDelete.save(flush: true)!= null
       def id = sampleToDelete.id
       def result = SampleAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

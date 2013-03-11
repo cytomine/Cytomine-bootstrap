@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.server.Storage
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.StorageAPI
 import be.cytomine.utils.UpdateData
@@ -30,14 +30,14 @@ public class StorageTests {
     }
 
     void testShowStorageWithCredential() {
-        def result = StorageAPI.show(BasicInstance.createOrGetBasicStorage().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.show(BasicInstanceBuilder.getStorage().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
 
     void testAddStorageCorrect() {
-        def storageToAdd = BasicInstance.getBasicStorageNotExist()
+        def storageToAdd = BasicInstanceBuilder.getStorageNotExist()
         def json = storageToAdd.encodeAsJSON()
 
         def result = StorageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -62,7 +62,7 @@ public class StorageTests {
     }
 
     void testUpdateStorageCorrect() {
-        Storage storageToAdd = BasicInstance.createOrGetBasicStorage()
+        Storage storageToAdd = BasicInstanceBuilder.getStorage()
 
         def data = UpdateData.createUpdateSet(storageToAdd)
         def result = StorageAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -74,22 +74,22 @@ public class StorageTests {
 
         def showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = StorageAPI.undo()
         assert 200 == result.code
         showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = StorageAPI.redo()
         assert 200 == result.code
         showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testUpdateStorageNotExist() {
-        Storage storageWithOldName = BasicInstance.createOrGetBasicStorage()
-        Storage storageWithNewName = BasicInstance.getBasicStorageNotExist()
+        Storage storageWithOldName = BasicInstanceBuilder.getStorage()
+        Storage storageWithNewName = BasicInstanceBuilder.getStorageNotExist()
         storageWithNewName.save(flush: true)
         Storage storageToEdit = Storage.get(storageWithNewName.id)
         def jsonStorage = storageToEdit.encodeAsJSON()
@@ -102,7 +102,7 @@ public class StorageTests {
     }
 
     void testDeleteStorage() {
-        def storageToDelete = BasicInstance.getBasicStorageNotExist()
+        def storageToDelete = BasicInstanceBuilder.getStorageNotExist()
         assert storageToDelete.save(flush: true)!= null
         def id = storageToDelete.id
         def result = StorageAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

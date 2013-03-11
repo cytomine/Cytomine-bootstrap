@@ -5,7 +5,7 @@ import be.cytomine.processing.Software
 
 import be.cytomine.project.Project
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
@@ -38,7 +38,7 @@ class ProjectTests  {
     }
 
     void testShowProjectWithCredential() {
-        Project project = BasicInstance.createOrGetBasicProjectWithRight()
+        Project project = BasicInstanceBuilder.getProject()
         def result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -46,8 +46,8 @@ class ProjectTests  {
     }
 
     void testListProjectByUser() {
-        Project project = BasicInstance.createOrGetBasicProject()
-        User user = BasicInstance.createOrGetBasicUser()
+        Project project = BasicInstanceBuilder.getProject()
+        User user = BasicInstanceBuilder.getUser()
         def result = ProjectAPI.listByUser(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -61,7 +61,7 @@ class ProjectTests  {
 
 
     void testListProjectByOntology() {
-        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        Ontology ontology = BasicInstanceBuilder.getOntology()
         def result = ProjectAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -74,8 +74,8 @@ class ProjectTests  {
     }
 
     void testListProjectBySoftware() {
-        Software software = BasicInstance.createOrGetBasicSoftware()
-        User user = BasicInstance.createOrGetBasicUser()
+        Software software = BasicInstanceBuilder.getSoftware()
+        User user = BasicInstanceBuilder.getUser()
         def result = ProjectAPI.listBySoftware(software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -88,7 +88,7 @@ class ProjectTests  {
     }
 
     void testAddProjectCorrect() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         projectToAdd.description = "Test de Description..."
         def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -98,7 +98,7 @@ class ProjectTests  {
     }
 
     void testAddProjectWithNameAlreadyExist() {
-        def projectToAdd = BasicInstance.createOrGetBasicProject()
+        def projectToAdd = BasicInstanceBuilder.getProject()
         String jsonProject = projectToAdd.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
         def result = ProjectAPI.create(jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -106,7 +106,7 @@ class ProjectTests  {
     }
 
     void testEditProjectCorrect() {
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         def data = UpdateData.createUpdateSet(projectToAdd)
         def result = ProjectAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -115,11 +115,11 @@ class ProjectTests  {
         int idProject = json.project.id
         def showResult = ProjectAPI.show(idProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
     }
 
     void testEditProjectWithBadName() {
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         Project projectToEdit = Project.get(projectToAdd.id)
         def jsonProject = projectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
@@ -131,8 +131,8 @@ class ProjectTests  {
     }
 
     void testEditProjectWithNameAlreadyExist() {
-        Project projectWithOldName = BasicInstance.createOrGetBasicProjectWithRight()
-        Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
+        Project projectWithOldName = BasicInstanceBuilder.getProject()
+        Project projectWithNewName = BasicInstanceBuilder.getProjectNotExist()
         projectWithNewName.save(flush: true)
 
         Project projectToEdit = Project.get(projectWithNewName.id)
@@ -145,8 +145,8 @@ class ProjectTests  {
     }
 
     void testEditProjectNotExist() {
-        Project projectWithOldName = BasicInstance.createOrGetBasicProject()
-        Project projectWithNewName = BasicInstance.getBasicProjectNotExist()
+        Project projectWithOldName = BasicInstanceBuilder.getProject()
+        Project projectWithNewName = BasicInstanceBuilder.getProjectNotExist()
         projectWithNewName.save(flush: true)
         Project projectToEdit = Project.get(projectWithNewName.id)
         def jsonProject = projectToEdit.encodeAsJSON()
@@ -159,7 +159,7 @@ class ProjectTests  {
     }
 
     void testDeleteProject() {
-        def projectToDelete = BasicInstance.getBasicProjectNotExist()
+        def projectToDelete = BasicInstanceBuilder.getProjectNotExist()
         assert projectToDelete.save(flush: true) != null
 
         def result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -176,13 +176,13 @@ class ProjectTests  {
 
     void testProjectCounterUserAnnotationCounter() {
         //create project
-        Project project = BasicInstance.getBasicProjectNotExist()
-        BasicInstance.checkDomain(project)
-        BasicInstance.saveDomain(project)
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist()
+        BasicInstanceBuilder.checkDomain(project)
+        BasicInstanceBuilder.saveDomain(project)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
-        BasicInstance.checkDomain(image)
-        BasicInstance.saveDomain(image)
+        BasicInstanceBuilder.checkDomain(image)
+        BasicInstanceBuilder.saveDomain(image)
 
         //check if 0 algo annotation
         assert project.countAnnotations == 0
@@ -190,11 +190,11 @@ class ProjectTests  {
         assert project.countJobAnnotations == 0
         assert image.countImageJobAnnotations == 0
         //add algo annotation
-        UserAnnotation a1 = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation a1 = BasicInstanceBuilder.getUserAnnotationNotExist()
         a1.image = image
         a1.project = project
-        BasicInstance.checkDomain(a1)
-        BasicInstance.saveDomain(a1)
+        BasicInstanceBuilder.checkDomain(a1)
+        BasicInstanceBuilder.saveDomain(a1)
 
         project.refresh()
         image.refresh()
@@ -205,11 +205,11 @@ class ProjectTests  {
         assert project.countJobAnnotations == 0
         assert image.countImageJobAnnotations == 0
         //add algo annotation
-        UserAnnotation a2 = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation a2 = BasicInstanceBuilder.getUserAnnotationNotExist()
         a2.image = image
         a2.project = project
-        BasicInstance.checkDomain(a2)
-        BasicInstance.saveDomain(a2)
+        BasicInstanceBuilder.checkDomain(a2)
+        BasicInstanceBuilder.saveDomain(a2)
 
         project.refresh()
         image.refresh()
@@ -248,11 +248,11 @@ class ProjectTests  {
 
     void testProjectCounterAlgoAnnotationCounter() {
         //create project
-        Project project = BasicInstance.getBasicProjectNotExist()
-        BasicInstance.saveDomain(project)
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist()
+        BasicInstanceBuilder.saveDomain(project)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
-        BasicInstance.saveDomain(image)
+        BasicInstanceBuilder.saveDomain(image)
 
         //check if 0 algo annotation
         project.refresh()
@@ -263,11 +263,11 @@ class ProjectTests  {
         assert image.countImageAnnotations == 0
 
         //add algo annotation
-        AlgoAnnotation a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        AlgoAnnotation a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a1.image = image
         a1.project = project
-        BasicInstance.checkDomain(a1)
-        BasicInstance.saveDomain(a1)
+        BasicInstanceBuilder.checkDomain(a1)
+        BasicInstanceBuilder.saveDomain(a1)
 
         //check if 1 algo annotation
         project.refresh()
@@ -278,11 +278,11 @@ class ProjectTests  {
         assert image.countImageAnnotations == 0
 
         //add algo annotation
-        AlgoAnnotation a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        AlgoAnnotation a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a2.image = image
         a2.project = project
-        BasicInstance.checkDomain(a2)
-        BasicInstance.saveDomain(a2)
+        BasicInstanceBuilder.checkDomain(a2)
+        BasicInstanceBuilder.saveDomain(a2)
 
         //check if 2 algo annotation
         project.refresh()

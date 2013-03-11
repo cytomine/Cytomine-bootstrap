@@ -37,6 +37,7 @@ class UserAnnotationService extends ModelService {
     def simplifyGeometryService
     def dataSource
     def reviewedAnnotationService
+    def annotationPropertyService
 
 
     def currentDomain() {

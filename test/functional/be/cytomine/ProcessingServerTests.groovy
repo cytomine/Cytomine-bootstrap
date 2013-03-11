@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -25,7 +25,7 @@ class ProcessingServerTests  {
   }
 
   void testShowProcessingServerWithCredential() {
-      def result = ProcessingServerAPI.show(BasicInstance.createOrGetBasicProcessingServer().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = ProcessingServerAPI.show(BasicInstanceBuilder.getProcessingServer().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.processing.Software
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.test.http.SoftwareParameterAPI
 
@@ -19,15 +19,15 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
   void testSoftwareParameterSecurityForCytomineAdmin() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstance.createOrGetBasicAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //create software
-      Software software = BasicInstance.getBasicSoftwareNotExist()
-      BasicInstance.saveDomain(software)
-      def softwareParameter = BasicInstance.getBasicSoftwareParameterNotExist()
+      Software software = BasicInstanceBuilder.getSoftwareNotExist()
+      BasicInstanceBuilder.saveDomain(software)
+      def softwareParameter = BasicInstanceBuilder.getSoftwareParameterNotExist()
       softwareParameter.software = software
       Infos.addUserRight(user1,software)
 
@@ -46,13 +46,13 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
   void testSoftwareParameterSecurityForSoftwareCreator() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //create software
-      Software software = BasicInstance.getBasicSoftwareNotExist()
-      BasicInstance.saveDomain(software)
+      Software software = BasicInstanceBuilder.getSoftwareNotExist()
+      BasicInstanceBuilder.saveDomain(software)
       Infos.addUserRight(user1,software)
-      def softwareParameter = BasicInstance.getBasicSoftwareParameterNotExist()
+      def softwareParameter = BasicInstanceBuilder.getSoftwareParameterNotExist()
       softwareParameter.software = software
 
       //Create new software param (user1)
@@ -69,15 +69,15 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
   void testSoftwareParameterSecurityForSimpleUser() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
       //Get user2
-      User user2 = BasicInstance.createOrGetBasicUser(USERNAME2,PASSWORD2)
+      User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
       //create software
-      Software software = BasicInstance.getBasicSoftwareNotExist()
-      BasicInstance.saveDomain(software)
+      Software software = BasicInstanceBuilder.getSoftwareNotExist()
+      BasicInstanceBuilder.saveDomain(software)
       Infos.addUserRight(user1,software)
-      def softwareParameter = BasicInstance.getBasicSoftwareParameterNotExist()
+      def softwareParameter = BasicInstanceBuilder.getSoftwareParameterNotExist()
       softwareParameter.software = software
 
       //Create new software param (user1)
@@ -94,13 +94,13 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
   void testSoftwareParameterSecurityForAnonymous() {
 
       //Get user1
-      User user1 = BasicInstance.createOrGetBasicUser(USERNAME1,PASSWORD1)
+      User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //create software
-      Software software = BasicInstance.getBasicSoftwareNotExist()
-      BasicInstance.saveDomain(software)
+      Software software = BasicInstanceBuilder.getSoftwareNotExist()
+      BasicInstanceBuilder.saveDomain(software)
       Infos.addUserRight(user1,software)
-      def softwareParameter = BasicInstance.getBasicSoftwareParameterNotExist()
+      def softwareParameter = BasicInstanceBuilder.getSoftwareParameterNotExist()
       softwareParameter.software = software
 
       //Create new software param (user1)

@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
@@ -18,7 +18,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class RetrievalProjectTests  {
 
     void testListRetrievalProjectWithCredential() {
-        Project project = BasicInstance.createOrGetBasicProject()
+        Project project = BasicInstanceBuilder.getProject()
         def result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -31,7 +31,7 @@ class RetrievalProjectTests  {
     }
 
     void testAddProjectRetrievalWithoutFlag() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = null
         json.retrievalAllOntology = null
@@ -48,7 +48,7 @@ class RetrievalProjectTests  {
     }
 
     void testAddProjectRetrievalWithRetrievalDisable() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = true
         json.retrievalAllOntology = false
@@ -65,7 +65,7 @@ class RetrievalProjectTests  {
     }
 
     void testAddProjectRetrievalWithRetrievalAllOntology() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = false
         json.retrievalAllOntology = true
@@ -82,12 +82,12 @@ class RetrievalProjectTests  {
     }
 
     void testAddProjectRetrievalWithRetrievalSomeProject() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = false
         json.retrievalAllOntology = false
-        //json.retrievalProjects = new JSONArray([BasicInstance.createOrGetBasicProjectWithRight().id])
-        json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
+        //json.retrievalProjects = new JSONArray([BasicInstanceBuilder.getProject().id])
+        json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
 
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -99,12 +99,12 @@ class RetrievalProjectTests  {
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        assert ProjectAPI.containsInJSONList(BasicInstance.createOrGetBasicProjectWithRight().id,json)
+        assert ProjectAPI.containsInJSONList(BasicInstanceBuilder.getProject().id,json)
     }
 
     void testAddProjectRetrievalWithoutConstistency() {
 
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = true
         json.retrievalAllOntology = true
@@ -112,30 +112,30 @@ class RetrievalProjectTests  {
         def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
 
-        projectToAdd = BasicInstance.getBasicProjectNotExist()
+        projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = true
         json.retrievalAllOntology = false
-        json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
+        json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
         result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
 
-        projectToAdd = BasicInstance.getBasicProjectNotExist()
+        projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = false
         json.retrievalAllOntology = true
-        json.retrievalProjects = new JSONArray("["+BasicInstance.createOrGetBasicProjectWithRight().id+"]")
+        json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
         result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
 
     }
 
     void testAddProjectRetrievalAndDeleteProjectDependency() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.retrievalDisable = false
         json.retrievalAllOntology = false
-        def projectRetrieval = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval = BasicInstanceBuilder.getProjectNotExist()
         assert projectRetrieval.save(flush: true)
 
         json.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
@@ -167,7 +167,7 @@ class RetrievalProjectTests  {
 
     void testUpdateProjectRetrievalAddProjectInsteadOfAllOntology() {
         //project with AO=T
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         projectToAdd.retrievalAllOntology = true;
         projectToAdd.retrievalDisable = false;
         projectToAdd.save(flush: true)
@@ -176,7 +176,7 @@ class RetrievalProjectTests  {
         def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
         jsonProject.retrievalDisable = false
         jsonProject.retrievalAllOntology = false
-        def projectRetrieval = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval.save(flush: true)
 
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
@@ -196,12 +196,12 @@ class RetrievalProjectTests  {
 
     void testUpdateProjectRetrievalAddProject() {
         //project with AO=T
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
         projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
-        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval1 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval1.save(flush: true)
 
         projectToAdd.addToRetrievalProjects(projectRetrieval1)
@@ -211,7 +211,7 @@ class RetrievalProjectTests  {
         def jsonProject = JSON.parse(projectToAdd.encodeAsJSON())
         jsonProject.retrievalDisable = false
         jsonProject.retrievalAllOntology = false
-        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval2 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval2.save(flush: true)
 
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"," + projectRetrieval2.id +"]")
@@ -233,15 +233,15 @@ class RetrievalProjectTests  {
 
     void testUpdateProjectRetrievalRemoveProject() {
         //project with AO=T
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
         projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
-        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval1 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval1.save(flush: true)
 
-        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval2 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval2.save(flush: true)
 
         projectToAdd.addToRetrievalProjects(projectRetrieval1)
@@ -271,15 +271,15 @@ class RetrievalProjectTests  {
 
     void testUpdateProjectRetrievalRemoveProjectAndDisableRetrieval() {
         //project with AO=T
-        Project projectToAdd = BasicInstance.createOrGetBasicProjectWithRight()
+        Project projectToAdd = BasicInstanceBuilder.getProject()
         projectToAdd.retrievalAllOntology = false;
         projectToAdd.retrievalDisable = false;
         projectToAdd.retrievalProjects?.clear()
         projectToAdd.save(flush: true)
-        def projectRetrieval1 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval1 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval1.save(flush: true)
 
-        def projectRetrieval2 = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval2 = BasicInstanceBuilder.getProjectNotExist()
         projectRetrieval2.save(flush: true)
 
         projectToAdd.addToRetrievalProjects(projectRetrieval1)
@@ -307,10 +307,10 @@ class RetrievalProjectTests  {
     }
 
     void testDeleteProjectRetrievalWithRetrievalProject() {
-        def projectToAdd = BasicInstance.getBasicProjectNotExist()
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
         assert projectToAdd.save(flush: true)
 
-        def projectRetrieval = BasicInstance.getBasicProjectNotExist()
+        def projectRetrieval = BasicInstanceBuilder.getProjectNotExist()
         assert projectRetrieval.save(flush: true)
 
         projectToAdd.refresh()

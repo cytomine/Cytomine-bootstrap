@@ -2,7 +2,7 @@ package be.cytomine
 
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 import grails.converters.JSON
 
@@ -24,30 +24,30 @@ class UserPositionTests  {
     }
 
     void testListByUser() {
-        def image = BasicInstance.createOrGetBasicImageInstance()
-       def result = UserPositionAPI.listLastByUser(image.id,BasicInstance.newUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def image = BasicInstanceBuilder.getImageInstance()
+       def result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
    }
 
     void testListByProject() {
-        def image = BasicInstance.createOrGetBasicImageInstance()
+        def image = BasicInstanceBuilder.getImageInstance()
        def result = UserPositionAPI.listLastByProject(image.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
    }
 
     void testListByImage() {
-        def image = BasicInstance.createOrGetBasicImageInstance()
+        def image = BasicInstanceBuilder.getImageInstance()
        def result = UserPositionAPI.listLastByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
    }
 
     void testAddPosition() {
-        def image = BasicInstance.createOrGetBasicImageInstance()
+        def image = BasicInstanceBuilder.getImageInstance()
         def json = JSON.parse("{image:${image.id},lon:100,lat:100}")
 
         def result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
-        result = UserPositionAPI.listLastByUser(image.id,BasicInstance.newUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = UserPositionAPI.listLastByProject(image.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code

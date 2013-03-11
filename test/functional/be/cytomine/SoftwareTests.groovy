@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.Software
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareAPI
 import be.cytomine.test.http.SoftwareParameterAPI
@@ -33,14 +33,14 @@ class SoftwareTests  {
    }
  
    void testShowSoftwareWithCredential() {
-       def result = SoftwareAPI.show(BasicInstance.createOrGetBasicSoftware().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = SoftwareAPI.show(BasicInstanceBuilder.getSoftware().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject
    }
  
    void testAddSoftwareCorrect() {
-       def softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
+       def softwareToAdd = BasicInstanceBuilder.getSoftwareNotExist()
        def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
        int idSoftware = result.data.id
@@ -62,13 +62,13 @@ class SoftwareTests  {
    }
  
    void testAddSoftwareAlreadyExist() {
-       def softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+       def softwareToAdd = BasicInstanceBuilder.getSoftware()
        def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 409 == result.code
    }
  
    void testUpdateSoftwareCorrect() {
-       Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+       Software softwareToAdd = BasicInstanceBuilder.getSoftware()
        def data = UpdateData.createUpdateSet(softwareToAdd)
        def resultBase = SoftwareAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200==resultBase.code
@@ -78,7 +78,7 @@ class SoftwareTests  {
  
        def showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        json = JSON.parse(showResult.data)
-       BasicInstance.compare(data.mapNew, json)
+       BasicInstanceBuilder.compare(data.mapNew, json)
 
        def result = SoftwareAPI.undo()
        assert 200 == result.code
@@ -87,17 +87,17 @@ class SoftwareTests  {
        System.out.println("toto="+showResult.data);
        System.out.println("toto="+JSON.parse(showResult.data));
        System.out.println("toto="+JSON.parse(showResult.data).name);
-       BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+       BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
        result = SoftwareAPI.redo()
        assert 200 == result.code
        showResult = SoftwareAPI.show(idSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+       BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateSoftwareNotExist() {
-       Software softwareWithOldName = BasicInstance.createOrGetBasicSoftware()
-       Software softwareWithNewName = BasicInstance.getBasicSoftwareNotExist()
+       Software softwareWithOldName = BasicInstanceBuilder.getSoftware()
+       Software softwareWithNewName = BasicInstanceBuilder.getSoftwareNotExist()
        softwareWithNewName.save(flush: true)
        Software softwareToEdit = Software.get(softwareWithNewName.id)
        def jsonSoftware = softwareToEdit.encodeAsJSON()
@@ -110,8 +110,8 @@ class SoftwareTests  {
    }
  
    void testUpdateSoftwareWithNameAlreadyExist() {
-       Software softwareWithOldName = BasicInstance.createOrGetBasicSoftware()
-       Software softwareWithNewName = BasicInstance.getBasicSoftwareNotExist()
+       Software softwareWithOldName = BasicInstanceBuilder.getSoftware()
+       Software softwareWithNewName = BasicInstanceBuilder.getSoftwareNotExist()
        softwareWithNewName.save(flush: true)
        Software softwareToEdit = Software.get(softwareWithNewName.id)
        def jsonSoftware = softwareToEdit.encodeAsJSON()
@@ -123,7 +123,7 @@ class SoftwareTests  {
    }
      
      void testEditSoftwareWithBadName() {
-         Software softwareToAdd = BasicInstance.createOrGetBasicSoftware()
+         Software softwareToAdd = BasicInstanceBuilder.getSoftware()
          Software softwareToEdit = Software.get(softwareToAdd.id)
          def jsonSoftware = softwareToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonSoftware)
@@ -134,7 +134,7 @@ class SoftwareTests  {
      }
  
    void testDeleteSoftware() {
-       def softwareToDelete = BasicInstance.getBasicSoftwareNotExist()
+       def softwareToDelete = BasicInstanceBuilder.getSoftwareNotExist()
        softwareToDelete = softwareToDelete.save(flush: true)
        assert softwareToDelete!= null
        def id = softwareToDelete.id
@@ -163,7 +163,7 @@ class SoftwareTests  {
    }
  
    void testDeleteSoftwareWithProject() {
-       def softwareProject = BasicInstance.createOrGetBasicSoftwareProject()
+       def softwareProject = BasicInstanceBuilder.getSoftwareProject()
        def result = SoftwareAPI.delete(softwareProject.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
    }
@@ -174,7 +174,7 @@ class SoftwareTests  {
 
 //    log.info("create software")
 //    //create project and try to delete his software
-//    def project = BasicInstance.createOrGetBasicProject()
+//    def project = BasicInstanceBuilder.getProject()
 //    def softwareToDelete = project.software
 //    assert softwareToDelete.save(flush:true)!=null
 //    String jsonSoftware = softwareToDelete.encodeAsJSON()
@@ -197,7 +197,7 @@ class SoftwareTests  {
         /**
          * test add software
          */
-        Software softwareToAdd = BasicInstance.getBasicSoftwareNotExist()
+        Software softwareToAdd = BasicInstanceBuilder.getSoftwareNotExist()
         def result = SoftwareAPI.create(softwareToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idSoftware = result.data.id
@@ -206,7 +206,7 @@ class SoftwareTests  {
         * test add software parameter N
         */
         log.info("create softwareparameter")
-        def softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
+        def softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameterNotExist()
         softwareparameterToAdd.software = Software.read(idSoftware)
         softwareparameterToAdd.name = "N"
         softwareparameterToAdd.type = "String"
@@ -219,7 +219,7 @@ class SoftwareTests  {
         * test add software parameter T
         */
         log.info("create softwareparameter")
-        softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
+        softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameterNotExist()
         softwareparameterToAdd.software = Software.read(idSoftware)
         softwareparameterToAdd.name = "T"
         softwareparameterToAdd.type = "String"
@@ -231,14 +231,14 @@ class SoftwareTests  {
         /*
         * test add software parameter project x
         */
-        def SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
+        def SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProjectNotExist()
         result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idSoftwareProject = result.data.id
         /*
         * test add software parameter project y
         */
-        SoftwareProjectToAdd = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProjectNotExist()
         result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         idSoftwareProject = result.data.id

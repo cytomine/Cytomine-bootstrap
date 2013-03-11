@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.JobData
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobDataAPI
 import grails.converters.JSON
@@ -32,7 +32,7 @@ class JobDataTests  {
     }
 
     void testShowJobDataWithCredential() {
-        JobData jobdata = BasicInstance.createOrGetBasicJobData()
+        JobData jobdata = BasicInstanceBuilder.getJobData()
         def result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -40,7 +40,7 @@ class JobDataTests  {
     }
 
     void testListJobDataByJob() {
-        JobData jobdata = BasicInstance.createOrGetBasicJobData()
+        JobData jobdata = BasicInstanceBuilder.getJobData()
         def result = JobDataAPI.listByJob(jobdata.job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -54,7 +54,7 @@ class JobDataTests  {
 
 
     void testAddJobDataCorrect() {
-        def jobdataToAdd = BasicInstance.getBasicJobDataNotExist()
+        def jobdataToAdd = BasicInstanceBuilder.getJobDataNotExist()
         def result = JobDataAPI.create(jobdataToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         JobData jobdata = result.data
@@ -63,7 +63,7 @@ class JobDataTests  {
     }
 
     void testEditJobDataCorrect() {
-        JobData jobdataToAdd = BasicInstance.createOrGetBasicJobData()
+        JobData jobdataToAdd = BasicInstanceBuilder.getJobData()
         def data = UpdateData.createUpdateSet(jobdataToAdd)
         def result = JobDataAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -74,11 +74,11 @@ class JobDataTests  {
         json = JSON.parse(showResult.data)
         println "data.mapNew="+data.mapNew
         println "json="+json
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
     }
 
     void testEditJobDataWithBadKey() {
-        JobData jobdataToAdd = BasicInstance.createOrGetBasicJobData()
+        JobData jobdataToAdd = BasicInstanceBuilder.getJobData()
         JobData jobdataToEdit = JobData.get(jobdataToAdd.id)
         def jsonJobData = jobdataToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJobData)
@@ -89,7 +89,7 @@ class JobDataTests  {
     }
 
     void testDeleteJobData() {
-        def jobdataToDelete = BasicInstance.getBasicJobDataNotExist()
+        def jobdataToDelete = BasicInstanceBuilder.getJobDataNotExist()
         assert jobdataToDelete.save(flush: true) != null
         def result = JobDataAPI.delete(jobdataToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -106,7 +106,7 @@ class JobDataTests  {
     void testDataInDatabase() {
         Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = false
         //create jobdata
-        JobData jobData = BasicInstance.getBasicJobDataNotExist()
+        JobData jobData = BasicInstanceBuilder.getJobDataNotExist()
         jobData.filename = "test.data"
         jobData.save(flush: true)
 
@@ -128,7 +128,7 @@ class JobDataTests  {
     void testDataInFileSystem() {
         Holders.getGrailsApplication().config.cytomine.jobdata.filesystem = true
         //create jobdata
-        JobData jobData = BasicInstance.getBasicJobDataNotExist()
+        JobData jobData = BasicInstanceBuilder.getJobDataNotExist()
         jobData.filename = "test.data"
         jobData.save(flush: true)
 

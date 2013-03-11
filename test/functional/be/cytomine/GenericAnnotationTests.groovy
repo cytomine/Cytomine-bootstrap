@@ -5,7 +5,7 @@ import be.cytomine.ontology.AlgoAnnotationTerm
 
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -30,7 +30,7 @@ import be.cytomine.utils.UpdateData
 class GenericAnnotationTests  {
 
     void testGetAnnotationWithCredentialWithaAnnotationAlgo() {
-        def annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AnnotationDomainAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -38,7 +38,7 @@ class GenericAnnotationTests  {
     }
 
     void testGetAnnotationWithCredentialWidthAnnotationUser() {
-        def annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = AnnotationDomainAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -46,7 +46,7 @@ class GenericAnnotationTests  {
     }
 
     void testListAnnotationByProject() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -59,7 +59,7 @@ class GenericAnnotationTests  {
 
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWithAnnotationAlgo() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -67,7 +67,7 @@ class GenericAnnotationTests  {
     }
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWidthAnnotationUser() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -76,7 +76,7 @@ class GenericAnnotationTests  {
 
 
     void testListAnnotationByImageAndUserWithCredentialWithAnnotationAlgo() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AnnotationDomainAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -84,7 +84,7 @@ class GenericAnnotationTests  {
     }
 
     void testListAnnotationByImageAndUserWithCredentialWithAnnotationUser() {
-        UserAnnotation annotation = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = AnnotationDomainAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -93,8 +93,7 @@ class GenericAnnotationTests  {
 
 
     void testListAnnotationByProjectAndTermAndUserWithCredentialForAnnotationAlgo() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
-
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -102,7 +101,7 @@ class GenericAnnotationTests  {
     }
 
     void testListAnnotationByProjectAndTermAndUserWithCredentialForAnnotationUser() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
 
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -112,7 +111,7 @@ class GenericAnnotationTests  {
 
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationAlgo() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
 
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -121,7 +120,7 @@ class GenericAnnotationTests  {
     }
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationUser() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
 
         def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -131,21 +130,21 @@ class GenericAnnotationTests  {
 
     void testListAnnotationByProjectWithSuggestTerm() {
         //create annotation
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
-        annotationTerm.term = BasicInstance.createOrGetBasicTerm()
-        BasicInstance.checkDomain(annotationTerm)
-        BasicInstance.saveDomain(annotationTerm)
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
+        annotationTerm.term = BasicInstanceBuilder.getTerm()
+        BasicInstanceBuilder.checkDomain(annotationTerm)
+        BasicInstanceBuilder.saveDomain(annotationTerm)
         UserAnnotation annotation = annotationTerm.userAnnotation
 
         //create job
-        UserJob userJob = BasicInstance.createUserJob(annotation.project)
+        UserJob userJob = BasicInstanceBuilder.getUserJob(annotation.project)
         Job job = userJob.job
 
         //create suggest with different term
-        AlgoAnnotationTerm suggest = BasicInstance.createAlgoAnnotationTerm(job,annotation,userJob)
-        suggest.term = BasicInstance.createOrGetAnotherBasicTerm()
-        BasicInstance.checkDomain(suggest)
-        BasicInstance.saveDomain(suggest)
+        AlgoAnnotationTerm suggest = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation,userJob)
+        suggest.term = BasicInstanceBuilder.getAnotherBasicTerm()
+        BasicInstanceBuilder.checkDomain(suggest)
+        BasicInstanceBuilder.saveDomain(suggest)
 
         def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -154,18 +153,18 @@ class GenericAnnotationTests  {
         assert AnnotationDomainAPI.containsInJSONList(annotation.id,json)
 
         //create annotation
-        AnnotationTerm annotationTerm2 = BasicInstance.createOrGetBasicAnnotationTerm()
-        annotationTerm2.userAnnotation = BasicInstance.createUserAnnotation(annotationTerm2.projectDomain())
-        annotationTerm2.term = BasicInstance.createOrGetBasicTerm()
-        BasicInstance.checkDomain(annotationTerm2)
-        BasicInstance.saveDomain(annotationTerm2)
+        AnnotationTerm annotationTerm2 = BasicInstanceBuilder.getAnnotationTerm()
+        annotationTerm2.userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(annotationTerm2.projectDomain(),true)
+        annotationTerm2.term = BasicInstanceBuilder.getTerm()
+        BasicInstanceBuilder.checkDomain(annotationTerm2)
+        BasicInstanceBuilder.saveDomain(annotationTerm2)
         UserAnnotation annotation2 = annotationTerm2.userAnnotation
 
         //create suggest with same term
-        AlgoAnnotationTerm suggest2 = BasicInstance.createAlgoAnnotationTerm(job,annotation2,userJob)
-        suggest2.term = BasicInstance.createOrGetBasicTerm()
-        BasicInstance.checkDomain(suggest)
-        BasicInstance.saveDomain(suggest)
+        AlgoAnnotationTerm suggest2 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation2,userJob)
+        suggest2.term = BasicInstanceBuilder.getTerm()
+        BasicInstanceBuilder.checkDomain(suggest)
+        BasicInstanceBuilder.saveDomain(suggest)
 
         //We are looking for a different term => annotation shouldn't be in result
         result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation2.project.id, annotationTerm2.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -178,19 +177,19 @@ class GenericAnnotationTests  {
 
 
     void testDownloadAnnotationDocumentForAnnotationAlgo() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AnnotationDomainAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testDownloadAnnotationDocumentForAnnotationUser() {
-        AnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAnnotationTerm()
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
         def result = AnnotationDomainAPI.downloadDocumentByProject(annotationTerm.userAnnotation.project.id,annotationTerm.userAnnotation.user.id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testAddAnnotationCorrectForAlgo() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(),user.username, 'PasswordUserJob')
@@ -214,7 +213,7 @@ class GenericAnnotationTests  {
     }
 
     void testAddAnnotationCorrectForUser() {
-        def annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
@@ -236,7 +235,7 @@ class GenericAnnotationTests  {
     }
 
     void testEditAnnotationWithGenericCallForAlgo() {
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def data = UpdateData.createUpdateSet(annotationToAdd)
@@ -248,21 +247,21 @@ class GenericAnnotationTests  {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo(user.username, Infos.GOODPASSWORDUSERJOB)
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo(user.username, Infos.GOODPASSWORDUSERJOB)
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, user.username, Infos.GOODPASSWORDUSERJOB)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAnnotationWithGenericCallForUser() {
-        UserAnnotation annotationToAdd = BasicInstance.createOrGetBasicUserAnnotation()
+        UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -272,21 +271,21 @@ class GenericAnnotationTests  {
 
         def showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = AnnotationDomainAPI.undo()
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AnnotationDomainAPI.redo()
         assert 200 == result.code
         showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testDeleteAnnotationForAlgo() {
-        def annotationToDelete = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def annotationToDelete = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         UserJob user = annotationToDelete.user
 
@@ -311,7 +310,7 @@ class GenericAnnotationTests  {
     }
 
     void testDeleteUserAnnotationForUser() {
-        def annotationToDelete = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToDelete = BasicInstanceBuilder.getUserAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         def id = annotationToDelete.id
         def result = AnnotationDomainAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -347,17 +346,17 @@ class GenericAnnotationTests  {
     }
 
     void testFillUserAnnotation() {
-        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToFill = BasicInstanceBuilder.getUserAnnotationNotExist()
         doFillAnnotationCall(annotationToFill)
     }
 
     void testFillAlgoAnnotation() {
-        def annotationToFill = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def annotationToFill = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         doFillAnnotationCall(annotationToFill)
     }
 
     void testFillReviewedAnnotation() {
-        def annotationToFill = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotationToFill = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         doFillAnnotationCall(annotationToFill)
     }
 
@@ -374,7 +373,7 @@ class GenericAnnotationTests  {
         String multiPolygonWithoutBlank = "ULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1)),((6 3,9 2,9 4,6 3)))"
 
         //add annotation with empty space inside it
-        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToFill = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotationToFill.location = new WKTReader().read(multiPolygon)
         assert annotationToFill.save(flush: true)  != null
 
@@ -404,7 +403,7 @@ class GenericAnnotationTests  {
                 "     )"
 
         //add annotation with empty space inside it
-        def annotationToFill = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotationToFill = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotationToFill.location = new WKTReader().read(multiPolygon)
         assert annotationToFill.save(flush: true)  != null
 
@@ -418,22 +417,22 @@ class GenericAnnotationTests  {
     }
 
     void testFreehandAnnotationCorrectionUserAdd() {
-        def annotation = BasicInstance.createUserAnnotation(BasicInstance.createOrGetBasicProject())
+        def annotation = BasicInstanceBuilder.getUserAnnotationNotExist(BasicInstanceBuilder.getProject(),true)
         doFreeHandAnnotationAdd(annotation,false)
     }
 
     void testFreehandAnnotationCorrectionReviewedAdd() {
-        def annotation = BasicInstance.createReviewAnnotation(BasicInstance.createOrGetBasicImageInstance())
+        def annotation = BasicInstanceBuilder.createReviewAnnotation(BasicInstanceBuilder.getImageInstance())
         doFreeHandAnnotationAdd(annotation,true)
     }
 
     void testFreehandAnnotationCorrectionUserRem() {
-        def annotation = BasicInstance.createUserAnnotation(BasicInstance.createOrGetBasicProject())
+        def annotation = BasicInstanceBuilder.getUserAnnotationNotExist(BasicInstanceBuilder.getProject(),true)
         doFreeHandAnnotationRem(annotation,false)
     }
 
     void testFreehandAnnotationCorrectionReviewedRem() {
-        def annotation = BasicInstance.createReviewAnnotation(BasicInstance.createOrGetBasicImageInstance())
+        def annotation = BasicInstanceBuilder.createReviewAnnotation(BasicInstanceBuilder.getImageInstance())
         doFreeHandAnnotationRem(annotation,true)
     }
 

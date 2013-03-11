@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.test.http.SoftwareProjectAPI
@@ -25,7 +25,7 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Add softwareProject 2 with user 1
-        SoftwareProject softwareProject2 = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject softwareProject2 = BasicInstanceBuilder.getSoftwareProjectNotExist()
         Infos.addUserRight(user,softwareProject2.project)
         def result = SoftwareProjectAPI.create(softwareProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -49,7 +49,7 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        SoftwareProject softwareProject2 = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject softwareProject2 = BasicInstanceBuilder.getSoftwareProjectNotExist()
         Infos.addUserRight(user,softwareProject2.project)
 
         //Add softwareProject 1 with user1
@@ -76,7 +76,7 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        SoftwareProject softwareProject2 = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject softwareProject2 = BasicInstanceBuilder.getSoftwareProjectNotExist()
         Infos.addUserRight(user,softwareProject2.project)
 
         //Add project right for user 2
@@ -110,7 +110,7 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        SoftwareProject softwareProject = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProjectNotExist()
         Infos.addUserRight(user1,softwareProject.project)
 
         //Add softwareProject 1 with user 1
@@ -134,7 +134,7 @@ class SoftwareProjectSecurityTests extends SecurityTestsAbstract {
         User user1 = getUser1()
 
         //Create project with user 1
-        SoftwareProject softwareProject = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProjectNotExist()
         Infos.addUserRight(user1,softwareProject.project)
 
         //Add softwareProject 1 with user 1

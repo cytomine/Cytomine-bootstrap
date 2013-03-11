@@ -1,6 +1,8 @@
 package be.cytomine.test.http
 
 import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import grails.converters.JSON
 
@@ -52,6 +54,20 @@ class ImageInstanceAPI extends DomainAPI {
     static def next(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/next.json"
         return doGET(URL, username, password)
+    }
+
+    static ImageInstance buildBasicImage(String username, String password) {
+        //Create project with user 1
+        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), username, password)
+        assert 200==result.code
+        Project project = result.data
+        //Add image with user 1
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.project = project
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), username, password)
+        assert 200==result.code
+        image = result.data
+        return image
     }
 
 }

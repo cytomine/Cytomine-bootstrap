@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.ontology.RelationTerm
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.RelationTermAPI
 import grails.converters.JSON
@@ -19,7 +19,7 @@ import be.cytomine.ontology.Relation
 class RelationTermTests {
 
     void testShowRelationTerm() {
-        RelationTerm relationTerm = BasicInstance.createOrGetBasicRelationTerm()
+        RelationTerm relationTerm = BasicInstanceBuilder.getRelationTerm()
         def result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -41,24 +41,24 @@ class RelationTermTests {
     }
     
   void testListRelationTermByTerm1() {
-      def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
 
-      result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
 
     void testListRelationTermByTerm2() {
-        def result = RelationTermAPI.listByTerm(BasicInstance.createOrGetBasicTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
     
     void testListRelationTermByRelation() {
-        def result = RelationTermAPI.listByRelation(BasicInstance.createOrGetBasicRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.listByRelation(BasicInstanceBuilder.getRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -66,7 +66,7 @@ class RelationTermTests {
 
 
     void testListRelationTermByTerm() {
-        def result = RelationTermAPI.listByTermAll(BasicInstance.createOrGetBasicTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.listByTermAll(BasicInstanceBuilder.getTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -83,7 +83,7 @@ class RelationTermTests {
     }
 
   void testAddRelationTermCorrect() {
-      def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
+      def relationTermToAdd = BasicInstanceBuilder.getRelationTermNotExist()
 
       String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
       def json = JSON.parse(jsonRelationTerm)
@@ -118,7 +118,7 @@ class RelationTermTests {
 
 
    void testAddRelationTermCorrectDefaultRelationParent() {
-        def relationTermToAdd = BasicInstance.getBasicRelationTermNotExist()
+        def relationTermToAdd = BasicInstanceBuilder.getRelationTermNotExist()
 
         String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
         def json = JSON.parse(jsonRelationTerm)
@@ -134,7 +134,7 @@ class RelationTermTests {
     }
 
   void testAddRelationTermAlreadyExist() {
-      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+      def relationTermToAdd = BasicInstanceBuilder.getRelationTerm()
 
       String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
       def json = JSON.parse(jsonRelationTerm)
@@ -148,7 +148,7 @@ class RelationTermTests {
   }
 
   void testAddRelationTermWithRelationNotExist() {
-    def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+    def relationTermToAdd = BasicInstanceBuilder.getRelationTerm()
     String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
     def json = JSON.parse(jsonRelationTerm)
     json.relation = -99
@@ -161,7 +161,7 @@ class RelationTermTests {
   }
 
   void testAddRelationTermWithTerm1NotExist() {
-      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+      def relationTermToAdd = BasicInstanceBuilder.getRelationTerm()
       String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
       def json = JSON.parse(jsonRelationTerm)
       json.relation = relationTermToAdd.relation.id
@@ -174,7 +174,7 @@ class RelationTermTests {
   }
 
   void testAddRelationTermWithTerm2NotExist() {
-      def relationTermToAdd = BasicInstance.createOrGetBasicRelationTerm()
+      def relationTermToAdd = BasicInstanceBuilder.getRelationTerm()
       String jsonRelationTerm = relationTermToAdd.encodeAsJSON()
       def json = JSON.parse(jsonRelationTerm)
       json.relation = relationTermToAdd.relation.id
@@ -187,7 +187,7 @@ class RelationTermTests {
   }
 
   void testDeleteRelationTerm() {
-      def relationtermToDelete = BasicInstance.getBasicRelationTermNotExist()
+      def relationtermToDelete = BasicInstanceBuilder.getRelationTermNotExist()
       assert relationtermToDelete.save(flush: true)  != null
       def id = relationtermToDelete.id
       int idRelation = relationtermToDelete.relation.id
@@ -213,7 +213,7 @@ class RelationTermTests {
   }
 
     void testDeleteRelationTermDefaultParent() {
-        def relationtermToDelete = BasicInstance.getBasicRelationTermNotExist()
+        def relationtermToDelete = BasicInstanceBuilder.getRelationTermNotExist()
         relationtermToDelete.relation = Relation.findByName(RelationTerm.names.PARENT)
         assert relationtermToDelete.save(flush: true)  != null
         def result = RelationTermAPI.delete(null,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

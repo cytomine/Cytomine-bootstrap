@@ -3,7 +3,7 @@ package be.cytomine
 import be.cytomine.ontology.AnnotationTerm
 
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationTermAPI
 import grails.converters.JSON
@@ -21,7 +21,7 @@ class AnnotationTermTests  {
 
   void testGetAnnotationTermWithCredential() {
     User currentUser = User.findByUsername(Infos.GOODLOGIN)
-    def annotationTermToAdd = BasicInstance.createOrGetBasicAnnotationTerm()
+    def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTerm()
     def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.userAnnotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 200 == result.code
     def json = JSON.parse(result.data)
@@ -29,7 +29,7 @@ class AnnotationTermTests  {
   }
 
   void testListAnnotationTermByAnnotationWithCredential() {
-    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json.collection instanceof JSONArray
@@ -39,17 +39,17 @@ class AnnotationTermTests  {
   }
 
     void testListAnnotationTermByAnnotationWithCredentialWithUser() {
-      def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
 
-      result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 404 == result.code
     }
 
     void testListAnnotationTermByUserNotWithCredential() {
-      def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstance.createOrGetBasicUserAnnotation().id,BasicInstance.newUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -57,7 +57,7 @@ class AnnotationTermTests  {
 
   void testAddAnnotationTermCorrect() {
      User currentUser = User.findByUsername(Infos.GOODLOGIN)
-    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermCorrect")
+    def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
     annotationTermToAdd.discard()
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -88,7 +88,7 @@ class AnnotationTermTests  {
 
     void testAddAnnotationTermCorrectDeletingOldTerm() {
        User currentUser = User.findByUsername(Infos.GOODLOGIN)
-      def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermCorrect")
+      def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
       annotationTermToAdd.discard()
       String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
       def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD,true)
@@ -118,7 +118,7 @@ class AnnotationTermTests  {
     }
 
   void testAddAnnotationTermAlreadyExist() {
-    def annotationTermToAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermAlreadyExist")
+    def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
     annotationTermToAdd.save(flush:true)
     //annotationTermToAdd is in database, we will try to add it twice
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
@@ -127,7 +127,7 @@ class AnnotationTermTests  {
   }
 
   void testAddAnnotationTermWithAnnotationNotExist() {
-    def annotationTermAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermWithAnnotationNotExist")
+    def annotationTermAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.userannotation = -99
@@ -137,7 +137,7 @@ class AnnotationTermTests  {
   }
 
   void testAddAnnotationTermWithTermNotExist() {
-    def annotationTermAdd = BasicInstance.getBasicAnnotationTermNotExist("testAddAnnotationTermWithTermNotExist")
+    def annotationTermAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.term = -99
@@ -149,7 +149,7 @@ class AnnotationTermTests  {
   void testDeleteAnnotationTerm() {
     User currentUser = User.findByUsername(Infos.GOODLOGIN)
 
-    def annotationTermToDelete = BasicInstance.createOrGetBasicAnnotationTerm()
+    def annotationTermToDelete = BasicInstanceBuilder.getAnnotationTerm()
     int idAnnotation = annotationTermToDelete.userAnnotation.id
     int idTerm = annotationTermToDelete.term.id
     int idUser = currentUser.id

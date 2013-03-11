@@ -1,10 +1,10 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-
+import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.UserAnnotation
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -32,7 +32,7 @@ import be.cytomine.utils.UpdateData
 class ReviewedAnnotationTests  {
 
     void testGetReviewedAnnotation() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -47,7 +47,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotation() {
-        BasicInstance.createOrGetBasicReviewedAnnotation()
+        BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -55,7 +55,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByProject() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -69,13 +69,13 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByProjectAndUser() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
-        def annotationNotCriteria = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
+        def annotationNotCriteria = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         annotationNotCriteria.project = annotation.project
-        annotationNotCriteria.user = BasicInstance.getBasicUserNotExist()
-        BasicInstance.saveDomain(annotationNotCriteria.user)
-        BasicInstance.checkDomain(annotationNotCriteria)
-        BasicInstance.saveDomain(annotationNotCriteria)
+        annotationNotCriteria.user = BasicInstanceBuilder.getUserNotExist()
+        BasicInstanceBuilder.saveDomain(annotationNotCriteria.user)
+        BasicInstanceBuilder.checkDomain(annotationNotCriteria)
+        BasicInstanceBuilder.saveDomain(annotationNotCriteria)
 
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -86,13 +86,13 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByProjectAndUserWithUserNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testListReviewedAnnotationByProjectAndUserAndImage() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         println "annotation.term="+annotation.terms
         println "annotation.term="+annotation.terms.id
         println "project.term="+annotation.project.ontology.terms()
@@ -104,35 +104,35 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByProjectAndUserAndImageWithImageNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testListReviewedAnnotationByProjectAndUserAndImageWithUserNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,-99,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testListReviewedAnnotationByProjectAndUserAndImageAndTerm() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
 
-        def annotationNotCriteria = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotationNotCriteria = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         annotationNotCriteria.project = annotation.project
         annotationNotCriteria.image = annotation.image
         annotationNotCriteria.user = annotation.user
 
-        def anotherTerm = BasicInstance.getBasicTermNotExist()
-        anotherTerm.ontology = BasicInstance.createOrGetBasicOntology()
-        BasicInstance.checkDomain(anotherTerm)
-        BasicInstance.saveDomain(anotherTerm)
+        def anotherTerm = BasicInstanceBuilder.getTermNotExist()
+        anotherTerm.ontology = BasicInstanceBuilder.getOntology()
+        BasicInstanceBuilder.checkDomain(anotherTerm)
+        BasicInstanceBuilder.saveDomain(anotherTerm)
 
         if(annotationNotCriteria.terms) annotationNotCriteria.terms.clear()
         annotationNotCriteria.addToTerms(anotherTerm)
 
-        BasicInstance.checkDomain(annotationNotCriteria)
-        BasicInstance.saveDomain(annotationNotCriteria)
+        BasicInstanceBuilder.checkDomain(annotationNotCriteria)
+        BasicInstanceBuilder.saveDomain(annotationNotCriteria)
 
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,annotation.termsId().first(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -143,14 +143,14 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByProjectAndUserAndImageAndTermWithTermNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
 
     void testListReviewedAnnotationByImage() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImage(annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -160,14 +160,14 @@ class ReviewedAnnotationTests  {
 
     void testListReviewedAnnotationByImageBBOX() {
         String bbox = "1,1,10000,10000"
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImage(annotation.image.id,bbox,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testListReviewedAnnotationByTermImage() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
-        def term = BasicInstance.createOrGetBasicTerm()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
+        def term = BasicInstanceBuilder.getTerm()
         def result = ReviewedAnnotationAPI.listByImageAndTerm(annotation.image.id,term.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
@@ -181,7 +181,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testListReviewedAnnotationByImageAndUser() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImageAndUser(annotation.image.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -191,27 +191,27 @@ class ReviewedAnnotationTests  {
 
     void testListReviewedAnnotationByImageAndUserAndBBOX() {
         String bbox = "1,1,10000,10000"
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImageAndUserAndBBOX(annotation.image.id,annotation.user.id,bbox,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testListReviewedAnnotationByImageAndUserWithImageNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImageAndUser(-99,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testListReviewedAnnotationByImageAndUserWithUserNotExist() {
-        def annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        def annotation = BasicInstanceBuilder.getReviewedAnnotation()
         def result = ReviewedAnnotationAPI.listByImageAndUser(annotation.image.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testAddReviewedAnnotationCorrect() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
-        json.term = BasicInstance.createOrGetBasicTerm().id
+        json.term = BasicInstanceBuilder.getTerm().id
         println "json.encodeAsJSON()="+json.encodeAsJSON()
         def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -234,7 +234,7 @@ class ReviewedAnnotationTests  {
     }
 
 //    void testAddReviewedAnnotationCorrectWithoutTerm() {
-//        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
 //        def json = JSON.parse(annotationToAdd.encodeAsJSON())
 //        json.term = []
 //
@@ -243,7 +243,7 @@ class ReviewedAnnotationTests  {
 //    }
 
     void testAddReviewedAnnotationCorrectWithBadProject() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.project = null
 
@@ -252,7 +252,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testAddReviewedAnnotationCorrectWithBadImage() {
-        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.image = null
 
@@ -261,7 +261,7 @@ class ReviewedAnnotationTests  {
     }
 
 //    void testAddReviewedAnnotationCorrectWithBadParent() {
-//        def annotationToAdd = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
 //        def json = JSON.parse(annotationToAdd.encodeAsJSON())
 //        json.annotationIdent = null
 //
@@ -271,7 +271,7 @@ class ReviewedAnnotationTests  {
 
 
     void testEditReviewedAnnotation() {
-        ReviewedAnnotation annotationToAdd = BasicInstance.createOrGetBasicReviewedAnnotation()
+        ReviewedAnnotation annotationToAdd = BasicInstanceBuilder.getReviewedAnnotation()
         def data = UpdateData.createUpdateSet(annotationToAdd)
         def result = ReviewedAnnotationAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -281,23 +281,23 @@ class ReviewedAnnotationTests  {
 
         def showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = ReviewedAnnotationAPI.undo()
         assert 200==showResult.code
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = ReviewedAnnotationAPI.redo()
         assert 200==showResult.code
         showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
 
 //    void testDeleteReviewedAnnotation() {
-//        def annotationToDelete = BasicInstance.getBasicReviewedAnnotationNotExist()
-//        assert annotationToDelete.addToTerm(BasicInstance.createOrGetBasicTerm()).save(flush: true)  != null
+//        def annotationToDelete = BasicInstanceBuilder.getReviewedAnnotationNotExist()
+//        assert annotationToDelete.addToTerm(BasicInstanceBuilder.getTerm()).save(flush: true)  != null
 //
 //        def id = annotationToDelete.id
 //
@@ -327,9 +327,9 @@ class ReviewedAnnotationTests  {
 //    }
 //
 //    void testDeleteReviewedAnnotationWithTerm() {
-//        def annotationToDelete = BasicInstance.getBasicReviewedAnnotationNotExist()
+//        def annotationToDelete = BasicInstanceBuilder.getReviewedAnnotationNotExist()
 //        assert annotationToDelete.save(flush: true)  != null
-//        annotationToDelete.addToTerm(BasicInstance.createOrGetBasicTerm())
+//        annotationToDelete.addToTerm(BasicInstanceBuilder.getTerm())
 //        //annotationToDelete.save(flush: true)
 //        def id = annotationToDelete.id
 //        println annotationToDelete.encodeAsJSON()
@@ -360,16 +360,16 @@ class ReviewedAnnotationTests  {
 
 
 //    void testAddReviewedAnnotationForAllJobData() {
-//        Job job = BasicInstance.getBasicJobNotExist()
-//        BasicInstance.checkDomain(job)
-//        BasicInstance.saveDomain(job)
-//        BasicInstance.createSoftwareProject(job.software,job.project)
+//        Job job = BasicInstanceBuilder.getJobNotExist()
+//        BasicInstanceBuilder.checkDomain(job)
+//        BasicInstanceBuilder.saveDomain(job)
+//        BasicInstanceBuilder.createSoftwareProject(job.software,job.project)
 //
-//        UserJob userJob = BasicInstance.getBasicUserJobNotExist()
+//        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist()
 //        userJob.job = job
-//        userJob.user = BasicInstance.getNewUser()
-//        BasicInstance.checkDomain(userJob)
-//        BasicInstance.saveDomain(userJob)
+//        userJob.user = BasicInstanceBuilder.getNewUser()
+//        BasicInstanceBuilder.checkDomain(userJob)
+//        BasicInstanceBuilder.saveDomain(userJob)
 //
 //        //add algo-annotation for this job
 //        AlgoAnnotation a1 = createAlgoAnnotation(job, userJob)
@@ -378,7 +378,7 @@ class ReviewedAnnotationTests  {
 //        AlgoAnnotationTerm at1 = createAlgoAnnotationTerm(job, a1, userJob)
 //
 //        //add user-annotation for this job
-//        UserAnnotation a2 = createUserAnnotation(job)
+//        UserAnnotation a2 = getUserAnnotationNotExist(true,job)
 //
 //        //add algo-annotation-term for this job
 //        AlgoAnnotationTerm at2 = createAlgoAnnotationTerm(job, a2, userJob)
@@ -421,7 +421,7 @@ class ReviewedAnnotationTests  {
          //check image review flag true AND false AND true (no rev => rev => stop rev)
 
           //create image
-          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
 
           //check image attributes
           def result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -464,10 +464,10 @@ class ReviewedAnnotationTests  {
       void testLockImageReviewing() {
           //check image lock, only review if image is mark as review star
           //create image
-          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
 
           //add review
-          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+          UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
           def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert ConstraintException.CODE==result.code
@@ -485,15 +485,15 @@ class ReviewedAnnotationTests  {
           assert 200 == result.code
 
           //create image
-          ImageInstance image2 = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-          UserAnnotation annotation2 = BasicInstance.createUserAnnotation(image2.project,image2)
+          ImageInstance image2 = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+          UserAnnotation annotation2 = BasicInstanceBuilder.getUserAnnotationNotExist(image2.project,image2,true)
           result = ReviewedAnnotationAPI.addReviewAnnotation(annotation2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert ConstraintException.CODE==result.code
 
       }
 
     void testStopReviewCancel() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.markStopReview(image.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -501,7 +501,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testStopReviewValidate() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.markStopReview(image.id, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -515,7 +515,7 @@ class ReviewedAnnotationTests  {
         ImageInstance image
 
         //validate image review by other user
-        image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.markStopReview(image.id, false,Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
@@ -524,14 +524,14 @@ class ReviewedAnnotationTests  {
 
      void testLockImageReviewingForOtherUser() {
           //create image
-          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+          ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
 
           //mark start review + check attr
           def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
 
           //add review with another login/user
-          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+          UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
           result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
          assert ConstraintException.CODE==result.code
 
@@ -540,8 +540,8 @@ class ReviewedAnnotationTests  {
       void testUnReviewing() {
           //review image => add review => check image is not reviewed
           //create image
-          ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-          UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+          ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+          UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
           //mark start review + check attr
           def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -558,15 +558,15 @@ class ReviewedAnnotationTests  {
       }
 
     void testAddReviewForImageNotReviewed() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
     void testAddReviewForUserNotReviewer() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
@@ -574,8 +574,10 @@ class ReviewedAnnotationTests  {
     }
 
     void testAddReviewForAnnotationTerm() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
+
+        AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -613,12 +615,12 @@ class ReviewedAnnotationTests  {
     }
 
     void testAddReviewForAlgoAnnotationTerm() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserJob user = BasicInstance.createUserJob(image.project)
-        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(user.job,user)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserJob user = BasicInstanceBuilder.getUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(user.job,user,true)
         annotation.image = image
-        BasicInstance.saveDomain(annotation)
-        BasicInstance.createAlgoAnnotationTerm(user.job,annotation,user)
+        BasicInstanceBuilder.saveDomain(annotation)
+        BasicInstanceBuilder.getAlgoAnnotationTerm(user.job,annotation,user)
 
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -634,15 +636,15 @@ class ReviewedAnnotationTests  {
     }
 
     void testRemoveReviewForAnnotationNotReviewed() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         def result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
     void testRemoveReviewForUserNotReviewed() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -652,12 +654,12 @@ class ReviewedAnnotationTests  {
     }
 
     void testRemoveReviewForAlgoAnnotationTerm() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserJob user = BasicInstance.createUserJob(image.project)
-        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(user.job,user)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserJob user = BasicInstanceBuilder.getUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(user.job,user,true)
         annotation.image = image
-        BasicInstance.saveDomain(annotation)
-        BasicInstance.createAlgoAnnotationTerm(user.job,annotation,user)
+        BasicInstanceBuilder.saveDomain(annotation)
+        BasicInstanceBuilder.getAlgoAnnotationTerm(user.job,annotation,user)
 
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -674,8 +676,8 @@ class ReviewedAnnotationTests  {
 
 
     void testRemoveReviewForAnnotationTerm() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -713,8 +715,8 @@ class ReviewedAnnotationTests  {
     }
 
     void testAddReviewAndUpdateGeometry() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -733,8 +735,8 @@ class ReviewedAnnotationTests  {
     }
 
     void testaddConflictReview() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -748,27 +750,27 @@ class ReviewedAnnotationTests  {
 
 
     void testReviewAllUserLayerImageNotFound() {
-        def result =  ReviewedAnnotationAPI.addReviewAll(-99,[BasicInstance.newUser.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  ReviewedAnnotationAPI.addReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
     void testReviewAllUserLayerImageNotReviewMode() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        def result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstance.newUser.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        def result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
     void testReviewAllUserLayerUserNotReviewer() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstance.newUser.id],Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstanceBuilder.user1.id],Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
         assert 400 == result.code
     }
 
 
     void testReviewAllUserLayer() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -781,12 +783,12 @@ class ReviewedAnnotationTests  {
     }
 
     void testReviewAllJobLayer() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserJob userJob = BasicInstance.createUserJob(image.project)
-        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(userJob.job,userJob)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserJob userJob = BasicInstanceBuilder.getUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(userJob.job,userJob,true)
         annotation.image = image
         annotation.project = image.project
-        BasicInstance.saveDomain(annotation)
+        BasicInstanceBuilder.saveDomain(annotation)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -800,8 +802,8 @@ class ReviewedAnnotationTests  {
 
 
     void testUnReviewAllUserLayer() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
         def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -813,7 +815,7 @@ class ReviewedAnnotationTests  {
     }
 
     void testUnReviewAllUserLayerImageNotFound() {
-        def result =  ReviewedAnnotationAPI.deleteReviewAll(-99,[BasicInstance.newUser.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  ReviewedAnnotationAPI.deleteReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
@@ -831,12 +833,12 @@ class ReviewedAnnotationTests  {
 
 
     void testAnnotationReviewedCounterForAnnotationAlgo() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserJob userJob = BasicInstance.createUserJob(image.project)
-        AlgoAnnotation annotation = BasicInstance.createAlgoAnnotation(userJob.job,userJob)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserJob userJob = BasicInstanceBuilder.getUserJob(image.project)
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(userJob.job,userJob,true)
         annotation.image = image
-        BasicInstance.checkDomain(annotation)
-        BasicInstance.saveDomain(annotation)
+        BasicInstanceBuilder.checkDomain(annotation)
+        BasicInstanceBuilder.saveDomain(annotation)
 
         image.refresh()
         image.project.refresh()
@@ -845,12 +847,12 @@ class ReviewedAnnotationTests  {
         assert image.countImageReviewedAnnotations==0
         int nbreRevAnnotationProject = image.project.countReviewedAnnotations
 
-        ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation review = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         review.image = annotation.image
         review.project = annotation.project
         review.putParentAnnotation(annotation)
-        BasicInstance.checkDomain(review)
-        BasicInstance.saveDomain(review)
+        BasicInstanceBuilder.checkDomain(review)
+        BasicInstanceBuilder.saveDomain(review)
 
         annotation.refresh()
         image.refresh()
@@ -872,20 +874,20 @@ class ReviewedAnnotationTests  {
     }
 
     void testAnnotationReviewedCounterForAnnotationUser() {
-        ImageInstance image = BasicInstance.createImageInstance(BasicInstance.createOrGetBasicProject())
-        UserJob userJob = BasicInstance.createUserJob(image.project)
-        UserAnnotation annotation = BasicInstance.createUserAnnotation(image.project,image)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserJob userJob = BasicInstanceBuilder.getUserJob(image.project)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         assert annotation.countReviewedAnnotations==0
         assert image.countImageReviewedAnnotations==0
         image.project.refresh()
         int nbreRevAnnotationProject = image.project.countReviewedAnnotations
 
-        ReviewedAnnotation review = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation review = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         review.image = annotation.image
         review.project = annotation.project
         review.putParentAnnotation(annotation)
-        BasicInstance.checkDomain(review)
-        BasicInstance.saveDomain(review)
+        BasicInstanceBuilder.checkDomain(review)
+        BasicInstanceBuilder.saveDomain(review)
 
         annotation.refresh()
         image.refresh()

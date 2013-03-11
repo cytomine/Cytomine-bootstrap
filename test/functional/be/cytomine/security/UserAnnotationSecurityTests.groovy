@@ -2,9 +2,9 @@ package be.cytomine.security
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-
+import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
 import be.cytomine.test.http.UserAnnotationAPI
@@ -27,11 +27,11 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add annotation 1 with cytomine admin
-        UserAnnotation annotation1 = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation1 = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation1.image = image
         annotation1.project = project
         def result = UserAnnotationAPI.create(annotation1.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
@@ -39,7 +39,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         annotation1 = result.data
 
         //Add annotation 2 with user 1
-        UserAnnotation annotation2 = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation2 = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation2.image = image
         annotation2.project = project
         Infos.printRight(annotation2.project)
@@ -68,11 +68,11 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add annotation 1 with user1
-        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
         def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -101,7 +101,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add project right for user 2
@@ -110,7 +110,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         assert 200 == resAddUser.code
 
         //Add annotation 1 with user 1
-        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
         def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -139,11 +139,11 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add annotation 1 with user 1
-        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
         project.refresh()
@@ -176,11 +176,11 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         User user1 = getUser1()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add annotation 1 with user 1
-        UserAnnotation annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
         def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)

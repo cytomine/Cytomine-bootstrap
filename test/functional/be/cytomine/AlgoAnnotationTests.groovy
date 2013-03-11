@@ -8,7 +8,7 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.AlgoAnnotationAPI
@@ -29,7 +29,7 @@ import be.cytomine.utils.UpdateData
 class AlgoAnnotationTests  {
 
     void testGetAlgoAnnotationWithCredential() {
-        def annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -37,7 +37,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationWithCredential() {
-        BasicInstance.createOrGetBasicAlgoAnnotation()
+        BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -45,7 +45,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByImageWithCredential() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByImage(annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -58,7 +58,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByProjectWithCredential() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -66,7 +66,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByProjectWithOffset() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id,true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -78,7 +78,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByProjecImageAndUsertWithCredential() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -89,9 +89,9 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByImageAndUserWithCredential() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
-        AlgoAnnotation annotationWith2Term = BasicInstance.createOrGetBasicAlgoAnnotation()
-        AlgoAnnotationTerm aat = BasicInstance.createAlgoAnnotationTerm(annotationWith2Term.user.job,annotationWith2Term,annotationWith2Term.user)
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
+        AlgoAnnotation annotationWith2Term = BasicInstanceBuilder.getAlgoAnnotation()
+        AlgoAnnotationTerm aat = BasicInstanceBuilder.getAlgoAnnotationTerm(annotationWith2Term.user.job,annotationWith2Term,annotationWith2Term.user)
 
 
         def result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -120,7 +120,7 @@ class AlgoAnnotationTests  {
 
 
     void testListAlgoAnnotationByProjectAndTermAndUserWithCredential() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(false)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -131,7 +131,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByProjectAndTermAndUserWithAllProjectImage() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(
                 annotationTerm.retrieveAnnotationDomain().project.id,
                 annotationTerm.term.id,
@@ -145,7 +145,7 @@ class AlgoAnnotationTests  {
     }
     
     void testListAlgoAnnotationByProjectAndTermWithUserNullWithCredential() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, -99, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -153,7 +153,7 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationByProjectAndTermAndUserAndImageWithCredential() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(false)
         Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
         def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -162,20 +162,20 @@ class AlgoAnnotationTests  {
     }
 
     void testListAlgoAnnotationyProjectAndUsersWithCredential() {
-        AlgoAnnotation annotation = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AlgoAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
     }
     
     void testDownloadAlgoAnnotationDocument() {
-        AlgoAnnotationTerm annotationTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AlgoAnnotationAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testAddAlgoAnnotationCorrect() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
         try {Infos.addUserRight(user.user.username,annotationToAdd.project)} catch(Exception e) {println e}
         def result = AlgoAnnotationAPI.create(annotationToAdd.encodeAsJSON(),user.username, 'PasswordUserJob')
@@ -199,8 +199,8 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationMultipleCorrect() {
-        def annotationToAdd1 = BasicInstance.createOrGetBasicAlgoAnnotation()
-        def annotationToAdd2 = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd1 = BasicInstanceBuilder.getAlgoAnnotation()
+        def annotationToAdd2 = BasicInstanceBuilder.getAlgoAnnotation()
         annotationToAdd2.image =  annotationToAdd1.image
         annotationToAdd2.project =  annotationToAdd1.project
         annotationToAdd2.save(flush: true)
@@ -214,7 +214,7 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationCorrectWithoutProject() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -224,12 +224,12 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationCorrectWithTerm() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
 
-        Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
-        Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+        Long idTerm1 = BasicInstanceBuilder.getTerm().id
+        Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
 
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
         annotationWithTerm.term = [idTerm1, idTerm2]
@@ -255,7 +255,7 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationWithoutProject() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -266,14 +266,14 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationBadGeom() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POINT(BAD GEOMETRY)'
 
-        Long idTerm1 = BasicInstance.createOrGetBasicTerm().id
-        Long idTerm2 = BasicInstance.createOrGetAnotherBasicTerm().id
+        Long idTerm1 = BasicInstanceBuilder.getTerm().id
+        Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
         updateAnnotation.term = [idTerm1, idTerm2]
 
         def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
@@ -281,7 +281,7 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationBadGeomEmpty() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -291,7 +291,7 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationBadGeomNull() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -301,7 +301,7 @@ class AlgoAnnotationTests  {
     }
 
     void testAddAlgoAnnotationImageNotExist() {
-        def annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -311,7 +311,7 @@ class AlgoAnnotationTests  {
     }
 
     void testEditAlgoAnnotation() {
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def data = UpdateData.createUpdateSet(annotationToAdd)
@@ -323,21 +323,21 @@ class AlgoAnnotationTests  {
 
         def showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = AlgoAnnotationAPI.undo(user.username, 'PasswordUserJob')
         assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compare(data.mapOld, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = AlgoAnnotationAPI.redo(user.username, 'PasswordUserJob')
         assert 200 == result.code
         showResult = AlgoAnnotationAPI.show(idAnnotation, user.username, 'PasswordUserJob')
-        BasicInstance.compare(data.mapNew, JSON.parse(showResult.data))
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
     void testEditAlgoAnnotationNotExist() {
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         AlgoAnnotation annotationToEdit = AlgoAnnotation.get(annotationToAdd.id)
@@ -348,7 +348,7 @@ class AlgoAnnotationTests  {
     }
 
     void testEditAlgoAnnotationWithBadGeometry() {
-        AlgoAnnotation annotationToAdd = BasicInstance.createOrGetBasicAlgoAnnotation()
+        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
@@ -358,7 +358,7 @@ class AlgoAnnotationTests  {
     }
 
     void testDeleteAlgoAnnotation() {
-        def annotationToDelete = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def annotationToDelete = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         UserJob user = annotationToDelete.user
 
@@ -388,7 +388,7 @@ class AlgoAnnotationTests  {
     }
 
     void testDeleteAlgoAnnotationWithData() {
-        def annotTerm = BasicInstance.createOrGetBasicAlgoAnnotationTermForAlgoAnnotation()
+        def annotTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         UserJob user = annotTerm.retrieveAnnotationDomain().user
 
         def annotationToDelete = annotTerm.retrieveAnnotationDomain()
@@ -398,24 +398,24 @@ class AlgoAnnotationTests  {
 
     void testListingAlgoAnnotationWithoutTermAlgo() {
         //create annotation without term
-        UserJob userJob = BasicInstance.createOrGetBasicUserJob()
+        UserJob userJob = BasicInstanceBuilder.getUserJob()
         User user = User.findByUsername(Infos.GOODLOGIN)
-        Project project = BasicInstance.getBasicProjectNotExist()
-        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        Project project = BasicInstanceBuilder.getProjectNotExist()
+        Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
 
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
 
-        AlgoAnnotation annotationWithoutTerm = BasicInstance.getBasicAlgoAnnotationNotExist()
+        AlgoAnnotation annotationWithoutTerm = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         annotationWithoutTerm.project = project
         annotationWithoutTerm.image = image
         annotationWithoutTerm.user = userJob
         assert annotationWithoutTerm.save(flush: true)
 
-        AlgoAnnotationTerm at = BasicInstance.getBasicAlgoAnnotationTermNotExistForAlgoAnnotation()
+        AlgoAnnotationTerm at = BasicInstanceBuilder.getAlgoAnnotationTermNotExistForAlgoAnnotation()
         at.term.ontology = ontology
         at.term.save(flush: true)
         at.project = project
@@ -453,26 +453,26 @@ class AlgoAnnotationTests  {
 
     void testListingAlgoAnnotationWithSeveralTermAlgo() {
         //create annotation without term
-        UserJob userJob = BasicInstance.createOrGetBasicUserJob()
+        UserJob userJob = BasicInstanceBuilder.getUserJob()
         User user = User.findByUsername(Infos.GOODLOGIN)
-        Project project = BasicInstance.getBasicProjectNotExist()
-        Ontology ontology = BasicInstance.createOrGetBasicOntology()
+        Project project = BasicInstanceBuilder.getProjectNotExist()
+        Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
 
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
         image.save(flush: true)
 
         //annotation with no multiple term
-        AlgoAnnotation annotationWithNoTerm = BasicInstance.getBasicAlgoAnnotationNotExist()
+        AlgoAnnotation annotationWithNoTerm = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         annotationWithNoTerm.project = project
         annotationWithNoTerm.image = image
         annotationWithNoTerm.user = userJob
         assert annotationWithNoTerm.save(flush: true)
 
         //annotation with multiple term
-        AlgoAnnotationTerm at = BasicInstance.getBasicAlgoAnnotationTermNotExistForAlgoAnnotation()
+        AlgoAnnotationTerm at = BasicInstanceBuilder.getAlgoAnnotationTermNotExistForAlgoAnnotation()
         at.term.ontology = ontology
         at.term.save(flush: true)
         at.userJob = userJob
@@ -484,7 +484,7 @@ class AlgoAnnotationTests  {
         annotationWithMultipleTerm.project = project
         annotationWithMultipleTerm.image = image
         assert annotationWithMultipleTerm.save(flush: true)
-        AlgoAnnotationTerm at2 = BasicInstance.getBasicAlgoAnnotationTermNotExistForAlgoAnnotation()
+        AlgoAnnotationTerm at2 = BasicInstanceBuilder.getAlgoAnnotationTermNotExistForAlgoAnnotation()
         at2.term.ontology = ontology
         at2.project = project
         assert at2.term.save(flush: true)
@@ -512,7 +512,7 @@ class AlgoAnnotationTests  {
     }
 
     void testUnionAlgoAnnotationWithNotFound() {
-        def a1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        def a1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         def result
         result = AlgoAnnotationAPI.union(-99,a1.retrieveAnnotationDomain().user.id,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
@@ -523,25 +523,25 @@ class AlgoAnnotationTests  {
     }
 
     void testUnionAlgoAnnotationByProjectWithCredential() {
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.save(flush: true)
         assert AlgoAnnotation.findAllByImage(image).size()==0
 
-        def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
 
         a1.location = new WKTReader().read("POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))")
         a1.image = image
         a1.project = image.project
         assert a1.save(flush: true)  != null
 
-        def a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
         a2.image = image
         a2.project = image.project
         assert a2.save(flush: true)  != null
 
-        def at1 = BasicInstance.createAlgoAnnotationTerm(a1.user.job,a1,a1.user)
-        def at2 = BasicInstance.createAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+        def at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+        def at2 = BasicInstanceBuilder.getAlgoAnnotationTerm(a2.user.job,a2,a2.user)
         at2.term = at1.term
         at2.save(flush:true)
 
@@ -554,25 +554,25 @@ class AlgoAnnotationTests  {
     }
 
     void testUnionAlgoAnnotationByProjectWithCredentialBufferNull() {
-        ImageInstance image = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.save(flush: true)
         assert AlgoAnnotation.findAllByImage(image).size()==0
 
-        def a1 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
 
         a1.location = new WKTReader().read("POLYGON ((0 0, 0 5100, 10000 5100, 10000 0, 0 0))")
         a1.image = image
         a1.project = image.project
         assert a1.save(flush: true)  != null
 
-        def a2 = BasicInstance.getBasicAlgoAnnotationNotExist()
+        def a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
         a2.image = image
         a2.project = image.project
         assert a2.save(flush: true)  != null
 
-        def at1 = BasicInstance.createAlgoAnnotationTerm(a1.user.job,a1,a1.user)
-        def at2 = BasicInstance.createAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+        def at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+        def at2 = BasicInstanceBuilder.getAlgoAnnotationTerm(a2.user.job,a2,a2.user)
         at2.term = at1.term
         at2.save(flush:true)
 

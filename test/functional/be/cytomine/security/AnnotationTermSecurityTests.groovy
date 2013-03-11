@@ -1,10 +1,11 @@
 package be.cytomine.security
 
 import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.Infos
@@ -26,10 +27,10 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Create Annotation with user 1
-        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.userAnnotation  = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         assert 200 == result.code
@@ -51,12 +52,12 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Add annotation 1 with cytomine admin
-        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Infos.addUserRight(user,annotation.project)
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.term.ontology = annotation.project.ontology
-        BasicInstance.saveDomain(annotationTerm.term)
+        BasicInstanceBuilder.saveDomain(annotationTerm.term)
         annotationTerm.userAnnotation = annotation
         annotationTerm.user = User.findByUsername(SecurityTestsAbstract.USERNAME1)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -80,7 +81,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Infos.addUserRight(user,annotation.project.ontology)
 
         //Add project right for user 2
@@ -88,9 +89,9 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         assert 200 == resAddUser.code
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.term.ontology = annotation.project.ontology
-        BasicInstance.saveDomain(annotationTerm.term)
+        BasicInstanceBuilder.saveDomain(annotationTerm.term)
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -113,10 +114,10 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -136,10 +137,10 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        UserAnnotation annotation = BasicInstance.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.userAnnotation = annotation
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code

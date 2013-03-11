@@ -2,7 +2,7 @@ package be.cytomine.dependency
 
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 
 import be.cytomine.project.Project
 import be.cytomine.ontology.Term
@@ -39,78 +39,78 @@ class TermDependencyTests  {
 
     void testTermDependency() {
         //create a term and all its dependence domain
-        def dependentDomain = createTermWithDependency(BasicInstance.createBasicProjectNotExist())
+        def dependentDomain = createTermWithDependency(BasicInstanceBuilder.getProjectNotExist(true))
         def term = dependentDomain.first()
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (200 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
         assert (200 == TermAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
 
         //check if all dependency are aivalable
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
         assert (200 == TermAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
     }
 
     void testTermDependencyWithAnnotation() {
         //create a term and all its dependence domain
-        def dependentDomain = createTermWithDependencyRefuse(BasicInstance.createBasicProjectNotExist())
+        def dependentDomain = createTermWithDependencyRefuse(BasicInstanceBuilder.getProjectNotExist(true))
         def term = dependentDomain.first()
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (400 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
     }
 
     void testTermDependencyWithReviewedAnnotation() {
-        Project project = BasicInstance.createBasicProjectNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         def dependentDomain = createTermWithDependency(project)
         Term term = dependentDomain.first()
         //change ontology for project with this ontology (cannot delete an ontology with project)
-        project.ontology = BasicInstance.createOrGetBasicOntology()
-        BasicInstance.saveDomain(project)
+        project.ontology = BasicInstanceBuilder.getOntology()
+        BasicInstanceBuilder.saveDomain(project)
 
-        BasicInstance.saveDomain(term)
+        BasicInstanceBuilder.saveDomain(term)
 
-        ReviewedAnnotation annotation = BasicInstance.createOrGetBasicReviewedAnnotation()
+        ReviewedAnnotation annotation = BasicInstanceBuilder.getReviewedAnnotation()
         annotation.project = project
         annotation.addToTerms(term)
-        BasicInstance.saveDomain(annotation)
+        BasicInstanceBuilder.saveDomain(annotation)
 
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         assert(400 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
     }
 
     void testOntologyDependency() {
         //create a term and all its dependence domain
-        def dependentDomain = createOntologyWithDependency(BasicInstance.createBasicProjectNotExist())
+        def dependentDomain = createOntologyWithDependency(BasicInstanceBuilder.getProjectNotExist(true))
         def ontology = dependentDomain.first()
         //change ontology for project with this ontology (cannot delete an ontology with project)
         Project.findAllByOntology(ontology).each {
-            it.ontology = BasicInstance.createOrGetBasicOntology()
-            BasicInstance.saveDomain(it)
+            it.ontology = BasicInstanceBuilder.getOntology()
+            BasicInstanceBuilder.saveDomain(it)
         }
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (200 == OntologyAPI.delete(ontology.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
         def res = OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD)
@@ -120,13 +120,13 @@ class TermDependencyTests  {
 
 
         //check if all dependency are aivalable
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
         assert (200 == OntologyAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
     }
 
 
@@ -134,26 +134,26 @@ class TermDependencyTests  {
     private def createTermWithDependency(Project project) {
 
         //create a term x, link with ontology
-        Term term = BasicInstance.getBasicTermNotExist()
+        Term term = BasicInstanceBuilder.getTermNotExist()
         term.ontology = project.ontology
-        BasicInstance.saveDomain(term)
+        BasicInstanceBuilder.saveDomain(term)
 
         //create a relation with term x and another term y
-        Term anotherTerm1 = BasicInstance.getBasicTermNotExist()
+        Term anotherTerm1 = BasicInstanceBuilder.getTermNotExist()
         anotherTerm1.ontology = project.ontology
-        BasicInstance.saveDomain(anotherTerm1)
+        BasicInstanceBuilder.saveDomain(anotherTerm1)
 
         RelationTerm rt1 = new RelationTerm(term1: term, term2: anotherTerm1, relation: Relation.findByName(RelationTerm.names.PARENT))
-        BasicInstance.saveDomain(rt1)
+        BasicInstanceBuilder.saveDomain(rt1)
 
 
         //create a relation with another term y and term x
-        Term anotherTerm2 = BasicInstance.getBasicTermNotExist()
+        Term anotherTerm2 = BasicInstanceBuilder.getTermNotExist()
         anotherTerm1.ontology = project.ontology
-        BasicInstance.saveDomain(anotherTerm1)
+        BasicInstanceBuilder.saveDomain(anotherTerm1)
 
         RelationTerm rt2 = new RelationTerm(term2: term, term1: anotherTerm1, relation: Relation.findByName(RelationTerm.names.PARENT))
-        BasicInstance.saveDomain(rt2)
+        BasicInstanceBuilder.saveDomain(rt2)
 
         return [term,rt1,rt2]
     }
@@ -161,49 +161,49 @@ class TermDependencyTests  {
     private def createTermWithDependencyRefuse(Project project) {
 
         //create a term x, link with ontology
-        Term term = BasicInstance.getBasicTermNotExist()
+        Term term = BasicInstanceBuilder.getTermNotExist()
         term.ontology = project.ontology
-        BasicInstance.saveDomain(term)
+        BasicInstanceBuilder.saveDomain(term)
 
         //create a relation with term x and another term y
-        Term anotherTerm1 = BasicInstance.getBasicTermNotExist()
+        Term anotherTerm1 = BasicInstanceBuilder.getTermNotExist()
         anotherTerm1.ontology = project.ontology
-        BasicInstance.saveDomain(anotherTerm1)
+        BasicInstanceBuilder.saveDomain(anotherTerm1)
 
         RelationTerm rt1 = new RelationTerm(term1: term, term2: anotherTerm1, relation: Relation.findByName(RelationTerm.names.PARENT))
-        BasicInstance.saveDomain(rt1)
+        BasicInstanceBuilder.saveDomain(rt1)
 
 
         //create a relation with another term y and term x
-        Term anotherTerm2 = BasicInstance.getBasicTermNotExist()
+        Term anotherTerm2 = BasicInstanceBuilder.getTermNotExist()
         anotherTerm1.ontology = project.ontology
-        BasicInstance.saveDomain(anotherTerm1)
+        BasicInstanceBuilder.saveDomain(anotherTerm1)
 
         RelationTerm rt2 = new RelationTerm(term2: term, term1: anotherTerm1, relation: Relation.findByName(RelationTerm.names.PARENT))
-        BasicInstance.saveDomain(rt2)
+        BasicInstanceBuilder.saveDomain(rt2)
 
         //create an annotation with this term
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.term = term
         annotationTerm.userAnnotation.project = project
-        BasicInstance.saveDomain(annotationTerm.userAnnotation)
-        BasicInstance.saveDomain(annotationTerm)
+        BasicInstanceBuilder.saveDomain(annotationTerm.userAnnotation)
+        BasicInstanceBuilder.saveDomain(annotationTerm)
 
         //create an algo annotation term for this term
-        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         algoAnnotationTerm1.term = anotherTerm1
         algoAnnotationTerm1.expectedTerm = term
         algoAnnotationTerm1.retrieveAnnotationDomain().project = project
-        BasicInstance.saveDomain(algoAnnotationTerm1.retrieveAnnotationDomain())
-        BasicInstance.saveDomain(algoAnnotationTerm1)
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm1.retrieveAnnotationDomain())
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm1)
 
         //create an algo annotation term for this term (expected term)
-        AlgoAnnotationTerm algoAnnotationTerm2 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        AlgoAnnotationTerm algoAnnotationTerm2 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         algoAnnotationTerm2.term = term
         algoAnnotationTerm2.expectedTerm = anotherTerm1
         algoAnnotationTerm2.retrieveAnnotationDomain().project = project
-        BasicInstance.saveDomain(algoAnnotationTerm2.retrieveAnnotationDomain())
-        BasicInstance.saveDomain(algoAnnotationTerm2)
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm2.retrieveAnnotationDomain())
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm2)
 
         return [term,rt1,rt2,annotationTerm,algoAnnotationTerm1,algoAnnotationTerm2]
     }

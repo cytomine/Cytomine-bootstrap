@@ -4,7 +4,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.processing.JobData
 import be.cytomine.test.http.JobDataAPI
@@ -28,12 +28,12 @@ class JobDataSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add jobData instance to project
-      JobData jobData = BasicInstance.getBasicJobDataNotExist()
+      JobData jobData = BasicInstanceBuilder.getJobDataNotExist()
       jobData.job.project = project
 
       //check if admin user can access/update/delete
@@ -58,7 +58,7 @@ class JobDataSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
@@ -68,7 +68,7 @@ class JobDataSecurityTests extends SecurityTestsAbstract{
       assert 200 == resAddUser.code
 
       //Add jobData instance to project
-      JobData jobData = BasicInstance.getBasicJobDataNotExist()
+      JobData jobData = BasicInstanceBuilder.getJobDataNotExist()
       jobData.job.project = project
       jobData.job.save(flush: true)
       //check if user 2 can access/update/delete
@@ -93,12 +93,12 @@ class JobDataSecurityTests extends SecurityTestsAbstract{
       User admin = getUserAdmin()
 
       //Create new project (user1)
-      def result = ProjectAPI.create(BasicInstance.getBasicProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+      def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
       assert 200 == result.code
       Project project = result.data
 
       //Add jobData instance to project
-      JobData jobData = BasicInstance.getBasicJobDataNotExist()
+      JobData jobData = BasicInstanceBuilder.getJobDataNotExist()
       jobData.job.project = project
 
       //check if simple user can access/update/delete
@@ -106,7 +106,7 @@ class JobDataSecurityTests extends SecurityTestsAbstract{
       assert (403 == result.code)
       jobData = result.data
 
-      jobData = BasicInstance.createOrGetBasicJobData()
+      jobData = BasicInstanceBuilder.getJobData()
       jobData.job.project = project
       jobData.job.save(flush:true)
 

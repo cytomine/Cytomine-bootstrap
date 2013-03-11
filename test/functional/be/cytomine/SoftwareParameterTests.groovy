@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.processing.SoftwareParameter
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareParameterAPI
 import grails.converters.JSON
@@ -26,7 +26,7 @@ class SoftwareParameterTests  {
       }
   
       void testListSoftwareParameterBySoftware() {
-          SoftwareParameter softwareparameter = BasicInstance.createOrGetBasicSoftwareParameter()
+          SoftwareParameter softwareparameter = BasicInstanceBuilder.getSoftwareParameter()
           def result = SoftwareParameterAPI.listBySoftware(softwareparameter.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
@@ -36,14 +36,14 @@ class SoftwareParameterTests  {
       }
   
       void testShowSoftwareParameterWithCredential() {
-          def result = SoftwareParameterAPI.show(BasicInstance.createOrGetBasicSoftwareParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.show(BasicInstanceBuilder.getSoftwareParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
       }
   
       void testAddSoftwareParameterCorrect() {
-          def softwareparameterToAdd = BasicInstance.getBasicSoftwareParameterNotExist()
+          def softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameterNotExist()
           def result = SoftwareParameterAPI.create(softwareparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           int idSoftwareParameter = result.data.id
@@ -53,7 +53,7 @@ class SoftwareParameterTests  {
       }
 
       void testUpdateSoftwareParameterCorrect() {
-          SoftwareParameter softwareparameterToAdd = BasicInstance.createOrGetBasicSoftwareParameter()
+          SoftwareParameter softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameter()
           def data = UpdateData.createUpdateSet(softwareparameterToAdd)
           def result = SoftwareParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
@@ -62,7 +62,7 @@ class SoftwareParameterTests  {
       }
   
       void testUpdateSoftwareParameterNotExist() {
-          SoftwareParameter softwareparameterWithNewName = BasicInstance.getBasicSoftwareParameterNotExist()
+          SoftwareParameter softwareparameterWithNewName = BasicInstanceBuilder.getSoftwareParameterNotExist()
           softwareparameterWithNewName.save(flush: true)
           SoftwareParameter softwareparameterToEdit = SoftwareParameter.get(softwareparameterWithNewName.id)
           def jsonSoftwareParameter = softwareparameterToEdit.encodeAsJSON()
@@ -74,7 +74,7 @@ class SoftwareParameterTests  {
       }
   
       void testUpdateSoftwareParameterWithBadSoftware() {
-          SoftwareParameter softwareparameterToAdd = BasicInstance.createOrGetBasicSoftwareParameter()
+          SoftwareParameter softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameter()
           SoftwareParameter softwareparameterToEdit = SoftwareParameter.get(softwareparameterToAdd.id)
           def jsonSoftwareParameter = softwareparameterToEdit.encodeAsJSON()
           def jsonUpdate = JSON.parse(jsonSoftwareParameter)
@@ -85,7 +85,7 @@ class SoftwareParameterTests  {
       }
   
       void testDeleteSoftwareParameter() {
-          def softwareparameterToDelete = BasicInstance.getBasicSoftwareParameterNotExist()
+          def softwareparameterToDelete = BasicInstanceBuilder.getSoftwareParameterNotExist()
           assert softwareparameterToDelete.save(flush: true)!= null
           def id = softwareparameterToDelete.id
           def result = SoftwareParameterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

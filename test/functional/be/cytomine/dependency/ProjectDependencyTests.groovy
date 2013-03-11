@@ -3,7 +3,7 @@ package be.cytomine.dependency
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.image.ImageInstance
@@ -31,13 +31,13 @@ class ProjectDependencyTests  {
         //create a term and all its dependence domain
         def dependentDomain = createProjectWithDependency()
         def project = dependentDomain.first()
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create) => CANNOT UNDO DELETE PROJECT!
         assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
@@ -54,13 +54,13 @@ class ProjectDependencyTests  {
         Task task = new Task(userIdent: User.findByUsername(Infos.GOODLOGIN).id,projectIdent: project.id)
         task = task.saveOnDatabase()
 
-        BasicInstance.checkIfDomainsExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
         assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD,task).code)
 
         //check if all dependency are not aivalable
-        BasicInstance.checkIfDomainsNotExist(dependentDomain)
+        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create) => CANNOT UNDO DELETE PROJECT!
         assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
@@ -77,19 +77,19 @@ class ProjectDependencyTests  {
 //        //create a term and all its dependence domain
 //        def dependentDomain = createProjectWithDependency()
 //        def project = dependentDomain.first()
-//        BasicInstance.checkIfDomainsExist(dependentDomain)
+//        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 //
 //        UploadedFile file = new UploadedFile(user:User.findByUsername(Infos.GOODLOGIN), project: project,filename:"x",originalFilename:"y",convertedFilename:"z",convertedExt:"a",ext:"b",path:"c",contentType:"d")
-//        BasicInstance.saveDomain(file)
+//        BasicInstanceBuilder.saveDomain(file)
 //
-//        BasicInstance.checkIfDomainsExist([file])
+//        BasicInstanceBuilder.checkIfDomainsExist([file])
 //
 //        //try to delete term
 //        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
 //
 //        //check if all dependency are not aivalable
-//        BasicInstance.checkIfDomainsExist(dependentDomain)
-//        BasicInstance.checkIfDomainsExist([file])
+//        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
+//        BasicInstanceBuilder.checkIfDomainsExist([file])
 //    }
 
 
@@ -98,78 +98,78 @@ class ProjectDependencyTests  {
 
 
     private def createProjectWithDependency() {
-        Project project = BasicInstance.createBasicProjectNotExist()
-        Term term = BasicInstance.getBasicTermNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        Term term = BasicInstanceBuilder.getTermNotExist()
         term.ontology = project.ontology
-        BasicInstance.saveDomain(term)
+        BasicInstanceBuilder.saveDomain(term)
 
         //Add algo annotation
-        AlgoAnnotation algoAnnotation =  BasicInstance.getBasicAlgoAnnotationNotExist()
+        AlgoAnnotation algoAnnotation =  BasicInstanceBuilder.getAlgoAnnotationNotExist()
         algoAnnotation.project = project
-        BasicInstance.saveDomain(algoAnnotation)
-        BasicInstance.checkDomain(algoAnnotation)
+        BasicInstanceBuilder.saveDomain(algoAnnotation)
+        BasicInstanceBuilder.checkDomain(algoAnnotation)
         algoAnnotation.project = project
-        BasicInstance.saveDomain(algoAnnotation)
+        BasicInstanceBuilder.saveDomain(algoAnnotation)
 
         //create an algo annotation term for this term
-        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstance.getBasicAlgoAnnotationTermNotExist()
+        AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         algoAnnotationTerm1.term = term
         algoAnnotationTerm1.expectedTerm = term
         algoAnnotationTerm1.annotation = algoAnnotation
-        BasicInstance.saveDomain(algoAnnotationTerm1)
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm1)
 
         //create an annotation with this term
-        AnnotationTerm annotationTerm = BasicInstance.getBasicAnnotationTermNotExist("")
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.term = term
         annotationTerm.userAnnotation.project = project
-        BasicInstance.saveDomain(annotationTerm.userAnnotation)
-        BasicInstance.saveDomain(annotationTerm)
+        BasicInstanceBuilder.saveDomain(annotationTerm.userAnnotation)
+        BasicInstanceBuilder.saveDomain(annotationTerm)
 
         //create annotation filter
-        AnnotationFilter af = BasicInstance.getBasicAnnotationFilterNotExist()
+        AnnotationFilter af = BasicInstanceBuilder.getAnnotationFilterNotExist()
         af.project = project
-        BasicInstance.saveDomain(af)
+        BasicInstanceBuilder.saveDomain(af)
 
         //craete image filter poroject
-        ImageFilterProject ifp = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
         ifp.project = project
-        BasicInstance.saveDomain(ifp)
+        BasicInstanceBuilder.saveDomain(ifp)
 
-        ImageInstance ia = BasicInstance.getBasicImageInstanceNotExist()
+        ImageInstance ia = BasicInstanceBuilder.getImageInstanceNotExist()
         ia.project = project
-        BasicInstance.saveDomain(ia)
+        BasicInstanceBuilder.saveDomain(ia)
 
-        Job job = BasicInstance.getBasicJobNotExist()
+        Job job = BasicInstanceBuilder.getJobNotExist()
         job.project = project
-        BasicInstance.saveDomain(job)
+        BasicInstanceBuilder.saveDomain(job)
 
-        ReviewedAnnotation ra = BasicInstance.getBasicReviewedAnnotationNotExist()
+        ReviewedAnnotation ra = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         ra.project = project
         ra.putParentAnnotation(algoAnnotation)
         ra.terms?.clear()
         ra.addToTerms(term)
-        BasicInstance.checkDomain(ra)
-        BasicInstance.saveDomain(ra)
+        BasicInstanceBuilder.checkDomain(ra)
+        BasicInstanceBuilder.saveDomain(ra)
         ra.project = project
-        BasicInstance.saveDomain(ra)
+        BasicInstanceBuilder.saveDomain(ra)
         log.info "*********************"
         log.info project.id+""
         log.info ra.project.id+""
 
-        SoftwareProject sp = BasicInstance.getBasicSoftwareProjectNotExist()
+        SoftwareProject sp = BasicInstanceBuilder.getSoftwareProjectNotExist()
         sp.project = project
-        BasicInstance.saveDomain(sp)
+        BasicInstanceBuilder.saveDomain(sp)
 
         project.retrievalProjects?.clear()
         project.addToRetrievalProjects(project)
-        project.addToRetrievalProjects(BasicInstance.createBasicProjectNotExist())
+        project.addToRetrievalProjects(BasicInstanceBuilder.getProjectNotExist())
 
         //Not recoverable domain (cannot retrieve it with undo delete)
         LastConnection lc = new LastConnection(project: project, user:  User.findByUsername(Infos.GOODLOGIN))
-        BasicInstance.saveDomain(lc)
+        BasicInstanceBuilder.saveDomain(lc)
 
         UserPosition up = new UserPosition(project: project, user: User.findByUsername(Infos.GOODLOGIN), image: ia)
-        BasicInstance.saveDomain(up)
+        BasicInstanceBuilder.saveDomain(up)
 
         return [project, algoAnnotation, algoAnnotationTerm1,annotationTerm.userAnnotation,annotationTerm,af,ifp,ia,job,ra,sp]
     }

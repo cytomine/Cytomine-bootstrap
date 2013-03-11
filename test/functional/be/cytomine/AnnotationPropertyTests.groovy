@@ -4,7 +4,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationProperty
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationPropertyAPI
 import be.cytomine.utils.UpdateData
@@ -16,7 +16,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class AnnotationPropertyTests {
 
     void testShowAnnotationProperty() {
-        def annotationProperty = BasicInstance.createOrGetBasicAnnotationProperty()
+        def annotationProperty = BasicInstanceBuilder.getAnnotationProperty()
         def result = AnnotationPropertyAPI.show(annotationProperty.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -30,7 +30,7 @@ class AnnotationPropertyTests {
     }
 
     void testListByAnnotation() {
-        def result = AnnotationPropertyAPI.listByAnnotation(BasicInstance.createOrGetBasicAnnotationProperty().retrieveAnnotationDomain().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationPropertyAPI.listByAnnotation(BasicInstanceBuilder.getAnnotationProperty().retrieveAnnotationDomain().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -43,9 +43,10 @@ class AnnotationPropertyTests {
 
     //Test ListKey
     void testListKeyWithProject () {
-        Project project = BasicInstance.createOrGetBasicProject()
-        UserAnnotation userAnnotation = BasicInstance.createUserAnnotation(project)
-        AnnotationProperty annotationProperty = BasicInstance.createAnnotationProperty(userAnnotation)
+        Project project = BasicInstanceBuilder.getProject()
+        UserAnnotation userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,BasicInstanceBuilder.getImageInstance(),true)
+
+        AnnotationProperty annotationProperty = BasicInstanceBuilder.getAnnotationPropertyNotExist(userAnnotation,true)
 
         def result = AnnotationPropertyAPI.listKeyWithProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -62,7 +63,7 @@ class AnnotationPropertyTests {
     }
 
     void testListKeyWithImage () {
-        def result = AnnotationPropertyAPI.listKeyWithImage((BasicInstance.createOrGetBasicImageInstance()).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationPropertyAPI.listKeyWithImage((BasicInstanceBuilder.getImageInstance()).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -77,7 +78,7 @@ class AnnotationPropertyTests {
     }
 
     void testDeleteAnnotationProperty() {
-        def annotationPropertyToDelete = BasicInstance.getBasicAnnotationPropertyNotExist()
+        def annotationPropertyToDelete = BasicInstanceBuilder.getAnnotationPropertyNotExist()
         assert annotationPropertyToDelete.save(flush: true) != null
 
         def id = annotationPropertyToDelete.id
@@ -110,7 +111,7 @@ class AnnotationPropertyTests {
     }
 
     void testAddAnnotationCorrect() {
-        def annotationPropertyToAdd = BasicInstance.getBasicAnnotationPropertyNotExist()
+        def annotationPropertyToAdd = BasicInstanceBuilder.getAnnotationPropertyNotExist()
         def result = AnnotationPropertyAPI.create( annotationPropertyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def id =  result.data.id
@@ -134,13 +135,13 @@ class AnnotationPropertyTests {
     }
 
     void testAddAnnotationPropertyAlreadyExist() {
-        def annotationPropertyToAdd = BasicInstance.createOrGetBasicAnnotationProperty()
+        def annotationPropertyToAdd = BasicInstanceBuilder.getAnnotationProperty()
         def result = AnnotationPropertyAPI.create(annotationPropertyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
 
     void testUpdateAnnotationPropertyCorrect() {
-        AnnotationProperty annotationPropertyToAdd = BasicInstance.createOrGetBasicAnnotationProperty()
+        AnnotationProperty annotationPropertyToAdd = BasicInstanceBuilder.getAnnotationProperty()
         def data = UpdateData.createUpdateSet(annotationPropertyToAdd)
 
         println annotationPropertyToAdd.annotationIdent + "-" + annotationPropertyToAdd.key
@@ -150,12 +151,12 @@ class AnnotationPropertyTests {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
-        BasicInstance.compare(data.mapNew,json.annotationproperty)
+        BasicInstanceBuilder.compare(data.mapNew,json.annotationproperty)
     }
 
     void testUpdateAnnotationPropertyNotExist() {
-        AnnotationProperty annotationPropertyOld = BasicInstance.createOrGetBasicAnnotationProperty()
-        AnnotationProperty annotationPropertyNew = BasicInstance.getBasicAnnotationPropertyNotExist()
+        AnnotationProperty annotationPropertyOld = BasicInstanceBuilder.getAnnotationProperty()
+        AnnotationProperty annotationPropertyNew = BasicInstanceBuilder.getAnnotationPropertyNotExist()
         annotationPropertyNew.save(flush: true)
         AnnotationProperty annotationPropertyToEdit = AnnotationProperty.get(annotationPropertyNew.id)
         def jsonAnnotationProperty = annotationPropertyToEdit.encodeAsJSON()
@@ -168,11 +169,11 @@ class AnnotationPropertyTests {
     }
 
     void testSelectCenterAnnotationCorrect() {
-        AnnotationProperty annotationProperty = BasicInstance.createOrGetBasicAnnotationProperty()
-        def user = BasicInstance.createOrGetBasicUser()
-        def image = BasicInstance.createOrGetBasicImageInstance()
+        AnnotationProperty annotationProperty = BasicInstanceBuilder.getAnnotationProperty()
+        def user = BasicInstanceBuilder.getUser()
+        def image = BasicInstanceBuilder.getImageInstance()
 
-        def annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
         annotation.user = user
         annotation.image = image
@@ -189,11 +190,11 @@ class AnnotationPropertyTests {
     }
 
     void testSelectCenterAnnotationNotCorrect() {
-        AnnotationProperty annotationProperty = BasicInstance.createOrGetBasicAnnotationProperty()
-        def user = BasicInstance.createOrGetBasicUser()
-        def image = BasicInstance.createOrGetBasicImageInstance()
+        AnnotationProperty annotationProperty = BasicInstanceBuilder.getAnnotationProperty()
+        def user = BasicInstanceBuilder.getUser()
+        def image = BasicInstanceBuilder.getImageInstance()
 
-        def annotation = BasicInstance.getBasicUserAnnotationNotExist()
+        def annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
         annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
         annotation.user = user
         annotation.image = image

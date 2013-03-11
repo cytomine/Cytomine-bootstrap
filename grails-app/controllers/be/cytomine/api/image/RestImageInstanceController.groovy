@@ -70,11 +70,7 @@ class RestImageInstanceController extends RestController {
 
     def next = {
         def image = imageInstanceService.read(params.long('id'))
-        println "image=$image"
-
-        println "project=${image?.project}"
         def next = ImageInstance.findAllByProjectAndCreatedLessThan(image.project,image.created,[sort:'created',order:'desc',max:1])
-        println "next=${next?.project}"
         if(next && !next.isEmpty()) {
             responseSuccess(next.first())
         } else {

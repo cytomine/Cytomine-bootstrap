@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.User
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAPI
@@ -29,12 +29,12 @@ class UserTests  {
     }
 
     void testListUserWithKey() {
-        def result = UserAPI.list(BasicInstance.newUser.publicKey,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(BasicInstanceBuilder.user1.publicKey,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         println json
-        assert json.id==BasicInstance.newUser.id
+        assert json.id==BasicInstanceBuilder.user1.id
     }
   
     void testListUserWithoutCredential() {
@@ -44,8 +44,8 @@ class UserTests  {
 
 
     void testListFriends() {
-        def user = BasicInstance.newUser
-        def project = BasicInstance.createOrGetBasicProject()
+        def user = BasicInstanceBuilder.user1
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.listFriends(user.id,false,project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
@@ -60,13 +60,13 @@ class UserTests  {
     }
 
     void testListOnlineFriendsWithOpenedImages() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.listOnline(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
     void testShowUserWithCredential() {
-        def result = UserAPI.show(BasicInstance.createOrGetBasicUser().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.show(BasicInstanceBuilder.getUser().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -82,7 +82,7 @@ class UserTests  {
 
 
     void testListProjectUser() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.id,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -98,7 +98,7 @@ class UserTests  {
     }
 
     void testListProjectAdmin() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.id,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -109,7 +109,7 @@ class UserTests  {
     }
 
     void testListProjectCreator() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.id,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -120,7 +120,7 @@ class UserTests  {
     }
 
     void testListOntologyUser() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.ontology.id,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -131,7 +131,7 @@ class UserTests  {
     }
 
     void testListOntologyCreator() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.ontology.id,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -142,7 +142,7 @@ class UserTests  {
     }
 
     void testListProjectLayer() {
-        def project = BasicInstance.createOrGetBasicProject()
+        def project = BasicInstanceBuilder.getProject()
         def result = UserAPI.list(project.id,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -153,7 +153,7 @@ class UserTests  {
     }
 
     void testAddUserCorrect() {
-        User userToAdd = BasicInstance.getBasicUserNotExist()
+        User userToAdd = BasicInstanceBuilder.getUserNotExist()
         def jsonUser = new JSONObject(userToAdd.encodeAsJSON()).put("password", "password").toString()
         println "jsonUser =" + jsonUser
         def result = UserAPI.create(jsonUser.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -165,14 +165,14 @@ class UserTests  {
     }
   
     void testAddUserAlreadyExist() {
-        def userToAdd = BasicInstance.createOrGetBasicUser()
+        def userToAdd = BasicInstanceBuilder.getUser()
         def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
 
     void testAddUserNameAlreadyExist() {
-        def user = BasicInstance.createOrGetBasicUser()
-        def userToAdd = BasicInstance.getBasicUserNotExist()
+        def user = BasicInstanceBuilder.getUser()
+        def userToAdd = BasicInstanceBuilder.getUserNotExist()
         userToAdd.username = user.username
         def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
@@ -180,15 +180,15 @@ class UserTests  {
 
 
     void testAddUserInvalidEmail() {
-        def user = BasicInstance.createOrGetBasicUser()
-        def userToAdd = BasicInstance.getBasicUserNotExist()
+        def user = BasicInstanceBuilder.getUser()
+        def userToAdd = BasicInstanceBuilder.getUserNotExist()
         userToAdd.email = "invalid@email"
         def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
     void testUpdateUserCorrect() {
-        User userToAdd = BasicInstance.createOrGetBasicUser()
+        User userToAdd = BasicInstanceBuilder.getUser()
         def data = UpdateData.createUpdateSet(userToAdd)
         def result = UserAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -198,12 +198,12 @@ class UserTests  {
   
         def showResult = UserAPI.show(idUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(showResult.data)
-        BasicInstance.compare(data.mapNew, json)
+        BasicInstanceBuilder.compare(data.mapNew, json)
     }
   
     void testUpdateUserNotExist() {
-        User userWithOldName = BasicInstance.createOrGetBasicUser()
-        User userWithNewName = BasicInstance.getBasicUserNotExist()
+        User userWithOldName = BasicInstanceBuilder.getUser()
+        User userWithNewName = BasicInstanceBuilder.getUserNotExist()
         userWithNewName.save(flush: true)
         User userToEdit = User.get(userWithNewName.id)
         def jsonUser = userToEdit.encodeAsJSON()
@@ -216,8 +216,8 @@ class UserTests  {
     }
   
     void testUpdateUserWithNameAlreadyExist() {
-        User userWithOldName = BasicInstance.createOrGetBasicUser()
-        User userWithNewName = BasicInstance.getBasicUserNotExist()
+        User userWithOldName = BasicInstanceBuilder.getUser()
+        User userWithNewName = BasicInstanceBuilder.getUserNotExist()
         userWithNewName.save(flush: true)
         User userToEdit = User.get(userWithNewName.id)
         def jsonUser = userToEdit.encodeAsJSON()
@@ -229,7 +229,7 @@ class UserTests  {
     }
 
     void testDeleteUser() {
-        def userToDelete = BasicInstance.getBasicUserNotExist()
+        def userToDelete = BasicInstanceBuilder.getUserNotExist()
         assert userToDelete.save(flush: true)!= null
         def id = userToDelete.id
         def result = UserAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -250,8 +250,8 @@ class UserTests  {
     }    
   
         void testDeleteUserWithData() {
-        def userToDelete = BasicInstance.createOrGetBasicUser()
-        def image =  BasicInstance.createOrGetBasicImageInstance()
+        def userToDelete = BasicInstanceBuilder.getUser()
+        def image =  BasicInstanceBuilder.getImageInstance()
         image.user = userToDelete
         assert image.save(flush:true)!=null
         def result = UserAPI.delete(userToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -259,26 +259,26 @@ class UserTests  {
     }
 
     void testAddDeleteUserToProject() {
-        def project = BasicInstance.getBasicProjectNotExist()
-        BasicInstance.saveDomain(project)
+        def project = BasicInstanceBuilder.getProjectNotExist()
+        BasicInstanceBuilder.saveDomain(project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == resAddUser.code
 
-        resAddUser = ProjectAPI.deleteUserProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        resAddUser = ProjectAPI.deleteUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == resAddUser.code
     }
 
     void testAddDeleteAdminToProject() {
-        def project = BasicInstance.getBasicProjectNotExist()
-        BasicInstance.saveDomain(project)
+        def project = BasicInstanceBuilder.getProjectNotExist()
+        BasicInstanceBuilder.saveDomain(project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addAdminProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == resAddUser.code
 
-        resAddUser = ProjectAPI.deleteAdminProject(project.id, BasicInstance.newUser.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        resAddUser = ProjectAPI.deleteAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == resAddUser.code
     }
 
@@ -287,7 +287,7 @@ class UserTests  {
      */
 
     void testShowUserJob() {
-        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def userJob = BasicInstanceBuilder.getUserJob()
         def result = UserAPI.showUserJob(userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         result = UserAPI.showUserJob(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -295,18 +295,18 @@ class UserTests  {
     }
 
     void testListUserJob() {
-        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def userJob = BasicInstanceBuilder.getUserJob()
         def result = UserAPI.listUserJob(userJob.job.project.id,false,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
     void testListUserJobTree() {
-        def userJob = BasicInstance.createOrGetBasicUserJob()
+        def userJob = BasicInstanceBuilder.getUserJob()
         def result = UserAPI.listUserJob(userJob.job.project.id,true,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
     void testListUserJobByImages() {
-        def userJob = BasicInstance.createOrGetBasicUserJob()
-        def result = UserAPI.listUserJob(userJob.job.project.id,false,BasicInstance.createOrGetBasicImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def userJob = BasicInstanceBuilder.getUserJob()
+        def result = UserAPI.listUserJob(userJob.job.project.id,false,BasicInstanceBuilder.getImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
@@ -315,7 +315,7 @@ class UserTests  {
     void testAddUserChildCorrect() {
        log.info("create user")
        def parent = User.findByUsername(Infos.GOODLOGIN);
-       def json = "{parent:"+ parent.id +", username:"+ Math.random()+", software: ${BasicInstance.createOrGetBasicSoftware().id}}";
+       def json = "{parent:"+ parent.id +", username:"+ Math.random()+", software: ${BasicInstanceBuilder.getSoftware().id}}";
 
        log.info("post user child")
        String URL = Infos.CYTOMINEURL+"api/userJob.json"

@@ -4,7 +4,7 @@ import be.cytomine.ontology.AlgoAnnotation
 
 import be.cytomine.project.Project
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 
 import grails.converters.JSON
@@ -30,7 +30,7 @@ class TaskTests  {
 
     void testShowTask() {
         println "test task"
-        Task task = new Task(projectIdent: BasicInstance.createOrGetBasicProject().id,userIdent:  BasicInstance.createOrGetBasicUser().id)
+        Task task = new Task(projectIdent: BasicInstanceBuilder.getProject().id,userIdent:  BasicInstanceBuilder.getUser().id)
         task.progress = 50
         task = task.saveOnDatabase()
         task.addComment("First step...")
@@ -60,7 +60,7 @@ class TaskTests  {
     }
 
     void testTask() {
-        Task task = new Task(projectIdent: BasicInstance.createOrGetBasicProject().id,userIdent:  BasicInstance.createOrGetBasicUser().id)
+        Task task = new Task(projectIdent: BasicInstanceBuilder.getProject().id,userIdent:  BasicInstanceBuilder.getUser().id)
         assert task.progress==0
         task = task.saveOnDatabase()
         task.addComment("First step...")
@@ -69,7 +69,7 @@ class TaskTests  {
     }
 
     void testAddTask() {
-        Project project = BasicInstance.createOrGetBasicProject()
+        Project project = BasicInstanceBuilder.getProject()
         def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -83,22 +83,19 @@ class TaskTests  {
 
     void testConcreteTask() {
         //create a job
-        Job job = BasicInstance.getBasicJobNotExist()
-        BasicInstance.checkDomain(job)
-        BasicInstance.saveDomain(job)
-        BasicInstance.createSoftwareProject(job.software,job.project)
+        Job job = BasicInstanceBuilder.getJobNotExist(true)
+        BasicInstanceBuilder.getSoftwareProjectNotExist(job.software,job.project,true)
 
-        UserJob userJob = BasicInstance.createBasicUserJobNotExist()
+        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist(true)
         userJob.job = job
-        userJob.user = BasicInstance.getNewUser()
-        BasicInstance.checkDomain(userJob)
-        BasicInstance.saveDomain(userJob)
+        userJob.user = BasicInstanceBuilder.getUser()
+        BasicInstanceBuilder.saveDomain(userJob)
 
         //add algo-annotation for this job
-        AlgoAnnotation a1 = BasicInstance.createAlgoAnnotation(job,userJob)
+        AlgoAnnotation a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist(job,userJob,true)
 
         //add algo-annotation-term for this job
-        AlgoAnnotationTerm at1 = BasicInstance.createAlgoAnnotationTerm(job,a1,userJob)
+        AlgoAnnotationTerm at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,a1,userJob)
 
         def result = TaskAPI.create(job.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
         assert 200 == result.code

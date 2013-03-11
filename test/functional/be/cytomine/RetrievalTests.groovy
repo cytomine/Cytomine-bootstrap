@@ -14,10 +14,10 @@ class RetrievalTests  {
     //Mock doesn't work with bamboo sometimes...
 
 //    void testRetrievalResult() {
-//        def project = BasicInstance.createOrGetBasicProject()
-//        def annotation1 = BasicInstance.createUserAnnotation(project)
-//        def annotation2 = BasicInstance.createUserAnnotation(project)
-//        def annotation3 = BasicInstance.createUserAnnotation(project)
+//        def project = BasicInstanceBuilder.getProject()
+//        def annotation1 = BasicInstanceBuilder.getUserAnnotationNotExist(true,project)
+//        def annotation2 = BasicInstanceBuilder.getUserAnnotationNotExist(true,project)
+//        def annotation3 = BasicInstanceBuilder.getUserAnnotationNotExist(true,project)
 //
 //        //mock retrieval response with empty JSON
 //        RetrievalHttpUtils.metaClass.'static'.getPostSearchResponse  = {String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch-> // stuff }
@@ -41,7 +41,7 @@ class RetrievalTests  {
 //            println "getPostSearchResponse mocked"
 //            return "[]"
 //        }
-//        def annotation = BasicInstance.createOrGetBasicUserAnnotation()
+//        def annotation = BasicInstanceBuilder.getUserAnnotation()
 //        def result = RetrievalAPI.getResults(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
 //        assert 200 == result.code
 //        println result.data

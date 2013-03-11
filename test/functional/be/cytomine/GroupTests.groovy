@@ -1,6 +1,6 @@
 package be.cytomine
 
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.GroupAPI
 import grails.converters.JSON
@@ -26,7 +26,7 @@ class GroupTests  {
   }
 
   void testShowGroup() {
-      def result = GroupAPI.show(BasicInstance.createOrGetBasicGroup().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = GroupAPI.show(BasicInstanceBuilder.getGroup().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -36,7 +36,7 @@ class GroupTests  {
   }
 
   void testAddGroupCorrect() {
-      def groupToAdd = BasicInstance.getBasicGroupNotExist()
+      def groupToAdd = BasicInstanceBuilder.getGroupNotExist()
       def result = GroupAPI.create(groupToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int idGroup = result.data.id
@@ -46,13 +46,13 @@ class GroupTests  {
   }
 
   void testAddGroupAlreadyExist() {
-      def groupToAdd = BasicInstance.createOrGetBasicGroup()
+      def groupToAdd = BasicInstanceBuilder.getGroup()
       def result = GroupAPI.create(groupToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }
 
   void testUpdateGroupCorrect() {
-      Group groupToAdd = BasicInstance.createOrGetBasicGroup()
+      Group groupToAdd = BasicInstanceBuilder.getGroup()
       def data = UpdateData.createUpdateSet(groupToAdd)
       def result = GroupAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
@@ -61,8 +61,8 @@ class GroupTests  {
   }
 
   void testUpdateGroupNotExist() {
-      Group groupWithOldName = BasicInstance.createOrGetBasicGroup()
-      Group groupWithNewName = BasicInstance.getBasicGroupNotExist()
+      Group groupWithOldName = BasicInstanceBuilder.getGroup()
+      Group groupWithNewName = BasicInstanceBuilder.getGroupNotExist()
       groupWithNewName.save(flush: true)
       Group groupToEdit = Group.get(groupWithNewName.id)
       def jsonGroup = groupToEdit.encodeAsJSON()
@@ -75,8 +75,8 @@ class GroupTests  {
   }
 
   void testUpdateGroupWithNameAlreadyExist() {
-      Group groupWithOldName = BasicInstance.createOrGetBasicGroup()
-      Group groupWithNewName = BasicInstance.getBasicGroupNotExist()
+      Group groupWithOldName = BasicInstanceBuilder.getGroup()
+      Group groupWithNewName = BasicInstanceBuilder.getGroupNotExist()
       groupWithNewName.save(flush: true)
       Group groupToEdit = Group.get(groupWithNewName.id)
       def jsonGroup = groupToEdit.encodeAsJSON()
@@ -88,7 +88,7 @@ class GroupTests  {
   }
 
   void testDeleteGroup() {
-      def groupToDelete = BasicInstance.getBasicGroupNotExist()
+      def groupToDelete = BasicInstanceBuilder.getGroupNotExist()
       assert groupToDelete.save(flush: true)!= null
       def id = groupToDelete.id
       def result = GroupAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)

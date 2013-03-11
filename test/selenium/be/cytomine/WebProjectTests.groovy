@@ -17,14 +17,14 @@ public class WebProjectTests extends AbstractWebProject{
 //
 //    void testConsultProject() {
 //        //check if the basic project is visible
-//        checkProjectOnList(getBasicProject().id)
+//        checkProjectOnList(getProject().id)
 //    }
 //
 //    void testAddProject() {
 //        //open dialog
 //        openAddProjectDialogAndWait()
 //        //fill form and save
-//        fillAddProjectDialogAndSave("testaddnewproject",getBasicProject().discipline?.id,getBasicProject().ontology?.id)
+//        fillAddProjectDialogAndSave("testaddnewproject",getProject().discipline?.id,getProject().ontology?.id)
 //        //check if project is on the listing page
 //        Project project = null
 //        int max = 10
@@ -38,7 +38,7 @@ public class WebProjectTests extends AbstractWebProject{
 //    }
 //
 //    void testEditProject() {
-//        Project project = createBasicProjectNotExist()
+//        Project project = getProjectNotExist(true)
 //        //open page
 //        openProjectPageAndWait()
 //        //open edit dialog
@@ -50,7 +50,7 @@ public class WebProjectTests extends AbstractWebProject{
 //    }
 //
 //    void testDeleteProject() {
-//        Project project = createBasicProjectNotExist()
+//        Project project = getProjectNotExist(true)
 //        //open page
 //        openProjectPageAndWait()
 //        //open delete dialog
@@ -63,8 +63,8 @@ public class WebProjectTests extends AbstractWebProject{
 //
 //
 //    void testFilterProjectName() {
-//        Project project1 = createBasicProjectNotExist("ABC123")
-//        Project project2 = createBasicProjectNotExist("XYZ789")
+//        Project project1 = getProjectNotExist(true"ABC123")
+//        Project project2 = getProjectNotExist(true"XYZ789")
 //        //open page
 //        openProjectPageAndWait()
 //
@@ -102,7 +102,7 @@ public class WebProjectTests extends AbstractWebProject{
 //    }
 //
 //    void testFilterProjectAutoComplete() {
-//        Project project = createBasicProjectNotExist()
+//        Project project = getProjectNotExist(true)
 //        String firstLetter = project.name.substring(0,2)
 //        //open page
 //        openProjectPageAndWait()

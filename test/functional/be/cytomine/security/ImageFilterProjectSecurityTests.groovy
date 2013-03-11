@@ -3,8 +3,9 @@ package be.cytomine.security
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
+import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.BasicInstance
+import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.test.http.ImageFilterProjectAPI
@@ -26,19 +27,19 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         User admin = getUserAdmin()
 
         //Create project with user 1
-        Project project = BasicInstance.createBasicProjectNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Infos.addUserRight(user,project)
 
 
         //Add imageFilterProject 1 with cytomine admin
-        ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject1 = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         assert 200 == result.code
         imageFilterProject1 = result.data
 
         //Add imageFilterProject 2 with user 1
-        ImageFilterProject imageFilterProject2 = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject2 = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject2.project = project
         result = ImageFilterProjectAPI.create(imageFilterProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -59,11 +60,11 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         User user = getUser1()
 
         //Create project with user 1
-        Project project = BasicInstance.createBasicProjectNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Infos.addUserRight(user,project)
 
         //Add imageFilterProject 1 with user1
-        ImageFilterProject imageFilterProject2 = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject2 = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject2.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject2.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -86,7 +87,7 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        Project project = BasicInstance.createBasicProjectNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Infos.addUserRight(user1,project)
         Infos.printRight(project)
 
@@ -96,7 +97,7 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         assert 200 == resAddUser.code
 
         //Add imageFilterProject 1 with user 1
-        ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject1 = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -120,11 +121,11 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         User user2 = getUser2()
 
         //Create project with user 1
-        Project project = BasicInstance.createBasicProjectNotExist()
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Infos.addUserRight(user1,project)
 
         //Add imageFilterProject 1 with user 1
-        ImageFilterProject imageFilterProject1 = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject1 = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject1.project = project
         def result = ImageFilterProjectAPI.create(imageFilterProject1.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
@@ -146,11 +147,11 @@ class ImageFilterProjectSecurityTests extends SecurityTestsAbstract {
         User user1 = getUser1()
 
         //Create project with user 1
-        ImageInstance image = BasicInstance.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Project project = image.project
 
         //Add imageFilterProject 1 with user 1
-        ImageFilterProject imageFilterProject = BasicInstance.getBasicImageFilterProjectNotExist()
+        ImageFilterProject imageFilterProject = BasicInstanceBuilder.getImageFilterProjectNotExist()
         imageFilterProject.project = project
         imageFilterProject.project = image.project
         def result = ImageFilterProjectAPI.create(imageFilterProject.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
