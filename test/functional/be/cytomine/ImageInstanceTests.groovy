@@ -112,9 +112,12 @@ class ImageInstanceTests  {
     }
 
     void testEditImageInstance() {
-        ImageInstance imageInstanceToAdd = BasicInstanceBuilder.getImageInstance()
-        def data = UpdateData.createUpdateSet(imageInstanceToAdd)
-        def result = ImageInstanceAPI.update(data.oldData.id, data.newData.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+
+        def image = BasicInstanceBuilder.getImageInstance()
+        def data = UpdateData.createUpdateSet(image,[project: [BasicInstanceBuilder.getProject(),BasicInstanceBuilder.getProjectNotExist(true)]])
+
+        def result = ImageInstanceAPI.update(image.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

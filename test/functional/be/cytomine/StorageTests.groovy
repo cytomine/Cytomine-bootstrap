@@ -62,10 +62,10 @@ public class StorageTests {
     }
 
     void testUpdateStorageCorrect() {
-        Storage storageToAdd = BasicInstanceBuilder.getStorage()
+        Storage storage = BasicInstanceBuilder.getStorage()
 
-        def data = UpdateData.createUpdateSet(storageToAdd)
-        def result = StorageAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(storage,[name: ["OLDNAME","NEWNAME"]])
+        def result = StorageAPI.update(storage.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         println "result : $result"
         assert 200 == result.code
         def json = JSON.parse(result.data)

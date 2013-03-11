@@ -59,10 +59,9 @@ class AnnotationFilterTests  {
   }
 
   void testUpdateAnnotationFilterCorrect() {
-      AnnotationFilter annotationfilterToAdd = BasicInstanceBuilder.getAnnotationFilter()
-
-      def data = UpdateData.createUpdateSet(annotationfilterToAdd)
-      def result = AnnotationFilterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def af =  BasicInstanceBuilder.getAnnotationFilter()
+      def data = UpdateData.createUpdateSet(af,[name: ["OLDNAME","NEWNAME"]])
+      def result = AnnotationFilterAPI.update(af.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

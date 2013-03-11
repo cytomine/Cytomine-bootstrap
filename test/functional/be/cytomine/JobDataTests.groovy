@@ -63,9 +63,9 @@ class JobDataTests  {
     }
 
     void testEditJobDataCorrect() {
-        JobData jobdataToAdd = BasicInstanceBuilder.getJobData()
-        def data = UpdateData.createUpdateSet(jobdataToAdd)
-        def result = JobDataAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def jobData = BasicInstanceBuilder.getJobData()
+        def data = UpdateData.createUpdateSet(jobData,[key: ["123","456"]])
+        def result = JobDataAPI.update(jobData.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

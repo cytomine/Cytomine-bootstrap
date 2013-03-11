@@ -67,9 +67,8 @@ class SampleTests  {
 
   void testUpdateSampleCorrect() {
       Sample sampleToAdd = BasicInstanceBuilder.getSample()
-
-      def data = UpdateData.createUpdateSet(sampleToAdd)
-      def result = SampleAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def data = UpdateData.createUpdateSet(sampleToAdd,[name: ["OLDNAME","NEWNAME"]])
+      def result = SampleAPI.update(sampleToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

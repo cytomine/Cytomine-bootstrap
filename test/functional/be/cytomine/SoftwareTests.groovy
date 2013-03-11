@@ -68,9 +68,9 @@ class SoftwareTests  {
    }
  
    void testUpdateSoftwareCorrect() {
-       Software softwareToAdd = BasicInstanceBuilder.getSoftware()
-       def data = UpdateData.createUpdateSet(softwareToAdd)
-       def resultBase = SoftwareAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def software = BasicInstanceBuilder.getSoftware()
+       def data = UpdateData.createUpdateSet(software,[name: ["OLDNAME","NEWNAME"],serviceName : ["projectService","userAnnotationService"]])
+       def resultBase = SoftwareAPI.update(software.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200==resultBase.code
        def json = JSON.parse(resultBase.data)
        assert json instanceof JSONObject

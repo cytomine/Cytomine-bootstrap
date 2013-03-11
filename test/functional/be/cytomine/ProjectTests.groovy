@@ -106,9 +106,11 @@ class ProjectTests  {
     }
 
     void testEditProjectCorrect() {
-        Project projectToAdd = BasicInstanceBuilder.getProject()
-        def data = UpdateData.createUpdateSet(projectToAdd)
-        def result = ProjectAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        def project = BasicInstanceBuilder.getProject()
+        def data = UpdateData.createUpdateSet(project,[name: ["OLDNAME","NEWNAME"]])
+
+        def result = ProjectAPI.update(project.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

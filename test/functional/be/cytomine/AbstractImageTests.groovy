@@ -241,9 +241,17 @@ class AbstractImageTests {
   }
 
   void testEditImage() {
-      AbstractImage imageToAdd = BasicInstanceBuilder.getAbstractImage()
-      def data = UpdateData.createUpdateSet(imageToAdd)
-      def result = AbstractImageAPI.update(data.oldData.id,data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def image = BasicInstanceBuilder.getAbstractImage()
+      def data = UpdateData.createUpdateSet(
+              image,
+                    [height:[10000,900000],
+                      width:[1000,9000],
+                      path:["OLDPATH","NEWPATH"],
+                      scanner:[BasicInstanceBuilder.getScanner(),BasicInstanceBuilder.getNewScannerNotExist(true)],
+                      filename: ["OLDNAME","NEWNAME"]]
+      )
+
+      def result = AbstractImageAPI.update(image.id,data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

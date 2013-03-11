@@ -88,7 +88,11 @@ class BasicInstanceBuilder {
     }
 
     static String toString(def data) {
-        return data + ""
+        try {
+            return data.toString()
+        } catch(Exception e) {
+            return data+""
+        }
     }
 
 
@@ -691,9 +695,6 @@ class BasicInstanceBuilder {
         checkDomain(relation)
     }
 
-
-
-
     static RelationTerm getRelationTerm() {
         log.debug "getRelationTerm()"
         def relation = getRelation()
@@ -776,10 +777,10 @@ class BasicInstanceBuilder {
         saveDomain(scanner)
     }
 
-    static Instrument getNewScannerNotExist() {
+    static Instrument getNewScannerNotExist(boolean save  = false) {
         log.debug "getNewScannerNotExist()"
         def scanner = new Instrument(brand: "newBrand", model: getRandomString())
-        saveDomain(scanner)
+        save? saveDomain(scanner) : checkDomain(scanner)
     }
 
     static Sample getSlide() {
@@ -815,11 +816,11 @@ class BasicInstanceBuilder {
         user
     }
 
-    static User getUserNotExist() {
+    static User getUserNotExist(boolean save = false) {
         log.debug "getUserNotExist()"
        User user = new User(username: getRandomString(),firstname: "BasicNotExist",lastname: "UserNotExist",email: "BasicNotExist@User.be",password: "password",enabled: true)
         user.generateKeys()
-        checkDomain(user)
+        save ? saveDomain(user) :  checkDomain(user)
     }
 
     static Group getGroup() {

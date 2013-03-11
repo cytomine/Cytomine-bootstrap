@@ -66,10 +66,9 @@ class DisciplineTests  {
   }
 
   void testUpdateDisciplineCorrect() {
-      Discipline disciplineToAdd = BasicInstanceBuilder.getDiscipline()
-
-      def data = UpdateData.createUpdateSet(disciplineToAdd)
-      def result = DisciplineAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def discipline = BasicInstanceBuilder.getDiscipline()
+      def data = UpdateData.createUpdateSet(discipline,[name: ["OLDNAME","NEWNAME"]])
+      def result = DisciplineAPI.update(discipline.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

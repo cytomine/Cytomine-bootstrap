@@ -238,8 +238,11 @@ class GenericAnnotationTests  {
         AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user
 
-        def data = UpdateData.createUpdateSet(annotationToAdd)
-        def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,user.username, Infos.GOODPASSWORDUSERJOB)
+        def data = UpdateData.createUpdateSet(
+                BasicInstanceBuilder.getAlgoAnnotation(),
+                [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
+        )
+        def result = AnnotationDomainAPI.update(annotationToAdd.id,data.postData,user.username, Infos.GOODPASSWORDUSERJOB)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -262,8 +265,11 @@ class GenericAnnotationTests  {
 
     void testEditAnnotationWithGenericCallForUser() {
         UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-        def data = UpdateData.createUpdateSet(annotationToAdd)
-        def result = AnnotationDomainAPI.update(data.oldData.id,data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(
+                BasicInstanceBuilder.getUserAnnotation(),
+                [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
+        )
+        def result = AnnotationDomainAPI.update(annotationToAdd.id,data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

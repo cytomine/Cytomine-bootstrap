@@ -53,9 +53,9 @@ class SoftwareParameterTests  {
       }
 
       void testUpdateSoftwareParameterCorrect() {
-          SoftwareParameter softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameter()
-          def data = UpdateData.createUpdateSet(softwareparameterToAdd)
-          def result = SoftwareParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def sp = BasicInstanceBuilder.getSoftwareParameter()
+          def data = UpdateData.createUpdateSet(sp,[name: ["OLDVALUE","NEWVALUE"]])
+          def result = SoftwareParameterAPI.update(sp.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject

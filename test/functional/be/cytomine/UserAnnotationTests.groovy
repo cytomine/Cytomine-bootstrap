@@ -9,6 +9,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAnnotationAPI
 
 import be.cytomine.test.http.DomainAPI
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -250,8 +251,12 @@ class UserAnnotationTests  {
 
     void testEditUserAnnotation() {
         UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-        def data = UpdateData.createUpdateSet(annotationToAdd)
-        def result = UserAnnotationAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(
+                BasicInstanceBuilder.getUserAnnotation(),
+                [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
+        )
+
+        def result = UserAnnotationAPI.update(annotationToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

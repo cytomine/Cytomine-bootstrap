@@ -52,9 +52,9 @@ class GroupTests  {
   }
 
   void testUpdateGroupCorrect() {
-      Group groupToAdd = BasicInstanceBuilder.getGroup()
-      def data = UpdateData.createUpdateSet(groupToAdd)
-      def result = GroupAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      Group group = BasicInstanceBuilder.getGroup()
+      def data = UpdateData.createUpdateSet(group,[name: ["OLDNAME","NEWNAME"]])
+      def result = GroupAPI.update(group.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject

@@ -311,11 +311,14 @@ class AlgoAnnotationTests  {
     }
 
     void testEditAlgoAnnotation() {
-        AlgoAnnotation annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
-        UserJob user = annotationToAdd.user
+        def aa = BasicInstanceBuilder.getAlgoAnnotation()
+        def data = UpdateData.createUpdateSet(
+                aa,
+                [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
+        )
+        UserJob user = aa.user
 
-        def data = UpdateData.createUpdateSet(annotationToAdd)
-        def result = AlgoAnnotationAPI.update(data.oldData.id, data.newData,user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.update(aa.id, data.postData,user.username, 'PasswordUserJob')
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

@@ -65,9 +65,9 @@ class JobParameterTests  {
      }
  
      void testUpdateJobParameterCorrect() {
-         JobParameter jobparameterToAdd = BasicInstanceBuilder.getJobParameter()
-         def data = UpdateData.createUpdateSet(jobparameterToAdd)
-         def result = JobParameterAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def jobParam = BasicInstanceBuilder.getJobParameter()
+         def data = UpdateData.createUpdateSet(jobParam,[value: ["123","456"]])
+         def result = JobParameterAPI.update(jobParam.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
          assert json instanceof JSONObject

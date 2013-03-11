@@ -74,8 +74,8 @@ class OntologyTests  {
   
     void testUpdateOntologyCorrect() {
         Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
-        def data = UpdateData.createUpdateSet(ontologyToAdd)
-        def result = OntologyAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def data = UpdateData.createUpdateSet(ontologyToAdd,[name: ["OLDNAME","NEWNAME"], user:[BasicInstanceBuilder.user1,BasicInstanceBuilder.user2]])
+        def result = OntologyAPI.update(ontologyToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

@@ -1,5 +1,6 @@
 package be.cytomine.utils
 
+import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.server.Storage
@@ -368,25 +369,54 @@ class UpdateData {
         return ['oldData':jobparameter,'newData':jsonJobparameter,'mapOld':mapOld,'mapNew':mapNew]
     }
 
-    static def createUpdateSet(Ontology ontology) {
-        log.info "update ontology"
-        String oldName = "NAME1"
-        String newName = "NAME2"
-        def mapNew = ["name":newName]
-        def mapOld = ["name":oldName]
-        /* Create a Name1 ontology */
-        Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
-        ontologyToAdd.name = oldName
-        assert (ontologyToAdd.save(flush:true) != null)
-        /* Encode a niew ontology Name2*/
-        Ontology ontologyToEdit = Ontology.get(ontologyToAdd.id)
-        def jsonOntology = ontologyToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonOntology)
-        jsonUpdate.name = newName
-        jsonOntology = jsonUpdate.encodeAsJSON()
-        return ['oldData':ontology,'newData':jsonOntology,'mapOld':mapOld,'mapNew':mapNew]
+
+
+
+
+    static def createUpdateSet(CytomineDomain domain,def maps) {
+         def mapOld = [:]
+         def mapNew = [:]
+
+        maps.each {
+            String key = it.key
+            mapOld[key] = extractValue(it.value[0])
+            domain[key] = it.value[0]
+        }
+
+        BasicInstanceBuilder.saveDomain(domain)
+
+
+
+        def json = JSON.parse(domain.encodeAsJSON())
+
+        maps.each {
+            String key = it.key
+            mapNew[key] = extractValue(it.value[1])
+            json[key] = extractValue(it.value[1])
+        }
+
+        println domain.encodeAsJSON()
+        println domain.encodeAsJSON()
+
+        println "mapOld="+mapOld
+        println "mapNew="+mapNew
+
+        return ['postData':json.toString(),'mapOld':mapOld,'mapNew':mapNew]
+
+
     }
 
+    static extractValue(def value) {
+        println "extractValue=$value"
+        println "extractValue.class="+value.class
+        println "extractValue.class.isInstance="+value.class.isInstance(CytomineDomain)
+        if (value.class.toString().contains("be.cytomine")) {
+            //if cytomine domain, get its id
+            return value.id
+        } else {
+            return value
+        }
+    }
 
     static def createUpdateSet(Project project) {
         String oldName = "Name1"

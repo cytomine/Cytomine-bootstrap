@@ -142,11 +142,11 @@ class AnnotationPropertyTests {
 
     void testUpdateAnnotationPropertyCorrect() {
         AnnotationProperty annotationPropertyToAdd = BasicInstanceBuilder.getAnnotationProperty()
-        def data = UpdateData.createUpdateSet(annotationPropertyToAdd)
+        def data = UpdateData.createUpdateSet(annotationPropertyToAdd,[key: ["OLDKEY","NEWKEY"],value: ["OLDVALUE","NEWVALUE"]])
 
         println annotationPropertyToAdd.annotationIdent + "-" + annotationPropertyToAdd.key
 
-        def result = AnnotationPropertyAPI.update(data.oldData.id, data.newData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationPropertyAPI.update(annotationPropertyToAdd.id, data.postData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

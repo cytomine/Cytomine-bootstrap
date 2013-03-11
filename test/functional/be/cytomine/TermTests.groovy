@@ -113,9 +113,9 @@ class TermTests  {
    }
  
    void testUpdateTermCorrect() {
-       Term termToAdd = BasicInstanceBuilder.getTerm()
-       def data = UpdateData.createUpdateSet(termToAdd)
-       def result = TermAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       Term term = BasicInstanceBuilder.getTerm()
+       def data = UpdateData.createUpdateSet(term,[name: ["OLDNAME","NEWNAME"]])
+       def result = TermAPI.update(term.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject

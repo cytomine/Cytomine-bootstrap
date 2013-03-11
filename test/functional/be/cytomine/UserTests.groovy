@@ -188,9 +188,10 @@ class UserTests  {
     }
 
     void testUpdateUserCorrect() {
-        User userToAdd = BasicInstanceBuilder.getUser()
-        def data = UpdateData.createUpdateSet(userToAdd)
-        def result = UserAPI.update(data.oldData.id, data.newData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def user = BasicInstanceBuilder.getUserNotExist(true)
+        def data = UpdateData.createUpdateSet(user,[firstname: ["OLDNAME","NEWNAME"], email:["old@email.com","new@email.com"]])
+
+        def result = UserAPI.update(user.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
