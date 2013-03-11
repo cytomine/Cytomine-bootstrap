@@ -49,9 +49,13 @@ class BootStrap {
     def userGroupService
     def termService
     def tableService
-
+    def secUserService
+    def permissionService
+    def fileSystemService
+    def imagePropertiesService
     def dataSource
 
+    def abstractImageService
 
     static def development = "development"
     static def production = "production"
@@ -108,8 +112,9 @@ class BootStrap {
             initData(GrailsUtil.environment)
         }
 
-        //toVersion1()
+
         if (GrailsUtil.environment != BootStrap.test) {
+           // toVersion1()
 //            getAbstractImageNestedFiles()
 //            initUserIntoAbstractImage()
 //            initUserStorages()
@@ -122,10 +127,7 @@ class BootStrap {
 
     }
 
-    def userService
-    def permissionService
-    def fileSystemService
-    def imagePropertiesService
+
 
 
 
@@ -184,7 +186,6 @@ class BootStrap {
 
     }
 
-    def abstractImageService
 
     private def getAbstractImageNestedFiles() {
 
@@ -314,14 +315,14 @@ class BootStrap {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-                    /*fileSystemService.makeRemoteDirectory(
+                    fileSystemService.makeRemoteDirectory(
                             storage.getIp(),
                             storage.getPort(),
                             storage.getUsername(),
                             storage.getPassword(),
                             storage.getKeyFile(),
                             storage.getBasePath())
-                     */
+
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
                         imageServerStorage.save(flush : true)
@@ -350,7 +351,7 @@ class BootStrap {
          */
         Project.withTransaction {
             Project.list().each { project ->
-                def users = userService.listUsers(project)
+                def users = secUserService.listUsers(project)
                 users.each { user ->
                     permissionService.addPermission(project.ontology,user.username,BasePermission.READ)
                 }

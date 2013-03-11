@@ -27,6 +27,7 @@ class RestUploadedFileController extends RestController {
     def deployImagesService
     def fileSystemService
     def mailService
+    def storageService
     def grailsApplication
 
     static allowedMethods = [image: 'POST']
@@ -55,18 +56,11 @@ class RestUploadedFileController extends RestController {
         SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
 
-        //read project
-        String projectParam = request.getParameter("idProject")
-        Project project = null
-        if (projectParam != null && projectParam != "undefined" && projectParam != "null") {
-            try {
-                int id_project = Integer.parseInt(projectParam)
-                project = projectService.read(id_project)
-            } catch (java.lang.NumberFormatException e) {
-                project = null
-            }
+        int id_project = params.int("idProject")
+        int id_storage = params.int("idStorage")
 
-        }
+        println "id_project : $id_project"
+        println "id_storage : $id_storage"
 
         //get file to upload
         def f = request.getFile('files[]')
@@ -94,7 +88,8 @@ class RestUploadedFileController extends RestController {
                     ext : extension,
                     size : f.size,
                     contentType : f.contentType,
-                    project : project,
+                    projects : [id_project],
+                    storages : [id_storage],
                     user : currentUser
             )
             uploadedFile.save(flush : true)
@@ -112,17 +107,26 @@ class RestUploadedFileController extends RestController {
         content.type = f.contentType
         content.uploadFile = uploadedFile
 
+        Collection<Storage> storages = []
+        uploadedFile.getStorages()?.each {
+            storages << storageService.read(it)
+        }
+
         //Convert and deploy
         backgroundService.execute("convertAndDeployImage", {
             def uploadedFiles = convertImagesService.convertUploadedFile(uploadedFile, currentUser)
             Collection<AbstractImage> abstractImagesCreated = []
             Collection<UploadedFile> deployedFiles = []
+
+
             uploadedFiles.each {
                 UploadedFile new_uploadedFile = (UploadedFile) it
+
+
                 if (new_uploadedFile.status == UploadedFile.TO_DEPLOY)
-                    abstractImagesCreated << deployImagesService.deployUploadedFile(new_uploadedFile, Storage.findAllByUser(currentUser), currentUser)
+                    abstractImagesCreated << deployImagesService.deployUploadedFile(new_uploadedFile, storages, currentUser)
                 if (new_uploadedFile.status == UploadedFile.CONVERTED)
-                    deployImagesService.copyUploadedFile(new_uploadedFile, Storage.findAllByUser(currentUser), currentUser)
+                    deployImagesService.copyUploadedFile(new_uploadedFile, storages, currentUser)
 
                 deployedFiles << new_uploadedFile
             }

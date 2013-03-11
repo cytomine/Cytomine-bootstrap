@@ -25,8 +25,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
     public static int TO_DEPLOY = 6
 
     SecUser user
-    String[] projects //projects ids that we have to link with the new file
-    String[] storages //storage ids on which we have to upload files
+    Long[] projects //projects ids that we have to link with the new file
+    Long[] storages //storage ids on which we have to upload files
     String filename
     String originalFilename
     String convertedFilename

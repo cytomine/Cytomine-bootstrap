@@ -126,7 +126,8 @@ class ConvertImagesService {
                 ext : extension,
                 size : new File(absolutePath).size(),
                 contentType : contentType,
-                project : parentUploadedFile.getProject(),
+                projects : parentUploadedFile.getProjects(),
+                storages: parentUploadedFile.getStorages(),
                 user : currentUser
         )
     }
@@ -164,7 +165,8 @@ class ConvertImagesService {
                             ext : "tiff",
                             size : new File(convertedFilenameFullPath).size(),
                             contentType : "image/tiff",
-                            project : uploadedFile.getProject(),
+                            projects : uploadedFile.getProjects(),
+                            storages: uploadedFile.getStorages(),
                             user : currentUser,
                             status: UploadedFile.TO_DEPLOY
                     )
