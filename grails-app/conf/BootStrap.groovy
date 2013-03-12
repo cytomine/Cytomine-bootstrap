@@ -5,7 +5,6 @@ import be.cytomine.image.NestedFile
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.ImageServerStorage
-import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.security.SecUser
@@ -32,7 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.AuthorityUtils
 import be.cytomine.security.UserGroup
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 
 /**
  * Bootstrap contains code that must be execute during application (re)start
@@ -114,11 +113,11 @@ class BootStrap {
 
 
         if (GrailsUtil.environment != BootStrap.test) {
-           // toVersion1()
-//            getAbstractImageNestedFiles()
-//            initUserIntoAbstractImage()
-//            initUserStorages()
-//            generateCopyToStorageScript()
+            /*toVersion1()
+            getAbstractImageNestedFiles()
+            initUserIntoAbstractImage()
+            initUserStorages()
+            generateCopyToStorageScript()*/
         }
 
         createSimpleUsers()
@@ -161,28 +160,34 @@ class BootStrap {
             f.delete()
             f = new File(scriptFilename)
         }
-        Storage originStorage = Storage.findByName("cytomine")
+        //Storage originStorage = Storage.findByName("cytomine")
+        String oldStorageBasePath = "/opt/cytomine/storage/beta.cytomine.be/"
         String originPath = null
         Storage destStorage = null
         String destPath = null
         String cmd = null
         String dirParent = null
+        println "create StorageAbstractImage"
         AbstractImage.list().each {
-            destStorage = Storage.findByUser(it.user)
-            originPath = [originStorage.getBasePath(), it.getPath()].join(File.separator)
-            destPath = [destStorage.getBasePath(), it.getPath()].join(File.separator)
-            dirParent = new File(destPath).getParent()
-            cmd = "mkdir -p \"$dirParent\";cp \"$originPath\" \"$destPath\";"
-            f << cmd
-            NestedFile.findAllByAbstractImage(it).each { nestedFile ->
-                originPath = [originStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
-                destPath = [destStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
+            new StorageAbstractImage(storage: Storage.findByUser(it.user), abstractImage: it).save()
+        }
+        println "create generateCopyToStorageScript"
+        AbstractImage.list().each {
+                destStorage = Storage.findByUser(it.user)
+                originPath = [oldStorageBasePath, it.getPath()].join(File.separator)
+                destPath = [destStorage.getBasePath(), it.getPath()].join(File.separator)
                 dirParent = new File(destPath).getParent()
                 cmd = "mkdir -p \"$dirParent\";cp \"$originPath\" \"$destPath\";"
                 f << cmd
-            }
-
+                NestedFile.findAllByAbstractImage(it).each { nestedFile ->
+                    originPath = [oldStorageBasePath, nestedFile.getFilename()].join(File.separator)
+                    destPath = [destStorage.getBasePath(), nestedFile.getFilename()].join(File.separator)
+                    dirParent = new File(destPath).getParent()
+                    cmd = "mkdir -p \"$dirParent\";cp \"$originPath\" \"$destPath\";"
+                    f << cmd
+                }
         }
+
 
     }
 
@@ -286,20 +291,21 @@ class BootStrap {
     private def initUserStorages() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         //a image server has now many storage
-        for (imageServer in ImageServer.findAll()) {
+        /*for (imageServer in ImageServer.findAll()) {
             ImageServerStorage imageServerStorage = ImageServerStorage.findByImageServer(imageServer)
             if (!imageServerStorage) {
                 imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : Storage.findByName("cytomine"))
                 imageServerStorage.save(flush : true)
             }
-        }
+        }*/
         //create storage for each user
         for (user in User.findAll()) {
+            String storage_base_path = grailsApplication.config.storage_path
+            println "storage_base_path : $storage_base_path"
+            String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
             if (!Storage.findByUser(user)) {
 
-                String storage_base_path = grailsApplication.config.storage_path
-                println "storage_base_path : $storage_base_path"
-                String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
+
 
                 Storage storage = new Storage(
                         name: "$user.username storage",
@@ -315,13 +321,13 @@ class BootStrap {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-                    fileSystemService.makeRemoteDirectory(
+                    /*fileSystemService.makeRemoteDirectory(
                             storage.getIp(),
                             storage.getPort(),
                             storage.getUsername(),
                             storage.getPassword(),
                             storage.getKeyFile(),
-                            storage.getBasePath())
+                            storage.getBasePath())*/
 
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
@@ -331,6 +337,15 @@ class BootStrap {
                     storage.errors.each {
                         log.error it
                     }
+                }
+            }  else { //update the storage
+                Storage storage = Storage.findByUser(user)
+                storage.basePath = remotePath
+                storage.save()
+                permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
+                for (imageServer in ImageServer.findAll()) {
+                    ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
+                    imageServerStorage.save(flush : true)
                 }
             }
 
