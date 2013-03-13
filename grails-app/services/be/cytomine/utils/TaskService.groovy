@@ -1,6 +1,6 @@
 package be.cytomine.utils
 
-
+import be.cytomine.SecurityACL
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import org.springframework.security.access.prepost.PreAuthorize
@@ -28,8 +28,8 @@ class TaskService  {
      * @param user User that create the task
      * @return Task created
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     def createNewTask(Project project, SecUser user) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         Task task = new Task(projectIdent: project?.id, userIdent: user.id)
         //task.addToComments("Task started...")
         task = task.saveOnDatabase()
@@ -41,8 +41,10 @@ class TaskService  {
      * @param task Task to update
      * @param comment Comment for the new task status
      */
-    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def updateTask(Task task, String comment) {
+        if (task) {
+            SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+        }
         updateTask(task,(task? task.progress : -1),comment)
     }
 
@@ -52,12 +54,12 @@ class TaskService  {
      * @param progress New progress value (0-100)
      * @param comment Comment for the new task status
      */
-    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def updateTask(Task task, int progress, String comment) {
             if(!task) {
                 //log.info "task is null, ignore task"
                 return
             }
+            SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
             log.info "Progress = $progress"
             task.progress = progress
             task.addComment(comment)
@@ -70,12 +72,12 @@ class TaskService  {
      * @param task Task to close
      * @return Closed task
      */
-    @PreAuthorize("#task==null or #task.userIdent == principal.id or hasRole('ROLE_ADMIN')")
     def finishTask(Task task) {
         if(!task) {
             log.info "task is null, ignore task"
             return
         }
+        SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
         task.progress = 100
         updateTask(task,100,"Task completed...")
         task = get(task.id)

@@ -15,7 +15,6 @@ class RestSecUserSecRoleController extends RestController {
     def secRoleService
     def secUserSecRoleService
     def cytomineService
-    def transactionService
 
     /**
      * List all roles for a user

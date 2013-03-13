@@ -3,8 +3,10 @@ package be.cytomine.ontology
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -15,6 +17,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 import be.cytomine.CytomineDomain
+import static org.springframework.security.acls.domain.BasePermission.*
 
 import grails.converters.JSON
 import be.cytomine.utils.Task
@@ -35,7 +38,7 @@ class OntologyService extends ModelService {
     Ontology read(def id) {
         def ontology = Ontology.read(id)
         if (ontology) {
-            SecurityCheck.checkReadAuthorization(ontology)
+            SecurityACL.check(ontology,READ)
         }
         ontology
     }
@@ -43,7 +46,7 @@ class OntologyService extends ModelService {
     Ontology get(def id) {
         def ontology = Ontology.get(id)
         if (ontology) {
-            SecurityCheck.checkReadAuthorization(ontology)
+            SecurityACL.check(ontology,READ)
         }
         ontology
     }
@@ -54,17 +57,7 @@ class OntologyService extends ModelService {
      */
     def list() {
         def user = cytomineService.currentUser
-        if (!user.admin) {
-            def list = Ontology.executeQuery(
-                    "select distinct ontology "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Ontology as ontology "+
-                    "where aclObjectId.objectId = ontology.id " +
-                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
-            return list
-        } else {
-            return Ontology.list()
-        }
+        return SecurityACL.getOntologyList(user)
     }
 
     /**
@@ -86,43 +79,40 @@ class OntologyService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json, SecurityCheck security) throws CytomineException {
+    def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkUser(currentUser)
         json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser), null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkOntologyWrite() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) throws CytomineException {
+    def update(Ontology domain, def jsonNewData) throws CytomineException {
+        SecurityACL.check(domain,WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser),domain,jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkOntologyDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security,Task task = null) throws CytomineException {
-        return delete(retrieve(json),transactionService.start(),true,task)
-    }
-
-    def delete(Ontology ontology, Transaction transaction = null, boolean printMessage = true,Task task = null) {
+    def delete(Ontology domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${ontology.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json,task)
+        SecurityACL.check(domain,DELETE)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
@@ -135,7 +125,7 @@ class OntologyService extends ModelService {
 
     def deleteDependentTerm(Ontology ontology, Transaction transaction, Task task = null) {
         Term.findAllByOntology(ontology).each {
-            termService.delete(it,transaction, false)
+            termService.delete(it,transaction, null,false)
         }
     }
 

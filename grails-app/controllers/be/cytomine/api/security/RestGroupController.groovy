@@ -12,7 +12,6 @@ class RestGroupController extends RestController {
 
     def abstractImageService
     def groupService
-    def transactionService
 
     /**
      * List all group

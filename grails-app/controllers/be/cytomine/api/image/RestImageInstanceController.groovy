@@ -81,7 +81,7 @@ class RestImageInstanceController extends RestController {
 
     def add = {
         try {
-            responseResult(imageInstanceService.add(request.JSON, new SecurityCheck()))
+            responseResult(imageInstanceService.add(request.JSON))
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)

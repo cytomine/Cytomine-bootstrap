@@ -2,8 +2,10 @@ package be.cytomine.image.server
 
 import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -14,6 +16,7 @@ import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class StorageService extends ModelService {
 
@@ -26,16 +29,15 @@ class StorageService extends ModelService {
         return Storage
     }
 
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list() {
-        //list ALL storage, order by name
-        Storage.list(sort: "name")
+        def list = SecurityACL.getStorageList(cytomineService.currentUser)
+        list.sort{it.name}
     }
 
     def get(def id) {
         def storage = Storage.get((Long) id)
         if(storage) {
-            storage.checkReadPermission()
+            SecurityACL.check(storage,READ)
         }
         storage
     }
@@ -43,33 +45,34 @@ class StorageService extends ModelService {
     def read(def id) {
         def storage =  Storage.read((Long) id)
         if(storage) {
-            storage.checkReadPermission()
+            SecurityACL.check(storage,READ)
         }
         storage
     }
 
     /**
      * Add the new domain with JSON data
-     * @param json New domain data
-     * @param security Security service object (user for right check)
+     * @param json New domain data)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        SecurityACL.checkUser(currentUser)
+        Command c = new AddCommand(user: currentUser)
+        executeCommand(c,null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkStorageWrite() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(Storage storage,def jsonNewData) {
+        SecurityACL.check(storage,WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        Command c = new EditCommand(user: currentUser)
+        executeCommand(c,storage,jsonNewData)
     }
 
     /**
@@ -78,10 +81,11 @@ class StorageService extends ModelService {
      * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkStorageDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
+    def delete(Storage storage, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        SecurityACL.check(storage.storageDomain(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new DeleteCommand(user: currentUser), json)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,storage,null)
     }
 
     def getStringParamsI18n(def domain) {

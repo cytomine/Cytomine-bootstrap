@@ -1,10 +1,13 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -12,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class JobDataService extends ModelService {
 
@@ -31,60 +35,57 @@ class JobDataService extends ModelService {
     def read(def id) {
         def jobData = JobData.read(id)
         if(jobData) {
-            SecurityCheck.checkReadAuthorization(jobData.job.project)
+            SecurityACL.check(jobData.projectDomain(),READ)
         }
         jobData
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         JobData.list(sort: "id")
     }
 
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         JobData.findAllByJob(job)
     }
 
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkJobAccess(#json['job']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json) {
+        SecurityACL.check(json.job, Job,"projectDomain",READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(JobData jd, def jsonNewData) {
+        SecurityACL.check(jd.projectDomain(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser),jd,jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        delete(retrieve(json), transactionService.start())
-    }
-
-    def delete(JobData jobData, Transaction transaction, boolean printMessage = true) {
+    def delete(JobData domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${jobData.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.check(domain.projectDomain(),READ)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

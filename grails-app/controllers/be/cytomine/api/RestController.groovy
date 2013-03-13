@@ -60,7 +60,7 @@ class RestController {
         try {
             println "UPDATE=$json"
             def domain =  service.retrieve(json)
-            def result = service.update(json, new SecurityCheck(domain))
+            def result = service.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -77,7 +77,7 @@ class RestController {
     public Object delete(def service, def json,Task task) {
         try {
             def domain = service.retrieve(json)
-            def result = service.delete(json,new SecurityCheck(domain),task)
+            def result = service.delete(domain,transactionService.start(),task,true)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -92,7 +92,7 @@ class RestController {
      * @return response
      */
     public Object addOne(def service, def json) {
-        return service.add(json, new SecurityCheck())
+        return service.add(json)
     }
 
     /**

@@ -3,8 +3,10 @@ package be.cytomine.ontology
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -17,6 +19,7 @@ import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class TermService extends ModelService {
 
@@ -44,15 +47,15 @@ class TermService extends ModelService {
     /**
      * List all term, Only for admin
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         return Term.list()
     }
 
     Term read(def id) {
         def term = Term.read(id)
         if (term) {
-            SecurityCheck.checkReadAuthorization(term.ontology)
+            SecurityACL.check(term.ontologyDomain(),READ)
         }
         term
     }
@@ -60,31 +63,31 @@ class TermService extends ModelService {
     Term get(def id) {
         def term = Term.get(id)
         if (term) {
-            SecurityCheck.checkReadAuthorization(term.ontology)
+            SecurityACL.check(term.ontologyDomain(),READ)
         }
         term
     }
 
-    @PreAuthorize("#ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Ontology ontology) {
+        SecurityACL.check(ontology.ontologyDomain(),READ)
         return ontology?.leafTerms()
     }
 
-    @PreAuthorize("#project.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project,READ)
         return project?.ontology?.terms()
     }
 
-    @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation annotation, User user) {
+        SecurityACL.check(annotation.projectDomain(),READ)
         return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
     }
 
     /**
      * Get all term id for a project
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public List<Long> getAllTermId(Project project) {
+        SecurityACL.check(project.projectDomain(),READ)
         //better perf with sql request
         String request = "SELECT t.id FROM term t WHERE t.ontology_id="+project.ontology.id
         def data = []
@@ -94,8 +97,8 @@ class TermService extends ModelService {
         return data
     }
 
-    @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def statProject(Term term) {
+        SecurityACL.check(term.ontologyDomain(),READ)
         def projects = Project.findAllByOntology(term.ontology)
         def count = [:]
         def percentage = [:]
@@ -133,43 +136,39 @@ class TermService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkOntologyAccess(#json['ontology']) or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
+        SecurityACL.check(json.ontology, Ontology,WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkOntologyWrite()  or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(Term term, def jsonNewData) {
+        SecurityACL.check(term.ontologyDomain(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser), term,jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkOntologyDelete()  or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
-        return delete(retrieve(json), transactionService.start())
-    }
-
-    def delete(Term term, Transaction transaction = null, boolean printMessage = true) {
-        log.info "Delete term "
+    def delete(Term domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${term.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser, transaction:transaction), json)
+        SecurityACL.check(domain.ontologyDomain(),DELETE)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
@@ -185,7 +184,7 @@ class TermService extends ModelService {
     }
 
     def deleteDependentAnnotationTerm(Term term, Transaction transaction, Task task = null) {
-        def nbreUserAnnotation = AnnotationTerm.countByTerm(term,term)
+        def nbreUserAnnotation = AnnotationTerm.countByTerm(term)
 
         if (nbreUserAnnotation>0) {
             throw new ConstraintException("Term is still linked with ${nbreUserAnnotation} annotations created by user. Cannot delete term!")
@@ -194,10 +193,10 @@ class TermService extends ModelService {
 
     def deleteDependentRelationTerm(Term term, Transaction transaction, Task task = null) {
         RelationTerm.findAllByTerm1(term).each {
-            relationTermService.delete(it,transaction,false)
+            relationTermService.delete(it,transaction,null,false)
         }
         RelationTerm.findAllByTerm2(term).each {
-            relationTermService.delete(it,transaction,false)
+            relationTermService.delete(it,transaction,null,false)
         }
     }
 

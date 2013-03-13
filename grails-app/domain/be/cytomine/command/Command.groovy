@@ -27,7 +27,12 @@ class Command extends CytomineDomain {
      * JSON object with data
      */
     JSONElement json
-    static transients = ["json"]
+
+
+
+    def domain
+
+    static transients = ["json","domain"]
 
     /**
      * User who launch command

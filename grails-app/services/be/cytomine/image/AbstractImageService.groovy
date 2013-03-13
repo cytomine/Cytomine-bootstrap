@@ -3,8 +3,10 @@ package be.cytomine.image
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.image.server.ImageProperty
@@ -42,8 +44,8 @@ class AbstractImageService extends ModelService {
     /**
      * List all images (only for admin!)
      */
-    @Secured(['ROLE_ADMIN'])
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         return AbstractImage.list()
     }
 
@@ -154,13 +156,13 @@ class AbstractImageService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    def add(def json,SecurityCheck security) throws CytomineException {
+    def add(def json) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
-        def res = executeCommand(new AddCommand(user: currentUser), json)
+        Command c = new AddCommand(user: currentUser)
+        def res = executeCommand(c,null,json)
         //AbstractImage abstractImage = retrieve(res.data.abstractimage)
         AbstractImage abstractImage = res.object
         Group group = Group.findByName(currentUser.getUsername())
@@ -183,20 +185,20 @@ class AbstractImageService extends ModelService {
     //TODO:: how to manage security here?
     /**
      * Update this domain with new data from json
-     * @param security Security service object (user for right check)
-     * @param json JSON with new data
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    def update(def json,SecurityCheck security) throws CytomineException {
+    def update(AbstractImage image,def jsonNewData) throws CytomineException {
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
-        def res = executeCommand(new EditCommand(user: currentUser), json)
+        def res = executeCommand(new EditCommand(user: currentUser), image,jsonNewData)
         AbstractImage abstractImage = res.object
         StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
             def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
             sai.delete(flush:true)
         }
-        json.storage.each { storageID ->
+        jsonNewData.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
             StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
             sai.save(flush:true,failOnError: true)
@@ -205,35 +207,18 @@ class AbstractImageService extends ModelService {
         return res
     }
 
-    //TODO:: how to manage security here?
     /**
-     * Delete domain in argument
-     * @param security Security service object (user for right check)
-     * @param json JSON that was passed in request parameter
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    def delete(def json,SecurityCheck security, Task task = null) throws CytomineException {
-//        transactionService.start()
-//        SecUser currentUser = cytomineService.getCurrentUser()
-//        AbstractImage abstractImage = read(json.id)
-//        Group group = Group.findByName(currentUser.getUsername())
-//        AbstractImageGroup.unlink(abstractImage, group)
-//        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-//            StorageAbstractImage.unlink(storageAbstractImage.storage, storageAbstractImage.abstractImage)
-//        }
-//
-//        ImageProperty.findAllByImage(abstractImage).each {
-//            it.delete(flush:true)
-//        }
-//
-//        def res =  executeCommand(new DeleteCommand(user: currentUser), json)
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(AbstractImage image, Transaction transaction = null, boolean printMessage = true) {
+    def delete(AbstractImage domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${image.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
 
@@ -335,13 +320,13 @@ class AbstractImageService extends ModelService {
         }
 
         AbstractImageGroup.findAllByAbstractImage(ai).each {
-            abstractImageGroupService.delete(it,transaction,false)
+            abstractImageGroupService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
         ImageInstance.findAllByBaseImage(ai).each {
-            imageInstanceService.delete(it,transaction,false)
+            imageInstanceService.delete(it,transaction,null,false)
         }
     }
 

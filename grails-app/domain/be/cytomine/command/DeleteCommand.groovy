@@ -23,7 +23,7 @@ class DeleteCommand extends Command {
     def execute() {
         initService()
         //Retrieve domain to delete it
-        def oldDomain = service.retrieve(json)
+        def oldDomain = domain
         //Init command info
         super.setProject(linkProject? oldDomain?.projectDomain() : null)
         def response = service.destroy(oldDomain, printMessage)

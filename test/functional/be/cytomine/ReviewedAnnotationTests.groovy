@@ -248,7 +248,7 @@ class ReviewedAnnotationTests  {
         json.project = null
 
         def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 400 == result.code
+        assert 404 == result.code
     }
 
     void testAddReviewedAnnotationCorrectWithBadImage() {

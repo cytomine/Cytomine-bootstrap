@@ -2,9 +2,11 @@ package be.cytomine.ontology
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -24,6 +26,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class UserAnnotationService extends ModelService {
 
@@ -47,7 +50,7 @@ class UserAnnotationService extends ModelService {
     UserAnnotation get(def id) {
         def annotation = UserAnnotation.get(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
@@ -55,13 +58,13 @@ class UserAnnotationService extends ModelService {
     UserAnnotation read(def id) {
         def annotation = UserAnnotation.read(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project.projectDomain(),READ)
         UserAnnotation.findAllByProject(project)
     }
 
@@ -74,8 +77,8 @@ class UserAnnotationService extends ModelService {
      * @param job Job that make prediction
      * @return
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
+        SecurityACL.check(project.projectDomain(),READ)
         log.info "list with suggestedTerm"
         if (userList.isEmpty()) {
             return []
@@ -112,8 +115,8 @@ class UserAnnotationService extends ModelService {
      * @param multipleTerm Only get annotation with multiple (diff) term
      * @return Annotation listing (light)
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+        SecurityACL.check(project.projectDomain(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             throw new IllegalArgumentException("Method not supported for this type of data!!!")
         } else {
@@ -156,8 +159,8 @@ class UserAnnotationService extends ModelService {
      * @param user Annotation user filter
      * @return Annotation listing (light)
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listLight(ImageInstance image, SecUser user) {
+        SecurityACL.check(image.projectDomain(),READ)
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
@@ -175,8 +178,8 @@ class UserAnnotationService extends ModelService {
      * @param notReviewedOnly Don't get annotation that have been reviewed
      * @return Annotation listing (light)
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listLight(ImageInstance image, SecUser user, Geometry boundingbox, Boolean notReviewedOnly) {
+        SecurityACL.check(image.projectDomain(),READ)
         String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
                 " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
                 " WHERE annotation.image_id = $image.id\n" +
@@ -196,8 +199,8 @@ class UserAnnotationService extends ModelService {
      * @param imageInstanceList Image filter
      * @return Annotation listing (light)
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        SecurityACL.check(project.projectDomain(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             listForUserJob(project, term, userList, imageInstanceList)
         } else {
@@ -230,8 +233,8 @@ class UserAnnotationService extends ModelService {
      * List all annotation with a very light strcuture: id, project and crop url
      * Use for retrieval server (suggest term)
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def listLightForRetrieval() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         String request = "SELECT a.id as id, a.project_id as project\n" +
                 " FROM user_annotation a\n" +
                 " WHERE GeometryType(a.location) != 'POINT'\n"
@@ -243,8 +246,8 @@ class UserAnnotationService extends ModelService {
      * List annotation created by user
      * @param image Image filter
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def listLight(ImageInstance image) {
+        SecurityACL.check(image.project,READ)
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
@@ -294,12 +297,10 @@ class UserAnnotationService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
-
+    def add(def json) {
+        SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
@@ -320,7 +321,7 @@ class UserAnnotationService extends ModelService {
             json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
-            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
             def annotationID = result?.data?.annotation?.id
             log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
@@ -352,24 +353,22 @@ class UserAnnotationService extends ModelService {
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
-
+    def update(UserAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.isSameUser(annotation.user,currentUser)
         //simplify annotation
         try {
-            def annotation = UserAnnotation.read(json.id)
             def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
             json.location = new WKTWriter().write(data.geometry)
         } catch (Exception e) {
             log.error("Cannot simplify:" + e)
         }
 
-        def result = executeCommand(new EditCommand(user: currentUser), json)
+        def result = executeCommand(new EditCommand(user: currentUser),annotation,jsonNewData)
 
         if (result.success) {
             Long id = result.userannotation.id
@@ -383,22 +382,18 @@ class UserAnnotationService extends ModelService {
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        def result = delete(retrieve(json),transactionService.start())
-        try {if (json.id) deleteRetrievalAnnotation(json.id) } catch (Exception e) { log.error "Cannot delete in retrieval:" + e.toString()}
-        return result
-    }
-
-    def delete(UserAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
+    def delete(UserAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${annotation.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.isSameUser(domain.user,currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     /**
@@ -554,19 +549,19 @@ class UserAnnotationService extends ModelService {
 
     def deleteDependentAlgoAnnotationTerm(UserAnnotation ua, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(ua.id).each {
-            algoAnnotationTermService.delete(it,transaction,false)
+            algoAnnotationTermService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentAnnotationTerm(UserAnnotation ua, Transaction transaction, Task task = null) {
         AnnotationTerm.findAllByUserAnnotation(ua).each {
-            annotationTermService.delete(it,transaction,false)
+            annotationTermService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentReviewedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {
         ReviewedAnnotation.findAllByParentIdent(ua.id).each {
-            reviewedAnnotationService.delete(it,transaction,false)
+            reviewedAnnotationService.delete(it,transaction,null,false)
         }
      }
 
@@ -579,7 +574,7 @@ class UserAnnotationService extends ModelService {
 
     def deleteDependentAnnotationProperty(UserAnnotation ua, Transaction transaction, Task task = null) {
         AnnotationProperty.findAllByAnnotationIdent(ua.id).each {
-            annotationPropertyService.delete(it,transaction,false)
+            annotationPropertyService.delete(it,transaction,null,false)
         }
 
     }

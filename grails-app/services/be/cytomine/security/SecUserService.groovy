@@ -4,8 +4,10 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
 import be.cytomine.utils.ModelService
@@ -33,6 +35,7 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class SecUserService extends ModelService {
 
@@ -60,59 +63,59 @@ class SecUserService extends ModelService {
         User
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def get(def id) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         SecUser.get(id)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     SecUser getByPublicKey(String key) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def read(def id) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         SecUser.read(id)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def readCurrentUser() {
+        SecurityACL.checkUser(cytomineService.currentUser)
         cytomineService.getCurrentUser()
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def list() {
+        SecurityACL.checkUser(cytomineService.currentUser)
         User.list(sort: "username", order: "asc")
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List ids) {
+        SecurityACL.check(project,READ)
         SecUser.findAllByIdInList(ids)
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listUsers(Project project) {
+        SecurityACL.check(project,READ)
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listCreator(Project project) {
+        SecurityACL.check(project,READ)
         List<User> users = SecUser.executeQuery("select secUser from AclObjectIdentity as aclObjectId, AclSid as aclSid, SecUser as secUser where aclObjectId.objectId = "+project.id+" and aclObjectId.owner = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         User user = users.isEmpty() ? null : users.first()
         return user
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listAdmins(Project project) {
+        SecurityACL.check(project,READ)
         def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.mask = 16 and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
-    @PreAuthorize("#ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listUsers(Ontology ontology) {
+        SecurityACL.check(ontology,READ)
         //TODO:: Not optim code a single SQL request will be very faster
         def users = []
         def projects = Project.findAllByOntology(ontology)
@@ -146,8 +149,8 @@ class SecUserService extends ModelService {
      * Each user has its own layer
      * If project has private layer, just get current user layer
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listLayers(Project project) {
+        SecurityACL.check(project,READ)
         Collection<SecUser> users = listUsers(project)
         SecUser currentUser = cytomineService.getCurrentUser()
         if (project.privateLayer && users.contains(currentUser)) {
@@ -162,8 +165,8 @@ class SecUserService extends ModelService {
     /**
      * Get all online user
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     List<SecUser> getAllOnlineUsers() {
+        SecurityACL.checkUser(cytomineService.currentUser)
         //get date with -X secondes
         def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {
@@ -178,8 +181,8 @@ class SecUserService extends ModelService {
     /**
      * Get all online user for a project
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllOnlineUsers(Project project) {
+        SecurityACL.check(project,READ)
         if(!project) return getAllOnlineUsers()
         def xSecondAgo = Utils.getDatePlusSecond(-20)
         def results = LastConnection.withCriteria {
@@ -195,8 +198,8 @@ class SecUserService extends ModelService {
     /**
      * Get all user that share at least a same project as user from argument
      */
-    @PreAuthorize("#user.id == principal.id or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllFriendsUsers(SecUser user) {
+        SecurityACL.isSameUser(user,cytomineService.currentUser)
         AclSid sid = AclSid.findBySid(user.username)
         List<SecUser> users = SecUser.executeQuery(
                 "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
@@ -208,16 +211,16 @@ class SecUserService extends ModelService {
     /**
      * Get all online user that share at least a same project as user from argument
      */
-    @PreAuthorize("#user.id == principal.id or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllFriendsUsersOnline(SecUser user) {
+        SecurityACL.isSameUser(user,cytomineService.currentUser)
         return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
     }
 
     /**
      * Get all user that share at least a same project as user from argument and
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     List<SecUser> getAllFriendsUsersOnline(SecUser user, Project project) {
+        SecurityACL.check(project,READ)
         //no need to make insterect because getAllOnlineUsers(project) contains only friends users
         return getAllOnlineUsers(project)
     }
@@ -225,45 +228,45 @@ class SecUserService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
-        User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+    def add(def json) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkAdmin(currentUser)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
-        User currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+    def update(SecUser user, def jsonNewData) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.isCreator(user,currentUser)
+        return executeCommand(new EditCommand(user: currentUser),user, jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        if (json.id == springSecurityService.principal.id) {
-            throw new ForbiddenException("A user can't delete herself")
-        }
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(SecUser user, Transaction transaction = null, boolean printMessage = true) {
+    def delete(SecUser domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${user.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        if(domain.algo()) {
+            Job job = ((UserJob)domain).job
+            SecurityACL.check(job?.projectDomain(),READ)
+        } else {
+            SecurityACL.checkAdmin(currentUser)
+            SecurityACL.isNotSameUser(domain,currentUser)
+        }
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     /**
@@ -273,8 +276,8 @@ class SecUserService extends ModelService {
      * @param admin Flaf if user will become a simple user or a project admin
      * @return Response structure
      */
-    @PreAuthorize("#project.hasPermission('ADMIN') or hasRole('ROLE_ADMIN')")
     def addUserFromProject(SecUser user, Project project, boolean admin) {
+        SecurityACL.check(project,ADMINISTRATION)
         log.info "service.addUserFromProject"
         if (project) {
             log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
@@ -304,8 +307,10 @@ class SecUserService extends ModelService {
      * @param admin Flaf if user will become a simple user or a project admin
      * @return Response structure
      */
-    @PreAuthorize("#project.hasPermission('ADMIN') or #user.id == principal.id or hasRole('ROLE_ADMIN')")
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
+        if (cytomineService.currentUser.id!=user.id) {
+            SecurityACL.check(project,ADMINISTRATION)
+        }
         if (project) {
             log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
             if(admin) {
@@ -353,7 +358,7 @@ class SecUserService extends ModelService {
     def deleteDependentAlgoAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof UserJob) {
             AlgoAnnotation.findAllByUser((UserJob)user).each {
-                algoAnnotationService.delete(it,transaction, false)
+                algoAnnotationService.delete(it,transaction,nullnfalse)
             }
         }
     }
@@ -361,7 +366,7 @@ class SecUserService extends ModelService {
     def deleteDependentAlgoAnnotationTerm(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof UserJob) {
             AlgoAnnotationTerm.findAllByUserJob((UserJob)user).each {
-                algoAnnotationTermService.delete(it,transaction, false)
+                algoAnnotationTermService.delete(it,transaction,null, false)
             }
         }
     }
@@ -369,7 +374,7 @@ class SecUserService extends ModelService {
     def deleteDependentAnnotationFilter(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             AnnotationFilter.findAllByUser(user).each {
-                annotationFilterService.delete(it,transaction, false)
+                annotationFilterService.delete(it,transaction, null,false)
             }
         }
     }
@@ -377,7 +382,7 @@ class SecUserService extends ModelService {
     def deleteDependentAnnotationTerm(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             AnnotationTerm.findAllByUser(user).each {
-                annotationTermService.delete(it,transaction, false)
+                annotationTermService.delete(it,transaction,null, false)
             }
         }
     }
@@ -385,7 +390,7 @@ class SecUserService extends ModelService {
     def deleteDependentImageInstance(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             ImageInstance.findAllByUser(user).each {
-                imageInstanceService.delete(it,transaction, false)
+                imageInstanceService.delete(it,transaction,null, false)
             }
         }
     }
@@ -393,7 +398,7 @@ class SecUserService extends ModelService {
     def deleteDependentOntology(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             Ontology.findAllByUser(user).each {
-                ontologyService.delete(it,transaction, false)
+                ontologyService.delete(it,transaction,null, false)
             }
         }
     }
@@ -401,14 +406,14 @@ class SecUserService extends ModelService {
     def deleteDependentReviewedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             ReviewedAnnotation.findAllByUser(user).each {
-                reviewedAnnotationService.delete(it,transaction, false)
+                reviewedAnnotationService.delete(it,transaction,null, false)
             }
         }
     }
 
     def deleteDependentSecUserSecRole(SecUser user, Transaction transaction, Task task = null) {
         SecUserSecRole.findAllBySecUser(user).each {
-            secUserSecRoleService.delete(it,transaction, false)
+            secUserSecRoleService.delete(it,transaction,null, false)
         }
     }
 
@@ -419,7 +424,7 @@ class SecUserService extends ModelService {
     def deleteDependentUserAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserAnnotation.findAllByUser(user).each {
-                userAnnotationService.delete(it,transaction, false)
+                userAnnotationService.delete(it,transaction,null, false)
             }
         }
     }
@@ -427,7 +432,7 @@ class SecUserService extends ModelService {
     def deleteDependentUserGroup(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserGroup.findAllByUser((User)user).each {
-                userGroupService.delete(it,transaction, false)
+                userGroupService.delete(it,transaction,null, false)
             }
         }
     }
@@ -443,7 +448,7 @@ class SecUserService extends ModelService {
     def deleteDependentUserJob(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserJob.findAllByUser((User)user).each {
-                delete(it,transaction,false)
+                delete(it,transaction,null,false)
             }
         }
     }

@@ -2,10 +2,13 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService
@@ -13,6 +16,7 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class AnnotationTermService extends ModelService {
 
@@ -25,18 +29,18 @@ class AnnotationTermService extends ModelService {
         return AnnotationTerm
     }
 
-    @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(UserAnnotation userAnnotation) {
+        SecurityACL.check(userAnnotation.projectDomain(),READ)
         AnnotationTerm.findAllByUserAnnotation(userAnnotation)
     }
 
-    @PreAuthorize("#userAnnotation.hasPermission(#userAnnotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def listNotUser(UserAnnotation userAnnotation, User user) {
+        SecurityACL.check(userAnnotation.projectDomain(),READ)
         AnnotationTerm.findAllByUserAnnotationAndUserNotEqual(userAnnotation, user)
     }
 
-    @PreAuthorize("#annotation.hasPermission(#annotation.project,'READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, SecUser user) {
+        SecurityACL.check(annotation.projectDomain(),READ)
         if (user) {
             AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
         } else {
@@ -49,36 +53,34 @@ class AnnotationTermService extends ModelService {
      * @param json New domain data
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
+        SecurityACL.check(json.userannotation,UserAnnotation,"projectDomain",READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if (!creator)
             json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(AnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
+    def delete(AnnotationTerm domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{userannotation: ${at.userAnnotation.id}, term: ${at.term.id}, user: ${at.user.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.isCreator(domain,currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
 
     def addAnnotationTerm(def idUserAnnotation, def idTerm, def idExpectedTerm, def idUser, SecUser currentUser, Transaction transaction) {
         def json = JSON.parse("{userannotation: $idUserAnnotation, term: $idTerm, expectedTerm: $idExpectedTerm, user: $idUser}")
-        return executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+        return executeCommand(new AddCommand(user: currentUser, transaction: transaction), null,json)
     }
 
     /**

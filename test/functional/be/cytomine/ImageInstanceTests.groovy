@@ -147,7 +147,7 @@ class ImageInstanceTests  {
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
         def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 400 == result.code
+        assert 404 == result.code
     }
 
     void testEditImageInstanceWithBadUser() {

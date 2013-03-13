@@ -2,9 +2,12 @@ package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
+import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
@@ -15,6 +18,7 @@ import org.springframework.security.access.annotation.Secured
 import be.cytomine.command.Transaction
 import grails.converters.JSON
 import be.cytomine.security.UserGroup
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class AbstractImageGroupService extends ModelService {
 
@@ -33,8 +37,8 @@ class AbstractImageGroupService extends ModelService {
         AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)
     }
 
-    @Secured(['ROLE_USER'])
     def list(user) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         def groups = UserGroup.findByUser(user).collect{it.group}
         return AbstractImageGroup.findAllByGroupInList(groups)
     }
@@ -42,32 +46,29 @@ class AbstractImageGroupService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @Secured(['ROLE_ADMIN'])
-    def add(def json, SecurityCheck security) throws CytomineException {
+    def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkAdmin(currentUser)
         json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
+        Command c = new AddCommand(user: currentUser)
+        return executeCommand(c, null, json)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @Secured(['ROLE_ADMIN'])
-    def delete(def json,SecurityCheck security, Task task = null) throws CytomineException {
-        Transaction transaction = transactionService.start()
-        delete(retrieve(json),transaction)
-    }
-
-    def delete(AbstractImageGroup aig, Transaction transaction = null, boolean printMessage = true) {
+    def delete(AbstractImageGroup domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{abstractimage: ${aig.abstractImage.id},group:${aig.group.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.checkAdmin(currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

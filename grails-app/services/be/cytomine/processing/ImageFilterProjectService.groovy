@@ -1,5 +1,7 @@
 package be.cytomine.processing
 
+import be.cytomine.SecurityACL
+import be.cytomine.command.Command
 import be.cytomine.utils.Task
 import grails.plugins.springsecurity.Secured
 
@@ -15,6 +17,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class ImageFilterProjectService extends ModelService {
 
@@ -25,49 +28,46 @@ class ImageFilterProjectService extends ModelService {
         return ImageFilterProject
     }
 
-    @Secured(['ROLE_ADMIN'])
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         return ImageFilterProject.list()
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def get(Project project, ImageFilter image) {
+        SecurityACL.check(project,READ)
         return ImageFilterProject.findByImageFilterAndProject(image, project)
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project,READ)
         return ImageFilterProject.findAllByProject(project)
     }
 
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) throws CytomineException {
+    def add(def json) throws CytomineException {
+        SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
-        delete(retrieve(json))
-    }
-
-    def delete(ImageFilterProject ifp, Transaction transaction = null, boolean printMessage = true) {
+    def delete(ImageFilterProject domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${ifp.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.check(domain.projectDomain(),READ)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

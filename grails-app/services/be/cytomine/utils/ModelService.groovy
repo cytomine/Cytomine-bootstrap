@@ -72,13 +72,21 @@ abstract class ModelService {
         return GrailsNameUtils.getPropertyName(GrailsNameUtils.getShortName(this.getClass()))
     }
 
+    protected executeCommand(Command c, CytomineDomain domain, def json, Task task = null) {
+        //bug, cannot do new XXXCommand(domain:domain, json:...) => new XXXCommand(); c.domain = domain; c.json = ...
+        c.domain = domain
+        c.json = json
+        executeCommand(c,task)
+    }
+
     /**
      * Execute command with JSON data
      */
-    protected executeCommand(Command c, def json, Task task = null) {
+    protected executeCommand(Command c, Task task = null) {
         log.info "==========> ${this} delete"
+        println "2.image=${c.domain}"
         if(c instanceof DeleteCommand) {
-            def domainToDelete = retrieve(json)
+            def domainToDelete = c.domain
 
             //Create a backup (for 'undo' op)
             //We create before for deleteCommand to keep data from HasMany inside json (data will be deleted later)
@@ -111,8 +119,8 @@ abstract class ModelService {
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "${getServiceName()} commandService=" + commandService + " c=" + c + " json=" + json
-        return commandService.processCommand(c, json)
+        log.info "${getServiceName()} commandService=" + commandService + " c=" + c
+        return commandService.processCommand(c)
     }
 
 

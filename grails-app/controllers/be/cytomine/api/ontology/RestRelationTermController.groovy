@@ -14,23 +14,6 @@ class RestRelationTermController extends RestController {
     def termService
     def relationTermService
 
-    /**
-     * List all full relation (term 1, term 2 and relation)
-     */
-    def list = {
-        responseSuccess(relationTermService.list())
-    }
-
-    /**
-     * List all relation terms filter by relation
-     */
-    def listByRelation = {
-        Relation relation = relationService.read(params.long('id'))
-        if(!relation) {
-            relation = relationService.getRelationParent()
-        }
-        responseSuccess(relationTermService.list(relation))
-    }
 
     /**
      * List all relation for a specific term and position

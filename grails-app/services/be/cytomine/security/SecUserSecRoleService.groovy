@@ -1,15 +1,19 @@
 package be.cytomine.security
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
+import be.cytomine.processing.Job
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.command.Transaction
 import grails.converters.JSON
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class SecUserSecRoleService extends ModelService {
 
@@ -24,43 +28,45 @@ class SecUserSecRoleService extends ModelService {
         SecUserSecRole
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         SecUserSecRole.findAllBySecUser(user)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def get(User user, SecRole role) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         SecUserSecRole.findBySecUserAndSecRole(user, role)
     }
 
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        SecurityACL.checkAdmin(currentUser)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(SecUserSecRole userRole, Transaction transaction = null, boolean printMessage = true) {
+    def delete(SecUserSecRole domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{user: ${userRole.secUser.id}, role: ${userRole.secRole.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser, transaction: transaction), json)
+        if(domain.secUser.algo()) {
+            Job job = ((UserJob)domain.secUser).job
+            SecurityACL.check(job?.projectDomain(),READ)
+        } else {
+            SecurityACL.checkAdmin(currentUser)
+        }
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

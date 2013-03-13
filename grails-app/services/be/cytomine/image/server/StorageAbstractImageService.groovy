@@ -1,8 +1,10 @@
 package be.cytomine.image.server
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import be.cytomine.image.AbstractImage
@@ -12,6 +14,7 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class StorageAbstractImageService extends ModelService {
 
@@ -21,21 +24,16 @@ class StorageAbstractImageService extends ModelService {
         return StorageAbstractImage
     }
 
-    @PreAuthorize("#security.checkStorageWrite(#json['storage']) or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
-        executeCommand(new AddCommand(user: cytomineService.getCurrentUser() ), json)
+    def add(def json) {
+        SecurityACL.check(json.storage,Storage,WRITE)
+        Command c = new AddCommand(user: cytomineService.getCurrentUser())
+        executeCommand(c,null,json)
     }
 
-    @PreAuthorize("#security.checkStorageWrite() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        Transaction transaction = transactionService.start()
-        delete(retrieve(json),transaction, true)
-    }
-
-    def delete(StorageAbstractImage sai, Transaction transaction = null, boolean printMessage = true) {
-        SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${sai.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+    def delete(StorageAbstractImage sai, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        SecurityACL.check(sai.storageDomain(),WRITE)
+        Command c = new DeleteCommand(user: cytomineService.getCurrentUser(),transaction:transaction)
+        return executeCommand(c,sai,null)
     }
 
     def getStringParamsI18n(def domain) {

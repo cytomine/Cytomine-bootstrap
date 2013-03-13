@@ -86,4 +86,8 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     public SecUser userDomainCreator() {
         return user;
     }
+
+    public Project projectDomain() {
+        return project
+    }
 }

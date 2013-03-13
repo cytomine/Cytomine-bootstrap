@@ -46,7 +46,7 @@ class RestStorageController extends RestController {
     def update = {
         try {
             def domain = storageService.retrieve(request.JSON)
-            def result = storageService.update(request.JSON,new SecurityCheck(domain))
+            def result = storageService.update(domain,request.JSON)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -61,7 +61,7 @@ class RestStorageController extends RestController {
     def delete = {
         try {
             def domain = storageService.retrieve(JSON.parse("{id : $params.id}"))
-            def result = storageService.delete(JSON.parse("{id : $params.id}"),new SecurityCheck(domain), null)
+            def result = storageService.delete(domain,transactionService.start(),null,true)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

@@ -229,13 +229,13 @@ class RestAnnotationDomainController extends RestController {
             json.location = newGeom
 
             if (annotation.algoAnnotation) {
-                responseSuccess(algoAnnotationService.update(json,new SecurityCheck(annotation)))
+                responseSuccess(algoAnnotationService.update(annotation,json))
             }
             else if (annotation.reviewedAnnotation) {
-                responseSuccess(reviewedAnnotationService.update(json,new SecurityCheck(annotation)))
+                responseSuccess(reviewedAnnotationService.update(annotation,json))
             }
             else {
-                responseSuccess(userAnnotationService.update(json,new SecurityCheck(annotation)))
+                responseSuccess(userAnnotationService.update(annotation,json))
             }
         } catch (CytomineException e) {
             log.error(e)
@@ -460,19 +460,19 @@ class RestAnnotationDomainController extends RestController {
             based.location = based.location.union(newGeometry)
             allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 based.location = based.location.union(other.location)
-                reviewedAnnotationService.delete(JSON.parse(other.encodeAsJSON()),new SecurityCheck(other))
+                reviewedAnnotationService.delete(other)
             }
-            result = reviewedAnnotationService.update(JSON.parse(based.encodeAsJSON()),new SecurityCheck(based))
+            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
         } else {
             //diff will be made
             //-remove the new geometry from the based annotation location
             //-remove the new geometry from all other annotation location
             based.location = based.location.difference(newGeometry)
             if (based.location.getNumPoints() < 2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
-            result = reviewedAnnotationService.update(JSON.parse(based.encodeAsJSON()),new SecurityCheck(based))
+            result = reviewedAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
             allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 other.location = other.location.difference(newGeometry)
-                reviewedAnnotationService.update(JSON.parse(other.encodeAsJSON()),new SecurityCheck(other))
+                reviewedAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
             }
         }
         return result
@@ -505,19 +505,19 @@ class RestAnnotationDomainController extends RestController {
             based.location = based.location.union(newGeometry)
             allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 based.location = based.location.union(other.location)
-                userAnnotationService.delete(JSON.parse(other.encodeAsJSON()),new SecurityCheck(other))
+                userAnnotationService.delete(other)
             }
-            result = userAnnotationService.update(JSON.parse(based.encodeAsJSON()),new SecurityCheck(based))
+            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
         } else {
             //diff will be made
             //-remove the new geometry from the based annotation location
             //-remove the new geometry from all other annotation location
             based.location = based.location.difference(newGeometry)
             if (based.location.getNumPoints() < 2) throw new WrongArgumentException("You cannot delete an annotation with substract! Use reject or delete tool.")
-            result = userAnnotationService.update(JSON.parse(based.encodeAsJSON()),new SecurityCheck(based))
+            result = userAnnotationService.update(based,JSON.parse(based.encodeAsJSON()))
             allAnnotationWithSameTerm.eachWithIndex { other, i ->
                 other.location = other.location.difference(newGeometry)
-                userAnnotationService.update(JSON.parse(other.encodeAsJSON()),new SecurityCheck(other))
+                userAnnotationService.update(other,JSON.parse(other.encodeAsJSON()))
             }
         }
         return result

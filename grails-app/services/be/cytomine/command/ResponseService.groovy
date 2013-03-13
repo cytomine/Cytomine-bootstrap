@@ -19,7 +19,9 @@ class ResponseService {
      * @return Response stucture
      */
     public def createResponseMessage(def object, def messageParams, boolean printMessage, String commandType, HashMap<String, Object> additionalCallbackParams = null) {
+        println "object="+object
         String objectName = getClassName(object)
+        println  "objectName="+objectName
         String command = "be.cytomine." + commandType + objectName + "Command"
         String idName = objectName.toLowerCase() + "ID" //termID, annotationID,...
         String id = object.id

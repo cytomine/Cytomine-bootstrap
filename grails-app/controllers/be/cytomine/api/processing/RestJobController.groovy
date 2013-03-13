@@ -96,7 +96,7 @@ class RestJobController extends RestController {
      */
     def add = {
         try {
-            def result = jobService.add(request.JSON,new SecurityCheck())
+            def result = jobService.add(request.JSON)
             def idJob = result?.data?.job?.id
             jobService.executeJob(Job.get(idJob))
             responseResult(result)

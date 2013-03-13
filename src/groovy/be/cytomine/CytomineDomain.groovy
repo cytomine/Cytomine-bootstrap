@@ -9,6 +9,7 @@ import be.cytomine.security.User
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
+import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.*
 
@@ -140,6 +141,13 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
+    boolean hasPermission(Permission permission) {
+        try {
+            return hasPermission(this,permission)
+        } catch (Exception e) {e.printStackTrace()}
+        return false
+    }
+
     /**
      * Check if current user has read permission on this domain
      */
@@ -162,6 +170,11 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     boolean checkPermission(String permission) {
+        return hasPermission(permission) || cytomineService.currentUser.admin
+    }
+
+
+    boolean checkPermission(Permission permission) {
         return hasPermission(permission) || cytomineService.currentUser.admin
     }
 
@@ -191,13 +204,27 @@ abstract class CytomineDomain  implements Comparable{
     boolean hasPermission(def domain,String permissionStr) {
         try {
             SecUser currentUser = cytomineService.getCurrentUser()
+            Permission permission = null;
+            if(permissionStr.equals("READ")) permission = READ
+            else if(permissionStr.equals("WRITE")) permission = WRITE
+            else if(permissionStr.equals("DELETE")) permission = DELETE
+            else if(permissionStr.equals("CREATE")) permission = CREATE
+            else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION
+
+            hasPermission(domain,permission)
+
+        } catch (Exception e) {
+            log.error e.toString()
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    boolean hasPermission(def domain,Permission permission) {
+        try {
+            SecUser currentUser = cytomineService.getCurrentUser()
             String usernameParentUser = currentUser.humanUsername()
-            int permission = -1
-            if(permissionStr.equals("READ")) permission = READ.mask
-            else if(permissionStr.equals("WRITE")) permission = WRITE.mask
-            else if(permissionStr.equals("DELETE")) permission = DELETE.mask
-            else if(permissionStr.equals("CREATE")) permission = CREATE.mask
-            else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION.mask
+            int mask = permission.mask
 
             //TODO:: this function is call very often, make a direct SQL request instead 3 request
 
@@ -209,7 +236,7 @@ abstract class CytomineDomain  implements Comparable{
             boolean hasPermission = false;
             List<AclEntry> acls = AclEntry.findAllByAclObjectIdentityAndSid(aclObject,aclSid)
             acls.each { acl ->
-                if(acl.mask>=permission) {
+                if(acl.mask>=mask) {
                     hasPermission=true
                 }
             }

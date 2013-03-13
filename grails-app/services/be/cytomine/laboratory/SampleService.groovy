@@ -1,8 +1,10 @@
 package be.cytomine.laboratory
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.image.AbstractImage
@@ -57,10 +59,11 @@ class SampleService extends ModelService {
     }
 
     //TODO:: secure ACL (who can add/update/delete a sample?)
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json,SecurityCheck security) {
+    def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        SecurityACL.checkUser(currentUser)
+        Command c = new AddCommand(user: currentUser)
+        return executeCommand(c,null,json)
     }
 
     //TODO:: secure ACL (who can add/update/delete a sample?)
@@ -70,28 +73,25 @@ class SampleService extends ModelService {
      * @param security Security service object (user for right check)
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def update(def json, SecurityCheck security) {
+    def update(Sample sample, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        SecurityACL.checkUser(currentUser)
+        return executeCommand(new EditCommand(user: currentUser),sample,jsonNewData)
     }
 
-    //TODO:: secure ACL (who can add/update/delete a sample?)
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(Sample sample, Transaction transaction = null, boolean printMessage = true) {
+    def delete(Sample domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${sample.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.checkUser(currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
@@ -100,7 +100,7 @@ class SampleService extends ModelService {
 
     def deleteDependentAbstractImage(Sample sample, Transaction transaction, Task task = null) {
         AbstractImage.findAllBySample(sample).each {
-            abstractImageService.delete(it,transaction,false)
+            abstractImageService.delete(it,transaction,null,false)
         }
     }
 

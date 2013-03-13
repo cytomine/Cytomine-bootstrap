@@ -1,8 +1,10 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -19,6 +21,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
 import grails.converters.JSON
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class JobService extends ModelService {
 
@@ -39,12 +42,13 @@ class JobService extends ModelService {
     def read(def id) {
         def job = Job.read(id)
         if(job) {
-            SecurityCheck.checkReadAuthorization(job.project)
+            SecurityACL.check(job.projectDomain(),READ)
         }
         job
     }
 
     def list(List<Project> projects) {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         Job.findAllByProjectInList(projects,[sort: "created", order: "desc"])
     }
 
@@ -52,8 +56,8 @@ class JobService extends ModelService {
      * List max job for a project
      * Light flag allow to get a light list with only main job properties
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, boolean light) {
+        SecurityACL.check(project,READ)
         def jobs = Job.findAllByProject(project, [sort: "created", order: "desc"])
         if(!light) {
             return jobs
@@ -66,8 +70,8 @@ class JobService extends ModelService {
      * List max job for a project and a software
      * Light flag allow to get a light list with only main job properties
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Software software, Project project, boolean light) {
+        SecurityACL.check(project,READ)
         def jobs = Job.findAllBySoftwareAndProject(software, project, [sort: "created", order: "desc"])
         if(!light) {
             jobs.each {
@@ -87,12 +91,10 @@ class JobService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
-
+    def add(def json) {
+        SecurityACL.check(json.project,Project, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
@@ -102,7 +104,7 @@ class JobService extends ModelService {
         synchronized (this.getClass()) {
             //Add Job
             log.debug this.toString()
-            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
             def job = result?.data?.job?.id
 
             //add all job params
@@ -120,53 +122,37 @@ class JobService extends ModelService {
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
-        log.info "update job:"+json
+    def update(Job job, def jsonNewData) {
+        SecurityACL.check(job.projectDomain(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser),job, jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-//        SecUser currentUser = cytomineService.getCurrentUser()
-//        def userJob = UserJob.findByJob(Job.read(json.id))
-//        if(userJob) {
-//            //TODO:: move this in a methode deleteUser in userService
-//            SecUserSecRole.findAllBySecUser(userJob).each{
-//                it.delete(flush:true)
-//            }
-//            userJob.delete(flish:true)
-//        }
-//        //TODO: delete job-parameters
-//        //TODO: delete job-data
-//        return executeCommand(new DeleteCommand(user: currentUser), json)
-        delete(retrieve(json))
-    }
-
-
-    def delete(Job job, Transaction transaction = null, boolean printMessage = true) {
+    def delete(Job domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${job.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.check(domain.projectDomain(),READ)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.software.name]
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
      List<UserJob> getAllLastUserJob(Project project, Software software) {
+        SecurityACL.check(project,READ)
          //TODO: inlist bad performance
          List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
          List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
@@ -213,8 +199,8 @@ class JobService extends ModelService {
     /**
      * Delete all annotation created by a user job from argument
      */
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public void deleteAllAlgoAnnotations(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
@@ -223,8 +209,8 @@ class JobService extends ModelService {
     /**
      * Delete all algo-annotation-term created by a user job from argument
      */
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public void deleteAllAlgoAnnotationsTerm(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
@@ -233,8 +219,8 @@ class JobService extends ModelService {
     /**
      * Delete all data filescreated by a user job from argument
      */
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public void deleteAllJobData(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         List<JobData> jobDatas = JobData.findAllByJob(job)
         List<Long> jobDatasId = jobDatas.collect{ it.id }
         if (jobDatasId.isEmpty()) return
@@ -247,8 +233,8 @@ class JobService extends ModelService {
      * @param job Job to launch
      * @return The job
      */
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public def executeJob(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         log.info "Create UserJob..."
         UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
         job.software.service.init(job, userJob)
@@ -261,8 +247,8 @@ class JobService extends ModelService {
         job
     }
 
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public UserJob createUserJob(User user, Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         UserJob userJob = new UserJob()
         userJob.job = job
         userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
@@ -300,19 +286,19 @@ class JobService extends ModelService {
 
     def deleteDependentJobParameter(Job job, Transaction transaction, Task task = null) {
         JobParameter.findAllByJob(job).each {
-            jobParameterService.delete(it, transaction, false)
+            jobParameterService.delete(it, transaction, null,false)
         }
     }
 
     def deleteDependentJobData(Job job, Transaction transaction, Task task = null) {
         JobData.findAllByJob(job).each {
-            jobDataService.delete(it, transaction, false)
+            jobDataService.delete(it, transaction, null,false)
         }
     }
 
     def deleteDependentUserJob(Job job, Transaction transaction, Task task = null) {
         UserJob.findAllByJob(job).each {
-            secUserService.delete(it, transaction, false)
+            secUserService.delete(it, transaction,null, false)
         }
     }
 

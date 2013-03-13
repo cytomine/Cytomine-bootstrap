@@ -14,7 +14,6 @@ class RestUserGroupController extends RestController {
     def userGroupService
     def secUserService
     def groupService
-    def transactionService
     def cytomineService
 
     /**

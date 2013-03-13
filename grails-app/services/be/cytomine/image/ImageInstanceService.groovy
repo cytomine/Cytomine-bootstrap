@@ -1,8 +1,10 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -16,9 +18,9 @@ import grails.converters.JSON
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
-import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 /**
  * TODO:: refactor + doc!!!!!!!
@@ -41,7 +43,7 @@ class ImageInstanceService extends ModelService {
     def read(def id) {
         def image = ImageInstance.read(id)
         if(image) {
-            SecurityCheck.checkReadAuthorization(image.project)
+            SecurityACL.check(image.projectDomain(),READ)
         }
         image
     }
@@ -49,13 +51,14 @@ class ImageInstanceService extends ModelService {
     def get(def id) {
         def image = ImageInstance.get(id)
         if(image) {
-            SecurityCheck.checkReadAuthorization(image.project)
+            SecurityACL.check(image.projectDomain(),READ)
         }
         image
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project,READ)
+
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
             eq("project", project)
@@ -65,8 +68,9 @@ class ImageInstanceService extends ModelService {
         return images
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listTree(Project project) {
+        SecurityACL.check(project,READ)
+
         def children = []
         list(project).each { image->
             children << [ id : image.id, key : image.id, title : image.baseImage.originalFilename, isFolder : false, children : []]
@@ -82,8 +86,9 @@ class ImageInstanceService extends ModelService {
         return tree
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, int inf, int sup) {
+        SecurityACL.check(project,READ)
+
         def images = ImageInstance.createCriteria().list(max:sup-inf, offset:inf) {
             createAlias("baseImage", "i")
             eq("project", project)
@@ -96,8 +101,9 @@ class ImageInstanceService extends ModelService {
     /**
      * Get all image id from project
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     public List<Long> getAllImageId(Project project) {
+        SecurityACL.check(project,READ)
+
         //better perf with sql request
         String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
         def data = []
@@ -110,46 +116,46 @@ class ImageInstanceService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) {
+    def add(def json) {
+        SecurityACL.check(json.project,Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        log.info "current user = " + currentUser.username
         json.user = currentUser.id
         synchronized (this.getClass()) {
-            executeCommand(new AddCommand(user: currentUser), json)
+            Command c = new AddCommand(user: currentUser)
+            executeCommand(c,null,json)
         }
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(ImageInstance domain, def jsonNewData) {
+        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(jsonNewData.project,Project,READ)
+
         SecUser currentUser = cytomineService.getCurrentUser()
-        executeCommand(new EditCommand(user: currentUser), json)
+        Command c = new EditCommand(user: currentUser)
+        executeCommand(c,domain,jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkProjectAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(ImageInstance image, Transaction transaction = null, boolean printMessage = true) {
+    def delete(ImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        SecurityACL.check(domain.projectDomain(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${image.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
@@ -164,13 +170,13 @@ class ImageInstanceService extends ModelService {
 
     def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         ReviewedAnnotation.findAllByImage(image).each {
-            reviewedAnnotationService.delete(it,transaction,false)
+            reviewedAnnotationService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         UserAnnotation.findAllByImage(image).each {
-            userAnnotationService.delete(it,transaction,false)
+            userAnnotationService.delete(it,transaction,null,false)
         }
     }
 

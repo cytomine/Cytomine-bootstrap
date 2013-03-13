@@ -56,13 +56,6 @@ class RelationTermTests {
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
-    
-    void testListRelationTermByRelation() {
-        def result = RelationTermAPI.listByRelation(BasicInstanceBuilder.getRelation().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-    }
 
 
     void testListRelationTermByTerm() {
@@ -75,12 +68,6 @@ class RelationTermTests {
         assert 404 == result.code
     }
 
-    void testListRelationTermByRelationParent() {
-        def result = RelationTermAPI.listByRelation(null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-    }
 
   void testAddRelationTermCorrect() {
       def relationTermToAdd = BasicInstanceBuilder.getRelationTermNotExist()

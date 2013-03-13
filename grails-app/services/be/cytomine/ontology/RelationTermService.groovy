@@ -1,8 +1,10 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
@@ -12,6 +14,7 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class RelationTermService extends ModelService {
 
@@ -29,25 +32,10 @@ class RelationTermService extends ModelService {
     /**
      * Get a relation term
      */
-    @PreAuthorize("(#term1.ontology.hasPermission('READ') and #term2.ontology.hasPermission('READ')) or hasRole('ROLE_ADMIN')")
     def get(Relation relation, Term term1, Term term2) {
+        SecurityACL.check(term1.ontologyDomain(),READ)
+        SecurityACL.check(term2.ontologyDomain(),READ)
         RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
-    }
-
-    /**
-     * List all relation term (admin only)
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def list() {
-        RelationTerm.list()
-    }
-
-    /**
-     * List all relation term  for a relation (admin only)
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    def list(Relation relation) {
-        RelationTerm.findAllByRelation(relation)
     }
 
     /**
@@ -56,8 +44,8 @@ class RelationTermService extends ModelService {
      * @param position Term position in relation (term x PARENT term y => term x position 1, term y position 2)
      * @return Relation term list
      */
-    @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Term term, def position) {
+        SecurityACL.check(term.ontologyDomain(),READ)
         position == "1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
     }
 
@@ -66,8 +54,8 @@ class RelationTermService extends ModelService {
      * @param term Term filter
      * @return Relation term list
      */
-    @PreAuthorize("#term.ontology.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Term term) {
+        SecurityACL.check(term.ontologyDomain(),READ)
         def relation1 = RelationTerm.findAllByTerm1(term);
         def relation2 = RelationTerm.findAllByTerm2(term);
         def all = (relation1 << relation2).flatten();
@@ -77,30 +65,29 @@ class RelationTermService extends ModelService {
     /**
      * Update this domain with new data from json
      * @param json JSON with new data
-     * @param security Security service object (user for right check)
      * @return Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("(#security.checkTermAccess(#json['term1']) and #security.checkTermAccess(#json['term2'])) or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
+        println "json=$json"
+        SecurityACL.check(json.term1,Term,"getOntology",WRITE)
+        SecurityACL.check(json.term2,Term,"getOntology",WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkOntologyAccess() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json), transactionService.start())
-    }
-
-    def delete(RelationTerm rt, Transaction transaction = null, boolean printMessage = true) {
+    def delete(RelationTerm domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{relation: ${rt.relation.id}, term1:${rt.term1.id}, term2:${rt.term2.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.check(domain.ontologyDomain(),DELETE)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

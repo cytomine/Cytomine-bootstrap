@@ -1,17 +1,20 @@
 package be.cytomine.image.server
 
+import be.cytomine.SecurityACL
 import be.cytomine.processing.ProcessingServer
 import grails.plugins.springsecurity.Secured
 
 class ProcessingServerService {
 
-    @Secured(['ROLE_USER'])
+    def cytomineService
+
     def list() {
+        SecurityACL.checkUser(cytomineService.currentUser)
         ProcessingServer.list()
     }
 
-    @Secured(['ROLE_USER'])
     def read(long id) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         return ProcessingServer.read(id)
     }
 

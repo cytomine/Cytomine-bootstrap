@@ -343,7 +343,7 @@ class RestUserAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
-        def result = userAnnotationService.add(json,new SecurityCheck())
+        def result = userAnnotationService.add(json)
         return result
     }
 
@@ -354,7 +354,7 @@ class RestUserAnnotationController extends RestController {
         def json = request.JSON
         try {
             def domain = userAnnotationService.retrieve(json)
-            def result = userAnnotationService.update(json,new SecurityCheck(domain))
+            def result = userAnnotationService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

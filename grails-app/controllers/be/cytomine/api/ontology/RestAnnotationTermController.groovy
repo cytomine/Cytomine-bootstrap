@@ -144,7 +144,7 @@ class RestAnnotationTermController extends RestController {
                 if(!json.userannotation || !UserAnnotation.read(json.userannotation)) {
                     throw new WrongArgumentException("AnnotationTerm must have a valide userannotation:"+json.userannotation)
                 }
-                def result = annotationTermService.add(json,new SecurityCheck(UserAnnotation.read(json.userannotation)))
+                def result = annotationTermService.add(json)
                 responseResult(result)
             } else {
                 //TODO:: won't work if we add an annotation term to a algoannotation
@@ -153,7 +153,7 @@ class RestAnnotationTermController extends RestController {
                 if(!json.annotationIdent || !annotation) {
                     throw new WrongArgumentException("AlgoAnnotationTerm must have a valide annotation:"+json.annotationIdent)
                 }
-                def result = algoAnnotationTermService.add(json, new SecurityCheck(annotation))
+                def result = algoAnnotationTermService.add(json)
                 responseResult(result)
             }
         } catch (CytomineException e) {

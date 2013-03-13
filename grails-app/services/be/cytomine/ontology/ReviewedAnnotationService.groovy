@@ -1,9 +1,13 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -22,10 +26,12 @@ import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class ReviewedAnnotationService extends ModelService {
 
     static transactional = true
+    def annotationPropertyService
     def cytomineService
     def transactionService
     def annotationTermService
@@ -42,7 +48,7 @@ class ReviewedAnnotationService extends ModelService {
     ReviewedAnnotation get(def id) {
         def annotation = ReviewedAnnotation.get(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
@@ -50,23 +56,23 @@ class ReviewedAnnotationService extends ModelService {
     ReviewedAnnotation read(def id) {
         def annotation = ReviewedAnnotation.read(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project.projectDomain(),READ)
         ReviewedAnnotation.findAllByProject(project)
     }
 
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
+        SecurityACL.check(image.projectDomain(),READ)
         ReviewedAnnotation.findAllByImage(image)
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
+        SecurityACL.check(project.projectDomain(),READ)
         def reviewed = ReviewedAnnotation.createCriteria().list {
             eq("project", project)
             inList("user.id", userList)
@@ -90,8 +96,8 @@ class ReviewedAnnotationService extends ModelService {
      * @param bbox Boundary area filter
      * @return Reviewed Annotation list
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, String bbox) {
+        SecurityACL.check(image.projectDomain(),READ)
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
         /**
          * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
@@ -138,8 +144,8 @@ class ReviewedAnnotationService extends ModelService {
      * @param bbox Boundary area filter
      * @return Reviewed Annotation list
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user, String bbox) {
+        SecurityACL.check(image.projectDomain(),READ)
         String[] coordinates = bbox.split(",")
         double bottomX = Double.parseDouble(coordinates[0])
         double bottomY = Double.parseDouble(coordinates[1])
@@ -154,9 +160,8 @@ class ReviewedAnnotationService extends ModelService {
                 .list()
     }
 
-    //reviewedAnnotationService.list(image, user, (String) params.bbox (optional))
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, Term term) {
+        SecurityACL.check(image.projectDomain(),READ)
         def reviewed = ReviewedAnnotation.createCriteria().list {
             createAlias "terms", "t"
             eq("image", image)
@@ -166,16 +171,16 @@ class ReviewedAnnotationService extends ModelService {
         reviewed
     }
 
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
+        SecurityACL.check(image.projectDomain(),READ)
         ReviewedAnnotation.createCriteria()
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
                 .list()
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        SecurityACL.check(project.projectDomain(),READ)
         boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at2.term_id as term, at2.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM reviewed_annotation a, reviewed_annotation_term at,reviewed_annotation_term at2,reviewed_annotation_term at3\n" +
@@ -248,11 +253,13 @@ class ReviewedAnnotationService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
+        println "json=$json"
+        //read annotation (annotation or annotationIdent)
+
+        SecurityACL.check(json.project,Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         Transaction transaction = transactionService.start()
         //Synchronzed this part of code, prevent two annotation to be add at the same time
@@ -261,7 +268,7 @@ class ReviewedAnnotationService extends ModelService {
             json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
-            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
             def annotationID = result?.data?.reviewedannotation?.id
             return result
         }
@@ -269,32 +276,30 @@ class ReviewedAnnotationService extends ModelService {
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(ReviewedAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def result = executeCommand(new EditCommand(user: currentUser), json)
+        SecurityACL.isCreator(annotation,currentUser)
+        def result = executeCommand(new EditCommand(user: currentUser),annotation,jsonNewData)
         return result
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id) or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(ReviewedAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
+    def delete(ReviewedAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${annotation.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.isCreator(domain,currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {
@@ -303,7 +308,7 @@ class ReviewedAnnotationService extends ModelService {
 
     def deleteDependentAlgoAnnotationTerm(ReviewedAnnotation annotation, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id).each {
-            algoAnnotationTermService.delete(it,transaction,false)
+            algoAnnotationTermService.delete(it,transaction,null,false)
         }
     }
 
@@ -313,7 +318,7 @@ class ReviewedAnnotationService extends ModelService {
 
     def deleteDependentAnnotationProperty(ReviewedAnnotation ra, Transaction transaction, Task task = null) {
         AnnotationProperty.findAllByAnnotationIdent(ra.id).each {
-            annotationPropertyService.delete(it,transaction,false)
+            annotationPropertyService.delete(it,transaction,null,false)
         }
 
     }

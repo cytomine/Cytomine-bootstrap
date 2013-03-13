@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
@@ -90,27 +91,36 @@ class AnnotationPropertyService extends ModelService {
         AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,key)
     }
 
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new AddCommand(user: currentUser)
-        return executeCommand(command, json)
+        return executeCommand(command,null,json)
     }
 
-    def update(def json, SecurityCheck security) {
+    /**
+     * Update this domain with new data from json
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
+     */
+    def update(AnnotationProperty ap, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new EditCommand(user: currentUser)
-        return executeCommand(command, json)
+        return executeCommand(command,ap,jsonNewData)
     }
 
-    def delete (def json, SecurityCheck security, Task task = null) throws CytomineException {
-        return delete(retrieve(json),transactionService.start(),true)
-    }
-
-    def delete(AnnotationProperty annotationProperty, Transaction transaction = null, boolean printMessage = true, Task task = null) {
+    /**
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
+     */
+    def delete(AnnotationProperty domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json =  JSON.parse("{id : ${annotationProperty.id}}")
-        Command command = new DeleteCommand(user: currentUser, transaction:transaction)
-        return executeCommand(command,json,task)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def getStringParamsI18n(def domain) {

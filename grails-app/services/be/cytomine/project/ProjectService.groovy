@@ -2,6 +2,7 @@ package be.cytomine.project
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 
 import be.cytomine.ontology.Ontology
@@ -32,6 +33,8 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.social.LastConnection
 import be.cytomine.utils.Task
 
+import static org.springframework.security.acls.domain.BasePermission.*
+
 class ProjectService extends ModelService {
 
     static transactional = true
@@ -58,7 +61,7 @@ class ProjectService extends ModelService {
     def read(def id) {
         def project = Project.read(id)
         if(project) {
-            SecurityCheck.checkReadAuthorization(project)
+            SecurityACL.check(project,READ)
         }
         project
     }
@@ -66,103 +69,75 @@ class ProjectService extends ModelService {
     def get(def id, def domain) {
         def project = Project.get(id)
         if(project) {
-            project.checkReadPermission()
+            SecurityACL.check(project,READ)
         }
         project
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         //list ALL projects,
         Project.list(sort: "name")
     }
-//
-//    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-//    def list(User user) {
-//        //list ALL projects,
-//        Project.list(sort: "name")
-//    }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     def list(User user) {
+        SecurityACL.checkUser(cytomineService.currentUser)
         //faster to get it from database table (getProjectList) than PostFilter
-        getProjectList(user)
+        SecurityACL.getProjectList(user)
     }
 
-
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Ontology ontology) {
         //very slow method because it check right access for each project ontology
-        Project.findAllByOntology(ontology)
+        SecurityACL.getProjectList(cytomineService.currentUser,ontology,null)
     }
 
-    @PostFilter("filterObject.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Software software) {
-        SoftwareProject.findAllBySoftware(software).collect {it.project}
+        SecurityACL.getProjectList(cytomineService.currentUser,null,software)
     }
 
-    private List<Project> getProjectList(SecUser user) {
-        //faster method
-        return Project.executeQuery(
-                "select distinct project "+
-                "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
-                "where aclObjectId.objectId = project.id " +
-                "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
-    }
-
-
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def lastAction(Project project, def max) {
+        SecurityACL.check(project, READ)
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
     }
 
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    def add(def json,SecurityCheck security) {
+    def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkUser(currentUser)
         checkRetrievalConsistency(json)
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkProjectWrite() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
-        checkRetrievalConsistency(json)
+    def update(Project project, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        SecurityACL.check(project.projectDomain(),WRITE)
+        return executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkProjectDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        return delete(retrieve(json),transactionService.start(),true,task)
-    }
-
-    def delete(Project project, Transaction transaction = null, boolean printMessage = true,Task task = null) {
+    def delete(Project domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${project.id}}")
-
-        /*
-           linkProject must be false, special case because we delete project in this command
-           If this command will be linked with the deleted project, we will have an database error (foreign key)
-         */
-        return executeCommand(new DeleteCommand(user: currentUser,linkProject:false,transaction:transaction,refuseUndo:true), json,task)
+        SecurityACL.check(domain,DELETE)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction,linkProject: false,refuseUndo:true)
+        println "pwet="+c.refuseUndo
+        return executeCommand(c,domain,null)
     }
 
     def afterAdd(Project domain, def response) {
@@ -223,7 +198,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${ImageFilterProject.countByProject(project)} links to image filter":"")
 
         ImageFilterProject.findAllByProject(project).each {
-            imageFilterProjectService.delete(it,transaction, false)
+            imageFilterProjectService.delete(it,transaction,null, false)
         }
     }
 
@@ -232,7 +207,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${Job.countByProject(project)} jobs":"")
 
         Job.findAllByProject(project).each {
-            jobService.delete(it,transaction, false)
+            jobService.delete(it,transaction,null, false)
         }
     }
 
@@ -241,7 +216,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${SoftwareProject.countByProject(project)} links to software":"")
 
         SoftwareProject.findAllByProject(project).each {
-            softwareProjectService.delete(it,transaction, false)
+            softwareProjectService.delete(it,transaction,null, false)
         }
     }
 
@@ -250,7 +225,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${AlgoAnnotation.countByProject(project)} annotations from algo":"")
 
         AlgoAnnotation.findAllByProject(project).each {
-            algoAnnotationService.delete(it,transaction, false)
+            algoAnnotationService.delete(it,transaction, null,false)
         }
     }
 
@@ -259,7 +234,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${AlgoAnnotationTerm.countByProject(project)} terms for annotation from algo":"")
 
         AlgoAnnotationTerm.findAllByProject(project).each {
-            algoAnnotationTermService.delete(it,transaction, false)
+            algoAnnotationTermService.delete(it,transaction,null, false)
         }
     }
 
@@ -268,7 +243,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${AnnotationFilter.countByProject(project)} annotations filters":"")
 
         AnnotationFilter.findAllByProject(project).each {
-            annotationFilterService.delete(it,transaction, false)
+            annotationFilterService.delete(it,transaction,null, false)
         }
     }
 
@@ -277,7 +252,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${ImageInstance.countByProject(project)} images":"")
 
         ImageInstance.findAllByProject(project).each {
-            imageInstanceService.delete(it,transaction, false)
+            imageInstanceService.delete(it,transaction,null, false)
         }
     }
 
@@ -286,7 +261,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${ReviewedAnnotation.countByProject(project)} validate annotation":"")
 
         ReviewedAnnotation.findAllByProject(project).each {
-            reviewedAnnotationService.delete(it,transaction, false)
+            reviewedAnnotationService.delete(it,transaction,null, false)
         }
     }
 
@@ -295,7 +270,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,task? "Delete ${UserAnnotation.countByProject(project)} annotations created by user":"")
 
         UserAnnotation.findAllByProject(project).each {
-            userAnnotationService.delete(it,transaction, false)
+            userAnnotationService.delete(it,transaction,null, false)
         }
     }
 

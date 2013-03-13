@@ -8,13 +8,13 @@ class RelationTermUrlMappings {
 
     static mappings = {
         "/api/relation/$id/term"(controller:"restRelationTerm"){
-            action = [GET: "listByRelation",POST:"add"]
+            action = [POST:"add"]
         }
         "/api/relation/$idrelation/term1/$idterm1/term2/$idterm2"(controller:"restRelationTerm"){
             action = [GET: "show",DELETE:"delete"]
         }
         "/api/relation/parent/term"(controller:"restRelationTerm"){
-            action = [GET: "listByRelation",POST:"add"]
+            action = [POST:"add"]
         }
         "/api/relation/parent/term1/$idterm1/term2/$idterm2"(controller:"restRelationTerm"){
             action = [GET: "show",DELETE:"delete"]

@@ -2,8 +2,10 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -22,10 +24,12 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.FetchMode
 import org.springframework.security.access.prepost.PreAuthorize
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class AlgoAnnotationService extends ModelService {
 
     static transactional = true
+    def annotationPropertyService
 
     def cytomineService
     def transactionService
@@ -42,7 +46,7 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation get(def id) {
         def annotation = AlgoAnnotation.get(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
@@ -50,23 +54,23 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation read(def id) {
         def annotation = AlgoAnnotation.read(id)
         if (annotation) {
-            SecurityCheck.checkReadAuthorization(annotation.project)
+            SecurityACL.check(annotation.projectDomain(),READ)
         }
         annotation
     }
 
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image) {
+        SecurityACL.check(image.projectDomain(),READ)
         AlgoAnnotation.findAllByImage(image)
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project,READ)
         AlgoAnnotation.findAllByProject(project)
     }
 
-    @PreAuthorize("#job.hasPermission(#job.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         List<UserJob> user = UserJob.findAllByJob(job);
         List<AlgoAnnotation> algoAnnotations = []
         user.each {
@@ -75,8 +79,8 @@ class AlgoAnnotationService extends ModelService {
         return algoAnnotations
     }
 
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user) {
+        SecurityACL.check(image.projectDomain(),READ)
         return AlgoAnnotation.findAllByImageAndUser(image, user)
     }
 
@@ -88,8 +92,9 @@ class AlgoAnnotationService extends ModelService {
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
-    @PreAuthorize("#image.hasPermission(#image.project,'READ') or hasRole('ROLE_ADMIN')")
     def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
+        SecurityACL.check(image.projectDomain(),READ)
+
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
         //we use SQL request (not hibernate) to speedup time request
@@ -159,8 +164,8 @@ class AlgoAnnotationService extends ModelService {
      * @param multipleTerm Flag to get only annotation with many terms
      * @return Algo annotation list
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+        SecurityACL.check(project,READ)
         log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
         if (userList.isEmpty()) {
             return []
@@ -277,8 +282,8 @@ class AlgoAnnotationService extends ModelService {
      * @param imageInstanceList Annotation Imageinstance
      * @return Algo Annotation List
      */
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
         } else if (imageInstanceList.isEmpty()) {
@@ -310,12 +315,10 @@ class AlgoAnnotationService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess(#json['project']) or hasRole('ROLE_ADMIN')")
-    def add(def json, SecurityCheck security) {
-
+    def add(def json) {
+        SecurityACL.check(json.project, Project, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
@@ -336,7 +339,8 @@ class AlgoAnnotationService extends ModelService {
             json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
-            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction), json)
+            Command command = new AddCommand(user: currentUser, transaction: transaction)
+            def result = executeCommand(command,null,json)
 
             return result
         }
@@ -344,46 +348,39 @@ class AlgoAnnotationService extends ModelService {
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id)  or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) {
+    def update(AlgoAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.isCreator(annotation,currentUser)
         //simplify annotation
         try {
-            def annotation = AlgoAnnotation.read(json.id)
-            def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
-            json.location = new WKTWriter().write(data.geometry)
+            def data = simplifyGeometryService.simplifyPolygon(jsonNewData.location, annotation?.geometryCompression)
+            jsonNewData.location = new WKTWriter().write(data.geometry)
         } catch (Exception e) {
             log.error("Cannot simplify:" + e)
         }
 
-        def result = executeCommand(new EditCommand(user: currentUser), json)
+        def result = executeCommand(new EditCommand(user: currentUser),annotation,jsonNewData)
 
         return result
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkCurrentUserCreator(principal.id)   or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) {
-        //Start transaction
-        Transaction transaction = transactionService.start()
-        def result = delete(retrieve(json),transaction)
-        return result
-    }
-
-    def delete(AlgoAnnotation annotation, Transaction transaction = null, boolean printMessage = true) {
-        log.info "Delete AlgoAnnotation ${annotation.id}"
+    def delete(AlgoAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${annotation.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.isCreator(domain,currentUser)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
 
@@ -410,19 +407,19 @@ class AlgoAnnotationService extends ModelService {
 
     def deleteDependentAlgoAnnotationTerm(AlgoAnnotation ao, Transaction transaction, Task task = null) {
         AlgoAnnotationTerm.findAllByAnnotationIdent(ao.id).each {
-            algoAnnotationTermService.delete(it,transaction,false)
+            algoAnnotationTermService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentReviewedAnnotation(AlgoAnnotation aa, Transaction transaction, Task task = null) {
         ReviewedAnnotation.findAllByParentIdent(aa.id).each {
-            reviewedAnnotationService.delete(it,transaction,false)
+            reviewedAnnotationService.delete(it,transaction,null,false)
         }
     }
 
     def deleteDependentAnnotationProperty(AlgoAnnotation aa, Transaction transaction, Task task = null) {
         AnnotationProperty.findAllByAnnotationIdent(aa.id).each {
-            annotationPropertyService.delete(it,transaction,false)
+            annotationPropertyService.delete(it,transaction,null,false)
         }
 
     }

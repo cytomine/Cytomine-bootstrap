@@ -97,7 +97,7 @@ class RestAlgoAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
-        def result = algoAnnotationService.add(json,new SecurityCheck())
+        def result = algoAnnotationService.add(json)
         return result
     }
 
@@ -110,7 +110,7 @@ class RestAlgoAnnotationController extends RestController {
             //get annotation from DB
             def domain = algoAnnotationService.retrieve(json)
             //update it thanks to JSON in request
-            def result = algoAnnotationService.update(json,new SecurityCheck(domain))
+            def result = algoAnnotationService.update(domain,json)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

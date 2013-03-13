@@ -21,7 +21,6 @@ import groovy.sql.Sql
 class RestUserJobController extends RestController {
 
     def springSecurityService
-    def transactionService
     def cytomineService
     def secUserService
     def projectService

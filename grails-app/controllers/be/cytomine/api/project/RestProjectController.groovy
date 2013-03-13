@@ -26,7 +26,6 @@ class RestProjectController extends RestController {
     def projectService
     def ontologyService
     def cytomineService
-    def transactionService
     def retrievalService
     def imageInstanceService
     def taskService
@@ -45,7 +44,7 @@ class RestProjectController extends RestController {
         } else {
             // better perf with this direct hql request on spring security acl domain table (than post filter)
             //responseSuccess(projectService.list(user))
-            responseSuccess(projectService.getProjectList(user))
+            responseSuccess(projectService.list(user))
 
         }
     }
@@ -202,7 +201,7 @@ class RestProjectController extends RestController {
     def update = {
         try {
             def domain = projectService.retrieve(request.JSON)
-            def result = projectService.update(request.JSON,new SecurityCheck(domain))
+            def result = projectService.update(domain,request.JSON)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -220,7 +219,7 @@ class RestProjectController extends RestController {
             log.info "task ${task} is find for id = ${params.getLong("task")}"
             def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
             log.info "project = ${domain}"
-            def result = projectService.delete(JSON.parse("{id : $params.id}"),new SecurityCheck(domain),task)
+            def result = projectService.delete(domain,transactionService.start(),task)
             //delete container in retrieval
             try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
             responseResult(result)

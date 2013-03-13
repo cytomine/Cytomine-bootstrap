@@ -2,8 +2,10 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import be.cytomine.processing.Job
@@ -13,9 +15,11 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.security.access.prepost.PreAuthorize
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class AlgoAnnotationTermService extends ModelService {
 
@@ -27,13 +31,13 @@ class AlgoAnnotationTermService extends ModelService {
         return AlgoAnnotationTerm
     }
 
-    @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(AnnotationDomain annotation) {
+        SecurityACL.check(annotation.projectDomain(),READ)
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
-    @PreAuthorize("#job.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def count(Job job) {
+        SecurityACL.check(job.projectDomain(),READ)
         long total = 0
         List<UserJob> users = UserJob.findAllByJob(job)
         users.each {
@@ -42,8 +46,8 @@ class AlgoAnnotationTermService extends ModelService {
         total
     }
 
-    @PreAuthorize("#annotation.project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
+        SecurityACL.check(annotation.projectDomain(),READ)
         if (userJob) {
             AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
         } else {
@@ -55,22 +59,36 @@ class AlgoAnnotationTermService extends ModelService {
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("#security.checkProjectAccess()")
-    def add(def json, SecurityCheck security) {
+    def add(def json) {
+        AnnotationDomain annotation
+        try {
+            annotation = AnnotationDomain.getAnnotationDomain(json.annotation)
+        } catch(Exception e) {
+            annotation = AnnotationDomain.getAnnotationDomain(json.annotationIdent)
+        }
+        SecurityACL.check(annotation.project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if (!creator)
             json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
-    }
 
-    def delete(AlgoAnnotationTerm at, Transaction transaction = null, boolean printMessage = true) {
+        Command command = new AddCommand(user: currentUser)
+        return executeCommand(command,null,json)
+    }
+    /**
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
+     */
+    def delete(AlgoAnnotationTerm domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${at.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
     def afterAdd(def domain, def response) {

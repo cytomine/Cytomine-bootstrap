@@ -3,9 +3,10 @@ package be.cytomine.processing
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-
+import be.cytomine.SecurityACL
 import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.acls.domain.BasePermission
 import grails.converters.JSON
 import be.cytomine.utils.Task
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class SoftwareService extends ModelService {
 
@@ -38,58 +40,53 @@ class SoftwareService extends ModelService {
         Software.read(id)
     }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     def list() {
+        SecurityACL.checkUser(cytomineService.currentUser)
         Software.list()
     }
 
-    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
     def list(Project project) {
+        SecurityACL.check(project.projectDomain(),READ)
         SoftwareProject.findAllByProject(project).collect {it.software}
     }
 
     /**
      * Add the new domain with JSON data
      * @param json New domain data
-     * @param security Security service object (user for right check)
      * @return Response structure (created domain data,..)
      */
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    def add(def json,SecurityCheck security) throws CytomineException {
+    def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkUser(currentUser)
         json.user = currentUser.id
-        return executeCommand(new AddCommand(user: currentUser), json)
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
      * Update this domain with new data from json
-     * @param json JSON with new data
-     * @param security Security service object (user for right check)
-     * @return Response structure (new domain data, old domain data..)
+     * @param domain Domain to update
+     * @param jsonNewData New domain datas
+     * @return  Response structure (new domain data, old domain data..)
      */
-    @PreAuthorize("#security.checkSoftwareWrite() or hasRole('ROLE_ADMIN')")
-    def update(def json, SecurityCheck security) throws CytomineException {
-        log.info "update software service"
+    def update(Software software, def jsonNewData) {
+        SecurityACL.check(software.softwareDomain(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
-        return executeCommand(new EditCommand(user: currentUser), json)
+        return executeCommand(new EditCommand(user: currentUser),software, jsonNewData)
     }
 
     /**
-     * Delete domain in argument
-     * @param json JSON that was passed in request parameter
-     * @param security Security service object (user for right check)
-     * @return Response structure (created domain data,..)
+     * Delete this domain
+     * @param domain Domain to delete
+     * @param transaction Transaction link with this command
+     * @param task Task for this command
+     * @param printMessage Flag if client will print or not confirm message
+     * @return Response structure (code, old domain,..)
      */
-    @PreAuthorize("#security.checkSoftwareDelete() or hasRole('ROLE_ADMIN')")
-    def delete(def json, SecurityCheck security, Task task = null) throws CytomineException {
-        //Start transaction
-        return delete(retrieve(json),transactionService.start())
-    }
-
-    def delete(Software software, Transaction transaction = null, boolean printMessage = true) {
+    def delete(Software domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        def json = JSON.parse("{id: ${software.id}}")
-        return executeCommand(new DeleteCommand(user: currentUser,transaction:transaction), json)
+        SecurityACL.check(domain.softwareDomain(),DELETE)
+        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+        return executeCommand(c,domain,null)
     }
 
 
@@ -103,19 +100,19 @@ class SoftwareService extends ModelService {
 
     def deleteDependentSoftwareParameter(Software software, Transaction transaction, Task task = null) {
         SoftwareParameter.findAllBySoftware(software).each {
-            softwareParameterService.delete(it,transaction, false)
+            softwareParameterService.delete(it,transaction,null, false)
         }
     }
 
     def deleteDependentJob(Software software, Transaction transaction, Task task = null) {
         Job.findAllBySoftware(software).each {
-            jobService.delete(it,transaction, false)
+            jobService.delete(it,transaction,null, false)
         }
     }
 
     def deleteDependentSoftwareProject(Software software, Transaction transaction, Task task = null) {
         SoftwareProject.findAllBySoftware(software).each {
-            softwareProjectService.delete(it,transaction, false)
+            softwareProjectService.delete(it,transaction,null, false)
         }
     }
 }

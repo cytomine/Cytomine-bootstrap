@@ -306,7 +306,7 @@ class RestReviewedAnnotationController extends RestController {
                 throw new AlreadyExistException("Annotation is already accepted!")
             }
             ReviewedAnnotation review = createReviewAnnotation(basedAnnotation, null)
-            def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()), new SecurityCheck())
+            def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()))
             responseResult(result)
 
         } catch (CytomineException e) {
@@ -330,8 +330,7 @@ class RestReviewedAnnotationController extends RestController {
                 throw new WrongArgumentException("You must be the image reviewer to reject annotation. Image reviewer is ${reviewedAnnotation.image.reviewUser?.username}.")
             }
             def json = JSON.parse("{id : ${reviewedAnnotation.id}}")
-            def domain = reviewedAnnotationService.retrieve(json)
-            def result = reviewedAnnotationService.delete(json,new SecurityCheck(domain))
+            def result = reviewedAnnotationService.delete(reviewedAnnotationService.retrieve(json))
             responseResult(result)
 
         } catch (CytomineException e) {
