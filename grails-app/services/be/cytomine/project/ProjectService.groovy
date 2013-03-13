@@ -1,37 +1,21 @@
 package be.cytomine.project
 
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
-
-import be.cytomine.ontology.Ontology
+import be.cytomine.command.*
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
+import be.cytomine.processing.Job
 import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-
-import be.cytomine.utils.ModelService
-
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PostFilter
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.acls.domain.BasePermission
-import be.cytomine.command.*
-import be.cytomine.processing.Job
-import be.cytomine.processing.SoftwareProject
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationFilter
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.UserAnnotation
-import grails.converters.JSON
-import be.cytomine.social.UserPosition
-import be.cytomine.image.UploadedFile
-
 import be.cytomine.social.LastConnection
+import be.cytomine.social.UserPosition
+import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
 

@@ -1,6 +1,5 @@
 package be.cytomine.processing.job
 
-import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.security.UserJob
@@ -21,8 +20,8 @@ class RetrievalEvolutionJobService extends AbstractJobService{
     def algoAnnotationTermService
 
     def init(Job job, UserJob userJob) {
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()),new SecurityCheck())
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()),new SecurityCheck())
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }

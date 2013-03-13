@@ -1,7 +1,6 @@
 package be.cytomine.image
 
 import be.cytomine.image.server.ImageProperty
-import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage

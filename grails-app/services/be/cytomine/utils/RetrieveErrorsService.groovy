@@ -3,6 +3,7 @@ package be.cytomine.utils
 class RetrieveErrorsService {
 
     def grailsApplication
+    def messageSource
 
     def initMethods() {
         grailsApplication.domainClasses.each {domainClass ->//iterate over the domainClasses

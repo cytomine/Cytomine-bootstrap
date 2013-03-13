@@ -3,22 +3,15 @@ package be.cytomine.image
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
-import be.cytomine.project.Project
+import be.cytomine.command.Transaction
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
+import be.cytomine.security.UserGroup
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.annotation.Secured
-
-import be.cytomine.command.Transaction
-import grails.converters.JSON
-import be.cytomine.security.UserGroup
-import static org.springframework.security.acls.domain.BasePermission.*
 
 class AbstractImageGroupService extends ModelService {
 

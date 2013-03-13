@@ -1,15 +1,10 @@
 package be.cytomine.ontology
 
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
 import be.cytomine.api.UrlApi
-import be.cytomine.command.AddCommand
-import be.cytomine.command.Command
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.processing.Job
@@ -18,15 +13,12 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTWriter
-import grails.converters.JSON
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.Exception.ConstraintException
-import be.cytomine.utils.Task
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class UserAnnotationService extends ModelService {
 

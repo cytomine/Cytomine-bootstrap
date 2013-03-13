@@ -3,8 +3,6 @@ package be.cytomine.utils
 import be.cytomine.SecurityACL
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.test.BasicInstanceBuilder
 
 class TaskService  {
 

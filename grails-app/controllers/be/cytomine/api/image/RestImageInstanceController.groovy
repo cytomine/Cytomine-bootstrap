@@ -2,10 +2,10 @@ package be.cytomine.api.image
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
@@ -20,12 +20,9 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
-import java.awt.Color
-import java.awt.Graphics2D
-import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-
-import be.cytomine.ontology.*
+import java.awt.*
+import java.awt.image.BufferedImage
 
 /**
  * Created by IntelliJ IDEA.

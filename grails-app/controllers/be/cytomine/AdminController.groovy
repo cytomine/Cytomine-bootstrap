@@ -1,16 +1,7 @@
 package be.cytomine
 
 import be.cytomine.api.RestController
-import be.cytomine.command.Command
-import be.cytomine.command.CommandHistory
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.Ontology
-import be.cytomine.project.Discipline
-import be.cytomine.project.Project
 import grails.plugins.springsecurity.Secured
-import groovy.sql.Sql
-import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
-import be.cytomine.ontology.ReviewedAnnotation
 
 @Secured(['ROLE_ADMIN'])
 class AdminController extends RestController {

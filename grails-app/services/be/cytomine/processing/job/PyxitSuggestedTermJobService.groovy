@@ -1,6 +1,5 @@
 package be.cytomine.processing.job
 
-import be.cytomine.SecurityCheck
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobParameter
 import be.cytomine.processing.SoftwareParameter
@@ -31,7 +30,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         softwareParameters.each { softwareParameter ->
             def value = parametersValues.get(softwareParameter.getName()) != null ? parametersValues.get(softwareParameter.getName()) : softwareParameter.getDefaultValue()
             JobParameter jobParameter = new JobParameter(value: value, job: job, softwareParameter: softwareParameter)
-            jobParameterService.add(JSON.parse(jobParameter.encodeAsJSON()),new SecurityCheck())
+            jobParameterService.add(JSON.parse(jobParameter.encodeAsJSON()))
         }
     }
 

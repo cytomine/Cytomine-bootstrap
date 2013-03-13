@@ -1,32 +1,22 @@
 package be.cytomine.ontology
 
-import be.cytomine.AnnotationDomain
-import be.cytomine.CytomineDomain
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
 import be.cytomine.api.UrlApi
-import be.cytomine.command.AddCommand
-import be.cytomine.command.Command
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
-import grails.converters.JSON
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.web.json.JSONObject
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.utils.Task
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class ReviewedAnnotationService extends ModelService {
 

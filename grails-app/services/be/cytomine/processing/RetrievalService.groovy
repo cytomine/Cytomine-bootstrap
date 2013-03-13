@@ -3,8 +3,9 @@ package be.cytomine.processing
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ServerException
-import be.cytomine.SecurityCheck
+import be.cytomine.SecurityACL
 import be.cytomine.image.server.RetrievalServer
+import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -12,14 +13,12 @@ import be.cytomine.test.HttpClient
 import be.cytomine.utils.RetrievalHttpUtils
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
+import groovy.sql.Sql
 import groovyx.gpars.Asynchronizer
+import org.apache.catalina.core.ApplicationContext
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
-import org.springframework.context.ApplicationContextAware
-import org.apache.catalina.core.ApplicationContext
-import be.cytomine.ontology.Ontology
-import groovy.sql.Sql
 
 /**
  * Retrieval is a server that can provide similar pictures of a request picture
@@ -134,7 +133,7 @@ class RetrievalService {
             try {
                 UserAnnotation annotation = UserAnnotation.read(annotationjson.id)
                 if (annotation && annotation.id != searchAnnotation.id) {
-                    SecurityCheck.checkReadAuthorization(annotation.project)
+                    SecurityACL.check(annotation.project,READ)
                     annotation.similarity = new Double(annotationjson.sim)
                     data << annotation
                 }

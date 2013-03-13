@@ -6,8 +6,7 @@ import ij.ImagePlus
 import ij.process.ImageProcessor
 import ij.process.PolygonFiller
 
-import java.awt.Color
-import java.awt.Rectangle
+import java.awt.*
 import java.awt.image.BufferedImage
 
 /**

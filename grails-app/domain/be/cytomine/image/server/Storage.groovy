@@ -1,7 +1,6 @@
 package be.cytomine.image.server
 
 import be.cytomine.CytomineDomain
-import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON

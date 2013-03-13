@@ -1,6 +1,5 @@
 package be.cytomine.processing.job
 
-import be.cytomine.SecurityCheck
 import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
 import be.cytomine.processing.structure.ConfusionMatrix
@@ -37,8 +36,8 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
         */
         //Create Job-parameter
 //        jobParameterService.add(JSON.parse(createJobParameter("execType",job,"cytomine").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()), new SecurityCheck())
-        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()), new SecurityCheck())
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
         //Execute Job
         log.info "Execute Job..."
     }

@@ -1,26 +1,19 @@
 package be.cytomine.image
 
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
-import be.cytomine.command.AddCommand
-import be.cytomine.command.Command
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+import be.cytomine.command.*
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
-import grails.converters.JSON
-import groovy.sql.Sql
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.hibernate.FetchMode
-import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.utils.Task
-import static org.springframework.security.acls.domain.BasePermission.*
+import groovy.sql.Sql
+import org.hibernate.FetchMode
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
  * TODO:: refactor + doc!!!!!!!

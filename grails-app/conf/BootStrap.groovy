@@ -1,6 +1,7 @@
 import be.cytomine.image.server.Storage
 import be.cytomine.security.SecUser
 import grails.util.Environment
+import groovy.sql.Sql
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -28,6 +29,7 @@ class BootStrap {
     def bootstrapTestDataService
     def bootstrapUtilsService
     def javascriptService
+    def dataSource
 
     def init = { servletContext ->
 
@@ -61,6 +63,8 @@ class BootStrap {
 
         /* Fill data just in test environment*/
         if (Environment.getCurrent() == Environment.TEST) {
+            new Sql(dataSource).executeUpdate("DELETE FROM task_comment")
+            new Sql(dataSource).executeInsert("DELETE FROM task")
             bootstrapTestDataService.initData()
         }
 

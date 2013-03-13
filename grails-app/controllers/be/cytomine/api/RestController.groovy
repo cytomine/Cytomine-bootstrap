@@ -1,15 +1,14 @@
 package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityCheck
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.converters.XML
 import org.codehaus.groovy.grails.web.json.JSONArray
 
-import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 class RestController {
 

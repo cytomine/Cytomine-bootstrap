@@ -2,7 +2,6 @@ package be.cytomine.image.server
 
 import be.cytomine.SecurityACL
 import be.cytomine.processing.ProcessingServer
-import grails.plugins.springsecurity.Secured
 
 class ProcessingServerService {
 

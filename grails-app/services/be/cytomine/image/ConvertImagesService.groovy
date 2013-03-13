@@ -1,7 +1,6 @@
 package be.cytomine.image
 
 import be.cytomine.security.SecUser
-import org.springframework.mock.web.MockMultipartFile
 
 import javax.activation.MimetypesFileTypeMap
 

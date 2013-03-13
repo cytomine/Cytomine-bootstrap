@@ -4,13 +4,10 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationProperty
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-
 
 class RestAnnotationPropertyController extends RestController {
 

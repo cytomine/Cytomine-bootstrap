@@ -1,8 +1,6 @@
 package be.cytomine.api.image.server
 
 import be.cytomine.api.RestController
-import be.cytomine.image.server.Storage
-import grails.converters.JSON
 
 class RestStorageAbstractImageController extends RestController {
 

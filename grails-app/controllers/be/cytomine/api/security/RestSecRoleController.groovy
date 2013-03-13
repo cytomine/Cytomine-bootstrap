@@ -1,7 +1,6 @@
 package be.cytomine.api.security
 
 import be.cytomine.api.RestController
-import grails.plugins.springsecurity.Secured
 
 /**
  * Controller for user roles

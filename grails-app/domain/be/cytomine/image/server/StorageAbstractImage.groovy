@@ -1,8 +1,7 @@
 package be.cytomine.image.server
 
-import be.cytomine.image.AbstractImage
 import be.cytomine.CytomineDomain
-import be.cytomine.security.Group
+import be.cytomine.image.AbstractImage
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger

@@ -3,7 +3,6 @@ package be.cytomine.api.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance

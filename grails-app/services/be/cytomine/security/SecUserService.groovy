@@ -1,41 +1,27 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
-import be.cytomine.Exception.CytomineMethodNotYetImplementedException
-import be.cytomine.Exception.ForbiddenException
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
-import be.cytomine.ontology.Ontology
+import be.cytomine.command.*
+import be.cytomine.image.ImageInstance
+import be.cytomine.image.UploadedFile
+import be.cytomine.ontology.*
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
+import be.cytomine.social.SharedAnnotation
+import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.Task
 import be.cytomine.utils.Utils
 import groovy.sql.Sql
 import org.apache.commons.collections.ListUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PreAuthorize
-import be.cytomine.command.*
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
-import be.cytomine.image.ImageInstance
-import grails.converters.JSON
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationFilter
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.ReviewedAnnotation
-
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.social.UserPosition
-import be.cytomine.image.UploadedFile
-import be.cytomine.social.SharedAnnotation
-import be.cytomine.Exception.ConstraintException
-import be.cytomine.utils.Task
-import static org.springframework.security.acls.domain.BasePermission.*
 
 class SecUserService extends ModelService {
 

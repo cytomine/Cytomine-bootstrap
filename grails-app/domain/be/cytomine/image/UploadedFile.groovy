@@ -1,7 +1,6 @@
 package be.cytomine.image
 
 import be.cytomine.CytomineDomain
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.apache.log4j.Logger

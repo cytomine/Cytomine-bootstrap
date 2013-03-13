@@ -3,15 +3,8 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.UrlApi
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
-import org.apache.log4j.Logger
-import org.springframework.cache.annotation.AnnotationCacheOperationSource
-
-import java.lang.annotation.Annotation
 
 class AnnotationProperty extends CytomineDomain implements Serializable{
 

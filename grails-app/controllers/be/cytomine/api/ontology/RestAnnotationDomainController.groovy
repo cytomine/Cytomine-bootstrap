@@ -5,7 +5,6 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation

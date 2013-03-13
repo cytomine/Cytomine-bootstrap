@@ -1,6 +1,5 @@
 package be.cytomine.security
 
-import be.cytomine.processing.SoftwareProject
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger

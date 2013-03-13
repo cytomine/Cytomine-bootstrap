@@ -1,20 +1,14 @@
 package be.cytomine.image.server
 
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
-import be.cytomine.image.AbstractImage
-import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PreAuthorize
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.WRITE
 
 class StorageAbstractImageService extends ModelService {
 

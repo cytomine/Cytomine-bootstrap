@@ -1,7 +1,6 @@
 package be.cytomine.security
 
 import be.cytomine.SecurityACL
-import org.springframework.security.access.prepost.PreAuthorize
 
 class SecRoleService {
 

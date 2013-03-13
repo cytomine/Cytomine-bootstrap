@@ -1,8 +1,8 @@
 package be.cytomine.command
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
 import be.cytomine.security.SecUser
-import be.cytomine.Exception.ObjectNotFoundException
 
 /**
  * Controller for command.

@@ -5,14 +5,11 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityACL
 import be.cytomine.command.Command
-import grails.util.GrailsNameUtils
 import be.cytomine.command.DeleteCommand
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.hibernate.cfg.NotYetImplementedException
-import be.cytomine.utils.Task
-import org.springframework.security.acls.domain.BasePermission
-import be.cytomine.ontology.Ontology
+import grails.util.GrailsNameUtils
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 abstract class ModelService {
 
@@ -144,6 +141,11 @@ abstract class ModelService {
         CytomineDomain domain = currentDomain().get(json.id)
         if (!domain) {
             throw new ObjectNotFoundException("${currentDomain().class} " + json.id + " not found")
+        }
+        def container = domain.container()
+        if (container) {
+            //we only check security if container is defined
+            SecurityACL.check(container,READ)
         }
         return domain
     }

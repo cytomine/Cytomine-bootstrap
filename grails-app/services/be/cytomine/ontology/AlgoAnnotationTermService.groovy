@@ -1,9 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.SecurityCheck
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -12,14 +10,11 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.structure.ConfusionMatrix
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.springframework.security.access.prepost.PreAuthorize
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class AlgoAnnotationTermService extends ModelService {
 

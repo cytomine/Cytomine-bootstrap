@@ -1,7 +1,6 @@
 package be.cytomine.image.server
 
 import be.cytomine.CytomineDomain
-import be.cytomine.image.Mime
 
 /**
  * Server that provide images data

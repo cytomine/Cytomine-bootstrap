@@ -1,8 +1,7 @@
 package be.cytomine.image
 
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.MimeImageServer
 import be.cytomine.CytomineDomain
+import be.cytomine.image.server.MimeImageServer
 
 /**
  * Image Extension

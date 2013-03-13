@@ -2,7 +2,6 @@ package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
@@ -18,9 +17,9 @@ import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 
+import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
-import javax.imageio.ImageIO
 
 /**
  * Controller for annotation created by user

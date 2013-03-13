@@ -1,15 +1,11 @@
 package be.cytomine.image
 
-import be.cytomine.project.Project
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-
-import be.cytomine.SecurityCheck
 import be.cytomine.image.server.Storage
-import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
-import be.cytomine.security.Group
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import javax.activation.MimetypesFileTypeMap
 
@@ -93,7 +89,7 @@ class DeployImagesService {
             storages.each { storage ->
                 println "storage=$storage"
                 println "abstractImage="+abstractImage.version
-                storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()), new SecurityCheck(storage))
+                storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()))
                 /*StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
                 sai.save(flush: true,failOnError: true)*/
             }
@@ -101,7 +97,7 @@ class DeployImagesService {
             uploadedFile.getProjects()?.each { project_id ->
                 Project project = projectService.read(project_id)
                 ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  project, user :currentUser)
-                imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()), new SecurityCheck())
+                imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
             }
 
             /*imagePropertiesService.clear(abstractImage)

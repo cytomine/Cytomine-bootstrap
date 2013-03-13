@@ -7,8 +7,8 @@ import be.cytomine.processing.image.filters.Auto_Threshold
 import ij.ImagePlus
 import ij.process.ImageConverter
 
-import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 /**
  * TODOSTEVBEN: clean unused method + doc

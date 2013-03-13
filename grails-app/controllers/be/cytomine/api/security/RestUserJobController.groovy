@@ -2,7 +2,6 @@ package be.cytomine.api.security
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-
 import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProject
@@ -10,10 +9,10 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
+import groovy.sql.Sql
 import javassist.tools.rmi.ObjectNotFoundException
 
 import java.text.SimpleDateFormat
-import groovy.sql.Sql
 
 /**
  * Handle HTTP Requests for CRUD operations on the User Job domain class.

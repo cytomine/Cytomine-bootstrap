@@ -4,7 +4,6 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobParameter
 import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
 
 /**
  * Controller for job parameter

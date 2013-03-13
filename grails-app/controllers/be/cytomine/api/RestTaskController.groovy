@@ -1,8 +1,8 @@
 package be.cytomine.api
 
-import be.cytomine.utils.Task
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.utils.Task
 
 /**
  * Controller for task

@@ -5,7 +5,6 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
-import grails.plugins.springsecurity.Secured
 
 /**
  * Controller for software: application that can be launch (job)

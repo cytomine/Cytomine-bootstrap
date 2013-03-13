@@ -1,11 +1,8 @@
 package be.cytomine.api.image.server
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityCheck
 import be.cytomine.api.RestController
-
 import be.cytomine.image.server.Storage
-import be.cytomine.utils.Task
 import grails.converters.JSON
 
 class RestStorageController extends RestController {
