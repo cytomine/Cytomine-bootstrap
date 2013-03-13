@@ -121,8 +121,12 @@ class Storage extends CytomineDomain {
         return domain
     }
 
-    public Storage storageDomain() {
-        this
+    /**
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain container() {
+        return this;
     }
 
 

@@ -50,11 +50,11 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Get the project link with this domain type
-     * @return Project of this domain
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-     public Project projectDomain() {
-        return userAnnotation.image.project
+    public CytomineDomain container() {
+        return userAnnotation.container();
     }
 
     /**

@@ -70,16 +70,6 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     /**
-     * Return domain project (annotation project, image project...)
-     * By default, a domain has no project.
-     * You need to override projectDomain() in domain class
-     * @return Domain project
-     */
-    public Project projectDomain() {
-        return null
-    }
-
-    /**
      * Return domain user (annotation user, image user...)
      * By default, a domain has no user.
      * You need to override userDomainCreator() in domain class
@@ -90,32 +80,10 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     /**
-     * Return domain ontology (term ontology, relation-term ontology...)
-     * By default, a domain has no ontology linked.
-     * You need to override ontologyDomain() in domain class
-     * @return Domain ontology
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-    public Ontology ontologyDomain() {
-        return null
-    }
-
-    /**
-     * Return domain software (parameter software, job software...)
-     * By default, a domain has no software linked.
-     * You need to override softwareDomain() in domain class
-     * @return Domain software
-     */
-    public Software softwareDomain() {
-        return null
-    }
-
-    /**
-     * Return domain storage
-     * By default, a domain has no project linked
-     * You need to override storageDomain() in domain class
-     * @return Domain software
-     */
-    public Storage storageDomain() {
+    public CytomineDomain container() {
         return null
     }
 

@@ -65,7 +65,7 @@ class ImageFilterProjectService extends ModelService {
      */
     def delete(ImageFilterProject domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

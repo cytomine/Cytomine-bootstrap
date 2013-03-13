@@ -153,8 +153,12 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
           return this.image?.baseImage?.getFilename()
       }
 
-    Project projectDomain() {
-        return image?.project
+    /**
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain container() {
+        return project;
     }
 
     def getArea() {

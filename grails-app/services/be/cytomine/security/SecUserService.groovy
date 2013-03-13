@@ -260,7 +260,7 @@ class SecUserService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         if(domain.algo()) {
             Job job = ((UserJob)domain).job
-            SecurityACL.check(job?.projectDomain(),READ)
+            SecurityACL.check(job?.container(),READ)
         } else {
             SecurityACL.checkAdmin(currentUser)
             SecurityACL.isNotSameUser(domain,currentUser)

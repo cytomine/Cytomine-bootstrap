@@ -339,7 +339,7 @@ class RestAlgoAnnotationController extends RestController {
             List<AlgoAnnotation> annotations = AlgoAnnotation.findAllByImageAndUser(image, user)
             annotations.each {
                 if (AlgoAnnotationTerm.findWhere(annotationIdent: it.id, userJob: user, term: term)) {
-                    it.location = it.location.buffer(bufferLength)
+                    it.location = it.location.buffer(0)    //TODO:: <= buffer(0)
                     it.save(flush: true)
                 }
             }

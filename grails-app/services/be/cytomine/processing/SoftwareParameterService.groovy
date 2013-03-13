@@ -66,7 +66,7 @@ class SoftwareParameterService extends ModelService{
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(SoftwareParameter softwareParam, def jsonNewData) {
-        SecurityACL.check(softwareParam.softwareDomain(),WRITE)
+        SecurityACL.check(softwareParam.container(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),softwareParam, jsonNewData)
     }
@@ -81,7 +81,7 @@ class SoftwareParameterService extends ModelService{
      */
     def delete(SoftwareParameter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.softwareDomain(),DELETE)
+        SecurityACL.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

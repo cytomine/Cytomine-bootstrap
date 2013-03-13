@@ -250,27 +250,27 @@ abstract class ModelService {
     }
 
 
-    def beforeAdd(def domain) {
+    protected def beforeAdd(def domain) {
 
     }
 
-    def beforeDelete(def domain) {
+    protected def beforeDelete(def domain) {
 
     }
 
-    def beforeUpdate(def domain) {
+    protected def beforeUpdate(def domain) {
 
     }
 
-    def afterAdd(def domain, def response) {
+    protected def afterAdd(def domain, def response) {
 
     }
 
-    def afterDelete(def domain, def response) {
+    protected def afterDelete(def domain, def response) {
 
     }
 
-    def afterUpdate(def domain, def response) {
+    protected def afterUpdate(def domain, def response) {
 
     }
 

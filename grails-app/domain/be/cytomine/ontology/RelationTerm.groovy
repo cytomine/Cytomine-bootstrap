@@ -60,13 +60,11 @@ class RelationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Return domain ontology (term ontology, relation-term ontology...)
-     * By default, a domain has no ontology linked.
-     * You need to override ontologyDomain() in domain class
-     * @return Domain ontology
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-    public Ontology ontologyDomain() {
-        return term1.ontology
+    public CytomineDomain container() {
+        return term1.container();
     }
 
     void checkAlreadyExist() {

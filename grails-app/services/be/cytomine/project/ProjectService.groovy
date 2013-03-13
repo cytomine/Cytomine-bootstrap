@@ -120,7 +120,7 @@ class ProjectService extends ModelService {
      */
     def update(Project project, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(project.projectDomain(),WRITE)
+        SecurityACL.check(project.container(),WRITE)
         return executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
     }
 
@@ -146,7 +146,7 @@ class ProjectService extends ModelService {
     }
 
 
-    def beforeDelete(Project domain) {
+    protected def beforeDelete(Project domain) {
         CommandHistory.findAllByProject(domain).each { it.delete() }
         Command.findAllByProject(domain).each {
             it

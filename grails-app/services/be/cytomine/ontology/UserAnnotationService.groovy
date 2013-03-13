@@ -50,7 +50,7 @@ class UserAnnotationService extends ModelService {
     UserAnnotation get(def id) {
         def annotation = UserAnnotation.get(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
@@ -58,13 +58,13 @@ class UserAnnotationService extends ModelService {
     UserAnnotation read(def id) {
         def annotation = UserAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(Project project) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         UserAnnotation.findAllByProject(project)
     }
 
@@ -78,7 +78,7 @@ class UserAnnotationService extends ModelService {
      * @return
      */
     def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         log.info "list with suggestedTerm"
         if (userList.isEmpty()) {
             return []
@@ -116,7 +116,7 @@ class UserAnnotationService extends ModelService {
      * @return Annotation listing (light)
      */
     def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             throw new IllegalArgumentException("Method not supported for this type of data!!!")
         } else {
@@ -160,7 +160,7 @@ class UserAnnotationService extends ModelService {
      * @return Annotation listing (light)
      */
     def listLight(ImageInstance image, SecUser user) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
@@ -179,7 +179,7 @@ class UserAnnotationService extends ModelService {
      * @return Annotation listing (light)
      */
     def listLight(ImageInstance image, SecUser user, Geometry boundingbox, Boolean notReviewedOnly) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
                 " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
                 " WHERE annotation.image_id = $image.id\n" +
@@ -200,7 +200,7 @@ class UserAnnotationService extends ModelService {
      * @return Annotation listing (light)
      */
     def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             listForUserJob(project, term, userList, imageInstanceList)
         } else {

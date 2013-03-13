@@ -46,7 +46,7 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation get(def id) {
         def annotation = AlgoAnnotation.get(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
@@ -54,13 +54,13 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation read(def id) {
         def annotation = AlgoAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(ImageInstance image) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         AlgoAnnotation.findAllByImage(image)
     }
 
@@ -70,7 +70,7 @@ class AlgoAnnotationService extends ModelService {
     }
 
     def list(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         List<UserJob> user = UserJob.findAllByJob(job);
         List<AlgoAnnotation> algoAnnotations = []
         user.each {
@@ -80,7 +80,7 @@ class AlgoAnnotationService extends ModelService {
     }
 
     def list(ImageInstance image, SecUser user) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         return AlgoAnnotation.findAllByImageAndUser(image, user)
     }
 
@@ -93,7 +93,7 @@ class AlgoAnnotationService extends ModelService {
      * @return Algo Annotation list
      */
     def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
 
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 

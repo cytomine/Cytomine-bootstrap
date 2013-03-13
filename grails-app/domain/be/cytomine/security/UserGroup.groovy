@@ -66,10 +66,6 @@ class UserGroup extends CytomineDomain {
         }
     }
 
-    public Project projectDomain() {
-        return null;
-    }
-
     def getCallBack() {
         return null
     }

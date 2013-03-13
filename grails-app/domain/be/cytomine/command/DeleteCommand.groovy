@@ -1,5 +1,7 @@
 package be.cytomine.command
 
+import be.cytomine.CytomineDomain
+import be.cytomine.project.Project
 import grails.converters.JSON
 
 /**
@@ -25,7 +27,10 @@ class DeleteCommand extends Command {
         //Retrieve domain to delete it
         def oldDomain = domain
         //Init command info
-        super.setProject(linkProject? oldDomain?.projectDomain() : null)
+        CytomineDomain container = oldDomain?.container()
+        if(container && container instanceof Project && linkProject) {
+            super.setProject(container)
+        }
         def response = service.destroy(oldDomain, printMessage)
         fillCommandInfoJSON(backup, response.data.message)
         return response

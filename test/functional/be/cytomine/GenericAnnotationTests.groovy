@@ -154,7 +154,7 @@ class GenericAnnotationTests  {
 
         //create annotation
         AnnotationTerm annotationTerm2 = BasicInstanceBuilder.getAnnotationTerm()
-        annotationTerm2.userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(annotationTerm2.projectDomain(),true)
+        annotationTerm2.userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(annotationTerm2.container(),true)
         annotationTerm2.term = BasicInstanceBuilder.getTerm()
         BasicInstanceBuilder.checkDomain(annotationTerm2)
         BasicInstanceBuilder.saveDomain(annotationTerm2)

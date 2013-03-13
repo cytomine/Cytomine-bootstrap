@@ -43,7 +43,7 @@ class ImageInstanceService extends ModelService {
     def read(def id) {
         def image = ImageInstance.read(id)
         if(image) {
-            SecurityACL.check(image.projectDomain(),READ)
+            SecurityACL.check(image.container(),READ)
         }
         image
     }
@@ -51,7 +51,7 @@ class ImageInstanceService extends ModelService {
     def get(def id) {
         def image = ImageInstance.get(id)
         if(image) {
-            SecurityACL.check(image.projectDomain(),READ)
+            SecurityACL.check(image.container(),READ)
         }
         image
     }
@@ -135,7 +135,7 @@ class ImageInstanceService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(ImageInstance domain, def jsonNewData) {
-        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(domain.container(),READ)
         SecurityACL.check(jsonNewData.project,Project,READ)
 
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -152,7 +152,7 @@ class ImageInstanceService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(ImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(domain.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

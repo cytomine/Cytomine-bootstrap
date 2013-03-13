@@ -42,7 +42,7 @@ class JobService extends ModelService {
     def read(def id) {
         def job = Job.read(id)
         if(job) {
-            SecurityACL.check(job.projectDomain(),READ)
+            SecurityACL.check(job.container(),READ)
         }
         job
     }
@@ -127,7 +127,7 @@ class JobService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Job job, def jsonNewData) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),job, jsonNewData)
     }
@@ -142,7 +142,7 @@ class JobService extends ModelService {
      */
     def delete(Job domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }
@@ -200,7 +200,7 @@ class JobService extends ModelService {
      * Delete all annotation created by a user job from argument
      */
     public void deleteAllAlgoAnnotations(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
@@ -210,7 +210,7 @@ class JobService extends ModelService {
      * Delete all algo-annotation-term created by a user job from argument
      */
     public void deleteAllAlgoAnnotationsTerm(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
@@ -220,7 +220,7 @@ class JobService extends ModelService {
      * Delete all data filescreated by a user job from argument
      */
     public void deleteAllJobData(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         List<JobData> jobDatas = JobData.findAllByJob(job)
         List<Long> jobDatasId = jobDatas.collect{ it.id }
         if (jobDatasId.isEmpty()) return
@@ -234,7 +234,7 @@ class JobService extends ModelService {
      * @return The job
      */
     public def executeJob(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         log.info "Create UserJob..."
         UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
         job.software.service.init(job, userJob)
@@ -248,7 +248,7 @@ class JobService extends ModelService {
     }
 
     public UserJob createUserJob(User user, Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         UserJob userJob = new UserJob()
         userJob.job = job
         userJob.username = "JOB[" + user.username + " ], " + new Date().toString()

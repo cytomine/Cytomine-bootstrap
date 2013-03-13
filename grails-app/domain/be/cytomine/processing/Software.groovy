@@ -142,12 +142,10 @@ class Software extends CytomineDomain {
     }
 
     /**
-     * Return domain software (parameter software, job software...)
-     * By default, a domain has no software linked.
-     * You need to override softwareDomain() in domain class
-     * @return Domain software
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-    public Software softwareDomain() {
+    public CytomineDomain container() {
         return this;
     }
 

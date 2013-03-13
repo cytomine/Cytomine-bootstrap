@@ -55,7 +55,7 @@ class TermService extends ModelService {
     Term read(def id) {
         def term = Term.read(id)
         if (term) {
-            SecurityACL.check(term.ontologyDomain(),READ)
+            SecurityACL.check(term.container(),READ)
         }
         term
     }
@@ -63,13 +63,13 @@ class TermService extends ModelService {
     Term get(def id) {
         def term = Term.get(id)
         if (term) {
-            SecurityACL.check(term.ontologyDomain(),READ)
+            SecurityACL.check(term.container(),READ)
         }
         term
     }
 
     def list(Ontology ontology) {
-        SecurityACL.check(ontology.ontologyDomain(),READ)
+        SecurityACL.check(ontology.container(),READ)
         return ontology?.leafTerms()
     }
 
@@ -79,7 +79,7 @@ class TermService extends ModelService {
     }
 
     def list(UserAnnotation annotation, User user) {
-        SecurityACL.check(annotation.projectDomain(),READ)
+        SecurityACL.check(annotation.container(),READ)
         return AnnotationTerm.findAllByUserAndUserAnnotation(user, annotation).collect {it.term.id}
     }
 
@@ -87,7 +87,7 @@ class TermService extends ModelService {
      * Get all term id for a project
      */
     public List<Long> getAllTermId(Project project) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         //better perf with sql request
         String request = "SELECT t.id FROM term t WHERE t.ontology_id="+project.ontology.id
         def data = []
@@ -98,7 +98,7 @@ class TermService extends ModelService {
     }
 
     def statProject(Term term) {
-        SecurityACL.check(term.ontologyDomain(),READ)
+        SecurityACL.check(term.container(),READ)
         def projects = Project.findAllByOntology(term.ontology)
         def count = [:]
         def percentage = [:]
@@ -151,7 +151,7 @@ class TermService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Term term, def jsonNewData) {
-        SecurityACL.check(term.ontologyDomain(),WRITE)
+        SecurityACL.check(term.container(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), term,jsonNewData)
     }
@@ -166,7 +166,7 @@ class TermService extends ModelService {
      */
     def delete(Term domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.ontologyDomain(),DELETE)
+        SecurityACL.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -61,7 +61,7 @@ class SecUserSecRoleService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         if(domain.secUser.algo()) {
             Job job = ((UserJob)domain.secUser).job
-            SecurityACL.check(job?.projectDomain(),READ)
+            SecurityACL.check(job?.container(),READ)
         } else {
             SecurityACL.checkAdmin(currentUser)
         }

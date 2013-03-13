@@ -37,7 +37,7 @@ class AnnotationFilterService extends ModelService {
     AnnotationFilter read(def id) {
         def filter = AnnotationFilter.read(id)
         if (filter) {
-            SecurityACL.check(filter.projectDomain(),READ)
+            SecurityACL.check(filter.container(),READ)
         }
         filter
     }
@@ -45,7 +45,7 @@ class AnnotationFilterService extends ModelService {
     AnnotationFilter get(def id) {
         def filter = AnnotationFilter.get(id)
         if (filter) {
-            SecurityACL.check(filter.projectDomain(),READ)
+            SecurityACL.check(filter.container(),READ)
         }
         filter
     }

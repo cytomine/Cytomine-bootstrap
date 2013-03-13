@@ -31,7 +31,7 @@ class StorageAbstractImageService extends ModelService {
     }
 
     def delete(StorageAbstractImage sai, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(sai.storageDomain(),WRITE)
+        SecurityACL.check(sai.container(),WRITE)
         Command c = new DeleteCommand(user: cytomineService.getCurrentUser(),transaction:transaction)
         return executeCommand(c,sai,null)
     }

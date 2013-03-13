@@ -52,6 +52,10 @@ class ResponseService {
     public static String getClassName(Object o) {
         //log.info("getClassName=" + o.getClass());
         String name = o.getClass()   //be.cytomine.image.Image
+        int exeed = name.indexOf("_\$\$_javassist") //if  be.cytomine.image.Image_$$_javassistxxxx...remove all after  _$$
+        if (exeed!=-1) {
+            name = name.substring(0,exeed)
+        }
         String[] array = name.split("\\.")  //[be,cytomine,image,Image]
         //log.info array.length
         return array[array.length - 1] // Image

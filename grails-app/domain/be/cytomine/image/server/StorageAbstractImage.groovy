@@ -42,9 +42,11 @@ class StorageAbstractImage extends CytomineDomain {
         }
     }
 
-    public Storage storageDomain() {
-        storage
+    /**
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain container() {
+        return storage.container();
     }
-
-
 }

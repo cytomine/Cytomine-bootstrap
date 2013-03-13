@@ -48,7 +48,7 @@ class ReviewedAnnotationService extends ModelService {
     ReviewedAnnotation get(def id) {
         def annotation = ReviewedAnnotation.get(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
@@ -56,23 +56,23 @@ class ReviewedAnnotationService extends ModelService {
     ReviewedAnnotation read(def id) {
         def annotation = ReviewedAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.projectDomain(),READ)
+            SecurityACL.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(Project project) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         ReviewedAnnotation.findAllByProject(project)
     }
 
     def list(ImageInstance image) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         ReviewedAnnotation.findAllByImage(image)
     }
 
     def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         def reviewed = ReviewedAnnotation.createCriteria().list {
             eq("project", project)
             inList("user.id", userList)
@@ -97,7 +97,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Reviewed Annotation list
      */
     def list(ImageInstance image, String bbox) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
         /**
          * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
@@ -145,7 +145,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Reviewed Annotation list
      */
     def list(ImageInstance image, SecUser user, String bbox) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         String[] coordinates = bbox.split(",")
         double bottomX = Double.parseDouble(coordinates[0])
         double bottomY = Double.parseDouble(coordinates[1])
@@ -161,7 +161,7 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     def list(ImageInstance image, Term term) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         def reviewed = ReviewedAnnotation.createCriteria().list {
             createAlias "terms", "t"
             eq("image", image)
@@ -172,7 +172,7 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     def list(ImageInstance image, SecUser user) {
-        SecurityACL.check(image.projectDomain(),READ)
+        SecurityACL.check(image.container(),READ)
         ReviewedAnnotation.createCriteria()
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
@@ -180,7 +180,7 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at2.term_id as term, at2.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM reviewed_annotation a, reviewed_annotation_term at,reviewed_annotation_term at2,reviewed_annotation_term at3\n" +

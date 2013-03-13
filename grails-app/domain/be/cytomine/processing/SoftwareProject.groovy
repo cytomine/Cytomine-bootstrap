@@ -57,12 +57,10 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Return domain project (annotation project, image project...)
-     * By default, a domain has no project.
-     * You need to override projectDomain() in domain class
-     * @return Domain project
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-    public Project projectDomain() {
-        return project;
+    public CytomineDomain container() {
+        return project.container();
     }
 }

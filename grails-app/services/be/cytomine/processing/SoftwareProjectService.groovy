@@ -32,7 +32,7 @@ class SoftwareProjectService extends ModelService{
     def read(def id) {
         def sp = SoftwareProject.get(id)
         if(sp) {
-            SecurityACL.check(sp.projectDomain(),READ)
+            SecurityACL.check(sp.container(),READ)
         }
         sp
     }
@@ -43,7 +43,7 @@ class SoftwareProjectService extends ModelService{
     }
 
     def list(Project project) {
-        SecurityACL.check(project.projectDomain(),READ)
+        SecurityACL.check(project.container(),READ)
         SoftwareProject.findAllByProject(project)
     }
 
@@ -69,7 +69,7 @@ class SoftwareProjectService extends ModelService{
      */
     def delete(SoftwareProject domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.projectDomain(),READ)
+        SecurityACL.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -88,13 +88,11 @@ class JobData extends CytomineDomain {
     }
 
     /**
-     * Return domain project (annotation project, image project...)
-     * By default, a domain has no project.
-     * You need to override projectDomain() in domain class
-     * @return Domain project
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
      */
-    public Project projectDomain() {
-        return job.project;
+    public CytomineDomain container() {
+        return job.container();
     }
 
 }

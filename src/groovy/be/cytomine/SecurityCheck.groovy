@@ -137,7 +137,7 @@ class SecurityCheck {
     }
 
     private boolean checkProjectPermission(String permission) {
-        def project = domain.projectDomain()
+        def project = domain.container()
         if(!project) {
             throw new ObjectNotFoundException("Project from domain ${domain} was not found! Unable to process project auth checking")
         }
@@ -166,7 +166,7 @@ class SecurityCheck {
     }
 
     private boolean checkOntologyPermission(String permission) {
-        def ontology = domain.ontologyDomain()
+        def ontology = domain.container()
         if(!ontology) {
             throw new ObjectNotFoundException("Ontology from domain ${domain} was not found! Unable to process ontology auth checking")
         }
@@ -203,7 +203,7 @@ class SecurityCheck {
     }
 
     private boolean checkStoragePermission(String permission) {
-        def storage = domain.storageDomain()
+        def storage = domain.container()
         if(!storage) {
             throw new ObjectNotFoundException("Storage from domain ${domain} was not found! Unable to process storage auth checking")
         }
@@ -244,7 +244,7 @@ class SecurityCheck {
     }
 
     private boolean checkSoftwarePermission(String permission) {
-        def software = domain.softwareDomain()
+        def software = domain.container()
         if(!software) {
             throw new ObjectNotFoundException("Software from domain ${domain} was not found! Unable to process software auth checking")
         }

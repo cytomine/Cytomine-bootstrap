@@ -30,17 +30,17 @@ class AnnotationTermService extends ModelService {
     }
 
     def list(UserAnnotation userAnnotation) {
-        SecurityACL.check(userAnnotation.projectDomain(),READ)
+        SecurityACL.check(userAnnotation.container(),READ)
         AnnotationTerm.findAllByUserAnnotation(userAnnotation)
     }
 
     def listNotUser(UserAnnotation userAnnotation, User user) {
-        SecurityACL.check(userAnnotation.projectDomain(),READ)
+        SecurityACL.check(userAnnotation.container(),READ)
         AnnotationTerm.findAllByUserAnnotationAndUserNotEqual(userAnnotation, user)
     }
 
     def read(AnnotationDomain annotation, Term term, SecUser user) {
-        SecurityACL.check(annotation.projectDomain(),READ)
+        SecurityACL.check(annotation.container(),READ)
         if (user) {
             AnnotationTerm.findWhere('userAnnotation.id': annotation.id, 'term': term, 'user': user)
         } else {
@@ -54,7 +54,7 @@ class AnnotationTermService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.userannotation,UserAnnotation,"projectDomain",READ)
+        SecurityACL.check(json.userannotation,UserAnnotation,"container",READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if (!creator)

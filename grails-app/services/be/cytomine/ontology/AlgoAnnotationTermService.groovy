@@ -32,12 +32,12 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     def list(AnnotationDomain annotation) {
-        SecurityACL.check(annotation.projectDomain(),READ)
+        SecurityACL.check(annotation.container(),READ)
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
     def count(Job job) {
-        SecurityACL.check(job.projectDomain(),READ)
+        SecurityACL.check(job.container(),READ)
         long total = 0
         List<UserJob> users = UserJob.findAllByJob(job)
         users.each {
@@ -47,7 +47,7 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
-        SecurityACL.check(annotation.projectDomain(),READ)
+        SecurityACL.check(annotation.container(),READ)
         if (userJob) {
             AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
         } else {

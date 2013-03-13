@@ -82,7 +82,7 @@ class StorageService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def delete(Storage storage, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(storage.storageDomain(),READ)
+        SecurityACL.check(storage.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,storage,null)
