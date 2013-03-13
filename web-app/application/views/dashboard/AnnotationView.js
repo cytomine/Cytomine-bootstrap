@@ -19,8 +19,6 @@ var AnnotationView = Backbone.View.extend({
                 $(self.el).empty();
                 self.model = collection;
                 self.nbAnnotation = collection.fullSize;
-                console.log("*******************************");
-                console.log(self.nbAnnotation);
                 self.initPagination();
                 self.appendThumbs(self.page);
 
@@ -31,10 +29,8 @@ var AnnotationView = Backbone.View.extend({
     initPagination: function () {
         var self = this;
 
-        //self.model.
-
          var nbPages = self.model.getNumberOfPages();
-        console.log("nbPages="+nbPages);
+
          if(nbPages<2) {
              return;
          } else {

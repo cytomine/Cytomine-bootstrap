@@ -6,6 +6,10 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.social.SharedAnnotation
+import org.hibernate.jdbc.Work
+
+import java.sql.Connection
+import java.sql.SQLException
 
 /**
  * Cytomine @ GIGA-ULG
@@ -25,6 +29,24 @@ import be.cytomine.social.SharedAnnotation
 class CountersService {
 
     def sessionFactory
+
+    def updateCommentsCounters() {
+
+        sessionFactory.currentSession.doWork(
+                new Work() {
+                    public void execute(Connection connection) throws SQLException
+                    {
+                        try {
+                            def statement = connection.createStatement()
+                            statement.execute("update project as p SET count_images = (select count(id) from image_instance where project_id = p.id);")
+                        } catch (org.postgresql.util.PSQLException e) {
+                            log.info e
+                        }
+                    }
+                }
+        )
+
+    }
 
     /**
      * Update all counter with their correct value
@@ -58,27 +80,12 @@ class CountersService {
                     image.setCountImageReviewedAnnotations(reviewedAnnotationsImage)
                     image.save(flush: true)
                 }
-
+                //replace by SQL ? update project as p SET count_images = (select count(id) from image_instance where project_id = p.id);
             }
         }
 
-        //reset annotation comments
-        sessionFactory.getCurrentSession().clear();
-        def connection = sessionFactory.currentSession.connection()
 
-        try {
-            def statement = connection.createStatement()
-            statement.execute("update user_annotation set count_comments = 0;")
-        } catch (org.postgresql.util.PSQLException e) {
-            log.info e
-        }
 
-        Collection<UserAnnotation> annotations = (Collection<UserAnnotation>) SharedAnnotation.list().collect { it.userAnnotation }.unique()
-        annotations.each { annotation ->
-            long countComments = (long) SharedAnnotation.countByUserAnnotation(annotation)
 
-            annotation.setCountComments(countComments)
-            annotation.save(flush: true)
-        }
     }
 }
