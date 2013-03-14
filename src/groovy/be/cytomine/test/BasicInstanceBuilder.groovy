@@ -268,9 +268,9 @@ class BasicInstanceBuilder {
     }
 
     static AlgoAnnotationTerm getAlgoAnnotationTermNotExistForAlgoAnnotation() {
-        def term = getTermNotExist(true)
-        def annotation = getAlgoAnnotationNotExist(true)
-        def user = getUserJobNotExist(true)
+        def term = saveDomain(getTermNotExist())
+        def annotation = saveDomain(getAlgoAnnotationNotExist())
+        def user = saveDomain(getUserJobNotExist())
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm

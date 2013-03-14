@@ -104,7 +104,7 @@ class RestController {
         result.data = []
         int i = 0
         json.each {
-            def resp = addOne(service, it)  //TODO:: when exception here, what should we do? For the time being, stop everything and response error
+            def resp = addOne(service, it)
             result.data << resp
             //sometimes, call clean cache (improve very well perf for big set)
             if (i % 100 == 0) cleanUpGorm()

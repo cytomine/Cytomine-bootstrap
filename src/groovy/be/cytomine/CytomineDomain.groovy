@@ -97,17 +97,6 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
-    /**
-     * This method check if current user has permission on the current domain
-     * @param permission Type of permission (read, admin,...)
-     * @return True if user has this permission on the current domain, otherwise false
-     */
-    boolean hasPermission(String permission) {
-        try {
-            return hasPermission(this,permission)
-        } catch (Exception e) {e.printStackTrace()}
-        return false
-    }
 
     boolean hasPermission(Permission permission) {
         try {
@@ -116,51 +105,8 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
-    /**
-     * Check if current user has read permission on this domain
-     */
-    boolean checkReadPermission() {
-        return checkPermission("READ")
-    }
-
-    /**
-     * Check if current user has write permission on this domain
-     */
-    boolean checkWritePermission() {
-        return checkPermission("WRITE")
-    }
-
-    /**
-     * Check if current user has delete permission on this domain
-     */
-    boolean checkDeletePermission() {
-        return checkPermission("DELETE")
-    }
-
-    boolean checkPermission(String permission) {
-        return hasPermission(permission) || cytomineService.currentUser.admin
-    }
-
-
     boolean checkPermission(Permission permission) {
         return hasPermission(permission) || cytomineService.currentUser.admin
-    }
-
-    /**
-     * This method check if current user has permission on the domain from className with this id
-     * @param id  Domain id
-     * @param className Domain class
-     * @param permission Type of permission
-     * @return  True if user has this permission on the specific domain, otherwise false
-     */
-    boolean hasPermission(Long id,String className, String permission) {
-        try {
-            def obj = grailsApplication.classLoader.loadClass(className).get(id)
-            return hasPermission(obj,permission)
-        } catch (Exception e) {
-            log.error e.toString()
-            e.printStackTrace()}
-        return false
     }
 
     /**
@@ -171,7 +117,6 @@ abstract class CytomineDomain  implements Comparable{
      */
     boolean hasPermission(def domain,String permissionStr) {
         try {
-            SecUser currentUser = cytomineService.getCurrentUser()
             Permission permission = null;
             if(permissionStr.equals("READ")) permission = READ
             else if(permissionStr.equals("WRITE")) permission = WRITE
