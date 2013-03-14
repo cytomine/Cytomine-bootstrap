@@ -7,7 +7,6 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserGroup
-import be.cytomine.test.Infos
 
 /**
  * Cytomine @ GIGA-ULG

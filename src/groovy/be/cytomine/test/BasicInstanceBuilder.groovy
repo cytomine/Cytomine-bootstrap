@@ -15,13 +15,10 @@ import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.*
 import be.cytomine.social.SharedAnnotation
-import be.cytomine.test.http.ImageInstanceAPI
-import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.http.UserAnnotationAPI
 import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 
 /**
  * Created by IntelliJ IDEA.

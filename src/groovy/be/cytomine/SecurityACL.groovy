@@ -4,14 +4,11 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.Term
-import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
-import be.cytomine.test.Infos
 import org.springframework.security.acls.model.Permission
 
 /**

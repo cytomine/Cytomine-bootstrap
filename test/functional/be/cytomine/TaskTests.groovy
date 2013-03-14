@@ -17,7 +17,6 @@ import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.test.http.JobAPI
 import be.cytomine.utils.Task
 import be.cytomine.test.http.TaskAPI
-import be.cytomine.utils.TaskComment
 
 /**
  * Created by IntelliJ IDEA.

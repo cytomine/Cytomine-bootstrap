@@ -1,8 +1,6 @@
 package be.cytomine.utils
 
-
 import groovy.sql.Sql
-import grails.util.Holders
 
 /**
  * Comment for a task
