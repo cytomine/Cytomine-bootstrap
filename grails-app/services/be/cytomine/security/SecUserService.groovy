@@ -185,7 +185,7 @@ class SecUserService extends ModelService {
      * Get all user that share at least a same project as user from argument
      */
     List<SecUser> getAllFriendsUsers(SecUser user) {
-        SecurityACL.isSameUser(user,cytomineService.currentUser)
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         AclSid sid = AclSid.findBySid(user.username)
         List<SecUser> users = SecUser.executeQuery(
                 "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
@@ -198,7 +198,7 @@ class SecUserService extends ModelService {
      * Get all online user that share at least a same project as user from argument
      */
     List<SecUser> getAllFriendsUsersOnline(SecUser user) {
-        SecurityACL.isSameUser(user,cytomineService.currentUser)
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
     }
 
@@ -230,7 +230,7 @@ class SecUserService extends ModelService {
      */
     def update(SecUser user, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(user,currentUser)
+        SecurityACL.checkIsCreator(user,currentUser)
         return executeCommand(new EditCommand(user: currentUser),user, jsonNewData)
     }
 
@@ -249,7 +249,7 @@ class SecUserService extends ModelService {
             SecurityACL.check(job?.container(),READ)
         } else {
             SecurityACL.checkAdmin(currentUser)
-            SecurityACL.isNotSameUser(domain,currentUser)
+            SecurityACL.checkIsNotSameUser(domain,currentUser)
         }
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

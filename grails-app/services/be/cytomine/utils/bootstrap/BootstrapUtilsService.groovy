@@ -43,9 +43,6 @@ class BootstrapUtilsService {
                 try {user.save(flush: true) } catch(Exception e) {println e}
                 log.info "Save ${user.username}..."
 
-                println User.findByUsername("lrollus")
-                println User.findByUsername(Infos.GOODLOGIN)
-
                 /* Create a special group the user */
                 def userGroupName = item.username
                 def userGroup = [

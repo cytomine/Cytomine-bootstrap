@@ -131,17 +131,11 @@ class Job extends CytomineDomain  {
             job.created = it.created?.time?.toString()
             job.updated = it.updated?.time?.toString()
             job.dataDeleted = it.dataDeleted
-            println "test"
             try {
-                println "1"
                 UserJob user = UserJob.findByJob(it)
-                println "2"
                 job.username = user?.humanUsername()
-                println "3"
                 job.userJob = user.id
-                println "4"
                 job.jobParameters = it.parameters()
-                println "5"
             } catch (Exception e) {
                 log.info e
             }

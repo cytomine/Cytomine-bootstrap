@@ -52,8 +52,6 @@ class RetrievalSuggestStatsController extends RestController {
             responseNotFound("UserJob","Params", params)
             return null
         }
-        println "x1: " + (userJob?.job?.project)
-        println "x2: " + userJob
 
         ConfusionMatrix matrix = retrievalSuggestedTermJobService.computeConfusionMatrix(termService.list(userJob?.job?.project), userJob)
         String matrixJSON = matrix.toJSON()

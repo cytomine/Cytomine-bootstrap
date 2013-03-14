@@ -112,7 +112,6 @@ class ConvertImagesService {
     private def createNewUploadedFile(UploadedFile parentUploadedFile, def pathAndExtension, SecUser currentUser, String contentType){
         String absolutePath = pathAndExtension.absolutePath
         String extension = pathAndExtension.extension
-        println "createNewUploadedFile $absolutePath"
         String filename = absolutePath.substring(parentUploadedFile.getPath().length(), absolutePath.length())
         if (!contentType) {
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();

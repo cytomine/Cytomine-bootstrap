@@ -246,7 +246,6 @@ class ReviewedAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        println "json=$json"
         //read annotation (annotation or annotationIdent)
 
         SecurityACL.check(json.project,Project,READ)
@@ -272,7 +271,7 @@ class ReviewedAnnotationService extends ModelService {
      */
     def update(ReviewedAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(annotation,currentUser)
+        SecurityACL.checkIsCreator(annotation,currentUser)
         def result = executeCommand(new EditCommand(user: currentUser),annotation,jsonNewData)
         return result
     }
@@ -287,7 +286,7 @@ class ReviewedAnnotationService extends ModelService {
      */
     def delete(ReviewedAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(domain,currentUser)
+        SecurityACL.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

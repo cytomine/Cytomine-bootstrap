@@ -64,7 +64,6 @@ class RelationTermService extends ModelService {
      * @return Response structure (new domain data, old domain data..)
      */
     def add(def json) {
-        println "json=$json"
         SecurityACL.check(json.term1,Term,"getOntology",WRITE)
         SecurityACL.check(json.term2,Term,"getOntology",WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()

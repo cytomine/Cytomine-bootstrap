@@ -112,10 +112,8 @@ class RetrievalService {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         def response = RetrievalHttpUtils.getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(grailsApplication.config.grails.serverURL),projectSearch)
-        println "response=$response"
         try {
             def json = JSON.parse(response)
-            println "json=$json"
             def result =  readRetrievalResponse(searchAnnotation,json)
             return result
         } catch (org.codehaus.groovy.grails.web.json.JSONException exception) { //server did not respond => 404

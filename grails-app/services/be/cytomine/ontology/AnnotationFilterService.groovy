@@ -61,7 +61,7 @@ class AnnotationFilterService extends ModelService {
      */
     def update(be.cytomine.ontology.AnnotationFilter af, def jsonNewData) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(af,currentUser)
+        SecurityACL.checkIsCreator(af,currentUser)
         return executeCommand(new EditCommand(user: currentUser), af, jsonNewData)
     }
 
@@ -75,7 +75,7 @@ class AnnotationFilterService extends ModelService {
      */
     def delete(AnnotationFilter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(domain,currentUser)
+        SecurityACL.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

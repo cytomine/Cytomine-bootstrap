@@ -84,7 +84,6 @@ class JobDataService extends ModelService {
     }
 
     def deleteDependentJobDataBinaryValue(JobData jobData, Transaction transaction, Task task = null) {
-        println "jobData=$jobData"
         if(jobData.value) {
             jobData.value.delete()
         }

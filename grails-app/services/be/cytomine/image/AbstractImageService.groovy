@@ -256,7 +256,6 @@ class AbstractImageService extends ModelService {
      * Get thumb image URL
      */
     def thumb(def id) {
-        println "thumb=$id"
         AbstractImage image = AbstractImage.read(id)
         try {
             return image.getThumbURL()

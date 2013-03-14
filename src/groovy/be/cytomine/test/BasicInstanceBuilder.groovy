@@ -42,7 +42,6 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def checkDomain(def domain) {
-        log.debug "#### checkDomain=" + domain.class
         if(!domain.validate()) {
             log.warn domain.class.name+".errors=" + domain.errors
             assert false
@@ -55,7 +54,6 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def saveDomain(def domain) {
-        log.debug "#### saveDomain=" + domain.class
         checkDomain(domain)
         if(!domain.save(flush: true)) {
             log.warn domain.class+".errors=" + domain.errors
@@ -72,17 +70,10 @@ class BasicInstanceBuilder {
      * @param json New Data
      */
     static void compare(map, json) {
-
-        println "map=$map"
-        println "json=$json"
         map.each {
             def propertyName = it.key
             def propertyValue = it.value
-
-            println "propertyName=$propertyName"
-            println "propertyValue=$propertyValue"
             def compareValue = json[it.key]
-            println "compareValue=$compareValue"
             assert toString(propertyValue).equals(toString(compareValue))
         }
     }
@@ -100,7 +91,6 @@ class BasicInstanceBuilder {
         try {
             domain.refresh()
         } catch(Exception e) {}
-        log.info "Check if domain ${domain.class} exist=${exist}"
        assert ((domain.read(domain.id)!=null) == exist)
     }
 
@@ -117,7 +107,6 @@ class BasicInstanceBuilder {
     }
 
     static User getUser() {
-        log.debug "createOrGetBasicUser()"
         def user = SecUser.findByUsername("BasicUser")
         if (!user) {
             user = new User(
@@ -128,12 +117,8 @@ class BasicInstanceBuilder {
                     password: "password",
                     enabled: true)
             user.generateKeys()
-            user.validate()
-            log.debug "user.errors=" + user.errors
-            user.save(flush: true)
-            log.debug "user.errors=" + user.errors
+            saveDomain(user)
         }
-        assert user != null
         user
     }
 
@@ -146,9 +131,6 @@ class BasicInstanceBuilder {
     static User getUser2() {
         return User.findByUsername("stevben")
     }
-
-
-
 
     static UserJob getUserJob(Project project) {
         Job job = BasicInstanceBuilder.getJobNotExist()
@@ -163,7 +145,6 @@ class BasicInstanceBuilder {
 
 
     static UserJob getUserJob() {
-        log.debug "getUserJob()"
         UserJob userJob = UserJob.findByUsername("BasicUserJob")
         if (!userJob) {
             userJob = new UserJob(username: "BasicUserJob",password: "PasswordUserJob",enabled: true,user : User.findByUsername(Infos.GOODLOGIN),job: getJob())
@@ -182,7 +163,6 @@ class BasicInstanceBuilder {
     }
 
     static UserJob getUserJobNotExist(boolean save = false) {
-        log.debug "getUserJobNotExist()"
         def user = getUser1()
         def job = getJobNotExist(true)
 
@@ -207,24 +187,14 @@ class BasicInstanceBuilder {
             } catch(Exception e) {
                 log.warn(e)
             }
-        assert user != null
         user
     }
 
     static ImageInstance getImageInstance() {
-        log.info "getImageInstance()"
-//
-//        def images = ImageInstance.list([max: 1, sort: 'id'])
-//        def image
-//        if (images.isEmpty()) {
-//            images << saveDomain(getImageInstanceNotExist())
-//        }
-//        images.first()
         saveDomain(getImageInstanceNotExist())
     }
 
     static ImageInstance getImageInstanceNotExist(Project project = BasicInstanceBuilder.getProject(), boolean save = false) {
-        log.info "getImageInstanceNotExist()"
         ImageInstance image = new ImageInstance(
                 baseImage: saveDomain(BasicInstanceBuilder.getAbstractImageNotExist()),
                 project: project,
@@ -237,7 +207,6 @@ class BasicInstanceBuilder {
 
 
     static AlgoAnnotation getAlgoAnnotation() {
-        log.debug "getAlgoAnnotation()"
         def annotation = AlgoAnnotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: getImageInstance(),
@@ -249,7 +218,6 @@ class BasicInstanceBuilder {
 
 
     static AlgoAnnotation getAlgoAnnotationNotExist(Job job = getJob(), UserJob user = getUserJob(),boolean save = false) {
-        log.debug "getAlgoAnnotationNotExist()"
         AlgoAnnotation annotation = new AlgoAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image:getImageInstance(),
@@ -275,7 +243,6 @@ class BasicInstanceBuilder {
     //CytomineDomain annotation = (useAlgoAnnotation? saveDomain(getUserAnnotationNotExist()) :  saveDomain(getAlgoAnnotationNotExist()))
 
     static AlgoAnnotationTerm getAlgoAnnotationTerm(Job job = getJob(), AnnotationDomain annotation, UserJob user = getUserJob()) {
-        log.debug "getAlgoAnnotationTerm()"
         def term = saveDomain(getTermNotExist())
 
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,expectedTerm:term,userJob:user,rate:0)
@@ -288,14 +255,12 @@ class BasicInstanceBuilder {
     }
 
     static AlgoAnnotationTerm getAlgoAnnotationTerm(Job job = getJob(), UserJob user = getUserJob(),boolean useAlgoAnnotation = false) {
-        log.debug "getAlgoAnnotationTerm()"
         def annotation = (useAlgoAnnotation? saveDomain(getAlgoAnnotationNotExist()) :  saveDomain(getUserAnnotationNotExist()))
         getAlgoAnnotationTerm(job,annotation,user)
     }
 
     //getAlgoAnnotationTermForAlgoAnnotation
     static AlgoAnnotationTerm getAlgoAnnotationTermNotExist(Job job = getJob(),UserJob userJob = getUserJob(),AnnotationDomain annotation = saveDomain(getUserAnnotationNotExist()),boolean save = false) {
-        log.debug "getAnnotationTermNotExist()"
         def term = saveDomain(getTermNotExist())
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:userJob, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
@@ -303,17 +268,9 @@ class BasicInstanceBuilder {
     }
 
     static AlgoAnnotationTerm getAlgoAnnotationTermNotExistForAlgoAnnotation() {
-        log.debug "getAlgoAnnotationTermNotExistForAlgoAnnotation()"
-        def term = getTermNotExist()
-        term.save(flush: true)
-        assert term != null
-        def annotation = getAlgoAnnotationNotExist()
-        annotation.save(flush: true)
-        assert annotation != null
-        def user = getUserJobNotExist()
-        user.save(flush: true)
-        assert user != null
-
+        def term = getTermNotExist(true)
+        def annotation = getAlgoAnnotationNotExist(true)
+        def user = getUserJobNotExist(true)
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:user, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm
@@ -329,7 +286,6 @@ class BasicInstanceBuilder {
     }
 
     static ReviewedAnnotation getReviewedAnnotation() {
-         log.debug "getReviewedAnnotation()"
          def basedAnnotation = saveDomain(getUserAnnotationNotExist())
          def image = getImageInstance()
          def annotation = ReviewedAnnotation.findOrCreateWhere(
@@ -355,7 +311,6 @@ class BasicInstanceBuilder {
      }
 
      static ReviewedAnnotation getReviewedAnnotationNotExist() {
-         log.debug "getReviewedAnnotation()"
          def basedAnnotation = saveDomain(getUserAnnotationNotExist())
 
          def annotation = ReviewedAnnotation.findOrCreateWhere(
@@ -371,7 +326,6 @@ class BasicInstanceBuilder {
      }
 
     static AnnotationTerm getAnnotationTerm() {
-        log.debug "getAnnotationTerm()"
         def annotation = saveDomain(getUserAnnotationNotExist())
         def term = saveDomain(getTermNotExist())
         def user = getUser1()
@@ -379,7 +333,6 @@ class BasicInstanceBuilder {
     }
 
     static AnnotationTerm getAnnotationTermNotExist(UserAnnotation annotation=saveDomain(getUserAnnotationNotExist()),boolean save=false) {
-        log.debug "getAnnotationTermNotExist()"
         def term = getTermNotExist()
         term.ontology = annotation.project.ontology
         saveDomain(term)
@@ -389,7 +342,6 @@ class BasicInstanceBuilder {
     }
 
     static UserAnnotation getUserAnnotation() {
-        log.debug "getUserAnnotation()"
         def annotation = UserAnnotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: getImageInstance(),
@@ -404,7 +356,6 @@ class BasicInstanceBuilder {
     }
 
     static UserAnnotation getUserAnnotationNotExist(Project project = getImageInstance().project, ImageInstance image,boolean save = false) {
-        log.debug "getUserAnnotationNotExist()"
         UserAnnotation annotation = new UserAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image:image,
@@ -417,7 +368,6 @@ class BasicInstanceBuilder {
 
 
     static SharedAnnotation getSharedAnnotation() {
-        log.debug "getSharedAnnotation()"
         def sharedannotation = SharedAnnotation.findOrCreateWhere(
                 sender: User.findByUsername(Infos.GOODLOGIN),
                 comment: "This is a test",
@@ -427,7 +377,6 @@ class BasicInstanceBuilder {
     }
 
     static SharedAnnotation getSharedAnnotationNotExist(boolean save = false) {
-        log.debug "getSharedAnnotationNotExist()"
         def sharedannotation = new SharedAnnotation(
                 sender: User.findByUsername(Infos.GOODLOGIN),
                 comment: "This is a test",
@@ -438,7 +387,6 @@ class BasicInstanceBuilder {
 
 
     static ImageFilter getImageFilter() {
-        log.debug "getImageFilter()"
        def imagefilter = ImageFilter.findByName("imagetest")
        if(!imagefilter) {
            imagefilter = new ImageFilter(name:"imagetest",baseUrl:"baseurl",processingServer:getProcessingServer())
@@ -448,13 +396,11 @@ class BasicInstanceBuilder {
     }
 
     static ImageFilter getImageFilterNotExist(boolean save = false) {
-        log.debug "getImageFilterNotExist()"
        def imagefilter = new ImageFilter(name:"imagetest"+new Date(),baseUrl:"baseurl",processingServer:getProcessingServer())
         save ? saveDomain(imagefilter) : checkDomain(imagefilter)
     }
 
     static ImageFilterProject getImageFilterProject() {
-        log.debug "getImageFilterProject()"
        def imageFilterProject = ImageFilterProject.find()
         if(!imageFilterProject) {
             imageFilterProject = new ImageFilterProject(imageFilter:getImageFilter(),project:getProject())
@@ -464,7 +410,6 @@ class BasicInstanceBuilder {
     }
 
     static ImageFilterProject getImageFilterProjectNotExist(boolean save = false) {
-        log.debug "getImageFilterProjectNotExist()"
         def imagefilter = saveDomain(getImageFilterNotExist())
         def project = saveDomain(getProjectNotExist())
         def ifp = new ImageFilterProject(imageFilter: imagefilter, project: project)
@@ -473,7 +418,6 @@ class BasicInstanceBuilder {
     }
 
     static AbstractImage getAbstractImage() {
-        log.debug "getAbstractImage()"
         AbstractImage image = AbstractImage.findByFilename("filename")
         if (!image) {
             image = new AbstractImage(filename: "filename", scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath")
@@ -482,20 +426,17 @@ class BasicInstanceBuilder {
     }
 
     static AbstractImage getAbstractImageNotExist(boolean save = false) {
-        log.debug "getImageNotExist()"
         def image = new AbstractImage(filename: getRandomString(), scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath")
         save ? saveDomain(image) : checkDomain(image)
     }
 
     static AbstractImageGroup getAbstractImageGroup() {
-        log.debug "getAbstractImageGroup()"
         def abstractImage = saveDomain(getAbstractImageNotExist())
         def group = saveDomain(getGroupNotExist())
         saveDomain(new AbstractImageGroup(abstractImage:abstractImage, group:group))
     }
 
     static AbstractImageGroup getAbstractImageGroupNotExist(boolean save = false) {
-        log.debug "getAbstractImageGroupNotExist()"
         def group = saveDomain(getGroupNotExist())
         def abstractImage = saveDomain(getAbstractImageNotExist())
         def abstractImageGroup = new AbstractImageGroup(abstractImage: abstractImage, group: group)
@@ -503,7 +444,6 @@ class BasicInstanceBuilder {
     }
 
     static StorageAbstractImage getStorageAbstractImage() {
-        log.debug("getStorageAbstractImage()")
         def storage = getStorage()
         def abstractImage = getAbstractImage()
         StorageAbstractImage sai = StorageAbstractImage.findByStorageAndAbstractImage(storage, abstractImage)
@@ -515,7 +455,6 @@ class BasicInstanceBuilder {
     }
 
     static ProcessingServer getProcessingServer() {
-        log.debug "getProcessingServer()"
         def ps = ProcessingServer.findByUrl("processing_server_url")
         if (!ps) {
             ps = new ProcessingServer(url: "processing_server_url")
@@ -525,7 +464,6 @@ class BasicInstanceBuilder {
     }
 
     static Discipline getDiscipline() {
-        log.debug "getDiscipline()"
         def discipline = Discipline.findByName("BASICDISCIPLINE")
         if (!discipline) {
             discipline = new Discipline(name: "BASICDISCIPLINE")
@@ -535,13 +473,11 @@ class BasicInstanceBuilder {
     }
 
     static Discipline getDisciplineNotExist() {
-        log.debug "getDisciplineNotExist()"
         Discipline discipline = new Discipline(name: getRandomString())
         checkDomain(discipline)
     }
 
     static AnnotationFilter getAnnotationFilter() {
-        log.debug "getAnnotationFilter()"
         def filter = AnnotationFilter.findByName("BASICFILTER")
         if (!filter) {
             filter = new AnnotationFilter(name:"BASICFILTER",project:getProject(),user:getUser1())
@@ -554,7 +490,6 @@ class BasicInstanceBuilder {
     }
 
     static AnnotationFilter getAnnotationFilterNotExist() {
-        log.debug "getAnnotationFilterNotExist()"
         def annotationFilter = new AnnotationFilter(name:getRandomString(),project:getProject(),user: getUser1())
         annotationFilter.addToTerms(getTerm())
         annotationFilter.addToUsers(getUser1())
@@ -562,7 +497,6 @@ class BasicInstanceBuilder {
     }
 
     static Sample getSample() {
-        log.debug "getSample()"
         def sample = Sample.findByName("BASICSAMPLE")
         if (!sample) {
             sample = new Sample(name: "BASICSAMPLE")
@@ -571,14 +505,12 @@ class BasicInstanceBuilder {
     }
 
     static Sample getSampleNotExist() {
-        log.debug "getSampleNotExist()"
         def sample = new Sample(name: getRandomString())
         checkDomain(sample)
     }
 
 
     static Job getJob() {
-        log.debug  "getJob()"
         def job = Job.findByProjectAndSoftware(getProject(),getSoftware())
         if(!job) {
             job = new Job(project:getProject(),software:getSoftware())
@@ -588,26 +520,22 @@ class BasicInstanceBuilder {
     }
 
     static Job getJobNotExist(boolean save = false) {
-        log.debug "getJobNotExist()"
         Job job =  new Job(software:saveDomain(getSoftwareNotExist()), project : saveDomain(getProjectNotExist()))
         save ? saveDomain(job) : checkDomain(job)
     }
 
 
     static JobData getJobDataNotExist() {
-        log.debug "getJobDataNotExist()"
         JobData jobData =  new JobData(job:saveDomain(getJobNotExist()), key : "TESTKEY", filename: "filename.jpg")
         checkDomain(jobData)
     }
 
 
     static JobData getJobData() {
-        log.debug  "getJobData()"
         saveDomain(getJobDataNotExist())
     }
 
     static JobParameter getJobParameter() {
-         log.debug "getJobparameter()"
          def job = getJob()
          def softwareParam = getSoftwareParameter()
          def jobParameter = JobParameter.findByJobAndSoftwareParameter(job,softwareParam)
@@ -619,7 +547,6 @@ class BasicInstanceBuilder {
      }
 
      static JobParameter getJobParameterNotExist() {
-         log.debug "getJobparameterNotExist()"
          def job = saveDomain(getJobNotExist())
          def softwareParam = saveDomain(getSoftwareParameterNotExist() )
          def jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
@@ -627,7 +554,6 @@ class BasicInstanceBuilder {
      }
 
     static Ontology getOntology() {
-        log.debug "getOntology()"
         def ontology = Ontology.findByName("BasicOntology")
         if (!ontology) {
             ontology = new Ontology(name: "BasicOntology", user: getUser1())
@@ -640,7 +566,6 @@ class BasicInstanceBuilder {
     }
 
     static Ontology getOntologyNotExist(boolean save = false) {
-        log.debug "getOntologyNsotExist()"
         Ontology ontology = new Ontology(name: getRandomString() + "", user: getUser1())
         save ? saveDomain(ontology) : checkDomain(ontology)
         if (save) {
@@ -652,7 +577,6 @@ class BasicInstanceBuilder {
     }
 
     static Project getProject() {
-        log.debug "getProject()"
         def name = "BasicProject".toUpperCase()
         def project = Project.findByName(name)
         if (!project) {
@@ -667,7 +591,6 @@ class BasicInstanceBuilder {
 
 
     static Project getProjectNotExist(boolean save = false) {
-        log.debug "getProjectNotExist()"
         Project project = new Project(name: getRandomString(), ontology: saveDomain(getOntologyNotExist()), discipline: getDiscipline(), description: "BasicDescription" )
         if(save) {
             saveDomain(project)
@@ -680,7 +603,6 @@ class BasicInstanceBuilder {
 
 
     static Relation getRelation() {
-        log.debug "getRelation()"
         def relation = Relation.findByName("BasicRelation")
         if (!relation) {
             relation = new Relation(name: "BasicRelation")
@@ -690,13 +612,11 @@ class BasicInstanceBuilder {
     }
 
     static Relation getRelationNotExist() {
-        log.debug "getRelationNotExist()"
         def relation = new Relation(name: getRandomString())
         checkDomain(relation)
     }
 
     static RelationTerm getRelationTerm() {
-        log.debug "getRelationTerm()"
         def relation = getRelation()
         def term1 = getTerm()
         def term2 = getAnotherBasicTerm()
@@ -710,7 +630,6 @@ class BasicInstanceBuilder {
     }
 
     static RelationTerm getRelationTermNotExist() {
-        log.debug "getRelationTermNotExist()"
         def relation = saveDomain(getRelationNotExist())
         def term1 = saveDomain(getTermNotExist())
         def term2 = saveDomain(getTermNotExist())
@@ -721,7 +640,6 @@ class BasicInstanceBuilder {
     }
 
     static Mime getMime() {
-        log.debug "getMime1()"
         def mime = Mime.findByExtension("tif")
         if(!mime) {
             mime = new Mime(extension:"tif",mimeType: "tif")
@@ -735,7 +653,6 @@ class BasicInstanceBuilder {
     }
 
     static Mime getMimeNotExist() {
-        log.debug "getMimeNotExist()"
         def mime = Mime.findByMimeType("mimeT");
         if (mime == null) {
             mime = new Mime(extension: "ext", mimeType: "mimeT")
@@ -755,7 +672,6 @@ class BasicInstanceBuilder {
     }
 
     static AnnotationProperty getAnnotationProperty() {
-        log.debug "getAnnotationProperty()"
         def annotation = getUserAnnotation()
         def annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,'MyKeyBasic')
         if (!annotationProperty) {
@@ -766,25 +682,21 @@ class BasicInstanceBuilder {
     }
 
     static AnnotationProperty getAnnotationPropertyNotExist(UserAnnotation annotation = getUserAnnotation(), boolean save = false) {
-        log.debug "getAnnotationProperty()"
         def annotationProperty = new AnnotationProperty(annotation: annotation, key: getRandomString(),value: "MyValueBasic")
         save? saveDomain(annotationProperty) : checkDomain(annotationProperty)
     }
 
     static Instrument getScanner() {
-        log.debug "getScanner()"
         Instrument scanner = new Instrument(brand: "brand", model: "model")
         saveDomain(scanner)
     }
 
     static Instrument getNewScannerNotExist(boolean save  = false) {
-        log.debug "getNewScannerNotExist()"
         def scanner = new Instrument(brand: "newBrand", model: getRandomString())
         save? saveDomain(scanner) : checkDomain(scanner)
     }
 
     static Sample getSlide() {
-        log.debug "getSlide()"
         def name = "BasicSlide".toUpperCase()
         def slide = Sample.findByName(name)
         if (!slide) {
@@ -795,13 +707,11 @@ class BasicInstanceBuilder {
     }
 
     static Sample getSlideNotExist() {
-        log.debug "getSlideNotExist()"
         def slide = new Sample(name: getRandomString())
         checkDomain(slide)
     }
 
     static User getUser(String username, String password) {
-        log.debug "getUser()"
         def user = SecUser.findByUsername(username)
         if (!user) {
             user = new User(username: username,firstname: "Basic",lastname: "User",email: "Basic@User.be",password: password,enabled: true)
@@ -817,14 +727,12 @@ class BasicInstanceBuilder {
     }
 
     static User getUserNotExist(boolean save = false) {
-        log.debug "getUserNotExist()"
        User user = new User(username: getRandomString(),firstname: "BasicNotExist",lastname: "UserNotExist",email: "BasicNotExist@User.be",password: "password",enabled: true)
         user.generateKeys()
         save ? saveDomain(user) :  checkDomain(user)
     }
 
     static Group getGroup() {
-        log.debug "getGroup()"
         def name = "BasicGroup".toUpperCase()
         def group = Group.findByName(name)
         if (!group) {
@@ -835,7 +743,6 @@ class BasicInstanceBuilder {
     }
 
     static Group getGroupNotExist() {
-        log.debug "getGroupNotExist()"
         Group group = new Group(name: getRandomString())
         checkDomain(group)
     }
@@ -850,14 +757,12 @@ class BasicInstanceBuilder {
     }
 
     static Storage getStorageNotExist() {
-        log.debug "getStorageNotExist()"
         Storage storage = new Storage(name: getRandomString(), basePath: getRandomString(), ip: getRandomString(), port: 22, user: getUser1())
         checkDomain(storage)
         storage
     }
 
     static Term getTerm() {
-        log.debug "getTerm()"
         def term = Term.findByName("BasicTerm")
         if (!term) {
             term = new Term(name: "BasicTerm", ontology: getOntology(), color: "FF0000")
@@ -867,7 +772,6 @@ class BasicInstanceBuilder {
     }
 
     static Term getAnotherBasicTerm() {
-        log.debug "getTerm()"
         def term = Term.findByName("AnotherBasicTerm")
         if (!term) {
             term = new Term(name: "AnotherBasicTerm", ontology: getOntology(), color: "F0000F")
@@ -877,18 +781,15 @@ class BasicInstanceBuilder {
     }
 
     static Term getTermNotExist(boolean save = false) {
-        log.debug "getTermNotExist()"
         getTermNotExist(saveDomain(getOntologyNotExist()), save)
     }
 
     static Term getTermNotExist(Ontology ontology,boolean save = false) {
-        log.debug "getTermNotExist()"
         Term term = new Term(name: getRandomString(), ontology: ontology, color: "0F00F0")
         save ? saveDomain(term) :  checkDomain(term)
     }
 
     static Software getSoftware() {
-        log.debug "getSoftware()"
         def software = Software.findByName("AnotherBasicSoftware")
         if (!software) {
             software = new Software(name: "AnotherBasicSoftware", serviceName:"helloWorldJobService")
@@ -898,14 +799,12 @@ class BasicInstanceBuilder {
     }
 
     static Software getSoftwareNotExist() {
-        log.debug "getSoftwareNotExist()"
         def software = new Software(name: getRandomString(),serviceName:"helloWorldJobService")
         software.validate()
         software
     }
 
     static SoftwareParameter getSoftwareParameter() {
-        log.debug "getSoftwareParameter()"
         Software software = getSoftware()
         def parameter = SoftwareParameter.findBySoftware(software)
         if (!parameter) {
@@ -916,14 +815,12 @@ class BasicInstanceBuilder {
     }
 
     static SoftwareParameter getSoftwareParameterNotExist() {
-        log.debug "getSoftwareParameterNotExist()"
         Software software = getSoftware()
         def parameter =   new SoftwareParameter(name: getRandomString(),software:software,type:"String")
         checkDomain(parameter)
     }
 
     static ImageServer getImageServer() {
-        log.debug "getImageServer()"
 
         def imageServer = ImageServer.findByName("bidon")
         if (!imageServer) {
@@ -942,13 +839,11 @@ class BasicInstanceBuilder {
     }
 
     static SoftwareProject getSoftwareProject() {
-        log.debug "getSoftwareProject()"
         SoftwareProject softproj = new SoftwareProject(software:getSoftware(),project:getProject())
         saveDomain(softproj)
     }
 
     static SoftwareProject getSoftwareProjectNotExist(Software software = saveDomain(getSoftwareNotExist()), Project project = saveDomain(getProjectNotExist()), boolean save = false) {
-        log.debug "getSoftwareProjectNotExist()"
         SoftwareProject softproj = new SoftwareProject(software:software,project:project)
         save ? saveDomain(softproj) : checkDomain(softproj)
     }

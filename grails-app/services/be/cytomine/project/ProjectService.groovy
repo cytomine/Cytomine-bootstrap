@@ -120,7 +120,6 @@ class ProjectService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.check(domain,DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction,linkProject: false,refuseUndo:true)
-        println "pwet="+c.refuseUndo
         return executeCommand(c,domain,null)
     }
 

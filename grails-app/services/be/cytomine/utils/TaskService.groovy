@@ -41,7 +41,7 @@ class TaskService  {
      */
     def updateTask(Task task, String comment) {
         if (task) {
-            SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+            SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
         }
         updateTask(task,(task? task.progress : -1),comment)
     }
@@ -57,7 +57,7 @@ class TaskService  {
                 //log.info "task is null, ignore task"
                 return
             }
-            SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+            SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
             log.info "Progress = $progress"
             task.progress = progress
             task.addComment(comment)
@@ -75,7 +75,7 @@ class TaskService  {
             log.info "task is null, ignore task"
             return
         }
-        SecurityACL.isSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+        SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
         task.progress = 100
         updateTask(task,100,"Task completed...")
         task = get(task.id)

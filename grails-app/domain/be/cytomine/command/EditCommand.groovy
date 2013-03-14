@@ -40,8 +40,6 @@ class EditCommand extends Command {
      */
     def execute() {
         initService()
-        println "4.image=${this.domain}"
-        println "5.image=${domain}"
         //Retrieve domain to update it
         def updatedDomain = this.domain
         def oldDomain = updatedDomain.encodeAsJSON()

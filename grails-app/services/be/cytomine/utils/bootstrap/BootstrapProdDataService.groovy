@@ -84,11 +84,9 @@ class BootstrapProdDataService {
         String destPath = null
         String cmd = null
         String dirParent = null
-        println "create StorageAbstractImage"
         AbstractImage.list().each {
             new StorageAbstractImage(storage: Storage.findByUser(it.user), abstractImage: it).save()
         }
-        println "create generateCopyToStorageScript"
         AbstractImage.list().each {
             destStorage = Storage.findByUser(it.user)
             originPath = [oldStorageBasePath, it.getPath()].join(File.separator)
@@ -211,7 +209,6 @@ class BootstrapProdDataService {
         //create storage for each user
         for (user in User.findAll()) {
             String storage_base_path = grailsApplication.config.storage_path
-            println "storage_base_path : $storage_base_path"
             String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
             if (!Storage.findByUser(user)) {
 

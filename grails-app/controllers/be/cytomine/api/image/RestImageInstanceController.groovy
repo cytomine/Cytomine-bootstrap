@@ -267,10 +267,6 @@ class RestImageInstanceController extends RestController {
         } else if ((params.zoom != null) && (zoom < zoomMinMax.min)) {
             zoom = zoomMinMax.min
         }
-
-        println "zoom=$zoom"
-        println "zoomMinMax=$zoomMinMax"
-
         try {
             return getMaskImage(annotation, term, zoom, true)
         } catch (Exception e) {

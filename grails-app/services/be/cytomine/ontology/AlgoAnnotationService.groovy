@@ -206,8 +206,6 @@ class AlgoAnnotationService extends ModelService {
                 }
             }
 
-            println "annotationsWithTerms=" + annotationsWithTerms
-
             //annotationsWithTerms = annotationsWithTerms.collect{it[0]}
 
             //inList crash is argument is an empty list so we have to use if/else at this time
@@ -346,7 +344,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def update(AlgoAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(annotation,currentUser)
+        SecurityACL.checkIsCreator(annotation,currentUser)
         //simplify annotation
         try {
             def data = simplifyGeometryService.simplifyPolygon(jsonNewData.location, annotation?.geometryCompression)
@@ -370,7 +368,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def delete(AlgoAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isCreator(domain,currentUser)
+        SecurityACL.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

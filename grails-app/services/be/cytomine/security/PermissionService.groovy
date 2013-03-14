@@ -37,9 +37,6 @@ class PermissionService {
                 aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
             }
 
-            println "${domain.class} ${domain.id} ${domain.version}"
-            println "${username} ${SecUser.findByUsername(username)} ${SecUser.findByUsername(username).version}"
-
             log.info "Try to add permission..."
             aclUtilService.addPermission(domain, username, permission)
             log.info "Permission added..."

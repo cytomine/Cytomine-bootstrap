@@ -123,19 +123,19 @@ class SecurityACL {
        }
     }
 
-    static public def isSameUser(SecUser user,SecUser currentUser) {
+    static public def checkIsSameUser(SecUser user,SecUser currentUser) {
         if (!currentUser.admin && (user.id!=currentUser.id)) {
             throw new ForbiddenException("You don't have the right to read this resource! You must be the same user!")
         }
     }
 
-    static public def isCreator(CytomineDomain domain,SecUser currentUser) {
+    static public def checkIsCreator(CytomineDomain domain,SecUser currentUser) {
         if (!currentUser.admin && (currentUser.id!=domain.userDomainCreator().id)) {
             throw new ForbiddenException("You don't have the right to read this resource! You must be the same user!")
         }
     }
 
-    static public def isNotSameUser(SecUser user,SecUser currentUser) {
+    static public def checkIsNotSameUser(SecUser user,SecUser currentUser) {
         if ((currentUser.id==user.id)) {
             throw new ForbiddenException("You cannot do this action with your own profil!")
         }

@@ -351,7 +351,7 @@ class UserAnnotationService extends ModelService {
      */
     def update(UserAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isSameUser(annotation.user,currentUser)
+        SecurityACL.checkIsSameUser(annotation.user,currentUser)
         //simplify annotation
         try {
             def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
@@ -383,7 +383,7 @@ class UserAnnotationService extends ModelService {
      */
     def delete(UserAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.isSameUser(domain.user,currentUser)
+        SecurityACL.checkIsSameUser(domain.user,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

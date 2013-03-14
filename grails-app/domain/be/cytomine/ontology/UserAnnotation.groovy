@@ -54,9 +54,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      * @return Terms list
      */
     def terms() {
-        println "this.version=${this.version}"
         if(this.version!=null) {
-            println "AnnotationTerm.findAllByUserAnnotation=${AnnotationTerm.findAllByUserAnnotation(this).collect {it.term}}"
             AnnotationTerm.findAllByUserAnnotation(this).collect {it.term}
         } else {
             return []
@@ -82,7 +80,6 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      * @return
      */
     List<Term> termsForReview() {
-        println "termsForReview=${terms().unique()}"
         terms().unique()
     }
 

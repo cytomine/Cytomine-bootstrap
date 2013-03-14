@@ -78,7 +78,6 @@ class RestAnnotationDomainController extends RestController {
         Project project = projectService.read(params.long('idproject'))
 
         if(params.getBoolean('reviewed')) {
-            println "restReviewedAnnotation.listAnnotationByProjectAndTerm"
             forward(controller: "restReviewedAnnotation", action: "listAnnotationByProjectAndTerm")
         } else {
             List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
@@ -103,7 +102,6 @@ class RestAnnotationDomainController extends RestController {
         }
 
         if(params.getBoolean('reviewed')) {
-            println "restReviewedAnnotation.downloadDocumentByProject"
             forward(controller: "restReviewedAnnotation", action: "downloadDocumentByProject")
         } else {
             if (!users.isEmpty() && SecUser.read(users.first()).algo()) {

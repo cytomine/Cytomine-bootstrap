@@ -122,7 +122,6 @@ class JSONUtils {
      * @return  Value as Cytomine Domain
      */
     static public def getJSONAttrDomain(def json, String attr, def domain, String column, String columnType, boolean mandatory) {
-        println "get attr $attr"
         if (json[attr] != null && !json[attr].toString().equals("null")) {
             def domainRead = domain.findWhere("$column": convertValue(json[attr].toString(), columnType))
             if (!domainRead) {

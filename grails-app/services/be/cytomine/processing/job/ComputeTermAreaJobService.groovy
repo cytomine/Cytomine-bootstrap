@@ -42,8 +42,6 @@ class ComputeTermAreaJobService extends AbstractJobService{
             allArgs[index++] = it
         }
 
-        println "allArgs=$allArgs"
-
         printStartJobInfo(job,allArgs)
         launchAndWaitSoftware(allArgs,job)
         printStopJobInfo(job,allArgs)

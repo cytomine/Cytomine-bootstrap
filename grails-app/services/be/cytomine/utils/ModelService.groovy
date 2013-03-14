@@ -80,8 +80,6 @@ abstract class ModelService {
      * Execute command with JSON data
      */
     protected executeCommand(Command c, Task task = null) {
-        log.info "==========> ${this} delete"
-        println "2.image=${c.domain}"
         if(c instanceof DeleteCommand) {
             def domainToDelete = c.domain
 
@@ -137,7 +135,6 @@ abstract class ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(Map json) {
-        println "retrieve json $json"
         CytomineDomain domain = currentDomain().get(json.id)
         if (!domain) {
             throw new ObjectNotFoundException("${currentDomain().class} " + json.id + " not found")

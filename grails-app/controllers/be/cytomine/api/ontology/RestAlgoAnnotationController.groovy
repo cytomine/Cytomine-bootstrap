@@ -252,8 +252,6 @@ class RestAlgoAnnotationController extends RestController {
 
             def annotationsId = annotations.collect {it.id}
 
-           println "annotationsId="+annotationsId
-            println "term="+terms
             def annotationTerms = AlgoAnnotationTerm.createCriteria().list {
                 inList("annotationIdent", annotationsId)
                 inList("term.id", terms)

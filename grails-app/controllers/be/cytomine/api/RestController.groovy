@@ -57,7 +57,6 @@ class RestController {
      */
     public Object update(def service, def json) {
         try {
-            println "UPDATE=$json"
             def domain =  service.retrieve(json)
             def result = service.update(domain,json)
             responseResult(result)

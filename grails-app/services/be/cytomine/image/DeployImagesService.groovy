@@ -87,8 +87,6 @@ class DeployImagesService {
             aig.save(flush: true,failOnError: true)*/
 
             storages.each { storage ->
-                println "storage=$storage"
-                println "abstractImage="+abstractImage.version
                 storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()))
                 /*StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
                 sai.save(flush: true,failOnError: true)*/
