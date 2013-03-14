@@ -200,6 +200,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         if (imageServerStorages == null || imageServerStorages.size() == 0 || width == null || height == null) return null
         Resolver resolver = Resolver.getResolver(imageServerStorages[0].imageServer.className)
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
-        return resolver.getZoomLevels(imageServerStorages[0].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator), width, height)
+        return resolver?.getZoomLevels(imageServerStorages[0].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator), width, height)
     }
 }
