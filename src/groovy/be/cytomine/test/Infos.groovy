@@ -57,7 +57,6 @@ class Infos {
      * @param project Project
      */
     static void addUserRight(User user, Project project) {
-        long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         aclUtilService.addPermission project, user.username, ADMINISTRATION
@@ -71,7 +70,6 @@ class Infos {
     }
 
     static void addUserRight(User user, Ontology ontology) {
-        long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
@@ -85,7 +83,6 @@ class Infos {
     }
 
     static void addUserRight(User user, Software software) {
-        long start = System.currentTimeMillis()
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")

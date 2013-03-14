@@ -23,7 +23,6 @@ class RestUserJobController extends RestController {
     def cytomineService
     def secUserService
     def projectService
-    def ontologyService
     def imageInstanceService
     def jobService
     def dataSource
@@ -140,7 +139,7 @@ class RestUserJobController extends RestController {
 
             } else if (params.getLong("image")) {
                 //just get user job that add data to images
-                def userJobs = []
+
                 def image = imageInstanceService.read(params.getLong("image"))
                 if (!image) {
                     throw new ObjectNotFoundException("Image ${params.image} was not found!")

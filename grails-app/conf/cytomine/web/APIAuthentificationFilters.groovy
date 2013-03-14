@@ -55,8 +55,6 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             String path = request.forwardURI //original URI Request
             String canonicalResource = path + queryString
             String messageToSign = canonicalHeaders + canonicalExtensionHeaders + canonicalResource
-            String signature = ""
-            String method = authorization.substring(0, authorization.indexOf(" "))
             String accessKey = authorization.substring(authorization.indexOf(" ") + 1, authorization.indexOf(":"))
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
 		
@@ -74,7 +72,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
 
             // base64-encode the hmac
             byte[] signatureBytes = Base64.encode(rawHmac)
-            signature = new String(signatureBytes)
+            def signature = new String(signatureBytes)
             if (authorizationSign == signature) {
                 //print "authorizationSign == signature : " + authorizationSign + " == " + signature
                 SpringSecurityUtils.reauthenticate user.getUsername(), null

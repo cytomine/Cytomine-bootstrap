@@ -19,7 +19,6 @@ class ImageProcessingService {
     private static final int BLACK = 0
     private static final int WHITE = 255
 
-
     static transactional = false
 
     public def isInROI(ImagePlus ip, x, y) {
@@ -44,7 +43,7 @@ class ImageProcessingService {
         filler = new ij.plugin.filter.Binary()
         filler.setup("fill", ori)
         filler.run(ori.getProcessor())*/
-        int k = 0
+
         Collection<Coordinate[]> components = new ArrayList<Coordinate[]>()
         Collection<Coordinate[]> polygons = new ArrayList<Coordinate[]>()
         for (int x = 0; x < img.getWidth(); x++) {

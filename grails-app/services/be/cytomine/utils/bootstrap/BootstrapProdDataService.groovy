@@ -119,7 +119,7 @@ class BootstrapProdDataService {
                 abstractImageService.delete(AbstractImage.read(it.id), null, false)
                 return
             }
-            Storage storage = storageAbstractImage.first().storage
+
             log.info "extract nested files of $it.filename"
             ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("%Error%")
             if (properties && properties.size() > 0) {
@@ -173,7 +173,7 @@ class BootstrapProdDataService {
                 log.error "cannot get storage for $it.filename"
                 return
             }
-            Storage storage = storageAbstractImage.first().storage
+
             log.info "extract nested files of $it.filename"
             ArrayList<ImageProperty> properties = ImageProperty.findAllByKeyLike("Error")
             if (properties && properties.size() > 0) {

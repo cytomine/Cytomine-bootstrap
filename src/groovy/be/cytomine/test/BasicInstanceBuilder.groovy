@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory
 class BasicInstanceBuilder {
 
     def springSecurityService
-    def secRoleService
 
     private static Log log = LogFactory.getLog(BasicInstanceBuilder.class)
 
@@ -68,7 +67,6 @@ class BasicInstanceBuilder {
      */
     static void compare(map, json) {
         map.each {
-            def propertyName = it.key
             def propertyValue = it.value
             def compareValue = json[it.key]
             assert toString(propertyValue).equals(toString(compareValue))

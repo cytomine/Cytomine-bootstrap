@@ -560,8 +560,6 @@ class RestReviewedAnnotationController extends RestController {
         }
         def termsName = Term.findAllByIdInList(terms).collect { it.toString() }
         def usersName = SecUser.findAllByIdInList(users).collect { it.toString() }
-        def imageInstances = ImageInstance.findAllByIdInList(images)
-
 
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;

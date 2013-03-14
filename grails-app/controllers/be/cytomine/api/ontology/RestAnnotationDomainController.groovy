@@ -138,7 +138,6 @@ class RestAnnotationDomainController extends RestController {
      */
     def add = {
         SecUser user = cytomineService.currentUser
-        def result
         if (user.algo()) {
             forward(controller: "restAlgoAnnotation", action: "add")
         } else {
@@ -157,7 +156,6 @@ class RestAnnotationDomainController extends RestController {
         else {
             try {
                 SecUser user = cytomineService.currentUser
-                def result
                 if (user.algo()) {
                     //if user is algo, redirect to the correct controller
                     forward(controller: "restAlgoAnnotation", action: "update")
@@ -181,7 +179,6 @@ class RestAnnotationDomainController extends RestController {
                         }
                     }
                 }
-                //responseResult(result)
             } catch (CytomineException e) {
                 log.error(e)
                 response([success: false, errors: e.msg], e.code)
@@ -217,8 +214,6 @@ class RestAnnotationDomainController extends RestController {
             if (!annotation) {
                 throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
             }
-
-            def response = [:]
 
             //Is the first polygon always the big 'boundary' polygon?
             String newGeom = fillForm(annotation.location.toText())

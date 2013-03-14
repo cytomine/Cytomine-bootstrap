@@ -32,7 +32,7 @@ class PermissionService {
 
             ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
             try {
-                MutableAcl acl = (MutableAcl) aclService.readAclById(oi);
+                aclService.readAclById(oi);
             } catch (NotFoundException nfe) {
                 aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
             }

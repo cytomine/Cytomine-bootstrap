@@ -258,7 +258,6 @@ class ReviewedAnnotationService extends ModelService {
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
-            def annotationID = result?.data?.reviewedannotation?.id
             return result
         }
     }

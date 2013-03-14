@@ -32,8 +32,6 @@ class RetrievalService {
 
     ApplicationContext applicationContext
 
-
-
     /**
      * Search similar annotation and best term for an annotation
      * @param project project which will provide annotation learning set
@@ -290,7 +288,6 @@ class RetrievalService {
         HttpClient client = new HttpClient();
         client.connect(URL, "xxx", "xxx");
         client.get()
-        int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
         return response

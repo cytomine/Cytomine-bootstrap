@@ -80,30 +80,30 @@ class LoginController {
      */
     def authfail = {
 
-        def username = session[UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY]
-        def msg
+        def msg = ''
         def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
         if (exception) {
+            //:todo put error messages in i18n
             if (exception instanceof AccountExpiredException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.expired
+                msg = "Account expired"
             }
             else if (exception instanceof CredentialsExpiredException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.passwordExpired
+                msg = "Password expired"
             }
             else if (exception instanceof DisabledException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.disabled
+                msg = "Account disabled"
             }
             else if (exception instanceof LockedException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.locked
+                msg = "Account locked"
             }
             else {
-                msg = SpringSecurityUtils.securityConfig.errors.login.fail
+                msg = "Bad login or password"
             }
         }
 
         if (springSecurityService.isAjax(request)) {
             response.status = 403
-            render([success: false, message: 'access denied'] as JSON)
+            render([success: false, message: msg] as JSON)
         }
 
     }

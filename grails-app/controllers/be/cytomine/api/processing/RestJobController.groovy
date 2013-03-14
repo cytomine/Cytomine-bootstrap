@@ -21,11 +21,8 @@ class RestJobController extends RestController {
     def jobService
     def softwareService
     def projectService
-    def jobParameterService
     def secUserService
-    def backgroundService
     def algoAnnotationService
-    def annotationTermService
     def algoAnnotationTermService
     def jobDataService
     def taskService
@@ -132,7 +129,7 @@ class RestJobController extends RestController {
 
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
-            //TODO:: Optim inseatd of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
+            //TODO:: Optim instead of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
             taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
             List<ReviewedAnnotation> reviewed = jobService.hasReviewedAnnotation(annotations)
