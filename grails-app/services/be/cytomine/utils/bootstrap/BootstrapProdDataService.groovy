@@ -43,7 +43,7 @@ class BootstrapProdDataService {
         getAbstractImageNestedFiles()
         initUserIntoAbstractImage()
         initUserStorages()
-        generateCopyToStorageScript()
+        //generateCopyToStorageScript()
     }
 
 
@@ -205,7 +205,7 @@ class BootstrapProdDataService {
 
     private def initUserStorages() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-
+        println "initUserStorages"
         //create storage for each user
         for (user in User.findAll()) {
             String storage_base_path = grailsApplication.config.storage_path
@@ -228,13 +228,13 @@ class BootstrapProdDataService {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-                    fileSystemService.makeRemoteDirectory(
-                            storage.getIp(),
-                            storage.getPort(),
-                            storage.getUsername(),
-                            storage.getPassword(),
-                            storage.getKeyFile(),
-                            storage.getBasePath())
+//                    fileSystemService.makeRemoteDirectory(
+//                            storage.getIp(),
+//                            storage.getPort(),
+//                            storage.getUsername(),
+//                            storage.getPassword(),
+//                            storage.getKeyFile(),
+//                            storage.getBasePath())
 
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
@@ -257,6 +257,7 @@ class BootstrapProdDataService {
             }
 
         }
+        println "initUserStorages end"
     }
 
     private def addPermissionsOnOntologyAndSoftware() {

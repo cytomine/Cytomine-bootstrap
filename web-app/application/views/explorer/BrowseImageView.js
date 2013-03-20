@@ -193,7 +193,12 @@ var BrowseImageView = Backbone.View.extend({
 
     show: function (options) {
         var self = this;
-        if (options.goToAnnotation != undefined) {
+
+        console.log("show!");
+        console.log(options.goToAnnotation);
+        console.log(options.goToAnnotation.value);
+        if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
+
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
                     var layer = _.find(self.layers, function (layer) {

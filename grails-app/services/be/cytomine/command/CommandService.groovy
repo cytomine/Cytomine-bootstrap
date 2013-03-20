@@ -45,7 +45,6 @@ class CommandService {
      * if success, put http response code as successCode
      */
     def processCommand(Command c, int successCode) throws CytomineException {
-        log.debug "processCommand: ${c.class}"
         String postData = c.json?.toString()
         def maxRequestSize = grailsApplication.config.cytomine.maxRequestSize
 
@@ -64,14 +63,10 @@ class CommandService {
             c.save()
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project,user: c.user, message: c.actionMessage)
             ch.save();
-            log.info "Save on undo stack: ${c.saveOnUndoRedoStack}"  + " transaction " + c.transaction?.id
 
             if (c.saveOnUndoRedoStack) {
-                log.debug "Save..."
                 def item = new UndoStackItem(command: c, user: c.user, transaction: c.transaction)
-                log.info item.validate()
                 item.save(flush: true,failOnError: true)
-                log.info "Item = ${item}"
             }
         }
         log.debug "result.status=" + result.status

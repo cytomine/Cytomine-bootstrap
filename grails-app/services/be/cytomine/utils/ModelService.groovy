@@ -101,7 +101,6 @@ abstract class ModelService {
             }
 
             dependencyMethodName.unique().eachWithIndex { method, index ->
-                log.info "====================> call ${method} with task ${task}"
                 taskService.updateTask(task, (int)((double)index/(double)numberOfDirectDependence)*100, "")
                 this."$method"(domainToDelete,c.transaction,task)
             }

@@ -58,7 +58,6 @@ class TaskService  {
                 return
             }
             SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
-            log.info "Progress = $progress"
             task.progress = progress
             task.addComment(comment)
             task = task.saveOnDatabase()
@@ -72,7 +71,6 @@ class TaskService  {
      */
     def finishTask(Task task) {
         if(!task) {
-            log.info "task is null, ignore task"
             return
         }
         SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)

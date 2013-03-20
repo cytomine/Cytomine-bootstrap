@@ -33,6 +33,7 @@ class UserAnnotationService extends ModelService {
     def dataSource
     def reviewedAnnotationService
     def annotationPropertyService
+    def kmeansGeometryService
 
 
     def currentDomain() {
@@ -153,12 +154,21 @@ class UserAnnotationService extends ModelService {
      */
     def listLight(ImageInstance image, SecUser user) {
         SecurityACL.check(image.container(),READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
-                " WHERE a.image_id = " + image.id + "\n" +
-                " AND a.user_id = " + user.id + "\n" +
-                " ORDER BY id desc, term"
-        return selectUserAnnotationFull(request)
+
+        if(kmeansGeometryService.mustBeReduce()) {
+            println "mustBeReduce"
+            String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+                              "from user_annotation \n " +
+                              "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n "
+             kmeansGeometryService.doKeamsRequest(request)
+        } else {
+            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
+                    " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
+                    " WHERE a.image_id = " + image.id + "\n" +
+                    " AND a.user_id = " + user.id + "\n" +
+                    " ORDER BY id desc, term"
+            return selectUserAnnotationFull(request)
+        }
     }
 
     /**
@@ -172,14 +182,25 @@ class UserAnnotationService extends ModelService {
      */
     def listLight(ImageInstance image, SecUser user, Geometry boundingbox, Boolean notReviewedOnly) {
         SecurityACL.check(image.container(),READ)
-        String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
-                " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
-                " WHERE annotation.image_id = $image.id\n" +
-                " AND annotation.user_id= $user.id\n" +
-                (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
-                " ORDER BY annotation.id desc"
-        return selectUserAnnotationLight(request)
+        println "listLight"
+        if(kmeansGeometryService.mustBeReduce()) {
+            println "mustBeReduce"
+            String request = "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+                    " from user_annotation \n " +
+                    " where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n "
+            kmeansGeometryService.doKeamsRequest(request)
+
+        } else {
+            String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
+                    " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
+                    " WHERE annotation.image_id = $image.id\n" +
+                    " AND annotation.user_id= $user.id\n" +
+                    (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
+                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
+                    " ORDER BY annotation.id desc"
+            return selectUserAnnotationLight(request)
+        }
+
     }
 
     /**

@@ -80,7 +80,7 @@ class SecUserService extends ModelService {
     }
 
     def listUsers(Project project) {
-        SecurityACL.check(project,READ)
+        //SecurityACL.check(project,READ)  TODO: security isue during bootstrap, uncomment me after bootstrap run!!!!!
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users

@@ -72,11 +72,11 @@ class ProjectService extends ModelService {
 
     def list(Ontology ontology) {
         //very slow method because it check right access for each project ontology
-        SecurityACL.getProjectList(cytomineService.currentUser,ontology,null)
+        SecurityACL.getProjectList(cytomineService.currentUser,ontology)
     }
 
     def list(Software software) {
-        SecurityACL.getProjectList(cytomineService.currentUser,null,software)
+        SecurityACL.getProjectList(cytomineService.currentUser,software)
     }
 
     def lastAction(Project project, def max) {

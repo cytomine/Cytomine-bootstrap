@@ -60,7 +60,11 @@ body {
 <![endif]-->
     <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>
 
+
+
 <g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
+
+   <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>
 
     <!-- RequireJS -->
     <script type="text/javascript" src="lib/requirejs/require.js"></script>

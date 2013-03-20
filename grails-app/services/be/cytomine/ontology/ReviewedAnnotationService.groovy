@@ -189,7 +189,6 @@ class ReviewedAnnotationService extends ModelService {
      * Execute request and format result into a list of map
      */
     private def selectReviewedAnnotationFull(String request) {
-        log.info "REQUEST=" + request
         def data = []
         long lastAnnotationId = -1
         long lastTermId = -1

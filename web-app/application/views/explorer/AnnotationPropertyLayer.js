@@ -3,7 +3,10 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, map) {
     var self = this;
     this.idImage = imageID;
     this.idUser = userID;
-    this.annotationsPropertiesCollection = null; //new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: "Key1"}).url().replace("json", "jsonp");
+   // this.annotationsPropertiesCollection = null; //new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: "Key1"}).url().replace("json", "jsonp");
+
+
+    this.annotationsPropertiesCollection = new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: 'null'}).url().replace("json", "jsonp")
 
     this.browseImageView = browseImageView;
     this.map = map;

@@ -1,4 +1,4 @@
-package be.cytomine.utils
+package be.cytomine.utils.geometry
 
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.Polygon

@@ -5,6 +5,7 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
@@ -89,10 +90,41 @@ class SecurityACL {
         }
     }
 
-    static public List<Project> getProjectList(SecUser user, Ontology ontology = null, Software software = null) {
+    static public List<Project> getProjectList(SecUser user) {
         //faster method
         if (user.admin) {
-            return ontology ? Project.findAllByOntology(ontology) : Project.list()
+            Project.list()
+        }
+        else {
+            return Project.executeQuery(
+                    "select distinct project "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                    "where aclObjectId.objectId = project.id " +
+                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+        }
+    }
+
+    static public List<Project> getProjectList(SecUser user, Ontology ontology) {
+        //faster method
+        if (user.admin) {
+            Project.findAllByOntology(ontology)
+        }
+        else {
+            return Project.executeQuery(
+                    "select distinct project "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                    "where aclObjectId.objectId = project.id " +
+                    "and aclEntry.aclObjectIdentity = aclObjectId.id "+
+                    (ontology? "and project.ontology.id = ${ontology.id} " : " ") +
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+        }
+    }
+
+    static public List<Project> getProjectList(SecUser user, Software software) {
+        //faster method
+        if (user.admin) {
+            SoftwareProject.findAllBySoftware(software).collect{it.project}
         }
         else {
             return Project.executeQuery(
@@ -100,7 +132,6 @@ class SecurityACL {
                     "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project, SoftwareProject as softwareProject "+
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                    (ontology? "and project.ontology.id = ${ontology.id} " : " ") +
                     (software? " and project.id = softwareProject.project.id and softwareProject.software.id = ${software.id} " : " ") +
                     "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
         }

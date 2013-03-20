@@ -12,7 +12,6 @@ class TransactionService {
      */
     Transaction start() {
         synchronized (this.getClass()) {
-            log.info "begin transaction:" + springSecurityService.principal.id
             //A transaction is a simple domain with a id (= transaction id)
             Transaction transaction = new Transaction()
             transaction.save(flush:true)

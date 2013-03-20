@@ -78,9 +78,14 @@ class RestUserAnnotationController extends RestController {
      * Bbbx params can be provide to select only annotation in a area
      */
     def listByImageAndUser = {
+        println "listByImageAndUser"
         def image = imageInstanceService.read(params.long('idImage'))
         def user = secUserService.read(params.idUser)
+        println "image=$image"
+        println "user=$user"
+        println "bbox=${params.bbox}"
         if (image && user && params.bbox) {
+
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
             def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly)

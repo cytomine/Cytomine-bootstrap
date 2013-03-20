@@ -6,9 +6,8 @@ var AnnotationStatus = {
 }
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
-    console.log(annotation);
     var location = annotation.location || annotation.get('location');
-
+//    var count = annotation.count ? annotation.count : "";
     var terms = annotation.term || annotation.get('term');
     var format = new OpenLayers.Format.WKT();
     var point = format.read(location);
@@ -26,6 +25,7 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
         listener: 'NO',
         importance: 10,
         term: term
+//        count: count
     };
     return feature;
 };
@@ -49,6 +49,7 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
 });
 
 var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map, reviewMode) {
+    var self = this;
     this.ontologyTreeView = ontologyTreeView;
     this.pointRadius = window.app.view.isMobile ? 12 : 8;
     this.name = name;
@@ -86,6 +87,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     var styleMap = new OpenLayers.StyleMap({
         'default': defaultStyle,
         'select': selectStyle
+//        'label' : "${count}"
     });
 
     console.log("reviewMode=" + reviewMode + " this.reviewLayer=" + this.reviewLayer);
@@ -117,6 +119,9 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
     console.log("Get annotations for layers:"+annotationsCollection);
 
+
+
+
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
         strategies: [
@@ -129,6 +134,31 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         }),
         'styleMap': styleMap
     });
+
+//    this.vectorsLayer.strategies[0].calculateBounds = function(mapBounds) {
+//        console.log("BOUNDS!");
+//        console.log(this.getMapBounds());
+//        console.log(this);
+//        console.log(self);
+//        console.log(self.vectorsLayer);
+//
+//        var annotationsCollection = null;
+//        if (!self.reviewLayer) {
+//            annotationsCollection = new AnnotationCollection({user: self.userID, image: self.imageID, term: undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
+//        } else {
+//            annotationsCollection = new AnnotationReviewedCollection({image: self.imageID, term: undefined, map: browseImageView}).url().replace("json", "jsonp");
+//        }
+//        self.vectorsLayer.refresh({ url : annotationsCollection +"&bbox=1,2,3,4"});
+//
+//
+//
+//
+//
+//        if(!mapBounds) {
+//            mapBounds = this.getMapBounds();
+//        }
+//    };
+    this.vectorsLayer.strategies[0].activate();
 
     this.controls = null;
     this.dialog = null;

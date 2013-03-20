@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.SecurityACL
+import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.Job
@@ -11,7 +12,9 @@ import be.cytomine.security.UserJob
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
 import org.hibernate.FetchMode
@@ -30,6 +33,7 @@ class AlgoAnnotationService extends ModelService {
     def simplifyGeometryService
     def dataSource
     def reviewedAnnotationService
+    def kmeansGeometryService
 
     def currentDomain() {
         return AlgoAnnotation
@@ -72,7 +76,6 @@ class AlgoAnnotationService extends ModelService {
     }
 
     def list(ImageInstance image, SecUser user) {
-        SecurityACL.check(image.container(),READ)
         return AlgoAnnotation.findAllByImageAndUser(image, user)
     }
 
@@ -92,13 +95,14 @@ class AlgoAnnotationService extends ModelService {
         //we use SQL request (not hibernate) to speedup time request
         String request
 
-        if (!notReviewedOnly) {
-            request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
-                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
-                    " WHERE annotation.image_id = $image.id\n" +
-                    " AND annotation.user_id= $user.id\n" +
-                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                    " ORDER BY annotation.id "
+        if(kmeansGeometryService.mustBeReduce()) {
+            request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n" +
+                       " from algo_annotation \n" +
+                       " where image_id = ${image.id} " +
+                       " and user_id = ${user.id} " +
+                        (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
+                       " and ST_IsEmpty(st_centroid(location))=false \n"
+            return kmeansGeometryService.doKeamsRequest(request)
 
         } else {
             //show only annotation that are not reviewed (use in review mode)
@@ -106,11 +110,14 @@ class AlgoAnnotationService extends ModelService {
                     " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
                     " WHERE annotation.image_id = $image.id\n" +
                     " AND annotation.user_id= $user.id\n" +
-                    " AND annotation.count_reviewed_annotations = 0 " +
+                    (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
                     " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
                     " ORDER BY annotation.id "
+            return selectAlgoAnnotationLight(request)
         }
+    }
 
+    def selectAlgoAnnotationLight(def request) {
         def sql = new Sql(dataSource)
 
         def data = []
@@ -259,7 +266,6 @@ class AlgoAnnotationService extends ModelService {
                 order 'created', 'desc'
             }
             long end = new Date().time
-            log.info "time = " + (end - start) + "ms"
             return annotations
         }
     }
@@ -273,33 +279,53 @@ class AlgoAnnotationService extends ModelService {
      * @return Algo Annotation List
      */
     def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+        println "toto ${userList} ${imageInstanceList}"
         SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
         } else if (imageInstanceList.isEmpty()) {
             return []
-        } else if (imageInstanceList.size() == project.countImages) {
+        } else {
             //Get all images
             //TODO:: May be speedup without using hibernate (direct SQL request)
-            List annotationsUsers = AlgoAnnotation.executeQuery(
-                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList])
 
-            List annotationsAlgo = AlgoAnnotation.executeQuery(
-                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList])
 
-            annotationsUsers.addAll(annotationsAlgo)
-            return annotationsUsers
-        } else {
+            String request = "" +
+                    "SELECT a.id as id, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project \n" +
+                    "FROM algo_annotation a, algo_annotation_term at \n" +
+                    "WHERE at.project_id = ${project.id} \n" +
+                    "AND at.term_id = ${term.id} \n" +
+                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
+                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
+                    "AND at.annotation_ident = a.id \n" +
+                    "UNION \n" +
+                    "SELECT a.id as id, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project \n" +
+                    "FROM user_annotation a, algo_annotation_term at \n" +
+                    "WHERE at.project_id = ${project.id} \n" +
+                    "AND at.term_id = ${term.id} \n" +
+                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
+                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')}) \n" :" ") +
+                    "AND at.annotation_ident = a.id \n" +
+                    "ORDER BY rate desc \n"
 
-            List annotationsUsers = AlgoAnnotation.executeQuery(
-                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM UserAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList, imageInstanceList: imageInstanceList])
 
-            List annotationsAlgo = AlgoAnnotation.executeQuery(
-                    "SELECT a, aat.rate, aat.term.id,aat.expectedTerm.id FROM AlgoAnnotation a, AlgoAnnotationTerm aat WHERE aat.project = :project AND aat.term = :term AND aat.userJob.id IN (:userList) AND a.image.id IN (:imageInstanceList) AND aat.annotationIdent=a.id ORDER BY aat.rate desc", [project: project, term: term, userList: userList, imageInstanceList: imageInstanceList])
-
-            annotationsUsers.addAll(annotationsAlgo)
-            return annotationsUsers
+            println request
+            return selecAlgoAnnotationLight(request)
         }
+    }
+
+
+    /**
+     * Execute request and format result into a list of map
+     */
+    private def selecAlgoAnnotationLight(String request) {
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            def url = (it.algo? UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256) : UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256))
+
+                data << [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project]
+        }
+        data
     }
 
     /**
@@ -413,4 +439,6 @@ class AlgoAnnotationService extends ModelService {
         }
 
     }
+
+
 }

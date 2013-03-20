@@ -1,6 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.SecUser
+import groovy.sql.Sql
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
@@ -101,7 +102,8 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     boolean checkPermission(Permission permission) {
-        return hasPermission(permission) || cytomineService.currentUser.admin
+        boolean right = hasPermission(permission) || cytomineService.currentUser.admin
+        return right
     }
 
     /**
@@ -128,27 +130,52 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
+//    boolean hasPermissionBadPerf(def domain,Permission permission) {
+//        try {
+//            SecUser currentUser = cytomineService.getCurrentUser()
+//            String usernameParentUser = currentUser.humanUsername()
+//            int mask = permission.mask
+//
+//            //TODO:: this function is call very often, make a direct SQL request instead 3 request
+//
+//            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
+//            AclSid aclSid = AclSid.findBySid(usernameParentUser)
+//            if(!aclObject) return false
+//            if(!aclSid) return false
+//
+//            boolean hasPermission = false;
+//            List<AclEntry> acls = AclEntry.findAllByAclObjectIdentityAndSid(aclObject,aclSid)
+//            acls.each { acl ->
+//                if(acl.mask>=mask) {
+//                    hasPermission=true
+//                }
+//            }
+//            return hasPermission
+//
+//        } catch (Exception e) {
+//            log.error e.toString()
+//            e.printStackTrace()
+//        }
+//        return false
+//    }
+
+    def dataSource
     boolean hasPermission(def domain,Permission permission) {
         try {
             SecUser currentUser = cytomineService.getCurrentUser()
-            String usernameParentUser = currentUser.humanUsername()
-            int mask = permission.mask
 
-            //TODO:: this function is call very often, make a direct SQL request instead 3 request
+            String request = "SELECT max(mask) FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
+            "WHERE aoi.object_id_identity = ${domain.id} " +
+            "AND sid.sid = '${currentUser.username}' " +
+            "AND ae.acl_object_identity = aoi.id "+
+            "AND ae.sid = sid.id "
 
-            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-            AclSid aclSid = AclSid.findBySid(usernameParentUser)
-            if(!aclObject) return false
-            if(!aclSid) return false
-
-            boolean hasPermission = false;
-            List<AclEntry> acls = AclEntry.findAllByAclObjectIdentityAndSid(aclObject,aclSid)
-            acls.each { acl ->
-                if(acl.mask>=mask) {
-                    hasPermission=true
-                }
+            int mask = 0;
+            new Sql(dataSource).eachRow(request) {
+                mask = it[0]
             }
-            return hasPermission
+
+            return mask >= permission.mask
 
         } catch (Exception e) {
             log.error e.toString()

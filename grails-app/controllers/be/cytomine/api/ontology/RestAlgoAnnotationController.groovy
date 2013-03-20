@@ -8,9 +8,14 @@ import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -35,6 +40,7 @@ class RestAlgoAnnotationController extends RestController {
     def dataSource
     def algoAnnotationTermService
     def paramsService
+    def unionGeometryService
 
     /**
      * List all annotation (created by algo) visible for the current user
@@ -184,13 +190,13 @@ class RestAlgoAnnotationController extends RestController {
      * List all annotation created by algo for specific project and a term
      */
     def listAnnotationByProjectAndTerm = {
-
+        log.info "listAnnotationByProjectAndTerm"
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'))
 
         if (project) {
 
-            List<Long> userList = paramsService.getParamsUserList(params.users,project)
+            List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
 
             if (term == null) {
@@ -303,6 +309,7 @@ class RestAlgoAnnotationController extends RestController {
         Term term = Term.read(params.getLong('idTerm'))
         Integer minIntersectLength = params.getInt('minIntersectionLength')
         Integer bufferLength = params.getInt('bufferLength')
+        Integer area = params.getInt('area')
         if (!image) {
             responseNotFound("ImageInstance", params.getLong('idImage'))
         }
@@ -313,7 +320,7 @@ class RestAlgoAnnotationController extends RestController {
             responseNotFound("User", params.getLong('idUser'))
         }
         else {
-            unionAnnotations(image, user, term, minIntersectLength, bufferLength)
+            unionAnnotations(image, user, term, minIntersectLength, bufferLength,area)
             def data = [:]
             data.annotationunion = [:]
             data.annotationunion.status = "ok"
@@ -329,118 +336,10 @@ class RestAlgoAnnotationController extends RestController {
      * @param minIntersectLength  size of the intersection geometry between two annotation to merge them
      * @param bufferLength tolerance threshold for two annotation (if they are very close but not intersect)
      */
-    private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength) {
-        int i = 0
-        if (bufferLength) {
-            //first, bufferize all annotations, so that we have "valid polygon"
-            List<AlgoAnnotation> annotations = AlgoAnnotation.findAllByImageAndUser(image, user)
-            annotations.each {
-                if (AlgoAnnotationTerm.findWhere(annotationIdent: it.id, userJob: user, term: term)) {
-                    it.location = it.location.buffer(0)    //TODO:: <= buffer(0)
-                    it.save(flush: true)
-                }
-            }
-        }
-
-        boolean restart = unionPostgisSQL(image, user, term, minIntersectLength, bufferLength)
-        /**
-         * Do union while previous union has merge something.
-         * If a touch b and b touch c (but a don't touch c), with a single union, we may have
-         * a merge with b
-         * c merge with b
-         * => a & c should be merge
-         */
-        while (restart && i < 100) {
-            restart = unionPostgisSQL(image, user, term, minIntersectLength, bufferLength)
-            i++
-        }
+    private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength, def area) {
+        unionGeometryService.unionPicture(image,user,term,area,area,bufferLength,minIntersectLength)
     }
 
-    private boolean unionPostgisSQL(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength) {
-        log.info "unionPostgisSQL"
-        log.info "image=$image"
-        log.info "user=$user"
-        log.info "term=$term"
-        log.info "minIntersectLength=$minIntersectLength"
-        log.info "bufferLength=$bufferLength"
-
-        boolean mustBeRestart = false
-        //key = deleted annotation, value = annotation that take in the deleted annotation
-        //If y is deleted and merge with x, we add an entry <y,x>. Further if y had intersection with z, we replace "y" (deleted) by "x" (has now intersection with z).
-        HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(1024)
-
-        List<AlgoAnnotation> annotations = AlgoAnnotation.findAllByImageAndUser(image, user)
-        annotations.each {
-            if (!it.location.isValid()) {
-                it.location = it.location.buffer(0)
-                it.save(flush: true)
-            }
-        }
-
-        String request
-        if (bufferLength == null) {
-            request = "SELECT annotation1.id as id1, annotation2.id as id2\n" +
-                    " FROM algo_annotation annotation1, algo_annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
-                    " WHERE annotation1.image_id = $image.id\n" +
-                    " AND annotation2.image_id = $image.id\n" +
-                    " AND annotation2.created > annotation1.created\n" +
-                    " AND annotation1.user_id = ${user.id}\n" +
-                    " AND annotation2.user_id = ${user.id}\n" +
-                    " AND annotation1.id = at1.annotation_ident\n" +
-                    " AND annotation2.id = at2.annotation_ident\n" +
-                    " AND at1.term_id = ${term.id}\n" +
-                    " AND at2.term_id = ${term.id}\n" +
-                    " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
-
-
-        } else {
-            request = "SELECT annotation1.id as id1, annotation2.id as id2\n" +
-                    " FROM algo_annotation annotation1, algo_annotation annotation2, algo_annotation_term at1, algo_annotation_term at2\n" +
-                    " WHERE annotation1.image_id = $image.id\n" +
-                    " AND annotation2.image_id = $image.id\n" +
-                    " AND annotation2.created > annotation1.created\n" +
-                    " AND annotation1.user_id = ${user.id}\n" +
-                    " AND annotation2.user_id = ${user.id}\n" +
-                    " AND annotation1.id = at1.annotation_ident\n" +
-                    " AND annotation2.id = at2.annotation_ident\n" +
-                    " AND at1.term_id = ${term.id}\n" +
-                    " AND at2.term_id = ${term.id}\n" +
-                    " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"
-        }
-
-        def sql = new Sql(dataSource)
-
-
-        sql.eachRow(request) {
-
-            long idBased = it[0]
-            //check if annotation has be deleted (because merge), if true get the union annotation
-            if (removedByUnion.containsKey(it[0]))
-                idBased = removedByUnion.get(it[0])
-
-            long idCompared = it[1]
-            //check if annotation has be deleted (because merge), if true get the union annotation
-            if (removedByUnion.containsKey(it[1]))
-                idCompared = removedByUnion.get(it[1])
-
-            AlgoAnnotation based = AlgoAnnotation.get(idBased)
-            AlgoAnnotation compared = AlgoAnnotation.get(idCompared)
-
-            if (based && compared && based.id != compared.id) {
-                mustBeRestart = true
-                based.location = based.location.union(compared.location)
-                removedByUnion.put(compared.id, based.id)
-                //save new annotation with union location
-
-                algoAnnotationService.saveDomain(based)
-                //remove old annotation with data
-                AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotationIdent = :annotation", [annotation: compared.id])
-                algoAnnotationService.removeDomain(compared)
-
-            }
-        }
-        return mustBeRestart
-    }
 
 
 
