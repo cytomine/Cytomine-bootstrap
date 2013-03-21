@@ -310,6 +310,10 @@ class RestAlgoAnnotationController extends RestController {
         Integer minIntersectLength = params.getInt('minIntersectionLength')
         Integer bufferLength = params.getInt('bufferLength')
         Integer area = params.getInt('area')
+        if(!area) {
+            area = 10000
+        }
+        println "area=$area"
         if (!image) {
             responseNotFound("ImageInstance", params.getLong('idImage'))
         }
@@ -336,7 +340,8 @@ class RestAlgoAnnotationController extends RestController {
      * @param minIntersectLength  size of the intersection geometry between two annotation to merge them
      * @param bufferLength tolerance threshold for two annotation (if they are very close but not intersect)
      */
-    private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength, def area) {
+    private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength, Integer area) {
+        println "area=$area"
         unionGeometryService.unionPicture(image,user,term,area,area,bufferLength,minIntersectLength)
     }
 

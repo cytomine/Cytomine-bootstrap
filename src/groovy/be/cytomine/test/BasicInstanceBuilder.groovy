@@ -195,8 +195,6 @@ class BasicInstanceBuilder {
                 project: project,
                 //slide: BasicInstanceBuilder.getSlide(),
                 user: getUser1())
-
-        println image.user
         save ? BasicInstanceBuilder.saveDomain(image) : BasicInstanceBuilder.checkDomain(image)
     }
 

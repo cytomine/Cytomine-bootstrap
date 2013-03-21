@@ -48,9 +48,9 @@ var InformationsPanel = SideBarPanel.extend({
             new ImageInstanceModel({next:true, id:self.model.id}).fetch({
                 success:function (model, response) {
                     if(model.get('project')) {
-                        var nextUrl = "#tabs-image-"+model.get('project')+"-"+model.id+"-";
+                        var nextUrl = "#" + self.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                         window.location = nextUrl;
-                        $("#closeTabtabs-image-"+self.model.id).click();
+                        $("#closeTab" +self.divPrefixId+ "-"+self.model.id).click();
                     } else {
                         window.app.view.message("Next image", "This is the last image", "error");
                     }

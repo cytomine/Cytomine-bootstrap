@@ -19,10 +19,15 @@ import groovy.sql.Sql
 
 class UnionGeometryService {
 
-    public void unionPicture(ImageInstance image, SecUser user, Term term, Long areaWidth, Long areaHeight,def bufferLength, def minIntersectLength) {
+    def dataSource
+
+    def algoAnnotationService
+
+    public void unionPicture(ImageInstance image, SecUser user, Term term, Integer areaWidth, Integer areaHeight,def bufferLength, def minIntersectLength) {
          //makeValidPolygon(image,user)
 
          //http://localhost:8080/api/algoannotation/union?idImage=8120370&idUser=11974001&idTerm=9444456&minIntersectionLength=10&bufferLength=0&area=2000
+        println "areaWidth=$areaWidth"
 
          def areas = computeArea(image,areaWidth,areaHeight)
 
@@ -60,7 +65,7 @@ class UnionGeometryService {
          }
      }
 
-     private def computeArea(ImageInstance image, Double maxW, Double maxH) {
+     private def computeArea(ImageInstance image, Integer maxW, Integer maxH) {
          log.info "computeArea..."
          Double width = image.baseImage.width
          Double height = image.baseImage.height
@@ -68,8 +73,11 @@ class UnionGeometryService {
          println "width=$width"
          println "height=$height"
 
-         Integer nbreAreaW =  Math.ceil(width/maxW)
-         Integer nbreAreaH = Math.ceil(height/maxH)
+         println "maxW=$maxW"
+         println "maxH=$maxH"
+
+         Integer nbreAreaW =  Math.ceil(width/(double)maxW)
+         Integer nbreAreaH = Math.ceil(height/(double)maxH)
 
          println "nbreAreaW=$nbreAreaW"
          println "height=$height"
@@ -130,15 +138,15 @@ class UnionGeometryService {
                      //save new annotation with union location
 
                      if(based.algoAnnotation) {
-                         saveDomain(based)
+                         algoAnnotationService.saveDomain(based)
                          //remove old annotation with data
                          AlgoAnnotationTerm.executeUpdate("delete AlgoAnnotationTerm aat where aat.annotationIdent = :annotation", [annotation: compared.id])
-                         removeDomain(compared)
+                         algoAnnotationService.removeDomain(compared)
                      } else {
-                         saveDomain(based)
+                         algoAnnotationService.saveDomain(based)
                          //remove old annotation with data
                          AnnotationTerm.executeUpdate("delete AnnotationTerm aat where aat.userAnnotation.id = :annotation", [annotation: compared.id])
-                         removeDomain(compared)
+                         algoAnnotationService.removeDomain(compared)
                      }
 
 
@@ -185,7 +193,7 @@ class UnionGeometryService {
                          " AND ST_Intersects(annotation1.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
                          " AND ST_Intersects(annotation2.location,GeometryFromText('" + bbox.toString() + "',0)) "
          }
-         if(bufferLength==null) {
+         if(bufferLength!=null) {
              request = request + " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"
          } else {
             request = request +  " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
