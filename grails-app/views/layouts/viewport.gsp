@@ -28,7 +28,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
-
+<link rel='stylesheet' href='lib/OpenLayers-2.12/theme/default/style.css' type='text/css'/>
 
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap.css"/>
 <style type="text/css">

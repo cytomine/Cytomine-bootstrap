@@ -495,6 +495,7 @@ var BrowseImageView = Backbone.View.extend({
             }
             var resolutions = _.union(serverResolutions, self.digitalResolutions)
             var options = {
+                theme : null,
                 maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
                 resolutions: resolutions,
                 serverResolutions: serverResolutions,
