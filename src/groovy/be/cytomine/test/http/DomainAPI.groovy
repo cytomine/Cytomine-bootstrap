@@ -115,7 +115,6 @@ class DomainAPI {
 
     static def doGET(String URL,String username,String password) {
         log.info("GET:"+URL)
-        println "4444444444444444444444444444"
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
         client.get()

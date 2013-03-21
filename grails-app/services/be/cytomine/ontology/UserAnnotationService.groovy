@@ -197,9 +197,7 @@ class UserAnnotationService extends ModelService {
         SecurityACL.check(image.container(),READ)
 
         def rule = kmeansGeometryService.mustBeReduce(image,user,boundingbox)
-        println "rule is =$rule"
         if(rule==kmeansGeometryService.FULL) {
-            println "ok :-)"
             String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
                                 " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
                                 " WHERE annotation.image_id = $image.id\n" +
@@ -209,7 +207,6 @@ class UserAnnotationService extends ModelService {
                                 " ORDER BY annotation.id desc"
             return selectUserAnnotationLight(request)
         } else if(rule==kmeansGeometryService.KMEANSFULL){
-            println "mustBeReduce"
             String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
                               "from user_annotation \n " +
                               "where image_id = ${image.id} " +
@@ -218,7 +215,6 @@ class UserAnnotationService extends ModelService {
                               "and ST_Intersects(user_annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n"
              kmeansGeometryService.doKeamsFullRequest(request)
         } else {
-            println "mustBeReduce"
             String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
                               "from user_annotation \n " +
                               "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n " +

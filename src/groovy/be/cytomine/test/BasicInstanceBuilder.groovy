@@ -421,7 +421,7 @@ class BasicInstanceBuilder {
     }
 
     static AbstractImage getAbstractImageNotExist(boolean save = false) {
-        def image = new AbstractImage(filename: getRandomString(), scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath")
+        def image = new AbstractImage(filename: getRandomString(), scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath", width: 1600, height: 1200)
         save ? saveDomain(image) : checkDomain(image)
     }
 

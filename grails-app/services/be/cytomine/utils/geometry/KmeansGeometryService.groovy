@@ -82,6 +82,10 @@ class KmeansGeometryService {
     }
 
     public int mustBeReduce(ImageInstance image, SecUser user, Geometry bbox) {
+        if (image.baseImage.width==null) {
+            return  FULL
+        }
+
         double imageWidth = image.baseImage.width
         double bboxWidth = bbox.getEnvelopeInternal().width
 
