@@ -122,7 +122,7 @@ class ViewPortToBuildXML {
 
             if (scriptElem.attributes.getNamedItem('src') != null) {
                 def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
-                if (scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc);
+                if (scriptElemSrc.startsWith("lib")) libFiles.add(scriptElemSrc.replace("?version=<g:meta name=\"app.version\"/>",""));
             }
         }
 
@@ -154,7 +154,7 @@ class ViewPortToBuildXML {
 
             if (scriptElem.attributes.getNamedItem('src') != null) {
                 def scriptElemSrc = scriptElem.attributes.getNamedItem('src').nodeValue.toString()
-                if (scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc);
+                if (scriptElemSrc.startsWith("app")) appFiles.add(scriptElemSrc.replace("?version=<g:meta name=\"app.version\"/>",""));
             }
         }
         appFiles.each {

@@ -92,29 +92,56 @@ class AlgoAnnotationService extends ModelService {
 
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
 
+        Geometry boundingBoxSmall = GeometryUtils.createLittleBoundingBox(bbox)
+
         //we use SQL request (not hibernate) to speedup time request
-        String request
 
-        if(kmeansGeometryService.mustBeReduce()) {
-            request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n" +
-                       " from algo_annotation \n" +
-                       " where image_id = ${image.id} " +
-                       " and user_id = ${user.id} " +
-                        (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                       " and ST_IsEmpty(st_centroid(location))=false \n"
-            return kmeansGeometryService.doKeamsRequest(request)
 
-        } else {
-            //show only annotation that are not reviewed (use in review mode)
-            request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
-                    " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
-                    " WHERE annotation.image_id = $image.id\n" +
-                    " AND annotation.user_id= $user.id\n" +
-                    (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                    " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
-                    " ORDER BY annotation.id "
+        def rule = kmeansGeometryService.mustBeReduce(image,user,boundingbox)
+
+        if(rule==kmeansGeometryService.FULL) {
+            String request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
+                                " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
+                                " WHERE annotation.image_id = $image.id\n" +
+                                " AND annotation.user_id= $user.id\n" +
+                                (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
+                                " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                                " ORDER BY annotation.id "
             return selectAlgoAnnotationLight(request)
+        } else if(rule==kmeansGeometryService.KMEANSFULL){
+            println "mustBeReduce"
+            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 15) OVER (), location\n" +
+                           " from algo_annotation \n" +
+                           " where image_id = ${image.id} " +
+                           " and user_id = ${user.id} " +
+                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
+                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + boundingBoxSmall.toString() + "',0)) \n" +
+                           " and ST_IsEmpty(st_centroid(location))=false \n"
+             kmeansGeometryService.doKeamsFullRequest(request)
+        } else {
+            println "mustBeReduce"
+            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n" +
+                           " from algo_annotation \n" +
+                           " where image_id = ${image.id} " +
+                           " and user_id = ${user.id} " +
+                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
+                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + boundingBoxSmall.toString() + "',0)) \n" +
+                           " and ST_IsEmpty(st_centroid(location))=false \n"
+             kmeansGeometryService.doKeamsSoftRequest(request)
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     def selectAlgoAnnotationLight(def request) {

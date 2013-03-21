@@ -7,7 +7,8 @@ var AnnotationStatus = {
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
     var location = annotation.location || annotation.get('location');
-//    var count = annotation.count ? annotation.count : "";
+    var count = annotation.count ? annotation.count : "";
+    var ratio = annotation.ratio ? annotation.ratio : undefined
     var terms = annotation.term || annotation.get('term');
     var format = new OpenLayers.Format.WKT();
     var point = format.read(location);
@@ -24,8 +25,9 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
         measure: 'NO',
         listener: 'NO',
         importance: 10,
-        term: term
-//        count: count
+        term: term,
+        count: count,
+        opacity : ratio
     };
     return feature;
 };
@@ -64,14 +66,47 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         elseFilter: true
     })];
 
-    var defaultStyle = new OpenLayers.Style({
-        'fillColor': '#EEEEEE',
-        'fillOpacity': .8,
-        'strokeColor': '#000000',
-        'strokeWidth': 3,
-        'pointRadius': this.pointRadius
-    });
+
+    var style = $.extend(true, {}, OpenLayers.Feature.Vector.style['default']); // get a copy of the default style
+    style.label = "${getLabel}";
+    style.fillOpacity = "${getOpacity}";
+    style.strokeWidth = 3 ;
+    style.fillColor = '#EEEEEE';
+    style.strokeColor= '${getStrokeColor}';
+    style.strokeWidth= 3;
+    style.pointRadius= this.pointRadius;
+
+
+    var defaultStyle = new OpenLayers.Style(style, {
+                context: {
+                    getLabel: function (feature) {
+                        console.log("getLabel");
+                        if (feature.geometry && feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+                            var count = feature.attributes.count
+                            if(count==undefined) count = "";
+                            return count;
+                        } else {
+                            return "";
+                        }
+                    } ,
+                    getOpacity: function (feature) {
+                        console.log("getOpacity");
+                        return 0.6;
+                    },
+                    getStrokeColor: function (feature) {
+                        console.log("getOpacity");
+                        var opacity = feature.attributes.opacity
+                        if(opacity==undefined) return '#000000';
+                        if(opacity<0.33) return "#B94A48"
+                        if(opacity<0.66) return "#C09853"
+                        return "#468847"
+                    }
+                }
+            })
     defaultStyle.addRules(rules);
+
+
+
     var selectStyle = null;
 
 //    if(!reviewMode)  {
@@ -84,11 +119,18 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     });
 
     selectStyle.addRules(rules);
+
+
+
+
+
+
     var styleMap = new OpenLayers.StyleMap({
-        'default': defaultStyle,
-        'select': selectStyle
-//        'label' : "${count}"
+        "default": defaultStyle,
+        "select" : selectStyle
     });
+
+
 
     console.log("reviewMode=" + reviewMode + " this.reviewLayer=" + this.reviewLayer);
     if (this.reviewLayer) {
@@ -193,30 +235,22 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor': "#EEEEEE",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#CCCCCC",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#FF0000",
-            'fillOpacity': 1,
-            'strokeColor': strokeColor,
             'strokeWidth': 5,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor': term.get('color'),
-                'fillOpacity': .6,
-                'strokeColor': strokeColor,
                 'strokeWidth': 3,
                 'pointRadius': self.pointRadius
             }
@@ -232,37 +266,27 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor': "#5BB75B",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#5BB75B",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#5BB75B",
-            'fillOpacity': 1,
-            'strokeColor': strokeColor,
             'strokeWidth': 5,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#5BB75B",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 5,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor': "#5BB75B",
-                'fillOpacity': .6,
-                'strokeColor': strokeColor,
                 'strokeWidth': 3,
                 'pointRadius': self.pointRadius
             }
@@ -278,37 +302,27 @@ AnnotationLayer.prototype = {
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor': "#BD362F",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#BD362F",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 3,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#BD362F",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 5,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#BD362F",
-            'fillOpacity': .6,
-            'strokeColor': strokeColor,
             'strokeWidth': 5,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor': "#BD362F",
-                'fillOpacity': .6,
-                'strokeColor': strokeColor,
                 'strokeWidth': 3,
                 'pointRadius': self.pointRadius
             }

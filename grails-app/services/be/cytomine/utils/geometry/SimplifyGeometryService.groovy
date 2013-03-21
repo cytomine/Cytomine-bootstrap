@@ -25,8 +25,8 @@ class SimplifyGeometryService {
         Geometry annotationFull = new WKTReader().read(form);
 
         Geometry lastAnnotationFull = annotationFull
-        double ratioMax = 1.6d
-        double ratioMin = 2d
+        double ratioMax = 1.3d
+        double ratioMin = 1.7d
         /* Number of point (ex: 500 points) */
         double numberOfPoint = annotationFull.getNumPoints()
         /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/

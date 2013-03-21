@@ -299,8 +299,8 @@ body {
 </g:if>
 </body>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
-    <script type="text/javascript" src="lib.js" ></script>
-    <script type="text/javascript" src="application.js" ></script>
+    <script type="text/javascript" src="lib.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
+    <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
 
 </g:if>
 <script type="text/javascript">
