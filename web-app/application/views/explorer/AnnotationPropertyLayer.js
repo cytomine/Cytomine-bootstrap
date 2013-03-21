@@ -82,4 +82,4 @@ AnnotationPropertyLayer.prototype = {
             this.vectorLayer.refresh({ url : url});
         }
     }
-}
+};

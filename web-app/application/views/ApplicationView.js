@@ -177,6 +177,10 @@ var ApplicationView = Backbone.View.extend({
                 preference.activated = !preference.activated;
                 localStorage.setObject(key, preference);
             });
+            $("#feedback").on("click", function (e) {
+                e.preventDefault();
+                showClassicWidget();
+            });
         });
 
     },

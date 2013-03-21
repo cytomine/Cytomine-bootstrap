@@ -41,18 +41,18 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         });
 
         var SortSelect = function sortArray(){
-            Liste= new Array();
-            Obj= document.getElementById('selectLayersAnnotationProperty')
+            var list= {};
+            var el= document.getElementById('selectLayersAnnotationProperty'); //:to do use class or find another way
 
-            for(i=0;i<Obj.options.length-1;i++){
-                Liste[i]=Obj.options[i+1].text
+            for(var i=0;i<el.options.length-1;i++){
+                list[i]=el.options[i+1].text;
             }
-            Liste=Liste.sort()
+            list=list.sort();
 
-            for(i=0;i<Obj.options.length-1;i++){
-                Obj.options[i+1].id=Liste[i]
-                Obj.options[i+1].value=Liste[i]
-                Obj.options[i+1].text=Liste[i]
+            for(var i=0;i<el.options.length-1;i++){
+                el.options[i+1].id=list[i];
+                el.options[i+1].value=list[i];
+                el.options[i+1].text=list[i];
             }
         }
     },

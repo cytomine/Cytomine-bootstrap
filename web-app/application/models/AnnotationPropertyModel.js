@@ -64,7 +64,6 @@ var AnnotationPropertyTextCollection = PaginatedCollection.extend({
             }
             return "/api/user/"+this.idUser+"/imageinstance/"+this.idImage+"/annotationposition.json" + offset;
         }
-        alert(":-(");
     }
 });
 

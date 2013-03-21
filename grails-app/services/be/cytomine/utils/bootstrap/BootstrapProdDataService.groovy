@@ -212,13 +212,11 @@ class BootstrapProdDataService {
             String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
             if (!Storage.findByUser(user)) {
 
-
-
                 Storage storage = new Storage(
                         name: "$user.username storage",
                         basePath: remotePath,
-                        ip: "139.165.108.28",
-                        username: "storage_cytomine",
+                        ip: "10.1.0.106",
+                        username: "storage",
                         password: "bioinfo;3u54",
                         keyFile: null,
                         port: 22,
@@ -228,13 +226,13 @@ class BootstrapProdDataService {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-//                    fileSystemService.makeRemoteDirectory(
-//                            storage.getIp(),
-//                            storage.getPort(),
-//                            storage.getUsername(),
-//                            storage.getPassword(),
-//                            storage.getKeyFile(),
-//                            storage.getBasePath())
+                    fileSystemService.makeRemoteDirectory(
+                            storage.getIp(),
+                            storage.getPort(),
+                            storage.getUsername(),
+                            storage.getPassword(),
+                            storage.getKeyFile(),
+                            storage.getBasePath())
 
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
