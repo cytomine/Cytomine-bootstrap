@@ -80,6 +80,8 @@ class RestAnnotationDomainController extends RestController {
         if(params.getBoolean('reviewed')) {
             forward(controller: "restReviewedAnnotation", action: "listAnnotationByProjectAndTerm")
         } else {
+            println "${params.users} => ${params.users.class}"
+            println "${project} => ${project}"
             List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
             if (!userList.isEmpty() && userList.get(0)?.algo()) {
                 forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")

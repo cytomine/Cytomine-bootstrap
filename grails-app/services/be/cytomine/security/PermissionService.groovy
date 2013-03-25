@@ -29,17 +29,13 @@ class PermissionService {
     void addPermission(def domain, String username, Permission permission) {
         synchronized (this.getClass()) {
             log.info "Add Permission " +  permission.mask + " for " + username + " to " + domain.class + " " + domain.id
-
             ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
             try {
                 aclService.readAclById(oi);
             } catch (NotFoundException nfe) {
                 aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
             }
-
-            log.info "Try to add permission..."
             aclUtilService.addPermission(domain, username, permission)
-            log.info "Permission added..."
         }
     }
 

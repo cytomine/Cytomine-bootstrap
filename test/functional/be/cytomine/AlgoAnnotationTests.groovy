@@ -88,7 +88,7 @@ class AlgoAnnotationTests  {
         assert 404 == result.code
     }
 
-    void testListAlgoAnnotationByImageAndUserWithCredential() {
+    void testListAlgoAnnotationByImageAndUser() {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         AlgoAnnotation annotationWith2Term = BasicInstanceBuilder.getAlgoAnnotation()
         AlgoAnnotationTerm aat = BasicInstanceBuilder.getAlgoAnnotationTerm(annotationWith2Term.user.job,annotationWith2Term,annotationWith2Term.user)
@@ -99,7 +99,23 @@ class AlgoAnnotationTests  {
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        String bbox = "1,1,10000,10000"
+
+        //very small bbox, hight annotation number
+        String bbox = "1,1,100,100"
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        //very large bbox, low annotation number
+        bbox = "1,1,10000,10000"
+        annotation.image.countImageAnnotations = 500000l
+        BasicInstanceBuilder.saveDomain(annotation.image)
 
         result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -110,6 +126,7 @@ class AlgoAnnotationTests  {
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
+
 
         result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

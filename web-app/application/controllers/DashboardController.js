@@ -13,7 +13,7 @@ var DashboardController = Backbone.Router.extend({
         "tabs-config-:project": "config",
         "tabs-algos-:project-:software-:job": "algos",
         "tabs-algos-:project-:software-": "algos",
-        "tabs-algos-:project-": "algos"
+        "tabs-algos-:project": "algos"
     },
 
     init: function (project, callback) {
@@ -101,11 +101,22 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
+    algos: function () {
+       this.algos(undefined,undefined,undefined);
+    },
+    algos: function (project) {
+        this.algos(project,undefined,undefined);
+    },
+    algos: function (project, software) {
+        this.algos(project,software,undefined);
+    },
     algos: function (project, software, job) {
         var self = this;
+        console.log("DashBoard.algos");
         var func = function () {
             window.app.controllers.browse.tabs.triggerRoute = false;
             var tabs = $("#explorer > .browser").find(".nav-tabs");
+            console.log(tabs.find('a[href^=#tabs-algos-' + window.app.status.currentProject + '-]'));
             tabs.find('a[href^=#tabs-algos-' + window.app.status.currentProject + ']').click();
             self.view.refreshAlgos(software, job || undefined);
             window.app.controllers.browse.tabs.triggerRoute = true;

@@ -190,6 +190,7 @@ var ApplicationView = Backbone.View.extend({
     printTaskEvolution: function (task, divToFill, timeout, reverse) {
         function checkTask() {
             //load all job data
+            console.log(task);
             new TaskModel({id: task.id}).fetch({
                     success: function (taskInfo, response) {
                         divToFill.empty();

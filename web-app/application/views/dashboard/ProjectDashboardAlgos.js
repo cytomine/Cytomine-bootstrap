@@ -29,10 +29,12 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         var self = this;
         $(this.el).empty();
         $(this.el).append(_.template(tpl, {}));
+        console.log("SoftwareCollection.fetch");
 
         //get all software from project and print menu
         new SoftwareCollection({ project: self.model.id}).fetch({
             success: function (collection, response) {
+                console.log("succes!");
                 if (collection.length == 0) {
                     $(self.el).empty();
                     $(self.el).append('<div class="alert alert-info" style="width : 50%; margin:auto; margin-top : 30px;">No software available for this project</div>');

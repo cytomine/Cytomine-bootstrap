@@ -62,7 +62,7 @@ class Task {
 
         if(!isAlreadyInDatabase) {
             id = AH.application.mainContext.sequenceService.generateID()
-            sql.executeInsert("INSERT INTO task (id,progress,projectIdent,userIdent) VALUES ($id,$progress,$projectIdent,$userIdent)")
+            sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id) VALUES ($id,$progress,$projectIdent,$userIdent)")
         } else {
             sql.executeUpdate("UPDATE task set progress=${progress} WHERE id=$id")
             println "UPDATE task set progress=${progress} WHERE id=$id"
@@ -76,7 +76,7 @@ class Task {
     def getFromDatabase(def id) {
         Task task = null
         Sql sql = createSQLDB()
-        sql.eachRow("SELECT id,progress,projectIdent,userIdent FROM task where id = ${id}") {
+        sql.eachRow("SELECT id,progress,project_id,user_id FROM task where id = ${id}") {
             task = new Task()
             task.id = it[0]
             task.progress = it[1]

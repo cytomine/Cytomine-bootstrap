@@ -24,11 +24,12 @@ var JobDeleteAllDataView = Backbone.View.extend({
 
         new TaskModel({project: self.project.id}).save({}, {
                 success: function (task, response) {
-                    $("#jobDataStat-" + self.model.id).append('<div id="task-' + task.id + '"></div>');
-                    var timer = window.app.view.printTaskEvolution(task, $("#jobDataStat-" + self.model.id).find("#task-" + task.id), 1000);
+                    console.log(response.task);
+                    $("#jobDataStat-" + self.model.id).append('<div id="task-' + response.task.id + '"></div>');
+                    var timer = window.app.view.printTaskEvolution(response.task, $("#jobDataStat-" + self.model.id).find("#task-" + response.task.id), 1000);
 
                     //load all job data
-                    new JobDataStatsModel({id: self.model.id, task: task.id}).fetch({
+                    new JobDataStatsModel({id: self.model.id, task: response.task.id}).fetch({
                             success: function (model, response) {
                                 console.log("data loaded:" + model.toJSON());
                                 clearInterval(timer);
@@ -76,7 +77,8 @@ var JobDeleteAllDataView = Backbone.View.extend({
 
 
             new TaskModel({project: self.project.id}).save({}, {
-                    success: function (task, response) {
+                    success: function (mod, response) {
+                        var task = response.task;
                         $("#jobDataStat-" + self.model.id).append('<div id="task-' + task.id + '"></div>');
                         var timer = window.app.view.printTaskEvolution(task, $("#jobDataStat-" + self.model.id).find("#task-" + task.id), 1000);
 

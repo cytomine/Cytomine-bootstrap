@@ -48,9 +48,26 @@ var InformationsPanel = SideBarPanel.extend({
             new ImageInstanceModel({next:true, id:self.model.id}).fetch({
                 success:function (model, response) {
                     if(model.get('project')) {
-                        var nextUrl = "#" + self.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
-                        window.location = nextUrl;
-                        $("#closeTab" +self.divPrefixId+ "-"+self.model.id).click();
+
+                        if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
+                            var nextUrl = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
+                            console.log(nextUrl);
+                            window.location = nextUrl;
+                            $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
+                        } else {
+                            new ImageReviewModel({id: model.id}).save({}, {
+                                success: function (model, response) {
+                                    //window.location = "#tabs-images-"+self.model.get('project');
+                    //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
+                                    window.app.view.message("Image", response.message, "success");
+                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
+                                    $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
+                                },
+                                error: function (model, response) {
+                                    var json = $.parseJSON(response.responseText);
+                                    window.app.view.message("Image", json.errors, "error");
+                                }});
+                        }
                     } else {
                         window.app.view.message("Next image", "This is the last image", "error");
                     }

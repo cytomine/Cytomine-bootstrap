@@ -74,7 +74,7 @@ class RestReviewedAnnotationController extends RestController {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = secUserService.read(params.idUser)
         if (image && user && params.bbox) {
-            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))l
+            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
         } else if (image && user) {
             responseSuccess(reviewedAnnotationService.list(image, user))
         }

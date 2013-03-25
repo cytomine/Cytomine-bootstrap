@@ -65,6 +65,12 @@ Browser.drive {
     println "toto!!!"
     go "http://google.com/ncr"
 
+    println it
+    println $("img")
+
+
+    println $("input")
+
       // make sure we actually got to the page
      assert title == "Google"
 

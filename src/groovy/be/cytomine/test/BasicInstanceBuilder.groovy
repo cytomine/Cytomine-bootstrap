@@ -273,7 +273,6 @@ class BasicInstanceBuilder {
         ReviewedAnnotation review = getReviewedAnnotationNotExist()
         review.project = image.project
         review.image = image
-        checkDomain(review)
         saveDomain(review)
         review
     }

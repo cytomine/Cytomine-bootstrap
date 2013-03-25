@@ -125,20 +125,7 @@ var AnnotationCollection = PaginatedCollection.extend({
                 console.log(this.users == undefined);
                 console.log(this.images == undefined);
                 console.log("****************************");
-
-                if (this.term >= "0" && this.users == undefined && this.images == undefined) {
-                    return "api/term/" + this.term + "/project/" + this.project + "/annotation.json" + queryString;
-                }
-                if (this.term >= "0" && this.users != undefined && this.images == undefined) {
-                    return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?" + queryString;
-                }
-                if (this.term >= "0" && this.users == undefined && this.images != undefined) {
-                    return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?images=" + this.images + queryString;
-                }
-                if (this.term >= "0" && this.users != undefined && this.images != undefined) {
-                    console.log("api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + this.users + "&images=" + this.images + queryString);
-                    return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?users=" + this.users + "&images=" + this.images + queryString;
-                }
+                return "api/term/" + this.term + "/project/" + this.project + "/annotation.json?" + queryString;
             } else if (this.project != undefined) {
                 return "api/project/" + this.project + "/annotation.json";
             } else if (this.image != undefined && this.term != undefined) {

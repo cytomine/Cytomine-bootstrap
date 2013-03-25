@@ -103,9 +103,9 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="grails-2.2.0" level="application" />
     <orderEntry type="module" module-name="cytomine-web-grailsPlugins" />
     <orderEntry type="module" module-name="Cytomine-web-grailsPlugins" />
+    <orderEntry type="library" name="grails-2.2.1" level="application" />
   </component>
 </module>
 

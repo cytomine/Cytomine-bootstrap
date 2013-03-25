@@ -51,6 +51,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
     refreshAlgos: function (idSoftware, idJob) {
+        console.log("this.projectDashboardAlgos="+this.projectDashboardAlgos);
         if (this.projectDashboardAlgos == null || this.projectDashboardAlgos == undefined) {
             this.projectDashboardAlgos = new ProjectDashboardAlgos({
                 model: this.model,
