@@ -64,7 +64,8 @@ class BootStrap {
         /* Fill data just in test environment*/
         if (Environment.getCurrent() == Environment.TEST) {
             new Sql(dataSource).executeUpdate("DELETE FROM task_comment")
-            new Sql(dataSource).executeInsert("DELETE FROM task")
+            new Sql(dataSource).executeUpdate("DELETE FROM task")
+
             bootstrapTestDataService.initData()
         }
 
