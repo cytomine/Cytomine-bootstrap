@@ -12,9 +12,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
 import org.hibernate.FetchMode
@@ -83,21 +81,29 @@ class AlgoAnnotationService extends ModelService {
      * List annotation created by algorithm
      * @param image Image filter
      * @param user User Job that created annotation filter
-     * @param bbox Boundary area filter
+     * @param bbox Boundary area filter (String)
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
     def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
+        list(image, user, GeometryUtils.createBoundingBox(bbox), notReviewedOnly)
+    }
+
+    /**
+     * List annotation created by algorithm
+     * @param image Image filter
+     * @param user User Job that created annotation filter
+     * @param bbox Boundary area filter (Geometry)
+     * @param notReviewedOnly Flag to get only annotation that are not reviewed
+     * @return Algo Annotation list
+     */
+    def list(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly) {
         SecurityACL.check(image.container(),READ)
-
-        Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
-
-        Geometry boundingBoxSmall = GeometryUtils.createLittleBoundingBox(bbox)
 
         //we use SQL request (not hibernate) to speedup time request
 
 
-        def rule = kmeansGeometryService.mustBeReduce(image,user,boundingbox)
+        def rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
 
         if(rule==kmeansGeometryService.FULL) {
             String request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
@@ -105,7 +111,7 @@ class AlgoAnnotationService extends ModelService {
                                 " WHERE annotation.image_id = $image.id\n" +
                                 " AND annotation.user_id= $user.id\n" +
                                 (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) " +
+                                " AND ST_Intersects(annotation.location,GeometryFromText('" + bbox.toString() + "',0)) " +
                                 " ORDER BY annotation.id "
             return selectAlgoAnnotationLight(request)
         } else if(rule==kmeansGeometryService.KMEANSFULL){
@@ -115,7 +121,7 @@ class AlgoAnnotationService extends ModelService {
                            " where image_id = ${image.id} " +
                            " and user_id = ${user.id} " +
                             (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + boundingBoxSmall.toString() + "',0)) \n" +
+                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
                            " and ST_IsEmpty(st_centroid(location))=false \n"
              kmeansGeometryService.doKeamsFullRequest(request)
         } else {
@@ -125,22 +131,10 @@ class AlgoAnnotationService extends ModelService {
                            " where image_id = ${image.id} " +
                            " and user_id = ${user.id} " +
                             (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + boundingBoxSmall.toString() + "',0)) \n" +
+                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
                            " and ST_IsEmpty(st_centroid(location))=false \n"
              kmeansGeometryService.doKeamsSoftRequest(request)
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

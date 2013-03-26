@@ -12,7 +12,9 @@ import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import grails.orm.HibernateCriteriaBuilder
 import groovy.sql.Sql
+import org.hibernate.Criteria
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 
@@ -24,11 +26,8 @@ class ReviewedAnnotationService extends ModelService {
     def annotationPropertyService
     def cytomineService
     def transactionService
-    def annotationTermService
-    def retrievalService
     def algoAnnotationTermService
     def modelService
-    def simplifyGeometryService
     def dataSource
 
     def currentDomain() {
@@ -87,8 +86,19 @@ class ReviewedAnnotationService extends ModelService {
      * @return Reviewed Annotation list
      */
     def list(ImageInstance image, String bbox) {
-        SecurityACL.check(image.container(),READ)
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
+        list(image, boundingbox)
+    }
+
+    /**
+     * List validate annotation
+     * @param image Image filter
+     * @param bbox Boundary area filter
+     * @return Reviewed Annotation list
+     */
+    def list(ImageInstance image, Geometry bbox) {
+        SecurityACL.check(image.container(),READ)
+
         /**
          * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
          * We compute in 'gc' the set of all other annotation that must be list
@@ -104,17 +114,17 @@ class ReviewedAnnotationService extends ModelService {
         boolean zoomToLow = true
         String request
         if (zoomToLow) {
-            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
                     " FROM reviewed_annotation reviewed\n" +
                     " WHERE reviewed.image_id = $image.id\n" +
-                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + bbox.toString() + "',0))\n" +
                     " ORDER BY numberOfCoveringAnnotation asc, id asc"
         } else {
             //too heavy to use with little zoom
-            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + boundingbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
                     " FROM reviewed_annotation reviewed\n" +
                     " WHERE reviewed.image_id = $image.id\n" +
-                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + boundingbox.toString() + "',0))\n" +
+                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + bbox.toString() + "',0))\n" +
                     " ORDER BY numberOfCoveringAnnotation asc, id asc"
         }
 
@@ -130,23 +140,29 @@ class ReviewedAnnotationService extends ModelService {
     /**
      * List validate annotation
      * @param image Image filter
-     * @param user User Job that created annotation filter
-     * @param bbox Boundary area filter
+     * @param bbox Boundary area filter (String)
+     * @param termsIDS id in order to filters on term. NULL value means no filter
+     * @param userIDS id in order to filters on user. NULL value means no filter
      * @return Reviewed Annotation list
      */
     def list(ImageInstance image, SecUser user, String bbox) {
+        return list(image,  GeometryUtils.createBoundingBox(bbox))
+    }
+
+    /**
+     * List validate annotation
+     * @param image Image filter
+     * @param bbox Boundary area filter (Geometry)
+     * @param termsIDS id in order to filters on term. NULL value means no filter
+     * @param userIDS id in order to filters on user. NULL value means no filter
+     * @return Reviewed Annotation list
+     */
+    def list(ImageInstance image, SecUser user, Geometry bbox) {
         SecurityACL.check(image.container(),READ)
-        String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
         ReviewedAnnotation.createCriteria()
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("image", image))
-                .add(SpatialRestrictions.within("location", boundingbox))
+                .add(SpatialRestrictions.within("location",bbox))
                 .list()
     }
 
@@ -301,7 +317,7 @@ class ReviewedAnnotationService extends ModelService {
 
     def deleteDependentHasManyTerm(ReviewedAnnotation annotation, Transaction transaction, Task task = null) {
         annotation.terms?.clear()
-     }
+    }
 
     def deleteDependentAnnotationProperty(ReviewedAnnotation ra, Transaction transaction, Task task = null) {
         AnnotationProperty.findAllByAnnotationIdent(ra.id).each {

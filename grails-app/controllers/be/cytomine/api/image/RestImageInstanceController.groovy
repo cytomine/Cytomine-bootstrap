@@ -2,20 +2,18 @@ package be.cytomine.api.image
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.*
 import be.cytomine.project.Project
+import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.LinearRing
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import ij.ImagePlus
-import org.hibernate.criterion.Restrictions
-import org.hibernatespatial.criterion.SpatialRestrictions
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -39,6 +37,13 @@ class RestImageInstanceController extends RestController {
     def imageInstanceService
     def projectService
     def abstractImageService
+    def userAnnotationService
+    def algoAnnotationService
+    def reviewedAnnotationService
+    def secUserService
+    def termService
+
+    final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
     def show = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
@@ -104,6 +109,9 @@ class RestImageInstanceController extends RestController {
         int y = abstractImage.getHeight() - Integer.parseInt(params.y)
         int w = Integer.parseInt(params.w)
         int h = Integer.parseInt(params.h)
+
+        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+
         int maxZoom = abstractImage.getZoomLevels().max
         int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
         int resizeWidth = w / Math.pow(2, zoom)
@@ -135,58 +143,101 @@ class RestImageInstanceController extends RestController {
         responseImage(abstractImageService.crop(annotation, null))
     }
 
-    def mask = {
+    def mask_review = {
+        println "mask_review"
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
-        int x = Integer.parseInt(params.x)
-        int y = Integer.parseInt(params.y)
-        int w = Integer.parseInt(params.w)
-        int h = Integer.parseInt(params.h)
-        int termID = Integer.parseInt(params.term)
+
+        int x = params.int("x")
+        int y = params.int("y")
+        int w = params.int("w")
+        int h = params.int("h")
+
+        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("Requestion window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+
+        Long[] termsIDS = params.terms?.split(",")?.collect {
+            Long.parseLong(it)
+        }
+        if (!termsIDS) { //don't filter by term, take everything
+            termsIDS = termService.getAllTermId(image.getProject())
+        }
+
 
         try {
+            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
+            Geometry roiGeometry = GeometryUtils.createBoundingBox(
+                    x,                                      //minX
+                    x + w,                                  //maxX
+                    abstractImage.getHeight() - (y + h),    //minX
+                    abstractImage.getHeight() - y           //maxY
+            )
+
             //Get the image, compute ratio between asked and received
-            String url = abstractImage.getCropURL(x, abstractImage.getHeight() - y, w, h)
-            BufferedImage window = getImageFromURL(url)
-            BufferedImage mask = new BufferedImage(window.getWidth(),window.getHeight(),BufferedImage.TYPE_INT_RGB)
-            double x_ratio = window.getWidth() / w
-            double y_ratio = window.getHeight() / h
+            BufferedImage mask = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
 
             //Fetch annotations with the requested term on the request image
-            Term term = Term.read(termID)
 
-            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
-            //1. Compute points
-            Coordinate[] roiPoints = new Coordinate[5]
-            roiPoints[0] = new Coordinate(x, abstractImage.getHeight() - y)
-            roiPoints[1] = new Coordinate(x + w, abstractImage.getHeight() - y)
-            roiPoints[2] = new Coordinate(x + w, abstractImage.getHeight() - (y + h))
-            roiPoints[3] = new Coordinate(x, abstractImage.getHeight() - (y + h))
-            roiPoints[4] = roiPoints[0]
-            //Build geometry
-            LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
-            Geometry roiGeometry = new GeometryFactory().createPolygon(linearRing)
+            def reviewedAnnotations = reviewedAnnotationService.list(image, roiGeometry)
+            ArrayList<Geometry> geometries = []
 
-            Collection<UserAnnotation> annotations = []
-            Collection<UserAnnotation> annotations_in_roi = UserAnnotation.createCriteria()
-                    .add(Restrictions.eq("image", image))
-                    .add(SpatialRestrictions.within("location",roiGeometry))
-                    .list()
-
-            if (!annotations_in_roi.isEmpty()) {
-                annotations = (Collection<UserAnnotation>) AnnotationTerm.createCriteria().list {
-                    inList("term", [term])
-                    join("userAnnotation")
-                    createAlias("userAnnotation", "a")
-                    projections {
-                        inList("a.id", annotations_in_roi.collect{it.id})
-                        groupProperty("userAnnotation")
-                    }
-                }
+            reviewedAnnotations.collect {
+                geometries << new WKTReader().read(it["location"])
             }
 
-            mask = segmentationService.colorizeWindow(abstractImage, mask, annotations.collect{it.getLocation()}, Color.decode(term.color), x, y, x_ratio, y_ratio)
+            //Draw annotation
+            mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.WHITE, x, y, 1, 1)
+            responseBufferedImage(mask)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
+    def mask = {
+        println "mask"
+        //TODO:: document this method
+        ImageInstance image = ImageInstance.read(params.long('id'))
+        AbstractImage abstractImage = image.getBaseImage()
+
+        int x = params.int("x")
+        int y = params.int("y")
+        int w = params.int("w")
+        int h = params.int("h")
+
+        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("Requestion window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+
+        Long[] termsIDS = params.terms?.split(",")?.collect {
+            Long.parseLong(it)
+        }
+        if (!termsIDS) { //don't filter by term, take everything
+            termsIDS = termService.getAllTermId(image.getProject())
+        }
+
+        Long[] userIDS = params.users?.split(",")?.collect {
+            Long.parseLong(it)
+        }
+        if (!userIDS) { //don't filter by users, take everything
+            userIDS = secUserService.listLayers(image.getProject()).collect { it.id}
+        }
+
+
+        try {
+            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
+            Geometry roiGeometry = GeometryUtils.createBoundingBox(
+                    x,                                      //minX
+                    x + w,                                  //maxX
+                    abstractImage.getHeight() - (y + h),    //minX
+                    abstractImage.getHeight() - y           //maxY
+            )
+
+            //Get the image, compute ratio between asked and received
+            BufferedImage mask = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+
+            //Fetch annotations with the requested term on the request image
+            Collection<UserAnnotation> annotations = userAnnotationService.list(image, roiGeometry, termsIDS, userIDS)
+
+            //Draw annotation
+            mask = segmentationService.colorizeWindow(abstractImage, mask, annotations.collect { it.getLocation() }, Color.WHITE, x, y, 1, 1)
             responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -335,7 +386,9 @@ class RestImageInstanceController extends RestController {
         ImagePlus copy = new ImagePlus("copy", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
 
         //Extract params
-        double scale = Integer.parseInt(params.oriwidth) / original.getWidth()
+        Integer resultWidth = params.int("resultwidth")
+        if (!resultWidth) resultWidth = 5000
+        double scale = resultWidth / original.getWidth()
 
         // Get polygons
         Collection<Coordinate[]> components = imageProcessingService.getConnectedComponents(original, copy, 50)

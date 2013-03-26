@@ -173,30 +173,6 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         }),
         'styleMap': styleMap
     });
-
-//    this.vectorsLayer.strategies[0].calculateBounds = function(mapBounds) {
-//        console.log("BOUNDS!");
-//        console.log(this.getMapBounds());
-//        console.log(this);
-//        console.log(self);
-//        console.log(self.vectorsLayer);
-//
-//        var annotationsCollection = null;
-//        if (!self.reviewLayer) {
-//            annotationsCollection = new AnnotationCollection({user: self.userID, image: self.imageID, term: undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
-//        } else {
-//            annotationsCollection = new AnnotationReviewedCollection({image: self.imageID, term: undefined, map: browseImageView}).url().replace("json", "jsonp");
-//        }
-//        self.vectorsLayer.refresh({ url : annotationsCollection +"&bbox=1,2,3,4"});
-//
-//
-//
-//
-//
-//        if(!mapBounds) {
-//            mapBounds = this.getMapBounds();
-//        }
-//    };
     this.vectorsLayer.strategies[0].activate();
 
     this.controls = null;

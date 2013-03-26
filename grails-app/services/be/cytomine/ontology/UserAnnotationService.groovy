@@ -17,6 +17,8 @@ import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
+import org.hibernate.criterion.Restrictions
+import org.hibernatespatial.criterion.SpatialRestrictions
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -182,28 +184,64 @@ class UserAnnotationService extends ModelService {
     }
 
     /**
+     * List annotations according to some filters parameters (rem : use list light if you only need the response, not
+     * the objects)
+     * @param image the image instance
+     * @param bbox Geometry restricted Area
+     * @param termsIDS filter terms ids
+     * @param userIDS filter user ids
+     * @return Annotation listing
+     */
+    def list(ImageInstance image, Geometry bbox, Long[] termsIDS, Long[] userIDS) {
+        //:to do use listlight and parse WKT instead ?
+        Collection<UserAnnotation> annotations_in_roi = []
+
+        annotations_in_roi = UserAnnotation.createCriteria()
+                .add(Restrictions.in("user.id", userIDS))
+                .add(Restrictions.eq("image.id", image.id))
+                .add(SpatialRestrictions.intersects("location",bbox))
+                .list()
+
+        Collection<UserAnnotation> annotations = []
+
+        if (!annotations_in_roi.isEmpty()) {
+            annotations = (Collection<UserAnnotation>) AnnotationTerm.createCriteria().list {
+                inList("term.id", termsIDS)
+                join("userAnnotation")
+                createAlias("userAnnotation", "a")
+                projections {
+                    inList("a.id", annotations_in_roi.collect{it.id})
+                    groupProperty("userAnnotation")
+                }
+            }
+        }
+
+        return annotations
+    }
+
+    /**
      * List annotation created by user
      * Rem1: We use SQL request (instead of using GORM/hibernate), this improve a lot perf.
      * @param image Image list
      * @param user Annotation user filter
-     * @param boundingbox WKT restricted Area
+     * @param bbox Geometry restricted Area
      * @param notReviewedOnly Don't get annotation that have been reviewed
      * @return Annotation listing (light)
      */
-    def listLight(ImageInstance image, SecUser user, Geometry boundingbox, Boolean notReviewedOnly) {
+    def listLight(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly) {
         SecurityACL.check(image.container(),READ)
         println "listLight"
 
         SecurityACL.check(image.container(),READ)
 
-        def rule = kmeansGeometryService.mustBeReduce(image,user,boundingbox)
+        def rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
         if(rule==kmeansGeometryService.FULL) {
             String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
                                 " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
                                 " WHERE annotation.image_id = $image.id\n" +
                                 " AND annotation.user_id= $user.id\n" +
                                 (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n" +
+                                " AND ST_Intersects(annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
                                 " ORDER BY annotation.id desc"
             return selectUserAnnotationLight(request)
         } else if(rule==kmeansGeometryService.KMEANSFULL){
@@ -212,13 +250,13 @@ class UserAnnotationService extends ModelService {
                               "where image_id = ${image.id} " +
                               "and user_id = ${user.id} " +
                               "and ST_IsEmpty(st_centroid(location))=false " +
-                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n"
+                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n"
              kmeansGeometryService.doKeamsFullRequest(request)
         } else {
             String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
                               "from user_annotation \n " +
                               "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n " +
-                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + boundingbox.toString() + "',0)) \n"
+                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n"
              kmeansGeometryService.doKeamsSoftRequest(request)
         }
 

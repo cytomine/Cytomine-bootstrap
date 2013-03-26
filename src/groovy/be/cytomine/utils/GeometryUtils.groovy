@@ -3,6 +3,7 @@ package be.cytomine.utils
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.LinearRing
 
 /**
  * User: lrollus
@@ -14,45 +15,22 @@ class GeometryUtils {
 
     public static Geometry createBoundingBox(String bbox) {
         String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(bottomX, bottomY), new Coordinate(bottomX, topY), new Coordinate(topX, topY), new Coordinate(topX, bottomY), new Coordinate(bottomX, bottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-        boundingbox
+        double minX = Double.parseDouble(coordinates[0])
+        double minY = Double.parseDouble(coordinates[1])
+        double maxX = Double.parseDouble(coordinates[2])
+        double maxY = Double.parseDouble(coordinates[3])
+        return GeometryUtils.createBoundingBox(minX, maxX, minY , maxY)
     }
 
-    public static Geometry createLittleBoundingBox(String bbox) {
-        String[] coordinates = bbox.split(",")
-        double bottomX = Double.parseDouble(coordinates[0])
-        double bottomY = Double.parseDouble(coordinates[1])
-        double topX = Double.parseDouble(coordinates[2])
-        double topY = Double.parseDouble(coordinates[3])
-
-        println "bottomX=$bottomX"
-        println "topX=$topX"
-        println "bottomY=$bottomY"
-        println "topY=$topY"
-
-        double realBottomX = bottomX + ((topX-bottomX)/4)
-        double realBottomY = bottomY + ((topY-bottomY)/4)
-        double realTopX = topX - ((topX-bottomX)/4)
-        double realTopY = topY - ((topY-bottomY)/4)
-
-
-        println "realBottomX=$realBottomX"
-        println "realTopX=$realTopX"
-        println "realBottomY=$realBottomY"
-
-        println "realTopY=$realTopY"
-
-
-
-        Coordinate[] boundingBoxCoordinates = [new Coordinate(realBottomX, realBottomY), new Coordinate(realBottomX, realTopY), new Coordinate(realTopX, realTopY), new Coordinate(realTopX, realBottomY), new Coordinate(realBottomX, realBottomY)]
-        Geometry boundingbox = new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(boundingBoxCoordinates), null)
-        boundingbox
+    public static Geometry createBoundingBox(double minX, double maxX, double minY, double maxY) {
+        Coordinate[] roiPoints = new Coordinate[5]
+        roiPoints[0] = new Coordinate(minX, minY)
+        roiPoints[1] = new Coordinate(minX, maxY)
+        roiPoints[2] = new Coordinate(maxX, maxY)
+        roiPoints[3] = new Coordinate(maxX, minY)
+        roiPoints[4] = roiPoints[0]
+        //Build geometry
+        LinearRing linearRing = new GeometryFactory().createLinearRing(roiPoints)
+        return new GeometryFactory().createPolygon(linearRing)
     }
-
-
 }
