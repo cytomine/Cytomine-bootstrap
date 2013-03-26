@@ -80,7 +80,6 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     var defaultStyle = new OpenLayers.Style(style, {
                 context: {
                     getLabel: function (feature) {
-                        console.log("getLabel");
                         if (feature.geometry && feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
                             var count = feature.attributes.count
                             if(count==undefined) count = "";
@@ -90,11 +89,9 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
                         }
                     } ,
                     getOpacity: function (feature) {
-                        console.log("getOpacity");
                         return 0.6;
                     },
                     getStrokeColor: function (feature) {
-                        console.log("getOpacity");
                         var opacity = feature.attributes.opacity
                         if(opacity==undefined) return '#000000';
                         if(opacity<0.33) return "#B94A48"
@@ -167,7 +164,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
         //renderers: ["Canvas", "SVG", "VML"],
         strategies: [
-            new OpenLayers.Strategy.BBOX({resFactor: 1})
+            new OpenLayers.Strategy.BBOX({resFactor: 1,ratio: 1})
         ],
         protocol: new OpenLayers.Protocol.Script({
             url: annotationsCollection,

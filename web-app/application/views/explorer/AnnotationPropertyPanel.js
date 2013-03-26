@@ -41,7 +41,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         });
 
         var SortSelect = function sortArray(){
-            var list= {};
+            var list= new Array();
             var el= document.getElementById('selectLayersAnnotationProperty'); //:to do use class or find another way
 
             for(var i=0;i<el.options.length-1;i++){
