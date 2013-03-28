@@ -227,6 +227,7 @@ class RestUserJobController extends RestController {
         userJob.accountLocked = user.accountLocked
         userJob.passwordExpired = user.passwordExpired
         userJob.user = user
+        userJob.job = job
         Date date = new Date()
 
         try {

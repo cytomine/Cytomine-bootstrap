@@ -218,6 +218,7 @@ body {
 
 <script type="text/javascript" src="application/views/upload/UploadFormView.js" ></script>
 
+<script type="text/javascript" src="application/views/image/ImageReviewAction.js" ></script>
 <script type="text/javascript" src="application/views/image/ImageThumbView.js" ></script>
 <script type="text/javascript" src="application/views/image/ImageSelectView.js" ></script>
 <script type="text/javascript" src="application/views/image/ImageView.js" ></script>

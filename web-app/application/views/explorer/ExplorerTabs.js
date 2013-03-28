@@ -37,9 +37,15 @@ var ExplorerTabs = Backbone.View.extend({
         var self = this;
         var tab = this.getImageView(idImage);
         if (tab != null) {
+            //open tab if already exist
             tab.view.show(options);
             self.showTab(idImage, "image");
             return;
+        }
+        tab = this.getImageView("review-" + idImage);
+        if (tab != null) {
+            //close review tab for this image if already exist
+            $("#closeTabtabs-review-" + idImage).click()
         }
 
         var tabs = $("#explorer-tab-content");
@@ -69,9 +75,15 @@ var ExplorerTabs = Backbone.View.extend({
         var self = this;
         var tab = this.getImageView("review-" + idImage);
         if (tab != null) {
+            //open tab if already exist
             tab.view.show(options);
             self.showTab(idImage, "review");
             return;
+        }
+        tab = this.getImageView(idImage);
+        if (tab != null) {
+            //close image tab for this image if already exist
+            $("#closeTabtabs-image-" + idImage).click()
         }
 
         var tabs = $("#explorer-tab-content");

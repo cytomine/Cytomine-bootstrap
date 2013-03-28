@@ -1,0 +1,21 @@
+<div class="btn-group">
+    <button class="btn btn-inverse" id="exploreButton<%=  id  %>">Explore</button>
+    <button class="btn dropdown-toggle btn-inverse" data-toggle="dropdown">
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a id="explore<%=  id  %>" href='#tabs-image-<%= project %>-<%=  id  %>-'><i
+                class="icon-eye-open icon-black"></i> Explore</a></li>
+        <li><a id="review<%=  id  %>" href="#tabs-review-<%= project %>-<%=  id  %>-"><i
+                class="icon-check icon-black"></i> Review</a></li>
+        <li class="divider"></li>
+        <li><a id="startreview<%=  id  %>" href="#"><i class="icon-play icon-black"></i> Start reviewing</a></li>
+        <li><a id="cancelreview<%=  id  %>" href="#"><i class="icon-stop icon-black"></i> Cancel Reviewing</a></li>
+        <li><a id="validateimage<%=  id  %>" href="#"><i class="icon-thumbs-up icon-black"></i> Validate image</a></li>
+        <li><a id="unvalidateimage<%=  id  %>" href="#"><i class="icon-thumbs-down icon-black"></i> Unvalidate image</a>
+        </li>
+        <li class="divider"></li>
+        <li><a id="moreinfo<%=  id  %>" href="#"><i class="icon-info-sign icon-black"></i> More info</a></li>
+
+    </ul>
+</div>
