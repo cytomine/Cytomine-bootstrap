@@ -192,7 +192,7 @@ class UserAnnotationService extends ModelService {
      * @param userIDS filter user ids
      * @return Annotation listing
      */
-    def list(ImageInstance image, Geometry bbox, Long[] termsIDS, Long[] userIDS) {
+    def list(ImageInstance image, Geometry bbox, List<Long> termsIDS, List<Long> userIDS) {
         //:to do use listlight and parse WKT instead ?
         Collection<UserAnnotation> annotations_in_roi = []
 

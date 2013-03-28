@@ -139,7 +139,7 @@ class RestReviewedAnnotationController extends RestController {
                } else if (termList.isEmpty()) {
                    responseNotFound("Term", params.terms)
                } else {
-                   def list = reviewedAnnotationService.list(project, userList, imageInstanceList, termList)
+                   def list = reviewedAnnotationService.list(project, termList, userList, imageInstanceList )
                    responseSuccess(list)
                }
            } else {
@@ -166,7 +166,7 @@ class RestReviewedAnnotationController extends RestController {
             if (userList.isEmpty() || imageInstanceList.isEmpty()) {
                 list = []
             } else {
-                list = reviewedAnnotationService.list(project, term, userList, imageInstanceList)
+                list = reviewedAnnotationService.list(project, [term.id], userList, imageInstanceList)
             }
             responseSuccess(list)
         }

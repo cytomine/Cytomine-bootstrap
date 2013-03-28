@@ -216,7 +216,7 @@ class RestAnnotationDomainController extends RestController {
             }
 
             //Is the first polygon always the big 'boundary' polygon?
-            String newGeom = fillForm(annotation.location.toText())
+            String newGeom = fillPolygon(annotation.location.toText())
             def json = JSON.parse(annotation.encodeAsJSON())
             json.location = newGeom
 
@@ -236,19 +236,19 @@ class RestAnnotationDomainController extends RestController {
     }
 
     /**
-     * Fill form to complete empty space inside polygon/mulypolygon
-     * @param form A polygon or multipolygon wkt form
+     * Fill polygon to complete empty space inside polygon/mulypolygon
+     * @param polygon A polygon or multipolygon wkt polygon
      * @return A polygon or multipolygon filled points
      */
-    private String fillForm(String form) {
-        if (form.startsWith("POLYGON")) return "POLYGON(" + getFirstPolygonLocation(form) + ")";
-        else if (form.startsWith("MULTIPOLYGON")) return "MULTIPOLYGON(" + getFirstPolygonLocationForEachItem(form) + ")";
-        else throw new WrongArgumentException("Form cannot be filled:" + form)
+    private String fillPolygon(String polygon) {
+        if (polygon.startsWith("POLYGON")) return "POLYGON(" + getFirstPolygonLocation(polygon) + ")";
+        else if (polygon.startsWith("MULTIPOLYGON")) return "MULTIPOLYGON(" + getFirstPolygonLocationForEachItem(polygon) + ")";
+        else throw new WrongArgumentException("Form cannot be filled:" + polygon)
     }
 
     /**
-     * Fill all polygon inside a Multipolygon WKT form
-     * @param form Multipolygon WKT form
+     * Fill all polygon inside a Multipolygon WKT polygon
+     * @param form Multipolygon WKT polygon
      * @return Multipolygon with all its polygon filled
      */
     private String getFirstPolygonLocationForEachItem(String form) {
@@ -287,18 +287,18 @@ class RestAnnotationDomainController extends RestController {
 
     /**
      * Fill a polygon
-     * @param form Polygon as wkt
+     * @param polygon Polygon as wkt
      * @return Polygon filled points
      */
-    private String getFirstPolygonLocation(String form) {
+    private String getFirstPolygonLocation(String polygon) {
         int i = 0;
         int start, stop;
-        while (form.charAt(i) != '(') i++;
-        while (form.charAt(i + 1) == '(') i++;
+        while (polygon.charAt(i) != '(') i++;
+        while (polygon.charAt(i + 1) == '(') i++;
         start = i;
-        while (form.charAt(i) != ')') i++;
+        while (polygon.charAt(i) != ')') i++;
         stop = i;
-        return form.substring(start, stop + 1);
+        return polygon.substring(start, stop + 1);
     }
 
     /**

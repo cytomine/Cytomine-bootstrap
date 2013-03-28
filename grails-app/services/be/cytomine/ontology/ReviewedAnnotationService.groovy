@@ -60,7 +60,7 @@ class ReviewedAnnotationService extends ModelService {
         ReviewedAnnotation.findAllByImage(image)
     }
 
-    def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
+    /*def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
         SecurityACL.check(project.container(),READ)
         def reviewed = ReviewedAnnotation.createCriteria().list {
             eq("project", project)
@@ -77,7 +77,7 @@ class ReviewedAnnotationService extends ModelService {
             if (hasTerm) annotationWithThisTerm << review
         }
         return annotationWithThisTerm
-    }
+    } */
 
     /**
      * List validate annotation
@@ -185,18 +185,18 @@ class ReviewedAnnotationService extends ModelService {
                 .list()
     }
 
-    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+    def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null) {
         SecurityACL.check(project.container(),READ)
         boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at2.term_id as term, at2.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
-                " FROM reviewed_annotation a, reviewed_annotation_term at,reviewed_annotation_term at2,reviewed_annotation_term at3\n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
+                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
                 " WHERE a.id = at.reviewed_annotation_terms_id \n" +
                 " AND a.project_id = " + project.id + "\n" +
-                " AND at3.term_id = " + term.id + "\n" +
-                " AND a.id = at2.reviewed_annotation_terms_id\n" +
-                " AND a.id = at3.reviewed_annotation_terms_id\n" +
-                " AND a.user_id IN (" + userList.collect {it}.join(",") + ") \n" +
-                (allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                " AND at.term_id IN  (" + termList.join(",") + ")\n" +
+                " AND a.id = at.reviewed_annotation_terms_id\n" +
+                " AND a.user_id IN (" + userList.join(",") + ") \n" +
+                (allImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                (bbox ? " AND ST_Intersects(a.location,GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
                 " ORDER BY id desc, term"
         selectReviewedAnnotationFull(request)
     }

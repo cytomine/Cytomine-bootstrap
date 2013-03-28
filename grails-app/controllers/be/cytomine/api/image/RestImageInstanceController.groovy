@@ -110,8 +110,9 @@ class RestImageInstanceController extends RestController {
         int w = Integer.parseInt(params.w)
         int h = Integer.parseInt(params.h)
 
-        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
-
+        if (w * h > MAX_SIZE_WINDOW_REQUEST) {
+            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+        }
         int maxZoom = abstractImage.getZoomLevels().max
         int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
         int resizeWidth = w / Math.pow(2, zoom)
@@ -143,56 +144,6 @@ class RestImageInstanceController extends RestController {
         responseImage(abstractImageService.crop(annotation, null))
     }
 
-    def mask_review = {
-        println "mask_review"
-        //TODO:: document this method
-        ImageInstance image = ImageInstance.read(params.long('id'))
-        AbstractImage abstractImage = image.getBaseImage()
-
-        int x = params.int("x")
-        int y = params.int("y")
-        int w = params.int("w")
-        int h = params.int("h")
-
-        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("Requestion window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
-
-        Long[] termsIDS = params.terms?.split(",")?.collect {
-            Long.parseLong(it)
-        }
-        if (!termsIDS) { //don't filter by term, take everything
-            termsIDS = termService.getAllTermId(image.getProject())
-        }
-
-
-        try {
-            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
-            Geometry roiGeometry = GeometryUtils.createBoundingBox(
-                    x,                                      //minX
-                    x + w,                                  //maxX
-                    abstractImage.getHeight() - (y + h),    //minX
-                    abstractImage.getHeight() - y           //maxY
-            )
-
-            //Get the image, compute ratio between asked and received
-            BufferedImage mask = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
-
-            //Fetch annotations with the requested term on the request image
-
-            def reviewedAnnotations = reviewedAnnotationService.list(image, roiGeometry)
-            ArrayList<Geometry> geometries = []
-
-            reviewedAnnotations.collect {
-                geometries << new WKTReader().read(it["location"])
-            }
-
-            //Draw annotation
-            mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.WHITE, x, y, 1, 1)
-            responseBufferedImage(mask)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
     def mask = {
         println "mask"
         //TODO:: document this method
@@ -204,21 +155,27 @@ class RestImageInstanceController extends RestController {
         int w = params.int("w")
         int h = params.int("h")
 
-        if (w * h > MAX_SIZE_WINDOW_REQUEST) responseError(new TooLongRequestException("Requestion window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+        boolean review = params.boolean("review")
 
-        Long[] termsIDS = params.terms?.split(",")?.collect {
+        if (w * h > MAX_SIZE_WINDOW_REQUEST) {
+            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+        }
+
+        java.util.List<Long> termsIDS = params.terms?.split(",")?.collect {
             Long.parseLong(it)
         }
         if (!termsIDS) { //don't filter by term, take everything
             termsIDS = termService.getAllTermId(image.getProject())
         }
 
-        Long[] userIDS = params.users?.split(",")?.collect {
+        java.util.List<Long> userIDS = params.users?.split(",")?.collect {
             Long.parseLong(it)
         }
         if (!userIDS) { //don't filter by users, take everything
             userIDS = secUserService.listLayers(image.getProject()).collect { it.id}
         }
+
+        java.util.List<Long> imageIDS = [image.id]
 
 
         try {
@@ -234,10 +191,32 @@ class RestImageInstanceController extends RestController {
             BufferedImage mask = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
 
             //Fetch annotations with the requested term on the request image
-            Collection<UserAnnotation> annotations = userAnnotationService.list(image, roiGeometry, termsIDS, userIDS)
+
+            ArrayList<Geometry> geometries
+            if (review) {
+                def reviewedAnnotations = reviewedAnnotationService.list(image.getProject(), termsIDS, userIDS, imageIDS, roiGeometry)
+                geometries = reviewedAnnotations.collect {
+                    new WKTReader().read(it["location"])
+                }
+            } else {
+                Collection<UserAnnotation> annotations = userAnnotationService.list(image, roiGeometry, termsIDS, userIDS)
+                geometries = annotations.collect { geometry ->
+                    geometry.getLocation()
+                }
+            }
 
             //Draw annotation
-            mask = segmentationService.colorizeWindow(abstractImage, mask, annotations.collect { it.getLocation() }, Color.WHITE, x, y, 1, 1)
+            for (geometryCollection in geometries) {
+                println ";)>>>" + geometryCollection.getNumGeometries()
+                for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
+                    Geometry geometry = geometryCollection.getGeometryN(i)
+                    mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.exteriorRing], Color.WHITE, x, y, 1, 1)
+                    for (def j = 0; j < geometryCollection.numInteriorRing; j++) {
+                        mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.getInteriorRingN(j)], Color.BLACK, x, y, 1, 1)
+                    }
+                }
+            }
+            //mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.WHITE, x, y, 1, 1)
             responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -387,7 +366,7 @@ class RestImageInstanceController extends RestController {
 
         //Extract params
         Integer resultWidth = params.int("resultwidth")
-        if (!resultWidth) resultWidth = 5000
+        if (!resultWidth) resultWidth = MAX_SIZE
         double scale = resultWidth / original.getWidth()
 
         // Get polygons
