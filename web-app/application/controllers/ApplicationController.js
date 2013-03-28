@@ -184,6 +184,16 @@ var ApplicationController = Backbone.Router.extend({
 
         return year + "-" + month + "-" + day + " " + hour + "h" + min;
     },
+    convertLongToDateShort: function (longDate) {
+        var createdDate = new Date();
+        createdDate.setTime(longDate);
+
+        //date format
+        var year = createdDate.getFullYear();
+        var month = (createdDate.getMonth() + 1) < 10 ? "0" + (createdDate.getMonth() + 1) : (createdDate.getMonth() + 1);
+        var day = (createdDate.getDate()) < 10 ? "0" + (createdDate.getDate()) : (createdDate.getDate());
+        return year + "-" + month + "-" + day;
+    },
     minString: function (string, maxFirstCar, maxLastCar) {
         if (string.length <= (maxFirstCar + maxLastCar + 5)) {
             return  string;

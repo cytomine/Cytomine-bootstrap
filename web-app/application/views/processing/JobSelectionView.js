@@ -65,7 +65,7 @@ var JobSelectionView = Backbone.View.extend({
                 self.printDatatables(self.jobs.models, date);
                 self.printDataPicker(date);
                 $(self.el).find("#datepicker").datepicker('setDate', date);
-                self.refreshDatePicker();
+                self.refreshJobs();
 
             }
         });
@@ -92,7 +92,7 @@ var JobSelectionView = Backbone.View.extend({
                 }
             },
             onSelect: function (dateStr) {
-                self.refreshDatePicker();
+                self.refreshJobs();
             }
         });
         if (date != undefined) {
@@ -101,17 +101,37 @@ var JobSelectionView = Backbone.View.extend({
             self.disableDateChangeEvent = false;
         }
 
+        $(self.el).find("#onlyDeletedJob").change(function() {
+           self.refreshJobs();
+        });
+
     },
-    refreshDatePicker: function () {
+    refreshJobs: function () {
         var self = this;
+
         if (!self.disableDateChangeEvent) {
+
+            var filteredJobs = [];
+
+            self.jobs.each(function(job) {
+                filteredJobs.push(job);
+            });
+
             var date = $(self.el).find("#datepicker").datepicker("getDate");
             if (date != null) {
                 self.currentDate = date;
                 var indx = self.findJobIndiceBetweenDateTime(date.getTime(), date.getTime() + 86400000); //60*60*24*1000 = 86400000ms in a day
-                var jobs = self.findJobByIndice(indx);
-                self.printDatatables(jobs, date);
+                filteredJobs = _.filter(filteredJobs, function(job,index){
+                    return  $.inArray(index,indx)!=-1;
+                });
             }
+
+            var noDeletedData = $(self.el).find("#onlyDeletedJob").attr('checked');
+            if(noDeletedData) {
+                filteredJobs = _.filter(filteredJobs, function(job,index){ return !job.get('dataDeleted')});
+            }
+
+            self.printDatatables(filteredJobs, date);
         }
     },
     findJobIndiceBetweenDateTime: function (min, max) {
@@ -272,11 +292,9 @@ var JobSelectionView = Backbone.View.extend({
         }
     },
     initSubGridDatatables: function () {
-        console.log("initSubGridDatatables");
         var self = this;
 
         $(self.el).find('#selectJobTable tbody td i').live('click', function () {
-            console.log('CLICK:' + self.table.fnIsOpen(nTr));
             var nTr = $(this).parents('tr')[0];
             if (self.table.fnIsOpen(nTr)) {
                 /* This row is already open - close it */
@@ -290,12 +308,10 @@ var JobSelectionView = Backbone.View.extend({
                 $(this).addClass("class", "icon-minus");
                 self.table.fnOpen(nTr, self.seeDetails(nTr), 'details');
                 var aData = self.table.fnGetData(nTr);
-                console.log("aData[1]=" + aData[1]);
                 new JobModel({ id: aData[1]}).fetch({
                     success: function (model, response) {
                         var tableParam = $(self.el).find('#selectJobTable').find('table[id=' + aData[1] + ']');
                         _.each(model.get('jobParameters'), function (param) {
-                            console.log("param.value=" + param.value);
                             var value = param.value
                             if (value.length > 50) {
                                 value = value.substring(0, 50) + "..."

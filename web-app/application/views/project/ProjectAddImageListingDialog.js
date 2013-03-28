@@ -201,6 +201,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             //
             var createdDate = new Date();
             createdDate.setTime(image.get('created'));
+
+
             //
             data[i] = {
                 id: image.id,
@@ -209,7 +211,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
                 filename: image.get('filename'),
                 type: image.get('mime'),
                 annotations: image.get('numberOfAnnotations'),
-                added: createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate(),
+                added: window.app.convertLongToDateShort(image.get("created")),
                 See: ''
             };
             i++;
@@ -349,10 +351,8 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
     },
     dateFormatter: function (cellvalue, options, rowObject) {
         // do something here
-        var createdDate = new Date();
-        createdDate.setTime(cellvalue);
 
-        return createdDate.getFullYear() + "-" + createdDate.getMonth() + "-" + createdDate.getDate()
+        return window.app.convertLongToDateShort(cellvalue);
     },
 
     addImageProjectFromTable: function () {
