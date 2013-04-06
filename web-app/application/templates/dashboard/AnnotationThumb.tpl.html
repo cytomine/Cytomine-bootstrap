@@ -1,5 +1,7 @@
-<div id="mainAnnotationThumb-<%= id %>" style="border: 3px solid; border-color: <%= colorStyle %>;width : 100px; height: 100px;position: relative;text-align: center; <%= backgroundcolor%>;">
-
+<div id="mainAnnotationThumb-<%= id %>" style="border: 3px solid; border-color: <%= colorStyle %>;width : 100px; height: 100px;position: relative;text-align: center;">
+    <% if (reviewed) { %>
+    <span class="label label-success" style="position: absolute;bottom: 0px;left: 20px;">Reviewed</span>
+    <% } %>
     <a href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'>
         <img id='AnnotationThumbCrop-<%= id %>' class='img-rounded' src='<%=  smallCropURL  %>' alt='alt |<%=  name  %>|' style="max-height:90px; max-width:90px;"/>
     </a>
@@ -28,7 +30,6 @@
                 <li><a tabindex="-1" style="display: none;" href="#delete-annotation/<%= id %>"> </a></li>
                 <li><a tabindex="-1" href='#tabs-image-<%= project %>-<%=  image  %>-<%= id %>'> View</a></li>
                 <li><a href='#tabs-annotationsproperties-<%= project %>-<%= id %>'>Properties</a></li>
-
             </ul>
         </div>
     </div>

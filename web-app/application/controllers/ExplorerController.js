@@ -8,6 +8,7 @@ var ExplorerController = Backbone.Router.extend({
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
         "tabs-review-:idProject-:idImage-": "review",
         "close": "close"
+        //"tabs-leaflet-:idProject-:idImage-" : "leaflet"
     },
 
     initialize: function () {
@@ -30,10 +31,23 @@ var ExplorerController = Backbone.Router.extend({
             }
         });
     },
-    browse: function (idProject, idImage) {
-        console.log("browse1");
-        this.browse(idProject,idImage,"");
-    },
+    /*leaflet : function(idProject, idImage) {  //tmp for test
+        var self = this;
+        console.log("activate leaflet");
+        require([
+            "http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"
+        ], function(){
+            console.log("activate leaflet plugins");
+            require([
+                "lib/leaflet/plugins/zoomify-layer-master/zoomify_layer.js",
+                "lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.js"
+            ], function() {
+                BrowseImageView = LeafletView;
+                self.browse(idProject, idImage);
+            });
+
+        });
+    },*/
     browse: function (idProject, idImage, idAnnotation) {
         console.log("browse2");
         /*

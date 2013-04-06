@@ -9,7 +9,12 @@ var PhonoController = Backbone.Router.extend({
     },
 
     createMenu: function () {
-        new PhonoMenu().render();
+        //<!-- Phono -->
+        // <script type="text/javascript" src="http://s.phono.com/releases/0.3/jquery.phono.js"></script>
+        require(["http://s.phono.com/releases/0.3/jquery.phono.js"], function() {
+            new PhonoMenu().render();
+        });
+
     }
 
 });

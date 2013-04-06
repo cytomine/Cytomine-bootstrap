@@ -235,7 +235,13 @@ class RestImageInstanceController extends RestController {
         double x_ratio = crop.getWidth() / boundaries.width
         double y_ratio = crop.getHeight() / boundaries.height
 
-        mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+        for (int i = 0; i < geometries.getNumGeometries(); i++) {
+            Geometry geometry = geometries.getGeometryN(i)
+            mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.exteriorRing], Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+            for (def j = 0; j < geometries.numInteriorRing; j++) {
+                mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.getInteriorRingN(j)], Color.BLACK, boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+            }
+        }
 
         if (withAlpha)
             return applyMaskToAlpha(crop, mask)

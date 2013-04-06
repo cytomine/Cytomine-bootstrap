@@ -82,8 +82,8 @@ class BootStrap {
 
         /* Tmp : migration script */
         if (Environment.getCurrent() != Environment.TEST && Storage.count() == 1) {
-//            bootstrapProdDataService.toVersion1()
-//            countersService.updateCommentsCounters()
+            bootstrapProdDataService.toVersion1()
+            countersService.updateCommentsCounters()
         }
 
     }

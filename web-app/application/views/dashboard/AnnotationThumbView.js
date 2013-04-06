@@ -25,10 +25,7 @@ var AnnotationThumbView = Backbone.View.extend({
                 colorStyle = "#F89406"
             }
 
-            var backgroundcolor = "";
-            if(annotation.get('reviewed')) {
-                backgroundcolor = "background-color: #008000;"
-            }
+
 
             //if user job, construct link to the job
             var jobLink = null;
@@ -47,7 +44,6 @@ var AnnotationThumbView = Backbone.View.extend({
                 ratePourcent: ratePourcent,
                 colorStyle: colorStyle,
                 jobLink: jobLink,
-                backgroundcolor : backgroundcolor,
                 nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0
             });
 

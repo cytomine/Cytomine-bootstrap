@@ -137,6 +137,7 @@
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationPropertyLayer.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/BrowseImageView.js"/>
+<fileset dir="${src.dir}" includes="application/views/explorer/LeafletView.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/ExplorerTabs.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationsPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/LayerSwitcherPanel.js"/>

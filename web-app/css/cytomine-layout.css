@@ -692,3 +692,8 @@ div.olControlZoomPanel .olControlZoomToMaxExtentItemInactive {
     margin: 1px;
     color: white;
 }
+
+.leafmap {
+      width: 768px;
+      height: 768px;
+}

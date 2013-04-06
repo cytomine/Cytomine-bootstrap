@@ -43,7 +43,7 @@ class BootstrapProdDataService {
         getAbstractImageNestedFiles()
         initUserIntoAbstractImage()
         initUserStorages()
-        //generateCopyToStorageScript()
+        generateCopyToStorageScript()
     }
 
 
@@ -65,7 +65,7 @@ class BootstrapProdDataService {
                         it.user = userGroups.first().user
                     }
                 }
-                it.user.save()
+                it.save()
             }
         }
     }
@@ -226,13 +226,13 @@ class BootstrapProdDataService {
                 if (storage.validate()) {
                     storage.save()
                     permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-                    fileSystemService.makeRemoteDirectory(
+                    /*fileSystemService.makeRemoteDirectory(
                             storage.getIp(),
                             storage.getPort(),
                             storage.getUsername(),
                             storage.getPassword(),
                             storage.getKeyFile(),
-                            storage.getBasePath())
+                            storage.getBasePath())*/
 
                     for (imageServer in ImageServer.findAll()) {
                         ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)

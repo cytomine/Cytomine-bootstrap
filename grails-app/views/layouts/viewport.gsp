@@ -40,11 +40,18 @@ body {
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
 <!--<link rel="stylesheet" href="css/darkstrap-v0.9.0.css"/>-->
 
-
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 <!--<link rel='stylesheet' href='http://danneu.com/bag/darkstrap/css/darkstrap.css' type='text/css'/>-->
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+<!--[if lte IE 8]>
+ <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
+<![endif]-->
+<link rel="stylesheet" href="lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.css" />
+<!--[if lte IE 8]><link rel="stylesheet" href="lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.ie.css" /><![endif]-->
+
 
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -79,9 +86,6 @@ body {
 
 
 <script type="text/javascript" src="lib/json2.js"></script>
-
-<!-- Phono -->
-<script type="text/javascript" src="http://s.phono.com/releases/0.3/jquery.phono.js"></script>
 
 <!-- fileupload -->
 <script type="text/javascript" src="lib/fileupload/vendor/jquery.ui.widget.js"></script>
@@ -206,6 +210,7 @@ body {
 <script type="text/javascript" src="application/views/explorer/AnnotationLayer.js" ></script>
 <script type="text/javascript" src="application/views/explorer/AnnotationPropertyLayer.js" ></script>
 <script type="text/javascript" src="application/views/explorer/BrowseImageView.js" ></script>
+<script type="text/javascript" src="application/views/explorer/LeafletView.js" ></script>
 <script type="text/javascript" src="application/views/explorer/ExplorerTabs.js" ></script>
 <script type="text/javascript" src="application/views/explorer/AnnotationsPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/LayerSwitcherPanel.js" ></script>
@@ -289,22 +294,22 @@ body {
 <div id="alerts"></div>
 <div id="phono-messages"></div>
 
-    <!-- UserVoice JavaScript SDK (only needed once on a page) -->
-    <script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/cZml7cQ5dV9V01diPSalCQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
+<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+<script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/cZml7cQ5dV9V01diPSalCQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
 
-    <!-- A function to launch the Classic Widget -->
-    <script>
-        UserVoice = window.UserVoice || [];
-        function showClassicWidget() {
-            UserVoice.push(['showLightbox', 'classic_widget', {
-                mode: 'full',
-                primary_color: '#cc6d00',
-                link_color: '#007dbf',
-                default_mode: 'support',
-                forum_id: 181698
-            }]);
-        }
-    </script>
+<!-- A function to launch the Classic Widget -->
+<script>
+    UserVoice = window.UserVoice || [];
+    function showClassicWidget() {
+        UserVoice.push(['showLightbox', 'classic_widget', {
+            mode: 'full',
+            primary_color: '#cc6d00',
+            link_color: '#007dbf',
+            default_mode: 'support',
+            forum_id: 181698
+        }]);
+    }
+</script>
 
 </body>
 <g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
