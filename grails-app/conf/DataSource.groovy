@@ -16,7 +16,7 @@ environments {
   development {
     dataSource {
       dbCreate = "update"
-      url="jdbc:postgresql://localhost:5432/cytomineprod"
+      url="jdbc:postgresql://localhost:5432/cytomine"
       password = "postgres"
     }
   }
@@ -39,7 +39,7 @@ environments {
     dataSource {
         //loggingSql = true
         dbCreate = "update"
-        url="jdbc:postgresql://localhost:5432/cytomineperf"
+        url="jdbc:postgresql://localhost:5433/cytomineperf"
         password = "postgres"
       }
     }

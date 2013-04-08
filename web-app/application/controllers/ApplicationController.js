@@ -15,6 +15,9 @@ var ApplicationController = Backbone.Router.extend({
         var self = this;
 
         self.dataTablesBootstrap();
+
+        HotKeys.initHotKeys();
+
         self.view = new ApplicationView({
             el: $('#content')
         });

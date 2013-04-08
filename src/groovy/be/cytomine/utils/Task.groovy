@@ -45,7 +45,7 @@ class Task {
         //sql request retrieve n last comments for task
         def data = []
         Sql sql = createSQLDB()
-        sql.eachRow("SELECT comment FROM task_comment where taskIdent = ${id} order by timestamp desc limit $max") {
+        sql.eachRow("SELECT comment FROM task_comment where task_id = ${id} order by timestamp desc limit $max") {
             data << it[0]
         }
         closeSQL(sql)

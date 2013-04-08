@@ -80,6 +80,16 @@ class RestImageInstanceController extends RestController {
         }
     }
 
+    def previous = {
+        def image = imageInstanceService.read(params.long('id'))
+        def previous = ImageInstance.findAllByProjectAndCreatedGreaterThan(image.project,image.created,[sort:'created',order:'asc',max:1])
+        if(previous && !previous.isEmpty()) {
+            responseSuccess(previous.first())
+        } else {
+            responseSuccess([:])
+        }
+    }
+
 
     def add = {
         try {

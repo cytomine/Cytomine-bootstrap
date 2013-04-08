@@ -66,6 +66,8 @@ var BrowseImageView = Backbone.View.extend({
         templateData.project = window.app.status.currentProject;
         templateData.type = self.divPrefixId;
         $(this.el).append(_.template(tpl, templateData));
+        console.log("************MODEL*************");
+        console.log(this.model);
         var shortOriginalFilename = this.model.get('originalFilename');
         if (shortOriginalFilename.length > 25) {
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";

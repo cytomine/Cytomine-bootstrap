@@ -344,7 +344,7 @@ class SecUserService extends ModelService {
     def deleteDependentAlgoAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof UserJob) {
             AlgoAnnotation.findAllByUser((UserJob)user).each {
-                algoAnnotationService.delete(it,transaction,nullnfalse)
+                algoAnnotationService.delete(it,transaction,null,false)
             }
         }
     }

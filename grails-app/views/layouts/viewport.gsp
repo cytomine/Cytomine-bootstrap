@@ -112,6 +112,10 @@ body {
 
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
 
+<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>
+
+
+
 <!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
 
@@ -263,6 +267,9 @@ body {
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
+
+
+<script type="text/javascript" src="application/utils/HotKeys.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Utils.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Invert.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/MagicWand.js" ></script>
@@ -290,7 +297,11 @@ body {
 </head>
 <body>
 
-<div id='dialogs'></div>
+
+<div id="hotkeys">
+</div>
+<div id='dialogs'>
+</div>
 <div id="alerts"></div>
 <div id="phono-messages"></div>
 

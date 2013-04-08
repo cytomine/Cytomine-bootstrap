@@ -50,15 +50,11 @@ var InformationsPanel = SideBarPanel.extend({
                     if(model.get('project')) {
 
                         if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
-                            var nextUrl = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
-                            console.log(nextUrl);
-                            window.location = nextUrl;
+                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                             $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (model, response) {
-                                    //window.location = "#tabs-images-"+self.model.get('project');
-                    //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                                     window.app.view.message("Image", response.message, "success");
                                     window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
                                     $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
@@ -76,5 +72,33 @@ var InformationsPanel = SideBarPanel.extend({
         });
         $("#getNext"+self.model.id).show();
 
+
+        $("#getPrevious"+self.model.id).click(function() {
+            new ImageInstanceModel({previous:true, id:self.model.id}).fetch({
+                success:function (model, response) {
+                    if(model.get('project')) {
+
+                        if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
+                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
+                            $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
+                        } else {
+                            new ImageReviewModel({id: model.id}).save({}, {
+                                success: function (model, response) {
+                                    window.app.view.message("Image", response.message, "success");
+                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
+                                    $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
+                                },
+                                error: function (model, response) {
+                                    var json = $.parseJSON(response.responseText);
+                                    window.app.view.message("Image", json.errors, "error");
+                                }});
+                        }
+                    } else {
+                        window.app.view.message("Previous image", "This is the first image", "error");
+                    }
+                }
+            });
+        });
+        $("#getPrevious"+self.model.id).show();
     }
 });

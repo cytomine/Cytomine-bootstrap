@@ -75,17 +75,21 @@ var ImageInstanceModel = Backbone.Model.extend({
         if (this.isNew()) {
             return base + format;
         }
-        var nextImage = "";
+        var otherImage = "";
         if(this.next) {
-            nextImage = "/next"
+            otherImage = "/next"
         }
-        var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + nextImage + format;
+        if(this.previous) {
+            otherImage = "/previous"
+        }
+        var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + otherImage + format;
         console.log(url);
         return url;
     },
     initialize: function (options) {
         this.id = options.id;
         this.next = options.next;
+        this.previous = options.previous;
     }
 });
 

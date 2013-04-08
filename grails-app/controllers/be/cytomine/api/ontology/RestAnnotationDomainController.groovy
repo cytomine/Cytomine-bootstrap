@@ -76,14 +76,17 @@ class RestAnnotationDomainController extends RestController {
     def listAnnotationByProjectAndTerm = {
 
         Project project = projectService.read(params.long('idproject'))
-
+        println "listAnnotationByProjectAndTerm"
         if(params.getBoolean('reviewed')) {
             forward(controller: "restReviewedAnnotation", action: "listAnnotationByProjectAndTerm")
         } else {
+
             List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
             if (!userList.isEmpty() && userList.get(0)?.algo()) {
+                println "listAnnotationByProjectAndTerm algo"
                 forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
             } else {
+                println "listAnnotationByProjectAndTerm user"
                 forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
             }
         }
@@ -359,7 +362,7 @@ class RestAnnotationDomainController extends RestController {
                 "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
                 "AND user_id = $idUser\n" +
-                "AND ST_Intersects(annotation.location,GeometryFromText('" + location + "',0));"
+                "AND ST_Intersects(annotation.location,ST_GeometryFromText('" + location + "',0));"
 
         def sql = new Sql(dataSource)
         List<Long> ids = []

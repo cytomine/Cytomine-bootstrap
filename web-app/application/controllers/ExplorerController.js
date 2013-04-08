@@ -7,8 +7,8 @@ var ExplorerController = Backbone.Router.extend({
         "tabs-image-:idProject-:idImage-": "browse",
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
         "tabs-review-:idProject-:idImage-": "review",
-        "close": "close"
-        //"tabs-leaflet-:idProject-:idImage-" : "leaflet"
+        "close": "close",
+        "tabs-leaflet-:idProject-:idImage-" : "leaflet"
     },
 
     initialize: function () {
@@ -31,7 +31,7 @@ var ExplorerController = Backbone.Router.extend({
             }
         });
     },
-    /*leaflet : function(idProject, idImage) {  //tmp for test
+    leaflet : function(idProject, idImage) {  //tmp for test
         var self = this;
         console.log("activate leaflet");
         require([
@@ -47,7 +47,7 @@ var ExplorerController = Backbone.Router.extend({
             });
 
         });
-    },*/
+    },
     browse: function (idProject, idImage, idAnnotation) {
         console.log("browse2");
         /*

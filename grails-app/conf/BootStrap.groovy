@@ -63,6 +63,8 @@ class BootStrap {
 
         /* Fill data just in test environment*/
         if (Environment.getCurrent() == Environment.TEST) {
+
+
             new Sql(dataSource).executeUpdate("DELETE FROM task_comment")
             new Sql(dataSource).executeUpdate("DELETE FROM task")
 
@@ -83,7 +85,7 @@ class BootStrap {
         /* Tmp : migration script */
         if (Environment.getCurrent() != Environment.TEST && Storage.count() == 1) {
             bootstrapProdDataService.toVersion1()
-            countersService.updateCommentsCounters()
+//            countersService.updateCommentsCounters()
         }
 
     }

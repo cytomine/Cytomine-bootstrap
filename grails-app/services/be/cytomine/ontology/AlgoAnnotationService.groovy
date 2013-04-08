@@ -111,8 +111,9 @@ class AlgoAnnotationService extends ModelService {
                                 " WHERE annotation.image_id = $image.id\n" +
                                 " AND annotation.user_id= $user.id\n" +
                                 (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,GeometryFromText('" + bbox.toString() + "',0)) " +
+                                " AND ST_Intersects(annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) " +
                                 " ORDER BY annotation.id "
+
             return selectAlgoAnnotationLight(request)
         } else if(rule==kmeansGeometryService.KMEANSFULL){
             println "mustBeReduce"
@@ -121,8 +122,8 @@ class AlgoAnnotationService extends ModelService {
                            " where image_id = ${image.id} " +
                            " and user_id = ${user.id} " +
                             (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
-                           " and ST_IsEmpty(st_centroid(location))=false \n"
+                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+                          // " and ST_IsEmpty(st_centroid(location))=false \n"
              kmeansGeometryService.doKeamsFullRequest(request)
         } else {
             println "mustBeReduce"
@@ -131,10 +132,11 @@ class AlgoAnnotationService extends ModelService {
                            " where image_id = ${image.id} " +
                            " and user_id = ${user.id} " +
                             (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
-                           " and ST_IsEmpty(st_centroid(location))=false \n"
+                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+                           //" and ST_IsEmpty(st_centroid(location))=false \n"
              kmeansGeometryService.doKeamsSoftRequest(request)
         }
+
 
     }
 
@@ -308,7 +310,6 @@ class AlgoAnnotationService extends ModelService {
             return []
         } else {
             //Get all images
-            //TODO:: May be speedup without using hibernate (direct SQL request)
 
 
             String request = "" +

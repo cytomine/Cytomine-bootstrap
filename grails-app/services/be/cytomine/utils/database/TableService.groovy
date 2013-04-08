@@ -31,13 +31,14 @@ class TableService {
     }
 
     def createTaskTable(def statement) {
-        String reqcreate =  "CREATE TABLE task (id bigint,progress int, projectIdent bigint,userIdent bigint);"
+
+        String reqcreate =  "CREATE TABLE task (id bigint,progress int, project_id bigint,user_id bigint);"
         log.info reqcreate
         try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create TABLE="+e}
     }
 
     def createTaskCommentTable(def statement) {
-        String reqcreate =  "CREATE TABLE task_comment (taskIdent bigint,comment varchar(255), timestamp bigint);"
+        String reqcreate =  "CREATE TABLE task_comment (task_id bigint,comment varchar(255), timestamp bigint);"
         log.info reqcreate
         try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create TABLE="+e}
 

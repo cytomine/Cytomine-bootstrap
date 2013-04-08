@@ -17,6 +17,9 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/next"(controller: "restImageInstance"){
             action = [GET:"next"]
         }
+        "/api/imageinstance/$id/previous"(controller: "restImageInstance"){
+            action = [GET:"previous"]
+        }
         "/api/imageinstance/$id/window-$x-$y-$w-$h"(controller: "restImageInstance"){
             action = [GET:"window"]
         }

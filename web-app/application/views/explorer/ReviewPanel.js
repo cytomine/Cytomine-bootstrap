@@ -259,7 +259,7 @@ var ReviewPanel = SideBarPanel.extend({
                 self.validatePicture();
             });
 
-            $('#showReviewLayer' + self.model.id).click(function () {
+            $('#showReviewLayer' + self.model.id).on('change',function () {
                 self.reviewLayer.vectorsLayer.setVisibility($(this).attr("checked"));
             });
 

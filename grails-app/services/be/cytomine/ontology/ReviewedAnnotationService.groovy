@@ -29,6 +29,7 @@ class ReviewedAnnotationService extends ModelService {
     def algoAnnotationTermService
     def modelService
     def dataSource
+    def kmeansGeometryService
 
     def currentDomain() {
         return ReviewedAnnotation
@@ -99,42 +100,59 @@ class ReviewedAnnotationService extends ModelService {
     def list(ImageInstance image, Geometry bbox) {
         SecurityACL.check(image.container(),READ)
 
-        /**
-         * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
-         * We compute in 'gc' the set of all other annotation that must be list
-         * For each review annotation, we compute the number of other annotation that cover it (ST_CoveredBy => t or f => 0 or 1)
-         *
-         * ST_CoveredBy will return false if the annotation is not perfectly "under" the compare annotation (if some points are outside)
-         * So in gc, we increase the size of each compare annotation just for the check
-         * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
-         */
-        def xfactor = "1.08"
-        def yfactor = "1.08"
-        //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
-        boolean zoomToLow = true
-        String request
-        if (zoomToLow) {
-            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                    " FROM reviewed_annotation reviewed\n" +
-                    " WHERE reviewed.image_id = $image.id\n" +
-                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + bbox.toString() + "',0))\n" +
-                    " ORDER BY numberOfCoveringAnnotation asc, id asc"
-        } else {
-            //too heavy to use with little zoom
-            request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                    " FROM reviewed_annotation reviewed\n" +
-                    " WHERE reviewed.image_id = $image.id\n" +
-                    " AND ST_Intersects(reviewed.location,GeometryFromText('" + bbox.toString() + "',0))\n" +
-                    " ORDER BY numberOfCoveringAnnotation asc, id asc"
-        }
 
-        def sql = new Sql(dataSource)
+            def rule = kmeansGeometryService.mustBeReduce(image,null,bbox)
+            if(rule==kmeansGeometryService.FULL) {
+                /**
+                 * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
+                 * We compute in 'gc' the set of all other annotation that must be list
+                 * For each review annotation, we compute the number of other annotation that cover it (ST_CoveredBy => t or f => 0 or 1)
+                 *
+                 * ST_CoveredBy will return false if the annotation is not perfectly "under" the compare annotation (if some points are outside)
+                 * So in gc, we increase the size of each compare annotation just for the check
+                 * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
+                 */
+                def xfactor = "1.08"
+                def yfactor = "1.08"
+                //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
+                boolean zoomToLow = true
+                String request
+                if (zoomToLow) {
+                    request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                            " FROM reviewed_annotation reviewed\n" +
+                            " WHERE reviewed.image_id = $image.id\n" +
+                            " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
+                            " ORDER BY numberOfCoveringAnnotation asc, id asc"
+                } else {
+                    //too heavy to use with little zoom
+                    request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
+                            " FROM reviewed_annotation reviewed\n" +
+                            " WHERE reviewed.image_id = $image.id\n" +
+                            " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
+                            " ORDER BY numberOfCoveringAnnotation asc, id asc"
+                }
+                  println request
+                def sql = new Sql(dataSource)
 
-        def data = []
-        sql.eachRow(request) {
-            data << [id: it[0], location: it[1], term: []]
-        }
-        data
+                def data = []
+                sql.eachRow(request) {
+                    data << [id: it[0], location: it[1], term: []]
+                }
+                data
+            } else if(rule==kmeansGeometryService.KMEANSFULL){
+                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+                                  "from reviewed_annotation \n " +
+                                  "where image_id = ${image.id} " +
+                                  "and ST_IsEmpty(st_centroid(location))=false " +
+                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+                 kmeansGeometryService.doKeamsFullRequest(request)
+            } else {
+                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+                                  "from reviewed_annotation \n " +
+                                  "where image_id = ${image.id}  \n " +
+                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+                 kmeansGeometryService.doKeamsSoftRequest(request)
+            }
     }
 
     /**

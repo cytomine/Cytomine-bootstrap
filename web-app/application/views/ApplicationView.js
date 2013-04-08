@@ -132,10 +132,11 @@ var ApplicationView = Backbone.View.extend({
         this.initComponents();
         var self = this;
         require([
-            "text!application/templates/BaseLayout.tpl.html"
+            "text!application/templates/BaseLayout.tpl.html", "text!application/templates/HotkeysDialog.tpl.html"
         ],
-            function (tpl) {
+            function (tpl,tplHotkeys) {
                 self.doLayout(tpl, renderCallback);
+                $("div#hotkeys").append(tplHotkeys);
             });
         return this;
     },
@@ -181,6 +182,12 @@ var ApplicationView = Backbone.View.extend({
                 e.preventDefault();
                 showClassicWidget();
             });
+//            $("#hotKeys").on("click", function (e) {
+//                console.log("click");
+//                e.preventDefault();
+//                new HotkeysDialog({el: $('#dialogs')}).render();
+//            });
+
         });
 
     },

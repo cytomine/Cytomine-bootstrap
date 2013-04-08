@@ -31,10 +31,10 @@ class KmeansGeometryService {
 
 
     public static def rules = [
-            100 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): KMEANSFULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
+            100 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
             75 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
-            50 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
-            25 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): FULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
+            50 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): FULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
+            25 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): FULL, ((int)ANNOTATIONSIZE5): FULL],
             0 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): FULL, ((int)ANNOTATIONSIZE5): FULL],
     ]
 
@@ -103,7 +103,16 @@ class KmeansGeometryService {
 
         log.info "ruleLine=$ruleLine"
 
-        def rule = getRuleForNumberOfAnnotations((user.algo()? image.countImageJobAnnotations : image.countImageAnnotations), ruleLine)
+        int numberOfAnnotation = 0
+        if(!user) {
+            numberOfAnnotation = ReviewedAnnotation.countByImage(image)
+        } else if (user.algo()) {
+            numberOfAnnotation = AlgoAnnotation.countByImageAndUser(image,user)
+        } else {
+            numberOfAnnotation = UserAnnotation.countByImageAndUser(image,user)
+        }
+
+        def rule = getRuleForNumberOfAnnotations(numberOfAnnotation, ruleLine)
 
         log.info "rule=$rule"
 
@@ -113,18 +122,10 @@ class KmeansGeometryService {
     public def getRuleForNumberOfAnnotations(def annotations, def ruleLine) {
         println "getRuleForNumberOfAnnotations=$annotations"
         if (annotations >= ANNOTATIONSIZE5) return ruleLine.get(ANNOTATIONSIZE5)
-        println "5"
-        println ruleLine
-        println ruleLine.get(ANNOTATIONSIZE4)
-
         if (annotations >= ANNOTATIONSIZE4) return ruleLine.get(ANNOTATIONSIZE4)
-        println "4"
         if (annotations >= ANNOTATIONSIZE3) return ruleLine.get(ANNOTATIONSIZE3)
-        println "3"
         if (annotations >= ANNOTATIONSIZE2) return ruleLine.get(ANNOTATIONSIZE2)
-        println "2"
         if (annotations >= ANNOTATIONSIZE1) return ruleLine.get(ANNOTATIONSIZE1)
-        println "1"
     }
 
 }

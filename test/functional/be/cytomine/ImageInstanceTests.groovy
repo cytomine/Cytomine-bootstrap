@@ -217,4 +217,23 @@ class ImageInstanceTests  {
         assert json instanceof JSONObject
         assert Long.parseLong(json.id+"") == image1.id
     }
+
+    void testGetPreviousImageInstance() {
+
+        def project = BasicInstanceBuilder.getProject()
+
+        def image1 = BasicInstanceBuilder.getImageInstanceNotExist()
+        image1.project = project
+        BasicInstanceBuilder.saveDomain(image1)
+
+        def image2 = BasicInstanceBuilder.getImageInstanceNotExist()
+        image2.project = project
+        BasicInstanceBuilder.saveDomain(image2)
+
+        def result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert Long.parseLong(json.id+"") == image2.id
+    }
 }

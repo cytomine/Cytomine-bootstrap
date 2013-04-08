@@ -42,28 +42,28 @@ class UnionGeometryService {
              }
          }
      }
-
-     private makeValidPolygon(ImageInstance image, SecUser user) {
-         log.info "makeValidPolygon..."
-         List<AnnotationDomain> annotations
-         if (user.algo()) {
-             annotations = AlgoAnnotation.findAllByImageAndUser(image, user)
-         } else {
-             annotations = UserAnnotation.findAllByImageAndUser(image, user)
-
-         }
-         log.info "Check validation ${annotations.size()} annotations..."
-         annotations.eachWithIndex { it,i->
-             if(i%100==0) {
-                 log.info "validation ${((double)i/(double)annotations.size())*100}%"
-             }
-             if (!it.location.isValid()) {
-                 it.location = it.location.buffer(0)
-                 it.save(flush: true)
-             }
-             //UPDATE algo_annotation set location = ST_BUFFER(location,0) WHERE image_id = 8120370 and user_id = 11974001 AND st_isvalid(location)=false;
-         }
-     }
+//
+//     private makeValidPolygon(ImageInstance image, SecUser user) {
+//         log.info "makeValidPolygon..."
+//         List<AnnotationDomain> annotations
+//         if (user.algo()) {
+//             annotations = AlgoAnnotation.findAllByImageAndUser(image, user)
+//         } else {
+//             annotations = UserAnnotation.findAllByImageAndUser(image, user)
+//
+//         }
+//         log.info "Check validation ${annotations.size()} annotations..."
+//         annotations.eachWithIndex { it,i->
+//             if(i%100==0) {
+//                 log.info "validation ${((double)i/(double)annotations.size())*100}%"
+//             }
+//             if (!it.location.isValid()) {
+//                 it.location = it.location.buffer(0)
+//                 it.save(flush: true)
+//             }
+//             //UPDATE algo_annotation set location = ST_BUFFER(location,0) WHERE image_id = 8120370 and user_id = 11974001 AND st_isvalid(location)=false;
+//         }
+//     }
 
      private def computeArea(ImageInstance image, Integer maxW, Integer maxH) {
          log.info "computeArea..."
@@ -172,10 +172,8 @@ class UnionGeometryService {
                          " AND annotation2.id = at2.annotation_ident\n" +
                          " AND at1.term_id = ${term.id}\n" +
                          " AND at2.term_id = ${term.id}\n" +
-                         " AND ST_IsEmpty(annotation1.location)=false \n" +
-                         " AND ST_IsEmpty(annotation2.location)=false \n" +
-                         " AND ST_Intersects(annotation1.location,GeometryFromText('" + bbox.toString() + "',0)) " +
-                         " AND ST_Intersects(annotation2.location,GeometryFromText('" + bbox.toString() + "',0)) "
+                         " AND ST_Intersects(annotation1.location,ST_GeometryFromText('" + bbox.toString() + "',0)) " +
+                         " AND ST_Intersects(annotation2.location,ST_GeometryFromText('" + bbox.toString() + "',0)) "
          } else {
              request = "SELECT annotation1.id as id1, annotation2.id as id2\n" +
                          " FROM user_annotation annotation1, user_annotation annotation2, annotation_term at1, annotation_term at2\n" +
@@ -188,10 +186,8 @@ class UnionGeometryService {
                          " AND annotation2.id = at2.user_annotation_id\n" +
                          " AND at1.term_id = ${term.id}\n" +
                          " AND at2.term_id = ${term.id}\n" +
-                         " AND ST_IsEmpty(annotation1.location)=false \n" +
-                         " AND ST_IsEmpty(annotation2.location)=false \n" +
-                         " AND ST_Intersects(annotation1.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
-                         " AND ST_Intersects(annotation2.location,GeometryFromText('" + bbox.toString() + "',0)) "
+                         " AND ST_Intersects(annotation1.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n" +
+                         " AND ST_Intersects(annotation2.location,ST_GeometryFromText('" + bbox.toString() + "',0)) "
          }
          if(bufferLength!=null) {
              request = request + " AND ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength)))>=$minIntersectLength\n"

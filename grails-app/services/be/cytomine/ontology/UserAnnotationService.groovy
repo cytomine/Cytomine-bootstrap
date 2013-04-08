@@ -241,7 +241,7 @@ class UserAnnotationService extends ModelService {
                                 " WHERE annotation.image_id = $image.id\n" +
                                 " AND annotation.user_id= $user.id\n" +
                                 (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n" +
+                                " AND ST_Intersects(annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n" +
                                 " ORDER BY annotation.id desc"
             return selectUserAnnotationLight(request)
         } else if(rule==kmeansGeometryService.KMEANSFULL){
@@ -250,13 +250,13 @@ class UserAnnotationService extends ModelService {
                               "where image_id = ${image.id} " +
                               "and user_id = ${user.id} " +
                               "and ST_IsEmpty(st_centroid(location))=false " +
-                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n"
+                              "and ST_Intersects(user_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
              kmeansGeometryService.doKeamsFullRequest(request)
         } else {
             String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
                               "from user_annotation \n " +
                               "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n " +
-                              "and ST_Intersects(user_annotation.location,GeometryFromText('" + bbox.toString() + "',0)) \n"
+                              "and ST_Intersects(user_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
              kmeansGeometryService.doKeamsSoftRequest(request)
         }
 

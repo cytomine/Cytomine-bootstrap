@@ -181,6 +181,7 @@
 <fileset dir="${src.dir}" includes="application/views/Component.js"/>
 <fileset dir="${src.dir}" includes="application/views/ApplicationView.js"/>
 <fileset dir="${src.dir}" includes="application/views/ConfirmDialogView.js"/>
+<fileset dir="${src.dir}" includes="application/utils/HotKeys.js"/>
 <fileset dir="${src.dir}" includes="application/utils/processing/image/Utils.js"/>
 <fileset dir="${src.dir}" includes="application/utils/processing/image/Invert.js"/>
 <fileset dir="${src.dir}" includes="application/utils/processing/image/MagicWand.js"/>

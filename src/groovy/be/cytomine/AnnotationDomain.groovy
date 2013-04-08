@@ -1,6 +1,7 @@
 package be.cytomine
 
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -9,6 +10,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * User: lrollus
@@ -90,12 +92,14 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     public beforeInsert() {
         super.beforeInsert()
         project = image.project
+        this.makeValid()
         if(!wktLocation)
             wktLocation = location.toText()
     }
 
     def beforeUpdate() {
         super.beforeUpdate()
+        this.makeValid()
         wktLocation = location.toText()
     }
 
@@ -257,5 +261,41 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         else throw new ObjectNotFoundException("Annotation ${id} not found")
 
     }
+
+
+    public void makeValid() {
+        Geometry geom = new WKTReader().read(this.location.toText())
+        Geometry validGeom = null
+        String type = geom.getGeometryType().toUpperCase()
+
+        println "*******************************"
+        println "geom="+geom
+        println "type=" + type
+        println "valid=" + geom.isValid()
+        println "*******************************"
+
+        if (!geom.isValid()) {
+            println "Geometry is not valid"
+            //selfintersect,...
+            validGeom = geom.buffer(0)
+            this.location = validGeom
+            this.wktLocation = validGeom.toText()
+        }
+
+        if (geom.isEmpty()) {
+            println "Geometry is empty"
+            //empty polygon,...
+            throw new WrongArgumentException("${geom.toText()} is an empty geometry!")
+        }
+
+        //for geometrycollection, we may take first collection element
+        if (type.equals("LINESTRING") || type.equals("MULTILINESTRING") || type.equals("GEOMETRYCOLLECTION")) {
+            //geometry collection, take first elem
+            throw new WrongArgumentException("${geom.getGeometryType()} is not a valid geometry type!")
+        }
+
+
+    }
+
 
 }
