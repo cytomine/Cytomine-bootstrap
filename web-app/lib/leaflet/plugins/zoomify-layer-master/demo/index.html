@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Leaflet ZoomifyLayer Demo</title>
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
+<![endif]-->
+
+<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+
+  <style type="text/css">
+    #map {
+      width: 768px;
+      height: 768px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="map">
+  </div>
+
+  <div>
+    <!-- <img src="/static/img/zoomify/4158/TileGroup0/0-0-0.jpg"> -->
+  </div>
+
+
+  
+  <script type="text/javascript" src="../zoomify_layer.js"></script>
+  <script type="text/javascript">
+    var imageUrl = 'http://mapy.vugtk.cz/kreibich/zoomify/beroun/',
+        imageSize = { width: 7112, height: 5377};
+
+    var layer = new ZoomifyLayer(imageUrl, imageSize),
+        map = new L.Map('map');
+
+    map.setView(new L.LatLng(0,0), 0);
+    map.addLayer(layer);
+  </script>
+</body>
+</html>
