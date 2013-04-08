@@ -34,7 +34,7 @@ class UserAnnotationService extends ModelService {
     def simplifyGeometryService
     def dataSource
     def reviewedAnnotationService
-    def annotationPropertyService
+    def propertyService
     def kmeansGeometryService
 
 
@@ -645,9 +645,9 @@ class UserAnnotationService extends ModelService {
         }
     }
 
-    def deleteDependentAnnotationProperty(UserAnnotation ua, Transaction transaction, Task task = null) {
-        AnnotationProperty.findAllByAnnotationIdent(ua.id).each {
-            annotationPropertyService.delete(it,transaction,null,false)
+    def deleteDependentProperty(UserAnnotation ua, Transaction transaction, Task task = null) {
+        Property.findAllByDomainIdent(ua.id).each {
+            propertyService.delete(it,transaction,null,false)
         }
 
     }

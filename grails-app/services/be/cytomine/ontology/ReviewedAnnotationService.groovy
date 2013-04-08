@@ -23,7 +23,7 @@ import static org.springframework.security.acls.domain.BasePermission.READ
 class ReviewedAnnotationService extends ModelService {
 
     static transactional = true
-    def annotationPropertyService
+    def propertyService
     def cytomineService
     def transactionService
     def algoAnnotationTermService
@@ -337,9 +337,9 @@ class ReviewedAnnotationService extends ModelService {
         annotation.terms?.clear()
     }
 
-    def deleteDependentAnnotationProperty(ReviewedAnnotation ra, Transaction transaction, Task task = null) {
-        AnnotationProperty.findAllByAnnotationIdent(ra.id).each {
-            annotationPropertyService.delete(it,transaction,null,false)
+    def deleteDependentProperty(ReviewedAnnotation ra, Transaction transaction, Task task = null) {
+        Property.findAllByDomainIdent(ra.id).each {
+            propertyService.delete(it,transaction,null,false)
         }
 
     }

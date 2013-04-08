@@ -81,7 +81,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
     }
 
     /**
-     * Get annotation thanks to annotationClassName and annotationIdent
+     * Get annotation thanks to domainClassName and annotationIdent
      * @return Annotation concerned with this prediction
      */
     public AnnotationDomain retrieveAnnotationDomain() {
@@ -129,7 +129,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['annotationIdent'] = it.annotationIdent
-            returnArray['annotationClassName'] = it.annotationClassName
+            returnArray['domainClassName'] = it.domainClassName
             returnArray['annotation'] = it.annotationIdent
             returnArray['term'] = it.term?.id
             returnArray['expectedTerm'] = it.expectedTerm?.id
