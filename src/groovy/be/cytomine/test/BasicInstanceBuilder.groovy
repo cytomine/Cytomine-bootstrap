@@ -1,7 +1,6 @@
 package be.cytomine.test
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
@@ -224,7 +223,7 @@ class BasicInstanceBuilder {
 //        AlgoAnnotationTerm at = getAlgoAnnotationTermNotExist()
 //        at.project = job.project
 //        at.annotationIdent = annotation.id
-//        at.annotationClassName = annotation.class.getName()
+//        at.domainClassName = annotation.class.getName()
 //        at.userJob = userJob
 //        checkDomain(at)
 //        saveDomain(at)
@@ -653,29 +652,49 @@ class BasicInstanceBuilder {
         mime
     }
 
-    static AnnotationProperty createAnnotationProperty(AnnotationDomain annotation) {
-        AnnotationProperty ap = getAnnotationPropertyNotExist()
-        ap.annotationIdent = annotation.id
-        ap.annotationClassName = annotation.class.getName()
-        ap.annotation = annotation
-        checkDomain(ap)
-        saveDomain(ap)
-        ap
-    }
-
-    static AnnotationProperty getAnnotationProperty() {
+    static Property getAnnotationProperty() {
         def annotation = getUserAnnotation()
-        def annotationProperty = AnnotationProperty.findByAnnotationIdentAndKey(annotation.id,'MyKeyBasic')
+        def annotationProperty = Property.findByDomainIdentAndKey(annotation.id,'MyKeyBasic')
         if (!annotationProperty) {
-            annotationProperty = new AnnotationProperty(annotation: annotation, key: 'MyKeyBasic', value:"MyValueBasic")
+            annotationProperty = new Property(domain: annotation, key: 'MyKeyBasic', value:"MyValueBasic")
             saveDomain(annotationProperty)
         }
         annotationProperty
     }
 
-    static AnnotationProperty getAnnotationPropertyNotExist(UserAnnotation annotation = getUserAnnotation(), boolean save = false) {
-        def annotationProperty = new AnnotationProperty(annotation: annotation, key: getRandomString(),value: "MyValueBasic")
+    static Property getAnnotationPropertyNotExist(UserAnnotation annotation = getUserAnnotation(), boolean save = false) {
+        def annotationProperty = new Property(domain: annotation, key: getRandomString(),value: "MyValueBasic")
         save? saveDomain(annotationProperty) : checkDomain(annotationProperty)
+    }
+
+    static Property getProjectProperty() {
+        def project = getProject()
+        def projectProperty = Property.findByDomainIdentAndKey(project.id,'MyKeyBasic')
+        if (!projectProperty) {
+            projectProperty = new Property(domain: project, key: 'MyKeyBasic', value:"MyValueBasic")
+            saveDomain(projectProperty)
+        }
+        projectProperty
+    }
+
+    static Property getProjectPropertyNotExist(Project project = getProject(), boolean save = false) {
+        def projectProperty = new Property(domain: project, key: getRandomString(),value: "MyValueBasic")
+        save? saveDomain(projectProperty) : checkDomain(projectProperty)
+    }
+
+    static Property getImageInstanceProperty() {
+        def imageInstance = getImageInstance()
+        def imageInstanceProperty = Property.findByDomainIdentAndKey(imageInstance.id,'MyKeyBasic')
+        if (!imageInstanceProperty) {
+            imageInstanceProperty = new Property(domain: imageInstance, key: 'MyKeyBasic', value:"MyValueBasic")
+            saveDomain(imageInstanceProperty)
+        }
+        imageInstanceProperty
+    }
+
+    static Property getImageInstancePropertyNotExist(ImageInstance imageInstance = getImageInstance(), boolean save = false) {
+        def imageInstanceProperty = new Property(domain: imageInstance, key: getRandomString(),value: "MyValueBasic")
+        save? saveDomain(imageInstanceProperty) : checkDomain(imageInstanceProperty)
     }
 
     static Instrument getScanner() {

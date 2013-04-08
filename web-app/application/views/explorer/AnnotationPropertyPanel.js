@@ -25,24 +25,24 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     },
 
     initSelect: function (id) {
-        var select = $(this.el).find("#selectLayersAnnotationProperty");
+        var select = $(this.el).find("#selectLayersAnnotationProperty-"+id);
         select.empty();
 
         var first = _.template("<option value='<%= id %>'><%= value %></option>", { id : "selectedEmpty", value : "No Key Selected"});
         select.append(first);
 
-        $.get("api/annotationproperty/key.json?idImage=" + id, function(data) {
+        $.get("/api/annotation/property/key.json?idImage=" + id, function(data) {
             _.each (data.collection, function (item){
                 var option = _.template("<option value='<%= id %>'><%= value %></option>", { id : item, value : item});
                 select.append(option);
-            })
+            });
 
-            SortSelect();
+            sortSelect();
         });
 
-        var SortSelect = function sortArray(){
+        var sortSelect = function sortArray(){
             var list= new Array();
-            var el= document.getElementById('selectLayersAnnotationProperty'); //:to do use class or find another way
+            var el= document.getElementById('selectLayersAnnotationProperty-'+id); //:to do use class or find another way
 
             for(var i=0;i<el.options.length-1;i++){
                 list[i]=el.options[i+1].text;
@@ -63,20 +63,20 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
      */
     doLayout: function (tpl) {
         var self = this;
+        var idImage = this.model.get('id');
 
-        var el = $('#annotationPropertyPanel'+this.model.get('id'));
-        el.html(_.template(tpl, {id: this.model.get('id')}));
+        var el = $('#annotationPropertyPanel'+idImage);
+        el.html(_.template(tpl, {id: idImage}));
         var elContent = el.find(".annotationPropertyContent");
         var sourceEvent = el.find(".toggle-content");
         this.initToggle(el, elContent, sourceEvent, "annotationPropertyContent");
 
-        self.initSelect(this.model.get('id'));
+        self.initSelect(idImage);
 
-        $("#selectLayersAnnotationProperty").click(function() {
+        $("#selectLayersAnnotationProperty-"+idImage).click(function() {
             console.log("click select");
             console.log(self.layer);
-            console.log("after select");
-            self.layer.loadAnnotationProperty($("#selectLayersAnnotationProperty").val());
+            self.layer.loadAnnotationProperty($("#selectLayersAnnotationProperty-"+idImage).val());
         });
     }
 });

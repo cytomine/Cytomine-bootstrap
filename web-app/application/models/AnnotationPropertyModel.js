@@ -1,7 +1,9 @@
 var AnnotationPropertyModel = Backbone.Model.extend({
-
+    initialize: function (options) {
+        this.idAnnotation = options.idAnnotation;
+    },
     url: function () {
-        var base = 'api/annotationproperty';
+        var base = 'api/annotation/' + this.idAnnotation + '/property';
         var format = '.json';
         if (this.isNew()) {
             return base + format;
@@ -9,8 +11,8 @@ var AnnotationPropertyModel = Backbone.Model.extend({
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
     parse : function (response, options) {
-        console.log("parse " + response.annotationproperty);
-        if (response.annotationproperty) return response.annotationproperty;
+        console.log("parse " + response.property);
+        if (response.property) return response.property;
         else return response;
     }
 });
@@ -23,10 +25,8 @@ var AnnotationPropertyCollection = PaginatedCollection.extend({
         this.idAnnotation = options.idAnnotation;
     },
     url: function () {
-        if (this.idAnnotation == undefined) {
-             return "api/annotationproperty.json";
-        } else {
-            return "api/annotation/" + this.idAnnotation + "/annotationproperty.json";
+        if (this.idAnnotation != undefined) {
+            return "api/annotation/" + this.idAnnotation + "/property.json";
         }
     }
 });
@@ -40,10 +40,10 @@ var AnnotationPropertyKeysCollection = PaginatedCollection.extend({
     },
     url: function () {
         if (this.idProject != undefined) {
-            return "api/annotationproperty/key.json?idProject="+this.idProject;
+            return "/api/annotation/property/key.json?idProject="+this.idProject;
         } else {
             if (this.idImage != undefined) {
-                return "api/annotationproperty/key.json?idImage="+this.idImage;
+                return "/api/annotation/property/key.json?idImage="+this.idImage;
             }
         }
     }

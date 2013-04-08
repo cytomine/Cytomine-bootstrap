@@ -3,8 +3,6 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, map) {
     var self = this;
     this.idImage = imageID;
     this.idUser = userID;
-   // this.annotationsPropertiesCollection = null; //new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: "Key1"}).url().replace("json", "jsonp");
-
 
     this.annotationsPropertiesCollection = new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: 'null'}).url().replace("json", "jsonp")
 
@@ -26,7 +24,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, map) {
         graphicZIndex : 15
     }});
 
-    this.vectorLayer = new OpenLayers.Layer.Vector("AnnotationPropertyValue", {
+    this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : styleMap,
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
@@ -63,17 +61,17 @@ AnnotationPropertyLayer.prototype = {
 
     loadAnnotationProperty : function (key) {
 
-        //Mettre le message au dessus de tout.
+        //Put the value over all layer
         var self = this;
         var layers = this.map.layers;
         _.each(layers,function(layer) {
             layer.setZIndex( 1000 )
         });
-        var vecLyr = this.map.getLayersByName('AnnotationPropertyValue')[0];
+        var vecLyr = this.map.getLayersByName('annotationPropertyValue')[0];
         vecLyr.setZIndex( 5000 );
 
 
-        console.log("AnnotationPropertyLayer.vectorLayer : " + this.vectorLayer);
+        console.log("annotationPropertyLayer.vectorLayer : " + this.vectorLayer);
         if (key == "selectedEmpty") {
             this.vectorLayer.removeAllFeatures();
         } else {

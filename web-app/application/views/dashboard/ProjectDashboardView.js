@@ -132,6 +132,16 @@ var ProjectDashboardView = Backbone.View.extend({
     fetchProjectInfo: function () {
         var self = this;
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
+            //Description
+            var maxLengthDescription = 30;
+            var shortDescription;
+            if (self.model.get('description') == undefined || self.model.get('description').length == 0) {
+                shortDescription = "Click here to add description "
+            } else {
+                shortDescription = (self.model.get('description').length > maxLengthDescription) ? self.model.get('description').substring(0,maxLengthDescription) : self.model.get('description');
+            }
+            self.model.set({ "shortDescription" : shortDescription});
+
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
             //Get users list
             $("#projectInfoUserList").empty();

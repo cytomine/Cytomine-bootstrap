@@ -434,7 +434,7 @@ var BrowseImageView = Backbone.View.extend({
     createAnnotationPropertiesPanel : function() {
       //annotationProperties
         var self = this;
-        //Creation du layer AnnotationProperty
+        //Creation du layer Property
         var layerAnnotProp = new AnnotationPropertyLayer(self.model.get('id'), window.app.status.user.id, self, self.map);
         this.annotationProperties = new AnnotationPropertyPanel({
             browseImageView: self,

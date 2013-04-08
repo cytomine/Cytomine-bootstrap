@@ -553,6 +553,9 @@ AnnotationLayer.prototype = {
                     } else {
                         self.showSimilarAnnotation(annotation);
                     }
+
+                    //ICI
+                    //<li style="color:#FFFFFF;"><a href="#tabs-annotationsproperties-<%= idProject %>-<%= idAnnotation %>">Add a property</a></li>
                 }
             });
         });

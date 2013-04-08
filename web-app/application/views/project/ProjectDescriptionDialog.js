@@ -29,7 +29,7 @@ var ProjectDescriptionDialog = Backbone.View.extend({
             backdrop: false
         });
 
-        //Ajout évenement sur les boutons de la fenêtre modal.
+        //Add event button on the modal window.
         $("#closeDescriptionProjectDialog").click(function () {
             $("#projectDescription" + self.model.id).modal('hide');
             $("#projectDescription" + self.model.id).remove();
