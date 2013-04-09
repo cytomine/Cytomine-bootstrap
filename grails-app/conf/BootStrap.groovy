@@ -65,8 +65,11 @@ class BootStrap {
         if (Environment.getCurrent() == Environment.TEST) {
 
 
-            new Sql(dataSource).executeUpdate("DELETE FROM task_comment")
-            new Sql(dataSource).executeUpdate("DELETE FROM task")
+            new Sql(dataSource).executeUpdate("DROP TABLE task_comment")
+            new Sql(dataSource).executeUpdate("DROP TABLE task")
+
+            new Sql(dataSource).executeUpdate("CREATE TABLE task (id bigint,progress bigint,project_id bigint,user_id bigint)")
+            new Sql(dataSource).executeUpdate("CREATE TABLE task_comment (task_id bigint,comment character varying(255),timestamp bigint)")
 
             bootstrapTestDataService.initData()
         }

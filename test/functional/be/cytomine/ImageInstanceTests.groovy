@@ -230,7 +230,7 @@ class ImageInstanceTests  {
         image2.project = project
         BasicInstanceBuilder.saveDomain(image2)
 
-        def result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.previous(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

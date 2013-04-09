@@ -56,6 +56,11 @@ class ImageInstanceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def previous(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/previous.json"
+        return doGET(URL, username, password)
+    }
+
     static ImageInstance buildBasicImage(String username, String password) {
         //Create project with user 1
         def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), username, password)
