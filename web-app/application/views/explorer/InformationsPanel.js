@@ -34,7 +34,9 @@ var InformationsPanel = SideBarPanel.extend({
      */
     doLayout: function (tpl) {
         var self = this;
-        var content = _.template(tpl, self.model.toJSON());
+        var json = self.model.toJSON();
+        json.originalFilename = self.model.getVisibleName();
+        var content = _.template(tpl,json);
         $('#informationsPanel' + self.model.get('id')).html(content);
         var el = $('#informationsPanel' + self.model.get('id'));
         var elContent1 = el.find(".infoPanelContent1");

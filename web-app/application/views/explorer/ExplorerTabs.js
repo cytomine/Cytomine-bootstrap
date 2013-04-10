@@ -131,6 +131,7 @@ var ExplorerTabs = Backbone.View.extend({
      * @param index the identifier of the Tab
      */
     removeTab: function (idImage, prefix) {
+        var self = this;
         var browseImageView = null
 
         if (prefix != "review") {
@@ -152,12 +153,22 @@ var ExplorerTabs = Backbone.View.extend({
         $('#tabs-' + prefix + '-' + idImage + "-dropdown").parent().remove();
         //Remove content
         $('#tabs-' + prefix + '-' + window.app.status.currentProject + '-' + idImage + '-').remove();
+
+        console.log("removeTabx");
+        console.log(this.tabs.length);
+        if(this.tabs.length!=0) {
+            var lastTab = this.tabs[this.tabs.length-1];
+            console.log("lastTab");
+            console.log(lastTab);
+            window.location = "#"+lastTab.view.divId;
+        }
     },
     /**
      * Show a tab
      * @param idImage the identifier of the Tab
      */
     showTab: function (idImage, prefix) {
+        console.log("showTab2");
         var tabs = $('#explorer-tab');
         window.app.controllers.browse.tabs.triggerRoute = false;
         $('#tabs-' + prefix + '-' + idImage).click();

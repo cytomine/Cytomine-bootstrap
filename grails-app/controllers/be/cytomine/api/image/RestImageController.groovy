@@ -147,7 +147,9 @@ class RestImageController extends RestController {
         try {
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
             def cropURL = getCropAnnotationURL(annotation,params)
-            if(cropURL!=null) responseImage(cropURL)
+            if(cropURL!=null) {
+                responseImage(cropURL)
+            }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }

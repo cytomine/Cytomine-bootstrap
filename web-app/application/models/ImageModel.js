@@ -6,6 +6,13 @@ var ImageModel = Backbone.Model.extend({
             return base + format;
         }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    },
+    getVisibleName : function() {
+        if(window.app.status.user.filenameVisible) {
+            return this.get('filename');
+        } else {
+            return "[BLIND] id=" + this.get('id').toString();
+        }
     }
 });
 
@@ -90,6 +97,13 @@ var ImageInstanceModel = Backbone.Model.extend({
         this.id = options.id;
         this.next = options.next;
         this.previous = options.previous;
+    },
+    getVisibleName : function() {
+        if(window.app.status.user.filenameVisible) {
+            return this.get('filename');
+        } else {
+            return "[BLIND]" + this.get('id');
+        }
     }
 });
 

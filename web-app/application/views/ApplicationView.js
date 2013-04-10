@@ -346,7 +346,7 @@ var ApplicationView = Backbone.View.extend({
     }
 });
 
-ApplicationView.prototype.message = function (title, message, type) {
+ApplicationView.prototype.message = function (title, message, type,timer) {
     if (type == "" || type == undefined) {
         type = 'alert-info';
     }
@@ -361,12 +361,24 @@ ApplicationView.prototype.message = function (title, message, type) {
     var tpl = '<div style="width : 400px;" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
     var left = ($(window).width() / 2 - 200);
-    $("#alerts").empty();
+
+    //$("#alerts").empty();
+
+    var numberOfOpenedDiv = $("#alerts").find("div.alert").length;
+    var maxOtherOpenedAlert = 1;
+    var divToClose = numberOfOpenedDiv-maxOtherOpenedAlert;
+    if(divToClose>0) {
+        $("#alerts").find("div.alert:lt("+(divToClose)+")").remove()
+    }
     $("#alerts").css("left", left);
     $("#alerts").append(_.template(tpl, { alert: title, message: message, timestamp: timestamp, type: type}));
+
+    if(!timer) {
+        timer = 3000;
+    }
     setTimeout(function () {
         $("#alert" + timestamp).remove();
-    }, 3000);
+    }, timer);
 
 }
 

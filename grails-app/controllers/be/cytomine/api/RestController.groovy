@@ -311,8 +311,9 @@ class RestController {
                 if (request.method == 'HEAD') {
                     render(text: "", contentType: "image/jpeg")
 
+                } else {
+                    redirect(url: url)
                 }
-                redirect(url: url)
             }
         }
 

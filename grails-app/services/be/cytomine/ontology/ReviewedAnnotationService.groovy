@@ -112,10 +112,25 @@ class ReviewedAnnotationService extends ModelService {
                  * So in gc, we increase the size of each compare annotation just for the check
                  * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
                  */
-                def xfactor = "1.08"
-                def yfactor = "1.08"
+                def xfactor = "1.28"
+                def yfactor = "1.28"
                 //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
-                boolean zoomToLow = true
+
+                double imageWidth = image.baseImage.width
+                double bboxWidth = bbox.getEnvelopeInternal().width
+                double ratio = bboxWidth/imageWidth*100
+
+                boolean zoomToLow = ratio > 50
+
+                log.info "imageWidth=$imageWidth"
+                log.info "bboxWidth=$bboxWidth"
+                log.info "ratio=$ratio"
+
+
+
+
+
+                println "zoomToLow="+zoomToLow
                 String request
                 if (zoomToLow) {
                     request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
@@ -214,7 +229,7 @@ class ReviewedAnnotationService extends ModelService {
                 " AND a.id = at.reviewed_annotation_terms_id\n" +
                 " AND a.user_id IN (" + userList.join(",") + ") \n" +
                 (allImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
-                (bbox ? " AND ST_Intersects(a.location,GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
+                (bbox ? " AND ST_Intersects(a.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
                 " ORDER BY id desc, term"
         selectReviewedAnnotationFull(request)
     }

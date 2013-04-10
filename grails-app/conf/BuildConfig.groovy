@@ -61,8 +61,8 @@ grails.project.dependency.resolution = {
         runtime ':jquery:1.8.3'
         compile ":grails-ant:0.1.3"
 
-        test ':code-coverage:1.2'
-//        test ':code-coverage:1.2.6-SNAPSHOT'
+ //       test ':code-coverage:1.2'
+        test ':code-coverage:1.2.6'
 
 
         test ':selenium-rc:1.0.2'
@@ -71,7 +71,7 @@ grails.project.dependency.resolution = {
         test(":spock:0.7") {
           exclude "spock-grails-support"
         }
-        test ":geb:0.9.0-RC-1"
+        test ":geb:0.9.0"
 
     }
 }

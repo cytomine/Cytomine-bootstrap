@@ -129,7 +129,7 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['annotationIdent'] = it.annotationIdent
-            returnArray['domainClassName'] = it.domainClassName
+            returnArray['annotationClassName'] = it.annotationClassName
             returnArray['annotation'] = it.annotationIdent
             returnArray['term'] = it.term?.id
             returnArray['expectedTerm'] = it.expectedTerm?.id

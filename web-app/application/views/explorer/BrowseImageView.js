@@ -68,7 +68,7 @@ var BrowseImageView = Backbone.View.extend({
         $(this.el).append(_.template(tpl, templateData));
         console.log("************MODEL*************");
         console.log(this.model);
-        var shortOriginalFilename = this.model.get('originalFilename');
+        var shortOriginalFilename = this.model.getVisibleName();
         if (shortOriginalFilename.length > 25) {
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
         }
@@ -198,7 +198,6 @@ var BrowseImageView = Backbone.View.extend({
 
         console.log("show!");
         console.log(options.goToAnnotation);
-        console.log(options.goToAnnotation.value);
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({

@@ -71,7 +71,7 @@ class PropertyService extends ModelService {
                 "AND p.key = '"+ key + "' " +
                 "AND ua.image_id = '"+ image.id +"' " +
                 "AND ua.user_id = '"+ user.id +"' " +
-                (boundingbox ? "AND ST_Intersects(ua.location,GeometryFromText('" + boundingbox.toString() + "',0)) " :"") +
+                (boundingbox ? "AND ST_Intersects(ua.location,ST_GeometryFromText('" + boundingbox.toString() + "',0)) " :"") +
                 "UNION " +
                 "SELECT DISTINCT aa.id, ST_CENTROID(aa.location), p.value " +
                 "FROM algo_annotation aa, property as p " +
@@ -79,7 +79,7 @@ class PropertyService extends ModelService {
                 "AND p.key = '"+ key + "' " +
                 "AND aa.image_id = '"+ image.id +"' " +
                 "AND aa.user_id = '"+ user.id +"' " +
-                (boundingbox ? "AND ST_Intersects(aa.location,GeometryFromText('" + boundingbox.toString() + "',0)) " :"")
+                (boundingbox ? "AND ST_Intersects(aa.location,ST_GeometryFromText('" + boundingbox.toString() + "',0)) " :"")
 
         return selectsql(request)
     }

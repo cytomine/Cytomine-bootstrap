@@ -15,6 +15,7 @@ var HotKeys = {
                 }
         );
         $(document).bind('keydown.n',function (evt){
+                    console.log("next");
                     if(self.checkMode("review") || self.checkMode("image")) {
                         self.doClick("div#"+window.location.hash.toString(),".nextImage");
                     }

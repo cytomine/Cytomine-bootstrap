@@ -26,7 +26,8 @@ var AuthController = Backbone.Router.extend({
                         window.app.status.user = {
                             authenticated: true,
                             id: data.id,
-                            model: model
+                            model: model,
+                            filenameVisible : true
                         }
                         window.app.startup();
                     }
