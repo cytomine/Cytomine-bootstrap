@@ -56,7 +56,7 @@ class RestImageInstanceController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'))
-        if (project) {
+        if (project && !params.tree) {
             String sortColumn = params.sortColumn ? params.sortColumn : "created"
             String sortDirection = params.sortDirection ? params.sortDirection : "desc"
             String search = params.search

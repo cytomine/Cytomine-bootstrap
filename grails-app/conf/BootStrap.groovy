@@ -1,7 +1,6 @@
 
 import be.cytomine.security.SecUser
 import grails.util.Environment
-import groovy.sql.Sql
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -25,7 +24,6 @@ class BootStrap {
     def secUserService
     def countersService
     def retrieveErrorsService
-    def bootstrapProdDataService
     def bootstrapTestDataService
     def bootstrapUtilsService
     def javascriptService

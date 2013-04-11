@@ -60,7 +60,7 @@ body {
 <!-- fuel ux -->
 <link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
 <link href="lib/fuelux/css/fuelux-responsive.css" rel="stylesheet" />
-<script src="lib/fuelux/loader.min.js" type="text/javascript"></script>
+
 
 
 <!--
@@ -84,6 +84,9 @@ body {
 
 <!-- Twitter bootstrap -->
 <script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>
+
+<!-- Fuel ux -->
+<script src="lib/fuelux/loader.min.js" type="text/javascript"></script>
 
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>
