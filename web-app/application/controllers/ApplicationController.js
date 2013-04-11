@@ -110,7 +110,7 @@ var ApplicationController = Backbone.Router.extend({
                                 id: data.get('user'),
                                 authenticated: data.get('authenticated'),
                                 model: model,
-                                filenameVisible : false
+                                filenameVisible : true
                             }
                             self.startup();
                         }
