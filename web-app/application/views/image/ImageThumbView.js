@@ -24,16 +24,9 @@ var ImageThumbView = Backbone.View.extend({
             $(self.el).html(_.template(tpl, self.model.toJSON()));
 
             $(self.el).find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
-            $(self.el).find("#moreinfo" + self.model.id).on("click", function () {
-                $("#image-properties").remove();
-                new ImagePropertiesView({model: self.model}).render();
-                return false;
-            });
             $(self.el).find('#imagereviewaction-thumb-'+self.model.id).append(_.template(tplReviewAction, self.model.toJSON()));
             self.addReviewInfo();
             self.configureAction();
-
-               //
 
         });
 
@@ -61,7 +54,7 @@ var ImageThumbView = Backbone.View.extend({
         this.render();
     },
     configureAction: function () {
-        var action = new ImageReviewAction({container:this});
+        var action = new ImageReviewAction({el:this.el, model : this.model});
         action.configureAction();
     }
 });

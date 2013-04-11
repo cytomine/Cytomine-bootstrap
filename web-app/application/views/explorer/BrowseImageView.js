@@ -570,8 +570,8 @@ var BrowseImageView = Backbone.View.extend({
 
             self.map = new OpenLayers.Map("map" + self.divPrefixId + self.model.get('id'), options);
             self.map.events.register('mousemove', self.map, function (e) {
-                var position = this.events.getMousePosition(e);
-                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: position.x, y: position.y});
+                var point = self.map.getLonLatFromPixel( this.events.getMousePosition(e) )
+                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: point.lon, y: point.lat});
                 $('#mousePositionContent' + self.model.id).html(coordinates);
             });
             self.initOntology();

@@ -79,16 +79,23 @@ class ImageInstanceService extends ModelService {
         return tree
     }
 
-    def list(Project project, int inf, int sup) {
+    def list(Project project, String sortColumn, String sortDirection, String search) {
         SecurityACL.check(project,READ)
 
-        def images = ImageInstance.createCriteria().list(max:sup-inf, offset:inf) {
-            createAlias("baseImage", "i")
+        String abstractImageAlias = "ai"
+        String _sortColumn = ImageInstance.hasProperty(sortColumn) ? sortColumn : "created"
+        _sortColumn = AbstractImage.hasProperty(sortColumn) ? abstractImageAlias + "." + sortColumn : "created"
+        String _search = (search != null && search != "") ? "%"+search+"%" : "%"
+
+        return ImageInstance.createCriteria().list() {
+            createAlias("baseImage", abstractImageAlias)
             eq("project", project)
-            order("created", "desc")
             fetchMode 'baseImage', FetchMode.JOIN
+            ilike(abstractImageAlias + ".originalFilename", _search)
+            order(_sortColumn, sortDirection)
         }
-        return images
+
+
     }
 
     /**
@@ -157,7 +164,7 @@ class ImageInstanceService extends ModelService {
 
     def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
         AlgoAnnotation.findAllByImage(image).each {
-             algoAnnotationService.delete(it,transaction)
+            algoAnnotationService.delete(it,transaction)
         }
     }
 

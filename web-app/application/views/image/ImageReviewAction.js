@@ -1,73 +1,83 @@
 var ImageReviewAction = Backbone.View.extend({
     tagName: "div",
     initialize: function (options) {
-        this.container = options.container;
+        this.el = options.el;
+        this.model = options.model;
     },
     configureAction: function () {
         var self = this;
-        $(self.container.el).find("#exploreButton" + self.container.model.id).click(function () {
-            window.location = '#tabs-image-' + self.container.model.get('project') + '-' + self.container.model.get('id') + '-';
+        var el = $(self.el);
+        el.find("#exploreButton" + self.model.id).click(function () {
+            window.location = '#tabs-image-' + self.model.get('project') + '-' + self.model.get('id') + '-';
         });
 
         if (self.isNotReviewed()) {
-            $(self.container.el).find("#explore" + self.container.model.id).show();
-            $(self.container.el).find("#review" + self.container.model.id).hide();
-            $(self.container.el).find("#startreview" + self.container.model.id).show();
-            $(self.container.el).find("#cancelreview" + self.container.model.id).hide();
-            $(self.container.el).find("#validateimage" + self.container.model.id).hide();
-            $(self.container.el).find("#unvalidateimage" + self.container.model.id).hide();
-            $(self.container.el).find("#moreinfo" + self.container.model.id).show();
+            
+            el.find("#explore" + self.model.id).show();
+            el.find("#review" + self.model.id).hide();
+            el.find("#startreview" + self.model.id).show();
+            el.find("#cancelreview" + self.model.id).hide();
+            el.find("#validateimage" + self.model.id).hide();
+            el.find("#unvalidateimage" + self.model.id).hide();
+            el.find("#moreinfo" + self.model.id).show();
         } else if (self.isInReviewing()) {
-            $(self.container.el).find("#explore" + self.container.model.id).show();
-            $(self.container.el).find("#review" + self.container.model.id).show();
-            $(self.container.el).find("#startreview" + self.container.model.id).hide();
-            if (self.container.model.get('numberOfReviewedAnnotations') == 0) {
-                $(self.container.el).find("#cancelreview" + self.container.model.id).show();
+            el.find("#explore" + self.model.id).show();
+            el.find("#review" + self.model.id).show();
+            el.find("#startreview" + self.model.id).hide();
+            if (self.model.get('numberOfReviewedAnnotations') == 0) {
+                el.find("#cancelreview" + self.model.id).show();
             }
             else {
-                $(self.container.el).find("#cancelreview" + self.container.model.id).hide();
+                el.find("#cancelreview" + self.model.id).hide();
             }
-            $(self.container.el).find("#validateimage" + self.container.model.id).show();
-            $(self.container.el).find("#unvalidateimage" + self.container.model.id).hide();
-            $(self.container.el).find("#moreinfo" + self.container.model.id).show();
+            el.find("#validateimage" + self.model.id).show();
+            el.find("#unvalidateimage" + self.model.id).hide();
+            el.find("#moreinfo" + self.model.id).show();
         } else {
-            $(self.container.el).find("#explore" + self.container.model.id).show();
-            $(self.container.el).find("#review" + self.container.model.id).show();
-            $(self.container.el).find("#startreview" + self.container.model.id).hide();
-            $(self.container.el).find("#cancelreview" + self.container.model.id).hide();
-            $(self.container.el).find("#validateimage" + self.container.model.id).hide();
-            $(self.container.el).find("#unvalidateimage" + self.container.model.id).show();
-            $(self.container.el).find("#moreinfo" + self.container.model.id).show();
+            el.find("#explore" + self.model.id).show();
+            el.find("#review" + self.model.id).show();
+            el.find("#startreview" + self.model.id).hide();
+            el.find("#cancelreview" + self.model.id).hide();
+            el.find("#validateimage" + self.model.id).hide();
+            el.find("#unvalidateimage" + self.model.id).show();
+            el.find("#moreinfo" + self.model.id).show();
         }
 
-        $(self.container.el).find("#startreview" + self.container.model.id).on("click", function () {
+        el.find("#startreview" + self.model.id).on("click", function () {
             self.startReviewing();
             return false;
         });
-        $(self.container.el).find("#cancelreview" + self.container.model.id).on("click", function () {
+        el.find("#cancelreview" + self.model.id).on("click", function () {
             self.cancelReviewing();
             return false;
         });
-        $(self.container.el).find("#validateimage" + self.container.model.id).on("click", function () {
+        el.find("#validateimage" + self.model.id).on("click", function () {
             self.validateImage();
             return false;
         });
-        $(self.container.el).find("#unvalidateimage" + self.container.model.id).on("click", function () {
+        el.find("#unvalidateimage" + self.model.id).on("click", function () {
             self.cancelReviewing();
+            return false;
+        });
+        //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
+        $("a.moreinfo" + self.model.id).live("click", function () {
+            $("#image-properties").remove();
+            alert("what?");
+            new ImagePropertiesView({model: self.model}).render();
             return false;
         });
     },
     startReviewing: function () {
         var self = this;
         console.log("startReviewing");
-        new ImageReviewModel({id: self.container.model.id}).save({}, {
+        new ImageReviewModel({id: self.model.id}).save({}, {
             success: function (model, response) {
                 //window.location = "#tabs-images-"+self.model.get('project');
 //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                 window.app.view.message("Image", response.message, "success");
-                self.container.model = new ImageModel(response.imageinstance);
-                self.container.render();
-                window.location = '#tabs-review-' + self.container.model.get('project') + '-' + self.container.model.get('id') + '-';
+                self.model = new ImageModel(response.imageinstance);
+                self.render();
+                window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-';
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -77,14 +87,14 @@ var ImageReviewAction = Backbone.View.extend({
     cancelReviewing: function () {
         var self = this;
         console.log("cancelReviewing");
-        new ImageReviewModel({id: self.container.model.id, cancel: true}).destroy({
+        new ImageReviewModel({id: self.model.id, cancel: true}).destroy({
             success: function (model, response) {
                 //window.location = "#tabs-images-"+self.model.get('project');
 //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
-                self.container.model = new ImageModel(response.imageinstance);
-                self.container.render();
+                self.model = new ImageModel(response.imageinstance);
+                self.render();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -94,12 +104,12 @@ var ImageReviewAction = Backbone.View.extend({
     validateImage: function () {
         var self = this;
         console.log("validateImage");
-        new ImageReviewModel({id: self.container.model.id}).destroy({
+        new ImageReviewModel({id: self.model.id}).destroy({
             success: function (model, response) {
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
-                self.container.model = new ImageModel(response.imageinstance);
-                self.container.render();
+                self.model = new ImageModel(response.imageinstance);
+                self.render();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -107,9 +117,10 @@ var ImageReviewAction = Backbone.View.extend({
             }});
     },
     isNotReviewed: function () {
-        return this.container.model.get("reviewStart") == null
+        return this.model.get("reviewStart") == null
     },
     isInReviewing: function () {
-        return this.container.model.get("reviewStart") != null && this.container.model.get("reviewStop") == null
-    }
+        return this.model.get("reviewStart") != null && this.model.get("reviewStop") == null
+    },
+    render : function() {}
 });

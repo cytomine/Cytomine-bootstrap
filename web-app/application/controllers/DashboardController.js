@@ -34,20 +34,13 @@ var DashboardController = Backbone.Router.extend({
             }
             this.showView();
         } else {
-            console.log("3");
             callback.call();
             this.showView();
         }
 
     },
     images: function (project) {
-        var self = this;
-        var func = function () {
-            self.view.refreshImagesThumbs();
-            var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-images-' + window.app.status.currentProject + ']').click();
-        };
-        this.init(project, func);
+        this.imagesarray(project);
     },
     imagesthumbs: function (project) {
         var self = this;

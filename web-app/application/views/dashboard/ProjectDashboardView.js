@@ -34,7 +34,6 @@ var ProjectDashboardView = Backbone.View.extend({
         var self = this;
         $(self.el).append(_.template(tpl, self.model.toJSON()));
         window.app.controllers.browse.tabs.addDashboard(self);
-        self.showImagesThumbs();
 
         //Refresh dashboard
         setInterval(function () {

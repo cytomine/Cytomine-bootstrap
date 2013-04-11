@@ -56,14 +56,14 @@ class RestImageInstanceController extends RestController {
 
     def listByProject = {
         Project project = projectService.read(params.long('id'))
-        if (project && params.inf && params.sup) {
-            responseSuccess(imageInstanceService.list(project, Integer.parseInt(params.inf), Integer.parseInt(params.sup)))
+        if (project) {
+            String sortColumn = params.sortColumn ? params.sortColumn : "created"
+            String sortDirection = params.sortDirection ? params.sortDirection : "desc"
+            String search = params.search
+            responseSuccess(imageInstanceService.list(project, sortColumn, sortDirection, search))
         }
-        else if (project && params.tree && Boolean.parseBoolean(params.tree))  {
+        else if (project && params.tree && params.boolean("tree"))  {
             responseSuccess(imageInstanceService.listTree(project))
-        }
-        else if (project) {
-            responseSuccess(imageInstanceService.list(project))
         }
         else {
             responseNotFound("ImageInstance", "Project", params.id)

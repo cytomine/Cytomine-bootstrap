@@ -38,16 +38,10 @@ var ImageView = Backbone.View.extend({
             }
 
             if (($(window).scrollTop() + 50) >= $(document).height() - $(window).height()) {
-                /*console.log("$(window).scrollTop() : " + $(window).scrollTop());
-                 console.log("$(document).height()- $(window).height() " + ($(document).height() - $(window).height()));
-                 */
-
-
                 self.appendThumbs(++self.page);
 
             }
         });
-
 
         return this;
     },
@@ -67,7 +61,9 @@ var ImageView = Backbone.View.extend({
         }
 
 
-        self.model = new ImageInstanceCollection({project: window.app.status.currentProject, inf: inf, sup: sup});
+        self.model = new ImageInstanceCollection({project: window.app.status.currentProject});
+        self.model.server_api.offset = inf;
+        self.model.server_api.max = sup - inf;
         self.model.fetch({
             success: function (collection, response) {
                 var idDivPage = window.app.status.currentProject + "-image-page-" + self.page;

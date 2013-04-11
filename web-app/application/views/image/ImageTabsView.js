@@ -1,75 +1,196 @@
+var ImageInstanceDataSource = function (options) {
+    this._formatter = options.formatter;
+    this._columns = options.columns;
+    this._delay = options.delay || 0;
+    this._collection = options.collection;
+};
+
+ImageInstanceDataSource.prototype = {
+
+    columns: function () {
+        return this._columns;
+    },
+
+    data: function (options, callback) {
+        var self = this;
+		console.log("options.pageSize"+options.pageSize);
+        options.pageSize = options.pageSize || 10;
+
+        setTimeout(function () {
+            var data = $.extend(true, [], self._data);
+
+            // SEARCHING
+            if (options.search) {
+                self._collection.server_api.search = options.search;
+            } else {
+				delete self._collection.server_api.search;
+			}
+
+            // SORTING
+            if (options.sortProperty) {
+                self._collection.server_api.sortColumn = options.sortProperty;
+                self._collection.server_api.sortDirection = options.sortDirection;
+            }
+
+            // PAGING
+            var startIndex = options.pageIndex * options.pageSize;
+            var endIndex = startIndex + options.pageSize;
+
+            self._collection.server_api.offset = startIndex;
+            self._collection.server_api.max = endIndex - startIndex;
+            self._collection.fetch({
+                success: function (collection, response) {
+                    data = collection.toJSON();
+                    var count =  collection.fullSize;
+                    var end = (endIndex > count) ? count : endIndex;
+                    var pages = Math.ceil(count / options.pageSize);
+                    var page = options.pageIndex + 1;
+                    var start = startIndex + 1;
+
+                    if (self._formatter) self._formatter(data);
+                    callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
+
+                    collection.each(function(model) {
+                        var action = new ImageReviewAction({el:("#MyGrid > tbody"),model:model, render: function() {}});
+                        action.configureAction();
+                    });
+                }
+            });
+
+
+        }, this._delay)
+    }
+};
+
+
 var ImageTabsView = Backbone.View.extend({
     tagName: "div",
     images: null, //array of images that are printed
     idProject: null,
     searchPanel: null,
-    reviewTemplate : null,
     initialize: function (options) {
         this.idProject = options.idProject;
         this.container = options.container;
-        this.listproject = "listimage" + this.idProject;
-        this.pageproject = "pagerimage" + this.idProject;
-        this.tab = 2;
-        this.timeoutHnd = null
-    },
-    loadImages :function(collection) {
-        var self = this;
-        var tbody = $('#projectImageTable' + self.idProject).find("tbody");
-        var thumbImgTpl = "<img class='lazy' src='<%= thumb %>' alt='<%= filename %>' style='max-height: 75px;'/>";
-        var rowTpl = "<tr><td><%= thumImg %></td><td><%= originalFilename %></td><td><%= mime %></td><td><%= width %></td><td><%= height %></td><td><%= magnification %></td><td><%= resolution %></td><td><%= numberOfAnnotations %></td><td><%= numberOfJobAnnotations %></td><td><%= created %></td><td><%= action %></td></tr>";
-        collection.each(function (image) {
-            var thumImg = _.template(thumbImgTpl, { thumb: image.get("thumb"), filename: image.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))});
-            image.set({"action": _.template(self.reviewTemplate, image.toJSON())});
-            image.set({"thumImg": thumImg});
-            image.set({"resolution": image.get("resolution").toFixed(2)});
-            image.set({"created": window.app.convertLongToDate(image.get("created"))});
-            image.set('originalFilename',image.getVisibleName(window.app.status.currentProjectModel.get('blindMode')));
-            tbody.append(_.template(rowTpl, image.toJSON()));
-            var action = new ImageReviewAction({container:{el:tbody,model:image, render: function() {}}});
-            action.configureAction();
-        });
     },
     refresh: function () {
-        var self = this;
-
-//        self.model.fetch({
-//            success: function (collection, response) {
-
-                var datatable = $('#projectImageTable' + self.idProject).dataTable();
-                datatable.fnDestroy();
-        $('#projectImageTable' + self.idProject).find("tbody").empty();
-                self.render();
-//                self.loadImages(collection);
-//            }
-//        });
     },
-    render: function () {
+    render : function() {
         var self = this;
-        self.model.fetch({
-            success: function (collection, response) {
-                //print data from project image table
-                require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (tplReviewAction) {
-                    self.reviewTemplate = tplReviewAction;
-                    self.loadImages(collection);
-                    $('#projectImageTable' + self.idProject).dataTable({
-                        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-                        "sPaginationType": "bootstrap",
-                        "oLanguage": {
-                            "sLengthMenu": "_MENU_ records per page"
-                        },
-                        "aaSorting": [[ 9, "desc" ]]
-                        /*"bProcessing": true,
-                         "bServerSide": true,
-                         "sAjaxSource":  self.model.url() + "?dataTables=true"*/
-                    });
-
-                    $('#projectImageListing' + self.idProject).hide();
-                    $('#projectImageTable' + self.idProject).show();
-
-                });
-
-            }
+        require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {
+           self.doLayout(actionMenuTpl)
         });
-        return this;
+    },
+    doLayout: function (actionMenuTpl) {
+        var self = this;
+
+        var dataSource = new ImageInstanceDataSource({
+            columns: [
+				{
+                    property: 'id',
+                    label: 'ID',
+                    sortable: true
+                },
+                {
+                    property: 'thumb',
+                    label: 'Preview',
+                    sortable: false
+                },
+                {
+                    property: 'originalFilename',
+                    label: 'Name',
+                    sortable: true
+                },
+                {
+                    property: 'width',
+                    label: 'Width',
+                    sortable: true
+                },
+                {
+                    property: 'height',
+                    label: 'Height',
+                    sortable: true
+                },
+                {
+                    property: 'magnification',
+                    label: 'Magnification',
+                    sortable: true
+                },
+                {
+                    property: 'resolution',
+                    label: 'Resolution',
+                    sortable: true
+                },
+                {
+                    property: 'numberOfAnnotations',
+                    label: 'a',
+                    sortable: true
+                },
+                {
+                    property: 'numberOfJobAnnotations',
+                    label: 'b',
+                    sortable: true
+                },
+                {
+                    property: 'numberOfJobAnnotations',
+                    label: 'c',
+                    sortable: true
+                },
+                {
+                    property: 'mime',
+                    label: 'Mime',
+                    sortable: true
+                },
+                {
+                    property: 'created',
+                    label: 'Created',
+                    sortable: true
+                },
+				{
+                    property: 'status',
+                    label: 'Status',
+                    sortable: false
+                },
+                {
+                    property: 'action',
+                    label: 'Action',
+                    sortable: false
+                }
+            ],
+            formatter: function (items) {
+                $.each(items, function (index, item) {
+                    item.thumb = _.template("<div style='width : 130px;'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></div>", item);
+                    item.action = _.template(actionMenuTpl, item);
+                    item.created = window.app.convertLongToDate(item.created);
+                    item.resolution = item.resolution.toFixed(3);
+					if (item.reviewed) {
+							item.status = '<span class="label label-success">Reviewed</span>';
+					}
+					else if (item.inReview) {
+							item.status = '<span class="label label-warning">In review</span>';
+					} else {
+						item.status = '<span class="label label-info">None</span>';
+					}
+					
+                });
+            },
+            collection : new ImageInstanceCollection({project: this.idProject}),
+            delay: 250
+        });
+
+        $('#MyGrid').datagrid({
+            dataSource: dataSource,
+            dataOptions : { pageIndex: 0, pageSize: 10 },
+            stretchHeight: true
+        });
+
+        $('#datagrid-reload').on('click', function () {
+            $('#MyGrid').datagrid('reload');
+        });
+
+
+        $('#MyGrid').datagrid({ dataSource: dataSource, stretchHeight: false})
+
+		$('#projectImageListing' + self.idProject).hide();
+         $('#projectImageTable' + self.idProject).show();
     }
 });

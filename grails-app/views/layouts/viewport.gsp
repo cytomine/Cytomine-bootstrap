@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="org.codehaus.groovy.grails.commons.GrailsApplication" %>
+<%@ page import="grails.util.Environment; org.codehaus.groovy.grails.commons.GrailsApplication" %>
 <%@ page import="grails.util.GrailsUtil" %>
 <!DOCTYPE html>
 <!--
@@ -10,7 +10,7 @@
   \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
 
 -->
-<html>
+<html class="fuelux">
 <head>
 <title>Cytomine</title>
 
@@ -57,6 +57,12 @@ body {
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
+<!-- fuel ux -->
+<link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
+<link href="lib/fuelux/css/fuelux-responsive.css" rel="stylesheet" />
+<script src="lib/fuelux/loader.min.js" type="text/javascript"></script>
+
+
 <!--
 <link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
 <script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
@@ -69,7 +75,7 @@ body {
 
 
 
-<g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
+<g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
 <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>
 
@@ -280,7 +286,7 @@ body {
 
 
 
-<g:if test="${GrailsUtil.environment != GrailsApplication.ENV_PRODUCTION}">
+<g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
     <script type="text/javascript">
         setTimeout(function(){
             if (navigator.appVersion.indexOf("Linux")!=-1) {
@@ -323,7 +329,7 @@ body {
 </script>
 
 </body>
-<g:if test="${GrailsUtil.environment == GrailsApplication.ENV_PRODUCTION}">
+<g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">
     <script type="text/javascript" src="lib.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
     <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
 

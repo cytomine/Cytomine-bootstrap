@@ -1,4 +1,4 @@
-import be.cytomine.image.server.Storage
+
 import be.cytomine.security.SecUser
 import grails.util.Environment
 import groovy.sql.Sql
@@ -75,12 +75,6 @@ class BootStrap {
         //if database is empty, create admin user
         if (SecUser.count() == 0) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
-        }
-
-        /* Tmp : migration script */
-        if (Environment.getCurrent() != Environment.TEST && Storage.count() == 1) {
-            bootstrapProdDataService.toVersion1()
-//            countersService.updateCommentsCounters()
         }
 
     }

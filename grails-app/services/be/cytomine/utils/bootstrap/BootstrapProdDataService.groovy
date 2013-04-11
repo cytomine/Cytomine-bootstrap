@@ -47,7 +47,7 @@ class BootstrapProdDataService {
     }
 
 
-    private def initUserIntoAbstractImage() {
+    private def  initUserIntoAbstractImage() {
         SecUser defaultUser = SecUser.findByUsername("rmaree")
         AbstractImage.list().each {
             if (!it.user) {
