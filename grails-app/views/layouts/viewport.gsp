@@ -30,14 +30,15 @@
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.12/theme/default/style.css' type='text/css'/>
 
-<link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>
+
 <style type="text/css">
 body {
     padding-top: 44px;
 
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap-responsive.min.css"/>
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
@@ -49,8 +50,6 @@ body {
 <!-- fuel ux -->
 <link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
 <link href="lib/fuelux/css/fuelux-responsive.css" rel="stylesheet" />
-
-
 
 <!--
 <link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
@@ -72,10 +71,10 @@ body {
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
 <!-- Twitter bootstrap -->
-<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>
+<!--<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>-->
 
 <!-- Fuel ux -->
-<script src="lib/fuelux/loader.min.js" type="text/javascript"></script>
+<script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
 
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>

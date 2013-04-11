@@ -1,5 +1,5 @@
 html, body {
-    /*background-image: url('../images/tiny_grid.png');*/
+    background-image: url('../images/tiny_grid.png');
 }
 
 
@@ -8,7 +8,7 @@ label {
 }
 
 img {
-    /*max-width: 10000% !important;*/ /* override max-width : 100% from twitter bootstrap, conflict with openlayers ! */
+    max-width: none !important; /* override max-width : 100% from twitter bootstrap, conflict with openlayers ! */
 }
 .header_h {
     padding-bottom: 10px;
@@ -212,11 +212,10 @@ span.dynatree-active a
     color: white !important; /* @ IE6 */
 }
 
-.tree > li > span.dynatree-selected a
+span.dynatree-selected a
 {
     background-color : green;
-    color: white;
-    font-style: italic;
+    color: white !important;
 }
 
 .tree > a {
