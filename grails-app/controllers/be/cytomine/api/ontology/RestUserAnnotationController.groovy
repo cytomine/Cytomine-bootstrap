@@ -85,10 +85,10 @@ class RestUserAnnotationController extends RestController {
         println "user=$user"
         println "bbox=${params.bbox}"
         if (image && user && params.bbox) {
-
             boolean notReviewedOnly = params.getBoolean("notreviewed")
+            Integer force = params.getInt('force')
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
-            def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly)
+            def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly,force)
             responseSuccess(data)
         } else if (image && user) {
             responseSuccess(userAnnotationService.listLight(image, user))

@@ -85,8 +85,8 @@ class AlgoAnnotationService extends ModelService {
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
-    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly) {
-        list(image, user, GeometryUtils.createBoundingBox(bbox), notReviewedOnly)
+    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly,Integer force = null) {
+        list(image, user, GeometryUtils.createBoundingBox(bbox), notReviewedOnly,force)
     }
 
     /**
@@ -97,14 +97,16 @@ class AlgoAnnotationService extends ModelService {
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
-    def list(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly) {
+    def list(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null) {
         SecurityACL.check(image.container(),READ)
 
         //we use SQL request (not hibernate) to speedup time request
 
-
-        def rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
-
+        def rule = force
+        if (!force) {
+            rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
+        }
+        println "RULEX=$rule"
         if(rule==kmeansGeometryService.FULL) {
             String request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
                                 " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +

@@ -42,14 +42,6 @@ class UserAnnotationService extends ModelService {
         return UserAnnotation
     }
 
-    UserAnnotation get(def id) {
-        def annotation = UserAnnotation.get(id)
-        if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
-        }
-        annotation
-    }
-
     UserAnnotation read(def id) {
         def annotation = UserAnnotation.read(id)
         if (annotation) {
@@ -228,13 +220,18 @@ class UserAnnotationService extends ModelService {
      * @param notReviewedOnly Don't get annotation that have been reviewed
      * @return Annotation listing (light)
      */
-    def listLight(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly) {
+    def listLight(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null) {
         SecurityACL.check(image.container(),READ)
         println "listLight"
 
         SecurityACL.check(image.container(),READ)
 
-        def rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
+        //if forced, use value in params, othewise compute if its good to kmeans (large bbox + lot of annotations to print)
+        def rule = force
+        if (!force) {
+            rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
+        }
+
         if(rule==kmeansGeometryService.FULL) {
             String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
                                 " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +

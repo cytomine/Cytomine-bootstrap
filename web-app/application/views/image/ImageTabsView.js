@@ -25,7 +25,7 @@ var ImageTabsView = Backbone.View.extend({
             image.set({"created": window.app.convertLongToDate(image.get("created"))});
             image.set('originalFilename',image.getVisibleName());
             tbody.append(_.template(rowTpl, image.toJSON()));
-            var action = new ImageReviewAction({container:{el:tbody,model:image}});
+            var action = new ImageReviewAction({container:{el:tbody,model:image, render: function() {}}});
             action.configureAction();
         });
     },

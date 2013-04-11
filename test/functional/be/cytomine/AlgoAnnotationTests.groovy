@@ -101,36 +101,28 @@ class AlgoAnnotationTests  {
 
 
         //very small bbox, hight annotation number
+        //force for each kmeans level (1,2,3)
         String bbox = "1,1,100,100"
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-
-        //very large bbox, low annotation number
-        bbox = "1,1,10000,10000"
-        annotation.image.countImageAnnotations = 500000l
-        BasicInstanceBuilder.saveDomain(annotation.image)
-
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-
-
-        result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
@@ -462,7 +454,16 @@ class AlgoAnnotationTests  {
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
+        assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
+
+        //all images
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -522,7 +523,16 @@ class AlgoAnnotationTests  {
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
+        assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
+
+        //all images
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray

@@ -6,6 +6,7 @@ import be.cytomine.security.User
 
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.AlgoAnnotationAPI
 import be.cytomine.test.http.UserAnnotationAPI
 
 import be.cytomine.test.http.DomainAPI
@@ -382,7 +383,16 @@ class UserAnnotationTests  {
 
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, user.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(annotationWithoutTerm.id,json)
+        assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
+
+        //all images
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, user.id,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -443,7 +453,16 @@ class UserAnnotationTests  {
 
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
+        assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
+
+        //all images
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, user.id, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -451,6 +470,109 @@ class UserAnnotationTests  {
         assert !DomainAPI.containsInJSONList(annotationWithNoTerm.id,json)
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
     }
+
+
+    void testListAlgoAnnotationByImageAndUser() {
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
+        UserAnnotation annotationWith2Term = BasicInstanceBuilder.getUserAnnotation()
+        AnnotationTerm aat = BasicInstanceBuilder.getAnnotationTermNotExist(annotationWith2Term,true)
+
+
+        def result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+
+        //very small bbox, hight annotation number
+        String bbox = "1,1,100,100"
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+
+        result = UserAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+
+    void testUnionUserAnnotationByProjectWithCredential() {
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.save(flush: true)
+        assert UserAnnotation.findAllByImage(image).size()==0
+
+        def a1 = BasicInstanceBuilder.getUserAnnotationNotExist()
+
+        a1.location = new WKTReader().read("POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))")
+        a1.image = image
+        a1.project = image.project
+        assert a1.save(flush: true)  != null
+
+        def a2 = BasicInstanceBuilder.getUserAnnotationNotExist()
+        a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
+        a2.image = image
+        a2.project = image.project
+        assert a2.save(flush: true)  != null
+
+        def at1 = BasicInstanceBuilder.getAnnotationTermNotExist(a1,true)
+        def at2 = BasicInstanceBuilder.getAnnotationTermNotExist(a2,true)
+        at2.term = at1.term
+        at2.save(flush:true)
+
+        assert UserAnnotation.findAllByImage(a1.image).size()==2
+
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        assert UserAnnotation.findAllByImage(a1.image).size()==1
+    }
+
+    void testUnionAlgoAnnotationByProjectWithCredentialBufferNull() {
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.save(flush: true)
+        assert UserAnnotation.findAllByImage(image).size()==0
+
+        def a1 = BasicInstanceBuilder.getUserAnnotationNotExist()
+
+        a1.location = new WKTReader().read("POLYGON ((0 0, 0 6000, 10000 6000, 10000 0, 0 0))")
+        a1.image = image
+        a1.project = image.project
+        assert a1.save(flush: true)  != null
+
+        def a2 = BasicInstanceBuilder.getUserAnnotationNotExist()
+        a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
+        a2.image = image
+        a2.project = image.project
+        assert a2.save(flush: true)  != null
+
+        def at1 = BasicInstanceBuilder.getAnnotationTermNotExist(a1,true)
+        def at2 = BasicInstanceBuilder.getAnnotationTermNotExist(a2,true)
+        at2.term = at1.term
+        at2.save(flush:true)
+
+        assert UserAnnotation.findAllByImage(a1.image).size()==2
+
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        assert UserAnnotation.findAllByImage(a1.image).size()==1
+    }
+
 
 
 }

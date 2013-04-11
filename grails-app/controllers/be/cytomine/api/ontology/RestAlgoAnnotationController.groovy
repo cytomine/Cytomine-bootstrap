@@ -176,7 +176,8 @@ class RestAlgoAnnotationController extends RestController {
         boolean notReviewedOnly = params.getBoolean("notreviewed")
 
         if (image && user && bbox) {
-            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly))
+            Integer force = params.getInt('force')
+            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly,force))
         } else if (image && user) {
             responseSuccess(algoAnnotationService.list(image, user))
         } else if (!user) {

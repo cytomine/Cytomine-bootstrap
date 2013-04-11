@@ -60,13 +60,12 @@ class AnnotationDomainAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByProjectAndUsersWithoutTerm(Long id,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?noTerm=true&users=" +idUser
+    static def listByProjectAndUsersWithoutTerm(Long id,Long idUser, Long idImage, String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?noTerm=true&users=" +idUser + (idImage? "&image="+idImage:"")
         return doGET(URL, username, password)
     }
-
-    static def listByProjectAndUsersSeveralTerm(Long id,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?multipleTerm=true&users=" +idUser
+    static def listByProjectAndUsersSeveralTerm(Long id,Long idUser, Long idImage,String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/annotation.json?multipleTerm=true&users=" +idUser + (idImage? "&image="+idImage:"")
         return doGET(URL, username, password)
     }
 
