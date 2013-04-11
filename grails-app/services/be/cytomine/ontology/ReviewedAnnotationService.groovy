@@ -54,10 +54,8 @@ class ReviewedAnnotationService extends ModelService {
     def list(Project project) {
         SecurityACL.check(project.container(),READ)
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
-                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
-                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
-                " AND a.project_id = " + project.id + "\n" +
-                " AND a.id = at.reviewed_annotation_terms_id\n" +
+                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
+                " WHERE a.project_id = " + project.id + "\n" +
                 " ORDER BY id desc, term"
         selectReviewedAnnotationFull(request)
     }
@@ -65,10 +63,8 @@ class ReviewedAnnotationService extends ModelService {
     def list(ImageInstance image) {
         SecurityACL.check(image.container(),READ)
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
-                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
-                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
-                " AND a.image_id = " + image.id + "\n" +
-                " AND a.id = at.reviewed_annotation_terms_id\n" +
+                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
+                " WHERE a.image_id = " + image.id + "\n" +
                 " ORDER BY id desc, term"
         selectReviewedAnnotationFull(request)
     }
