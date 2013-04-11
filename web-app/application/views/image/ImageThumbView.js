@@ -16,7 +16,7 @@ var ImageThumbView = Backbone.View.extend({
         var self = this;
         require(["text!application/templates/image/ImageThumb.tpl.html", "text!application/templates/image/ImageThumbProperties.tpl.html","text!application/templates/image/ImageReviewAction.tpl.html"], function (tpl, tplProperties,tplReviewAction) {
             self.tplProperties = tplProperties;
-            var filename = self.model.getVisibleName();
+            var filename = self.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
             self.model.set('originalFilename',filename);
             var title = (filename.length < 27) ? filename : filename.substr(0, 24) + "...";
             var resolution = Math.round(1000 * self.model.get('resolution')) / 1000; //round to third decimal

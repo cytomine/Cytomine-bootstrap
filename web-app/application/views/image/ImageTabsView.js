@@ -18,12 +18,12 @@ var ImageTabsView = Backbone.View.extend({
         var thumbImgTpl = "<img class='lazy' src='<%= thumb %>' alt='<%= filename %>' style='max-height: 75px;'/>";
         var rowTpl = "<tr><td><%= thumImg %></td><td><%= originalFilename %></td><td><%= mime %></td><td><%= width %></td><td><%= height %></td><td><%= magnification %></td><td><%= resolution %></td><td><%= numberOfAnnotations %></td><td><%= numberOfJobAnnotations %></td><td><%= created %></td><td><%= action %></td></tr>";
         collection.each(function (image) {
-            var thumImg = _.template(thumbImgTpl, { thumb: image.get("thumb"), filename: image.getVisibleName()});
+            var thumImg = _.template(thumbImgTpl, { thumb: image.get("thumb"), filename: image.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))});
             image.set({"action": _.template(self.reviewTemplate, image.toJSON())});
             image.set({"thumImg": thumImg});
             image.set({"resolution": image.get("resolution").toFixed(2)});
             image.set({"created": window.app.convertLongToDate(image.get("created"))});
-            image.set('originalFilename',image.getVisibleName());
+            image.set('originalFilename',image.getVisibleName(window.app.status.currentProjectModel.get('blindMode')));
             tbody.append(_.template(rowTpl, image.toJSON()));
             var action = new ImageReviewAction({container:{el:tbody,model:image, render: function() {}}});
             action.configureAction();

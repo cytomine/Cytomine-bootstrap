@@ -306,6 +306,11 @@ var AddProjectDialog = Backbone.View.extend({
         var ontology = $("#projectontology").attr('value');
         var users = $("#projectuser").multiselectNext('selectedValues');
 
+        var blindMode = $("input#blindMode").attr('checked')=="checked";
+        var privateLayer = $("input#privateLayer").attr('checked')=="checked";
+
+        console.log("blindMode="+blindMode);
+        console.log("privateLayer="+privateLayer);
 
         var retrievalDisable = $("input#retrievalProjectNone").is(':checked');
         var retrievalProjectAll = $("input#retrievalProjectAll").is(':checked');
@@ -319,8 +324,9 @@ var AddProjectDialog = Backbone.View.extend({
         var totalOperation = users.length + 1; //N users +1 for project creation
         self.changeProgressBarStatus((1/totalOperation)*100);
 
+
         //create project
-        new ProjectModel({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}, {
+        new ProjectModel({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
                 success: function (model, response) {
                     console.log("1. Project added!");
                     window.app.view.message("Project", response.message, "success");

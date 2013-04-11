@@ -7,8 +7,8 @@ var ImageModel = Backbone.Model.extend({
         }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
-    getVisibleName : function() {
-        if(window.app.status.user.filenameVisible) {
+    getVisibleName : function(hideName) {
+        if(!hideName) {
             return this.get('filename');
         } else {
             return "[BLIND] id=" + this.get('id').toString();
@@ -98,8 +98,8 @@ var ImageInstanceModel = Backbone.Model.extend({
         this.next = options.next;
         this.previous = options.previous;
     },
-    getVisibleName : function() {
-        if(window.app.status.user.filenameVisible) {
+    getVisibleName : function(hideName) {
+        if(!hideName) {
             return this.get('filename');
         } else {
             return "[BLIND]" + this.get('id');

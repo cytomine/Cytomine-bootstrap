@@ -89,6 +89,11 @@ var EditProjectDialog = Backbone.View.extend({
                 return false;
             }
         });
+
+
+        $("input#blindMode").attr('checked', self.model.get('blindMode'));
+        $("input#privateLayer").attr('checked', self.model.get('privateLayer'));
+
     },
     createUserList: function () {
         var self = this;
@@ -273,7 +278,11 @@ var EditProjectDialog = Backbone.View.extend({
         if (retrievalProjectSome) {
             projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
         }
+        var blindMode = $("input#blindMode").attr('checked')=="checked";
+        var privateLayer = $("input#privateLayer").attr('checked')=="checked";
 
+        console.log("blindMode="+blindMode);
+        console.log("privateLayer="+privateLayer);
 
         var projectOldUsers = []; //[a,b,c]
         var projectNewUsers = null;  //[a,b,x]
@@ -309,9 +318,9 @@ var EditProjectDialog = Backbone.View.extend({
 
         //edit project
         var project = self.model;
-        project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval});
+        project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer});
 
-        project.save({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}, {
+        project.save({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
                 success: function (model, response) {
 
 

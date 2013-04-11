@@ -59,6 +59,24 @@
             </fieldset>
 
             <fieldset title="Step 2" style="margin: auto;height: 300px;">
+                <legend>Project config</legend>
+                <div>
+                    <div class="alert alert-info">
+                        If private layer is enabled, a user will not see annotations from other users.
+                    </div>
+                    <input type="checkbox" id="privateLayer"> Private Layer
+
+                    <br><br>
+
+                    <div class="alert alert-info">
+                        If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
+                    </div>
+                    <input type="checkbox" id="blindMode"> Blind Mode
+                </div>
+                <br>
+            </fieldset>
+
+            <fieldset title="Step 3" style="margin: auto;height: 300px;">
                 <legend>Project users</legend>
                 <div>
                     <select multiple="multiple" id="projectuser" style="width:500px;">
@@ -67,7 +85,7 @@
                 <br>
             </fieldset>
 
-            <fieldset title="Step 3" style="margin: auto;height: 300px;">
+            <fieldset title="Step 4" style="margin: auto;height: 300px;">
                 <legend>Retrieval info</legend>
                 <div id="retrievalGroup">
                     <div class="alert alert-info">

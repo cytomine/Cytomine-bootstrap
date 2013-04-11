@@ -34,6 +34,8 @@ class Project extends CytomineDomain implements Serializable {
      */
     boolean privateLayer = false
 
+    boolean blindMode = false
+
     /**
      * Number of projects user annotations
      */
@@ -135,6 +137,7 @@ class Project extends CytomineDomain implements Serializable {
         domain.retrievalDisable = JSONUtils.getJSONAttrBoolean(json, 'retrievalDisable', false)
         domain.retrievalAllOntology = JSONUtils.getJSONAttrBoolean(json, 'retrievalAllOntology', true)
         domain.privateLayer = JSONUtils.getJSONAttrBoolean(json, 'privateLayer', false)
+        domain.blindMode = JSONUtils.getJSONAttrBoolean(json, 'blindMode', false)
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
@@ -169,6 +172,7 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['ontologyName'] = project.ontology?.name
             returnArray['discipline'] = project.discipline?.id
             returnArray['privateLayer'] = (project.privateLayer != null &&  project.privateLayer)
+            returnArray['blindMode'] = (project.blindMode != null &&  project.blindMode)
             returnArray['disciplineName'] = project.discipline?.name
             returnArray['numberOfSlides'] = project.countSamples()
             returnArray['numberOfImages'] = project.countImageInstance()

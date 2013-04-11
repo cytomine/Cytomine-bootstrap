@@ -35,7 +35,6 @@ var ProjectDashboardView = Backbone.View.extend({
         $(self.el).append(_.template(tpl, self.model.toJSON()));
         window.app.controllers.browse.tabs.addDashboard(self);
         self.showImagesThumbs();
-        self.blindModeOption();
 
         //Refresh dashboard
         setInterval(function () {
@@ -43,36 +42,6 @@ var ProjectDashboardView = Backbone.View.extend({
                 self.refreshDashboard();
             }
         }, 60000);
-    },
-    blindModeOption : function() {
-        var self = this;
-        console.log("blindModeOption");
-        self.printBlindMode();
-        $("#blindMode"+self.model.id).click(function() {
-            window.app.status.user.filenameVisible=!window.app.status.user.filenameVisible;
-
-
-            console.log(window.app.controllers.browse.tabs.tabs.length);
-
-            var openedTabs = window.app.controllers.browse.tabs.tabs.length;
-            if(openedTabs>0) {
-                window.app.view.message("Blind mode", {responseText:"You have "+ openedTabs + " image(s) open. You should close/open them to apply the new blind mode"}, "",6000);
-            }
-            self.printBlindMode();
-            self.refreshImagesThumbs();
-            self.refreshImagesTable();
-        });
-
-    },
-    printBlindMode : function()  {
-        var self = this;
-        if(window.app.status.user.filenameVisible) {
-            $("#blindMode"+self.model.id).removeClass("disabled");
-            $("#blindMode"+self.model.id).html(' <i class="icon-folder-open icon-white"></i>&nbsp;&nbsp;Blind mode disabled');
-        } else {
-            $("#blindMode"+self.model.id).addClass("disabled");
-            $("#blindMode"+self.model.id).html(' <i class="icon-folder-close icon-white"></i>&nbsp;&nbsp;Blind mode activated');
-        }
     },
     refreshImagesThumbs: function () {
         if (this.projectDashboardImages == null) {

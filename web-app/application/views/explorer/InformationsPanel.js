@@ -35,7 +35,7 @@ var InformationsPanel = SideBarPanel.extend({
     doLayout: function (tpl) {
         var self = this;
         var json = self.model.toJSON();
-        json.originalFilename = self.model.getVisibleName();
+        json.originalFilename = self.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
         var content = _.template(tpl,json);
         $('#informationsPanel' + self.model.get('id')).html(content);
         var el = $('#informationsPanel' + self.model.get('id'));
