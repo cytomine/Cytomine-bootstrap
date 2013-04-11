@@ -63,6 +63,18 @@ class PropertyService extends ModelService {
         return selectListkey(request)
     }
 
+    private List<String> listKeysForImageInstance(Project project) {
+        if (project != null)
+            SecurityACL.check(project,READ)
+
+        String request = "SELECT DISTINCT p.key " +
+                "FROM property as p, image_instance as ii " +
+                "WHERE p.domain_ident = ii.id " +
+                "AND ii.project_id = "+ project.id;
+
+        return selectListkey(request)
+    }
+
     def listAnnotationCenterPosition(SecUser user, ImageInstance image, Geometry boundingbox, String key) {
         SecurityACL.check(image.container(),READ)
         String request = "SELECT DISTINCT ua.id, ST_CENTROID(ua.location), p.value " +

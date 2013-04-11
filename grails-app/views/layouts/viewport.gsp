@@ -181,6 +181,8 @@ body {
 <script type="text/javascript" src="application/models/TaskModel.js" ></script>
 <script type="text/javascript" src="application/models/StorageModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationPropertyModel.js" ></script>
+<script type="text/javascript" src="application/models/ImageInstancePropertyModel.js" ></script>
+<script type="text/javascript" src="application/models/ProjectPropertyModel.js" ></script>
 
 <!-- View -->
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
@@ -201,7 +203,7 @@ body {
 <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotations.js" ></script>
 <script type="text/javascript" src="application/views/dashboard/ProjectDashboardAlgos.js" ></script>
 <script type="text/javascript" src="application/views/dashboard/ProjectDashboardConfig.js" ></script>
-<script type="text/javascript" src="application/views/dashboard/ProjectDashboardAnnotationsProperties.js" ></script>
+<script type="text/javascript" src="application/views/dashboard/ProjectDashboardProperties.js" ></script>
 
 <script type="text/javascript" src="application/views/processing/JobListingView.js" ></script>
 <script type="text/javascript" src="application/views/processing/JobComparatorView.js" ></script>

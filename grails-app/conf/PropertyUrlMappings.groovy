@@ -48,5 +48,8 @@ class PropertyUrlMappings
         "/api/imageinstance/$idImageInstance/property/$id"(controller:"restProperty"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/imageinstance/property/key"(controller:"restProperty"){
+            action = [GET:"listKeyForImageInstance"]
+        }
     }
 }

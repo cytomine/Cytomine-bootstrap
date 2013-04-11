@@ -103,6 +103,8 @@
 <fileset dir="${src.dir}" includes="application/models/TaskModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/StorageModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/AnnotationPropertyModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/ImageInstancePropertyModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/ProjectPropertyModel.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>
@@ -118,7 +120,7 @@
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotations.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAlgos.js"/>
 <fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardConfig.js"/>
-<fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardAnnotationsProperties.js"/>
+<fileset dir="${src.dir}" includes="application/views/dashboard/ProjectDashboardProperties.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobListingView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobComparatorView.js"/>
 <fileset dir="${src.dir}" includes="application/views/processing/JobSelectionView.js"/>

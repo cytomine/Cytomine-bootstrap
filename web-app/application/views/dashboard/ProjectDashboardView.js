@@ -94,15 +94,15 @@ var ProjectDashboardView = Backbone.View.extend({
         }
 
     },
-    refreshAnnotationsProperties: function (annotation) {
+    refreshProperties: function (idDomain, nameDomain) {
         console.log("ProjectDashboardView");
         var self = this;
 
-        if (this.projectDashboardAnnotationsProperties == null) {
-            this.projectDashboardAnnotationsProperties = new ProjectDashboardAnnotationsProperties({ model: this.model, el: this.el, idAnnotation: annotation});
-            this.projectDashboardAnnotationsProperties.render();
+        if (this.projectDashboardProperties == null) {
+            this.projectDashboardProperties = new ProjectDashboardProperties({ model: this.model, el: this.el, idDomain: idDomain, nameDomain: nameDomain});
+            this.projectDashboardProperties.render();
         } else {
-            this.projectDashboardAnnotationsProperties.refresh(annotation)
+            this.projectDashboardProperties.refresh(idDomain, nameDomain)
         }
     },
     /**

@@ -57,7 +57,7 @@ class RestPropertyController extends RestController {
     }
 
 
-    def listKeyForAnnotation /*Ancien ListKey*/ = {
+    def listKeyForAnnotation = {
         Project project = projectService.read(params.long('idProject'))
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
 
@@ -69,7 +69,15 @@ class RestPropertyController extends RestController {
             responseNotFound("Property","Image/Project", params.idImage+"/"+params.idProject)
         }
     }
+    def listKeyForImageInstance = {
+        Project project = projectService.read(params.long('idProject'))
 
+        if(project) {
+            responseSuccess(propertyService.listKeysForImageInstance(project))
+        } else {
+            responseNotFound("Property","Project", params.idProject)
+        }
+    }
 
 
     def listAnnotationPosition = {

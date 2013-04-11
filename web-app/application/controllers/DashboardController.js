@@ -7,8 +7,11 @@ var DashboardController = Backbone.Router.extend({
         "tabs-imagesarray-:project": "imagesarray",
         "tabs-annotations-:project-:terms-:users": "annotations",
         "tabs-annotations-:project": "annotations",
-        "tabs-annotationsproperties-:project-:annotations": "annotationsproperties",
-        "tabs-annotationsproperties-:project": "annotationsproperties",
+        "tabs-properties-:project-:iddomain": "properties",
+        "tabs-properties-:project": "properties",
+        "tabs-projectproperties-:project-:iddomain": "projectProperties",
+        "tabs-annotationproperties-:project-:iddomain": "annotationProperties",
+        "tabs-imageproperties-:project-:iddomain": "imageProperties",
         "tabs-dashboard-:project": "dashboard",
         "tabs-config-:project": "config",
         "tabs-algos-:project-:software-:job": "algos",
@@ -75,27 +78,35 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    annotationsproperties: function (project) {
-        this.annotationsproperties(project, 0);
+    projectProperties : function(project, idDomain) {
+        this.properties(project, idDomain, "Project");
     },
-    annotationsproperties: function (project, annotations) {
-        this.annotationsproperties(project, annotations);
+    imageProperties : function(project, idDomain) {
+        this.properties(project, idDomain, "ImageInstance");
     },
-    annotationsproperties: function (project, annotations) {
-        console.log("controller.annotationsproperties: " + project + "-" + annotations);
+    annotationProperties : function(project, idDomain) {
+        this.properties(project, idDomain, "Annotation");
+    },
+    properties: function (project, idDomain, nameDomain) {
+        console.log("controller.properties: " + project + "-" + idDomain);
         var self = this;
-        var func = function () {
-            window.app.controllers.browse.tabs.triggerRoute = false;
-            var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-annotationsproperties-' + window.app.status.currentProject + ']').click();
-            self.view.refreshAnnotationsProperties(annotations);
-            window.app.controllers.browse.tabs.triggerRoute = true;
 
-        };
-        this.init(project, func);
+        if (nameDomain == undefined) {
+           //navigate to annotation, project, image, poperties
+            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + project + "-undefined" ,true);
+        } else {
+            var func = function () {
+                window.app.controllers.browse.tabs.triggerRoute = false;
+                var tabs = $("#explorer > .browser").find(".nav-tabs");
+                tabs.find('a[href=#tabs-properties-' + window.app.status.currentProject + ']').click();
+                self.view.refreshProperties(idDomain, nameDomain);
+                window.app.controllers.browse.tabs.triggerRoute = true;
+            }
+            self.init(project, func);
+        }
     },
     algos: function () {
-       this.algos(undefined,undefined,undefined);
+        this.algos(undefined,undefined,undefined);
     },
     algos: function (project) {
         this.algos(project,undefined,undefined);

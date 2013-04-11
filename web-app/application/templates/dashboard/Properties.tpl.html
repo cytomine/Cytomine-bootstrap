@@ -1,0 +1,63 @@
+<div id="properties-<%= id %>" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+     xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <div class="container-fluid" style="padding-top: 10px">
+        <div class="span4" style="max-width: 300px;">
+            <div class="well sidebar-nav">
+                <div align="middle" class="btn-group" data-toggle="buttons-radio">
+                    <button type="button" id="buttonAnnotationProperty" class="btn btn-primary">Annotation</button>
+                    <button type="button" id="buttonImageInstanceProperty" class="btn btn-primary">Image</button>
+                    <button type="button" id="buttonProjectProperty" class="btn btn-primary">Project</button>
+                </div>
+                <br/>
+                <div align="middle">
+                    <select id="identifiantSelect">
+                    </select>
+                </div>
+                <br/>
+                <div align="middle">
+                    <a id="loadImageOrText" href="">
+                    </a>
+                </div>
+                <hr>
+                <p><em><i class='icon-info-sign' /> Info: To edit a property, double-click the key or the value</em></p>
+            </div>
+        </div>
+
+        <div class="span8">
+            <div class="well">
+                <h4>Add a property</h4><br/>
+                <div class="controls">
+                    <form>
+                    <input type="text" title="Key" class="input-xlarge" id="input_key" required />
+                    <input type="text" title="Value" class="input-xlarge" id="input_value" required />
+                    <li style="display : inline;">
+                        <button id="addProperty" class="btn">Add Property </button>
+                    </li>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="span8">
+            <div class="well" >
+                <h4>Properties</h4><br/>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th width="200">Key</th>
+                            <th width="350">Value</th>
+                            <th width="50">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-hover" id="tableProperty">
+
+                    </tbody>
+                </table>
+                <br/>
+                <li style="display : inline;">
+                    <button id="deleteProperty" class="btn">Delete Property</button>
+                </li>
+            </div>
+        </div>
+    </div>
+</div>
