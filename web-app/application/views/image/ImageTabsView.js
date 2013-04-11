@@ -3,6 +3,7 @@ var ImageInstanceDataSource = function (options) {
     this._columns = options.columns;
     this._delay = options.delay || 0;
     this._collection = options.collection;
+    this._container = options.container;
 };
 
 ImageInstanceDataSource.prototype = {
@@ -51,7 +52,7 @@ ImageInstanceDataSource.prototype = {
                     callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
 
                     collection.each(function(model) {
-                        var action = new ImageReviewAction({el:("#MyGrid > tbody"),model:model, render: function() {}});
+                        var action = new ImageReviewAction({el:("#MyGrid > tbody"),model:model, container : self._container});
                         action.configureAction();
                     });
                 }
@@ -73,6 +74,7 @@ var ImageTabsView = Backbone.View.extend({
         this.container = options.container;
     },
     refresh: function () {
+        $('#MyGrid').datagrid('renderData');
     },
     render : function() {
         var self = this;
@@ -84,6 +86,7 @@ var ImageTabsView = Backbone.View.extend({
         var self = this;
 
         var dataSource = new ImageInstanceDataSource({
+            container : self,
             columns: [
 				{
                     property: 'id',
@@ -182,11 +185,6 @@ var ImageTabsView = Backbone.View.extend({
             dataOptions : { pageIndex: 0, pageSize: 10 },
             stretchHeight: true
         });
-
-        $('#datagrid-reload').on('click', function () {
-            $('#MyGrid').datagrid('reload');
-        });
-
 
         $('#MyGrid').datagrid({ dataSource: dataSource, stretchHeight: false})
 

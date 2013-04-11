@@ -38,20 +38,9 @@ body {
 }
 </style>
 <link rel="stylesheet" href="lib/bootstrap-2.1.1/css/bootstrap-responsive.min.css"/>
-<!--<link rel="stylesheet" href="css/darkstrap-v0.9.0.css"/>-->
-
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
-<!--<link rel='stylesheet' href='http://danneu.com/bag/darkstrap/css/darkstrap.css' type='text/css'/>-->
-
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
-<!--[if lte IE 8]>
- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
-<![endif]-->
-<link rel="stylesheet" href="lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.css" />
-<!--[if lte IE 8]><link rel="stylesheet" href="lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.ie.css" /><![endif]-->
-
 
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>

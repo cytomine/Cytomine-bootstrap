@@ -3,6 +3,7 @@ var ImageReviewAction = Backbone.View.extend({
     initialize: function (options) {
         this.el = options.el;
         this.model = options.model;
+        this.container  = options.container;
     },
     configureAction: function () {
         var self = this;
@@ -76,7 +77,7 @@ var ImageReviewAction = Backbone.View.extend({
 //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
-                self.render();
+                self.container.refresh();
                 window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-';
             },
             error: function (model, response) {
@@ -94,7 +95,7 @@ var ImageReviewAction = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
                 self.model = new ImageModel(response.imageinstance);
-                self.render();
+                self.container.refresh();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -109,7 +110,7 @@ var ImageReviewAction = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
                 self.model = new ImageModel(response.imageinstance);
-                self.render();
+                self.container.refresh();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -121,6 +122,5 @@ var ImageReviewAction = Backbone.View.extend({
     },
     isInReviewing: function () {
         return this.model.get("reviewStart") != null && this.model.get("reviewStop") == null
-    },
-    render : function() {}
+    }
 });

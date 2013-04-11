@@ -304,7 +304,6 @@ class AlgoAnnotationService extends ModelService {
      * @return Algo Annotation List
      */
     def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-        println "toto ${userList} ${imageInstanceList}"
         SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
@@ -315,7 +314,7 @@ class AlgoAnnotationService extends ModelService {
 
 
             String request = "" +
-                    "SELECT a.id as id, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project \n" +
+                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project \n" +
                     "FROM algo_annotation a, algo_annotation_term at \n" +
                     "WHERE at.project_id = ${project.id} \n" +
                     "AND at.term_id = ${term.id} \n" +
@@ -323,7 +322,7 @@ class AlgoAnnotationService extends ModelService {
                     (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
                     "AND at.annotation_ident = a.id \n" +
                     "UNION \n" +
-                    "SELECT a.id as id, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project \n" +
+                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project \n" +
                     "FROM user_annotation a, algo_annotation_term at \n" +
                     "WHERE at.project_id = ${project.id} \n" +
                     "AND at.term_id = ${term.id} \n" +
@@ -333,7 +332,6 @@ class AlgoAnnotationService extends ModelService {
                     "ORDER BY rate desc \n"
 
 
-            println request
             return selecAlgoAnnotationLight(request)
         }
     }
@@ -347,7 +345,7 @@ class AlgoAnnotationService extends ModelService {
         new Sql(dataSource).eachRow(request) {
             def url = (it.algo? UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256) : UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256))
 
-                data << [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project]
+                data << [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project, reviewed : (it.countReviewedAnnotations > 0)]
         }
         data
     }

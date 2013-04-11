@@ -54,7 +54,7 @@ var ImageThumbView = Backbone.View.extend({
         this.render();
     },
     configureAction: function () {
-        var action = new ImageReviewAction({el:this.el, model : this.model});
+        var action = new ImageReviewAction({el:this.el, model : this.model, container : this});
         action.configureAction();
     }
 });

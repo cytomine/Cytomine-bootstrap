@@ -8,7 +8,7 @@ label {
 }
 
 img {
-    max-width: 10000% !important; /* override max-width : 100% from twitter bootstrap, conflict with openlayers ! */
+    /*max-width: 10000% !important;*/ /* override max-width : 100% from twitter bootstrap, conflict with openlayers ! */
 }
 .header_h {
     padding-bottom: 10px;
