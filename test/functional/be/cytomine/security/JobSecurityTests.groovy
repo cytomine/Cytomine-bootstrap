@@ -76,6 +76,7 @@ class JobSecurityTests extends SecurityTestsAbstract{
       assert 200 == result.code
       job = result.data
       assert (200 == JobAPI.show(job.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+
       result = JobAPI.listBySoftwareAndProject(job.software.id,project.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2,true)
       assert 200 == result.code
       assert (true ==JobAPI.containsInJSONList(job.id,JSON.parse(result.data)))

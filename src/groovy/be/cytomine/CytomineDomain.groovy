@@ -166,7 +166,7 @@ abstract class CytomineDomain  implements Comparable{
 
             String request = "SELECT max(mask) FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
             "WHERE aoi.object_id_identity = ${domain.id} " +
-            "AND sid.sid = '${currentUser.username}' " +
+            "AND sid.sid = '${currentUser.humanUsername()}' " +
             "AND ae.acl_object_identity = aoi.id "+
             "AND ae.sid = sid.id "
 
