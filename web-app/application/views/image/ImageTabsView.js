@@ -37,9 +37,14 @@ ImageInstanceDataSource.prototype = {
             var startIndex = options.pageIndex * options.pageSize;
             var endIndex = startIndex + options.pageSize;
 
-            self._collection.server_api.offset = startIndex;
-            self._collection.server_api.max = endIndex - startIndex;
-            self._collection.fetch({
+//            self._collection.server_api.offset = startIndex;
+//            self._collection.server_api.max = endIndex - startIndex;
+//
+//            console.log("*****************************************");
+            console.log(window.app.models.projects.server_api.offset);
+            console.log(window.app.models.projects.server_api.max);
+
+            self._collection.goTo(options.pageIndex,{
                 success: function (collection, response) {
                     var data = []
                     collection.each(function(item) {
@@ -181,7 +186,7 @@ var ImageTabsView = Backbone.View.extend({
 					
                 });
             },
-            collection : new ImageInstanceCollection({project: this.idProject}),
+            collection : new ImageInstanceCollection({project: this.idProject,max:10}),
             delay: 250
         });
 

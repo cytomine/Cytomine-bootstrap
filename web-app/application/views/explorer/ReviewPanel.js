@@ -238,6 +238,7 @@ var ReviewPanel = SideBarPanel.extend({
                 selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
             });
 
+            console.log("userJobLayers="+this.userJobLayers.length);
             this.userJobLayers.each(function (layer) {
                 if (!layer.get("isDeleted")) {
                     self.layerName[layer.id] = layer.layerName();
