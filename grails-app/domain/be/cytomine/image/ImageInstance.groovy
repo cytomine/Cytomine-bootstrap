@@ -80,7 +80,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), false)
         domain.baseImage = JSONUtils.getJSONAttrDomain(json, "baseImage", new AbstractImage(), false)
         domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), false)
-        domain.countImageAnnotations = JSONUtils.getJSONAttrLong(json, "numberOfAnnotations", 0)
         domain.reviewStart = JSONUtils.getJSONAttrDate(json, "reviewStart")
         domain.reviewStop = JSONUtils.getJSONAttrDate(json, "reviewStop")
         domain.reviewUser = JSONUtils.getJSONAttrDomain(json, "reviewUser", new User(), false)

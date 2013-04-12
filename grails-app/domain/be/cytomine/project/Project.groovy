@@ -130,9 +130,14 @@ class Project extends CytomineDomain implements Serializable {
         domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
         domain.discipline = JSONUtils.getJSONAttrDomain(json, "discipline", new Discipline(), false)
 
-        domain.countAnnotations = JSONUtils.getJSONAttrLong(json, 'countAnnotations', 0)
-        domain.countImages = JSONUtils.getJSONAttrLong(json, 'countImages', 0)
-        domain.countJobAnnotations = JSONUtils.getJSONAttrLong(json, 'countJobAnnotations', 0)
+
+//        int nbreAnnotation = JSONUtils.getJSONAttrLong(json, 'countAnnotations', -1)
+//        domain.countAnnotations = (nbreAnnotation!=-1? nbreAnnotation : domain.countAnnotations)
+//
+//        int nbreImage = JSONUtils.getJSONAttrLong(json, 'countImages', -1)
+//        domain.countImages = JSONUtils.getJSONAttrLong(json, 'countImages', 0)
+//
+//        domain.countJobAnnotations = JSONUtils.getJSONAttrLong(json, 'countJobAnnotations', 0)
 
         domain.retrievalDisable = JSONUtils.getJSONAttrBoolean(json, 'retrievalDisable', false)
         domain.retrievalAllOntology = JSONUtils.getJSONAttrBoolean(json, 'retrievalAllOntology', true)
