@@ -41,6 +41,11 @@ ImageInstanceDataSource.prototype = {
             self._collection.server_api.max = endIndex - startIndex;
             self._collection.fetch({
                 success: function (collection, response) {
+                    var data = []
+                    collection.each(function(item) {
+                        item.set("originalFilename",item.getVisibleName(window.app.status.currentProjectModel.get('blindMode')));
+                    });
+
                     data = collection.toJSON();
                     var count =  collection.fullSize;
                     var end = (endIndex > count) ? count : endIndex;
