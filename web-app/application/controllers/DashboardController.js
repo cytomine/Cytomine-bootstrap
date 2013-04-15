@@ -91,10 +91,14 @@ var DashboardController = Backbone.Router.extend({
         console.log("controller.properties: " + project + "-" + idDomain);
         var self = this;
 
+        console.log(self.view);
         if (nameDomain == undefined) {
            //navigate to annotation, project, image, poperties
             window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + project + "-undefined" ,true);
         } else {
+            if(!window.app.controllers.browse.tabs.triggerRoute) {
+                return;
+            }
             var func = function () {
                 window.app.controllers.browse.tabs.triggerRoute = false;
                 var tabs = $("#explorer > .browser").find(".nav-tabs");

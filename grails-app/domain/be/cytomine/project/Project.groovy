@@ -131,6 +131,7 @@ class Project extends CytomineDomain implements Serializable {
         domain.discipline = JSONUtils.getJSONAttrDomain(json, "discipline", new Discipline(), false)
 
 
+
 //        int nbreAnnotation = JSONUtils.getJSONAttrLong(json, 'countAnnotations', -1)
 //        domain.countAnnotations = (nbreAnnotation!=-1? nbreAnnotation : domain.countAnnotations)
 //

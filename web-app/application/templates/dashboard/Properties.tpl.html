@@ -3,15 +3,20 @@
     <div class="container-fluid" style="padding-top: 10px">
         <div class="span4" style="max-width: 300px;">
             <div class="well sidebar-nav">
-                <div align="middle" class="btn-group" data-toggle="buttons-radio">
+                <div class="btn-group" data-toggle="buttons-radio">
                     <button type="button" id="buttonAnnotationProperty" class="btn btn-primary">Annotation</button>
                     <button type="button" id="buttonImageInstanceProperty" class="btn btn-primary">Image</button>
                     <button type="button" id="buttonProjectProperty" class="btn btn-primary">Project</button>
                 </div>
                 <br/>
                 <div align="middle">
+                    <br/>
                     <select id="identifiantSelect">
                     </select>
+                    <div id="infoDisplaySelect" style="max-height: 250px; overflow: auto;">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                    </div>
+                    <button type="button" id="refreshIdentifiantSelect" class="btn btn-inverse">Refresh List</button>
                 </div>
                 <br/>
                 <div align="middle">
@@ -53,6 +58,9 @@
 
                     </tbody>
                 </table>
+                <div id="infoDisplayTable" style="max-height: 250px; overflow: auto;">
+                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                </div>
                 <br/>
                 <li style="display : inline;">
                     <button id="deleteProperty" class="btn">Delete Property</button>

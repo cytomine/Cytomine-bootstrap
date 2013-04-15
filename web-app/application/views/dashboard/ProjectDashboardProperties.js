@@ -23,15 +23,13 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
     refresh: function (idDomain, nameDomain) {
         var self = this;
-
         self.nameDomain = nameDomain;
 
         if (self.nameDomain != "Project") {
             self.initIdentifiantSelect(idDomain);
         } else {
-            var select = $("#identifiantSelect");
-            select.empty();
-            select.attr("disabled", "disabled");
+            $("#identifiantSelect").hide();
+            $("#refreshIdentifiantSelect").hide();
 
             self.initTableProperty();
             self.initPropertyRowEvents();
@@ -47,7 +45,6 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
         var content = _.template(propertiesTpl, {id:self.model.id, name: self.model.get("name")});
         $("#tabs-properties-"+self.model.id).append(content);
-
 
         //In case of a user use a link in menu explore (popupAnnotation for example)
         if (self.idDomain != null) {
@@ -67,6 +64,11 @@ var ProjectDashboardProperties = Backbone.View.extend({
             window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-undefined",true);
         });
 
+        $("#refreshIdentifiantSelect").click(function() {
+            console.log("click refresh");
+            self.initIdentifiantSelect();
+        });
+
         $("#addProperty").click(function(event) {
             console.log("click button add");
             event.preventDefault();
@@ -74,7 +76,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
         });
         $("#identifiantSelect").click(function() {
             console.log("click select");
-            self.redirectProperty();
+            self.refreshProperty();
         });
         $("#deleteProperty").click(function() {
             console.log("click button delete");
@@ -153,10 +155,18 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
     initIdentifiantSelect: function (ident) {
         var self = this;
-        var select = $("#identifiantSelect");
 
+        //Hide selectBox and Button refresh
+        var select = $("#identifiantSelect");
+        select.hide();
         select.empty();
         select.attr("disabled", "disabled");
+        $("#refreshIdentifiantSelect").hide();
+
+        //display message "Loading..."
+        var loadingAlert = _.template("<div class='alert alert-info'><i class='icon-refresh'/> Loading...</div>", {});
+        $("#infoDisplaySelect").empty();
+        $("#infoDisplaySelect").append(loadingAlert);
 
         if (self.nameDomain == "Annotation") {
             new AnnotationCollection({project: self.model.id}).fetch({
@@ -185,6 +195,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
         var addValueSelect = function (collection, id) {
             if (_.size(collection) > 0) {
                 $(select).removeAttr("disabled");
+                $("#loadingSelect").hide();
             }
             collection.each(function(options) {
                 var date = window.app.convertLongToDate(options.get('created'));
@@ -195,24 +206,30 @@ var ProjectDashboardProperties = Backbone.View.extend({
             if (id != null) {
                 select.val(id);
             }
+
+            //Display selectbox, button Refresh and hide the label "loading..."
+            select.show();
+            $("#refreshIdentifiantSelect").show();
+            $("#infoDisplaySelect").empty();
+
             self.initTableProperty();
             self.initPropertyRowEvents();
             self.loadAutocomplete();
         }
     },
 
-    redirectProperty: function () {
+    refreshProperty: function () {
         var self = this;
 
         if (self.nameDomain == "Annotation") {
-            window.location.href ="#tabs-annotationproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val();
+            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         } else if (self.nameDomain == "ImageInstance") {
-            window.location.href ="#tabs-imageproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val();
+            window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         } else if (self.nameDomain == "Project") {
-            window.location.href ="#tabs-projectproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val();
+            window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         }
 
-        self.initRadioButton();
+        self.initTableProperty();
     },
 
     initRadioButton: function () {
@@ -236,20 +253,21 @@ var ProjectDashboardProperties = Backbone.View.extend({
     initTableProperty : function () {
         var self = this;
 
-        var collection;
         var idDomain = $("#identifiantSelect").val();
         var tbody = $(this.el).find("#tableProperty");
         tbody.empty();
 
-        if (self.nameDomain == "Annotation") {
-            collection = self.annotationCollection;
+        //Display message "Loading..."
+        var loadingAlert = _.template("<div class='alert alert-info'><i class='icon-refresh'/> Loading...</div>", {});
+        $("#infoDisplayTable").empty();
+        $("#infoDisplayTable").append(loadingAlert);
 
+        if (self.nameDomain == "Annotation") {
             new AnnotationPropertyCollection({idAnnotation: idDomain }).fetch({
                 success: function (collection, response) {
                     self.annotationPropertyCollection = collection;
-                    collection.each(function(model) {
-                        self.drawOption(model);
-                    });
+                    loopCollection(self.annotationPropertyCollection);
+                    self.loadImage(idDomain, self.annotationCollection);
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
@@ -257,14 +275,11 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 }
             });
         } else if (self.nameDomain == "ImageInstance") {
-            collection = self.imageInstanceCollection;
-
             new ImageInstancePropertyCollection({idImageInstance: idDomain }).fetch({
                 success: function (collection, response) {
                     self.imageInstancePropertyCollection = collection;
-                    collection.each(function(model) {
-                        self.drawOption(model);
-                    });
+                    loopCollection(self.imageInstancePropertyCollection);
+                    self.loadImage(idDomain, self.imageInstanceCollection);
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
@@ -275,9 +290,8 @@ var ProjectDashboardProperties = Backbone.View.extend({
             new ProjectPropertyCollection({idProject: window.app.status.currentProject }).fetch({
                 success: function (collection, response) {
                     self.projectPropertyCollection = collection;
-                    collection.each(function(model) {
-                        self.drawOption(model);
-                    });
+                    loopCollection(self.projectPropertyCollection);
+                    self.loadImage(idDomain, null);
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
@@ -286,14 +300,37 @@ var ProjectDashboardProperties = Backbone.View.extend({
             });
         }
 
+        var loopCollection = function (collection) {
+            if (collection.size() == 0) {
+                $("#infoDisplayTable").empty();
+                var noDataAlert = _.template("<div class='alert alert-block'>No data to display</div>", {});
+                $("#infoDisplayTable").append(noDataAlert);
+            } else {
+                collection.each(function(model) {
+                    self.drawOption(model);
+                });
+            }
+        }
+    },
+
+    loadImage: function (idDomain, collection) {
+        var self = this;
+
         //Add Image Or Text
         var imageOrTextPlace = $("#loadImageOrText");
+        var imageType;
         imageOrTextPlace.empty();
 
         if (self.nameDomain != "Project") {
+            if (self.nameDomain == "Annotation") {
+                imageType = "cropURL";
+            } else if (self.nameDomain == "ImageInstance") {
+                imageType = "thumb";
+            }
+
             collection.each(function(options) {
                 if (idDomain == options.get('id')) {
-                    var option = _.template("<img align='middle' id='imageProperty-<%=id%>' width='150px' height='100px' src='<%=image%>'>", { id : options.get('id'), image : options.get('cropURL')});
+                    var option = _.template("<img align='middle' id='imageProperty-<%=id%>' width='150px' height='100px' src='<%=image%>'>", { id : options.get('id'), image : options.get(imageType)});
                     imageOrTextPlace.append(option);
                     imageOrTextPlace.attr("href","#tabs-image-" + window.app.status.currentProject + "-" + options.get('image') + "-");
                 }
@@ -301,12 +338,13 @@ var ProjectDashboardProperties = Backbone.View.extend({
         } else {
             var option = _.template("<p id='textProperty-<%=id%>'><%=name%></p>", { id : window.app.status.currentProject, name : window.app.status.currentProjectModel.get('name')});
             imageOrTextPlace.append(option);
-            imageOrTextPlace.attr("href","##tabs-dashboard-" + window.app.status.currentProject);
+            imageOrTextPlace.attr("href","#tabs-dashboard-" + window.app.status.currentProject);
         }
-
     },
 
     drawOption: function (model) {
+        $("#infoDisplayTable").empty();
+
         var tbody = $(this.el).find("#tableProperty");
         var option = _.template("<tr class='trProperty<%= id %>' id='<%= id %>'><td data-id='<%= id %>' class='propertyKey'><%= key %></td>" +
             "<td data-id='<%= id %>' class='propertyValue'><%= value %></td>" +
