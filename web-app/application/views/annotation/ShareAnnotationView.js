@@ -50,38 +50,41 @@ var ShareAnnotationView = Backbone.View.extend({
             }
         });
 
-        var userCollection = new UserCollection({project: this.project}).fetch({
-            success: function (collection, response) {
-                userCollection = collection;
-                var optionTpl = "<option value='<%= id %>'><%= name %></option>"
-                collection.each(function (user) {
-                    selectUser.append(_.template(optionTpl, { id: user.id, name: user.prettyName()}));
-                });
-            },
-            error: function (collection, response) {
-                window.app.view.message("Error", response.message, "error")
-            }
+
+        var usersId = []
+         window.app.models.projectUser.each(function(user) {
+            usersId.push({id:user.id,label:user.prettyName()});
         });
+
+        self.userMaggicSuggest = selectUser.magicSuggest({
+                     data: usersId,
+                     displayField: 'label',
+                     value: [],
+                     width: 300,
+                     maxSelection:null
+                 });
+        $("#selectUserShare" + self.model.id).hide();
+
 
         var getSelectedUsers = function () {
             var value = $("input[name=shareWithOption]:checked").val();
             if (value == "everyone") {
                 var users = []
-                userCollection.each(function (user) {
+                window.app.models.projectUser.each(function (user) {
                     users.push(user.get("id"));
                 });
                 return users;
             } else if (value == "somebody") {
-                return [selectUser.val()];
+                return self.userMaggicSuggest.getValue();
             }
         }
 
         shareWithOption.change(function () {
             var value = $(this).val();
             if (value == "everyone") {
-                selectUser.attr("disabled", "disabled");
+                $("#selectUserShare" + self.model.id).hide();
             } else if (value == "somebody") {
-                selectUser.removeAttr("disabled");
+                $("#selectUserShare" + self.model.id).show();
             }
         });
 
@@ -96,7 +99,8 @@ var ShareAnnotationView = Backbone.View.extend({
             shareButton.html("Sending...");
 
             var users = getSelectedUsers();
-            var userName = (_.size(users) == 1) ? userCollection.get(users[0]).prettyName() : "user";
+            console.log(users);
+            var userName = (_.size(users) == 1) ? window.app.models.projectUser.get(users[0]).prettyName() : "user";
             var comment = $("#annotationComment" + self.model.id).val();
             var shareAnnotationURL = _.template("<%= serverURL %>/#share-annotation/<%= id %>", {
                 serverURL: window.app.status.serverURL,
@@ -109,14 +113,14 @@ var ShareAnnotationView = Backbone.View.extend({
                     idAnnotation: self.model.id
                 });
             var message = _.template(shareAnnotationMailTpl, {
-                from: userCollection.get(window.app.status.user.id).prettyName(),
+                from: window.app.models.projectUser.get(window.app.status.user.id).prettyName(),
                 to: userName,
                 comment: comment,
                 annotationURL: annotationURL,
                 shareAnnotationURL: shareAnnotationURL,
                 by: window.app.status.serverURL
             });
-            var subject = _.template("Cytomine : <%= from %> shared an annotation with you", { from: userCollection.get(window.app.status.user.id).prettyName()});
+            var subject = _.template("Cytomine : <%= from %> shared an annotation with you", { from: window.app.models.projectUser.get(window.app.status.user.id).prettyName()});
             new AnnotationCommentModel({
                 annotation: self.model.id
             }).save({

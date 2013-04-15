@@ -4,7 +4,7 @@
     </div>
     <div class="modal-body">
         <div class="row" style="min-height: 250px;">
-            <div class="span3">
+            <div class="span8">
                 <form>
                     <fieldset>
                         <div class="control-group">
@@ -17,10 +17,10 @@
                                 </label>
                                 <label class="radio">
                                     <input type="radio" name="shareWithOption" value="somebody">
-                                    One person in particular
+                                    Some users
                                 </label>
                                 <label>
-                                    <select id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" disabled/>
+                                    <div id="selectUserShare<%= id %>" name="selectUserShare<%= id %>"></div>
                                 </label>
 
                             </div>
@@ -39,13 +39,13 @@
                     </fieldset>
                 </form>
             </div>
-            <div class="span4">
+            <div class="span8">
                 <h2>Comments</h2>
                 <ul id="comments<%= id %>">
 
                 </ul>
             </div>
-            <div class="span2">
+            <div class="span8">
                 <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
             </div>
         </div>

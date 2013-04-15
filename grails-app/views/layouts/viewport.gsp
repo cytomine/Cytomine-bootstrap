@@ -48,7 +48,7 @@ body {
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
 <!-- fuel ux -->
@@ -101,7 +101,8 @@ body {
 
 <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
-
+<link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css' type='text/css'/>
+<script type="text/javascript" src="lib/magicsuggest/magicsuggest-1.2.7-min.js"></script>
 
 <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
 <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>

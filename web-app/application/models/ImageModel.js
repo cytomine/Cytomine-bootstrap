@@ -111,9 +111,7 @@ var ImageInstanceModel = Backbone.Model.extend({
 var ImageInstanceCollection = PaginatedCollection.extend({
     model: ImageModel,
     url: function () {
-        if (this.inf != undefined && this.sup != undefined) {
-            return "api/project/" + this.project + "/imageinstance.json?inf=" + this.inf + "&sup=" + this.sup;
-        } else if (this.tree) {
+        if (this.tree) {
             return "api/project/" + this.project + "/imageinstance.json?tree=true";
         } else {
             return "api/project/" + this.project + "/imageinstance.json";
@@ -123,8 +121,6 @@ var ImageInstanceCollection = PaginatedCollection.extend({
         this.initPaginator(options);
         this.project = options.project;
         this.tree = options.tree != undefined && options.tree == true;
-        this.inf = options.inf;
-        this.sup = options.sup;
     }
 });
 

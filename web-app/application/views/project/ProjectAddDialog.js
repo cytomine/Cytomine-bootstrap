@@ -162,42 +162,30 @@ var AddProjectDialog = Backbone.View.extend({
         })
     },
     createUserList: function () {
-        /* Create Users List */
-        $("#projectuser").empty();
+        var self = this;
+        var allUser = null;
+
+        var loadUser = function() {
+            var allUserArray = [];
+
+            allUser.each(function(user) {
+                allUserArray.push({id:user.id,label:user.prettyName()});
+            });
+
+            self.userMaggicSuggest = $('#projectuser').magicSuggest({
+                         data: allUserArray,
+                         displayField: 'label',
+                         value: [window.app.status.user.id],
+                         width: 590,
+                         maxSelection:null
+                     });
+        }
 
         new UserCollection({}).fetch({
-            success: function (collection, response) {
-
-                collection.each(function (user) {
-                    if (user.id == window.app.status.user.id) {
-                        $("#projectuser").append('<option value="' + user.id + '" selected="selected">' + user.prettyName() + '</option>');
-                    } else {
-                        $("#projectuser").append('<option value="' + user.id + '">' + user.prettyName() + '</option>');
-                    }
-                });
-                $("#projectuser").multiselectNext({
-                    deselected: function (event, ui) {
-                        //lock current user (cannot be deselected
-                        if ($(ui.option).val() == window.app.status.user.id) {
-                            $("#projectuser").multiselectNext('select', $(ui.option).text());
-                            window.app.view.message("User", "You must be in user list of your project!", "error");
-                        }
-                    },
-                    selected: function (event, ui) {
-                        //alert($(ui.option).val() + " has been selected");
-                    }});
-
-                $("div.ui-multiselect").find("ul.available").css("height", "150px");
-                $("div.ui-multiselect").find("ul.selected").css("height", "150px");
-                $("div.ui-multiselect").find("input.search").css("width", "75px");
-
-                $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
-
-                console.log("window.app.status.user.model.prettyName()=" + window.app.status.user.model.prettyName());
-                $("#projectuser").multiselectNext('select', window.app.status.user.model.prettyName());
+            success: function (allUserCollection, response) {
+                allUser = allUserCollection;
+                loadUser();
             }});
-
-
     },
     createRetrievalProject: function () {
         var self = this;
@@ -304,7 +292,7 @@ var AddProjectDialog = Backbone.View.extend({
             discipline = null;
         }
         var ontology = $("#projectontology").attr('value');
-        var users = $("#projectuser").multiselectNext('selectedValues');
+        var users = self.userMaggicSuggest.getValue();
 
         var blindMode = $("input#blindMode").attr('checked')=="checked";
         var privateLayer = $("input#privateLayer").attr('checked')=="checked";
