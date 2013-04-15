@@ -47,7 +47,6 @@ var AnnotationThumbView = Backbone.View.extend({
                 nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0
             });
 
-
             $(self.el).html(_.template(tpl, annotation.toJSON()));
             $(self.el).attr("data-annotation", annotation.get("id"));
             if (self.term != undefined) {

@@ -61,8 +61,8 @@ var AnnotationQuestionableView = Backbone.View.extend({
         self.model.each(function (annotation) {
 
             if ((cpt >= inf) && (cpt < sup)) {
-                var annotationModel = new AnnotationModel(annotation);
-
+                var annotationModel = new AnnotationModel({});
+                annotationModel.set(annotation.toJSON());
                 var thumb = new AnnotationThumbView({
                     model: annotationModel,
                     className: "thumb-wrap",

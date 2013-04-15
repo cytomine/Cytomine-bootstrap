@@ -125,7 +125,7 @@ var ImageTabsView = Backbone.View.extend({
                 },
                 {
                     property: 'magnification',
-                    label: 'Magnification',
+                    label: 'X',
                     sortable: true
                 },
                 {
@@ -135,17 +135,17 @@ var ImageTabsView = Backbone.View.extend({
                 },
                 {
                     property: 'numberOfAnnotations',
-                    label: 'a',
+                    label: 'User an.',
                     sortable: true
                 },
                 {
                     property: 'numberOfJobAnnotations',
-                    label: 'b',
+                    label: 'Algo an.',
                     sortable: true
                 },
                 {
                     property: 'numberOfJobAnnotations',
-                    label: 'c',
+                    label: 'Valid an.',
                     sortable: true
                 },
                 {
@@ -171,10 +171,10 @@ var ImageTabsView = Backbone.View.extend({
             ],
             formatter: function (items) {
                 $.each(items, function (index, item) {
-                    item.thumb = _.template("<div style='width : 130px;'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></div>", item);
+                    item.thumb = _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>", item);
                     item.action = _.template(actionMenuTpl, item);
                     item.created = window.app.convertLongToDate(item.created);
-                    item.resolution = item.resolution.toFixed(3);
+                    item.resolution = item.resolution.toFixed(3)+"µm/pixel";
 					if (item.reviewed) {
 							item.status = '<span class="label label-success">Reviewed</span>';
 					}
@@ -193,7 +193,7 @@ var ImageTabsView = Backbone.View.extend({
         $('#MyGrid').datagrid({
             dataSource: dataSource,
             dataOptions : { pageIndex: 0, pageSize: 10 },
-            stretchHeight: true
+            stretchHeight: false
         });
 
         $('#MyGrid').datagrid({ dataSource: dataSource, stretchHeight: false})

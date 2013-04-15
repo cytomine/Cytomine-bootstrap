@@ -71,6 +71,7 @@ var OntologyView = Backbone.View.extend({
         $("#menuOntologyUl").children().removeClass("active");
         $("#consultOntology-" + self.idOntology).addClass("active");
         self.printOntology();
+        $(window).scrollTop(0);
     },
     printOntology: function () {
         console.log("printOntology");

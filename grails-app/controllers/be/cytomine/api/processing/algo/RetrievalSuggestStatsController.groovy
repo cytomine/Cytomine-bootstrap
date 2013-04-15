@@ -260,6 +260,7 @@ class RetrievalSuggestStatsController extends RestController {
         for (int i = 0; i < algoAnnotationsTerm.size() && max > results.size(); i++) {
             def result = [:]
             def suggest = algoAnnotationsTerm.get(i)
+
             result['id'] = suggest.id
             AnnotationDomain annotation = suggest.retrieveAnnotationDomain()
             result['annotation'] = annotation.id
