@@ -1,5 +1,5 @@
 html, body {
-    background-image: url('../images/tiny_grid.png');
+    /*background-image: url('../images/tiny_grid.png');*/
 }
 
 
@@ -7,9 +7,10 @@ label {
     text-align: left;
 }
 
-img {
-    max-width: none !important; /* override max-width : 100% from twitter bootstrap, conflict with openlayers ! */
+img.olTileImage {
+    max-width: none !important;
 }
+
 .header_h {
     padding-bottom: 10px;
     margin-bottom: 20px;
@@ -366,7 +367,7 @@ td.confusionMatrixBadValue{
 }
 
 /* Datatables */
-/*
+
 div.dataTables_length label {
     float: left;
     text-align: left;
@@ -413,7 +414,7 @@ table.table thead .sorting_desc_disabled { background: url('../images/datatables
 table.dataTable th:active {
     outline: none;
 }
-*/
+
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */

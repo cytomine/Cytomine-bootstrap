@@ -4,12 +4,13 @@
         <li><%= originalFilename %></li>
         <li>width : <%= width %></li>
         <li>height : <%= height %></li>
-        <li><a id="getPrevious<%= id %>" class="btn previousImage" style="display:none;">Previous image</a></li>
-        <li><a id="getNext<%= id %>" class="btn nextImage" style="display:none;">Next image</a></li>
     </ul>
+    <div class="btn-group" style="padding-left : 5px;">
+        <a id="getPrevious<%= id %>" class="btn btn-small previousImage" style="display:none;">Previous image</a>
+        <a id="getNext<%= id %>" class="btn btn-small nextImage" style="display:none;">Next image</a>
+    </div>
 </div>
 <h3><i class="toggle-content2 icon-plus icon-white icon-small"></i> Position</h3>
 <div class="infoPanelContent2" id="zoomInfoPanel<%= id %>" style="padding-left: 10px;display: none;"></div>
 <div class="infoPanelContent2" id="mousePositionContent<%=id %>" style="padding-left: 10px;display: none;">
-
 </div>

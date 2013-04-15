@@ -30,15 +30,19 @@
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.12/theme/default/style.css' type='text/css'/>
 
-<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>
+<!--<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>-->
+<link rel="stylesheet" href="css/cosmo/bootstrap.min.css" />
+<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" href="css/font-awesome.min.css" />
+<link rel="stylesheet" href="css/cosmo/bootswatch.css" />
 
 <style type="text/css">
 body {
-    padding-top: 44px;
+    padding-top: 55px;
 
 }
 </style>
-<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap-responsive.min.css"/>
+
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>

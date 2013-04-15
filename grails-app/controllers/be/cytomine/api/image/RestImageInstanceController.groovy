@@ -217,7 +217,7 @@ class RestImageInstanceController extends RestController {
 
             //Draw annotation
             for (geometryCollection in geometries) {
-                println ";)>>>" + geometryCollection.getNumGeometries()
+
                 for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
                     Geometry geometry = geometryCollection.getGeometryN(i)
                     mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.exteriorRing], Color.WHITE, x, y, 1, 1)
@@ -238,18 +238,19 @@ class RestImageInstanceController extends RestController {
         BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
-        Collection<Geometry> geometries = new LinkedList<Geometry>()
 
-        geometries.add(annotation.getLocation())
+        Geometry geometry = annotation.getLocation()
+
         def boundaries = annotation.getBoundaries()
         double x_ratio = crop.getWidth() / boundaries.width
         double y_ratio = crop.getHeight() / boundaries.height
 
-        for (int i = 0; i < geometries.getNumGeometries(); i++) {
-            Geometry geometry = geometries.getGeometryN(i)
-            mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.exteriorRing], Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
-            for (def j = 0; j < geometries.numInteriorRing; j++) {
-                mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.getInteriorRingN(j)], Color.BLACK, boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+
+        for (int i = 0; i < geometry.getNumGeometries(); i++) {
+            Geometry g = geometry.getGeometryN(i)
+            mask = segmentationService.colorizeWindow(abstractImage, mask, [g.exteriorRing], Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
+            for (def j = 0; j < geometry.numInteriorRing; j++) {
+                mask = segmentationService.colorizeWindow(abstractImage, mask, [g.getInteriorRingN(j)], Color.BLACK, boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
             }
         }
 

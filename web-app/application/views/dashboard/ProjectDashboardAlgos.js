@@ -362,7 +362,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         }
     },
     getJobLabel: function (className, text, width) {
-        return _.template('<span class="label <%= className %>"><%= text %></span>', { className: className, text: text});
+        return _.template('<span class="badge <%= className %>"><%= text %></span>', { className: className, text: text});
         //return '<span class="'+className+'""> '+text+'</span>';
     },
     getJobProgress: function (job, className, text, width) {   //todo: add class " progress-striped"
