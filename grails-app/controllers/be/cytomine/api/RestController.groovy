@@ -193,7 +193,7 @@ class RestController {
             subList = list.subList(offset,offset + maxForCollection)
         }
 
-        responseSuccess ([collection: subList, offset: offset, size: list.size(), totalPages: Math.ceil(list.size()/max)])
+        responseSuccess ([collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)])
 
 
     }

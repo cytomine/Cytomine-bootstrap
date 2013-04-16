@@ -37,12 +37,9 @@ ImageInstanceDataSource.prototype = {
             var startIndex = options.pageIndex * options.pageSize;
             var endIndex = startIndex + options.pageSize;
 
-//            self._collection.server_api.offset = startIndex;
-//            self._collection.server_api.max = endIndex - startIndex;
-//
-//            console.log("*****************************************");
-            console.log(window.app.models.projects.server_api.offset);
-            console.log(window.app.models.projects.server_api.max);
+			if (self._collection.max != options.pageSize) {
+				self._collection = new ImageInstanceCollection({project: self._collection.project, max:options.pageSize});
+			}
 
             self._collection.goTo(options.pageIndex,{
                 success: function (collection, response) {

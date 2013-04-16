@@ -113,7 +113,8 @@ class RestUploadedFileController extends RestController {
 
         //Convert and deploy
         backgroundService.execute("convertAndDeployImage", {
-            def uploadedFiles = convertImagesService.convertUploadedFile(uploadedFile, currentUser)
+            UploadedFile uploadedFile_copy = UploadedFile.get(uploadedFile.id)
+            def uploadedFiles = convertImagesService.convertUploadedFile(uploadedFile_copy, currentUser)
             Collection<AbstractImage> abstractImagesCreated = []
             Collection<UploadedFile> deployedFiles = []
 
@@ -142,9 +143,9 @@ class RestUploadedFileController extends RestController {
 
 
             //delete main uploaded file
-            if (!deployedFiles.contains(uploadedFile)) {
-                fileSystemService.deleteFile(uploadedFile.absolutePath)
-                uploadedFile.delete()
+            if (!deployedFiles.contains(uploadedFile_copy)) {
+                fileSystemService.deleteFile(uploadedFile_copy.absolutePath)
+                uploadedFile_copy.delete()
             }
             //delete nested uploaded file
             deployedFiles.each {
@@ -158,7 +159,7 @@ class RestUploadedFileController extends RestController {
             try {
                 abstractImagesCreated.each { abstractImage ->
                     imagePropertiesService.clear(abstractImage)
-                    //imagePropertiesService.populate(abstractImage)
+                    imagePropertiesService.populate(abstractImage)
                     imagePropertiesService.extractUseful(abstractImage)
                     abstractImage.save(flush : true)
                 }

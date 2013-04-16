@@ -63,7 +63,6 @@ var ImageReviewAction = Backbone.View.extend({
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
         $("a.moreinfo" + self.model.id).live("click", function () {
             $("#image-properties").remove();
-            alert("what?");
             new ImagePropertiesView({model: self.model}).render();
             return false;
         });
