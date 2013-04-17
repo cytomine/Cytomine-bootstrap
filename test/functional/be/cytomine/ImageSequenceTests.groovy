@@ -222,7 +222,7 @@ class ImageSequenceTests {
         assert json.collection instanceof JSONArray
         assert json.collection.size()==9
 
-        result = ImageSequenceAPI.getSequenceInfo(dataSet.last().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageSequenceAPI.getSequenceInfo(ImageSequence.findByImageGroup(imageGroup).image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         println json
