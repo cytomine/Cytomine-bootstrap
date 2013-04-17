@@ -6,6 +6,8 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.acquisition.Instrument
+import be.cytomine.image.multidim.ImageGroup
+import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.*
 import be.cytomine.laboratory.Sample
 import be.cytomine.ontology.*
@@ -435,6 +437,11 @@ class BasicInstanceBuilder {
 
     static AbstractImage getAbstractImageNotExist(boolean save = false) {
         def image = new AbstractImage(filename: getRandomString(), scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath", width: 1600, height: 1200)
+        save ? saveDomain(image) : checkDomain(image)
+    }
+
+    static AbstractImage getAbstractImageNotExist(String filename, boolean save = false) {
+        def image = new AbstractImage(filename: filename, scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath", width: 1600, height: 1200)
         save ? saveDomain(image) : checkDomain(image)
     }
 
@@ -901,4 +908,67 @@ class BasicInstanceBuilder {
          saveDomain(algoAnnotationBad)
          return job
      }
+
+
+    static ImageSequence getImageSequence() {
+        ImageSequence imageSequence = ImageSequence.findByImageGroup(getImageGroup())
+        if(!imageSequence) {
+            imageSequence = new ImageSequence(image:getImageInstanceNotExist(imageGroup.project,true),zStack:0,time:0,channel:0,imageGroup:imageGroup)
+            imageSequence = saveDomain(imageSequence)
+        }
+        imageSequence
+    }
+
+    static ImageSequence getImageSequenceNotExist(boolean save = false) {
+        ImageSequence seq = new ImageSequence(image:getImageInstance(),zStack:0,time:0,channel:2,imageGroup:getImageGroup())
+        save ? saveDomain(seq) : checkDomain(seq)
+    }
+
+    static ImageSequence getImageSequence(ImageInstance image,Integer zStack, Integer time, Integer channel, ImageGroup imageGroup,boolean save = false) {
+        ImageSequence seq = new ImageSequence(image:image,zStack:zStack,time:time,channel:channel,imageGroup:imageGroup)
+        save ? saveDomain(seq) : checkDomain(seq)
+    }
+
+    static ImageGroup getImageGroup() {
+        ImageGroup imageGroup = ImageGroup.findByName("imagegroupname")
+        if(!imageGroup) {
+            imageGroup = new ImageGroup(project: project, name:"imagegroupname" )
+            imageGroup = saveDomain(imageGroup)
+        }
+        imageGroup
+    }
+
+    static ImageGroup getImageGroupNotExist(Project project = getProject(), boolean save = false) {
+        ImageGroup imageGroup = new ImageGroup(project: project)
+        save ? saveDomain(imageGroup) : checkDomain(imageGroup)
+    }
+
+    static def getMultiDimensionalDataSet(def zStack,def time,def channel) {
+        Project project = getProjectNotExist(true)
+        ImageGroup group = getImageGroupNotExist(project,true)
+
+        def data = []
+
+        zStack.eachWithIndex { z,zi ->
+            time.eachWithIndex { t,ti ->
+                channel.eachWithIndex { c,ci ->
+                    String filename = z+"-"+t+"-"+c+"-"+System.currentTimeMillis()
+                    def abstractImage = getAbstractImageNotExist(filename,true)
+                    def imageInstance = getImageInstanceNotExist(project,true)
+                    imageInstance.baseImage = abstractImage
+                    saveDomain(imageInstance)
+
+                    ImageSequence seq = getImageSequence(imageInstance,zi,ti,ci,group,true)
+                    data << seq
+                }
+            }
+        }
+        assert data.first().zStack==0
+        assert data.first().time==0
+        assert data.first().channel==0
+        assert data.last().zStack==2
+        assert data.last().time==2
+        assert data.last().channel==2
+        return data
+    }
 }

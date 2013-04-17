@@ -2,6 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
+import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AnnotationIndex
 import be.cytomine.ontology.ReviewedAnnotation
@@ -29,6 +30,7 @@ class ImageInstanceService extends ModelService {
     def algoAnnotationService
     def dataSource
     def reviewedAnnotationService
+    def imageSequenceService
 
     def currentDomain() {
         return ImageInstance
@@ -191,5 +193,11 @@ class ImageInstanceService extends ModelService {
         AnnotationIndex.findAllByImage(image).each {
             it.delete()
          }
+    }
+
+    def deleteDependentImageSequence(ImageInstance image, Transaction transaction, Task task = null) {
+        ImageSequence.findAllByImage(image).each {
+            imageSequenceService.delete(it,transaction,null,false)
+        }
     }
 }

@@ -4,6 +4,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.Job
@@ -37,6 +38,7 @@ class ProjectService extends ModelService {
     def imageInstanceService
     def reviewedAnnotationService
     def userAnnotationService
+    def imageSequenceService
 
     def currentDomain() {
         Project
@@ -304,6 +306,12 @@ class ProjectService extends ModelService {
 
         LastConnection.findAllByProject(project).each {
               it.delete()
+        }
+    }
+
+    def deleteDependentImageGroup(Project project, Transaction transaction, Task task = null) {
+        ImageGroup.findAllByProject(project).each {
+            imageSequenceService.delete(it,transaction,null,false)
         }
     }
 
