@@ -63,19 +63,19 @@ class UserAnnotationDependencyTests  {
         algoAnnotationTerm1.expectedTerm = at.term
         algoAnnotationTerm1.annotation = annotation
         BasicInstanceBuilder.saveDomain(algoAnnotationTerm1)
+//
+//        ReviewedAnnotation ra = BasicInstanceBuilder.getReviewedAnnotationNotExist()
+//        ra.project = project
+//        ra.putParentAnnotation(annotation)
+//        ra.terms?.clear()
+//        ra.addToTerms(at.term)
+//        BasicInstanceBuilder.checkDomain(ra)
+//        BasicInstanceBuilder.saveDomain(ra)
+//        ra.project = project
+//        ra.putParentAnnotation(annotation)
+//        BasicInstanceBuilder.saveDomain(ra)
 
-        ReviewedAnnotation ra = BasicInstanceBuilder.getReviewedAnnotationNotExist()
-        ra.project = project
-        ra.putParentAnnotation(annotation)
-        ra.terms?.clear()
-        ra.addToTerms(at.term)
-        BasicInstanceBuilder.checkDomain(ra)
-        BasicInstanceBuilder.saveDomain(ra)
-        ra.project = project
-        ra.putParentAnnotation(annotation)
-        BasicInstanceBuilder.saveDomain(ra)
-
-        return [annotation,at,algoAnnotationTerm1,ra]
+        return [annotation,at,algoAnnotationTerm1]
     }
 
 

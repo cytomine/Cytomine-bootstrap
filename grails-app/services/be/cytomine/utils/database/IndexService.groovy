@@ -115,6 +115,9 @@ class IndexService {
              */
             createIndex(statement, "term", "ontology_id");
 
+            createIndex(statement, "annotation_index", "image_id");
+            createIndex(statement, "annotation_index", "user_id");
+
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e

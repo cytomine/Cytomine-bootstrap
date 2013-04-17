@@ -497,4 +497,10 @@ class SecUserService extends ModelService {
         }
     }
 
+    def deleteDependentAnnotationIndex(SecUser user,Transaction transaction, Task task = null) {
+        AnnotationIndex.findAllByUser(user).each {
+            it.delete()
+         }
+    }
+
 }

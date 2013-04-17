@@ -137,6 +137,23 @@ class BasicInstanceBuilder {
         saveDomain(userJob)
     }
 
+    static UserJob getUserJob(String username, String password) {
+        UserJob user = UserJob.findByUsername(username)
+        if (!user) {
+            user = new UserJob(username: username, user:User.findByUsername(Infos.GOODLOGIN),password: password,enabled: true,job: getJob())
+            user.generateKeys()
+            saveDomain(user)
+            try {
+                User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
+                    SecUserSecRole.create(userJob, secRole)
+                }
+            } catch(Exception e) {
+                log.warn(e)
+            }
+        }
+        user
+    }
+
 
     static UserJob getUserJob() {
         UserJob userJob = UserJob.findByUsername("BasicUserJob")

@@ -42,6 +42,20 @@ class TriggerService {
             statement.execute(getProjectAnnotationReviewedCountTriggerDecr())
             statement.execute(getImageAnnotationReviewedCountTriggerIncr())
             statement.execute(getImageAnnotationReviewedCountTriggerDecr())
+
+            statement.execute(getAnnotationIndexTriggerIncr())
+            statement.execute(getAnnotationIndexTriggerDecr())
+
+            statement.execute(getAlgoAnnotationIndexTriggerIncr())
+            statement.execute(getAlgoAnnotationIndexTriggerDecr())
+
+            statement.execute(getReviewedAnnotationIndexTriggerIncr())
+            statement.execute(getReviewedAnnotationIndexTriggerDecr())
+
+
+
+
+
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }
@@ -432,5 +446,181 @@ class TriggerService {
         log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
+
+
+
+
+
+
+    String getAnnotationIndexTriggerIncr() {
+        String createFunction = """
+                            CREATE OR REPLACE FUNCTION incrementAnnotationIndex() RETURNS trigger as \$incAnnUserIndex\$
+            DECLARE
+                    alreadyExist INTEGER;
+            BEGIN
+                    SELECT count(*) INTO alreadyExist FROM annotation_index WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+                    IF (alreadyExist=0) THEN
+                        INSERT INTO annotation_index(user_id, image_id, count_annotation, count_reviewed_annotation, version, id) VALUES(NEW.user_id,NEW.image_id,0,0,0,nextval('hibernate_sequence'));
+                    END IF;
+                    UPDATE annotation_index SET count_annotation = count_annotation+1, version = version+1 WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+                    RETURN NEW;
+            END;
+            \$incAnnUserIndex\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS incrementUserAnnotationIndexTrigger on user_annotation;"
+
+        String createTrigger = "CREATE TRIGGER incrementUserAnnotationIndexTrigger AFTER INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationIndex(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getAnnotationIndexTriggerDecr() {
+        String createFunction = """
+                            CREATE OR REPLACE FUNCTION decrementAnnotationIndex() RETURNS trigger as \$decrAnnUserIndex\$
+            DECLARE
+                    alreadyExist INTEGER;
+            BEGIN
+                    UPDATE annotation_index SET count_annotation = count_annotation-1, version = version+1 WHERE user_id = OLD.user_id AND image_id = OLD.image_id;
+                    RETURN OLD;
+            END;
+            \$decrAnnUserIndex\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS decrementUserAnnotationIndexTrigger on user_annotation;"
+
+        String createTrigger = "CREATE TRIGGER decrementUserAnnotationIndexTrigger AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE decrementAnnotationIndex(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getAlgoAnnotationIndexTriggerIncr() {
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS incrementAlgoAnnotationIndexTrigger on algo_annotation;"
+
+        String createTrigger = "CREATE TRIGGER incrementAlgoAnnotationIndexTrigger AFTER INSERT ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationIndex(); "
+
+        log.info dropTrigger
+        log.info createTrigger
+        return dropTrigger + createTrigger
+    }
+
+    String getAlgoAnnotationIndexTriggerDecr() {
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS decrementAlgoAnnotationIndexTrigger on algo_annotation;"
+
+        String createTrigger = "CREATE TRIGGER decrementAlgoAnnotationIndexTrigger AFTER DELETE ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE decrementAnnotationIndex(); "
+
+        log.info dropTrigger
+        log.info createTrigger
+        return dropTrigger + createTrigger
+    }
+
+
+
+
+    String getReviewedAnnotationIndexTriggerIncr() {
+        String createFunction = """
+                           CREATE OR REPLACE FUNCTION incrementReviewedAnnotationIndex() RETURNS trigger as \$incAnnRevIndex\$
+    DECLARE
+            alreadyExist INTEGER;
+    BEGIN
+            SELECT count(*) INTO alreadyExist FROM annotation_index WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+            IF (alreadyExist=0) THEN
+                INSERT INTO annotation_index(user_id, image_id, count_annotation, count_reviewed_annotation, version, id) VALUES(NEW.user_id,NEW.image_id,0,0,0,nextval('hibernate_sequence'));
+            END IF;
+            UPDATE annotation_index SET count_reviewed_annotation = count_reviewed_annotation+1, version = version+1 WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+            RETURN NEW;
+    END;
+    \$incAnnRevIndex\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS incrementReviewedAnnotationIndexTrigger on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER incrementReviewedAnnotationIndexTrigger AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementReviewedAnnotationIndex(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+    String getReviewedAnnotationIndexTriggerDecr() {
+        String createFunction = """
+                            CREATE OR REPLACE FUNCTION decrementReviewedAnnotationIndex() RETURNS trigger as \$decrAnnUserIndex\$
+            DECLARE
+                    alreadyExist INTEGER;
+            BEGIN
+                    UPDATE annotation_index SET count_reviewed_annotation = count_reviewed_annotation-1, version = version+1 WHERE user_id = OLD.user_id AND image_id = OLD.image_id;
+                    RETURN OLD;
+            END;
+            \$decrAnnUserIndex\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS decrementReviewedAnnotationIndexTrigger on reviewed_annotation;"
+
+        String createTrigger = "CREATE TRIGGER decrementReviewedAnnotationIndexTrigger AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE decrementReviewedAnnotationIndex(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

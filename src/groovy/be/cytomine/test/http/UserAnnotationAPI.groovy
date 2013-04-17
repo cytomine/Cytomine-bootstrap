@@ -92,7 +92,9 @@ class UserAnnotationAPI extends DomainAPI {
 
     static def create(String jsonAnnotation, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/userannotation.json"
+        println "jsonAnnotation="+jsonAnnotation
         def result = doPOST(URL,jsonAnnotation,username,password)
+        println result
         def json = JSON.parse(result.data)
         if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: result.code]
         println "json="+json

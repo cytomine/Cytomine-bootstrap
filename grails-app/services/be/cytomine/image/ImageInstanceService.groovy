@@ -3,6 +3,7 @@ package be.cytomine.image
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.AnnotationIndex
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -184,5 +185,11 @@ class ImageInstanceService extends ModelService {
         UserPosition.findAllByImage(image).each {
             it.delete()
         }
+    }
+
+    def deleteDependentAnnotationIndex(ImageInstance image,Transaction transaction, Task task = null) {
+        AnnotationIndex.findAllByImage(image).each {
+            it.delete()
+         }
     }
 }

@@ -419,6 +419,7 @@ var BrowseImageView = Backbone.View.extend({
             model: this.model,
             el: this.el
         }).render();
+        this.createNumberOfAnnotationPerUser();
     },
     createReviewPanel: function () {
         var self = this;
@@ -430,6 +431,35 @@ var BrowseImageView = Backbone.View.extend({
             userJobLayers: self.userJobForImage
         }).render();
     },
+    createNumberOfAnnotationPerUser : function() {
+        console.log("createNumberOfAnnotationPerUser");
+        var self = this;
+        var refreshData = function() {
+            $.get("/api/imageinstance/"+self.model.id+"/annotationindex.json", function(data) {
+                console.log("GET REFRESH");
+                var totalReviewed = 0;
+                _.each (data.collection, function (item){
+                    //
+                    var span = $("li#entry"+item.user).find("span.numberOfAnnotation")
+                    if(span.length>0) {
+                        span.empty();
+                        span.append("("+item.countAnnotation+")");
+                    }
+                    totalReviewed = totalReviewed + item.countReviewedAnnotation;
+                });
+                var span = $("li#entryREVIEW").find("span.numberOfAnnotation");
+                span.empty();
+                span.append("("+totalReviewed+")");
+            });
+        }
+        refreshData();
+        var interval = setInterval(refreshData, 5000);
+        $(window).bind('hashchange', function () {
+            clearInterval(interval);
+        });
+
+    } ,
+
     createAnnotationPropertiesPanel : function() {
       //annotationProperties
         var self = this;

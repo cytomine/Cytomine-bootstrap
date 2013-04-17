@@ -19,6 +19,7 @@ import org.apache.catalina.core.ApplicationContext
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
  * Retrieval is a server that can provide similar pictures of a request picture

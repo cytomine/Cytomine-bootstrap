@@ -29,7 +29,7 @@ class SegmentationService {
             int[] _y = new int[coordinates.size()]
             coordinates.eachWithIndex { coordinate, i ->
                 if(i%100==0) {
-                    println "*** $i/${coordinates.size()} coordinates"
+                    //println "*** $i/${coordinates.size()} coordinates"
                 }
                 int xLocal = Math.min((coordinate.x - x) * x_ratio, window.getWidth());
                 xLocal = Math.max(0, xLocal)

@@ -507,6 +507,7 @@ class UserAnnotationService extends ModelService {
     def afterAdd(def domain, def response) {
         response.data['annotation'] = response.data.userannotation
         response.data.remove('userannotation')
+
     }
 
     def afterDelete(def domain, def response) {
@@ -630,9 +631,9 @@ class UserAnnotationService extends ModelService {
     }
 
     def deleteDependentReviewedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {
-        ReviewedAnnotation.findAllByParentIdent(ua.id).each {
-            reviewedAnnotationService.delete(it,transaction,null,false)
-        }
+//        ReviewedAnnotation.findAllByParentIdent(ua.id).each {
+//            reviewedAnnotationService.delete(it,transaction,null,false)
+//        }
      }
 
     def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {

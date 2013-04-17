@@ -1,10 +1,14 @@
-
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AnnotationIndex
 import be.cytomine.security.SecUser
 import grails.util.Environment
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.hibernate.jdbc.Work
 
 import java.lang.management.ManagementFactory
+import java.sql.Connection
+import java.sql.SQLException
 
 /**
  * Bootstrap contains code that must be execute during application (re)start
@@ -28,6 +32,7 @@ class BootStrap {
     def bootstrapUtilsService
     def javascriptService
     def dataSource
+    def sessionFactory
 
     def init = { servletContext ->
 
@@ -73,6 +78,36 @@ class BootStrap {
         //if database is empty, create admin user
         if (SecUser.count() == 0) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
+        }
+
+
+
+           if(AnnotationIndex.count()==0) {
+
+
+               sessionFactory.currentSession.doWork(
+                       new Work() {
+                           public void execute(Connection connection) throws SQLException
+                           {
+                               try {
+                                   def statement = connection.createStatement()
+                                   statement.execute("  INSERT INTO annotation_index(user_id,image_id,count_annotation,count_reviewed_annotation,id,version) \n" +
+                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
+                                           "            FROM algo_annotation ua \n" +
+                                           "            GROUP by ua.user_id, ua.image_id\n" +
+                                           "            UNION\n" +
+                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
+                                           "            FROM user_annotation ua \n" +
+                                           "            GROUP by ua.user_id, ua.image_id\n" +
+                                           "            ORDER BY count desc;")
+                               } catch (org.postgresql.util.PSQLException e) {
+                                   log.info e
+                               }
+                           }
+                       }
+               )
+
+
         }
 
     }
