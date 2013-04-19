@@ -19,9 +19,12 @@ import org.apache.log4j.Logger
 class ImageSequence extends CytomineDomain implements Serializable {
 
     ImageInstance image
-    Integer zStack
-    Integer time
+
     Integer channel
+    Integer zStack
+    Integer slice
+    Integer time
+
     ImageGroup imageGroup
 
     static constraints = {
@@ -56,6 +59,7 @@ class ImageSequence extends CytomineDomain implements Serializable {
         domain.updated = JSONUtils.getJSONAttrDate(json, "updated")
         domain.image = JSONUtils.getJSONAttrDomain(json, "image", new ImageInstance(), true)
         domain.zStack =  JSONUtils.getJSONAttrInteger(json,"zStack",0)
+        domain.slice =  JSONUtils.getJSONAttrInteger(json,"slice",0)
         domain.time =  JSONUtils.getJSONAttrInteger(json,"time",0)
         domain.channel =  JSONUtils.getJSONAttrInteger(json,"channel",0)
         domain.imageGroup = JSONUtils.getJSONAttrDomain(json, "imageGroup", new ImageGroup(), true)
@@ -79,6 +83,7 @@ class ImageSequence extends CytomineDomain implements Serializable {
             returnArray['id'] = it.id
             returnArray['image'] = it.image.id
             returnArray['zStack'] = it.zStack
+            returnArray['slice'] = it.slice
             returnArray['time'] = it.time
             returnArray['channel'] = it.channel
             returnArray['imageGroup'] = it.imageGroup.id

@@ -24,7 +24,7 @@ class ImageSequenceUrlMappings {
             action = [GET:"getSequenceInfo"]
         }
 
-        "/api/imagegroup/$id/$zstack/$time/$channel/imagesequence"(controller: "restImageSequence"){
+        "/api/imagegroup/$id/$channel/$zstack/$slice/$time/imagesequence"(controller: "restImageSequence"){
             action = [GET:"getByImageGroupAndIndex"]
         }
 

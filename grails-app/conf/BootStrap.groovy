@@ -80,9 +80,7 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
         }
 
-
-
-           if(AnnotationIndex.count()==0) {
+        if(AnnotationIndex.count()==0) {
 
 
                sessionFactory.currentSession.doWork(
@@ -111,4 +109,21 @@ class BootStrap {
         }
 
     }
+
+
+    def merge57() {
+        //read all images
+
+        //sort by filename
+
+        //split(".").
+
+
+
+
+
+    }
+
+
+
 }

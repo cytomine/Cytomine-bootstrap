@@ -650,26 +650,27 @@ AnnotationLayer.prototype = {
             self.createSuggestedTermLink(bestTerm2, annotation);
         }
 
-        $("#loadSimilarAnnotation" + annotation.id).replaceWith("<a href=\"#\" id=\"annotationSimilar" + annotation.id + "\"> Search similar annotations</a>");
-        $("#annotationSimilar" + annotation.id).click(function () {
-            $('#annotationRetrieval').replaceWith("");
-            $("#annotationRetrievalMain").empty();
-            $("#annotationRetrievalMain").append("<div id=\"annotationRetrieval\"></div>");
+        //$("#loadSimilarAnnotation" + annotation.id).replaceWith("<a href=\"#\" id=\"annotationSimilar" + annotation.id + "\"> Search similar annotations</a>");
 
 
+        $("#loadSimilarAnnotation" + annotation.id).replaceWith('<a id="showRetrieval'+annotation.id+'" href="#myModalRetrieval" role="button" class="btn" data-toggle="modal">Launch demo modal</a>');
+
+
+        $("#showRetrieval" + annotation.id).click(function () {
+            console.log("click");
             var bestTerms = [bestTerm1, bestTerm2];
             var bestTermsValue = [bestTerm1Value, bestTerm2Value];
             var panel = new AnnotationRetrievalView({
                 model: new AnnotationRetrievalCollection(similarAnnotation),
                 projectsPanel: self,
                 container: self,
-                el: "#annotationRetrieval",
+                el: "#annotationRetrievalInfo",
                 baseAnnotation: annotation,
                 terms: terms,
                 bestTerms: bestTerms,
                 bestTermsValue: bestTermsValue
             }).render();
-            return false;
+            return true;
 
         });
     },

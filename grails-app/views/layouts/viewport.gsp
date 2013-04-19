@@ -33,8 +33,11 @@
 <!--<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>-->
 <link rel="stylesheet" href="css/cosmo/bootstrap.min.css" />
 <link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap-responsive.min.css"/>
-<link rel="stylesheet" href="css/font-awesome.min.css" />
+<link rel="stylesheet" href="css/cosmo/font-awesome.min.css" />
 <link rel="stylesheet" href="css/cosmo/bootswatch.css" />
+
+
+
 
 <style type="text/css">
 body {
@@ -54,7 +57,10 @@ body {
 <!-- fuel ux -->
 <link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
 <link href="lib/fuelux/css/fuelux-responsive.css" rel="stylesheet" />
+%{--<link href="lib/fuelux/css/fuelux.min.css" rel="stylesheet" />--}%
 
+
+<link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
 <!--
 <link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
 <script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
@@ -101,7 +107,7 @@ body {
 
 <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
-<link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css' type='text/css'/>
+
 <script type="text/javascript" src="lib/magicsuggest/magicsuggest-1.2.7-min.js"></script>
 
 <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
@@ -226,6 +232,7 @@ body {
 <script type="text/javascript" src="application/views/explorer/OverviewMapPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/OntologyPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/ReviewPanel.js" ></script>
+<script type="text/javascript" src="application/views/explorer/MultiDimensionPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/InformationsPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/AnnotationPropertyPanel.js" ></script>
 
@@ -303,6 +310,8 @@ body {
 
 
 <div id="hotkeys">
+</div>
+<div id="similarannotationmodal">
 </div>
 <div id='dialogs'>
 </div>

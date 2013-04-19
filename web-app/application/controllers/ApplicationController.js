@@ -18,6 +18,22 @@ var ApplicationController = Backbone.Router.extend({
 
         HotKeys.initHotKeys();
 
+        require([
+            "text!application/templates/explorer/SimilarAnnotationModal.tpl.html"
+        ],
+            function (retrievalTpl) {
+                var template = _.template(retrievalTpl,{});
+                $("#similarannotationmodal").append(template);
+                $('#tabSimilarAnnotation a').click(function (e) {
+                  e.preventDefault();
+                  $(this).tab('show');
+                })
+            });
+
+
+
+
+
         self.view = new ApplicationView({
             el: $('#content')
         });

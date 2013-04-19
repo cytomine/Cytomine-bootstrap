@@ -63,8 +63,8 @@ class RestImageSequenceController extends RestController {
             Integer zStack = params.int("zstack")
             Integer time = params.int("time")
             Integer channel = params.int("channel")
-
-            responseSuccess(imageSequenceService.get(imageGroup,zStack,time,channel))
+            Integer slice = params.int("slice")
+            responseSuccess(imageSequenceService.get(imageGroup,channel,zStack,slice,time))
         }
         else {
             responseNotFound("ImageSequence", "ImageInstance", params.id)

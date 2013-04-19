@@ -147,6 +147,7 @@
 <fileset dir="${src.dir}" includes="application/views/explorer/OverviewMapPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/OntologyPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/ReviewPanel.js"/>
+<fileset dir="${src.dir}" includes="application/views/explorer/MultiDimensionPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/InformationsPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationPropertyPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js"/>

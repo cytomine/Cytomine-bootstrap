@@ -480,6 +480,15 @@ var BrowseImageView = Backbone.View.extend({
             el: self.el
         }).render();
     },
+    createMultiDimensionPanel: function () {
+        var self = this;
+        console.log("createMultiDimensionPanel");
+        this.multidimensionPanel = new MultiDimensionPanel({
+            browseImageView: self,
+            model: self.model,
+            el: self.el
+        }).render();
+    },
     /**
      * Create a draggable Panel containing a OverviewMap
      */
@@ -517,6 +526,7 @@ var BrowseImageView = Backbone.View.extend({
                 console.log("LAYER SWITECHER=" + $(".layerSwitcherPanel").length)
             }
             self.createInformationPanel();
+            self.createMultiDimensionPanel();
             //self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */

@@ -56,7 +56,7 @@ class ImageSequenceService extends ModelService {
 
         def imageSeq = ImageSequence.findByImage(image)
         if (!imageSeq)  {
-            return [zStack:null,time:null,channel:null, imageGroup:null]
+            return [slice: null,zStack:null,time:null,channel:null, imageGroup:null]
         }
 
         def poss = ImageSequence.findAllByImageGroup(imageSeq.imageGroup)
@@ -65,6 +65,7 @@ class ImageSequenceService extends ModelService {
         def z = []
         def t = []
         def c = []
+        def s = []
 
         poss.each {
             println "it=$it"
@@ -72,19 +73,22 @@ class ImageSequenceService extends ModelService {
             z << it.zStack
             t << it.time
             c << it.channel
+            s << it.slice
         }
 
         z = z.unique().sort()
         t = t.unique().sort()
         c = c.unique().sort()
+        s = s.unique().sort()
         println "z final=$z"
-        return [zStack:z,time:t,channel:c, imageGroup:imageSeq.imageGroup.id]
+        return [slice:s,zStack:z,time:t,channel:c, imageGroup:imageSeq.imageGroup.id,c:imageSeq.channel,z:imageSeq.zStack,s:imageSeq.slice,t:imageSeq.time]
     }
 
-    def get(ImageGroup imageGroup,Integer zStack,Integer time, Integer channel) {
-        def data = ImageSequence.findWhere([imageGroup:imageGroup,zStack:zStack,time:time,channel:channel])
+    //channel,zStack,slice,time
+    def get(ImageGroup imageGroup,Integer channel,Integer zStack,Integer slice, Integer time) {
+        def data = ImageSequence.findWhere([imageGroup:imageGroup,slice:slice,zStack:zStack,time:time,channel:channel])
         if (!data) {
-             throw new ObjectNotFoundException("There is no sequence value for this image group [${imageGroup.id}] and theses values=[$zStack,$time,$channel]")
+             throw new ObjectNotFoundException("There is no sequence value for this image group [${imageGroup.id}] and theses values=[$channel,$zStack,$slice,$time,]")
         }
         data
     }

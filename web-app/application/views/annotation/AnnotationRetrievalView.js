@@ -19,28 +19,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         var self = this;
         console.log("AnnotationRetrievalView: main elem " + $(self.el).length);
-        $("#retrievalMenu").replaceWith("");
-        $("#retrievalThumb").replaceWith("");
-        $("#retrievalPieChart").replaceWith("");
-        $(self.el).append("<ul id=\"retrievalMenu\"><li><a href=\"#retrievalThumb\">Thumb view</a></li><li><a href=\"#retrievalPieChart\">Stats view</a></li></ul>");
-        $(self.el).append("<div id=\"retrievalThumb\"><div>");
-        $(self.el).append("<div id=\"retrievalPieChart\"><div id=\"retrievalPieChartTerm\" style=\"float: left; width: 50%;\"></div><div id=\"retrievalPieChartProject\" style=\"float: left; width: 50%;\"></div></div>");
+        $("#myModalRetrieval").find("#retrievalPieChartTerm").empty();
+        $("#myModalRetrieval").find("#retrievalPieChartProject").empty();
+        $("#myModalRetrieval").find("#retrievalThumb").empty();
 
-        $("#annotationRetrieval").tabs();
-        $(self.el).dialog({
-            title: self.createTitle(),
-            width: 900,
-            height: 500,
-            autoOpen: true,
-            modal: true,
-            buttons: {
-                "Close": function () {
-                    $(self.el).dialog("close");
-
-                }
-            }
-        });
+        console.log("3");
         self.createThumbView(self.page);
+        console.log("4");
         self.createStatsView();
         return this;
 
@@ -167,6 +152,8 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
         self.annotations = [];
 
+        console.log("**************************");
+        console.log(self.baseAnnotation);
         var thumb = new AnnotationThumbView({
             model: self.baseAnnotation,
             className: "thumb-wrap",
@@ -181,12 +168,13 @@ var AnnotationRetrievalView = Backbone.View.extend({
 
             if ((cpt >= inf) && (cpt < sup)) {
                 annotation.set({name: annotation.get('similarity')});
-                var annotationModel = new AnnotationModel(annotation);
+                //var annotationModel = new AnnotationModel(annotation);
 
+                annotation.set("reviewed",false);
                 var thumb = new AnnotationThumbView({
-                    model: annotationModel,
+                    model: annotation,
                     className: "thumb-wrap",
-                    id: "annotationthumb" + annotationModel.id
+                    id: "annotationthumb" + annotation.id
                 }).render();
                 $("#retrievalThumb").append(thumb.el);
             }

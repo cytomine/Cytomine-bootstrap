@@ -33,8 +33,8 @@ class ImageSequenceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def get(Long idImageInstance, Integer zStack, Integer time, Integer channel, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/imagegroup/$idImageInstance/$zStack/$time/$channel/imagesequence.json"
+    static def get(Long idImageInstance, Integer channel,Integer zStack, Integer slice, Integer time, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "/api/imagegroup/$idImageInstance/$channel/$zStack/$slice/$time/imagesequence.json"
         return doGET(URL, username, password)
     }
 

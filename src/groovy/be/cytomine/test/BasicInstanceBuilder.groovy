@@ -913,19 +913,19 @@ class BasicInstanceBuilder {
     static ImageSequence getImageSequence() {
         ImageSequence imageSequence = ImageSequence.findByImageGroup(getImageGroup())
         if(!imageSequence) {
-            imageSequence = new ImageSequence(image:getImageInstanceNotExist(imageGroup.project,true),zStack:0,time:0,channel:0,imageGroup:imageGroup)
+            imageSequence = new ImageSequence(image:getImageInstanceNotExist(imageGroup.project,true),zStack:0,slice: 0, time:0,channel:0,imageGroup:imageGroup)
             imageSequence = saveDomain(imageSequence)
         }
         imageSequence
     }
 
     static ImageSequence getImageSequenceNotExist(boolean save = false) {
-        ImageSequence seq = new ImageSequence(image:getImageInstance(),zStack:0,time:0,channel:2,imageGroup:getImageGroup())
+        ImageSequence seq = new ImageSequence(image:getImageInstance(),slice: 0, zStack:0,time:0,channel:2,imageGroup:getImageGroup())
         save ? saveDomain(seq) : checkDomain(seq)
     }
 
-    static ImageSequence getImageSequence(ImageInstance image,Integer zStack, Integer time, Integer channel, ImageGroup imageGroup,boolean save = false) {
-        ImageSequence seq = new ImageSequence(image:image,zStack:zStack,time:time,channel:channel,imageGroup:imageGroup)
+    static ImageSequence getImageSequence(ImageInstance image,Integer channel, Integer zStack, Integer slice, Integer time,ImageGroup imageGroup,boolean save = false) {
+        ImageSequence seq = new ImageSequence(image:image,zStack:zStack,time:time,channel:channel,slice:slice,imageGroup:imageGroup)
         save ? saveDomain(seq) : checkDomain(seq)
     }
 
@@ -943,32 +943,37 @@ class BasicInstanceBuilder {
         save ? saveDomain(imageGroup) : checkDomain(imageGroup)
     }
 
-    static def getMultiDimensionalDataSet(def zStack,def time,def channel) {
+    static def getMultiDimensionalDataSet(def channel,def zStack,def slice,def time) {
         Project project = getProjectNotExist(true)
         ImageGroup group = getImageGroupNotExist(project,true)
 
         def data = []
 
-        zStack.eachWithIndex { z,zi ->
-            time.eachWithIndex { t,ti ->
-                channel.eachWithIndex { c,ci ->
-                    String filename = z+"-"+t+"-"+c+"-"+System.currentTimeMillis()
-                    def abstractImage = getAbstractImageNotExist(filename,true)
-                    def imageInstance = getImageInstanceNotExist(project,true)
-                    imageInstance.baseImage = abstractImage
-                    saveDomain(imageInstance)
+        channel.eachWithIndex { c,ci ->
+            zStack.eachWithIndex { z,zi ->
+                slice.eachWithIndex { s,si ->
+                    time.eachWithIndex { t,ti ->
+                        String filename = c+"-"+z+"-"+s+"-"+t+"-"+System.currentTimeMillis()
+                        def abstractImage = getAbstractImageNotExist(filename,true)
+                        def imageInstance = getImageInstanceNotExist(project,true)
+                        imageInstance.baseImage = abstractImage
+                        saveDomain(imageInstance)
 
-                    ImageSequence seq = getImageSequence(imageInstance,zi,ti,ci,group,true)
-                    data << seq
+                        ImageSequence seq = getImageSequence(imageInstance,ci,zi,si,ti,group,true)
+                        data << seq
+                    }
+
                 }
             }
         }
-        assert data.first().zStack==0
-        assert data.first().time==0
-        assert data.first().channel==0
-        assert data.last().zStack==2
-        assert data.last().time==2
-        assert data.last().channel==2
+//        assert data.first().slice==0
+//        assert data.first().zStack==0
+//        assert data.first().time==0
+//        assert data.first().channel==0
+//        assert data.last().zStack==2
+//        assert data.last().slice==2
+//        assert data.last().time==2
+//        assert data.last().channel==2
         return data
     }
 }
