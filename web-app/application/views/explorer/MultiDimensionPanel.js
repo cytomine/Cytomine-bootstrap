@@ -45,7 +45,11 @@ var MultiDimensionPanel = SideBarPanel.extend({
 
             console.log("GET data:"+data);
 
-            var positionTex = "c: "+data.c+" z: "+data.z + " s: "+data.s + " t: "+data.t;
+            var positionTex = "This image has no other dimension."
+            if(data.c!=null && data.c!=undefined) {
+                positionTex = "Picture is in position c: "+data.c+" z: "+data.z + " s: "+data.s + " t: "+data.t;
+            }
+
             json.position=positionTex;
             var content = _.template(tpl,json);
 
@@ -120,14 +124,16 @@ var MultiDimensionPanel = SideBarPanel.extend({
             }
 
             if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
-                window.location = "#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-";
                 $("#closeTab" +self.browseImageView.divPrefixId+ "-"+currentImage.id).click();
+                console.log("2.GOTO="+"#closeTab" +self.browseImageView.divPrefixId+ "-"+currentImage.id);
+                window.location = "#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-";
+                console.log("1.GOTO="+"#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-");
             } else {
                 new ImageReviewModel({id: idImage}).save({}, {
                     success: function (model, response) {
                         window.app.view.message("Image", response.message, "success");
-                        window.location = '#'+ self.browseImageView.divPrefixId  + '-' + currentImage.get('project') + '-' + response.imageinstance.id + '-';
                         $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ currentImage.id).click();
+                        window.location = '#'+ self.browseImageView.divPrefixId  + '-' + currentImage.get('project') + '-' + response.imageinstance.id + '-';
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);

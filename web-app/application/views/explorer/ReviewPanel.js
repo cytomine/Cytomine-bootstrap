@@ -92,7 +92,10 @@ var ReviewPanel = SideBarPanel.extend({
      * @param layer User/UserJob id
      */
     addLayerToReview: function (layer) {
+
         var self = this;
+        console.log("----------");
+        console.log(self.browseImageView.divId + " => " + layer);
         if (layer == undefined) {
             return;
         }
@@ -199,7 +202,7 @@ var ReviewPanel = SideBarPanel.extend({
         self.printedLayer = _.filter(self.printedLayer, function (elem) {
             return elem.id != layer
         });
-        $("#reviewLayerElem" + layer).replaceWith("");
+        panelElem.find("#reviewLayerElem" + layer).replaceWith("");
 
         //enable from select list
         var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
@@ -213,6 +216,8 @@ var ReviewPanel = SideBarPanel.extend({
         var self = this;
         //disable from select box
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+        console.log("#######");
+        console.log(this.browseImageView.divId + "=>" + layer);
         //add to list
         panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i></span>');
         $("#removeReviewLayer" + layer).click(function (elem) {

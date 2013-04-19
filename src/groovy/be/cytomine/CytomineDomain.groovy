@@ -120,7 +120,6 @@ abstract class CytomineDomain  implements Comparable{
             else if(permissionStr.equals("DELETE")) permission = DELETE
             else if(permissionStr.equals("CREATE")) permission = CREATE
             else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION
-
             hasPermission(domain,permission)
 
         } catch (Exception e) {

@@ -34,6 +34,8 @@ class AnnotationIndexService {
      * If user is null, return the number of reviewed annotation for this image
      */
     def count(ImageInstance image, SecUser user) {
+        println "count"
+        println "image"
         String request
         if (user) {
             request = "SELECT count_annotation  \n" +
@@ -46,8 +48,10 @@ class AnnotationIndexService {
         }
 
         long value = 0
+        println request
         new Sql(dataSource).eachRow(request) {
-            value = it[0]
+            def val = it[0]
+            val? value = val : 0
         }
         return value
     }

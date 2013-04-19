@@ -1097,6 +1097,8 @@ var BrowseImageView = Backbone.View.extend({
         } else {
 
             self.reviewPanel.addReviewLayerToReview();
+            console.log("##########");
+            console.log(this.divId + " => addLayerToReview");
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
             self.reviewPanel.removeLayerFromReview(window.app.status.user.id);
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
