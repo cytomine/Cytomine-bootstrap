@@ -9,7 +9,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import grails.util.Holders
 import groovy.sql.Sql
-import static org.springframework.security.acls.domain.BasePermission.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,6 +23,8 @@ class SearchService extends ModelService {
     def dataSource
     def cytomineService
 
+    //Security is made ​​in sql query thanks to currentUser
+    //"getSecurityTable" and "getSecurityJoin" manage the security
     def list(List<String> keywords, String operator, String domain) {
         def data = []
         String request = ""
@@ -33,6 +34,7 @@ class SearchService extends ModelService {
 
         SecUser currentUser = cytomineService.getCurrentUser()
 
+        //Creating queries for project or annotation or image
         if (domain.equals("Project")) {
             listTable.add("project")
             listType.add(Project.class.getName())
@@ -55,6 +57,7 @@ class SearchService extends ModelService {
             //Add Security
             blocSelect += getSecurityJoin("ii.project_id", currentUser)
         } else if (domain.equals("Annotation")) {
+            //There are three types of annotation
             listTable.add("user_annotation")
             listTable.add("algo_annotation")
             listTable.add("reviewed_annotation")
@@ -70,6 +73,7 @@ class SearchService extends ModelService {
             blocSelect += getSecurityJoin("a.project_id", currentUser)
         }
 
+        //In case of the operator is OR
         if (operator.equals("OR")) {
             for (int a = 0; a < listTable.size(); a++) {
                 //Replace in String: domain and table
@@ -81,6 +85,7 @@ class SearchService extends ModelService {
                 request +=  blocSelectFromWhere +
                         "AND (p.value ILIKE '%" + keywords[0] + "%'"
 
+                //Loop for the keywords
                 for (int i = 1; i < keywords.size() ; i++) {
                     request += " OR p.value ILIKE '%" + keywords[i] + "%'"
                 }
@@ -98,6 +103,7 @@ class SearchService extends ModelService {
                 request += "(" + blocSelectFromWhere +
                         "AND p.value ILIKE '%" + keywords[0] + "%' "
 
+                //Loop for the keywords
                 for (int i = 1; i < keywords.size() ; i++) {
                     request += "INTERSECT " +
                             blocSelectFromWhere +
@@ -110,16 +116,17 @@ class SearchService extends ModelService {
         data
     }
 
+    //Return the table for the security
     private String getSecurityTable (SecUser currentUser) {
         String request = " "
 
         if (!currentUser.isAdmin()) {
             request = ", acl_object_identity as aoi, acl_sid as sid, acl_entry as ae "
         }
-
         return request
     }
 
+    //Return jointure to check the security
     private String getSecurityJoin (String params, SecUser currentUser) {
         String request = ""
 
@@ -129,10 +136,10 @@ class SearchService extends ModelService {
                     "AND ae.acl_object_identity = aoi.id " +
                     "AND ae.sid = sid.id "
         }
-
         return request
     }
 
+    //Create the list with all results
     private def select(String request) {
         def data = []
         String domain
