@@ -47,5 +47,9 @@ class UrlMappings {
         "/api/commandhistory"(controller: "restProject") {
             action = [GET:"listCommandHistory"]
         }
+
+        "/api/search"(controller: "search") {
+            action = [GET:"listResponse"]
+        }
     }
 }

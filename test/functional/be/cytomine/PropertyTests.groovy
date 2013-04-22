@@ -349,48 +349,8 @@ class PropertyTests {
         BasicInstanceBuilder.compare(data.mapNew,json.property)
     }
 
-    /*void testUpdateAnnotationPropertyNotExist() {
-        Property annotationPropertyOld = BasicInstanceBuilder.getAnnotationProperty()
-        Property annotationPropertyNew = BasicInstanceBuilder.getAnnotationPropertyNotExist()
-        annotationPropertyNew.save(flush: true)
-        Property annotationPropertyToEdit = Property.get(annotationPropertyNew.id)
-        def jsonAnnotationProperty = annotationPropertyToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonAnnotationProperty)
-        jsonUpdate.key = annotationPropertyOld.key
-        jsonUpdate.id = -99
-        jsonAnnotationProperty = jsonUpdate.encodeAsJSON()
-        def result = PropertyAPI.update(-99, jsonAnnotationProperty, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 404 == result.code
-    }
-    void testUpdateAnnotationPropertyNotExist() {
-        Property annotationPropertyOld = BasicInstanceBuilder.getAnnotationProperty()
-        Property annotationPropertyNew = BasicInstanceBuilder.getAnnotationPropertyNotExist()
-        annotationPropertyNew.save(flush: true)
-        Property annotationPropertyToEdit = Property.get(annotationPropertyNew.id)
-        def jsonAnnotationProperty = annotationPropertyToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonAnnotationProperty)
-        jsonUpdate.key = annotationPropertyOld.key
-        jsonUpdate.id = -99
-        jsonAnnotationProperty = jsonUpdate.encodeAsJSON()
-        def result = PropertyAPI.update(-99, jsonAnnotationProperty, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 404 == result.code
-    }
-    void testUpdateAnnotationPropertyNotExist() {
-        Property annotationPropertyOld = BasicInstanceBuilder.getAnnotationProperty()
-        Property annotationPropertyNew = BasicInstanceBuilder.getAnnotationPropertyNotExist()
-        annotationPropertyNew.save(flush: true)
-        Property annotationPropertyToEdit = Property.get(annotationPropertyNew.id)
-        def jsonAnnotationProperty = annotationPropertyToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonAnnotationProperty)
-        jsonUpdate.key = annotationPropertyOld.key
-        jsonUpdate.id = -99
-        jsonAnnotationProperty = jsonUpdate.encodeAsJSON()
-        def result = PropertyAPI.update(-99, jsonAnnotationProperty, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 404 == result.code
-    } */
-
     //TEST CENTER ANNOTATION
-    /*void testSelectCenterAnnotationCorrect() {
+    void testSelectCenterAnnotationCorrect() {
         Property annotationProperty = BasicInstanceBuilder.getAnnotationProperty()
         def user = BasicInstanceBuilder.getUser()
         def image = BasicInstanceBuilder.getImageInstance()
@@ -399,7 +359,7 @@ class PropertyTests {
         annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
         annotation.user = user
         annotation.image = image
-        annotationProperty.annotation = annotation;
+        annotationProperty.domain = annotation;
         annotationProperty.key = "TestCytomine"
         annotationProperty.value = "ValueTestCytomine"
         assert annotationProperty.save(flush: true) != null
@@ -420,7 +380,7 @@ class PropertyTests {
         annotation.location = new WKTReader().read("POLYGON ((0 0, 0 1000, 1000 1000, 1000 0, 0 0))")
         annotation.user = user
         annotation.image = image
-        annotationProperty.annotation = annotation;
+        annotationProperty.domain = annotation;
         annotationProperty.key = "TestCytomine"
         annotationProperty.value = "ValueTestCytomine"
         assert annotationProperty.save(flush: true) != null
@@ -433,5 +393,5 @@ class PropertyTests {
         //Error IdImage
         result = PropertyAPI.listAnnotationCenterPosition(user.id, -99, "0,0,1000,1000","TestCytomine", Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
-    }*/
+    }
 }

@@ -132,7 +132,10 @@ class RestPropertyController extends RestController {
     }
     def addPropertyAnnotation = {
         def json = request.JSON
-        json.domainClassName = AnnotationDomain.getName()
+
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(json.domainIdent)
+
+        json.domainClassName = annotation.class.getName()
         add(propertyService, request.JSON)
     }
     def addPropertyImageInstance = {
