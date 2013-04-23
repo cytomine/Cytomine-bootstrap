@@ -171,7 +171,9 @@ var ImageTabsView = Backbone.View.extend({
                     item.thumb = _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>", item);
                     item.action = _.template(actionMenuTpl, item);
                     item.created = window.app.convertLongToDate(item.created);
-                    item.resolution = item.resolution.toFixed(3)+"µm/pixel";
+                    if(item.resolution) {
+                        item.resolution = item.resolution.toFixed(3)+"µm/pixel";
+                    }
 					if (item.reviewed) {
 							item.status = '<span class="label label-success">Reviewed</span>';
 					}

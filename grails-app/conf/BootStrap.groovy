@@ -1,6 +1,11 @@
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationIndex
+import be.cytomine.security.Group
+import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
+import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
+import be.cytomine.security.UserGroup
 import grails.util.Environment
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -29,6 +34,7 @@ class BootStrap {
     def countersService
     def retrieveErrorsService
     def bootstrapTestDataService
+    def bootstrapProdDataService
     def bootstrapUtilsService
     def javascriptService
     def dataSource
@@ -108,6 +114,31 @@ class BootStrap {
 
         }
 
+        //bootstrapProdDataService.initUserStorages()
+
+
+//        if(SecUserSecRole.count()<3) {
+//            User.findAll().each { user ->
+//
+//                def userGroupName = user.username
+//                def userGroup = [
+//                        [name: userGroupName]
+//                ]
+//                bootstrapUtilsService.createGroups(userGroup)
+//                Group group = Group.findByName(userGroupName)
+//                UserGroup ug = new UserGroup(user:user, group:group)
+//                ug.save(flush:true,failOnError: true)
+//
+//                if(user.authorities.isEmpty()) {
+//                    if (user.username.equals("lrollus") || user.username.equals("rmaree") || user.username.equals("stevben")) {
+//                        SecUserSecRole.create(user, SecRole.findByAuthority("ROLE_ADMIN"))
+//                        SecUserSecRole.create(user, SecRole.findByAuthority("ROLE_USER"))
+//                    } else {
+//                        SecUserSecRole.create(user, SecRole.findByAuthority("ROLE_USER"))
+//                    }
+//                }
+//           }
+//        }
     }
 
 

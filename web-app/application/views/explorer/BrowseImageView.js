@@ -506,7 +506,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
 
         //HACK : Set the height of the map manually
-        var paddingTop = 77;
+        var paddingTop = 96;
         var height = $(window).height() - paddingTop;
         $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("height", height);
         $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("width", "100%");

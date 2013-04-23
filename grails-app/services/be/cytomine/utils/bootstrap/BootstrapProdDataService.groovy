@@ -203,7 +203,7 @@ class BootstrapProdDataService {
 
     }
 
-    private def initUserStorages() {
+    def initUserStorages() {
         SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         println "initUserStorages"
         //create storage for each user

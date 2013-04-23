@@ -3,15 +3,16 @@
     <dd><%= userName %></dd>
     <dt>Date</dt>
     <dd><%= created %></dd>
-    <% if (_.size(userByTerm) > 0) { %>
-    <dt>Term associated</dt>
-    <% _.each(userByTerm, function(it) { %>
-    <dd><i><%= it.userName %></i> has associated <i><%= it.termName %></i></dd>
-    <% }) %>
-    <% if (termName && expectedTermName) { %>
-    <dt>Suggestion</dt>
-    <dd><span class="label label-warning">Algorithm suggests <%= termName %> instead of <%= expectedTermName %></span>
-    </dd>
+        <% if (_.size(userByTerm) > 0) { %>
+            <dt>Term associated</dt>
+            <% _.each(userByTerm, function(it) { %>
+            <dd><i><%= it.userName %></i> has associated <i><%= it.termName %></i></dd>
+        <% }) %>
     <% } %>
+    <% if (termName!=undefined && expectedTermName!=undefined) { %>
+        <dt>Suggestion</dt>
+        <dd>Algorithm suggests <b><i><%= termName %></i></b> instead of <b><i><%= expectedTermName %></i></b>
+        </dd>
     <% } %>
+
 </dl>
