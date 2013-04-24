@@ -100,18 +100,49 @@ class RestPropertyController extends RestController {
     }
 
 
-    def show = {
+    def showProject = {
+        def projectId = params.long('idProject')
+        Project project = projectService.read(projectId)
+
         Property property
         if(params.id != null) {
             property = propertyService.read(params.id)
+        } else if (params.key != null) {
+            property = propertyService.read(project, params.key)
+        }
+
+        if (property) {
+            responseSuccess(property)
         } else {
-            if (params.idProject != null) {
-                property = propertyService.read(params.idProject, params.key)
-            } else if (params.idAnnotation != null) {
-                property = propertyService.read(params.idAnnotation, params.key)
-            } else if (params.idImageInstance != null) {
-                property = propertyService.read(params.idImageInstance, params.key)
-            }
+            responseNotFound("Property", params.id)
+        }
+    }
+    def showAnnotation = {
+        def annotationId = params.long('idAnnotation')
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
+
+        Property property
+        if(params.id != null) {
+            property = propertyService.read(params.id)
+        } else if (params.key != null) {
+            property = propertyService.read(annotation, params.key)
+        }
+
+        if (property) {
+            responseSuccess(property)
+        } else {
+            responseNotFound("Property", params.id)
+        }
+    }
+    def showImageInstance = {
+        def imageInstanceId = params.long('idImageInstance')
+        ImageInstance imageInstance = imageInstanceService.read(imageInstanceId)
+
+        Property property
+        if(params.id != null) {
+            property = propertyService.read(params.id)
+        } else if (params.key != null) {
+            property = propertyService.read(imageInstance, params.key)
         }
 
         if (property) {

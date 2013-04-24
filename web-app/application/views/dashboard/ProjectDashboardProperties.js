@@ -364,7 +364,9 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 new  AnnotationPropertyModel({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}).save({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}, {
                     success: function (model, response) {
                         self.drawOption(model);
-                        self.annotationPropertyCollection.push(model);
+                        self.annotationPropertyCollection.add(model);
+                        console.log("COLLECTION");
+                        console.log(self.annotationPropertyCollection);
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
@@ -409,9 +411,15 @@ var ProjectDashboardProperties = Backbone.View.extend({
             collection = self.projectPropertyCollection;
         }
 
+        var idModelArray = [];
+
         collection.each(function(model) {
-            if ($("#checkbox"+model.id).is(':checked')) {
-                model.destroy({
+            idModelArray.push(model.id);
+        });
+
+        _.each(idModelArray, function(idModel) {
+            if ($("#checkbox"+idModel).is(':checked')) {
+                collection.get(idModel).destroy({
                     success: function (model, response) {
                         window.app.view.message(self.nameDomain + " Property", response.message, "success");
                         $("tr.trProperty"+model.id).empty();

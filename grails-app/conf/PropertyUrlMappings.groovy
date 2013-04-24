@@ -14,10 +14,10 @@ class PropertyUrlMappings
             action = [GET:"listByProject",POST: "addPropertyProject"]
         }
         "/api/project/$idProject/key/$key/property"(controller:"restProperty"){
-            action = [GET:"show"]
+            action = [GET:"showProject"]
         }
         "/api/project/$idProject/property/$id"(controller:"restProperty"){
-            action = [GET:"show",PUT:"update", DELETE:"delete"]
+            action = [GET:"showProject",PUT:"update", DELETE:"delete"]
         }
 
         /****************/
@@ -27,10 +27,10 @@ class PropertyUrlMappings
             action = [GET:"listByAnnotation",POST: "addPropertyAnnotation"]
         }
         "/api/annotation/$idAnnotation/key/$key/property"(controller:"restProperty"){
-            action = [GET:"show"]
+            action = [GET:"showAnnotation"]
         }
         "/api/annotation/$idAnnotation/property/$id"(controller:"restProperty"){
-            action = [GET:"show",PUT:"update", DELETE:"delete"]
+            action = [GET:"showAnnotation",PUT:"update", DELETE:"delete"]
         }
         "/api/annotation/property/key"(controller:"restProperty"){
             action = [GET:"listKeyForAnnotation"]
@@ -43,10 +43,10 @@ class PropertyUrlMappings
             action = [GET:"listByImageInstance",POST: "addPropertyImageInstance"]
         }
         "/api/imageinstance/$idImageInstance/key/$key/property"(controller:"restProperty"){
-            action = [GET:"show"]
+            action = [GET:"showImageInstance"]
         }
         "/api/imageinstance/$idImageInstance/property/$id"(controller:"restProperty"){
-            action = [GET:"show",PUT:"update", DELETE:"delete"]
+            action = [GET:"showImageInstance",PUT:"update", DELETE:"delete"]
         }
         "/api/imageinstance/property/key"(controller:"restProperty"){
             action = [GET:"listKeyForImageInstance"]
