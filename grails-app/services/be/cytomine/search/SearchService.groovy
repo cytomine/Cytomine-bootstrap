@@ -7,6 +7,8 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.SearchEnum.Operator
+import be.cytomine.utils.SearchEnum.Filter
 import grails.util.Holders
 import groovy.sql.Sql
 
@@ -25,7 +27,7 @@ class SearchService extends ModelService {
 
     //Security is made ​​in sql query thanks to currentUser
     //"getSecurityTable" and "getSecurityJoin" manage the security
-    def list(List<String> keywords, String operator, String domain) {
+    def list(List<String> keywords, Operator operator, Filter filter) {
         def data = []
         String request = ""
         String blocSelect = ""
@@ -35,7 +37,7 @@ class SearchService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //Creating queries for project or annotation or image
-        if (domain.equals("Project")) {
+        if (filter.equals(Filter.PROJECT)) {
             listTable.add("project")
             listType.add(Project.class.getName())
 
@@ -45,7 +47,7 @@ class SearchService extends ModelService {
 
             //Add Security
             blocSelect += getSecurityJoin("pro.id", currentUser)
-        } else if (domain.equals("Image")) {
+        } else if (filter.equals(Filter.IMAGE)) {
             listTable.add("image_instance")
             listType.add(ImageInstance.class.getName())
 
@@ -56,7 +58,7 @@ class SearchService extends ModelService {
 
             //Add Security
             blocSelect += getSecurityJoin("ii.project_id", currentUser)
-        } else if (domain.equals("Annotation")) {
+        } else if (filter.equals(Filter.ANNOTATION)) {
             //There are three types of annotation
             listTable.add("user_annotation")
             listTable.add("algo_annotation")
@@ -74,7 +76,7 @@ class SearchService extends ModelService {
         }
 
         //In case of the operator is OR
-        if (operator.equals("OR")) {
+        if (operator.equals(Operator.OR)) {
             for (int a = 0; a < listTable.size(); a++) {
                 //Replace in String: domain and table
                 String blocTmp = blocSelect.replaceAll("<domain>", listType[a])
@@ -92,7 +94,7 @@ class SearchService extends ModelService {
                 request += ") "
             }
             data = select(request)
-        } else if (operator.equals("AND")) {
+        } else if (operator.equals(Operator.AND)) {
             for (int a = 0; a < listTable.size(); a++) {
                 //Replace in String: domain and table
                 String blocTmp = blocSelect.replaceAll("<domain>", listType[a])

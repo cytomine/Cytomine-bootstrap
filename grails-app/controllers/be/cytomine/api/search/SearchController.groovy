@@ -1,8 +1,8 @@
 package be.cytomine.api.search
 
 import be.cytomine.api.RestController
-import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
+import be.cytomine.utils.SearchEnum.Filter
+import be.cytomine.utils.SearchEnum.Operator
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,27 +24,33 @@ class SearchController extends RestController {
         def filter = params.get('filter')
 
         if (!operator) {
-             operator = "OR"
+             operator = Operator.OR
         }
         if (!filter) {
-            filter = "ALL"
+            filter = Filter.ALL
         }
 
         if (keywords) {
             listKeyword = keywords.split(",")
 
-            if (filter.equals("Project")) {
+            if (operator.equals("OR")) {
+                operator = Operator.OR
+            } else if (operator.equals("AND")) {
+                operator = Operator.AND
+            }
+
+            if (filter.equals(Filter.PROJECT)) {
                 responseSuccess(searchService.list(listKeyword, operator, filter))
-            } else if (filter.equals("Image")) {
+            } else if (filter.equals(Filter.IMAGE)) {
                 responseSuccess(searchService.list(listKeyword, operator, filter))
-            } else if (filter.equals("Annotation")) {
+            } else if (filter.equals(Filter.ANNOTATION)) {
                 responseSuccess(searchService.list(listKeyword, operator, filter))
             } else {
-                // filter = ALL
+                // filter = Filter.ALL
                 def all = []
-                all.addAll(searchService.list(listKeyword, operator, "Project"))
-                all.addAll(searchService.list(listKeyword, operator, "Image"))
-                all.addAll(searchService.list(listKeyword, operator, "Annotation"))
+                all.addAll(searchService.list(listKeyword, operator, Filter.PROJECT))
+                all.addAll(searchService.list(listKeyword, operator, Filter.IMAGE))
+                all.addAll(searchService.list(listKeyword, operator, Filter.ANNOTATION))
                 all.sort{-it.id}
                 responseSuccess(all)
             }

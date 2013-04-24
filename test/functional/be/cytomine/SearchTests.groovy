@@ -10,6 +10,8 @@ import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.SearchAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
+import be.cytomine.utils.SearchEnum.Filter
+import be.cytomine.utils.SearchEnum.Operator
 
 class SearchTests {
 
@@ -33,7 +35,7 @@ class SearchTests {
         project2Property2.domain = project2
         BasicInstanceBuilder.saveDomain(project2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", "OR", "Project", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", Operator.OR, Filter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -42,7 +44,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(project1.id, json)
         assert DomainAPI.containsInJSONList(project2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", "AND", "Project", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", Operator.AND, Filter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -74,7 +76,7 @@ class SearchTests {
         annotation2Property2.domain = userAnnotation2
         BasicInstanceBuilder.saveDomain(annotation2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", "OR", "Annotation", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", Operator.OR, Filter.ANNOTATION, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -83,7 +85,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(userAnnotation1.id, json)
         assert DomainAPI.containsInJSONList(userAnnotation2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", "AND", "Annotation", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", Operator.AND, Filter.ANNOTATION, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -115,7 +117,7 @@ class SearchTests {
         image2Property2.domain = imageInstance2
         BasicInstanceBuilder.saveDomain(image2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", "OR", "Image", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", Operator.OR, Filter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -124,7 +126,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(imageInstance1.id, json)
         assert DomainAPI.containsInJSONList(imageInstance2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", "AND", "Image", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", Operator.AND, Filter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
