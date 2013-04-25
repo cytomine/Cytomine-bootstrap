@@ -23,11 +23,14 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
     refresh: function (idDomain, nameDomain) {
         var self = this;
+
+
         self.nameDomain = nameDomain;
 
         if (self.nameDomain != "Project") {
             self.initIdentifiantSelect(idDomain);
-        } else {
+        } else if (idDomain) {
+
             $("#identifiantSelect").hide();
             $("#refreshIdentifiantSelect").hide();
 
@@ -36,7 +39,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
             self.loadAutocomplete();
         }
 
-        self.initRadioButton();
+            self.initRadioButton();
     },
 
     doLayout: function (propertiesTpl) {
@@ -82,6 +85,10 @@ var ProjectDashboardProperties = Backbone.View.extend({
             console.log("click button delete");
             self.deleteProperty();
         });
+
+        if (!self.nameDomain) {
+            $("#buttonAnnotationProperty").click();
+        }
     },
 
     initPropertyRowEvents : function () {

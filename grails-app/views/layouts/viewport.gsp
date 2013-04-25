@@ -52,7 +52,7 @@ body {
 
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
 
 <!-- fuel ux -->
 <link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />

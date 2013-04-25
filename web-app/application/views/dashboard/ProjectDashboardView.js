@@ -95,14 +95,11 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
     refreshProperties: function (idDomain, nameDomain) {
-        console.log("ProjectDashboardView");
-        var self = this;
-
         if (this.projectDashboardProperties == null) {
             this.projectDashboardProperties = new ProjectDashboardProperties({ model: this.model, el: this.el, idDomain: idDomain, nameDomain: nameDomain});
             this.projectDashboardProperties.render();
         } else {
-            this.projectDashboardProperties.refresh(idDomain, nameDomain)
+            this.projectDashboardProperties.refresh(idDomain, nameDomain);
         }
     },
     /**

@@ -90,24 +90,15 @@ var DashboardController = Backbone.Router.extend({
     properties: function (project, idDomain, nameDomain) {
         console.log("controller.properties: " + project + "-" + idDomain);
         var self = this;
-
-        console.log(self.view);
-        if (nameDomain == undefined) {
-           //navigate to annotation, project, image, poperties
-            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + project + "-undefined" ,true);
-        } else {
-            if(!window.app.controllers.browse.tabs.triggerRoute) {
-                return;
-            }
-            var func = function () {
-                window.app.controllers.browse.tabs.triggerRoute = false;
-                var tabs = $("#explorer > .browser").find(".nav-tabs");
-                tabs.find('a[href=#tabs-properties-' + window.app.status.currentProject + ']').click();
-                self.view.refreshProperties(idDomain, nameDomain);
-                window.app.controllers.browse.tabs.triggerRoute = true;
-            }
-            self.init(project, func);
+        var func = function () {
+            console.log("init properties with domain = " + nameDomain);
+            window.app.controllers.browse.tabs.triggerRoute = false;
+            var tabs = $("#explorer > .browser").find(".nav-tabs");
+            tabs.find('a.annotationTabLink').click();
+            self.view.refreshProperties(idDomain, nameDomain);
+            window.app.controllers.browse.tabs.triggerRoute = true;
         }
+        self.init(project, func);
     },
     algos: function () {
         this.algos(undefined,undefined,undefined);
