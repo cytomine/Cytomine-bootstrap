@@ -24,17 +24,22 @@ var ProjectDashboardProperties = Backbone.View.extend({
     refresh: function (idDomain, nameDomain) {
         var self = this;
 
-
-        self.nameDomain = nameDomain;
+        if (nameDomain != undefined) {
+            self.nameDomain = nameDomain;
+        }
+        console.log("NAMEDOMAIN : ");
+        console.log(self.nameDomain);
 
         if (self.nameDomain != "Project") {
             self.initIdentifiantSelect(idDomain);
-        } else if (idDomain) {
+        } else {
 
             $("#identifiantSelect").hide();
             $("#refreshIdentifiantSelect").hide();
+            $("#infoDisplaySelect").empty();
 
-            self.initTableProperty();
+            self.refreshProperty();
+            //self.initTableProperty();
             self.initPropertyRowEvents();
             self.loadAutocomplete();
         }
@@ -49,22 +54,29 @@ var ProjectDashboardProperties = Backbone.View.extend({
         var content = _.template(propertiesTpl, {id:self.model.id, name: self.model.get("name")});
         $("#tabs-properties-"+self.model.id).append(content);
 
+        console.log(self.idDomain);
         //In case of a user use a link in menu explore (popupAnnotation for example)
         if (self.idDomain != null) {
-            self.initIdentifiantSelect(self.idDomain);
-            self.initRadioButton();
+                console.log("ICI ????");
+                self.refresh(self.idDomain, self.nameDomain);
+//                console.log("OUUUUU ICI ????");
+//                self.initIdentifiantSelect(self.idDomain);
+//                self.initRadioButton();
         }
 
         $("#buttonAnnotationProperty").click(function() {
-            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-undefined" ,true);
+            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-undefined" ,false);
+            self.refresh(self.idDomain, "Annotation");
         });
 
         $("#buttonImageInstanceProperty").click(function() {
-            window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-undefined",true);
+            window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-undefined",false);
+            self.refresh(self.idDomain, "ImageInstance");
         });
 
         $("#buttonProjectProperty").click(function() {
-            window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-undefined",true);
+            window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-undefined",false);
+            self.refresh(self.idDomain, "Project");
         });
 
         $("#refreshIdentifiantSelect").click(function() {
@@ -79,6 +91,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
         });
         $("#identifiantSelect").click(function() {
             console.log("click select");
+            self.idDomain = $("#identifiantSelect").val();
             self.refreshProperty();
         });
         $("#deleteProperty").click(function() {
@@ -200,6 +213,8 @@ var ProjectDashboardProperties = Backbone.View.extend({
         }
 
         var addValueSelect = function (collection, id) {
+            var idExist = false;
+
             if (_.size(collection) > 0) {
                 $(select).removeAttr("disabled");
                 $("#loadingSelect").hide();
@@ -208,18 +223,27 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 var date = window.app.convertLongToDate(options.get('created'));
                 var option = _.template("<option value='<%= id %>'><%= value %> - <%= created %></option>", { id : options.get('id'), value : options.get('id'), created: date});
                 select.append(option);
+
+                if (options.get('id') == id) {
+                    idExist = true;
+                }
             });
 
-            if (id != null) {
+            if (idExist == true) {
                 select.val(id);
+            } else if (idExist == false) {
+                self.idDomain = undefined;
             }
+
+
+            self.refreshProperty();
 
             //Display selectbox, button Refresh and hide the label "loading..."
             select.show();
             $("#refreshIdentifiantSelect").show();
             $("#infoDisplaySelect").empty();
 
-            self.initTableProperty();
+            //self.initTableProperty();
             self.initPropertyRowEvents();
             self.loadAutocomplete();
         }
@@ -229,11 +253,14 @@ var ProjectDashboardProperties = Backbone.View.extend({
         var self = this;
 
         if (self.nameDomain == "Annotation") {
-            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
+            window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-" + self.idDomain ,false);
+            //window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         } else if (self.nameDomain == "ImageInstance") {
-            window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
+            window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-" + self.idDomain ,false);
+            //window.app.controllers.dashboard.navigate("#tabs-imageproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         } else if (self.nameDomain == "Project") {
-            window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
+            window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-" + self.idDomain ,false);
+            //window.app.controllers.dashboard.navigate("#tabs-projectproperties-" + window.app.status.currentProject + "-" + $("#identifiantSelect").val() ,false);
         }
 
         self.initTableProperty();
