@@ -85,7 +85,6 @@ var JobTableView = Backbone.View.extend({
 
         $(self.el).find('#searchJobTable').find("tbody").find("button").click(function () {
             var id = $(this).attr("id");
-            $(self.parent.el).dialog("close");
             window.location = '#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + id + '';
         });
 

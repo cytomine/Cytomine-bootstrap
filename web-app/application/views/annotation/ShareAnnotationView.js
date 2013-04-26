@@ -88,13 +88,15 @@ var ShareAnnotationView = Backbone.View.extend({
             }
         });
 
-        $("#shareCancelButton" + self.model.id).click(function () {
+        $("#shareCancelButton" + self.model.id).click(function (event) {
+            event.preventDefault();
             self.dialog.close();
             window.history.back();
             return false;
         });
 
-        $("#shareButton" + self.model.id).click(function () {
+        $("#shareButton" + self.model.id).click(function (event) {
+            event.preventDefault();
             var shareButton = $(this);
             shareButton.html("Sending...");
 

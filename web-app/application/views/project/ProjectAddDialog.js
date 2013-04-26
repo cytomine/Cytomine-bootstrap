@@ -40,11 +40,13 @@ var AddProjectDialog = Backbone.View.extend({
             keyboard: true,
             backdrop: false
         });
-        $("#saveProjectButton").click(function () {
+        $("#saveProjectButton").click(function (event) {
+            event.preventDefault();
             $("#login-form-add-project").submit();
             return false;
         });
-        $("#closeAddProjectDialog").click(function () {
+        $("#closeAddProjectDialog").click(function (event) {
+            event.preventDefault();
             $("#addproject").modal('hide');
             $("#addproject").remove();
             return false;
@@ -287,15 +289,15 @@ var AddProjectDialog = Backbone.View.extend({
         $("#projecterrorlabel").hide();
 
         var name = $("#project-name").val().toUpperCase();
-        var discipline = $("#projectdiscipline").attr('value');
+        var discipline = $("#projectdiscipline").val();
         if (discipline == -1) {
             discipline = null;
         }
-        var ontology = $("#projectontology").attr('value');
+        var ontology = $("#projectontology").val();
         var users = self.userMaggicSuggest.getValue();
 
-        var blindMode = $("input#blindMode").attr('checked')=="checked";
-        var privateLayer = $("input#privateLayer").attr('checked')=="checked";
+        var blindMode = $("input#blindMode").is(':checked');
+        var privateLayer = $("input#privateLayer").is(':checked');
 
         console.log("blindMode="+blindMode);
         console.log("privateLayer="+privateLayer);

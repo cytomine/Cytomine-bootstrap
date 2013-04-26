@@ -62,7 +62,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
         $("#" + layerID).click(function () {
             console.log("click");
-            var checked = $(this).attr("checked");
+            var checked = $(this).is(':checked');
             console.log("visible:" + checked);
             layer.vectorsLayer.setVisibility(checked);
         });
@@ -125,13 +125,23 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var self = this;
         var content = _.template(tpl, {id: self.model.get("id"), isDesktop: !window.app.view.isMobile});
         $("#" + this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
+        console.log("test");
+        console.log("test: "+ self.browseImageView.divId + " " + "#layerSwitcher" + self.model.get("id") + " .followUser");
+        console.log($("#" + self.browseImageView.divId).length);
+        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).length);
+        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").length);
+        console.log($("#" + self.browseImageView.divId + " > #layerSwitcher" + self.model.get("id")+" > .followUser").length);
 
-        $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").live('click', function (e) {
-            var followUser = $(this).attr("checked") == "checked";
+
+        $("#" + self.browseImageView.divId).on('change',".followUser", function (e) {
+            alert('123');
+            var followUser = $(this).is(':checked');
             $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
                 $(this).attr('checked', false);
             });
+            console.log(followUser);
             $(this).attr('checked', followUser);
+            console.log(this);
             self.stopFollowing();
             if (!followUser) {
                 return;
@@ -143,17 +153,19 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
 
         $("#selectLayersIcon" + self.model.get("id")).off("click");
-        $("#selectLayersIcon" + self.model.get("id")).on("click", function (event) {
+
+        $(document).on("change", "#selectLayersIcon" + self.model.get("id"), function (event) {
+            console.log("change user annotation");
             var userList = $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find("ul.annotationLayers");
             var projectUsers = _.pluck(window.app.models.projectUser, 'id');
             var almostOneCheckedState = false;
             _.each(projectUsers, function (userID) {
-                var checked = userList.find("li[data-id=" + userID + "]").find('input.showUser').attr("checked") == "checked";
+                var checked = userList.find("li[data-id=" + userID + "]").find('input.showUser').is(':checked');
                 if (!almostOneCheckedState && checked) {
                     almostOneCheckedState = true;
                 }
             });
-            if (userList.find("li[data-id=REVIEW]").find('input.showUser').attr("checked") == "checked") {
+            if (userList.find("li[data-id=REVIEW]").find('input.showUser').is(':checked')) {
                 almostOneCheckedState = true;
             }
             self.browseImageView.setAllLayersVisibility(!almostOneCheckedState);
@@ -166,5 +178,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var elContent2 = el.find(".layerSwitcherContent2");
         this.initToggle(el, elContent1, sourceEvent1, "layerSwitcherContent1");
         this.initToggle(el, elContent2, sourceEvent2, "layerSwitcherContent2");
+
+        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").length);
     }
 });

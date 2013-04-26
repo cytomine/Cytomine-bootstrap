@@ -41,11 +41,13 @@ var EditOntologyDialog = Backbone.View.extend({
             keyboard: true,
             backdrop: false
         });
-        $('#editOntologyButton').click(function () {
+        $('#editOntologyButton').click(function (event) {
+            event.preventDefault();
             $("#login-form-edit-ontology").submit();
             return false;
         });
-        $('#closeEditOntologyDialog').click(function () {
+        $('#closeEditOntologyDialog').click(function (event) {
+            event.preventDefault();
             $("#editontology").modal("hide");
             $("#editontology").remove();
             return false;

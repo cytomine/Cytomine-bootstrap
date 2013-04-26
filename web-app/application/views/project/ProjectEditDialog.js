@@ -26,11 +26,13 @@ var EditProjectDialog = Backbone.View.extend({
         var dialog = _.template(projectEditDialogTpl, {});
         $(self.el).append(dialog);
 
-        $("#editProjectButton").click(function () {
+        $("#editProjectButton").click(function (event) {
+            event.preventDefault();
             $("#login-form-edit-project").submit();
             return false;
         });
-        $("#closeEditProjectDialog").click(function () {
+        $("#closeEditProjectDialog").click(function (event) {
+            event.preventDefault();
             $("#editproject").modal('hide');
             $("#editproject").remove();
             return false;
@@ -266,8 +268,8 @@ var EditProjectDialog = Backbone.View.extend({
         if (retrievalProjectSome) {
             projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
         }
-        var blindMode = $("input#blindMode").attr('checked')=="checked";
-        var privateLayer = $("input#privateLayer").attr('checked')=="checked";
+        var blindMode = $("input#blindMode").is(':checked');
+        var privateLayer = $("input#privateLayer").is(':checked');
 
         console.log("blindMode="+blindMode);
         console.log("privateLayer="+privateLayer);

@@ -244,7 +244,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             ],
             onSelectRow: function (id) {
 
-                var checked = $("#" + self.listmanageproject).find("#" + id).find(".cbox").attr('checked');
+                var checked = $("#" + self.listmanageproject).find("#" + id).find(".cbox").is(':checked');
                 if (checked) {
                     $("#" + self.listmanageproject).find("#" + id).find("td").css("background-color", "CD661D");
                 }

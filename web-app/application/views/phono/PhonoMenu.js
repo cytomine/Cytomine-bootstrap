@@ -15,7 +15,7 @@ var PhonoMenu = Backbone.View.extend({
             $("#menu-right").append(tplPhonoMenu);
             self.bindEvents();
             self.activate();
-            $(".online-user").live('click', function (e) {
+            $(document).on('click',".online-user", function (e) {
                 e.preventDefault();
                 var idUser = $(this).attr("data-call-id");
                 var model = self.onlineUsers.get(idUser);

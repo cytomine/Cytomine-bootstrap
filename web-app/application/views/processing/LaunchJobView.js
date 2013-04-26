@@ -10,6 +10,7 @@ var LaunchJobView = Backbone.View.extend({
         this.software = options.software;
         this.project = options.project;
         this.parent = options.parent;
+        this.el = options.el;
     },
     render: function () {
         var self = this;
@@ -17,43 +18,21 @@ var LaunchJobView = Backbone.View.extend({
             "text!application/templates/processing/JobLaunch.tpl.html"
         ],
             function (JobLaunchTpl) {
+                console.log(self) ;
                 self.loadResult(JobLaunchTpl);
             });
         return this;
     },
     loadResult: function (JobLaunchTpl) {
+        console.log("loadResult");
         var self = this;
         var content = _.template(JobLaunchTpl, {});
+
         $(self.el).empty();
         $(self.el).append(content);
         self.params = [];
         self.paramsViews = [];
 
-        var width = ($(window).width() - 200);
-        var height = ($(window).height() - 200);
-        $(self.el).dialog({
-            modal: true,
-            minWidth: Math.min(Math.round($(window).width() - 75), 800),
-            minHeight: Math.round($(window).height() - 75),
-            maxWidth: 800,
-            buttons: [
-                {
-                    text: "Cancel",
-                    click: function () {
-                        $(this).dialog("close");
-                    }
-                },
-                {
-                    text: "Create job",
-                    click: function () {
-                        self.createJobFromParam();
-
-                    }
-                }
-            ], close: function (event, ui) {
-                $("#userRetrievalSuggestMatrixDataTable").empty();
-            }
-        });
         $("#jobTitle").append("<h3>Run job from " + self.software.get('name') + " on project " + self.project.get('name') + " </h3>");
 
         _.each(self.software.get('parameters'), function (param) {
@@ -175,7 +154,6 @@ var LaunchJobView = Backbone.View.extend({
                 window.app.view.message("Add Job", response.message, "success");
                 console.log(model.get('job').id);
                 self.parent.changeJobSelection(model.get('job').id);
-                $(self.el).dialog("close");
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

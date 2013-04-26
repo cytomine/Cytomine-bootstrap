@@ -124,7 +124,8 @@ var AnnotationsPanel = Backbone.View.extend({
         el.css("width", "16px");
         el.css("height", "16px");
         el.css("bottom", "0px");
-        el.find("div.panel_button").click(function () {
+        el.find("div.panel_button").click(function (event) {
+            event.preventDefault();
             width = parseInt($(window).width());
             el.find("div.panel_button").toggle();
             el.css("bottom", "0px");
@@ -144,7 +145,8 @@ var AnnotationsPanel = Backbone.View.extend({
         });
 
 
-        el.find("div#hide_button").click(function () {
+        el.find("div#hide_button").click(function (event) {
+            event.preventDefault();
             el.animate({
                 height: "16px"
             }, "fast")

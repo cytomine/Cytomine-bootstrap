@@ -204,7 +204,7 @@ var ExplorerTabs = Backbone.View.extend({
         tabs.append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>", { idProject: window.app.status.currentProject}));
         tabs.append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>", { idProject: window.app.status.currentProject}));
 
-        $('a[data-toggle="tab"]').live('show', function (e) {
+        $(document).on('click','a[data-toggle="tab"]', function (e) {
             var hash = this.href.split("#")[1];
             $("#" + hash).attr('style', 'width:100%;min-height:500px;overflow:auto;');
             if (self.triggerRoute) {

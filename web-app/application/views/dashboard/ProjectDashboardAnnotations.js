@@ -36,7 +36,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
 
 
         $(self.el).find("input.undefinedAnnotationsCheckbox").change(function () {
-            if ($(this).attr("checked") == "checked") {
+            if ($(this).is(':checked')) {
                 self.refreshAnnotations(-1, self.selectedUsers, self.selectedJobs, self.selectedImages);
                 self.selectedTerm.push(-1);
                 $("#tabsterm-panel-" + self.model.id + "--1").show();
@@ -48,7 +48,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             self.updateDownloadLinks();
         });
         $(self.el).find("input.multipleAnnotationsCheckbox").change(function () {
-            if ($(this).attr("checked") == "checked") {
+            if ($(this).is(':checked')) {
                 self.refreshAnnotations(-2, self.selectedUsers, self.selectedJobs, self.selectedImages);
                 self.selectedTerm.push(-2);
                 $("#tabsterm-panel-" + self.model.id + "--2").show();
@@ -631,8 +631,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var nbTermSelected = _.size(this.selectedTerm);
         var nbJobSelected = _.size(this.selectedJobs);
         var nbSelectedImages = _.size(this.selectedImages);
-        nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
-        nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") ? 1 : 0;
+        nbTermSelected += ($(this.el).find("input.undefinedAnnotationsCheckbox").is(':checked')) ? 1 : 0;
+        nbTermSelected += ($(this.el).find("input.multipleAnnotationsCheckbox").is(':checked')) ? 1 : 0;
         if (nbTermSelected > 0 && nbSelectedImages > 0 && (nbUserSelected > 0 || nbJobSelected > 0)) {
             $("#listtabannotation").show();
             $("#downloadAnnotation").show();
@@ -689,10 +689,10 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             }
             self.refreshAnnotations(node.data.key, users, jobs, images);
         });
-        if ($(this.el).find("input.undefinedAnnotationsCheckbox").attr("checked") == "checked") {
+        if ($(this.el).find("input.undefinedAnnotationsCheckbox").is(':checked')) {
             self.refreshAnnotations(-1, users, jobs, images);
         }
-        if ($(this.el).find("input.multipleAnnotationsCheckbox").attr("checked") == "checked") {
+        if ($(this.el).find("input.multipleAnnotationsCheckbox").is(':checked')) {
             self.refreshAnnotations(-2, users, jobs, images);
         }
         self.updateContentVisibility();

@@ -46,22 +46,27 @@ var DashboardController = Backbone.Router.extend({
         this.imagesarray(project);
     },
     imagesthumbs: function (project) {
+        console.log("imagesthumbs");
         var self = this;
         var func = function () {
+            console.log("refreshImagesThumbs");
             self.view.refreshImagesThumbs();
+            console.log("showImagesThumbs");
             self.view.showImagesThumbs();
             var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-images-' + window.app.status.currentProject + ']').click();
+            tabs.find('a[href=#tabs-images-' + window.app.status.currentProject + ']').tab('show');
         };
         this.init(project, func);
     },
     imagesarray: function (project) {
         var self = this;
         var func = function () {
+            console.log("refreshImagesTable");
             self.view.refreshImagesTable();
+            console.log("showImagesTable");
             self.view.showImagesTable();
             var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-images-' + window.app.status.currentProject + ']').click();
+            tabs.find('a[href=#tabs-images-' + window.app.status.currentProject + ']').tab('show');
         };
         this.init(project, func);
     },

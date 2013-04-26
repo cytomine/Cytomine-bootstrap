@@ -76,6 +76,7 @@ var UploadFormView = Backbone.View.extend({
                 add: function (e, data) {
                     var that = $(this).data('fileupload'),
                         files = data.files;
+                    console.log(that);
                     that._adjustMaxNumberOfFiles(-files.length);
                     data.isAdjusted = true;
                     data.files.valid = data.isValidated = that._validate(files);
@@ -668,11 +669,9 @@ var UploadFormView = Backbone.View.extend({
         uploadTable.show();
         loadingDiv.hide();
 
-
-        $("#refreshUploadedFiles").live("click", function (e) {
+        $(document).on('click', "#refreshUploadedFiles", function (e) {
             e.preventDefault();
             self.uploadDataTables.fnReloadAjax();
-
         });
     },
     doLayout: function (tpl) {
@@ -687,7 +686,7 @@ var UploadFormView = Backbone.View.extend({
 
         linkWithProject.off('change');
         linkWithProject.on('change', function (event) {
-            if ($(this).attr("checked") == "checked") {
+            if ($(this).is(':checked')) {
                 linkProjectSelect.removeAttr("disabled");
             } else {
                 linkProjectSelect.attr("disabled", "disabled");
@@ -732,7 +731,7 @@ var UploadFormView = Backbone.View.extend({
                 var linkProjectSelect = $("#linkProjectSelect");
                 var linkWithProject = $("#linkWithProject");
                 var idProject = null;
-                if (linkWithProject.attr("checked") == "checked") {
+                if (linkWithProject.is(':checked')) {
                     idProject = linkProjectSelect.val();
                 }
                 var idStorage = linkStorageSelect.val();

@@ -30,13 +30,15 @@ var ProjectDescriptionDialog = Backbone.View.extend({
         });
 
         //Add event button on the modal window.
-        $("#closeDescriptionProjectDialog").click(function () {
+        $("#closeDescriptionProjectDialog").click(function (event) {
+            event.preventDefault();
             $("#projectDescription" + self.model.id).modal('hide');
             $("#projectDescription" + self.model.id).remove();
             return false;
         });
 
-        $("#saveDescriptionProjectDialog").click(function () {
+        $("#saveDescriptionProjectDialog").click(function (event) {
+            event.preventDefault();
             self.saveDescriptionProject();
 
             $("#projectDescription" + self.model.id).modal('hide');

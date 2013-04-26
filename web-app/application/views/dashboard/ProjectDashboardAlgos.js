@@ -118,6 +118,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
         $("#panelJobResultsDiv").empty();
         //load result
         self.fillJobSelectView();
+
+        self.printSoftwareButton();
     },
     printProjectSoftwareInfo: function () {
         var self = this;
@@ -143,48 +145,80 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     printSoftwareButton: function () {
         var self = this;
-        //jobLaunchDialogParent
-        $("#softwareLaunchJobButton").click(function () {
-            new LaunchJobView({
-                software: self.software,
-                project: self.model,
-                el: $("#jobComparatorDialogParent"),
-                parent: self
-            }).render();
+
+        //init modal for job launch
+        var launchView = new LaunchJobView({
+            software: self.software,
+            project: self.model,
+            el: '#jobComparatorDialogParent',
+            parent: self
         });
 
-        $("#softwareCompareJobButton").click(function () {
-            self.jobsLight.fetch({
-                success: function (collection, response) {
-                    new JobComparatorView({
-                        software: self.software,
-                        project: self.model,
-                        el: $("#jobComparatorDialogParent"),
-                        parent: self,
-                        jobs: collection,
-                        job1: undefined,
-                        job2: undefined,
-                        softwares: self.softwares
-                    }).render();
-                }
-            });
+        var modalLaunch = new CustomModal({
+            idModal : "launchJobModal",
+            button : $("#softwareLaunchJobButton"),
+            header :"Launch new job",
+            body :"<div id='jobComparatorDialogParent'></div>",
+            width : Math.round($(window).width() - 200),
+            height : Math.round($(window).height() - 75),
+            callBack: function() {launchView.render();}
         });
+        modalLaunch.addButtons("closeNewJob","Close",false);
+        modalLaunch.addButtons("createNewJob","Create new job",true,function() {launchView.createJobFromParam();});
 
-        $("#softwareFilterJobButton").click(function () {
 
-            new JobSearchView({
-                software: self.software,
-                project: self.model,
-                idJob: self.idJob,
-                parent: self,
-                el: $("#softwareSearchDialogParent")
-            }).render();
+        //init modal for job compare
+        var modalCompare = new CustomModal({
+            idModal : "compareJobModal",
+            button : $("#softwareCompareJobButton"),
+            header :"Compare jobs",
+            body :"<div id='jobComparatorDialogParent'></div>",
+            width : Math.round($(window).width() - 200),
+            height : Math.round($(window).height() - 200),
+            callBack: function() {
+                self.jobsLight.fetch({
+                            success: function (collection, response) {
+                                var compareView =  new JobComparatorView({
+                                       software: self.software,
+                                       project: self.model,
+                                       el: "#jobComparatorDialogParent",
+                                       parent: self,
+                                       job1: undefined,
+                                       job2: undefined,
+                                       softwares: self.softwares,
+                                       jobs : collection
+                                 }).render();
+                            }
+                        });
+            }
         });
+        modalCompare.addButtons("closeCompare","Close",false);
+
+
+        //init modal for job filter
+        var modalCompare = new CustomModal({
+            idModal : "filterJobModal",
+            button :  $("#softwareFilterJobButton"),
+            header :"Filter jobs",
+            body :"<div id='jobFilterDialogParent'></div>",
+            width : Math.round($(window).width() - 200),
+            height : Math.round($(window).height() - 200),
+            callBack: function() {
+                new JobSearchView({
+                    software: self.software,
+                    project: self.model,
+                    idJob: self.idJob,
+                    parent: self,
+                    el: "#softwareSearchDialogParent"
+                }).render();
+            }
+        });
+        modalCompare.addButtons("closeCompare","Close",false);
     },
     printComparatorLaunch: function () {
         var self = this;
 
-        $("#launchComparator").live("click", function () {
+        $(document).on('click',"#launchComparator", function () {
             self.jobsLight.fetch({
                 success: function (collection, response) {
 

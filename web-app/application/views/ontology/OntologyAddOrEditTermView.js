@@ -97,11 +97,13 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
             keyboard: true,
             backdrop: false
         });
-        $("#AddOrEditTermButton").click(function () {
+        $("#AddOrEditTermButton").click(function (event) {
+            event.preventDefault();
             self.$from.submit();
             return false;
         });
-        $("#closeAddOrEditTermDialog").click(function () {
+        $("#closeAddOrEditTermDialog").click(function (event) {
+            event.preventDefault();
             self.$termDialog.modal('hide');
             self.$termDialog.remove();
             return false;

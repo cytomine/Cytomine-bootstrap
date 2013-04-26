@@ -124,7 +124,8 @@ var SoftwareProjectPanel = Backbone.View.extend({
                     var option = _.template("<option value='<%= id %>'><%= name %></option>", software.toJSON());
                     $(self.el).find("#addSoftware").append(option);
                 });
-                $(self.el).find("#addSoftwareButton").click(function () {
+                $(self.el).find("#addSoftwareButton").click(function (event) {
+                    event.preventDefault();
                     new SoftwareProjectModel({ project: self.model.id, software: $(self.el).find("#addSoftware").val()}).save({}, {
                         success: function (softwareProject, response) {
                             self.renderSoftware(new SoftwareProjectModel(softwareProject.toJSON().softwareproject), el);
@@ -141,7 +142,7 @@ var SoftwareProjectPanel = Backbone.View.extend({
 
         self.renderSoftwares();
 
-        $(this.el).find("a.removeSoftware").live('click', function () {
+        $(document).on('click', "a.removeSoftware", function () {
             var idSoftwareProject = $(this).attr('data-id');
             self.removeSoftware(idSoftwareProject);
             return false;
@@ -188,7 +189,8 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
                     $(self.el).find("#addImageFilter").append(option);
 
                 });
-                $(self.el).find("#addImageFilterButton").click(function () {
+                $(self.el).find("#addImageFilterButton").click(function (event) {
+                    event.preventDefault();
                     new ProjectImageFilterModel({ project: self.model.id, imageFilter: $(self.el).find("#addImageFilter").val()}).save({}, {
                         success: function (imageFilter, response) {
                             self.renderImageFilter(new ImageFilterModel(imageFilter.toJSON().imagefilterproject), el);
@@ -205,12 +207,11 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
 
         self.renderFilters();
 
-        $(this.el).find("a.removeImageFilter").live('click', function () {
+        $(document).on('click', "a.removeImageFilter", function () {
             var idImageFilter = $(this).attr("data-id");
             self.removeImageFilter(idImageFilter);
             return false;
         });
-
         return this;
 
     }

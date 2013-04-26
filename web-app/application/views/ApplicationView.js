@@ -122,8 +122,11 @@ var ApplicationView = Backbone.View.extend({
         return this;
     },
     initEvents: function () {
-        $("#undo").live('click', this.undo);
-        $("#redo").live('click', this.redo);
+        $(document).on('click',"#undo",this.undo);
+        $(document).on('click',"#redo",this.redo);
+//
+//        $("#undo").on('click', this.undo);
+//        $("#redo").on('click', this.redo);
     },
     /**
      * Grab the layout and call ask for render
@@ -132,12 +135,20 @@ var ApplicationView = Backbone.View.extend({
         this.initComponents();
         var self = this;
         require([
-            "text!application/templates/BaseLayout.tpl.html", "text!application/templates/HotkeysDialog.tpl.html"
+            "text!application/templates/BaseLayout.tpl.html","text!application/templates/HotkeysDialog.tpl.html"
         ],
-            function (tpl,tplHotkeys) {
-                self.doLayout(tpl, renderCallback);
-                $("div#hotkeys").append(tplHotkeys);
+        function (tpl,tplHotkeys) {
+            self.doLayout(tpl, renderCallback);
+            var modal = new CustomModal({
+                idModal : "hotkeysModal",
+                button : $("#hotkeysModalButton"),
+                header :"HotKeys",
+                body :tplHotkeys,
+                width : 900,
+                height : 800
             });
+            modal.addButtons("closeHotKeys","Close",true);
+        });
         return this;
     },
     initPreferences: function () {
@@ -182,11 +193,6 @@ var ApplicationView = Backbone.View.extend({
                 e.preventDefault();
                 showClassicWidget();
             });
-//            $("#hotKeys").on("click", function (e) {
-//                console.log("click");
-//                e.preventDefault();
-//                new HotkeysDialog({el: $('#dialogs')}).render();
-//            });
 
         });
 

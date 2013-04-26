@@ -12,7 +12,8 @@ var ImagePropertiesView = Backbone.View.extend({
                 dialogID: "#image-properties"
             }
         }).render();
-        $("#closeImagePropertiesDialog").click(function () {
+        $("#closeImagePropertiesDialog").click(function (event) {
+            event.preventDefault();
             self.dialog.close();
             return false;
         });

@@ -20,7 +20,7 @@ class KmeansGeometryService {
 
     public static int ANNOTATIONSIZE1 = 0
     public static int ANNOTATIONSIZE2 = 100
-    public static int ANNOTATIONSIZE3 = 500
+    public static int ANNOTATIONSIZE3 = 2000
     public static int ANNOTATIONSIZE4 = 10000
     public static int ANNOTATIONSIZE5 = 100000
 

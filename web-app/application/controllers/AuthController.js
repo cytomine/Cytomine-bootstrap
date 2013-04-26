@@ -13,6 +13,7 @@ var AuthController = Backbone.Router.extend({
     doLogin: function () {
         var app = new ApplicationView(); //in order to use message function
         var data = $("#login-form").serialize(); //should be in LoginDIalogView
+        var location = window.location;
         $.ajax({
             url: 'j_spring_security_check',
             type: 'post',
@@ -20,7 +21,6 @@ var AuthController = Backbone.Router.extend({
             data: data,
             success: function (data) {
                 app.message("Welcome", "You are logged as " + data.fullname, "", "success");
-                $("#login-confirm").modal('hide');
                 new UserModel({id: data.id}).fetch({
                     success: function (model, response) {
                         window.app.status.user = {
@@ -30,6 +30,8 @@ var AuthController = Backbone.Router.extend({
                             filenameVisible : true
                         }
                         window.app.startup();
+                        window.location = location;
+                        window.location.reload(true);
                     }
                 });
 

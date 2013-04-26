@@ -30,7 +30,8 @@ var ProjectUsersDialog = Backbone.View.extend({
             keyboard: true,
             backdrop: false
         });
-        $("#closeUserProjectDialog").click(function () {
+        $("#closeUserProjectDialog").click(function (event) {
+            event.preventDefault();
             $("#projectUsers" + self.model.id).modal('hide');
             $("#projectUsers" + self.model.id).remove();
             return false;

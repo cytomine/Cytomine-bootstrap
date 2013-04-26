@@ -44,9 +44,6 @@ var JobComparatorView = Backbone.View.extend({
         $(self.el).append(content);
 
 
-        var width = ($(window).width() - 200);
-        var height = ($(window).height() - 200);
-        $(self.el).dialog({ width: width, height: height, modal: true });
         self.printSoftwareSelection($("#comparatorSoftwareSelection"));
         self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job1'), self.software1.id);
         self.changeSelectionValue($("#comparatorSoftwareSelection").find('.job2'), self.software2.id);

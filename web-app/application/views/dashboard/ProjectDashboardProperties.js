@@ -107,7 +107,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
     initPropertyRowEvents : function () {
         var self = this;
 
-        $("td.propertyKey").live("dblclick", function () {
+        $(document).on('dblclick', "td.propertyKey", function () {
             var id = $(this).attr('data-id');
             var idForm = "propertyFormKey" + id;
             var model;
@@ -139,7 +139,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
             });
         });
 
-        $("td.propertyValue").live("dblclick", function () {
+        $(document).on('dblclick',"td.propertyValue", function () {
             var id = $(this).attr('data-id');
             var idForm = "propertyFormValue" + id;
             var model;
@@ -478,23 +478,24 @@ var ProjectDashboardProperties = Backbone.View.extend({
         } else if (self.nameDomain == "ImageInstance") {
             domainName = "imageinstance";
         }
-
+        console.log("####################");
         if (domainName != null) {
             $.get("/api/"+domainName+"/property/key.json?idProject=" + window.app.status.currentProject, function(data) {
+                console.log(data);
+                console.log(data.collection);
                 _.each (data.collection, function (item){
+                    console.log(item)
                     keyNameArray.push(item);
                 });
+                console.log("*************");
+                console.log(keyNameArray);
+                $("#input_key").typeahead({source:keyNameArray});
+                console.log("*************");
+            });
 
-                //autocomplete
-                $("#input_key").autocomplete({
-                    minLength: 0, //with min=0, if user erase its text, it will show all key withouth name constraint
-                    source: keyNameArray
-                });
-            });
         } else {
-            $("#input_key").autocomplete({
-                source: keyNameArray
-            });
+            $("#input_key").typeahead({source:keyNameArray});
         }
+
     }
 });

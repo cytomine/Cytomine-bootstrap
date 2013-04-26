@@ -2,6 +2,7 @@ var ProjectDashboardImages = Backbone.View.extend({
     imagesView: null,
     imagesTabsView: null,
     refreshImagesThumbs: function () {
+        console.log("refreshImagesThumbs");
         if (this.imagesView == null) {
             this.imagesView = new ImageView({
                 page: 0,

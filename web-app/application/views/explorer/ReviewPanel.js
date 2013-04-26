@@ -266,7 +266,7 @@ var ReviewPanel = SideBarPanel.extend({
             });
 
             $('#showReviewLayer' + self.model.id).on('change',function () {
-                self.reviewLayer.vectorsLayer.setVisibility($(this).attr("checked"));
+                self.reviewLayer.vectorsLayer.setVisibility($(this).is(':checked'));
             });
 
         } else {
@@ -287,13 +287,16 @@ var ReviewPanel = SideBarPanel.extend({
             //hide and lock action
             el.find("#currentReviewAnnotation" + self.model.get("id")).hide();
             el.find("#reviewChoice" + self.model.get("id")).hide();
-            el.find(".toggleShowAnnotation").click(function () {
+            el.find(".toggleShowAnnotation").click(function (event) {
+                event.preventDefault();
                 return false;
             });
-            el.find(".toggleShowLayers").click(function () {
+            el.find(".toggleShowLayers").click(function (event) {
+                event.preventDefault();
                 return false;
             });
-            el.find(".toggleShowAction").click(function () {
+            el.find(".toggleShowAction").click(function (event) {
+                event.preventDefault();
                 return false;
             });
         }

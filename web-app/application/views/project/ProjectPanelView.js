@@ -155,20 +155,22 @@ var ProjectPanelView = Backbone.View.extend({
                     dialogID: '#delete-project-confirm'
                 }
             }).render();
-            $("#closeProjectDeleteCancelDialog").click(function () {
+            $("#closeProjectDeleteCancelDialog").click(function (event) {
+                event.preventDefault();
                 $('#delete-project-confirm').modal("hide");
                 $('#delete-project-confirm').remove();
                 return false;
             });
-            $('#delete-project-confirm').find("a.close").click(function() {
+            $('#delete-project-confirm').find("a.close").click(function(event) {
+                event.preventDefault();
                 $('#delete-project-confirm').modal("hide");
                 $('#delete-project-confirm').remove();
                 return false;
             });
 
 
-            $("#closeProjectDeleteConfirmDialog").click(function () {
-
+            $("#closeProjectDeleteConfirmDialog").click(function (event) {
+                event.preventDefault();
                 new TaskModel({project: self.model.id}).save({}, {
                          success: function (taskResponse, response) {
                              var task = taskResponse.get('task');

@@ -50,9 +50,12 @@ body {
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 
+
+
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
 
 <!-- fuel ux -->
 <link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
@@ -75,6 +78,12 @@ body {
 
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
+<!-- fileupload -->
+%{--<script type="text/javascript" src="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"></script>--}%
+<script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-7.4.1/js/cors/jquery.xdr-transport.js"></script>
+
 <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>
 
 <!-- RequireJS -->
@@ -94,11 +103,7 @@ body {
 
 <script type="text/javascript" src="lib/json2.js"></script>
 
-<!-- fileupload -->
-<script type="text/javascript" src="lib/fileupload/vendor/jquery.ui.widget.js"></script>
-<script type="text/javascript" src="lib/fileupload/jquery.iframe-transport.js"></script>
-<script type="text/javascript" src="lib/fileupload/jquery.fileupload.js"></script>
-<script type="text/javascript" src="lib/fileupload/cors/jquery.xdr-transport.js"></script>
+
 
 
 <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
@@ -128,8 +133,8 @@ body {
 <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
 
 <!--jqgrid -->
-<script src="lib/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-<script src="lib/jqgrid/js/jquery.jqGrid.src.js" type="text/javascript"></script>
+<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>
 
 <!-- Datatables -->
 <script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>
@@ -279,7 +284,7 @@ body {
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
 
-
+<script type="text/javascript" src="application/utils/CustomModal.js" ></script>
 <script type="text/javascript" src="application/utils/HotKeys.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Utils.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Invert.js" ></script>
@@ -308,7 +313,8 @@ body {
 </head>
 <body>
 
-
+<div id="modals">
+</div>
 <div id="hotkeys">
 </div>
 <div id="similarannotationmodal">

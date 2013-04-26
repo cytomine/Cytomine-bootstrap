@@ -53,10 +53,11 @@ var ImageFiltersPanel = Backbone.View.extend({
             self.redraw();
         });
         el.find("input[name=filterActive]").change(function () {
-            self.enabled = ($(this).attr("checked") == "checked");
+            self.enabled = ($(this).is(':checked'));
             self.redraw();
         });
-        el.find("a[name=reset]").click(function () {
+        el.find("a[name=reset]").click(function (event) {
+            event.preventDefault();
             el.find("#brightness" + self.model.get("id")).slider("option", "value", 128);
             el.find("#contrast" + self.model.get("id")).slider("option", "value", 128);
             el.find("input[name=invert]").removeAttr("checked");
@@ -114,7 +115,7 @@ var ImageFiltersPanel = Backbone.View.extend({
         var el = $("#" + this.browseImageView.divId).find("#imageFiltersPanel" + this.model.get("id"));
         var brightness = parseInt(el.find("#brightness" + this.model.get("id")).slider("value"));
         var contrast = parseInt(el.find("#contrast" + this.model.get("id")).slider("value"));
-        var invert = (el.find("input[name=invert]").attr("checked") == "checked");
+        var invert = (el.find("input[name=invert]").is(':checked'));
         this.parameters = [];
         this.parameters.push({ key: "brightness", value: brightness});
         this.parameters.push({ key: "contrast", value: contrast});

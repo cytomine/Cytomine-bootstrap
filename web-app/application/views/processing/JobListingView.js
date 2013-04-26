@@ -12,6 +12,8 @@ var JobListingView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
+        alert("used here!");
+        console.log("trace");
         require([
             "text!application/templates/processing/JobListing.tpl.html"
         ],
@@ -108,7 +110,8 @@ var JobListingView = Backbone.View.extend({
                             created: dateStr
                         };
                         $("#listAlgoInfo").jqGrid('addRowData', i + 1, data);
-                        $("#seeResult" + job.id).button().click(function () {
+                        $("#seeResult" + job.id).button().click(function (event) {
+                            event.preventDefault();
                             self.selectJob(job);
                         });
 

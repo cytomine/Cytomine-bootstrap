@@ -251,7 +251,7 @@ var BrowseImageView = Backbone.View.extend({
                 return;
             }
             if (visibility) {
-                if ($(this).attr("checked") != "checked") {
+                if (!$(this).is(':checked')) {
                     this.click();
                 }
             } else {

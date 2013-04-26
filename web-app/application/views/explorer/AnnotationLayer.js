@@ -653,10 +653,11 @@ AnnotationLayer.prototype = {
         //$("#loadSimilarAnnotation" + annotation.id).replaceWith("<a href=\"#\" id=\"annotationSimilar" + annotation.id + "\"> Search similar annotations</a>");
 
 
-        $("#loadSimilarAnnotation" + annotation.id).replaceWith('<a id="showRetrieval'+annotation.id+'" href="#myModalRetrieval" role="button" class="btn" data-toggle="modal">Launch demo modal</a>');
+        $("#loadSimilarAnnotation" + annotation.id).replaceWith('<a id="showRetrieval'+annotation.id+'" href="#myModalRetrieval" role="button" class="btn" data-toggle="modal">See similar annotations</a>');
 
 
-        $("#showRetrieval" + annotation.id).click(function () {
+        $("#showRetrieval" + annotation.id).click(function (event) {
+            event.preventDefault();
             console.log("click");
             var bestTerms = [bestTerm1, bestTerm2];
             var bestTermsValue = [bestTerm1Value, bestTerm2Value];

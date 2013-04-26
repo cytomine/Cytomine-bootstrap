@@ -149,20 +149,28 @@ var ProjectSearchPanel = Backbone.View.extend({
             projectNameArray.push(project.get('name'));
         });
 
-        //autocomplete
-        $(self.searchProjectTextBoxElem).autocomplete({
-            minLength: 0, //with min=0, if user erase its text, it will show all project withouth name constraint
-            source: projectNameArray,
-            select: function (event, ui) {
-                $(self.searchProjectTextBoxElem).val(ui.item.label)
-                self.searchProject();
+        //autocomplete  old version with jq ui
+//        $(self.searchProjectTextBoxElem).autocomplete({
+//            minLength: 0, //with min=0, if user erase its text, it will show all project withouth name constraint
+//            source: projectNameArray,
+//            select: function (event, ui) {
+//                $(self.searchProjectTextBoxElem).val(ui.item.label)
+//                self.searchProject();
+//
+//            },
+//            search: function (event) {
+//                console.log("search=" + $(self.searchProjectTextBoxElem).val());
+//                self.searchProject();
+//            }
+//        });
 
-            },
-            search: function (event) {
-                console.log("search=" + $(self.searchProjectTextBoxElem).val());
-                self.searchProject();
-            }
-        });
+
+
+
+        $(self.searchProjectTextBoxElem).typeahead({source:projectNameArray,minLength:0});
+
+        $(self.searchProjectTextBoxElem).bind('propertychange keyup input paste',function() {self.searchProject();});
+
     },
     /**
      * Create a slider elem in slideElem with min/max value and a label with its amount in labelElem
@@ -174,6 +182,26 @@ var ProjectSearchPanel = Backbone.View.extend({
     createSliderWithoutAmountPrint: function (sliderElem, labelElem, min, max) {
         var self = this;
 
+//        $(sliderElem).noUiSlider({
+//            range: [20, 100]
+//           ,start: [40, 80]
+//           ,step: 20
+//           ,slide: function(){
+//           }
+////            range: [min, max]
+////           ,start: [min, max]
+////           ,step: 1
+////           ,slide: function(){
+//////              var values = $(this).val();
+//////                $(labelElem).val("" + values[ 0 ] + " - " + values[ 1 ]);
+//////                self.searchProject();
+////           }
+//        });
+////        $(labelElem).val("" + $(sliderElem).val()[0] + " - " + $(sliderElem).val()[1]);
+//        $(labelElem).find("a").click(function() {
+//            alert("1234");
+//            return false;}
+//        );
 
         $(sliderElem).slider({
             range: true,

@@ -111,8 +111,8 @@ var RetrievalAlgoResult = Backbone.View.extend({
                             if (propertyName != term.id) {
                                 var elemId = "term" + term.id + "suggest" + propertyName;
 
-                                $(self.el).find("#list-suggest-" + term.id).append("<a id=\"" + elemId + "\"><b>" + terms.get(propertyName).get('name') + "</b> (" + entry[i][propertyName] + "%) </a>");
-                                self.linkAnnotationMapWithBadTerm($("#" + elemId), term.id, propertyName, terms);
+                                $(self.el).find("#list-suggest-" + term.id).append("<a role='button'  data-toggle='modal' href='#"+elemId+"Modal' id=\"" + elemId + "\"><b>" + terms.get(propertyName).get('name') + "</b> (" + entry[i][propertyName] + "%) </a>");
+                                self.linkAnnotationMapWithBadTerm($("#" + elemId), term.id, propertyName, terms,elemId+"Modal");
                             } else {
                                 $(self.el).find("#success-suggest-" + term.id).html("");
                                 $(self.el).find("#success-suggest-" + term.id).append(entry[i][propertyName]);
@@ -129,65 +129,72 @@ var RetrievalAlgoResult = Backbone.View.extend({
                 //Global sucess rate per class (For each class, compute sucess + make avg)
                 $(self.el).find("#worstTermList").append('<b>Average (per class):</b> ' + (model.get('avgMiddlePerClass') * 100).toFixed(2) + "%<br>");
 
-                $(self.el).find("#worstTermList").append('<br><button id="matrix-suggest" class="btn">View confusion matrix</button>');
+                $(self.el).find("#worstTermList").append('<br><a role="button" data-toggle="modal" href="#confusionMatrixModal" id="matrix-suggest" class="btn">View confusion matrix</a>');
                 $(self.el).find("#worstTermList").append('<a href="#tabs-annotations-' + self.project.id + '-all-' + self.model.get("userJob") + '" class="btn">View predicted galleries</a>');
-                $(self.el).find("#matrix-suggest").button();
-                $(self.el).find('#matrix-suggest').click(function () {
-                    self.initMatrixDialog(terms);
+//                $(self.el).find("#matrix-suggest").button();
+
+
+
+                var fillMatrix = function(){
+                    $(self.el).find('#userRetrievalSuggestMatrixDataTable').empty();
+                    new StatsRetrievalSuggestionMatrixModel({job: self.model.id}).fetch({
+                        success: function (model, response) {
+                            console.log("build matrix");
+                            self.drawRetrievalSuggestionTable(model, response, terms);
+                            console.log("build dialog:" + $("#userRetrievalSuggestMatrixDataTable").length);
+                        }
+                    });
+                }
+
+                var modal = new CustomModal({
+                    idModal : "confusionMatrixModal",
+                    button : $("#matrix-suggest"),
+                    header :"Confusion Matrix",
+                    body :"<div id='userRetrievalSuggestMatrixDataTable'></div>",
+                    width : Math.round($(window).width() - 75),
+                    height : Math.round($(window).height() - 75),
+                    callBack: fillMatrix
                 });
+                modal.addButtons("closeHotKeys","Close",true);
             }
         );
     },
-    linkAnnotationMapWithBadTerm: function ($item, term, suggestTerm, terms) {
+    linkAnnotationMapWithBadTerm: function ($item, term, suggestTerm, terms,modalId) {
         var self = this;
-        $item.click(function () {
 
-            $(self.el).find('#annotationQuestionable').replaceWith("");
-            $(self.el).find("#annotationQuestionableMain").empty();
-            $(self.el).find("#annotationQuestionableMain").append("<div id=\"annotationQuestionable\"></div>");
+        console.log("click");
+         console.log("modalId="+modalId);
+         console.log("$item="+$item.html());
 
-            new AnnotationCollection({project: self.project.id, term: term, suggestTerm: suggestTerm, job: self.model.id}).fetch({
-                success: function (collection, response) {
-                    var panel = new AnnotationQuestionableView({
-                        model: collection,
-                        container: self,
-                        el: "#annotationQuestionable",
-                        terms: terms,
-                        term: term,
-                        suggestTerm: suggestTerm
-                    }).render();
+         //init modal for job filter
+         var modalCompare = new CustomModal({
+             idModal : modalId,
+             button :  $item,
+             header :"",
+             body :"<div id='annotationQuestionable'></div>",
+             width : Math.round($(window).width() - 200),
+             height : Math.round($(window).height() - 200),
+             callBack: function() {
+                 console.log("callBack");
+                 new AnnotationCollection({project: self.project.id, term: term, suggestTerm: suggestTerm, job: self.model.id}).fetch({
+                     success: function (collection, response) {
+                         console.log("AnnotationQuestionableView");
+                         var panel = new AnnotationQuestionableView({
+                             model: collection,
+                             container: self,
+                             el: "#annotationQuestionable",
+                             terms: terms,
+                             term: term,
+                             suggestTerm: suggestTerm
+                         }).render();
 
-                }
-            });
-        });
+                     }
+                 });
+             }
+         });
+         modalCompare.addButtons("closeCompare","Close",false);
     },
-    initMatrixDialog: function (terms) {
-        var self = this;
-        $(self.el).find('#userRetrievalSuggestMatrixDataTable').empty();
-        new StatsRetrievalSuggestionMatrixModel({job: self.model.id}).fetch({
-            success: function (model, response) {
-                console.log("build matrix");
-                self.drawRetrievalSuggestionTable(model, response, terms);
-                console.log("build dialog:" + $("#userRetrievalSuggestMatrixDataTable").length);
-                $("#userRetrievalSuggestMatrixDataTable").dialog({
-                    modal: true,
-                    minWidth: Math.round($(window).width() - 75),
-                    minHeight: Math.round($(window).height() - 75),
-                    buttons: [
-                        {
-                            text: "Ok",
-                            click: function () {
-                                $(this).dialog("close");
-                            }
-                        }
-                    ], close: function (event, ui) {
-                        $("#userRetrievalSuggestMatrixDataTable").empty();
-                    }
-                });
 
-            }
-        });
-    },
     tableElement: 'userRetrievalSuggestMatrixDataTable',
     tableElementHtml: 'userRetrievalSuggestMatrixDataTableHtml',
     addLine: function (idLine) {
@@ -197,14 +204,15 @@ var RetrievalAlgoResult = Backbone.View.extend({
         this.addCell(idLine, idColumn, value, style, '');
     },
     addCell: function (idLine, idColumn, value, style, tooltip) {
-        $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#" + idLine).append('<td id="' + idColumn + '"title="' + tooltip + '" class="' + style + '">' + value + '</td>');
+        var modalId = 'confusionMatrix'+idLine+"-"+idColumn+'Modal';
+        $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#" + idLine).append('<td id="' + idColumn + '"title="' + tooltip + '" class="' + style + '"><a data-Toggle="modal" href="#'+modalId+'">' + value + '</a></td>');
         var elem = $("#userRetrievalSuggestMatrixDataTableHtml").find("tr#" + idLine).find("td#" + idColumn);
         if (tooltip != '' && tooltip != undefined) {
             elem.tooltip();
         }
 
         if (idLine > 0 && idColumn > 0 && value != '') {
-            this.linkAnnotationMapWithBadTerm(elem, idLine, idColumn, this.terms)
+            this.linkAnnotationMapWithBadTerm(elem.find("a"), idLine, idColumn, this.terms,modalId)
         }
     },
     drawRetrievalSuggestionTable: function (model, response, terms) {

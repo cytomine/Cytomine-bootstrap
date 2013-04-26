@@ -126,7 +126,7 @@ var JobSelectionView = Backbone.View.extend({
                 });
             }
 
-            var noDeletedData = $(self.el).find("#onlyDeletedJob").attr('checked');
+            var noDeletedData = $(self.el).find("#onlyDeletedJob").is(':checked');
             if(noDeletedData) {
                 filteredJobs = _.filter(filteredJobs, function(job,index){ return !job.get('dataDeleted')});
             }
@@ -294,7 +294,7 @@ var JobSelectionView = Backbone.View.extend({
     initSubGridDatatables: function () {
         var self = this;
 
-        $(self.el).find('#selectJobTable tbody td i').live('click', function () {
+        $(self.el).find("#selectJobTable tbody td i").on('click', function () {
             var nTr = $(this).parents('tr')[0];
             if (self.table.fnIsOpen(nTr)) {
                 /* This row is already open - close it */

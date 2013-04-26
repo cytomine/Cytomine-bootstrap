@@ -65,13 +65,14 @@ var JobDeleteAllDataView = Backbone.View.extend({
 
 
         console.log("button listener...");
-        $("#jobDeleteDataCancelButton" + self.model.id).click(function () {
+        $("#jobDeleteDataCancelButton" + self.model.id).click(function (event) {
+            event.preventDefault();
             self.dialog.close();
             return false;
         });
 
-        $("#jobDeleteDataButton" + self.model.id).click(function () {
-
+        $("#jobDeleteDataButton" + self.model.id).click(function (event) {
+            event.preventDefault();
             $("#jobDataStat-" + self.model.id).empty();
             $("#jobDataStat-" + self.model.id).append('<div class="alert alert-info" ><i class="icon-refresh"/> Deleting all data...this may take some time...</div>');
 

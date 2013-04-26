@@ -16,27 +16,14 @@ var AnnotationQuestionableView = Backbone.View.extend({
         }
     },
     render: function () {
-
         var self = this;
         console.log("AnnotationQuestionableView: main elem " + $(self.el).length);
         $("#questionableThumb").replaceWith("");
-        $(self.el).append("<div id=\"questionableThumb\"><div>");
-
-        $(self.el).dialog({
-            title: self.createTitle(),
-            width: 900,
-            height: 500,
-            autoOpen: true,
-            modal: true,
-            buttons: {
-                "Close": function () {
-                    $(self.el).dialog("close");
-
-                }
-            }
-        });
+        console.log($("#annotationQuestionable").length);
+        console.log($(self.el).length);
+        $(self.el).append('<div id="questionableThumb"></div>');
+        console.log($(self.el).html());
         self.createThumbView(self.page);
-
         return this;
 
     },
@@ -68,6 +55,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
                     className: "thumb-wrap",
                     id: "annotationthumb" + annotationModel.id
                 }).render();
+                console.log( $("#questionableThumb").length);
                 $("#questionableThumb").append(thumb.el);
             }
             cpt++;

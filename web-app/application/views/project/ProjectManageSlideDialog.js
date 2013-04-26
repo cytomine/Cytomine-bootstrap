@@ -76,7 +76,8 @@ var ProjectManageSlideDialog = Backbone.View.extend({
             icons: {primary: "ui-icon-circle-triangle-w"}
         });
 
-        $('a.goBack').click(function () {
+        $('a.goBack').click(function (event) {
+            event.preventDefault();
             console.log("go back!");
             parent.history.back();
             return false;

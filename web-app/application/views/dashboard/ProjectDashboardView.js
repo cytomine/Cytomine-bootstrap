@@ -337,12 +337,14 @@ var ProjectDashboardView = Backbone.View.extend({
         return action
     },
     showImagesThumbs: function () {
+        console.log("#showImagesThumbs");
         $("#tabs-projectImageThumb" + this.model.id).show();
         $("#tabs-projectImageListing" + this.model.id).hide();
         $('#imageThumbs' + this.model.id).attr("disabled", "disabled");
         $('#imageArray' + this.model.id).removeAttr("disabled");
     },
     showImagesTable: function () {
+        console.log("#showImagesTable");
         $("#tabs-projectImageThumb" + this.model.id).hide();
         $("#tabs-projectImageListing" + this.model.id).show();
         $('#imageThumbs' + this.model.id).removeAttr("disabled");

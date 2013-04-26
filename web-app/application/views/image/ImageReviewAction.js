@@ -61,7 +61,7 @@ var ImageReviewAction = Backbone.View.extend({
             return false;
         });
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
-        $("a.moreinfo" + self.model.id).live("click", function () {
+        $(document).on('click',"a.moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
             new ImagePropertiesView({model: self.model}).render();
             return false;

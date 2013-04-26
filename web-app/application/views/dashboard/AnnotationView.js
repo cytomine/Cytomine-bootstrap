@@ -60,7 +60,8 @@ var AnnotationView = Backbone.View.extend({
                 var className = (self.page == nbPages - 1) ? "next disabled" : "";
                 pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>Next &rarr;</a></li>", { className: className, page: self.page + 1});
                 $pagination.append(pageLink);
-                $pagination.find("a").click(function () {
+                $pagination.find("a").click(function (event) {
+                    event.preventDefault();
                     var page = parseInt($(this).attr("data-page"));
                     if (page >= 0 && page < nbPages) {
                         self.switchToPage(page);

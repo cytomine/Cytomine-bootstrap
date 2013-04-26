@@ -134,7 +134,8 @@ var OntologyPanelView = Backbone.View.extend({
                 }
             }).render();
 
-            $('#deleteOntologyButton').click(function () {
+            $('#deleteOntologyButton').click(function (event) {
+                event.preventDefault();
                 new TaskModel({project: self.model.id}).save({}, {
                          success: function (taskResponse, response) {
                              var task = taskResponse.get('task');
@@ -172,7 +173,8 @@ var OntologyPanelView = Backbone.View.extend({
                 return false;
             });
 
-            $('#closeDeleteOntologyDialog').click(function () {
+            $('#closeDeleteOntologyDialog').click(function (event) {
+                event.preventDefault();
                 $('#delete-ontology-confirm').modal('hide');
                 $('#delete-ontology-confirm').modal('remove');
                 return false;
@@ -216,12 +218,15 @@ var OntologyPanelView = Backbone.View.extend({
                     dialogID: '#delete-term-confirm'
                 }
             }).render();
-            $('#closeDeleteTermDialog').click(function () {
+            console.log("closeDeleteTermDialog="+$('#closeDeleteTermDialog').length);
+            $('#closeDeleteTermDialog').click(function (event) {
+                event.preventDefault();
                 $('#delete-term-confirm').modal('hide');
                 $('#delete-term-confirm').remove();
                 return false;
             });
-            $('#deleteTermButton').click(function () {
+            $('#deleteTermButton').click(function (event) {
+                event.preventDefault();
                 self.removeTerm(term, '#delete-term-confirm');
                 return false;
             });

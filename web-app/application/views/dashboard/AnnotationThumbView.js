@@ -75,26 +75,11 @@ var AnnotationThumbView = Backbone.View.extend({
 
             var termName = undefined;
             var expectedTermName = undefined;
-            if(annotation.get('id')==861430) {
-                console.log("*********************************************************");
-                console.log("*********************************************************");
-                console.log("*********************************************************");
-                console.log("*********************************************************");
-                console.log("*********************************************************");
-                console.log("*********************************************************");
-                console.log(annotation.get("idTerm"));
-                console.log(annotation.get("idExpectedTerm"));
-                console.log(window.app.status.currentTermsCollection.get(annotation.get("idTerm")).get('name'));
-                console.log(window.app.status.currentTermsCollection.get(annotation.get("idExpectedTerm")).get('name'));
-            }
 
             if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
                 termName = window.app.status.currentTermsCollection.get(annotation.get("idTerm")).get('name');
                 expectedTermName = window.app.status.currentTermsCollection.get(annotation.get("idExpectedTerm")).get('name')
             }
-
-            console.log("termName="+termName);
-            console.log("expectedTermName="+expectedTermName);
 
             var popoverContent = _.template(popoverTpl, {
                 created: window.app.convertLongToDate(annotation.get("created")),
