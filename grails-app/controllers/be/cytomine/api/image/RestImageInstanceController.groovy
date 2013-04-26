@@ -216,17 +216,8 @@ class RestImageInstanceController extends RestController {
             }
 
             //Draw annotation
-            for (geometryCollection in geometries) {
+            mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, x, y, 1, 1)
 
-                for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
-                    Geometry geometry = geometryCollection.getGeometryN(i)
-                    mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.exteriorRing], Color.WHITE, x, y, 1, 1)
-                    for (def j = 0; j < geometryCollection.numInteriorRing; j++) {
-                        mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry.getInteriorRingN(j)], Color.BLACK, x, y, 1, 1)
-                    }
-                }
-            }
-            //mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, Color.WHITE, x, y, 1, 1)
             responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
@@ -245,14 +236,7 @@ class RestImageInstanceController extends RestController {
         double x_ratio = crop.getWidth() / boundaries.width
         double y_ratio = crop.getHeight() / boundaries.height
 
-
-        for (int i = 0; i < geometry.getNumGeometries(); i++) {
-            Geometry g = geometry.getGeometryN(i)
-            mask = segmentationService.colorizeWindow(abstractImage, mask, [g.exteriorRing], Color.decode(term.color), boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
-            for (def j = 0; j < geometry.numInteriorRing; j++) {
-                mask = segmentationService.colorizeWindow(abstractImage, mask, [g.getInteriorRingN(j)], Color.BLACK, boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
-            }
-        }
+        mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry], boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
 
         if (withAlpha)
             return applyMaskToAlpha(crop, mask)
