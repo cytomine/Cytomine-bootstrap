@@ -128,6 +128,9 @@ class AlgoAnnotationAPI extends DomainAPI {
         return doPUT(URL,"",username,password)
     }
 
-
+    static def union(def idImage, def idUser, def idTerm, def minIntersectionLength, def bufferLength, def area, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/union.json?idImage=$idImage&idUser=$idUser&idTerm=$idTerm&minIntersectionLength=$minIntersectionLength&bufferLength=$bufferLength&area=$area"
+        return doPUT(URL,"",username,password)
+    }
 
 }

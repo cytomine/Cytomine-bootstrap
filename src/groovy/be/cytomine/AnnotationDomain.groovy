@@ -94,8 +94,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         super.beforeInsert()
         project = image.project
         this.makeValid()
-        if(!wktLocation)
-            wktLocation = location.toText()
+        wktLocation = location.toText()
     }
 
     def beforeUpdate() {

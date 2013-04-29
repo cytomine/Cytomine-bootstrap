@@ -28,6 +28,30 @@ var ExplorerTabs = Backbone.View.extend({
         $(this.el).html(_.template(tpl, {}));
         return this;
     },
+    showLastTab : function(avoid) {
+        console.log("avoid="+avoid);
+        var i=(this.tabs.length-1);
+        while(i>=0) {
+            console.log("i="+i);
+            console.log(this.tabs[i].idImage);
+            if(this.tabs[i].idImage!=avoid) {
+                var id = this.tabs[i].view.divPrefixId + "-" + this.tabs[i].idImage;  //$("#tabs-image-16829").tab('show');
+                console.log("show:"+id);
+                console.log($("#"+id).length);
+
+
+                var millisecondsToWait = 250;
+               setTimeout(function() {
+                   // Whatever you want to do after the wait
+                   console.log("#"+id);
+                   $("#"+id).tab('show');
+               }, millisecondsToWait);
+
+                break;
+            }
+            i--;
+        }
+    },
     /**
      *  Add a Tab containing a BrowseImageView instance
      *  @idImage : the id of the Image we want to display
@@ -64,6 +88,7 @@ var ExplorerTabs = Backbone.View.extend({
                 $("#closeTabtabs-image-" + idImage).on("click", function (e) {
                     var idImage = $(this).attr("data-image");
                     self.removeTab(idImage, "image");
+                    self.showLastTab(idImage);
                 });
                 self.showTab(idImage, "image");
 
@@ -103,6 +128,7 @@ var ExplorerTabs = Backbone.View.extend({
                 $("#closeTabtabs-review-" + idImage).on("click", function (e) {
                     var idImage = $(this).attr("data-image");
                     self.removeTab(idImage, "review");
+                    self.showLastTab(idImage);
                 });
                 self.showTab(idImage, "review");
 
@@ -154,14 +180,14 @@ var ExplorerTabs = Backbone.View.extend({
         //Remove content
         $('#tabs-' + prefix + '-' + window.app.status.currentProject + '-' + idImage + '-').remove();
 
-        console.log("removeTabx");
-        console.log(this.tabs.length);
-        if(this.tabs.length!=0) {
-            var lastTab = this.tabs[this.tabs.length-1];
-            console.log("lastTab");
-            console.log(lastTab);
-            window.location = "#"+lastTab.view.divId;
-        }
+//        console.log("removeTabx");
+//        console.log(this.tabs.length);
+//        if(this.tabs.length!=0) {
+//            var lastTab = this.tabs[this.tabs.length-1];
+//            console.log("lastTab");
+//            console.log(lastTab);
+//            window.location = "#"+lastTab.view.divId;
+//        }
     },
     /**
      * Show a tab

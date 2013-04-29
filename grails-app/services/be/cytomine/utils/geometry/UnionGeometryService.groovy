@@ -10,9 +10,11 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryCollection
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import groovy.sql.Sql
@@ -22,6 +24,8 @@ class UnionGeometryService {
     def dataSource
 
     def algoAnnotationService
+
+    def simplifyGeometryService
 
     public void unionPicture(ImageInstance image, SecUser user, Term term, Integer areaWidth, Integer areaHeight,def bufferLength, def minIntersectLength) {
          //makeValidPolygon(image,user)
@@ -133,8 +137,18 @@ class UnionGeometryService {
 
                  if (based && compared && based.id != compared.id) {
                      mustBeRestart = true
-                     based.location = based.location.union(compared.location)
+
+                     based.location = based.location.buffer(bufferLength)
+                     compared.location = compared.location.buffer(bufferLength)
+
+                     based.location = combineIntoOneGeometry([based.location,compared.location])
+
+                     based.location = based.location.union()
+
+                     //based.location = simplifyGeometryService.simplifyPolygon(based.location.toText()).geometry
+                     //based.location = based.location.union(compared.location)
                      removedByUnion.put(compared.id, based.id)
+
                      //save new annotation with union location
 
                      if(based.algoAnnotation) {
@@ -155,7 +169,15 @@ class UnionGeometryService {
          return mustBeRestart
      }
 
+    static Geometry combineIntoOneGeometry( Collection<Geometry> geometryCollection ){
+         GeometryFactory factory = new GeometryFactory();
 
+         // note the following geometry collection may be invalid (say with overlapping polygons)
+         GeometryCollection geometryCollection1 =
+              (GeometryCollection) factory.buildGeometry( geometryCollection );
+
+         return geometryCollection1.union();
+     }
 
      private List intersectAnnotation(ImageInstance image, SecUser user, Term term, Geometry bbox, def bufferLength, def minIntersectLength) {
          String request
@@ -195,6 +217,13 @@ class UnionGeometryService {
             request = request +  " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
          }
 
+
+
+
+//
+//         printDebugInfo(image,user,term,bbox,bufferLength,minIntersectLength)
+
+
          println request
 
          def sql = new Sql(dataSource)
@@ -207,5 +236,33 @@ class UnionGeometryService {
          log.info "find intersect annotation... ${data.size()}"
          data
      }
+
+    def printDebugInfo(ImageInstance image, SecUser user, Term term, Geometry bbox, def bufferLength, def minIntersectLength) {
+        def request = "SELECT annotation1.id as id1, annotation2.id as id2, ST_Perimeter(ST_Intersection(ST_Buffer(annotation1.location,$bufferLength), ST_Buffer(annotation2.location,$bufferLength))), ST_AREA(annotation1.location),ST_AREA(annotation2.location)\n" +
+                    " FROM user_annotation annotation1, user_annotation annotation2, annotation_term at1, annotation_term at2\n" +
+                    " WHERE annotation1.image_id = $image.id\n" +
+                    " AND annotation2.image_id = $image.id\n" +
+                    " AND annotation2.created > annotation1.created\n" +
+                    " AND annotation1.user_id = ${user.id}\n" +
+                    " AND annotation2.user_id = ${user.id}\n" +
+                    " AND annotation1.id = at1.user_annotation_id\n" +
+                    " AND annotation2.id = at2.user_annotation_id\n" +
+                    " AND at1.term_id = ${term.id}\n" +
+                    " AND at2.term_id = ${term.id}\n" +
+                    " AND ST_Intersects(annotation1.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n" +
+                    " AND ST_Intersects(annotation2.location,ST_GeometryFromText('" + bbox.toString() + "',0)) "
+
+        println request
+        def sql = new Sql(dataSource)
+        def data = []
+        sql.eachRow(request) {
+            println it[2] + "\t" + it[0] + "\t" + it[1]  + "\t" + it[3]  + "\t" + it[4]
+        }
+
+
+    }
+
+
+
 
 }

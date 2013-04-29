@@ -134,7 +134,6 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
 
         $("#" + self.browseImageView.divId).on('change',".followUser", function (e) {
-            alert('123');
             var followUser = $(this).is(':checked');
             $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
                 $(this).attr('checked', false);

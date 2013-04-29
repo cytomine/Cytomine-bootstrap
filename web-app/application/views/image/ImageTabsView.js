@@ -141,7 +141,7 @@ var ImageTabsView = Backbone.View.extend({
                     sortable: true
                 },
                 {
-                    property: 'numberOfJobAnnotations',
+                    property: 'numberOfReviewedAnnotations',
                     label: 'Valid an.',
                     sortable: true
                 },

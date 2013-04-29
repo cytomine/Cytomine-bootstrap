@@ -54,12 +54,15 @@ var InformationsPanel = SideBarPanel.extend({
                         if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
                             window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                             $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
+                            //hack: close go to dashboard
+                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (model, response) {
                                     window.app.view.message("Image", response.message, "success");
                                     window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
                                     $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
+                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
                                 },
                                 error: function (model, response) {
                                     var json = $.parseJSON(response.responseText);
@@ -83,12 +86,14 @@ var InformationsPanel = SideBarPanel.extend({
                         if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
                             window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                             $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
+                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (model, response) {
                                     window.app.view.message("Image", response.message, "success");
                                     window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
                                     $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
+                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
                                 },
                                 error: function (model, response) {
                                     var json = $.parseJSON(response.responseText);
