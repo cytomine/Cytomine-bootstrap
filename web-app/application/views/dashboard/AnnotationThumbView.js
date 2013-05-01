@@ -6,6 +6,11 @@ var AnnotationThumbView = Backbone.View.extend({
 
     initialize: function (options) {
         this.term = options.term;
+        console.log(options);
+        if(options.reviewMode!=undefined) {
+            this.reviewMode = options.reviewMode;
+        }
+
         _.bindAll(this, 'render');
     },
     render: function () {
@@ -19,12 +24,25 @@ var AnnotationThumbView = Backbone.View.extend({
             }
 
             var colorStyle = undefined;
-            if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) {
-                colorStyle = "#cccccc";
-            } else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
-                colorStyle = "#F89406"
-            }
+            console.log("*****" + self.reviewMode);
+            if(self.reviewMode) {
+                if(annotation.get('reviewed')) {
+                    colorStyle = "#3fb618";
+                } else if(annotation.get('term').length>1) {
+                    colorStyle = "#000000";
+                } else if(annotation.get('term').length==1) {
+                    colorStyle = window.app.status.currentTermsCollection.get(annotation.get('term')).get('color');
+                } else {
+                    colorStyle =  "#cccccc";
+                }
 
+            } else {
+                if (annotation.get("idTerm") == annotation.get("idExpectedTerm")) {
+                    colorStyle = "#cccccc";
+                } else if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
+                    colorStyle = "#F89406"
+                }
+            }
 
 
             //if user job, construct link to the job
@@ -39,6 +57,11 @@ var AnnotationThumbView = Backbone.View.extend({
                 });
             }
 
+            if(self.reviewMode) {
+                annotation.set('cropURL',annotation.get('cropURL')+"?draw=true");
+                annotation.set('smallCropURL',annotation.get('smallCropURL')+"&draw=true");
+            }
+
             annotation.set({
                 sameUser: (window.app.status.user.id == annotation.get("user")),
                 ratePourcent: ratePourcent,
@@ -46,11 +69,7 @@ var AnnotationThumbView = Backbone.View.extend({
                 jobLink: jobLink,
                 nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0
             });
-
-            console.log(annotation.toJSON());
-            console.log(annotation.toJSON().image);
             $(self.el).html(_.template(tpl, annotation.toJSON()));
-            console.log("OK");
 
             $(self.el).attr("data-annotation", annotation.get("id"));
             if (self.term != undefined) {
@@ -88,8 +107,6 @@ var AnnotationThumbView = Backbone.View.extend({
                 termName: termName,
                 expectedTermName: expectedTermName
             });
-
-            console.log(popoverContent);
 
             $(self.el).popover({
                 html: true,

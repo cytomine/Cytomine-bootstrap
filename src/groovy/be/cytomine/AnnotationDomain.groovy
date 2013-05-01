@@ -10,6 +10,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 
@@ -187,15 +188,12 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
    def getBoundaries() {
        //get num points
        if (location.getNumPoints()>3) {
-           Coordinate[] coordinates = location.getEnvelope().getCoordinates()
-           int topLeftX = coordinates[3].x
-           int topLeftY = coordinates[3].y
-           //int topLeftY = Integer.parseInt(metadata.height) - coordinates[3].y
-           int width = coordinates[1].x - coordinates[0].x
-           int height = coordinates[3].y - coordinates[0].y
-
-           //log.debug "topLeftX :" + topLeftX + " topLeftY :" + topLeftY + " width :" + width + " height :" + height
-           return [topLeftX: topLeftX, topLeftY: topLeftY, width: width, height: height]
+         Envelope env = location.getEnvelopeInternal();
+         Integer maxY = env.getMaxY();
+         Integer minX = env.getMinX();
+         Integer width = env.getWidth();
+         Integer height = env.getHeight();
+         return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
        } else throw new be.cytomine.Exception.InvalidRequestException("Cannot make a crop for a POINT")
 
     }
@@ -207,6 +205,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     def toCropURLWithMaxSize(int maxSize) {
         def boundaries = getBoundaries()
+        println boundaries
         return image.baseImage.getCropURLWithMaxWithOrHeight(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, maxSize, maxSize)
     }
 

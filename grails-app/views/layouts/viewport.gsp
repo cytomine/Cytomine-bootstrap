@@ -279,6 +279,13 @@ body {
 <script type="text/javascript" src="application/views/annotation/AnnotationQuestionableView.js" ></script>
 <script type="text/javascript" src="application/views/annotation/ShareAnnotationView.js" ></script>
 
+
+<script type="text/javascript" src="application/views/review/ReviewTermListing.js" ></script>
+<script type="text/javascript" src="application/views/review/ReviewAnnotationListing.js" ></script>
+<script type="text/javascript" src="application/views/review/DashboardReviewPanel.js" ></script>
+
+
+
 <script type="text/javascript" src="application/views/utils/CrudGridView.js" ></script>
 <script type="text/javascript" src="application/views/Component.js" ></script>
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>

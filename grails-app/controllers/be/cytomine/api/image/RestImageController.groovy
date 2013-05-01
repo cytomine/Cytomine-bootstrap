@@ -8,7 +8,19 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Envelope
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+
+import javax.imageio.ImageIO
+import java.awt.BasicStroke
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.RenderingHints
+import java.awt.geom.Path2D
+import java.awt.image.BufferedImage
 
 /**
  * Controller for abstract image
@@ -148,12 +160,49 @@ class RestImageController extends RestController {
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
             def cropURL = getCropAnnotationURL(annotation,params)
             if(cropURL!=null) {
-                responseImage(cropURL)
+                if(!params.getBoolean('draw')) {
+                    responseImage(cropURL)
+                } else {
+                    responseBufferedImage(createCropWithDraw(annotation,cropURL));
+                }
             }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
     }
+
+
+    private BufferedImage createCropWithDraw(AnnotationDomain annotation,String url) {
+        BufferedImage baseImage = ImageIO.read(new URL(url));
+        Geometry location = new WKTReader().read(annotation.location.toText());
+
+        Envelope env = location.getEnvelopeInternal();
+        double minX = env.getMinX();
+        double maxY = env.getMaxY();
+
+        Path2D.Float regionOfInterest = new Path2D.Float();
+         boolean isFirst = true;
+
+        Coordinate[] coordinates = location.getCoordinates();
+
+       for(Coordinate c:coordinates) {
+            double x = c.x-minX;
+            double y = maxY-(c.y); //max-coord to because y axis is differe,t
+            if(isFirst) {
+                regionOfInterest.moveTo(x,y);
+                isFirst = false;
+            }
+            regionOfInterest.lineTo(x,y);
+       }
+
+      Graphics2D g2d = (Graphics2D)baseImage.getGraphics();
+      g2d.setStroke(new BasicStroke(50f));
+      g2d.setColor(new Color(155,89,187,200));
+      g2d.draw(regionOfInterest);
+      baseImage
+    }
+
+
 
     /**
      * Get annotation crop (image area that frame annotation)
@@ -164,12 +213,25 @@ class RestImageController extends RestController {
         try {
             params.max_size = "256"
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
-            def cropURL = getCropAnnotationURL(annotation,params)
-            if(cropURL!=null) responseImage(cropURL)
+            if(!params.getBoolean('draw')) {
+                def cropURL = getCropAnnotationURL(annotation,params)
+                responseImage(cropURL)
+            } else {
+                def value = params.max_size
+                params.max_size=null
+                def cropURL = getCropAnnotationURL(annotation,params)
+                def image = createCropWithDraw(annotation,cropURL)
+                if(value) {
+                    println  Integer.parseInt(value)
+                    image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
+                }
+                responseBufferedImage(image);
+            }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
     }
+
 
     /**
      * Get annotation user crop (image area that frame annotation)
@@ -178,8 +240,21 @@ class RestImageController extends RestController {
     def cropUserAnnotation = {
         try {
             def annotation = UserAnnotation.read(params.id)
-            def cropURL = getCropAnnotationURL(annotation,params)
-            if(cropURL!=null) responseImage(cropURL)
+
+            if(!params.getBoolean('draw')) {
+                def cropURL = getCropAnnotationURL(annotation,params)
+                responseImage(cropURL)
+            } else {
+                def value = params.max_size
+                params.max_size=null
+                def cropURL = getCropAnnotationURL(annotation,params)
+                def image = createCropWithDraw(annotation,cropURL)
+                if(value) {
+                    println  Integer.parseInt(value)
+                    image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
+                }
+                responseBufferedImage(image);
+            }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
@@ -192,8 +267,20 @@ class RestImageController extends RestController {
     def cropAlgoAnnotation = {
         try {
             def annotation = AlgoAnnotation.read(params.id)
-            def cropURL = getCropAnnotationURL(annotation,params)
-            responseImage(cropURL)
+            if(!params.getBoolean('draw')) {
+                def cropURL = getCropAnnotationURL(annotation,params)
+                responseImage(cropURL)
+            } else {
+                def value = params.max_size
+                params.max_size=null
+
+                def image = createCropWithDraw(annotation,cropURL)
+                if(value) {
+                    println  Integer.parseInt(value)
+                    image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
+                }
+                responseBufferedImage(image);
+            }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
@@ -206,12 +293,48 @@ class RestImageController extends RestController {
     def cropReviewedAnnotation = {
         try {
             def annotation = ReviewedAnnotation.read(params.id)
-            def cropURL = getCropAnnotationURL(annotation,params)
-            responseImage(cropURL)
+            if(!params.getBoolean('draw')) {
+                def cropURL = getCropAnnotationURL(annotation,params)
+                responseImage(cropURL)
+            } else {
+                def value = params.max_size
+                params.max_size=null
+                def cropURL = getCropAnnotationURL(annotation,params)
+                def image = createCropWithDraw(annotation,cropURL)
+                if(value) {
+                    println  Integer.parseInt(value)
+                    image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
+                }
+                responseBufferedImage(image);
+            }
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
     }
+
+
+    private static BufferedImage scaleImage(BufferedImage img, Integer width, Integer height) {
+        int imgWidth = img.getWidth();
+        int imgHeight = img.getHeight();
+        if (imgWidth*height < imgHeight*width) {
+            width = imgWidth*height/imgHeight;
+        } else {
+            height = imgHeight*width/imgWidth;
+        }
+        BufferedImage newImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = newImage.createGraphics();
+        try {
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.clearRect(0, 0, width, height);
+            g.drawImage(img, 0, 0, width, height, null);
+        } finally {
+            g.dispose();
+        }
+        return newImage;
+    }
+
 
     /**
      * Get crop annotation URL
