@@ -224,7 +224,7 @@ class ReviewedAnnotationService extends ModelService {
 
     def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null) {
         SecurityACL.check(project.container(),READ)
-        boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
+        boolean filterOnImages = ImageInstance.countByProject(project) != imageInstanceList.size()
         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
                 " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
                 " WHERE a.id = at.reviewed_annotation_terms_id \n" +
@@ -232,7 +232,7 @@ class ReviewedAnnotationService extends ModelService {
                 " AND at.term_id IN  (" + termList.join(",") + ")\n" +
                 " AND a.id = at.reviewed_annotation_terms_id\n" +
                 " AND a.user_id IN (" + userList.join(",") + ") \n" +
-                (allImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                (filterOnImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
                 (bbox ? " AND ST_Intersects(a.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
                 " ORDER BY id desc, term"
         selectReviewedAnnotationFull(request)

@@ -74,15 +74,16 @@ body {
 <![endif]-->
 <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>
 
-
-
-<g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
-
 <!-- fileupload -->
 %{--<script type="text/javascript" src="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"></script>--}%
 <script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.fileupload.js"></script>
 <script type="text/javascript" src="lib/fileupload-7.4.1/js/cors/jquery.xdr-transport.js"></script>
+
+
+
+<g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
+
 
 <script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>
 

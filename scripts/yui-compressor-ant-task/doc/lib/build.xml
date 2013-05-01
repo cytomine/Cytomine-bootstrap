@@ -63,10 +63,6 @@
 
         <echo message="Building ${result.file}"/>
         <concat destfile="${result.file}" force="no">
-<fileset dir="${src.dir}" includes="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"/>
-<fileset dir="${src.dir}" includes="lib/fileupload-7.4.1/js/jquery.iframe-transport.js"/>
-<fileset dir="${src.dir}" includes="lib/fileupload-7.4.1/js/jquery.fileupload.js"/>
-<fileset dir="${src.dir}" includes="lib/fileupload-7.4.1/js/cors/jquery.xdr-transport.js"/>
 <fileset dir="${src.dir}" includes="lib/OpenLayers-2.12/Openlayers-instrumenter.js"/>
 <fileset dir="${src.dir}" includes="lib/requirejs/require.js"/>
 <fileset dir="${src.dir}" includes="lib/fuelux/loader.min.js"/>
