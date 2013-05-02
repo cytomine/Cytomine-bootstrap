@@ -164,11 +164,25 @@ var AnnotationReviewedCollection = PaginatedCollection.extend({
         if (this.offset != undefined) {
             offset = offset + "offset=" + this.offset;
         }
-        return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
+
+        console.log(this);
+
+        console.log("*********************"+this.project);
+        console.log("*********************"+this.user);
+
+        if(this.project && this.user) {
+            return "api/project/" + this.project + "/reviewedannotation.json?user=" + this.user;
+        } else {
+            return "api/imageinstance/" + this.image + "/reviewedannotation.json" + offset;
+        }
+
+
     },
     initialize: function (options) {
         this.initPaginator(options);
         this.image = options.image;//one image
+        this.user = options.user;//one image
+        this.project = options.project;//one image
         this.map = options.map;
     },
     build: function () {

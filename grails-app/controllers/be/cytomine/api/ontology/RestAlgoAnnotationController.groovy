@@ -155,8 +155,8 @@ class RestAlgoAnnotationController extends RestController {
             //retrieve all image/user for the filter
             List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
-
-            def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"))
+            boolean notReviewedOnly = params.getBoolean("notreviewed")
+            def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly)
             responseSuccess(list)
         }
         else {
@@ -196,14 +196,14 @@ class RestAlgoAnnotationController extends RestController {
         Project project = projectService.read(params.long('idproject'))
 
         if (project) {
-
+            boolean notReviewedOnly = params.getBoolean("notreviewed")
             List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
 
             if (term == null) {
                 responseNotFound("Term", params.idterm)
             } else if (!params.suggestTerm) {
-                def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList)
+                def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList,notReviewedOnly)
                 responseSuccess(list)
             }
         } else {

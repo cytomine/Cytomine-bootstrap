@@ -17,8 +17,9 @@ var DashboardController = Backbone.Router.extend({
         "tabs-algos-:project-:software-:job": "algos",
         "tabs-algos-:project-:software-": "algos",
         "tabs-algos-:project": "algos",
-        "tabs-review-:project-:user-:term": "review",
-        "tabs-review-:project": "review"
+        "tabs-review-:project-:image-:user-:term": "review"
+//        "tabs-review-:project-:user-:term": "review",
+//        "tabs-review-:project": "review"
 
     },
 
@@ -130,14 +131,14 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
-    review : function(project) {
-        this.review(project,null,null)
-    },
-    review : function(project,user,term) {
+//    review : function(project) {
+//        this.review(project,null,null)
+//    },
+    review : function(project,image,user,term) {
         var self = this;
         var func = function () {
 
-            console.log("project="+project + " user="+user + " term="+term);
+            console.log("project="+project + " image="+image+" user="+user + " term="+term);
 
             if(user && (user=="null")) {
                 user = null;
@@ -147,7 +148,7 @@ var DashboardController = Backbone.Router.extend({
             }
 
             console.log("Controller dashboard.review");
-            self.view.refreshReview(user,term);
+            self.view.refreshReview(image,user,term);
             var tabs = $("#explorer > .browser").find(".nav-tabs");
             tabs.find('a[href=#tabs-review-' + window.app.status.currentProject + ']').tab('show');
         };

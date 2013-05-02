@@ -11,32 +11,75 @@ var DashboardReviewPanel = Backbone.View.extend({
     initialize: function (options) {
         this.el = "#tabs-review-" + this.model.id;
     },
-    render: function (user,term) {
+    render: function (image,user,term) {
         var self = this;
         require([
             "text!application/templates/review/ReviewPanel.tpl.html"
         ],
             function (ReviewPanelTpl) {
-                $(self.el).append(ReviewPanelTpl);
 
-                self.initFilter(user,term);
+                new ImageInstanceModel({id: image}).fetch({
+                    success: function (model, response) {
+                        $(self.el).empty();
 
-                self.initAnnotationListing(user,term);
+                        var reviewer = null;
+                        if(model.get('reviewUser')) {
+                            reviewer = window.app.models.projectUser.get(model.get('reviewUser')).prettyName()
+                        }
 
-                self.initTermListing();
+                        $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer}));
+
+                        if(reviewer==null) {
+                            $("a#startToReview"+image).click(function(evt){
+                                 evt.preventDefault();
+
+                                new ImageReviewModel({id: image}).save({}, {
+                                    success: function (model, response) {
+                                        window.app.view.message("Image", response.message, "success");
+                                        window.location.reload();
+                                    },
+                                    error: function (model, response) {
+                                        var json = $.parseJSON(response.responseText);
+                                        window.app.view.message("Image", json.errors, "error");
+                                     }});
+                            });
+                        }
+
+
+                        self.initFilter(user,term);
+
+                        self.initLastReview();
+
+                        self.initAnnotationListing(image,user,term);
+
+                        self.initTermListing();
+                }});
+
+
+
+
 
             });
         return this;
     },
-    refresh: function(user,term) {
+    refresh: function(image,user,term) {
         var self = this;
-        self.annotationListing.render(self.model.id,user,term)
+        self.annotationListing.render(self.model.id,image,user,term)
         self.changeSelectedFilter(user,term);
     },
-    initAnnotationListing: function(user,term) {
+    initLastReview : function() {
+        console.log("*********************"+this.model.id);
+        var self = this;
+        self.lastReviewListing = new ReviewLastReviewListing({
+            user : window.app.status.user.id,
+            project : self.model.id,
+            el: $("#lastReviewListing")
+        }).render();
+    },
+    initAnnotationListing: function(image,user,term) {
         console.log("initAnnotationListing");
         var self = this;
-
+        self.image = image;
         self.user = user;
         self.term = term;
         self.annotationListing = new ReviewAnnotationListing({
@@ -44,7 +87,7 @@ var DashboardReviewPanel = Backbone.View.extend({
             model: null,
             term: undefined,
             el: $("#annotationReviewListing")
-        }).render(self.model.id,user,term);
+        }).render(self.model.id,image,user,term);
 
 
         $("#annotationReviewListing").find(".thumb-wrap").draggable( {
@@ -64,10 +107,10 @@ var DashboardReviewPanel = Backbone.View.extend({
 
         self.termListing= new ReviewTermListing({
             model: collection,
-            el: $("#termReviewListing")
+            el: $("#termReviewChoice")
         }).render();
 
-        $("#termReviewListing").find("div").droppable( {
+        $("#termReviewChoice").find("div").droppable( {
             accept: '#annotationReviewListing .thumb-wrap',
             hoverClass: 'hovered',
             drop: self.handleCardDrop
@@ -142,7 +185,7 @@ var DashboardReviewPanel = Backbone.View.extend({
                 termValue = null;
             }
             if(!self.disableEvent) {
-               window.location = "#tabs-review-"+self.model.id+"-"+ userValue + "-" + termValue
+               window.location = "#tabs-review-"+self.model.id+"-"+self.image+"-"+ userValue + "-" + termValue
             }
         }
 

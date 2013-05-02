@@ -10,7 +10,12 @@ var AnnotationThumbView = Backbone.View.extend({
         if(options.reviewMode!=undefined) {
             this.reviewMode = options.reviewMode;
         }
-
+        if(options.size!=undefined) {
+            this.size = options.size;
+        } else {
+            this.size = 100;
+        }
+        this.sizeImage = this.size-10;
         _.bindAll(this, 'render');
     },
     render: function () {
@@ -67,7 +72,9 @@ var AnnotationThumbView = Backbone.View.extend({
                 ratePourcent: ratePourcent,
                 colorStyle: colorStyle,
                 jobLink: jobLink,
-                nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0
+                nbComments: annotation.get("nbComments")!=undefined ? annotation.get("nbComments") : 0,
+                sizeImage : self.sizeImage,
+                size : self.size
             });
             $(self.el).html(_.template(tpl, annotation.toJSON()));
 

@@ -1,19 +1,50 @@
-<div class="row">
+<div class="row text-center" align="center">
 
-    <div id="filterReviewListing" class="span12">
-         <select id="filterUser"></select>
-         <select id="filterTerm"></select>
+    <div id="filterReviewListing" class="span12 text-center" style="margin:20px auto;float:none;">
+
+        <div class="hero-unit">
+                <h2>Review for project <%= projectName %></h2>
+                <p> You are reviewing image <%= imageFilename %>.</p>
+                <p>User: <select id="filterUser"></select>&nbsp;&nbsp; Term: <select id="filterTerm"></select></p>
+
+                <% if (reviewer) { %>
+                     <p class="text-info"><%= reviewer %> is the reviewer for this image.</p>
+                <% } else {%>
+                     <p class="text-error">There is no reviewer for this image.</p>
+                     <p><a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a></p>
+                <% }%>
+        </div>
+
+
+
+
+    </div>
+
+    <% if (reviewer) { %>
+    <div id="lastReviewListing" class="span12  text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+        <h4>Your last review for this project:</h4>
+        <div id="lastReviewedAnnotation">
+            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+        </div>
     </div>
 
 
-    <div id="annotationReviewListing" class="span12">
-
-
+    <div id="annotationReviewListing" class="span12  text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+        <div id="AnnotationNotReviewed">
+            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+        </div>
+        <div id="pagination">
+              <button id="next1">NEXT</button>
+              <button id="next5">NEXT 5</button>
+        </div>
     </div>
 
-    <div id="termReviewListing" class="span12" >
 
+    <div id="termReviewListing" align="center" class="span12 text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+        <div id="termReviewChoice">
+        </div>
 
     </div>
+    <% } %>
 
 </div>

@@ -7,9 +7,11 @@ import ij.ImagePlus
 import ij.process.ImageProcessor
 import ij.process.PolygonFiller
 
-
+import java.awt.BasicStroke
 import java.awt.Color
+import java.awt.Graphics2D
 import java.awt.Rectangle
+import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
 
 /**
@@ -84,4 +86,98 @@ class SegmentationService {
         //ip.setPixels(pixels)
         ip.getBufferedImage()
     }
+
+
+
+
+
+
+
+
+    public BufferedImage drawPolygon(AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, Color c, int borderWidth,int x, int y, double x_ratio, double y_ratio) {
+        println "1"
+        for (geometry in geometryCollection) {
+
+            if (geometry instanceof com.vividsolutions.jts.geom.MultiPolygon) {
+                println "1a"
+                com.vividsolutions.jts.geom.MultiPolygon multiPolygon = (com.vividsolutions.jts.geom.MultiPolygon) geometry;
+                for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
+                    window = drawPolygon(image, window, multiPolygon.getGeometryN(i),c,borderWidth, x, y, x_ratio, y_ratio)
+                }
+            } else {
+                println "1b"
+                window = drawPolygon(image, window, geometry,c,borderWidth, x, y, x_ratio, y_ratio)
+            }
+        }
+
+        return window
+    }
+
+    public BufferedImage drawPolygon(AbstractImage image, BufferedImage window,  com.vividsolutions.jts.geom.Geometry geometry, Color c, int borderWidth,int x, int y, double x_ratio, double y_ratio) {
+        println "2"
+        if (geometry instanceof com.vividsolutions.jts.geom.Polygon) {
+            com.vividsolutions.jts.geom.Polygon polygon = (com.vividsolutions.jts.geom.Polygon) geometry;
+            window = drawPolygon(image, window, polygon,c,borderWidth, x, y, x_ratio, y_ratio)
+        }
+
+        return window
+    }
+
+    public BufferedImage drawPolygon(AbstractImage image, BufferedImage window, com.vividsolutions.jts.geom.Polygon polygon, Color c, int borderWidth,int x, int y, double x_ratio, double y_ratio) {
+        println "3"
+        window = drawPolygon(image, window, polygon.getExteriorRing(), c,borderWidth, x, y, x_ratio, y_ratio)
+        println polygon.toText()
+        println "polygon=${polygon.getNumInteriorRing()}"
+        for (def j = 0; j < polygon.getNumInteriorRing(); j++) {
+            window = drawPolygon(image, window, polygon.getInteriorRingN(j), c,borderWidth, x, y, x_ratio, y_ratio)
+        }
+
+        return window
+    }
+
+    public BufferedImage drawPolygon(AbstractImage image, BufferedImage window, LineString lineString, Color c, int borderWidth, int x, int y, double x_ratio, double y_ratio) {
+
+        println "4"
+        Path2D.Float regionOfInterest = new Path2D.Float();
+         boolean isFirst = true;
+
+        Coordinate[] coordinates = lineString.getCoordinates();
+
+       for(Coordinate coordinate:coordinates) {
+             double xLocal = Math.min((coordinate.x - x) * x_ratio, window.getWidth());
+             xLocal = Math.max(0, xLocal)
+             double yLocal = Math.min((image.getHeight() - coordinate.y - y) * y_ratio, window.getHeight());
+             yLocal = Math.max(0, yLocal)
+
+            if(isFirst) {
+                regionOfInterest.moveTo(xLocal,yLocal);
+                isFirst = false;
+            }
+            regionOfInterest.lineTo(xLocal,yLocal);
+       }
+        println ""
+      Graphics2D g2d = (Graphics2D)window.getGraphics();
+      g2d.setStroke(new BasicStroke(borderWidth));
+      g2d.setColor(c);
+      g2d.draw(regionOfInterest);
+      window
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

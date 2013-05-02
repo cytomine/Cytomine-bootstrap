@@ -62,11 +62,11 @@ class RestUserAnnotationController extends RestController {
     def listByProject = {
         Project project = projectService.read(params.long('id'))
         if (project) {
-
+            boolean notReviewedOnly = params.getBoolean("notreviewed")
             List<Long> userList = paramsService.getParamsUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
-            def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"))
+            def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly)
             responseList(list)
         } else {
             responseNotFound("Project", params.id)
@@ -105,7 +105,7 @@ class RestUserAnnotationController extends RestController {
     def listAnnotationByProjectAndTerm = {
         Term term = termService.read(params.long('idterm'))
         Project project = projectService.read(params.long('idproject'))
-
+        boolean notReviewedOnly = params.getBoolean("notreviewed")
         if (term == null) {
             responseNotFound("Term", params.idterm)
         } else if (project == null) {
@@ -120,7 +120,7 @@ class RestUserAnnotationController extends RestController {
                 if (userList.isEmpty() || imageInstanceList.isEmpty()) {
                     list = []
                 } else {
-                    list = userAnnotationService.list(project, term, userList, imageInstanceList)
+                    list = userAnnotationService.list(project, term, userList, imageInstanceList,notReviewedOnly)
                 }
                 list = mergeResults(list)
                 responseList(list)

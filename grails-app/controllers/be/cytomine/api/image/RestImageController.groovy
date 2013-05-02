@@ -11,13 +11,19 @@ import be.cytomine.security.SecUser
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.LineString
+import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import ij.ImagePlus
+import ij.process.ImageProcessor
+import ij.process.PolygonFiller
 
 import javax.imageio.ImageIO
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
+import java.awt.Rectangle
 import java.awt.RenderingHints
 import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
@@ -32,6 +38,7 @@ class RestImageController extends RestController {
     def abstractImageService
     def cytomineService
     def projectService
+    def segmentationService
 
     /**
      * List all abstract image available on cytomine
@@ -174,33 +181,79 @@ class RestImageController extends RestController {
 
     private BufferedImage createCropWithDraw(AnnotationDomain annotation,String url) {
         BufferedImage baseImage = ImageIO.read(new URL(url));
-        Geometry location = new WKTReader().read(annotation.location.toText());
+        println "createCropWithDraw"
+        //AbstractImage image, BufferedImage window, LineString lineString, Color color, int x, int y, double x_ratio, double y_ratio
+        def boundaries = annotation.getBoundaries()
+        double x_ratio = baseImage.getWidth() / boundaries.width
+        double y_ratio = baseImage.getHeight() / boundaries.height
 
-        Envelope env = location.getEnvelopeInternal();
-        double minX = env.getMinX();
-        double maxY = env.getMaxY();
+        println boundaries.width
+        println x_ratio
+        //int borderWidth = ((double)annotation.getArea()/(100000000d/50d))
+        int borderWidth = ((double)boundaries.width/(15000/250d))*x_ratio
 
-        Path2D.Float regionOfInterest = new Path2D.Float();
-         boolean isFirst = true;
 
-        Coordinate[] coordinates = location.getCoordinates();
+        println "borderWidth="+borderWidth
 
-       for(Coordinate c:coordinates) {
-            double x = c.x-minX;
-            double y = maxY-(c.y); //max-coord to because y axis is differe,t
-            if(isFirst) {
-                regionOfInterest.moveTo(x,y);
-                isFirst = false;
-            }
-            regionOfInterest.lineTo(x,y);
-       }
+        //AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, Color c, int borderWidth,int x, int y, double x_ratio, double y_ratio
+        baseImage = segmentationService.drawPolygon(
+                annotation.image.baseImage,
+                baseImage,
+                [annotation.location],
+                Color.BLACK,
+                borderWidth,
+                boundaries.topLeftX,
+                annotation.image.baseImage.getHeight() - boundaries.topLeftY,
+                x_ratio,
+                y_ratio
+        )
 
-      Graphics2D g2d = (Graphics2D)baseImage.getGraphics();
-      g2d.setStroke(new BasicStroke(50f));
-      g2d.setColor(new Color(155,89,187,200));
-      g2d.draw(regionOfInterest);
+
       baseImage
     }
+
+
+
+
+
+
+
+//    private BufferedImage createCropWithDraw(AnnotationDomain annotation,String url) {
+//        BufferedImage baseImage = ImageIO.read(new URL(url));
+//        Geometry location = new WKTReader().read(annotation.location.toText());
+//
+//        Envelope env = location.getEnvelopeInternal();
+//        double minX = env.getMinX();
+//        double minY = env.getMinY();
+//        double maxY = env.getMaxY();
+//        double maxX = env.getMaxX();
+//
+//        Path2D.Float regionOfInterest = new Path2D.Float();
+//         boolean isFirst = true;
+//
+//        Coordinate[] coordinates = location.getCoordinates();
+//        println coordinates.length
+//        println ""
+//       for(Coordinate c:coordinates) {
+//            double x = c.x-minX;
+//            double y = maxY-(c.y); //max-coord to because y axis is differe,t
+//           //double y = c.y-minY;
+//           print "$x,$y ; "
+//            if(isFirst) {
+//                regionOfInterest.moveTo(x,y);
+//                isFirst = false;
+//            }
+//            regionOfInterest.lineTo(x,y);
+//       }
+//        println ""
+//
+//      Graphics2D g2d = (Graphics2D)baseImage.getGraphics();
+//      g2d.setStroke(new BasicStroke(50f));
+//      //g2d.setColor(new Color(155,89,187,200));
+//        g2d.setColor(new Color(0,0,0,200));
+//      g2d.draw(regionOfInterest);
+//      baseImage
+//    }
 
 
 
@@ -302,7 +355,6 @@ class RestImageController extends RestController {
                 def cropURL = getCropAnnotationURL(annotation,params)
                 def image = createCropWithDraw(annotation,cropURL)
                 if(value) {
-                    println  Integer.parseInt(value)
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
                 responseBufferedImage(image);

@@ -73,13 +73,15 @@ var ProjectDashboardView = Backbone.View.extend({
         this.ProjectDashboardConfig.refresh();
 
     },
-    refreshReview: function (user,term) {
+    refreshReview: function (image,user,term) {
         console.log("DashBoardView.refreshReview user"+user);
-        if (this.projectDashboardReview == null) {
+        console.log("New.Image="+image);
+        if (this.projectDashboardReview == null || this.projectDashboardReview.image!=image) {
+
             this.projectDashboardReview = new DashboardReviewPanel({ model: this.model});
-            this.projectDashboardReview.render(user,term);
+            this.projectDashboardReview.render(image,user,term);
         } else {
-            this.projectDashboardReview.refresh(user,term);
+            this.projectDashboardReview.refresh(image,user,term);
         }
     },
 

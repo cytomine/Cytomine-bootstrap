@@ -180,6 +180,7 @@
 <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationRetrievalView.js"/>
 <fileset dir="${src.dir}" includes="application/views/annotation/AnnotationQuestionableView.js"/>
 <fileset dir="${src.dir}" includes="application/views/annotation/ShareAnnotationView.js"/>
+<fileset dir="${src.dir}" includes="application/views/review/ReviewLastReviewListing.js"/>
 <fileset dir="${src.dir}" includes="application/views/review/ReviewTermListing.js"/>
 <fileset dir="${src.dir}" includes="application/views/review/ReviewAnnotationListing.js"/>
 <fileset dir="${src.dir}" includes="application/views/review/DashboardReviewPanel.js"/>

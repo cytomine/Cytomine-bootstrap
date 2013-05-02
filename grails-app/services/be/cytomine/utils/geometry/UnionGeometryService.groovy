@@ -138,8 +138,11 @@ class UnionGeometryService {
                  if (based && compared && based.id != compared.id) {
                      mustBeRestart = true
 
-                     based.location = based.location.buffer(bufferLength)
-                     compared.location = compared.location.buffer(bufferLength)
+                     if(bufferLength) {
+                         based.location = based.location.buffer(bufferLength)
+                         compared.location = compared.location.buffer(bufferLength)
+                     }
+
 
                      based.location = combineIntoOneGeometry([based.location,compared.location])
 

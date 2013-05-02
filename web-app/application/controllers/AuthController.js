@@ -29,9 +29,10 @@ var AuthController = Backbone.Router.extend({
                             model: model,
                             filenameVisible : true
                         }
+                        $("#login-confirm").remove();
                         window.app.startup();
-                        window.location = location;
-                        window.location.reload(true);
+//                        window.location = location;
+//                        window.location.reload(true);
                     }
                 });
 

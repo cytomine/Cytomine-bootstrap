@@ -102,7 +102,7 @@ class UserAnnotationService extends ModelService {
      * @param multipleTerm Only get annotation with multiple (diff) term
      * @return Annotation listing (light)
      */
-    def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+    def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false) {
         SecurityACL.check(project.container(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             throw new IllegalArgumentException("Method not supported for this type of data!!!")
@@ -118,6 +118,7 @@ class UserAnnotationService extends ModelService {
                         " AND at2.term_id <> at3.term_id \n" +
                         " AND at2.user_id IN (" + userList.join(",") + ") \n" +
                         (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
+                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                         " ORDER BY id desc, term"
             else if (noTerm)
                 request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,null as term, null as annotationTerms,null as userTerm,a.wkt_location as location  \n" +
@@ -126,6 +127,7 @@ class UserAnnotationService extends ModelService {
                         " AND at.id IS NULL\n" +
                         " AND a.user_id IN (" + userList.join(",") + ") \n" +
                         (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
+                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                         " ORDER BY id desc, term"
             else
                 request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
@@ -133,6 +135,7 @@ class UserAnnotationService extends ModelService {
                         " WHERE a.project_id = " + project.id + "\n" +
                         " AND a.user_id IN (" + userList.join(",") + ") \n" +
                         (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
+                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                         " ORDER BY id desc, term"
 
             selectUserAnnotationFull(request)
@@ -269,7 +272,7 @@ class UserAnnotationService extends ModelService {
      * @param imageInstanceList Image filter
      * @return Annotation listing (light)
      */
-    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList, boolean notReviewedOnly = false) {
         SecurityACL.check(project.container(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             listForUserJob(project, term, userList, imageInstanceList)
@@ -284,6 +287,7 @@ class UserAnnotationService extends ModelService {
                     " AND a.id = at3.user_annotation_id\n" +
                     " AND at.user_id IN (" + userList.collect {it}.join(",") + ") \n" +
                     (allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                     " ORDER BY id desc, term"
             selectUserAnnotationFull(request)
         }

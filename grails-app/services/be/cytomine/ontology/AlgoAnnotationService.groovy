@@ -188,7 +188,7 @@ class AlgoAnnotationService extends ModelService {
      * @param multipleTerm Flag to get only annotation with many terms
      * @return Algo annotation list
      */
-    def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm) {
+    def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false) {
         SecurityACL.check(project,READ)
         log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
         if (userList.isEmpty()) {
@@ -220,7 +220,10 @@ class AlgoAnnotationService extends ModelService {
 
                 if (termNumber > 1) {
                     AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id, className)
-                    if (imageInstanceList.contains(annotation.image.id)) {
+
+                    def avoid = (notReviewedOnly && annotation.hasReviewedAnnotation())
+
+                    if (!avoid && imageInstanceList.contains(annotation.image.id)) {
                         data << annotation
                     }
                 }
@@ -243,18 +246,21 @@ class AlgoAnnotationService extends ModelService {
             //inList crash is argument is an empty list so we have to use if/else at this time
             def annotations = []
 
+            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
 
             if (annotationsWithTerms.size() == 0) {
                 annotations.addAll(UserAnnotation.createCriteria().list {
                     eq("project", project)
                     inList("image.id", imageInstanceList)
                     inList("user.id", userList)
+                    lt('countReviewedAnnotations',maxReviewed)
                     order 'created', 'desc'
                 })
                 annotations.addAll(AlgoAnnotation.createCriteria().list {
                     eq("project", project)
                     inList("image.id", imageInstanceList)
                     inList("user.id", userList)
+                    lt('countReviewedAnnotations',maxReviewed)
                     order 'created', 'desc'
                 })
             } else {
@@ -262,6 +268,7 @@ class AlgoAnnotationService extends ModelService {
                     eq("project", project)
                     inList("image.id", imageInstanceList)
                     inList("user.id", userList)
+                    lt('countReviewedAnnotations',maxReviewed)
                     not {
                         inList("id", annotationsWithTerms)
                     }
@@ -271,6 +278,7 @@ class AlgoAnnotationService extends ModelService {
                     eq("project", project)
                     inList("image.id", imageInstanceList)
                     inList("user.id", userList)
+                    lt('countReviewedAnnotations',maxReviewed)
                     not {
                         inList("id", annotationsWithTerms)
                     }
@@ -282,8 +290,10 @@ class AlgoAnnotationService extends ModelService {
         } else {
             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
             long start = new Date().time
+            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
             def annotations = AlgoAnnotation.createCriteria().list {
                 eq("project", project)
+                lt('countReviewedAnnotations',maxReviewed)
                 inList("user.id", userList)
                 inList("image.id", imageInstanceList)
                 fetchMode 'image', FetchMode.JOIN
@@ -303,7 +313,7 @@ class AlgoAnnotationService extends ModelService {
      * @param imageInstanceList Annotation Imageinstance
      * @return Algo Annotation List
      */
-    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
+    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList,boolean notReviewedOnly = false) {
         SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
@@ -321,6 +331,7 @@ class AlgoAnnotationService extends ModelService {
                     "AND at.user_job_id IN (${userList.join(',')}) \n" +
                     (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
                     "AND at.annotation_ident = a.id \n" +
+                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                     "UNION \n" +
                     "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
                     "FROM user_annotation a, algo_annotation_term at \n" +
@@ -329,6 +340,7 @@ class AlgoAnnotationService extends ModelService {
                     "AND at.user_job_id IN (${userList.join(',')}) \n" +
                     (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')}) \n" :" ") +
                     "AND at.annotation_ident = a.id \n" +
+                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                     "ORDER BY rate desc \n"
 
 
