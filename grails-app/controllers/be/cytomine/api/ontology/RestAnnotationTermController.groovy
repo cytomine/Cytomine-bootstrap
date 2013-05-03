@@ -173,7 +173,7 @@ class RestAnnotationTermController extends RestController {
             if(cytomineService.isUserAlgo()) {
                 throw new InvalidRequestException("A userJob cannot delete user term from userannotation")
             }
-            def result = annotationTermService.addWithDeletingOldTerm(params.idannotation, params.idterm)
+            def result = annotationTermService.addWithDeletingOldTerm(params.idannotation, params.idterm, params.boolean('clearForAll'))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

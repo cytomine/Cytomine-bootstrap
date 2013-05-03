@@ -705,3 +705,7 @@ div.olControlZoomPanel .olControlZoomToMaxExtentItemInactive {
       width: 768px;
       height: 768px;
 }
+
+.termHovered {
+    background-color: rgb(223, 223, 223);
+}

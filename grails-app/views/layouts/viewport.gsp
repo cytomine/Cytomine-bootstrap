@@ -279,6 +279,7 @@ body {
 <script type="text/javascript" src="application/views/annotation/AnnotationQuestionableView.js" ></script>
 <script type="text/javascript" src="application/views/annotation/ShareAnnotationView.js" ></script>
 
+<script type="text/javascript" src="application/views/review/ReviewStatsListing.js" ></script>
 <script type="text/javascript" src="application/views/review/ReviewLastReviewListing.js" ></script>
 <script type="text/javascript" src="application/views/review/ReviewTermListing.js" ></script>
 <script type="text/javascript" src="application/views/review/ReviewAnnotationListing.js" ></script>

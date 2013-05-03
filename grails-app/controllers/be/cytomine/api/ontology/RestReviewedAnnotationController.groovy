@@ -172,6 +172,16 @@ class RestReviewedAnnotationController extends RestController {
         }
     }
 
+    def stats = {
+        ImageInstance image = imageInstanceService.read(params.long('image'))
+        if(image) {
+            responseSuccess(reviewedAnnotationService.stats(image))
+        }
+        else {
+            responseNotFound("Image", params.image)
+        }
+    }
+
 
     /**
      * Get a single reviewed annotation

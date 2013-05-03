@@ -51,9 +51,30 @@ class ReviewedAnnotationService extends ModelService {
         annotation
     }
 
+    def stats(ImageInstance image) {
+        String request = "SELECT user_id, count(*), sum(count_reviewed_annotations) as total \n" +
+                "FROM user_annotation ua\n" +
+                "WHERE ua.image_id = ${image.id}\n" +
+                "GROUP BY user_id\n" +
+                "UNION\n" +
+                "SELECT user_id, count(*), sum(count_reviewed_annotations) as total \n" +
+                "FROM algo_annotation aa\n" +
+                "WHERE aa.image_id = ${image.id}\n" +
+                "GROUP BY user_id\n" +
+                "ORDER BY total desc;"
+
+        def data = []
+
+        new Sql(dataSource).eachRow(request) {
+             data << [user : it[0],all : it[1],reviewed : it[2]
+            ]
+        }
+        data
+    }
+
     def list(Project project) {
         SecurityACL.check(project.container(),READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
                 " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
                 " WHERE a.project_id = " + project.id + "\n" +
                 " ORDER BY id desc, term"
@@ -62,7 +83,7 @@ class ReviewedAnnotationService extends ModelService {
 
     def list(ImageInstance image) {
         SecurityACL.check(image.container(),READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
                 " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
                 " ORDER BY id desc, term"
@@ -225,7 +246,7 @@ class ReviewedAnnotationService extends ModelService {
     def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null) {
         SecurityACL.check(project.container(),READ)
         boolean filterOnImages = ImageInstance.countByProject(project) != imageInstanceList.size()
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location  \n" +
+        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent   \n" +
                 " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
                 " WHERE a.id = at.reviewed_annotation_terms_id \n" +
                 " AND a.project_id = " + project.id + "\n" +
@@ -265,13 +286,14 @@ class ReviewedAnnotationService extends ModelService {
                         created: it.created,
                         updated: it.updated,
                         reviewed: (it.countReviewedAnnotations > 0),
-                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                        cropURL: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
                         smallCropURL: UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
                         url: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
                         imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
                         term: (it.term ? [it.term] : []),
                         userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
-                        location: it.location
+                        location: it.location,
+                        parentIdent:it.parent
                 ]
             } else {
                 if (it.term) {

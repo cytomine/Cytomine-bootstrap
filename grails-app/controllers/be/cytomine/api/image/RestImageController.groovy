@@ -179,8 +179,8 @@ class RestImageController extends RestController {
     }
 
 
-    private BufferedImage createCropWithDraw(AnnotationDomain annotation,String url) {
-        BufferedImage baseImage = ImageIO.read(new URL(url));
+    private BufferedImage createCropWithDraw(AnnotationDomain annotation,BufferedImage baseImage) {
+
         println "createCropWithDraw"
         //AbstractImage image, BufferedImage window, LineString lineString, Color color, int x, int y, double x_ratio, double y_ratio
         def boundaries = annotation.getBoundaries()
@@ -211,50 +211,6 @@ class RestImageController extends RestController {
 
       baseImage
     }
-
-
-
-
-
-
-
-//    private BufferedImage createCropWithDraw(AnnotationDomain annotation,String url) {
-//        BufferedImage baseImage = ImageIO.read(new URL(url));
-//        Geometry location = new WKTReader().read(annotation.location.toText());
-//
-//        Envelope env = location.getEnvelopeInternal();
-//        double minX = env.getMinX();
-//        double minY = env.getMinY();
-//        double maxY = env.getMaxY();
-//        double maxX = env.getMaxX();
-//
-//        Path2D.Float regionOfInterest = new Path2D.Float();
-//         boolean isFirst = true;
-//
-//        Coordinate[] coordinates = location.getCoordinates();
-//        println coordinates.length
-//        println ""
-//       for(Coordinate c:coordinates) {
-//            double x = c.x-minX;
-//            double y = maxY-(c.y); //max-coord to because y axis is differe,t
-//           //double y = c.y-minY;
-//           print "$x,$y ; "
-//            if(isFirst) {
-//                regionOfInterest.moveTo(x,y);
-//                isFirst = false;
-//            }
-//            regionOfInterest.lineTo(x,y);
-//       }
-//        println ""
-//
-//      Graphics2D g2d = (Graphics2D)baseImage.getGraphics();
-//      g2d.setStroke(new BasicStroke(50f));
-//      //g2d.setColor(new Color(155,89,187,200));
-//        g2d.setColor(new Color(0,0,0,200));
-//      g2d.draw(regionOfInterest);
-//      baseImage
-//    }
-
 
 
     /**
@@ -301,11 +257,11 @@ class RestImageController extends RestController {
                 def value = params.max_size
                 params.max_size=null
                 def cropURL = getCropAnnotationURL(annotation,params)
-                def image = createCropWithDraw(annotation,cropURL)
+                BufferedImage image = ImageIO.read(new URL(cropURL));
                 if(value) {
-                    println  Integer.parseInt(value)
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
+                image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
         } catch (Exception e) {
@@ -326,12 +282,12 @@ class RestImageController extends RestController {
             } else {
                 def value = params.max_size
                 params.max_size=null
-
-                def image = createCropWithDraw(annotation,cropURL)
+                def cropURL = getCropAnnotationURL(annotation,params)
+                BufferedImage image = ImageIO.read(new URL(cropURL));
                 if(value) {
-                    println  Integer.parseInt(value)
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
+                image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
         } catch (Exception e) {
@@ -353,10 +309,11 @@ class RestImageController extends RestController {
                 def value = params.max_size
                 params.max_size=null
                 def cropURL = getCropAnnotationURL(annotation,params)
-                def image = createCropWithDraw(annotation,cropURL)
+                BufferedImage image = ImageIO.read(new URL(cropURL));
                 if(value) {
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
+                image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
         } catch (Exception e) {

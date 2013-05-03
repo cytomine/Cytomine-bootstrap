@@ -52,6 +52,11 @@ class ReviewedAnnotationUrlMappings {
          }
 
 
+        "/api/imageinstance/$image/reviewedannotation/stats"(controller: "restReviewedAnnotation"){
+            action = [GET:"stats"]
+         }
+
+
         //validate all annotation for a job?
     }
 }

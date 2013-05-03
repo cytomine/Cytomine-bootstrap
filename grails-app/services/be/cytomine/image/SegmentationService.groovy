@@ -11,6 +11,7 @@ import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Rectangle
+import java.awt.RenderingHints
 import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
 
@@ -157,8 +158,10 @@ class SegmentationService {
        }
         println ""
       Graphics2D g2d = (Graphics2D)window.getGraphics();
+        //g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.setStroke(new BasicStroke(borderWidth));
       g2d.setColor(c);
+
       g2d.draw(regionOfInterest);
       window
 

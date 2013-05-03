@@ -55,6 +55,7 @@ class HttpClient {
         client = new DefaultHttpClient();
         // Create AuthCache instance
         AuthCache authCache = new BasicAuthCache();
+
         // Generate BASIC scheme object and add it to the local
         // auth cache
         BasicScheme basicAuth = new BasicScheme();

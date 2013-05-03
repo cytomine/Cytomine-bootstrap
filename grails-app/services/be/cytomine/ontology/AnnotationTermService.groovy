@@ -83,7 +83,7 @@ class AnnotationTermService extends ModelService {
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
-    def addWithDeletingOldTerm(def idAnnotation, def idterm) {
+    def addWithDeletingOldTerm(def idAnnotation, def idterm, boolean fromAllUser = false) {
         SecUser currentUser = cytomineService.getCurrentUser()
         UserAnnotation annotation = UserAnnotation.read(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")
@@ -91,11 +91,17 @@ class AnnotationTermService extends ModelService {
         Transaction transaction = transactionService.start()
 
         //Delete all annotation term
-        def annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, currentUser)
+        def annotationTerm
+        if(!fromAllUser) {
+
+            annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, currentUser)
+        } else {
+            annotationTerm = AnnotationTerm.findAllByUserAnnotation(annotation)
+        }
         log.info "Delete old annotationTerm= " + annotationTerm.size()
         annotationTerm.each { annotterm ->
             log.info "unlink annotterm:" + annotterm.id
-            this.delete(annotterm,transaction,true)
+            this.delete(annotterm,transaction,null,true)
         }
         //Add annotation term
         return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)

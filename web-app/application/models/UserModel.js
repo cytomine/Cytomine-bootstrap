@@ -23,7 +23,13 @@ var UserModel = Backbone.Model.extend({
     },
 
     prettyName: function () {
-        return this.get('lastname') + " " + this.get('firstname');
+        if (this.get('lastname')==undefined) {
+            return this.get("softwareName") + " " + window.app.convertLongToDate(this.get("created"));
+        }
+        else {
+            return this.get('lastname') + " " + this.get('firstname');
+        }
+
     },
     layerName: function () {
         if (this.get('algo')) {

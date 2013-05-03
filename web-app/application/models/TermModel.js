@@ -25,6 +25,9 @@ var AnnotationTermModel = Backbone.Model.extend({
         else if (this.clear != null) {
             return 'api/annotation/' + this.userannotation + '/term/' + this.term + '/clearBefore.json';
         }
+        else if (this.clearForAll != null) {
+            return 'api/annotation/' + this.userannotation + '/term/' + this.term + '/clearBefore.json?clearForAll=true';
+        }
         else {
             return 'api/annotation/' + this.userannotation + '/term/' + this.term + '.json';
         }
@@ -33,6 +36,7 @@ var AnnotationTermModel = Backbone.Model.extend({
         this.userannotation = options.userannotation;
         this.term = options.term;
         this.clear = options.clear;
+        this.clearForAll = options.clearForAll;
     }
 });
 

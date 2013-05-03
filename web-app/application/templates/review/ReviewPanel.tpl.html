@@ -1,50 +1,115 @@
 <div class="row text-center" align="center">
 
-    <div id="filterReviewListing" class="span12 text-center" style="margin:20px auto;float:none;">
+    <!--<div id="filterReviewListing" class="row container-fluid span12 text-center" style="margin:20px auto;float:none;">-->
 
-        <div class="hero-unit">
-                <h2>Review for project <%= projectName %></h2>
-                <p> You are reviewing image <%= imageFilename %>.</p>
-                <p>User: <select id="filterUser"></select>&nbsp;&nbsp; Term: <select id="filterTerm"></select></p>
+        <!--<div class=" span8" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;" >-->
+                <!--<h2>Review for project <%= projectName %></h2>-->
+                <!--<p> You are reviewing image <%= imageFilename %>.</p>-->
+                <!--<p>User: <select id="filterUser"></select>&nbsp;&nbsp; Term: <select id="filterTerm"></select></p>-->
 
-                <% if (reviewer) { %>
-                     <p class="text-info"><%= reviewer %> is the reviewer for this image.</p>
-                <% } else {%>
-                     <p class="text-error">There is no reviewer for this image.</p>
-                     <p><a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a></p>
-                <% }%>
-        </div>
+                <!--<% if (reviewer) { %>-->
+                     <!--<p class="text-info"><%= reviewer %> is the reviewer for this image.</p>-->
+                <!--<% } else {%>-->
+                     <!--<p class="text-error">There is no reviewer for this image.</p>-->
+                     <!--<p><a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a></p>-->
+                <!--<% }%>-->
+        <!--</div>-->
+
+        <!--<div class="span3" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">-->
+                <!--coucou-->
+        <!--</div>-->
+
+    <!--</div>-->
+    <!---->
+
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+          <!--<div class="span10">span10</div>-->
+          <!--<div class="span2">span2</div>-->
 
 
 
 
+
+
+
+          <!--<div class="span10">-->
+            <div class="span9">
+
+                <div id="filterReviewListing" class="text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+                    <h2>Review for project <%= projectName %></h2>
+                    <p> You are reviewing image <%= imageFilename %>.</p>
+                    <p>User: <select id="filterUser"></select>&nbsp;&nbsp; Term: <select id="filterTerm"></select></p>
+
+                    <% if (reviewer) { %>
+                         <p class="text-info"><%= reviewer %> is the reviewer for this image.</p>
+                    <% } else {%>
+                         <p class="text-error">There is no reviewer for this image.</p>
+                         <p><a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a></p>
+                    <% }%>
+                </div>
+            </div>
+            <div class="span3">
+                <div id="statsReviewListing" class="text-left" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+                    <div id="userStatsReviewListing" class="text-left" ></div>
+                    <div id="buttonStatsReviewListing" class="text-left" style="margin:20px auto;float:none;">
+                        <button class="btn previous"><i class="icon-chevron-left"></i></button>
+                        <button class="btn next"><i class="icon-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+           <!--</div>-->
+      </div>
     </div>
+
+
+
+
 
     <% if (reviewer) { %>
-    <div id="lastReviewListing" class="span12  text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
-        <h4>Your last review for this project:</h4>
-        <div id="lastReviewedAnnotation">
-            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span10">
+
+
+
+            <div id="annotationReviewListing" class="span12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+                <div id="AnnotationNotReviewed">
+                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                </div>
+                <div id="pagination">
+                      <button id="previous5">PREVIOUS 5</button>
+                      <button id="previous1">PREVIOUS</button>
+                      <span id="pagin"></span>
+                      <button id="next1">NEXT</button>
+                      <button id="next5">NEXT 5</button>
+                      <button id="reviewAll">Review all</button>
+                </div>
+            </div>
+
+
+            <div id="termReviewListing" align="center" class="span12 text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;">
+                <div id="termReviewChoice">
+                </div>
+            </div>
         </div>
+        <div class="span2">
+            <div id="lastReviewListing" class="span12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+                <h4>Your last review for this project:</h4>
+                <div id="lastReviewedAnnotation">
+                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+      </div>
     </div>
 
 
-    <div id="annotationReviewListing" class="span12  text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
-        <div id="AnnotationNotReviewed">
-            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-        </div>
-        <div id="pagination">
-              <button id="next1">NEXT</button>
-              <button id="next5">NEXT 5</button>
-        </div>
-    </div>
 
 
-    <div id="termReviewListing" align="center" class="span12 text-center" style="border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
-        <div id="termReviewChoice">
-        </div>
 
-    </div>
     <% } %>
 
 </div>
