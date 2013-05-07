@@ -17,6 +17,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).hide();
             el.find("#startreview" + self.model.id).show();
+            el.find("#startCytoreview" + self.model.id).show();
             el.find("#cancelreview" + self.model.id).hide();
             el.find("#validateimage" + self.model.id).hide();
             el.find("#unvalidateimage" + self.model.id).hide();
@@ -25,6 +26,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
             el.find("#startreview" + self.model.id).hide();
+            el.find("#startCytoreview" + self.model.id).hide();
             if (self.model.get('numberOfReviewedAnnotations') == 0) {
                 el.find("#cancelreview" + self.model.id).show();
             }
@@ -38,6 +40,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
             el.find("#startreview" + self.model.id).hide();
+            el.find("#startCytoreview" + self.model.id).hide();
             el.find("#cancelreview" + self.model.id).hide();
             el.find("#validateimage" + self.model.id).hide();
             el.find("#unvalidateimage" + self.model.id).show();
@@ -48,6 +51,12 @@ var ImageReviewAction = Backbone.View.extend({
             self.startReviewing();
             return false;
         });
+
+        el.find("#startCytoreview" + self.model.id).on("click", function () {
+            self.startCytoReviewing();
+            return false;
+        });
+
         el.find("#cancelreview" + self.model.id).on("click", function () {
             self.cancelReviewing();
             return false;
@@ -78,6 +87,21 @@ var ImageReviewAction = Backbone.View.extend({
                 self.model = new ImageModel(response.imageinstance);
                 self.container.refresh();
                 window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-';
+            },
+            error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Image", json.errors, "error");
+            }});
+    },
+    startCytoReviewing: function () {
+        var self = this;
+        console.log("startCytoReviewing");
+        new ImageReviewModel({id: self.model.id}).save({}, {
+            success: function (model, response) {
+                window.app.view.message("Image", response.message, "success");
+                self.model = new ImageModel(response.imageinstance);
+                self.container.refresh();
+                window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-null-null';
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

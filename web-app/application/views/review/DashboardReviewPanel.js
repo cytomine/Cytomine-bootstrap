@@ -14,9 +14,9 @@ var DashboardReviewPanel = Backbone.View.extend({
     render: function (image,user,term) {
         var self = this;
         require([
-            "text!application/templates/review/ReviewPanel.tpl.html"
+            "text!application/templates/review/ReviewPanel.tpl.html","text!application/templates/image/ImageReviewAction.tpl.html"
         ],
-            function (ReviewPanelTpl) {
+            function (ReviewPanelTpl,ReviewActionTpl) {
 
                 new ImageInstanceModel({id: image}).fetch({
                     success: function (model, response) {
@@ -30,7 +30,7 @@ var DashboardReviewPanel = Backbone.View.extend({
                                     reviewer = window.app.models.projectUser.get(model.get('reviewUser')).prettyName()
                                 }
 
-                                $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer}));
+                                $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer, validate:model.get('reviewStop')}));
 
                                 if(reviewer==null) {
                                     $("a#startToReview"+image).click(function(evt){
@@ -39,7 +39,7 @@ var DashboardReviewPanel = Backbone.View.extend({
                                         new ImageReviewModel({id: image}).save({}, {
                                             success: function (model, response) {
                                                 window.app.view.message("Image", response.message, "success");
-                                                window.location.reload();
+                                                self.refresh();
                                             },
                                             error: function (model, response) {
                                                 var json = $.parseJSON(response.responseText);
@@ -50,6 +50,13 @@ var DashboardReviewPanel = Backbone.View.extend({
 
 
                                 self.initFilter(user,term);
+
+                                $(self.el).find("#reviewCytoAction").append(_.template(ReviewActionTpl, model.toJSON()));
+                                var action = new ImageReviewAction({el:$("#reviewCytoAction"), model : model, container : self});
+                                action.configureAction();
+
+
+                                $("#statsReviewListing").css("min-height",$("#filterReviewListing").height());
 
                                 self.initStatsReview(image,user);
 
@@ -67,6 +74,10 @@ var DashboardReviewPanel = Backbone.View.extend({
     },
     refresh: function(image,user,term) {
         var self = this;
+        if(!image) {
+            self.render(self.image,self.user,self.term);
+            return;
+        }
         self.annotationListing.render(self.model.id,image,user,term)
         self.changeSelectedFilter(user,term);
         self.initStatsReview(image,user);
@@ -134,8 +145,6 @@ var DashboardReviewPanel = Backbone.View.extend({
               cursor: 'move',
               revert: true
         });
-        //drag/start/stop doesn't work :-/
-        $("#annotationReviewListing").find(".thumb-wrap").on( "dragstart", function( event, ui ) {alert('345');} );
     },
     initTermListing: function() {
         console.log("initTermListing");

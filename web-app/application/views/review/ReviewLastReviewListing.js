@@ -37,6 +37,15 @@ var ReviewLastReviewListing = Backbone.View.extend({
                         reviewMode : true
                     }).render();
 
+                    $(thumb.el).draggable({
+                        scroll: true,
+                        //scrollSpeed : 00,
+                        revert: true,
+                        delay: 500,
+                        opacity: 0.35,
+                        cursorAt: { top: 85, left: 90}
+                    });
+
                     $(thumb.el).append("<p class='terms text-center'></p>")
                     var termNames = []
                     _.each(rev.get("term"), function (it) {

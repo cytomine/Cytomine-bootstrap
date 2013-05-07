@@ -44,9 +44,8 @@ var ReviewAnnotationListing = Backbone.View.extend({
         });
 
 
-
         $("#annotationReviewListing").find("#reviewAll").click(function() {
-            self.reviewVisible();
+            self.reviewChecked();
         });
 
         $("#annotationReviewListing").find("#checkAll").click(function() {
@@ -82,6 +81,26 @@ var ReviewAnnotationListing = Backbone.View.extend({
         var self = this;
         $(self.el).find("span#pagin").empty();
         $(self.el).find("span#pagin").append("&nbsp;" + (self.currentPosition+1) + " / " + self.model.length +"&nbsp;");
+
+        var indiceNext = self.currentPosition+self.max;
+        if(indiceNext>self.model.size()-1) {
+            $("#annotationReviewListing").find("#next1").attr("disabled","disabled");
+            $("#annotationReviewListing").find("#next5").attr("disabled","disabled");
+        } else {
+            $("#annotationReviewListing").find("#next1").removeAttr("disabled");
+            $("#annotationReviewListing").find("#next5").removeAttr("disabled");
+        }
+
+        var indicePrevious = self.currentPosition-1;
+
+        if(indicePrevious<0) {
+            $("#annotationReviewListing").find("#previous1").attr("disabled","disabled")
+            $("#annotationReviewListing").find("#previous5").attr("disabled","disabled")
+        } else {
+            $("#annotationReviewListing").find("#previous1").removeAttr("disabled");
+            $("#annotationReviewListing").find("#previous5").removeAttr("disabled");
+        }
+
     },
 
     next : function() {
@@ -102,22 +121,24 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
         var indiceNext = self.currentPosition+self.max;
 
-        if(indiceNext<=self.model.size()-1) {
             //remove current
             $("#AnnotationNotReviewed").find('div[data-annotation='+id+']').remove();
             $("#AnnotationNotReviewed").find(".popover").remove();
 
-            //add the new last in list
 
+        if(indiceNext<=self.model.size()-1) {
+            //add the new last in list
             var next = self.model.at(indiceNext);
             self.addAnnotation(next,true);
 
 
-             self.currentPosition++;
-            self.refreshPagaination();
         } else {
-            window.app.view.message("Annotation", "There is no other annotations!", "error");
+//            window.app.view.message("Annotation", "There is no other annotations!", "error");
         }
+
+        self.currentPosition++;
+        self.refreshPagaination();
+
     },
     previous : function(id) {
         var self = this;
@@ -138,17 +159,18 @@ var ReviewAnnotationListing = Backbone.View.extend({
              self.currentPosition--;
             self.refreshPagaination();
         } else {
-            window.app.view.message("Annotation", "There is no annotation before!", "error");
+//            window.app.view.message("Annotation", "There is no annotation before!", "error");
         }
     },
 
 
 
-    reviewVisible : function() {
+    reviewChecked : function() {
         var self = this;
-        var visibleAnnotation = $("#AnnotationNotReviewed").find(".thumb-wrap");
-        $.each(visibleAnnotation, function(index, value) {
-          var idAnnotation = $(value).data('annotation');
+        var allChecked = _.map($("#annotationReviewListing").find(".component").find('input:checked'),function(elem) {
+            return $(elem).data("annotation");
+        });
+        $.each(allChecked, function(index, idAnnotation) {
             self.container.marskAsReviewed(idAnnotation,null,false);
         });
     },
@@ -177,6 +199,33 @@ var ReviewAnnotationListing = Backbone.View.extend({
             size : 200
         }).render();
 
+        $(thumb.el).draggable({
+            scroll: true,
+            //scrollSpeed : 00,
+            revert: true,
+            delay: 500,
+            opacity: 0.35,
+            cursorAt: { top: 85, left: 90},
+            start: function (event, ui) {
+                $("#AnnotationNotReviewed").find(".popover").remove();
+            },
+            stop: function (event, ui) {
+                $("#annotationReviewListing").find(".component").find('input:checked').parent().parent().css({
+                      top: 0,
+                      left: 0
+                 });
+            },
+            drag: function( event, ui ) {
+                $("#annotationReviewListing").find(".component").find('input:checked').parent().parent().css({
+                      top: ui.position.top,
+                      left: ui.position.left
+                 });
+          }
+        });
+
+
+
+
         $(thumb.el).append("<p class='terms text-center'></p>")
         var termNames = []
         _.each(annotation.get("term"), function (it) {
@@ -204,6 +253,10 @@ var ReviewAnnotationListing = Backbone.View.extend({
         $(thumb.el).find("button.review").click(function() {
             self.container.marskAsReviewed($(this).data('annotation'),null,false);
         });
+
+
+
+
 
     }
 });

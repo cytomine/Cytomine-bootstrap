@@ -125,7 +125,10 @@ var AnnotationThumbView = Backbone.View.extend({
                 trigger: 'hover'
             });
 
-            self.initDraggable();
+            if(!self.reviewMode) {
+                self.initDraggable();
+            }
+
         });
         return this;
     },
