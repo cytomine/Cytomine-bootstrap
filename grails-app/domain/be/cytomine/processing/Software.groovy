@@ -128,7 +128,7 @@ class Software extends CytomineDomain {
             software.resultName = it.resultName
             software.description = it.description
             try {
-                software.parameters = SoftwareParameter.findAllBySoftwareAndSetByServer(it, false)
+                software.parameters = SoftwareParameter.findAllBySoftwareAndSetByServer(it, false, [sort : "index", order : "asc"])
                 software.numberOfJob = Job.countBySoftware(it)
                 software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH)
                 software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE)

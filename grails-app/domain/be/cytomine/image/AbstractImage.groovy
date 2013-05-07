@@ -164,6 +164,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
         def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
+        if (!resolver) return null
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
         String url = resolver.getMetaDataURL(imageServerStorages[index].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator))
         return url
@@ -176,6 +177,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
         def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
+        if (!resolver) return null
         def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
         String basePath = storage.getBasePath()
@@ -199,6 +201,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         def imageServerStorages = getImageServersStorage()
         if (imageServerStorages == null || imageServerStorages.size() == 0 || width == null || height == null) return null
         Resolver resolver = Resolver.getResolver(imageServerStorages[0].imageServer.className)
+        if (!resolver) return null
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
         return resolver?.getZoomLevels(imageServerStorages[0].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator), width, height)
     }
