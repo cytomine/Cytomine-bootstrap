@@ -96,7 +96,7 @@ class Software extends CytomineDomain {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         domain.description = JSONUtils.getJSONAttrStr(json, 'description')
-        domain.serviceName = JSONUtils.getJSONAttrStr(json, 'serviceName',true)
+        domain.serviceName = JSONUtils.getJSONAttrStr(json, 'serviceName')
         domain.resultName = JSONUtils.getJSONAttrStr(json, 'resultName')
 
         def service
@@ -128,7 +128,7 @@ class Software extends CytomineDomain {
             software.resultName = it.resultName
             software.description = it.description
             try {
-                software.parameters = it.softwareParameterService.list(it, false)
+                software.parameters = SoftwareParameter.findAllBySoftwareAndSetByServer(it, false)
                 software.numberOfJob = Job.countBySoftware(it)
                 software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH)
                 software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE)
