@@ -13,6 +13,8 @@ import org.apache.log4j.Logger
  */
 class Software extends CytomineDomain {
 
+    def softwareParameterService
+
     /**
      * Application name
      */
@@ -126,7 +128,7 @@ class Software extends CytomineDomain {
             software.resultName = it.resultName
             software.description = it.description
             try {
-                software.parameters = SoftwareParameter.findAllBySoftware(it,[sort: "index",order: "asc"])
+                software.parameters = it.softwareParameterService.list(it, false)
                 software.numberOfJob = Job.countBySoftware(it)
                 software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH)
                 software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE)

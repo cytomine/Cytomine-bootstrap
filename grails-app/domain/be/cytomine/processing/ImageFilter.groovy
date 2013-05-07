@@ -28,7 +28,7 @@ class ImageFilter {
             def returnArray = [:]
             returnArray['id'] = it.id
             returnArray['name'] = it.name
-            returnArray['processingServer'] = it.processingServer
+            returnArray['processingServer'] = it.processingServer.url
             returnArray['baseUrl'] = it.baseUrl
             return returnArray
         }

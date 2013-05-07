@@ -37,41 +37,23 @@ var SoftwareDetailsView = Backbone.View.extend({
     printSoftwareParams: function () {
         var self = this;
         $('#softwareParamsTable').find("tbody").empty();
-        var datatable = $('#softwareParamsTable').dataTable();
-        datatable.fnClearTable();
+
 
         var tbody = $('#softwareParamsTable').find("tbody");
 
         _.each(self.model.get('parameters'), function (param) {
-            var name = '<td>' + param.name + '</td>';
-            var type = '<td style="text-align:center;">' + param.type + '</td>';
-            var defaultVal = '<td>' + param.defaultParamValue + '</td>';
-            var checked = "";
-            if (param.required) {
-                checked = 'checked="yes"';
-            }
-            var require = '<td style="text-align:center;"><input type="checkbox" ' + checked + ' disabled /></td>';
-            var index = '<td style="text-align:center;">' + param.index + '</td>';
-            tbody.append('<tr>' + name + type + defaultVal + require + index + '</tr>');
+            var tpl = "<tr><td><%= name %></td><td><%= type %></td><td><%= defaultParamValue %></td><td><input type='checkbox' <%= checked %> disabled /></td><td><%= index %></td></tr>"
+            var rowHtml = _.template(tpl, {
+                name : param.name,
+                type : param.type,
+                defaultParamValue : param.defaultParamValue,
+                checked : (param.required ? "checked" : ""),
+                index : param.index
+            });
+            tbody.append(rowHtml);
         });
 
-        $('#softwareParamsTable').dataTable({
-            //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ records per page"
-            },
-            "iDisplayLength": 999999,
-            "bLengthChange": false,
-            bDestroy: true,
-            "aoColumnDefs": [
-                { "sWidth": "30%", "aTargets": [ 0 ] },
-                { "sWidth": "10%", "aTargets": [ 1 ] },
-                { "sWidth": "40%", "aTargets": [ 2 ] },
-                { "sWidth": "10%", "aTargets": [ 3 ] },
-                { "sWidth": "10%", "aTargets": [ 4 ] }
-            ]
-        });
+
     },
     printJobsChart: function () {
         var self = this;

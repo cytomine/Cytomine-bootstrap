@@ -33,9 +33,9 @@ class SoftwareParameterService extends ModelService{
         softParam
     }
 
-    def list(Software software) {
+    def list(Software software, Boolean includeSetByServer = false) {
         SecurityACL.check(software,READ)
-        SoftwareParameter.findAllBySoftware(software)
+        SoftwareParameter.findAllBySoftwareAndSetByServer(software, includeSetByServer)
     }
 
     /**

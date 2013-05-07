@@ -34,6 +34,10 @@ ul,
 }
 
 
+.ms-res-ctn {
+    z-index: 1100;
+}
+
 .thumb{
     background:#EEE;
     border:#CCC solid 1px;

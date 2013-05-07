@@ -85,9 +85,11 @@ class IIPResolver extends Resolver{
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
         if (height > desiredHeight) {
-            args.add("HEI" + ARGS_EQUAL + Math.round(baseImageHeight / Math.ceil(height / desiredHeight)))
+            int hei = Math.round(baseImageHeight / Math.ceil(height / desiredHeight))
+            args.add("HEI" + ARGS_EQUAL + hei)
         } else if (width > desiredWidth) {
-            args.add("WID" + ARGS_EQUAL + Math.round(baseImageWidth / Math.ceil(width / desiredWidth)))
+            int wid = Math.round(baseImageWidth / Math.ceil(width / desiredWidth))
+            args.add("WID" + ARGS_EQUAL + wid)
         }
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)

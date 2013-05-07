@@ -62,6 +62,12 @@ class SoftwareParameter extends CytomineDomain {
      */
     String uriSortAttribut
 
+    /**
+     * Indicated if the field is autofilled by the server
+     */
+    Boolean setByServer
+
+
     static belongsTo = [Software]
 
     static constraints = {
@@ -71,6 +77,7 @@ class SoftwareParameter extends CytomineDomain {
         uri (nullable: true, blank : true)
         uriPrintAttribut (nullable: true, blank : true)
         uriSortAttribut (nullable: true, blank : true)
+        setByServer(defaultValue : false)
     }
 
     public beforeInsert() {
@@ -115,6 +122,7 @@ class SoftwareParameter extends CytomineDomain {
             softwareParameter.uri = it.uri
             softwareParameter.uriPrintAttribut = it.uriPrintAttribut
             softwareParameter.uriSortAttribut = it.uriSortAttribut
+            softwareParameter.setByServer = it.setByServer
             return softwareParameter
         }
     }
@@ -132,10 +140,11 @@ class SoftwareParameter extends CytomineDomain {
         domain.type = JSONUtils.getJSONAttrStr(json, 'type', true)
         domain.defaultValue = JSONUtils.getJSONAttrStr(json, 'defaultValue')
         domain.required = JSONUtils.getJSONAttrBoolean(json, 'required',false)
-        domain.defaultValue = JSONUtils.getJSONAttrInteger(json, 'index', -1)
+        domain.index = JSONUtils.getJSONAttrInteger(json, 'index', -1)
         domain.uri = JSONUtils.getJSONAttrStr(json,'uri')
         domain.uriPrintAttribut = JSONUtils.getJSONAttrStr(json,'uriPrintAttribut')
         domain.uriSortAttribut = JSONUtils.getJSONAttrStr(json,'uriSortAttribut')
+        domain.setByServer = JSONUtils.getJSONAttrBoolean(json,'setByServer', false)
         return domain;
     }
 

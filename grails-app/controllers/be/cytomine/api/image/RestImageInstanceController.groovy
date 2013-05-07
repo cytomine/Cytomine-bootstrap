@@ -226,6 +226,7 @@ class RestImageInstanceController extends RestController {
 
     private BufferedImage getMaskImage(AnnotationDomain annotation, Term term, Integer zoom, Boolean withAlpha) {
         //TODO:: document this method
+
         BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
@@ -288,9 +289,6 @@ class RestImageInstanceController extends RestController {
         }
         Integer zoom = null
         if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        if (annotation == null) {
-            responseNotFound("Crop", "Annotation", params.annotation)
-        }
 
         def zoomMinMax = annotation.getImage().getBaseImage().getZoomLevels()
         if ((params.zoom != null) && (zoom > zoomMinMax.max)) {

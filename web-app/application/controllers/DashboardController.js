@@ -304,6 +304,6 @@ var DashboardController = Backbone.Router.extend({
         if (computeValue.length > maxSize) {
             shortValue = computeValue.substring(0, maxSize) + "...";
         }
-        return '<a class="cellPopover" data-placement="top" rel="popover" data-content="' + computeValue + '" data-original-title="">' + shortValue + '</a>';
+        return shortValue;
     }
 });

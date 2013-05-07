@@ -232,10 +232,10 @@ class JobService extends ModelService {
         job.software.service.init(job, userJob)
 
         log.info "Launch async..."
-        backgroundService.execute("RunJobAsynchronously", {
+        //backgroundService.execute("RunJobAsynchronously", {
             log.info "Launch thread";
             job.software.service.execute(job)
-        })
+        //})
         job
     }
 

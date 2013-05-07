@@ -294,3 +294,17 @@ grails.plugins.springsecurity.controllerAnnotations.staticRules = [
         '/admin/manage/**': ['ROLE_ADMIN']
 ]
 
+
+/** RABBITMQ */
+rabbitmq {
+    connectionfactory {
+        username = 'guest'
+        password = 'guest'
+        hostname = 'localhost'
+        consumers = 5
+    }
+    queues = {
+        cytomineQueue()
+        //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
+    }
+}

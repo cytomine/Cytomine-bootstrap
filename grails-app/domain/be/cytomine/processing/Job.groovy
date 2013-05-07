@@ -156,7 +156,11 @@ class Job extends CytomineDomain  {
      * @return Container of this domain
      */
     public CytomineDomain container() {
-        return project.container();
+        return project.container()
+    }
+
+    public String toString() {
+        software.getName() + "[" + software.getId() + "]"
     }
 
 }

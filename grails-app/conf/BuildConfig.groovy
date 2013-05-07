@@ -8,6 +8,7 @@ grails.project.dependency.resolution = {
     inherits("global") {
         // uncomment to disable ehcache
         // excludes 'ehcache'
+        excludes 'httpclient'
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
@@ -52,8 +53,9 @@ grails.project.dependency.resolution = {
         runtime ':fields:1.3'
 
         runtime ':twitter-bootstrap:2.0.4'
-        runtime ':quartz:1.0-RC5'
-        runtime ':quartz-monitor:0.3-RC1'
+        runtime ":rabbitmq:1.0.0"
+        runtime ":quartz:1.0-RC7"
+        runtime ":quartz-monitor:0.3-RC1"
         runtime ':rest:0.7'
         runtime ':cache:1.0.1'
         runtime ':database-migration:1.2.1'

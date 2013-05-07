@@ -26,8 +26,9 @@ class RestSoftwareParameterController extends RestController{
      */
     def listBySoftware = {
         Software software = Software.read(params.long('id'))
+        boolean includeSetByServer = params.boolean('setByServer', false)
         if(software) {
-            responseSuccess(softwareParameterService.list(software))
+            responseSuccess(softwareParameterService.list(software, includeSetByServer))
         } else {
             responseNotFound("Software", params.id)
         }

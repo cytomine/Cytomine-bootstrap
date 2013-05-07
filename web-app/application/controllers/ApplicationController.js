@@ -224,6 +224,8 @@ var ApplicationController = Backbone.Router.extend({
         return start + "[...]" + end;
     },
     replaceVariable: function (value) {
+        if (!value) return value; //return undefined of not defined...
+
         var result = value;
         result = result.replace("$currentProjectCreationDate$", window.app.status.currentProjectModel.get('created'));
         result = result.replace("$currentProject$", window.app.status.currentProject);

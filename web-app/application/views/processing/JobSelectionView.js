@@ -188,7 +188,7 @@ var JobSelectionView = Backbone.View.extend({
                 if (job.get('dataDeleted')) {
                     cellDelete = "All job data are deleted"
                 } else {
-                    cellDelete = '<button id="' + job.id + '">Delete all job data</button>';
+                    cellDelete = '<button class="btn btn-warning" id="' + job.id + '">Delete data</button>';
                 }
 
 

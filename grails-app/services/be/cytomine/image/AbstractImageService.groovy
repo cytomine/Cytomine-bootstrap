@@ -19,6 +19,8 @@ class AbstractImageService extends ModelService {
 
     static transactional = false
 
+    static final int REQUESTED_CROP_SIZE = 64
+
     def commandService
     def cytomineService
     def imagePropertiesService
@@ -293,6 +295,12 @@ class AbstractImageService extends ModelService {
         if (zoom != null) {
             int desiredWidth = boundaries.width / Math.pow(2, zoom)
             int desiredHeight = boundaries.height / Math.pow(2, zoom)
+            /* find the nearest acceptable zoom */
+            while (desiredWidth < REQUESTED_CROP_SIZE && desiredHeight < REQUESTED_CROP_SIZE) {
+                zoom--
+                desiredWidth = boundaries.width / Math.pow(2, zoom)
+                desiredHeight = boundaries.height / Math.pow(2, zoom)
+            }
             return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
         } else {
             return annotation.toCropURL()

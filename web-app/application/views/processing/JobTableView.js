@@ -104,7 +104,7 @@ var JobTableView = Backbone.View.extend({
         self.initSubGridDatatables();
 
         //hide id column
-        self.buildSHowHideColumnParamPanel(self.table);
+        //self.buildSHowHideColumnParamPanel(self.table);
 
 
     },

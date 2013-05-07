@@ -83,7 +83,6 @@ var JobListingView = Backbone.View.extend({
             }
         });
 
-        console.log("listAlgoInfo2");
         var refreshData = function () {
 
             new JobCollection({ project: self.project.id, software: software.id}).fetch({
@@ -155,6 +154,7 @@ var JobListingView = Backbone.View.extend({
     },
     printJobParameter: function (subgrid_id, row_id, idJob) {
         var self = this;
+
         console.log("printJobParameter=" + subgrid_id + "|" + row_id);
         var subgrid_table_id, pager_id;
         subgrid_table_id = subgrid_id + "_t";
