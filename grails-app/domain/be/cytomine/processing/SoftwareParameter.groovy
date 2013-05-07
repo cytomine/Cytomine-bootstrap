@@ -65,7 +65,7 @@ class SoftwareParameter extends CytomineDomain {
     /**
      * Indicated if the field is autofilled by the server
      */
-    Boolean setByServer
+    Boolean setByServer = false
 
 
     static belongsTo = [Software]
@@ -77,7 +77,6 @@ class SoftwareParameter extends CytomineDomain {
         uri (nullable: true, blank : true)
         uriPrintAttribut (nullable: true, blank : true)
         uriSortAttribut (nullable: true, blank : true)
-        setByServer(defaultValue : false)
     }
 
     public beforeInsert() {
