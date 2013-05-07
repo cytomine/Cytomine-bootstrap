@@ -313,8 +313,15 @@ class RestReviewedAnnotationController extends RestController {
             if(ReviewedAnnotation.findByParentIdent(basedAnnotation.id)) {
                 throw new AlreadyExistException("Annotation is already accepted!")
             }
+
             ReviewedAnnotation review = createReviewAnnotation(basedAnnotation, null)
-            def result = reviewedAnnotationService.add(JSON.parse(review.encodeAsJSON()))
+
+            def json = JSON.parse(review.encodeAsJSON())
+            def jsonRequest = request.JSON.terms
+            if(jsonRequest) {
+                json.terms = jsonRequest
+            }
+            def result = reviewedAnnotationService.add(json)
             responseResult(result)
 
         } catch (CytomineException e) {

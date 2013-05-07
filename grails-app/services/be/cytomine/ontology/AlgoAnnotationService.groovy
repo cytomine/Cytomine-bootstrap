@@ -190,7 +190,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false) {
         SecurityACL.check(project,READ)
-        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm")
+        log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm notReviewedOnly=$notReviewedOnly")
         if (userList.isEmpty()) {
             return []
         } else if (imageInstanceList.isEmpty()) {
@@ -293,7 +293,7 @@ class AlgoAnnotationService extends ModelService {
             int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
             def annotations = AlgoAnnotation.createCriteria().list {
                 eq("project", project)
-                lt('countReviewedAnnotations',maxReviewed)
+                lte('countReviewedAnnotations',maxReviewed)
                 inList("user.id", userList)
                 inList("image.id", imageInstanceList)
                 fetchMode 'image', FetchMode.JOIN
@@ -313,7 +313,7 @@ class AlgoAnnotationService extends ModelService {
      * @param imageInstanceList Annotation Imageinstance
      * @return Algo Annotation List
      */
-    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList,boolean notReviewedOnly = false) {
+    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList,Boolean notReviewedOnly = false) {
         SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
@@ -321,7 +321,7 @@ class AlgoAnnotationService extends ModelService {
             return []
         } else {
             //Get all images
-
+            println "listForUserJob"
 
             String request = "" +
                     "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
@@ -343,7 +343,7 @@ class AlgoAnnotationService extends ModelService {
                     (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                     "ORDER BY rate desc \n"
 
-
+             println request
             return selecAlgoAnnotationLight(request)
         }
     }

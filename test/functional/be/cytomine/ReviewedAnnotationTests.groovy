@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 
 import be.cytomine.test.BasicInstanceBuilder
@@ -232,6 +233,7 @@ class ReviewedAnnotationTests  {
         result = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
+
 
 //    void testAddReviewedAnnotationCorrectWithoutTerm() {
 //        def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
@@ -617,6 +619,32 @@ class ReviewedAnnotationTests  {
         result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
+
+
+    void testAddReviewForAnnotationTermOtherTerm() {
+         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
+
+         AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
+         Term term =  BasicInstanceBuilder.getTermNotExist(at.term.ontology,true)
+
+         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [term.id], Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+         def json = JSON.parse(result.data)
+         assert json instanceof JSONObject
+         assert json.reviewedannotation.terms !=null
+         assert json.reviewedannotation.terms.size()==1
+
+         assert json.reviewedannotation.terms.contains(term.id.intValue())
+         assert !json.reviewedannotation.terms.contains(at.term.id.intValue())
+         def idReviewAnnotation = json.reviewedannotation.id
+         result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+     }
 
     void testAddReviewForAlgoAnnotationTerm() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)

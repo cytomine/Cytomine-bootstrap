@@ -54,8 +54,8 @@
                 <div id="statsReviewListing" class="text-left" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
                     <div id="userStatsReviewListing" class="text-left" ></div>
                     <div id="buttonStatsReviewListing" class="text-left" style="margin:20px auto;float:none;">
-                        <button class="btn previous"><i class="icon-chevron-left"></i></button>
-                        <button class="btn next"><i class="icon-chevron-right"></i></button>
+                        <button class="btn previous" style="float:left;"><i class="icon-chevron-left"></i></button>
+                        <button class="btn next" style="float:right;"><i class="icon-chevron-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -80,12 +80,14 @@
                     <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
                 </div>
                 <div id="pagination">
-                      <button id="previous5">PREVIOUS 5</button>
-                      <button id="previous1">PREVIOUS</button>
+                      <button id="checkAll" class="btn">Check all</button>
+                      <button id="previous1" class="btn btn-primary"><i class="icon-chevron-left"></i></button>
+                      <button id="previous5" class="btn"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i></button>
+
                       <span id="pagin"></span>
-                      <button id="next1">NEXT</button>
-                      <button id="next5">NEXT 5</button>
-                      <button id="reviewAll">Review all</button>
+                      <button id="next5" class="btn"><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></button>
+                      <button id="next1" class="btn btn-primary"><i class="icon-chevron-right"></i></button>
+                      <button id="reviewAll" class="btn">Review all</button>
                 </div>
             </div>
 

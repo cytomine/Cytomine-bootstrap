@@ -20,47 +20,47 @@ var DashboardReviewPanel = Backbone.View.extend({
 
                 new ImageInstanceModel({id: image}).fetch({
                     success: function (model, response) {
-                        $(self.el).empty();
+                        new UserJobCollection({project: window.app.status.currentProject, image: image}).fetch({
+                            success: function (collection, response) {
+                                self.userJobForImage = collection;
+                                $(self.el).empty();
 
-                        var reviewer = null;
-                        if(model.get('reviewUser')) {
-                            reviewer = window.app.models.projectUser.get(model.get('reviewUser')).prettyName()
-                        }
+                                var reviewer = null;
+                                if(model.get('reviewUser')) {
+                                    reviewer = window.app.models.projectUser.get(model.get('reviewUser')).prettyName()
+                                }
 
-                        $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer}));
+                                $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer}));
 
-                        if(reviewer==null) {
-                            $("a#startToReview"+image).click(function(evt){
-                                 evt.preventDefault();
+                                if(reviewer==null) {
+                                    $("a#startToReview"+image).click(function(evt){
+                                         evt.preventDefault();
 
-                                new ImageReviewModel({id: image}).save({}, {
-                                    success: function (model, response) {
-                                        window.app.view.message("Image", response.message, "success");
-                                        window.location.reload();
-                                    },
-                                    error: function (model, response) {
-                                        var json = $.parseJSON(response.responseText);
-                                        window.app.view.message("Image", json.errors, "error");
-                                     }});
-                            });
-                        }
+                                        new ImageReviewModel({id: image}).save({}, {
+                                            success: function (model, response) {
+                                                window.app.view.message("Image", response.message, "success");
+                                                window.location.reload();
+                                            },
+                                            error: function (model, response) {
+                                                var json = $.parseJSON(response.responseText);
+                                                window.app.view.message("Image", json.errors, "error");
+                                             }});
+                                    });
+                                }
 
 
-                        self.initFilter(user,term);
+                                self.initFilter(user,term);
 
-                        self.initStatsReview(image,user);
+                                self.initStatsReview(image,user);
 
-                        self.initLastReview();
+                                self.initLastReview();
 
-                        self.initAnnotationListing(image,user,term);
+                                self.initAnnotationListing(image,user,term);
 
-                        self.initTermListing();
+                                self.initTermListing();
+                            }
+                        });
                 }});
-
-
-
-
-
             });
         window.app.view.currentReview = this;
         return this;
@@ -71,22 +71,16 @@ var DashboardReviewPanel = Backbone.View.extend({
         self.changeSelectedFilter(user,term);
         self.initStatsReview(image,user);
     },
-    marskAsReviewed : function(id) {
+    marskAsReviewed : function(id, terms, reviewed) {
         var self = this;
-        new AnnotationReviewedModel({id: id}).save({}, {
-            success: function (model, response) {
-//
-//                var lastReviewDiv = $("#lastReviewListing").find(".thumb-wrap").last();
-//                console.log("lastReviewDiv="+lastReviewDiv);
-//                if(lastReviewDiv) {
-//                    var lastReviewPos = lastReviewDiv.position();
-//                    console.log(lastReviewPos);
-//                    $("#AnnotationNotReviewed").find('div[data-annotation='+id+']').animate({left:lastReviewPos.left, top:lastReviewPos.top}, 500);
-//                }
 
+        new AnnotationReviewedModel({id: id}).save({terms:terms}, {
+            success: function (model, response) {
                 //remove from annotation listing
-                self.annotationListing.remove(id);
-                console.log(self.lastReviewListing);
+                if(!reviewed) {
+                    self.annotationListing.remove(id);
+                    console.log(self.lastReviewListing);
+                }
 
                 //refresh last review
                 self.lastReviewListing.refresh();
@@ -156,78 +150,72 @@ var DashboardReviewPanel = Backbone.View.extend({
         }).render();
 
         $("#termReviewChoice").find("div").droppable( {
-            accept: '#annotationReviewListing .thumb-wrap',
+            accept: '#annotationReviewListing .thumb-wrap, #lastReviewedAnnotation .thumb-wrap',
             hoverClass: 'termHovered',
-            drop: self.handleNotReviewed
+            drop: self.handle,
+            cursor: 'move',
+      	 	 revert: true
           } );
-//        $("#termReviewChoice").find("div").droppable( {
-//            accept: '#lastReviewedAnnotation .thumb-wrap',
-//            hoverClass: 'termHovered',
-//            drop: self.handleReviewed
-//          } );
-
 
     },
-    handleNotReviewed : function(event, ui) {
+    handle : function(event,ui) {
+
+        ui.draggable.draggable( 'disable' );
+        ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
+        ui.draggable.draggable( 'option', 'revert', false );
+
+        if(ui.draggable.data('reviewed')) {
+            window.app.view.currentReview.handleReviewed( $(this),event, ui);
+        }else {
+            window.app.view.currentReview.handleNotReviewed( $(this),event, ui);
+        }
+    },
+    handleNotReviewed : function(termBox,event, ui) {
         var self = this;
-        var idTerm = $(this).data("term");
+        var idTerm = $(termBox).data("term");
         var idAnnotation = ui.draggable.data('annotation');
-        console.log("IdTerm="+idTerm);
-        console.log("idAnnotation="+idAnnotation);
-       // window.app.view.currentReview.dropStyleAnnotation(event, ui);
 
-       //first: map term with annotation remove other term!!!
-         new AnnotationTermModel({term: idTerm, userannotation: idAnnotation, clearForAll: true}).save(null, {success: function (termModel, response) {
-                 window.app.view.message("Correct Term", response.message, "");
-                //second: review annotation
-                window.app.view.currentReview.marskAsReviewed(idAnnotation);
+        console.log("###############################################################");
+        console.log("###############################################################");
+        console.log("###############################################################");
+        var allChecked = _.map($("#annotationReviewListing").find(".component").find('input:checked'),function(elem) {
+            return $(elem).data("annotation");
+        });
 
-             }, error: function (model, response) {
-                 var json = $.parseJSON(response.responseText);
-                 window.app.view.message("Correct term", "error:" + json.errors, "");
-             }});
+        console.log(allChecked);
+
+        if(allChecked.length==0) {
+           //no checked but d&d => just take annotation that was dragged
+           window.app.view.currentReview.marskAsReviewed(idAnnotation,[idTerm],false);
+        } else {
+           //one or more checked
+            console.log(allChecked);
+            allChecked = _.union(allChecked, [idAnnotation]);
+            console.log(allChecked);
+            _.each(allChecked,function(item) {
+                console.log("review:"+item);
+                window.app.view.currentReview.marskAsReviewed(item,[idTerm],false);
+            });
+        }
 
     },
-    handleReviewed :function(event, ui) {
+    handleReviewed :function(termBox,event, ui) {
         var self = this;
-        var idTerm = $(this).data("term");
+        var idTerm = $(termBox).data("term");
         var idAnnotation = ui.draggable.data('annotation');
-        console.log("IdTerm="+idTerm);
-        console.log("idAnnotation="+idAnnotation);
-         var idAnnotationParent = window.app.view.currentReview.lastReviewListing.model.get(idAnnotation).get('parentIdent');
-        console.log(window.app.view.currentReview.lastReviewListing.model);
-        console.log("idAnnotationParent="+idAnnotationParent);
+        var idAnnotationParent = window.app.view.currentReview.lastReviewListing.model.get(idAnnotation).get('parentIdent');
+
+
         //first: reject annotation
-
             new AnnotationReviewedModel({id: idAnnotationParent}).destroy({
                 success: function (model, response) {
-                    console.log("1 ok");
-                     //change terme
-                    new AnnotationTermModel({term: idTerm, userannotation: idAnnotationParent, clearForAll: true}).save(null, {success: function (termModel, response) {
-                        console.log("2 ok");
-                            window.app.view.message("Correct Term", response.message, "");
-                           //second: review annotation
-                           window.app.view.currentReview.marskAsReviewed(idAnnotationParent);
-
-                        }, error: function (model, response) {
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Correct term", "error:" + json.errors, "");
-                        }});
-
+                        //second: validate annotation
+                           window.app.view.currentReview.marskAsReviewed(idAnnotationParent,[idTerm],true);
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     window.app.view.message("Annotation", json.errors, "error");
                 }});
-
-
-
-
-
-
-
-        //second: validate annotation
-
     },
     dropStyleAnnotation : function(event, ui ) {
          //ui.draggable.addClass( 'hove' );
@@ -241,12 +229,12 @@ var DashboardReviewPanel = Backbone.View.extend({
         var self = this;
         var userFilter = $("#filterReviewListing").find("#filterUser");
         userFilter.empty();
-        userFilter.append('<option value="0">All</option>');
+        userFilter.append('<option value="0">All user (no job)</option>');
 
         window.app.models.projectUser.each(function(user) {
             userFilter.append('<option value="'+user.id+'">'+user.prettyName()+'</option>');
         });
-        window.app.models.projectUserJob.each(function(user) {
+        self.userJobForImage.each(function(user) {
             userFilter.append('<option value="'+user.id+'">'+user.prettyName()+'</option>');
         });
 

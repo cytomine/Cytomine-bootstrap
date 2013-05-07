@@ -46,10 +46,14 @@ var ReviewLastReviewListing = Backbone.View.extend({
                     });
 
                     $(thumb.el).find(".terms").append(termNames.join(", "));
-
-
-                    $(self.el).find("#lastReviewedAnnotation").append("<br>");
+                    $(thumb.el).find('div').css("margin","0px auto");
+                    $(thumb.el).find('div').css("float","none");
+                    $(thumb.el).append("<p class='text-center'>"+window.app.convertLongToDate(rev.get('created'))+ "</p>");
+                    $(self.el).find("#lastReviewedAnnotation").append("<hr/>");
                     $(self.el).find("#lastReviewedAnnotation").append(thumb.el);
+//                    $(thumb.el).find(".thumb-wrap").data("reviewed",'true');
+//                    $(thumb.el).data("reviewed",'true');
+                    $(self.el).attr("data-reviewed", "true");
                 });
             }
         });

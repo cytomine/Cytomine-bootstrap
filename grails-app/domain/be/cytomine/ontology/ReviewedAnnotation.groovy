@@ -1,6 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
@@ -217,6 +218,18 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              return returnArray
          }
      }
+
+    /**
+     * Check if this domain will cause unique constraint fail if saving on database
+     */
+    void checkAlreadyExist() {
+        ReviewedAnnotation.withNewSession {
+                ReviewedAnnotation reviewed = ReviewedAnnotation.findByParentIdent(parentIdent)
+                if(reviewed!=null && (reviewed.id!=id))  {
+                    throw new AlreadyExistException("This annotation is already reviewed!")
+                }
+        }
+    }
 
 
     /**

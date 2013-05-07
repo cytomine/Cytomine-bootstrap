@@ -16,6 +16,7 @@ var AnnotationThumbView = Backbone.View.extend({
             this.size = 100;
         }
         this.sizeImage = this.size-10;
+
         _.bindAll(this, 'render');
     },
     render: function () {
@@ -83,6 +84,7 @@ var AnnotationThumbView = Backbone.View.extend({
                 $(self.el).attr("data-term", self.term);
             }
 
+            $(self.el).attr("data-reviewed", annotation.get('reviewed'));
 
             //POPOVER
             //See if algo suggest something and agrees

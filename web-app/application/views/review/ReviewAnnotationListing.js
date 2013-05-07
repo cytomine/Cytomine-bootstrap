@@ -49,6 +49,12 @@ var ReviewAnnotationListing = Backbone.View.extend({
             self.reviewVisible();
         });
 
+        $("#annotationReviewListing").find("#checkAll").click(function() {
+            $("#annotationReviewListing").find(".component").find('input').attr("checked",true);
+        });
+
+
+
         self.refresh();
 
 
@@ -65,7 +71,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         self.model = new AnnotationCollection({project: self.project, images:[self.image], term: self.term, users: (self.user? [self.user] : null),reviewed:false, notReviewedOnly:true});
         self.model.goTo(this.page,{
             success: function (collection, response) {
-                $(self.el).find("#AnnotationNotReviewed").empty();
+                $(self.el).find("#AnnotationNotReviewed").find("div").remove();
                 self.model = collection;
                 self.nbAnnotation = collection.fullSize;
                 self.appendThumbs(self.page);
@@ -75,7 +81,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
     refreshPagaination : function() {
         var self = this;
         $(self.el).find("span#pagin").empty();
-        $(self.el).find("span#pagin").append("[" + (self.currentPosition+1) + " / " + self.model.length +"]");
+        $(self.el).find("span#pagin").append("&nbsp;" + (self.currentPosition+1) + " / " + self.model.length +"&nbsp;");
     },
 
     next : function() {
@@ -91,7 +97,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         self.refreshPagaination();
     },
     hide : function(id) {
-         console.log(id);
+
         var self = this;
 
         var indiceNext = self.currentPosition+self.max;
@@ -143,7 +149,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         var visibleAnnotation = $("#AnnotationNotReviewed").find(".thumb-wrap");
         $.each(visibleAnnotation, function(index, value) {
           var idAnnotation = $(value).data('annotation');
-            self.container.marskAsReviewed(idAnnotation);
+            self.container.marskAsReviewed(idAnnotation,null,false);
         });
     },
     appendThumbs: function (page) {
@@ -170,126 +176,34 @@ var ReviewAnnotationListing = Backbone.View.extend({
             reviewMode : true,
             size : 200
         }).render();
-        $(thumb.el).append('<button data-annotation = "'+annotation.id+'" class="btn review" style="min-width:100%;">Accept</button>');
+
+        $(thumb.el).append("<p class='terms text-center'></p>")
+        var termNames = []
+        _.each(annotation.get("term"), function (it) {
+            var term = window.app.status.currentTermsCollection.get(it);
+            var termName = term.get('name');
+            termNames.push('<span class="label label-warning" style="background-color:'+term.get('color')+';">'+termName+'</span>')
+        });
+
+        $(thumb.el).find(".terms").append(termNames.join(", "));
+
+        $(thumb.el).append('<div class="component text-center"></div>');
+
+        $(thumb.el).find(".component").append('<button  style="display:inline;" data-annotation = "'+annotation.id+'" class="btn review" style="min-width:100%;">Accept</button>');
+        $(thumb.el).find(".component").append('<input data-annotation="'+annotation.id+'" style="display:inline;" type="checkbox" value="takeMe">');
 
         if(after) {
-
             $(self.el).find("#AnnotationNotReviewed").append(thumb.el);
         } else {
             $(self.el).find("#AnnotationNotReviewed").prepend(thumb.el);
         }
 
+        $(self.el).attr("data-reviewed", 'false');
 
 
         $(thumb.el).find("button.review").click(function() {
-            self.container.marskAsReviewed($(this).data('annotation'));
+            self.container.marskAsReviewed($(this).data('annotation'),null,false);
         });
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    render: function (project,user,term) {
-//        var self = this;
-//        console.log("render: project="+project + " user="+user + " term="+term);
-//        self.project = project;
-//        self.user = user;
-//        self.term = term;
-//        self.refresh();
-//        return this;
-//    },
-//    refresh: function () {
-//        var self = this;
-//
-//        self.model = new AnnotationCollection({project: self.project, term: self.term, users: (self.user? [self.user] : null),reviewed:false, max: 5});
-//
-//        self.model.goTo(this.page,{
-//            success: function (collection, response) {
-//                $(self.el).empty();
-//                self.model = collection;
-//                self.nbAnnotation = collection.fullSize;
-//                self.initPagination();
-//                self.appendThumbs(self.page);
-//
-//        }});
-//    },
-//    nextOne : function() {
-//
-//    },
-//    initPagination: function () {
-//        var self = this;
-//         var nbPages = self.model.getNumberOfPages();
-//
-//         if(nbPages<2) {
-//             return;
-//         } else {
-//            require(["text!application/templates/dashboard/Pagination.tpl.html"], function (paginationTpl) {
-//
-//                var pagination = _.template(paginationTpl, { term: "all"});
-//                $(self.el).append(pagination);
-//                var $pagination = $(self.el).find("#pagination-term-" + "all").find("ul");
-//                var className = (self.page == 0) ? "prev disabled" : "";
-//
-//                var pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>&larr; Previous</a></li>", { className: className, page: self.page - 1});
-//                $pagination.append(pageLink);
-//                var shiftUp = (self.page - self.pagination_window < 0) ? Math.abs(self.page - self.pagination_window) : 0;
-//                var shiftDown = (self.page + self.pagination_window >= nbPages) ? Math.abs(self.pagination_window + self.page - nbPages + 1) : 0;
-//
-//                for (var i = Math.max(0, self.page - self.pagination_window - shiftDown); i < Math.min(nbPages, self.page + self.pagination_window + shiftUp + 1); i++) {
-//                    var linkID = "term-" + "all" + "-page-" + i;
-//                    className = (i == self.page) ? "active" : "";
-//                    pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'><%= page %></a></li>", {
-//                        className: className,
-//                        linkID: linkID,
-//                        page: i
-//                    });
-//                    $pagination.append(pageLink);
-//                }
-//                var className = (self.page == nbPages - 1) ? "next disabled" : "";
-//                pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>Next &rarr;</a></li>", { className: className, page: self.page + 1});
-//                $pagination.append(pageLink);
-//                $pagination.find("a").click(function (event) {
-//                    event.preventDefault();
-//                    var page = parseInt($(this).attr("data-page"));
-//                    if (page >= 0 && page < nbPages) {
-//                        self.switchToPage(page);
-//                    }
-//                    return false;
-//                });
-//
-//            });
-//         }
-//    },
-//    switchToPage: function (page) {
-//        var self = this;
-//        self.page = page;
-//        $(self.el).empty();
-//        self.refresh();
-//    },
-//    appendThumbs: function (page) {
-//        var self = this;
-//        self.annotations = [];
-//        self.model.each(function (annotation) {
-//            var thumb = new AnnotationThumbView({
-//                model: annotation,
-//                className: "thumb-wrap",
-//                term: "all",
-//                reviewMode : true
-//            }).render();
-//            $(self.el).append(thumb.el);
-//            self.annotations.push(annotation.id);
-//        });
-//    }
 });

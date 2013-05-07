@@ -80,7 +80,7 @@ body {
 <script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.fileupload.js"></script>
 <script type="text/javascript" src="lib/fileupload-7.4.1/js/cors/jquery.xdr-transport.js"></script>
 
-
+<script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
@@ -127,6 +127,8 @@ body {
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
 
 <script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>
+
+
 
 
 

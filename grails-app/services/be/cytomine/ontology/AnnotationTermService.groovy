@@ -83,7 +83,7 @@ class AnnotationTermService extends ModelService {
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
-    def addWithDeletingOldTerm(def idAnnotation, def idterm, boolean fromAllUser = false) {
+    def addWithDeletingOldTerm(def idAnnotation, def idterm, Boolean fromAllUser = false) {
         SecUser currentUser = cytomineService.getCurrentUser()
         UserAnnotation annotation = UserAnnotation.read(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")

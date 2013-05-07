@@ -64,6 +64,7 @@ class ReviewedAnnotationService extends ModelService {
                 "ORDER BY total desc;"
 
         def data = []
+        println request
 
         new Sql(dataSource).eachRow(request) {
              data << [user : it[0],all : it[1],reviewed : it[2]

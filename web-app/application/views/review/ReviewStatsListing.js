@@ -11,6 +11,7 @@ var ReviewStatsListing = Backbone.View.extend({
         this.user = options.user;
     },
     render: function () {
+        console.log("ReviewStatsListing.render()");
         var self = this;
         $("#buttonStatsReviewListing").find("button.previous").click(function() {
             self.previous();
