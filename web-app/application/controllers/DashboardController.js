@@ -17,7 +17,7 @@ var DashboardController = Backbone.Router.extend({
         "tabs-algos-:project-:software-:job": "algos",
         "tabs-algos-:project-:software-": "algos",
         "tabs-algos-:project": "algos",
-        "tabs-review-:project-:image-:user-:term": "review"
+        "tabs-reviewdash-:project-:image-:user-:term": "review"
 //        "tabs-review-:project-:user-:term": "review",
 //        "tabs-review-:project": "review"
 
@@ -150,7 +150,7 @@ var DashboardController = Backbone.Router.extend({
             console.log("Controller dashboard.review");
             self.view.refreshReview(image,user,term);
             var tabs = $("#explorer > .browser").find(".nav-tabs");
-            tabs.find('a[href=#tabs-review-' + window.app.status.currentProject + ']').tab('show');
+            tabs.find('a[href=#tabs-reviewdash-' + window.app.status.currentProject + ']').tab('show');
         };
         this.init(project, func);
     },

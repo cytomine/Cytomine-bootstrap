@@ -51,13 +51,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         $("#annotationReviewListing").find("#checkAll").click(function() {
             $("#annotationReviewListing").find(".component").find('input').attr("checked",true);
         });
-
-
-
         self.refresh();
-
-
-
         return this;
     },
     refresh: function () {
@@ -67,6 +61,8 @@ var ReviewAnnotationListing = Backbone.View.extend({
         console.log([self.image]) ;
         console.log(self.term) ;
         console.log((self.user? [self.user] : null)) ;
+        $(self.el).find("#AnnotationNotReviewed").find("div").remove();
+        $(self.el).find("#AnnotationNotReviewed").append('<div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>');
         self.model = new AnnotationCollection({project: self.project, images:[self.image], term: self.term, users: (self.user? [self.user] : null),reviewed:false, notReviewedOnly:true});
         self.model.goTo(this.page,{
             success: function (collection, response) {
@@ -230,8 +226,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         var termNames = []
         _.each(annotation.get("term"), function (it) {
             var term = window.app.status.currentTermsCollection.get(it);
-            var termName = term.get('name');
-            termNames.push('<span class="label label-warning" style="background-color:'+term.get('color')+';">'+termName+'</span>')
+            termNames.push(_.template(self.container.termSpanTemplate,term.toJSON()))
         });
 
         $(thumb.el).find(".terms").append(termNames.join(", "));

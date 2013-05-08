@@ -133,7 +133,7 @@ class BasicInstanceBuilder {
         if(project) job.project = project
         saveDomain(job)
         BasicInstanceBuilder.getSoftwareProjectNotExist(job.software,job.project,true)
-        UserJob userJob = BasicInstanceBuilder.getUserJob()
+        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist()
         userJob.job = job
         userJob.user = BasicInstanceBuilder.getUser1()
         saveDomain(userJob)
@@ -287,6 +287,24 @@ class BasicInstanceBuilder {
         algoannotationTerm
     }
 
+    static AlgoAnnotation getAlgoAnnotationNotExist(ImageInstance image, String polygon, UserJob user, Term term) {
+        AlgoAnnotation annotation = new AlgoAnnotation(
+                location: new WKTReader().read(polygon),
+                image:image,
+                user: user,
+                project:project
+        )
+        println annotation.user
+        annotation = saveDomain(annotation)
+
+
+       def at = getAlgoAnnotationTermNotExist(user.job,user,annotation,true)
+        at.term = term
+        at.userJob = user
+        saveDomain(at)
+        annotation
+    }
+
     static ReviewedAnnotation createReviewAnnotation(ImageInstance image) {
         ReviewedAnnotation review = getReviewedAnnotationNotExist()
         review.project = image.project
@@ -374,6 +392,42 @@ class BasicInstanceBuilder {
         )
         println annotation.user
         save ? saveDomain(annotation) : checkDomain(annotation)
+    }
+
+
+
+    static UserAnnotation getUserAnnotationNotExist(ImageInstance image, String polygon, User user, Term term) {
+        UserAnnotation annotation = new UserAnnotation(
+                location: new WKTReader().read(polygon),
+                image:image,
+                user: user,
+                project:project
+        )
+        println annotation.user
+        annotation = saveDomain(annotation)
+
+
+       def at = getAnnotationTermNotExist(annotation,true)
+        at.term = term
+        at.user = user
+        saveDomain(at)
+        annotation
+    }
+
+    static ReviewedAnnotation getReviewedAnnotationNotExist(ImageInstance image, String polygon, User user, Term term) {
+        def annotation = getUserAnnotationNotExist(image,polygon,user,term)
+
+            def reviewedAnnotation = ReviewedAnnotation.findOrCreateWhere(
+                    location: annotation.location,
+                    image: annotation.image,
+                    user: user,
+                    project:annotation.project,
+                    status : 0,
+                    reviewUser: user
+            )
+        reviewedAnnotation.putParentAnnotation(annotation)
+        reviewedAnnotation.addToTerms(term)
+        saveDomain(reviewedAnnotation)
     }
 
 

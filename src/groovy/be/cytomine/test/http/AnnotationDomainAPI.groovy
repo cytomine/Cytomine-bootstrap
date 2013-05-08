@@ -5,6 +5,7 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.Infos
 import grails.converters.JSON
+import groovyx.net.http.URIBuilder
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
@@ -105,5 +106,15 @@ class AnnotationDomainAPI extends DomainAPI {
     static def delete(def id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation/" + id + ".json"
         return doDELETE(URL,username,password)
+    }
+
+    static def listIncluded(String geometry, Long idImage, Long idUser,List<Long> terms,String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotations/included?geometry=${geometry.replace(" ","%20")}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
+        return doGET(URL, username, password)
+    }
+
+    static def listIncluded(AnnotationDomain annotation, Long idImage, Long idUser,List<Long> terms,String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotations/included?annotation=${annotation.id}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
+        return doGET(URL, username, password)
     }
 }

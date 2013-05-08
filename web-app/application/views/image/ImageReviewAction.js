@@ -16,6 +16,7 @@ var ImageReviewAction = Backbone.View.extend({
             
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).hide();
+            el.find("#reviewCyto" + self.model.id).hide();
             el.find("#startreview" + self.model.id).show();
             el.find("#startCytoreview" + self.model.id).show();
             el.find("#cancelreview" + self.model.id).hide();
@@ -25,6 +26,7 @@ var ImageReviewAction = Backbone.View.extend({
         } else if (self.isInReviewing()) {
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
+            el.find("#reviewCyto" + self.model.id).show();
             el.find("#startreview" + self.model.id).hide();
             el.find("#startCytoreview" + self.model.id).hide();
             if (self.model.get('numberOfReviewedAnnotations') == 0) {
@@ -39,6 +41,7 @@ var ImageReviewAction = Backbone.View.extend({
         } else {
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
+            el.find("#reviewCyto" + self.model.id).show()
             el.find("#startreview" + self.model.id).hide();
             el.find("#startCytoreview" + self.model.id).hide();
             el.find("#cancelreview" + self.model.id).hide();
@@ -101,7 +104,7 @@ var ImageReviewAction = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
                 self.container.refresh();
-                window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-null-null';
+                window.location = '#tabs-reviewdash-' + self.model.get('project') + '-' + self.model.get('id') + '-null-null';
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

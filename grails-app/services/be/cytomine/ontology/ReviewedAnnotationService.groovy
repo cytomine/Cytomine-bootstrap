@@ -1,5 +1,6 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -88,6 +89,18 @@ class ReviewedAnnotationService extends ModelService {
                 " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
                 " WHERE a.image_id = " + image.id + "\n" +
                 " ORDER BY id desc, term"
+        selectReviewedAnnotationFull(request)
+    }
+
+    def list(ImageInstance image, String geometry, List<Long> terms, AnnotationDomain annotation = null) {
+        SecurityACL.check(image.container(),READ)
+         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
+                 "FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
+                 "WHERE a.image_id = ${image.id} \n" +
+                 "AND at.term_id IN (${terms.join(',')})\n" +
+                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
+                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
+        println request
         selectReviewedAnnotationFull(request)
     }
 

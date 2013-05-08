@@ -125,5 +125,11 @@ class AnnotationUrlMappings {
         "/api/annotationcorrection"(controller:"restAnnotationDomain"){
             action = [POST:"addCorrection"]
         }
+
+
+        "/api/imageinstance/$idImage/annotations/included"(controller:"restAnnotationDomain"){
+                action = [GET: "listIncludedAnnotation"]
+         }
+
     }
 }

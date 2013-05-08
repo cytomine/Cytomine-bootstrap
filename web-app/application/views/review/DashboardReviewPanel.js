@@ -8,16 +8,17 @@ var DashboardReviewPanel = Backbone.View.extend({
     user : null,
     term: null,
     disableEvent: false,
+    termSpanTemplate : null,
     initialize: function (options) {
-        this.el = "#tabs-review-" + this.model.id;
+        this.el = "#tabs-reviewdash-" + this.model.id;
     },
     render: function (image,user,term) {
         var self = this;
         require([
-            "text!application/templates/review/ReviewPanel.tpl.html","text!application/templates/image/ImageReviewAction.tpl.html"
+            "text!application/templates/review/ReviewPanel.tpl.html","text!application/templates/image/ImageReviewAction.tpl.html","text!application/templates/ontology/TermSpan.tpl.html"
         ],
-            function (ReviewPanelTpl,ReviewActionTpl) {
-
+            function (ReviewPanelTpl,ReviewActionTpl, TermSpanTpl) {
+                self.termSpanTemplate = TermSpanTpl;
                 new ImageInstanceModel({id: image}).fetch({
                     success: function (model, response) {
                         new UserJobCollection({project: window.app.status.currentProject, image: image}).fetch({
@@ -102,6 +103,7 @@ var DashboardReviewPanel = Backbone.View.extend({
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Annotation", json.errors, "error");
+                self.refresh()
             }});
     },
     initLastReview : function() {
@@ -167,10 +169,14 @@ var DashboardReviewPanel = Backbone.View.extend({
           } );
 
     },
+
+
+
+
     handle : function(event,ui) {
 
-        ui.draggable.draggable( 'disable' );
-        ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
+        //ui.draggable.draggable( 'disable' );
+       // ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
         ui.draggable.draggable( 'option', 'revert', false );
 
         if(ui.draggable.data('reviewed')) {
@@ -270,7 +276,7 @@ var DashboardReviewPanel = Backbone.View.extend({
                 termValue = "multiple";
              }
             if(!self.disableEvent) {
-               window.location = "#tabs-review-"+self.model.id+"-"+self.image+"-"+ userValue + "-" + termValue
+               window.location = "#tabs-reviewdash-"+self.model.id+"-"+self.image+"-"+ userValue + "-" + termValue
             }
         }
 

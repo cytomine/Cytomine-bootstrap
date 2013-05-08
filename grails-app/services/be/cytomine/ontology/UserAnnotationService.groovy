@@ -1,5 +1,6 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityACL
@@ -292,6 +293,30 @@ class UserAnnotationService extends ModelService {
             selectUserAnnotationFull(request)
         }
     }
+
+
+    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
+        SecurityACL.check(image.container(),READ)
+         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at.term_id as term, at.id as annotationTerms,at.user_id as userTerm,a.wkt_location as location \n" +
+                 "FROM user_annotation a, annotation_term at \n" +
+                 "WHERE a.id = at.user_annotation_id \n" +
+                 "AND a.image_id = ${image.id} \n" +
+                 "AND a.user_id = ${user.id} \n" +
+                 "AND a.id = at.user_annotation_id \n" +
+                 "AND at.term_id IN (${terms.join(',')})\n" +
+                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
+                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
+
+        selectUserAnnotationFull(request)
+    }
+
+
+
+
+
+
+
+
 
 //
 //    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")

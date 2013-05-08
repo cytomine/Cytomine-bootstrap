@@ -50,8 +50,8 @@ var ReviewLastReviewListing = Backbone.View.extend({
                     var termNames = []
                     _.each(rev.get("term"), function (it) {
                         var term = window.app.status.currentTermsCollection.get(it);
-                        var termName = term.get('name');
-                        termNames.push('<span class="label label-warning" style="background-color:'+term.get('color')+';">'+termName+'</span>')
+
+                        termNames.push(_.template(self.container.termSpanTemplate,term.toJSON()));
                     });
 
                     $(thumb.el).find(".terms").append(termNames.join(", "));

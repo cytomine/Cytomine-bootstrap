@@ -22,7 +22,8 @@ var ReviewTermListing = Backbone.View.extend({
         self.sortWithOrder();
         self.model.each(function(term) {
 
-            $(self.el).append('<div data-term="'+term.id+'" style="border-width: 3px; border-style: solid; border-color: rgb(183, 177, 177);min-width : 175px; min-height: 175px;text-align: center;margin-bottom: 15px;margin-top: 15px;margin-left: 15px;margin-right: 15px;" class="span1 termChoice" id="termDrop'+term.id+'"><span class="label label-warning" style="background-color:'+term.get('color')+';">'+term.get('name')+'</span></div>');
+            var spanText = _.template(self.container.termSpanTemplate,term.toJSON());
+            $(self.el).append('<div data-term="'+term.id+'" style="border-width: 3px; border-style: solid; border-color: rgb(183, 177, 177);min-width : 175px; min-height: 175px;text-align: center;margin-bottom: 15px;margin-top: 15px;margin-left: 15px;margin-right: 15px;" class="span1 termChoice" id="termDrop'+term.id+'">'+spanText+'</div>');
         });
 
         $( "#termReviewChoice" ).sortable({update:function() {

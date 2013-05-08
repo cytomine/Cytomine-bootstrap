@@ -2,6 +2,7 @@ package be.cytomine.test.http
 
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
+import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 
 /**
@@ -24,6 +25,9 @@ class DomainAPI {
      */
     static boolean containsInJSONList(Long id, def list) {
         println "Search $id in ${list}"
+        if(list instanceof String) {
+            list = JSON.parse(list)
+        }
         list = list.collection
         if (list == []) return false
         boolean find = false

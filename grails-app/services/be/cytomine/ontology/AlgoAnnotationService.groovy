@@ -348,6 +348,20 @@ class AlgoAnnotationService extends ModelService {
         }
     }
 
+    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
+        SecurityACL.check(image.container(),READ)
+         String request = "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
+                 "FROM algo_annotation a, algo_annotation_term at \n" +
+                 "WHERE a.id = at.annotation_ident \n" +
+                 "AND a.image_id = ${image.id} \n" +
+                 "AND a.user_id = ${user.id} \n" +
+                 "AND at.term_id IN (${terms.join(',')})\n" +
+                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
+                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
+
+        println request
+        selecAlgoAnnotationLight(request)
+    }
 
     /**
      * Execute request and format result into a list of map
