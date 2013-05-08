@@ -1,8 +1,9 @@
 package be.cytomine.api.search
 
+import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.api.RestController
-import be.cytomine.utils.SearchEnum.Filter
-import be.cytomine.utils.SearchEnum.Operator
+import be.cytomine.utils.SearchFilter
+import be.cytomine.utils.SearchOperator
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,44 +21,44 @@ class SearchController extends RestController {
         List<String> listKeyword
 
         def keywords = params.get('keywords')
-        def operator = params.get('operator')
-        def filter = params.get('filter')
+        String operator = params.get('operator')
+        String filter = params.get('filter')
 
-        if (!operator) {
-             operator = Operator.OR
-        }
-        if (!filter) {
-            filter = Filter.ALL
+        if (!keywords) {
+            responseError(new InvalidRequestException("Please specify some keywords"))
         }
 
-        if (keywords) {
-            listKeyword = keywords.split(",")
-
-            if (operator.equals("OR")) {
-                operator = Operator.OR
-            } else if (operator.equals("AND")) {
-                operator = Operator.AND
-            }
-
-            if (filter.equals(Filter.PROJECT)) {
-                responseSuccess(searchService.list(listKeyword, operator, filter))
-            } else if (filter.equals(Filter.IMAGE)) {
-                responseSuccess(searchService.list(listKeyword, operator, filter))
-            } else if (filter.equals(Filter.ANNOTATION)) {
-                responseSuccess(searchService.list(listKeyword, operator, filter))
-            } else {
-                // filter = Filter.ALL
-                def all = []
-                all.addAll(searchService.list(listKeyword, operator, Filter.PROJECT))
-                all.addAll(searchService.list(listKeyword, operator, Filter.IMAGE))
-                all.addAll(searchService.list(listKeyword, operator, Filter.ANNOTATION))
-                all.sort{-it.id}
-                responseSuccess(all)
+        if (operator) {
+            operator = operator.toUpperCase()
+            if (!SearchOperator.getPossibleValues().contains(operator)) {
+                String possibleValues =  SearchOperator.getPossibleValues().join(",")
+                responseError(new InvalidRequestException("Operator $operator does not exists. Possible value : $possibleValues"))
             }
         } else {
-            responseNotFound("Search","Keywords", params.keywords)
+            operator = SearchOperator.OR
         }
 
+        if (filter) {
+            filter = filter.toUpperCase()
+            if (!SearchFilter.getPossibleValues().contains(filter)) {
+                String possibleValues =  SearchFilter.getPossibleValues().join(",")
+                responseError(new InvalidRequestException("Filter $filter does not exists. Possible value : $possibleValues"))
+            }
+        } else {
+            filter = SearchFilter.ALL
+        }
 
+        listKeyword = keywords.split(",")
+
+        def all = []
+        if (filter.equals(SearchFilter.PROJECT) || filter.equals(SearchFilter.ALL))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.PROJECT))
+        if (filter.equals(SearchFilter.IMAGE) || filter.equals(SearchFilter.ALL))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.IMAGE))
+        if (filter.equals(SearchFilter.ANNOTATION) || filter.equals(SearchFilter.ALL))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION))
+
+        all.sort{-it.id}
+        responseSuccess(all)
     }
 }

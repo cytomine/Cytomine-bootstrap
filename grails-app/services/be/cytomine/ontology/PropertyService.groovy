@@ -168,7 +168,7 @@ class PropertyService extends ModelService {
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.key, domain.domainIdent]
+        return [domain.key, domain.domainClassName, domain.domainIdent]
     }
 
     private def selectListkey(String request) {

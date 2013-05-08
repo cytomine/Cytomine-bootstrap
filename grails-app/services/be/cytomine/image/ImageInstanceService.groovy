@@ -5,6 +5,7 @@ import be.cytomine.command.*
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AnnotationIndex
+import be.cytomine.ontology.Property
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -31,6 +32,7 @@ class ImageInstanceService extends ModelService {
     def dataSource
     def reviewedAnnotationService
     def imageSequenceService
+    def propertyService
 
     def currentDomain() {
         return ImageInstance
@@ -199,5 +201,12 @@ class ImageInstanceService extends ModelService {
         ImageSequence.findAllByImage(image).each {
             imageSequenceService.delete(it,transaction,null,false)
         }
+    }
+
+    def deleteDependentProperty(ImageInstance image, Transaction transaction, Task task = null) {
+        Property.findAllByDomainIdent(image.id).each {
+            propertyService.delete(it,transaction,null,false)
+        }
+
     }
 }

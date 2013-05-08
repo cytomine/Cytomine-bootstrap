@@ -39,6 +39,7 @@ class ProjectService extends ModelService {
     def reviewedAnnotationService
     def userAnnotationService
     def imageSequenceService
+    def propertyService
 
     def currentDomain() {
         Project
@@ -315,4 +316,10 @@ class ProjectService extends ModelService {
         }
     }
 
+    def deleteDependentProperty(Project project, Transaction transaction, Task task = null) {
+        Property.findAllByDomainIdent(project.id).each {
+            propertyService.delete(it,transaction,null,false)
+        }
+
+    }
 }
