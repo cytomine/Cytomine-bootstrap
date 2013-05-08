@@ -699,6 +699,7 @@ AnnotationLayer.prototype = {
             if (evt.feature.popup != null) {
                 return;
             }
+            $("div#measure").remove();
             var resolution = self.browseImageView.model.get("resolution");
             var length = evt.feature.geometry.getLength();
             if (resolution != undefined && resolution != null) {
@@ -709,6 +710,8 @@ AnnotationLayer.prototype = {
                 length += " pixels";
             }
             var content = _.template(tpl, {length: length});
+
+
             self.popup = new OpenLayers.Popup("measure",
                 new OpenLayers.LonLat(evt.feature.geometry.getBounds().right + 50, evt.feature.geometry.getBounds().bottom + 50),
                 new OpenLayers.Size(200, 60),

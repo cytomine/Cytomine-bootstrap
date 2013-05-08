@@ -474,6 +474,7 @@ var BrowseImageView = Backbone.View.extend({
     },
     createInformationPanel: function () {
         var self = this;
+        console.log('x:'+self.model.get('originalFilename'));
         this.informationsPanel = new InformationsPanel({
             browseImageView: self,
             model: self.model,

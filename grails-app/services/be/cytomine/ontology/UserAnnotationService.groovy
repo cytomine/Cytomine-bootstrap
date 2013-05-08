@@ -278,7 +278,11 @@ class UserAnnotationService extends ModelService {
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             listForUserJob(project, term, userList, imageInstanceList)
         } else {
+            println "xxx="+ imageInstanceList.size()
+            println "yyy="+ ImageInstance.countByProject(project)
+
             boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
+            println "allImages="+ allImages
             String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
                     " FROM user_annotation a, annotation_term at,annotation_term at2,annotation_term at3\n" +
                     " WHERE a.id = at.user_annotation_id \n" +
@@ -287,7 +291,7 @@ class UserAnnotationService extends ModelService {
                     " AND a.id = at2.user_annotation_id\n" +
                     " AND a.id = at3.user_annotation_id\n" +
                     " AND at.user_id IN (" + userList.collect {it}.join(",") + ") \n" +
-                    (allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+                    (!allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
                     (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
                     " ORDER BY id desc, term"
             selectUserAnnotationFull(request)

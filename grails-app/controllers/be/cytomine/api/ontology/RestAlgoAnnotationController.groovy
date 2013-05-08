@@ -41,6 +41,7 @@ class RestAlgoAnnotationController extends RestController {
     def algoAnnotationTermService
     def paramsService
     def unionGeometryService
+    def annotationIndexService
 
     /**
      * List all annotation (created by algo) visible for the current user
@@ -312,7 +313,12 @@ class RestAlgoAnnotationController extends RestController {
         Integer bufferLength = params.getInt('bufferLength')
         Integer area = params.getInt('area')
         if(!area) {
-            area = 10000
+            //compute a good "windows area" (depend of number of annotation and image size)
+            //little image with a lot of annotataion must be very short window size
+            def annotationNumber = annotationIndexService.count(image,user)
+            def imageSize = image.baseImage.width*image.baseImage.height
+            area = Math.sqrt(imageSize)/(annotationNumber/1000)
+            area = Math.max(area,500)
         }
         println "area=$area"
         if (!image) {

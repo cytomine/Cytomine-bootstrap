@@ -78,10 +78,12 @@ var DashboardReviewPanel = Backbone.View.extend({
         if(!image) {
             self.render(self.image,self.user,self.term);
             return;
+        } else {
+            self.render(image,user,term);
         }
-        self.annotationListing.render(self.model.id,image,user,term)
-        self.changeSelectedFilter(user,term);
-        self.initStatsReview(image,user);
+//        self.annotationListing.render(self.model.id,image,user,term)
+//        self.changeSelectedFilter(user,term);
+//        self.initStatsReview(image,user);
     },
     marskAsReviewed : function(id, terms, reviewed) {
         var self = this;

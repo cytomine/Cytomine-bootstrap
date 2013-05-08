@@ -114,7 +114,7 @@ class RestUserAnnotationController extends RestController {
         else {
             List<Long> userList = paramsService.getParamsUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
-
+            println "imageInstanceList="+imageInstanceList
             if (!params.suggestTerm) {
                 def list
                 if (userList.isEmpty() || imageInstanceList.isEmpty()) {

@@ -100,7 +100,7 @@ var ImageInstanceModel = Backbone.Model.extend({
     },
     getVisibleName : function(hideName) {
         if(!hideName) {
-            return this.get('filename');
+            return this.get('originalFilename');
         } else {
             return "[BLIND]" + this.get('id');
         }
