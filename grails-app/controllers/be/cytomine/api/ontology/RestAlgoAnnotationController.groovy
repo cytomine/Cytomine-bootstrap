@@ -312,14 +312,7 @@ class RestAlgoAnnotationController extends RestController {
         Integer minIntersectLength = params.getInt('minIntersectionLength')
         Integer bufferLength = params.getInt('bufferLength')
         Integer area = params.getInt('area')
-        if(!area) {
-            //compute a good "windows area" (depend of number of annotation and image size)
-            //little image with a lot of annotataion must be very short window size
-            def annotationNumber = annotationIndexService.count(image,user)
-            def imageSize = image.baseImage.width*image.baseImage.height
-            area = Math.sqrt(imageSize)/(annotationNumber/1000)
-            area = Math.max(area,500)
-        }
+
         println "area=$area"
         if (!image) {
             responseNotFound("ImageInstance", params.getLong('idImage'))
@@ -331,6 +324,14 @@ class RestAlgoAnnotationController extends RestController {
             responseNotFound("User", params.getLong('idUser'))
         }
         else {
+            if(!area) {
+                //compute a good "windows area" (depend of number of annotation and image size)
+                //little image with a lot of annotataion must be very short window size
+                def annotationNumber = annotationIndexService.count(image,user)
+                def imageSize = image.baseImage.width*image.baseImage.height
+                area = Math.sqrt(imageSize)/(annotationNumber/1000)
+                area = Math.max(area,500)
+            }
             unionAnnotations(image, user, term, minIntersectLength, bufferLength,area)
             def data = [:]
             data.annotationunion = [:]

@@ -59,75 +59,75 @@ class GebTests extends GebReportingTest{
 
      @Test
      void checkGoogle() {
+         println "geb test"
 
-
-Browser.drive {
-    println "toto!!!"
-    go "http://google.com/ncr"
-
-    println it
-    println $("img")
-
-
-    println $("input")
-
-      // make sure we actually got to the page
-     assert title == "Google"
-
-    $("input", name: "q").value("wikipedia")
-
-    $("input", name: "btnG").click()
-
-    waitFor { title.endsWith("Google Search") }
-
-}
-
-//         go "http://google.com/ncr"
+//Browser.drive {
+//    println "toto!!!"
+//    go "http://google.com/ncr"
 //
-//             // make sure we actually got to the page
-//             assert title == "Google"
+//    println it
+//    println $("img")
 //
-//             // enter wikipedia into the search field
-//             println $("html")
-//             println $("head").children()
-//             println $("input", name: "q")
-//         println title
 //
-//         println $("body").children()
+//    println $("input")
 //
-//             $("input", name: "q").value("wikipedia")
+//      // make sure we actually got to the page
+//     assert title == "Google"
 //
-//         println $("body").children()
-//         println $("ol", id: "rso").children()
-//         Thread.sleep(3000)
-//          println $("body").children()
-//         println $("ol", id: "rso").children()
-//         Thread.sleep(3000)
-//          println $("body").children()
-//         println $("ol", id: "rso").children()
-//         Thread.sleep(3000)
-//          println $("body").children()
-//         println $("ol", id: "rso").children()
-//         //println $("input", name: "q").value()
+//    $("input", name: "q").value("wikipedia")
 //
-//             // wait for the change to results page to happen
-//             // (google updates the page dynamically without a new request)
-//             println title
-//             Thread.sleep(5000)
-//         println title
-//         Thread.sleep(5000)
-//     println title
-//             waitFor { title.endsWith("Google Search") }
+//    $("input", name: "btnG").click()
 //
-//             // is the first link to wikipedia?
-//             def firstLink = $("li.g", 0).find("a.l")
-//             assert firstLink.text() == "Wikipedia"
+//    waitFor { title.endsWith("Google Search") }
 //
-//             // click the link
-//             firstLink.click()
+//}
 //
-//             // wait for Google's javascript to redirect to Wikipedia
-//             waitFor { title == "Wikipedia" }
+////         go "http://google.com/ncr"
+////
+////             // make sure we actually got to the page
+////             assert title == "Google"
+////
+////             // enter wikipedia into the search field
+////             println $("html")
+////             println $("head").children()
+////             println $("input", name: "q")
+////         println title
+////
+////         println $("body").children()
+////
+////             $("input", name: "q").value("wikipedia")
+////
+////         println $("body").children()
+////         println $("ol", id: "rso").children()
+////         Thread.sleep(3000)
+////          println $("body").children()
+////         println $("ol", id: "rso").children()
+////         Thread.sleep(3000)
+////          println $("body").children()
+////         println $("ol", id: "rso").children()
+////         Thread.sleep(3000)
+////          println $("body").children()
+////         println $("ol", id: "rso").children()
+////         //println $("input", name: "q").value()
+////
+////             // wait for the change to results page to happen
+////             // (google updates the page dynamically without a new request)
+////             println title
+////             Thread.sleep(5000)
+////         println title
+////         Thread.sleep(5000)
+////     println title
+////             waitFor { title.endsWith("Google Search") }
+////
+////             // is the first link to wikipedia?
+////             def firstLink = $("li.g", 0).find("a.l")
+////             assert firstLink.text() == "Wikipedia"
+////
+////             // click the link
+////             firstLink.click()
+////
+////             // wait for Google's javascript to redirect to Wikipedia
+////             waitFor { title == "Wikipedia" }
      }
 }
 
