@@ -9,6 +9,10 @@ import be.cytomine.SecurityACL
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import grails.util.GrailsNameUtils
+
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 abstract class ModelService {
@@ -283,6 +287,22 @@ abstract class ModelService {
 
     def getStringParamsI18n(def domain) {
         throw new ServerException("getStringParamsI18n must be implemented for $this!")
+    }
+
+
+    protected boolean columnExist(ResultSet rs, String column) {
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        int numberOfColumns = rsMetaData.getColumnCount();
+
+        // get the column names; column indexes start from 1
+        for (int i = 1; i < numberOfColumns + 1; i++) {
+            String columnName = rsMetaData.getColumnName(i);
+            // Get the name of the column's table name
+            if (column.equals(columnName)) {
+                return true
+            }
+        }
+        return false
     }
 
 }

@@ -7,6 +7,7 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
@@ -36,6 +37,8 @@ class RestAnnotationDomainController extends RestController {
     def algoAnnotationService
     def reviewedAnnotationService
     def paramsService
+    def userService
+    def exportService
 
     /**
      * List annotation by project
@@ -124,7 +127,63 @@ class RestAnnotationDomainController extends RestController {
         responseSuccess(getIncludedAnnotation(params))
     }
 
+    def downloadIncludedAnnotation = {
+        println "downloadIncludedAnnotation"
+        def image = imageInstanceService.read(params.long('idImage'))
+        def lists = getIncludedAnnotation(params)
+        downloadPdf(lists,image.project)
+    }
 
+
+
+    private downloadPdf(def annotations, Project project) {
+        println "downloadPdf"
+        if (params?.format && params.format != "html") {
+            def exporterIdentifier = params.format;
+            if (exporterIdentifier == "xls") exporterIdentifier = "excel"
+            response.contentType = grailsApplication.config.grails.mime.types[params.format]
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
+            String datePrefix = simpleFormat.format(new Date())
+            response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_included.${params.format}")
+
+            def users = secUserService.listAll(project)
+            def terms = termService.list(project)
+
+            def usersIndex = [:]
+            users.each {
+                usersIndex.put(it.id,it)
+            }
+            def termsIndex = [:]
+            terms.each {
+                termsIndex.put(it.id,it)
+            }
+
+
+            def exportResult = []
+            annotations.each { annotation ->
+                def data = [:]
+                data.id = annotation.id
+                data.area = (int) Math.floor(annotation.area)
+                data.perimeter = (int) Math.floor(annotation.perimeter)
+                data.XCentroid = (int) Math.floor(annotation.x)
+                data.YCentroid = (int) Math.floor(annotation.y)
+
+                data.image = annotation.image
+                data.filename = annotation.originalfilename
+                data.user = usersIndex.get(annotation.user)
+                data.term = annotation.term.collect {termsIndex.get(it).name}.join(", ")
+                data.cropURL = annotation.cropURL
+                data.cropGOTO = UrlApi.getAnnotationURL(project.id, data.image, data.id)
+                exportResult.add(data)
+            }
+
+            List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
+            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
+            String title = "Annotations included"
+
+            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
+        }
+    }
 
 
     def getIncludedAnnotation(params){
@@ -162,73 +221,6 @@ class RestAnnotationDomainController extends RestController {
         response
 
     }
-
-
-
-    def downloadIncludedAnnotation  = {
-
-        def annotations = getIncludedAnnotation(params)
-
-        //TODO: change all code
-        if (params?.format && params.format != "html") {
-            def exporterIdentifier = params.format;
-            if (exporterIdentifier == "xls") exporterIdentifier = "excel"
-            response.contentType = grailsApplication.config.grails.mime.types[params.format]
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
-            String datePrefix = simpleFormat.format(new Date())
-            response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_included.${params.format}")
-
-
-            def exportResult = []
-
-
-            annotations.each {
-                  //id
-                  //user
-                  //term
-
-
-            }
-        }
-//
-//            annotationTerms.each { annotationTerm ->
-//                UserAnnotation annotation = annotationTerm.userAnnotation
-//                def centroid = annotation.getCentroid()
-//                Term term = annotationTerm.term
-//                def data = [:]
-//                data.id = annotation.id
-//                data.area = annotation.computeArea()
-//                data.perimeter = annotation.computePerimeter()
-//                if (centroid != null) {
-//                    data.XCentroid = (int) Math.floor(centroid.x)
-//                    data.YCentroid = (int) Math.floor(centroid.y)
-//                } else {
-//                    data.XCentroid = "undefined"
-//                    data.YCentroid = "undefined"
-//                }
-//                data.image = annotation.image.id
-//                data.filename = annotation.getFilename()
-//                data.user = annotation.user.toString()
-//                data.term = term.name
-//                data.cropURL = UrlApi.getUserAnnotationCropWithAnnotationId(annotation.id)
-//                data.cropGOTO = UrlApi.getAnnotationURL(annotation?.image?.project?.id, annotation.image.id, annotation.id)
-//                exportResult.add(data)
-//            }
-//
-//            List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
-//            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
-//            String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
-//
-//            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
-
-    }
-
-
-
-
-
-
-
 
     /**
      * Read a specific annotation

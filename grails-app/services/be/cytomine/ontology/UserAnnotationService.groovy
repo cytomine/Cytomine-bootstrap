@@ -21,6 +21,9 @@ import groovy.sql.Sql
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
 
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 class UserAnnotationService extends ModelService {
@@ -301,11 +304,13 @@ class UserAnnotationService extends ModelService {
 
     def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
         SecurityACL.check(image.container(),READ)
-         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at.term_id as term, at.id as annotationTerms,at.user_id as userTerm,a.wkt_location as location \n" +
-                 "FROM user_annotation a, annotation_term at \n" +
+         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at.term_id as term, at.id as annotationTerms,at.user_id as userTerm,a.wkt_location as location, ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename \n" +
+                 "FROM user_annotation a, annotation_term at, abstract_image ai, image_instance ii \n" +
                  "WHERE a.id = at.user_annotation_id \n" +
                  "AND a.image_id = ${image.id} \n" +
                  "AND a.user_id = ${user.id} \n" +
+                 "AND a.image_id = ii.id  \n" +
+                 "AND ii.base_image_id = ai.id  \n" +
                  "AND a.id = at.user_annotation_id \n" +
                  "AND at.term_id IN (${terms.join(',')})\n" +
                  (annotation? "AND a.id <> ${annotation.id} \n" :"")+
@@ -567,6 +572,9 @@ class UserAnnotationService extends ModelService {
         def data = []
         long lastAnnotationId = -1
         long lastTermId = -1
+        boolean first = true;
+        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
+        def realColumn = []
 
         new Sql(dataSource).eachRow(request) {
             /**
@@ -575,26 +583,39 @@ class UserAnnotationService extends ModelService {
              * For the other lines, we add term data to the last annotation
              */
             if (it.id != lastAnnotationId) {
-                data << [
-                        'class': 'be.cytomine.ontology.UserAnnotation',
-                        id: it.id,
-                        image: it.image,
-                        geometryCompression: it.geometryCompression,
-                        project: it.project,
-                        container: it.project,
-                        user: it.user,
-                        nbComments: it.nbComments,
-                        created: it.created,
-                        updated: it.updated,
-                        reviewed: (it.countReviewedAnnotations > 0),
-                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
-                        smallCropURL: UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
-                        url: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
-                        imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
-                        term: (it.term ? [it.term] : []),
-                        userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
-                        location: it.location
-                ]
+                if(first) {
+                    optionalColumn.each { columnName ->
+                          if(columnExist(it,columnName)) {
+                              realColumn << columnName
+                          }
+                    }
+                    first = false
+                }
+
+
+                def item = ['class': 'be.cytomine.ontology.UserAnnotation',
+                                        id: it.id,
+                                        image: it.image,
+                                        geometryCompression: it.geometryCompression,
+                                        project: it.project,
+                                        container: it.project,
+                                        user: it.user,
+                                        nbComments: it.nbComments,
+                                        created: it.created,
+                                        updated: it.updated,
+                                        reviewed: (it.countReviewedAnnotations > 0),
+                                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                                        smallCropURL: UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
+                                        url: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
+                                        imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
+                                        term: (it.term ? [it.term] : []),
+                                        userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
+                                        location: it.location ]
+
+                realColumn.each { columnName ->
+                    item[columnName]=it[columnName]
+                }
+                data << item
             } else {
                 if (it.term) {
                     data.last().term.add(it.term)

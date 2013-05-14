@@ -350,11 +350,13 @@ class AlgoAnnotationService extends ModelService {
 
     def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
         SecurityACL.check(image.container(),READ)
-         String request = "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
-                 "FROM algo_annotation a, algo_annotation_term at \n" +
+         String request = "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename \n" +
+                 "FROM algo_annotation a, algo_annotation_term at, abstract_image ai, image_instance ii \n" +
                  "WHERE a.id = at.annotation_ident \n" +
                  "AND a.image_id = ${image.id} \n" +
                  "AND a.user_id = ${user.id} \n" +
+                 "AND a.image_id = ii.id  \n" +
+                 "AND ii.base_image_id = ai.id  \n" +
                  "AND at.term_id IN (${terms.join(',')})\n" +
                  (annotation? "AND a.id <> ${annotation.id} \n" :"")+
                  "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
@@ -368,10 +370,30 @@ class AlgoAnnotationService extends ModelService {
      */
     private def selecAlgoAnnotationLight(String request) {
         def data = []
+        boolean first = true;
+        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
+        def realColumn = []
         new Sql(dataSource).eachRow(request) {
+
+            if(first) {
+                optionalColumn.each { columnName ->
+                      if(columnExist(it,columnName)) {
+                          realColumn << columnName
+                      }
+                }
+                first = false
+            }
+
             def url = (it.algo? UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256) : UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256))
 
-                data << [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project, reviewed : (it.countReviewedAnnotations > 0), user: it.user]
+            def item =  [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project, reviewed : (it.countReviewedAnnotations > 0), user: it.user]
+
+            realColumn.each { columnName ->
+                item[columnName]=it[columnName]
+            }
+
+            data << item
+
         }
         data
     }

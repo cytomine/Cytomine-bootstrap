@@ -79,6 +79,14 @@ class SecUserService extends ModelService {
         SecUser.findAllByIdInList(ids)
     }
 
+    def listAll(Project project) {
+        def data = []
+        data.addAll(listUsers(project))
+        //TODO: could be optim!!!
+        data.addAll(UserJob.findAllByJobInList(Job.findAllByProject(project)))
+        data
+    }
+
     def listUsers(Project project) {
         //SecurityACL.check(project,READ)  TODO: security isue during bootstrap, uncomment me after bootstrap run!!!!!
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+

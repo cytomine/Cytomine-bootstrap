@@ -127,9 +127,12 @@ class AnnotationUrlMappings {
         }
 
 
-        "/api/imageinstance/$idImage/annotations/included"(controller:"restAnnotationDomain"){
+        "/api/imageinstance/$idImage/annotation/included"(controller:"restAnnotationDomain"){
                 action = [GET: "listIncludedAnnotation"]
          }
+        "/api/imageinstance/$idImage/annotation/included/download"(controller: "restAnnotationDomain"){
+            action = [GET:"downloadIncludedAnnotation"]
+        }
 
     }
 }
