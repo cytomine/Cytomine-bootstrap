@@ -43,7 +43,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
     },
     addVectorLayer: function (layer, model, userID) {
-
+        var self = this;
         this.vectorLayers.push({ id: userID, vectorsLayer: layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-" + new Date().getTime(); //index of the layer in this.layers array
         var color = "#FFF";
@@ -65,6 +65,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             var checked = $(this).is(':checked');
             console.log("visible:" + checked);
             layer.vectorsLayer.setVisibility(checked);
+            self.browseImageView.annotationProperties.updateAnnotationProperyLayers(); //update annotation proprety layers
         });
 
     },

@@ -1,48 +1,51 @@
-var AnnotationPropertyLayer = function (imageID, userID, browseImageView, map) {
+var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     var self = this;
     this.idImage = imageID;
     this.idUser = userID;
 
-    this.annotationsPropertiesCollection = new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: 'null'}).url().replace("json", "jsonp")
-
     this.browseImageView = browseImageView;
-    this.map = map;
+    this.map = browseImageView.map;
     this.vectorLayer = null;
+    this.key = key;
 
-    var styleMap = new OpenLayers.StyleMap({'default':{
-        strokeColor: "#00FF00",
-        fillColor: "#00FF00",
-        //pointRadius: 10,
-        label : "value: ${value}",
-
+    this.styleMap = new OpenLayers.StyleMap({'default':{
+        label : "${value}",
         fontColor: "red",
-        fontSize: "14px",
-        fontFamily: "Courier New, monospace",
+        fontSize: "13px",
         fontWeight: "bold",
-
-        graphicZIndex : 15
     }});
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
-        styleMap : styleMap,
+        styleMap : self.styleMap,
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],
         protocol: new OpenLayers.Protocol.Script({
-            url: this.annotationsPropertiesCollection,
+            url: new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: this.key}).url().replace("json", "jsonp"),
             format: new OpenLayers.Format.AnnotationProperty({annotationPropertyLayer: this}),
             callbackKey: "callback"
         })
     });
 
-    this.map.addLayer(this.vectorLayer);
+    this.addToMap = function() {
+        this.map.addLayer(this.vectorLayer);
+    };
+
+    this.setZIndex = function(index) {
+        this.vectorLayer.setZIndex( index );
+    }
+
+    this.removeFromMap = function() {
+        this.map.removeLayer(this.vectorLayer);
+    };
 }
 
 OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
     read: function (collection) {
         var nestedCollection = collection.collection;
         var features = [];
+        var self = this;
 
         _.each(nestedCollection, function (result) {
 
@@ -57,27 +60,3 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
     }
 });
 
-AnnotationPropertyLayer.prototype = {
-
-    loadAnnotationProperty : function (key) {
-
-        //Put the value over all layer
-        var self = this;
-        var layers = this.map.layers;
-        _.each(layers,function(layer) {
-            layer.setZIndex( 1000 )
-        });
-        var vecLyr = this.map.getLayersByName('annotationPropertyValue')[0];
-        vecLyr.setZIndex( 5000 );
-
-
-        console.log("annotationPropertyLayer.vectorLayer : " + this.vectorLayer);
-        if (key == "selectedEmpty") {
-            this.vectorLayer.removeAllFeatures();
-        } else {
-            var url = new AnnotationPropertyTextCollection({idUser: this.idUser, idImage: this.idImage, key: key}).url().replace("json", "jsonp");
-            console.log("new url" + url);
-            this.vectorLayer.refresh({ url : url});
-        }
-    }
-};

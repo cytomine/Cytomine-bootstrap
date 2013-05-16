@@ -1,7 +1,7 @@
 var AnnotationPropertyPanel = SideBarPanel.extend({
     tagName: "div",
     keyAnnotationProperty: null,
-
+    annotationPropertyLayers : [],
     /**
      * ExplorerTabs constructor
      * @param options
@@ -9,7 +9,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     initialize: function (options) {
         this.browseImageView = options.browseImageView;
         this.callback = options.callback;
-        this.layer = options.layer;
+        //this.layer = options.layer;
     },
     /**
      * Grab the layout and call ask for render
@@ -64,7 +64,6 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     doLayout: function (tpl) {
         var self = this;
         var idImage = this.model.get('id');
-
         var el = $('#annotationPropertyPanel'+idImage);
         el.html(_.template(tpl, {id: idImage}));
         var elContent = el.find(".annotationPropertyContent");
@@ -73,10 +72,32 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
 
         self.initSelect(idImage);
 
-        $("#selectLayersAnnotationProperty-"+idImage).click(function() {
-            console.log("click select");
-            console.log(self.layer);
-            self.layer.loadAnnotationProperty($("#selectLayersAnnotationProperty-"+idImage).val());
+        $("#selectLayersAnnotationProperty-"+idImage).on("change", function() {
+            self.updateAnnotationProperyLayers();
         });
+    },
+
+    updateAnnotationProperyLayers : function() {
+        var self = this;
+        var idImage = this.model.get('id');
+        _.each(self.annotationPropertyLayers, function (annotationPropertyLayer) {
+            annotationPropertyLayer.removeFromMap();
+        });
+        self.annotationPropertyLayers = [];
+
+        var key = $("#selectLayersAnnotationProperty-"+idImage).val();
+        if (key != "selectedEmpty") {
+            _.each(self.browseImageView.layers, function (layer) {
+
+                if (layer.vectorsLayer.visibility) {
+                    var annotationPropertyLayer = new AnnotationPropertyLayer(self.model.get('id'), layer.userID, self.browseImageView, key);
+                    annotationPropertyLayer.addToMap();
+                    annotationPropertyLayer.setZIndex(726);
+
+                    self.annotationPropertyLayers.push(annotationPropertyLayer);
+                }
+
+            });
+        }
     }
 });

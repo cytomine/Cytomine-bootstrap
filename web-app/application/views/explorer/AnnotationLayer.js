@@ -13,7 +13,7 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
     var format = new OpenLayers.Format.WKT();
     var point = format.read(location);
     var geom = point.geometry;
-    var feature = new OpenLayers.Feature.Vector(geom);
+    var feature = new OpenLayers.Feature.Vector(geom, {zIndex : 999});
     var term = AnnotationStatus.NO_TERM; //no term associated
     if (terms.length > 1) { //multiple term
         term = AnnotationStatus.MULTIPLE_TERM;
@@ -75,6 +75,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
     style.strokeColor= '${getStrokeColor}';
     style.strokeWidth= 3;
     style.pointRadius= this.pointRadius;
+    style.graphicZIndex = 999;
 
 
     var defaultStyle = new OpenLayers.Style(style, {
@@ -112,7 +113,8 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         'fillOpacity': .8,
         'strokeColor': '#00FF00',
         'strokeWidth': 3,
-        'pointRadius': this.pointRadius
+        'pointRadius': this.pointRadius,
+        graphicZIndex : 14
     });
 
     selectStyle.addRules(rules);
@@ -162,6 +164,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
 
 
     this.vectorsLayer = new OpenLayers.Layer.Vector(this.name, {
+        rendererOptions: { zIndexing: true },
         //renderers: ["Canvas", "SVG", "VML"],
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1,ratio: 2})
@@ -172,6 +175,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
             callbackKey: "callback"
         }),
         'styleMap': styleMap
+
     });
     this.vectorsLayer.strategies[0].activate();
 

@@ -339,7 +339,7 @@ var BrowseImageView = Backbone.View.extend({
             }
 
             self.initAutoAnnoteTools();
-            self.createAnnotationPropertiesPanel();
+
         }
     },
     /**
@@ -463,13 +463,11 @@ var BrowseImageView = Backbone.View.extend({
     createAnnotationPropertiesPanel : function() {
       //annotationProperties
         var self = this;
-        //Creation du layer Property
-        var layerAnnotProp = new AnnotationPropertyLayer(self.model.get('id'), window.app.status.user.id, self, self.map);
+
         this.annotationProperties = new AnnotationPropertyPanel({
             browseImageView: self,
             model: self.model,
-            el: self.el,
-            layer : layerAnnotProp
+            el: self.el
         }).render();
     },
     createInformationPanel: function () {
@@ -517,6 +515,8 @@ var BrowseImageView = Backbone.View.extend({
         });
 
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
+            self.createAnnotationPropertiesPanel();
+
             if (!self.review) {
                 self.createLayerSwitcher();
                 $(".reviewPanel").hide();
@@ -718,6 +718,9 @@ var BrowseImageView = Backbone.View.extend({
 
             }
         });
+
+        console.log("INDEX_BROWSEIMAGE = " + this.map.getLayerIndex(this.map.annotationProperties));
+
     },
     broadcastPosition: function () {
         var image = this.model.get("id");

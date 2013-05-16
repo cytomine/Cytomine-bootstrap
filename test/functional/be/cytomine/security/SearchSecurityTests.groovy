@@ -78,7 +78,7 @@ class SearchSecurityTests extends SecurityTestsAbstract {
 
     }
 
-    void testAnnotationPropertySecurityForSimpleUser() {
+    void testSearchSecurityForSimpleUser() {
         //Get user1
         User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
         //Get user2
