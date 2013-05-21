@@ -267,13 +267,11 @@ var DashboardController = Backbone.Router.extend({
                     success: function (col, response) {
                         window.app.addToCache(window.app.replaceVariable(param.uri), col);
                         cell.html(self.createJobParameterDomainValue(ids, col, param, maxSize));
-                        cell.find("a").popover();
                     }
                 });
             } else {
                 console.log("Collection is CACHE");
                 cell.html(self.createJobParameterDomainValue(ids, collection, param, maxSize));
-                cell.find("a").popover();
             }
         }
         else {
@@ -285,14 +283,25 @@ var DashboardController = Backbone.Router.extend({
         }
     },
     createJobParameterDomainValue: function (ids, collection, param, maxSize) {
+        var getLink = function(model, uriPrintAttribut) {
+            if (model.get("class") == 'be.cytomine.project.Project') {
+                return _.template("<a href='#tabs-dashboard-<%= id %>'><%= name %></a>", { id : model.id, name : model.get(uriPrintAttribut) });
+            } else if (model.get("class") == 'be.cytomine.image.ImageInstance') {
+                return _.template("<a href='#tabs-image-<%= idProject %>-<%= idImage %>-'><%= name %></a>", { idProject : model.get("project"), idImage : model.id, name : model.get(uriPrintAttribut) });
+            } else if (model.get("class") == 'be.cytomine.ontology.Term') {
+                return _.template("<a href='#ontology/<%= idOntology %>/<%= idTerm %>'><%= name %></a>", { idOntology : model.get("ontology"), idTerm : model.id, name : model.get(uriPrintAttribut) });
+            } else {
+                return model.get(uriPrintAttribut);
+            }
+        };
         var names = [];
         _.each(ids, function (id) {
-            var name = collection.get(id);
-            if (name == undefined) {
+            var model = collection.get(id);
+            if (model == undefined) {
                 names.push("Unknown");
             }
             else {
-                names.push(name.get(param.uriPrintAttribut));
+                names.push(getLink(model, param.uriPrintAttribut));
             }
 
         });

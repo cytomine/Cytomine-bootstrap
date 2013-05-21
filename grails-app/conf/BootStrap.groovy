@@ -1,4 +1,7 @@
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.Mime
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.ontology.AnnotationIndex
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
@@ -112,6 +115,26 @@ class BootStrap {
                )
 
 
+        }
+
+        //create SCN MIME
+        Mime mime = new Mime(extension : "scn", mimeType : "openslide/scn")
+        if (mime.validate()) {
+            mime.save()
+            for (imageServer in ImageServer.list()) {
+                MimeImageServer mimeImageServer = new MimeImageServer( mime : mime, imageServer : imageServer)
+                if (mimeImageServer.validate()) {
+                    mimeImageServer.save()
+                } else {
+                    mimeImageServer.errors?.each {
+                        println it
+                    }
+                }
+            }
+        } else {
+            mime.errors?.each {
+                println it
+            }
         }
 
         //bootstrapProdDataService.initUserStorages()

@@ -200,6 +200,8 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              returnArray['user'] = annotation.user?.id
              returnArray['reviewUser'] = annotation.reviewUser?.id
              returnArray['area'] = annotation.computeArea()
+             returnArray['perimeterUnit'] = annotation.getPerimeterUnit()
+             returnArray['areaUnit'] = annotation.getAreaUnit()
              returnArray['perimeter'] = annotation.computePerimeter()
              returnArray['centroid'] = annotation.getCentroid()
              returnArray['created'] = annotation.created?.time?.toString()

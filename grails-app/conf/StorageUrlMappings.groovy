@@ -15,5 +15,8 @@ class StorageUrlMappings {
         "/api/storage/$id"(controller: "restStorage"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
+        "/api/storage/create/$user"(controller : "restStorage") {
+            action = [POST:"create"]
+        }
     }
 }

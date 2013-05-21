@@ -213,14 +213,24 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
     }
 
+    def getPerimeterUnit() {
+        if (this.image.baseImage.resolution == null) return "pixels"
+        else return "mm"
+    }
+
+    def getAreaUnit() {
+        if (this.image.baseImage.resolution == null) return "pixels"
+        else return "microns²"
+    }
+
     def computeArea() {
         if (this.image.baseImage.resolution == null) return Math.round(this.getArea())// + " pixels²"
-        else return Math.round(this.getArea() * this.image.baseImage.resolution)// + " µm²"
+        else return Math.round(this.getArea() * this.image.baseImage.resolution * this.image.baseImage.resolution)// + "1000000 µm² = 1  mm²"
     }
 
     def computePerimeter() {
         if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter())// + " pixels"
-        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution)// + " µm"
+        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution / 1000)// + " 1000 µm = 1 mm"
     }
 
     def getCallBack() {

@@ -157,6 +157,8 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
             returnArray['user'] = annotation.user?.id
             returnArray['nbComments'] = annotation.countComments
             returnArray['area'] = annotation.computeArea()
+            returnArray['perimeterUnit'] = annotation.getPerimeterUnit()
+            returnArray['areaUnit'] = annotation.getAreaUnit()
             returnArray['perimeter'] = annotation.computePerimeter()
             returnArray['centroid'] = annotation.getCentroid()
             returnArray['created'] = annotation.created?.time?.toString()

@@ -16,4 +16,8 @@ class RestSecRoleController extends RestController {
     def list = {
         responseSuccess(secRoleService.list())
     }
+
+    def show = {
+        responseSuccess(secRoleService.read(params.id))
+    }
 }

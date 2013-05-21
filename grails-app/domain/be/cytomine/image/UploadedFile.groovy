@@ -12,7 +12,7 @@ import org.apache.log4j.Logger
  */
 class UploadedFile extends CytomineDomain implements Serializable{
 
-    public static allowedMime = ["svs", "opt", "jp2"]
+    public static allowedMime = ["svs", "opt", "jp2", "scn"]
     public static zipMime = ["zip"]
     public static mimeToConvert = ["jpg", "jpeg", "png", "tiff", "tif","pgm"]//, "ndpi"]
     public static int UPLOADED = 0

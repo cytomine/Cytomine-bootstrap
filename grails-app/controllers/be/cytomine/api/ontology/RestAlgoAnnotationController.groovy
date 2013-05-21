@@ -8,16 +8,10 @@ import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
 import grails.converters.JSON
-import groovy.sql.Sql
 import org.codehaus.groovy.grails.web.json.JSONArray
 
 import java.text.SimpleDateFormat
@@ -274,6 +268,8 @@ class RestAlgoAnnotationController extends RestController {
                 def data = [:]
                 data.id = annotation.id
                 data.area = annotation.computeArea()
+                data.perimeterUnit = annotation.getPerimeterUnit()
+                data.areaUnit = annotation.getAreaUnit()
                 data.perimeter = annotation.computePerimeter()
                 if (centroid != null) {
                     data.XCentroid = (int) Math.floor(centroid.x)
@@ -292,7 +288,7 @@ class RestAlgoAnnotationController extends RestController {
             }
 
             List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
-            Map labels = ["id": "Id", "area": "Area (µm²)", "perimeter": "Perimeter (µm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
+            Map labels = ["id": "Id", "area": "Area (microns²)", "perimeter": "Perimeter (mm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
             String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
 
             exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])

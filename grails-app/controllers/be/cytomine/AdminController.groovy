@@ -25,6 +25,10 @@ class AdminController extends RestController {
     def modelService
 
     def index() {
+      //don't remove this, it calls admin/index.gsp layout !
+    }
+
+    def test_annotation() {
         //testCyto()
         //testImage()
         testRemoveAnnotation()

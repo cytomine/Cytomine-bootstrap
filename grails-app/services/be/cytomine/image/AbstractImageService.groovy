@@ -19,7 +19,7 @@ class AbstractImageService extends ModelService {
 
     static transactional = false
 
-    static final int REQUESTED_CROP_SIZE = 64
+    static final int MIN_REQUESTED_CROP_SIZE = 8
 
     def commandService
     def cytomineService
@@ -106,40 +106,28 @@ class AbstractImageService extends ModelService {
 
             log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
 
-            def userGroup = abstractImageGroupService.list(user)
-            log.info "userGroup=" + userGroup.size()
-            if(!userGroup.isEmpty()) {
-                def imageGroup = AbstractImageGroup.createCriteria().list {
-                    inList("group.id", userGroup.collect {it.group.id})
-                    projections {
-                        groupProperty('abstractImage.id')
-                    }
-                }
-                log.info "imageGroup=" + imageGroup.size()
+            def abstractImages = StorageAbstractImage.findAllByStorageInList(storageService.list()).collect { it.abstractImage.id }
 
-                log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
-                PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
-                    inList("id", imageGroup)
-                    ilike("filename", "%" + filenameSearch + "%")
-                    between('created', dateAddedStart, dateAddedStop)
+            log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
+            PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
+                inList("id", abstractImages)
+                ilike("filename", "%" + filenameSearch + "%")
+                between('created', dateAddedStart, dateAddedStop)
 
-                }
-                data.page = page + ""
-                data.records = results.totalCount
-                data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
-                data.rows = results.list
-            } else {
+            }
+            data.page = page + ""
+            data.records = results.totalCount
+            data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
+            data.rows = results.list
+            /*} else {
                 //GORM GOTCHA: list in inList cannot be empty
                 data.page = page + ""
                 data.records = 0
                 data.total = 0
                 data.rows = []
-            }
+            }*/
 
 
-        }
-        else {
-            data = list(user)
         }
         return data
     }
@@ -296,7 +284,7 @@ class AbstractImageService extends ModelService {
             int desiredWidth = boundaries.width / Math.pow(2, zoom)
             int desiredHeight = boundaries.height / Math.pow(2, zoom)
             /* find the nearest acceptable zoom */
-            while (desiredWidth < REQUESTED_CROP_SIZE && desiredHeight < REQUESTED_CROP_SIZE) {
+            while (desiredWidth < MIN_REQUESTED_CROP_SIZE && desiredHeight < MIN_REQUESTED_CROP_SIZE) {
                 zoom--
                 desiredWidth = boundaries.width / Math.pow(2, zoom)
                 desiredHeight = boundaries.height / Math.pow(2, zoom)

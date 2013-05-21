@@ -19,7 +19,7 @@
                 <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
             </div>
         </div>
-       </div>
+    </div>
     <div class="row" style="padding : 30px;">
         <div class="widget-dashboard">
             <h4 class="header_h">Statistics</h4>
@@ -277,7 +277,7 @@
                         <div id="annotationRetrieval"></div>
                     </div>
                     <!--<div id="annotationQuestionableMain">-->
-                        <!--<div id="annotationQuestionable"></div>-->
+                    <!--<div id="annotationQuestionable"></div>-->
                     <!--</div>-->
                 </div>
             </div>
@@ -292,74 +292,57 @@
 </div>
 
 <div class="tab-pane" id="tabs-config-<%= id %>" style="overflow : auto;padding: 20px;">
-    <div class="container-fluid">
-        <div style="margin-top: 20px;">
-            <div class="widget-header">
-                <h3>Magic Wand Configuration</h3>
-            </div>
-            <div class="widget-content" style="padding: 10px;">
-                <form id="mwToleranceForm" class="form-horizontal well">
-                    <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" for="input_threshold">Threshold</label>
-
-                            <div class="controls">
-                                <div class="input-prepend input-append">
-                                    <span class="add-on"><i class=" icon-picture"></i></span><input type="text"
-                                                                                                    class="input-xlarge"
-                                                                                                    id="input_threshold"/><span
-                                        class="help-inline">Note : Is not used for HISTOLOGY projects
-</span>
-                                </div>
+    <div class="container-fluid" style="background-color: #ffffff !important;">
+        <div style="margin-top: 20px;" class="well">
+            <h3>Magic Wand Configuration</h3>
+            <form id="mwToleranceForm" class="form-horizontal well">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="input_threshold">Threshold</label>
+                        <div class="controls">
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class=" icon-picture"></i></span>
+                                <input type="text" class="input-xlarge" id="input_threshold"/>
+                                <span class="help-inline">Note : Is not used for HISTOLOGY projects</span>
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label" for="input_tolerance">Tolerance</label>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="input_tolerance">Tolerance</label>
 
-                            <div class="controls">
-                                <div class="input-prepend input-append">
-                                    <span class="add-on"><i class=" icon-screenshot"></i></span><input type="text"
-                                                                                                       class="input-xlarge"
-                                                                                                       id="input_tolerance"/><span
-                                        class="help-inline">Note : only used for HISTOLOGY projects
- </span>
-                                </div>
+                        <div class="controls">
+                            <div class="input-prepend input-append">
+                                <span class="add-on"><i class=" icon-screenshot"></i>
+                                </span><input type="text" class="input-xlarge" id="input_tolerance"/>
+                                <span class="help-inline">Note : only used for HISTOLOGY projects</span>
                             </div>
                         </div>
-                        <div class="form-actions">
-                            <button id="submit_mwToleranceForm" type="submit" class="btn btn-primary">Save changes
-                            </button>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-        </div>
-        <div style="margin-top: 20px;">
-            <div class="widget-header">
-                <h3>Image filters</h3>
-            </div>
-            <div class="widget-content" style="padding: 10px;">
-                <ul class="image-filters">
-                    <li>
-                        <button id="addImageFilterButton" class="btn btn-small btn-primary">
-                            <i class="icon-plus icon-white"/></i> Add&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div class="form-actions">
+                        <button id="submit_mwToleranceForm" type="submit" class="btn btn-primary">Save changes
                         </button>
-                        <select id="addImageFilter"></select></li>
-                </ul>
-            </div>
+                    </div>
+                </fieldset>
+            </form>
         </div>
-        <div style="margin-top: 20px;">
-            <div class="widget-header">
-                <h3>Softwares</h3>
-            </div>
-            <div class="widget-content" style="padding: 10px;">
-                <ul class="softwares">
-                    <li>
-                        <button id="addSoftwareButton" class="btn btn-small btn-primary"><i
-                                class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
-                        <select id="addSoftware"></select></li>
-                </ul>
-            </div>
+        <div style="margin-top: 20px;" class="well">
+            <h3>Image filters</h3>
+            <ul class="image-filters">
+                <li>
+                    <button id="addImageFilterButton" class="btn btn-small btn-primary">
+                        <i class="icon-plus icon-white"/></i> Add&nbsp;&nbsp;&nbsp;
+                    </button>
+                    <select id="addImageFilter"></select></li>
+            </ul>
+        </div>
+        <div style="margin-top: 20px;" class="well">
+            <h3>Softwares</h3>
+            <ul class="softwares">
+                <li>
+                    <button id="addSoftwareButton" class="btn btn-small btn-primary"><i
+                            class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
+                    <select id="addSoftware"></select></li>
+            </ul>
         </div>
     </div>
 </div>

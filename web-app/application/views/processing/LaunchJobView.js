@@ -515,9 +515,12 @@ var InputListDomainView = Backbone.View.extend({
         var magicSuggestData = self.collection.toJSON();
         var magicSuggestValue = undefined;
 
-        if (magicSuggestData.length == 0) {
-            magicSuggestValue = magicSuggestData[0];
-        }
+        /*if (magicSuggestData.length == 1) { //select the single choice
+            magicSuggestValue = [magicSuggestData[0].id];
+        } else if (magicSuggestData.length > 1) { //add a ALL choices
+            magicSuggestData.push({ id : -1, a : "ALL"});
+            magicSuggestValue = [-1];
+        }*/
 
         self.elemSuggest = cell.find(".suggest").magicSuggest({
             displayField : self.printAttribut,
@@ -528,7 +531,7 @@ var InputListDomainView = Backbone.View.extend({
             value : magicSuggestValue,
             width : 550,
             renderer: function(v){
-                if (v.thumb) { //image model
+                if (v.thumb) { //image/annotation model
                     return _.template('<div><div style="float:left; width : 128px;"><img src="<%= thumb %>" style="max-width : 64px; max-height : 64px;" /></div><div style="padding-left: 20px;"><%= name %></div></div><div style="clear:both;"></div>', { thumb : v.thumb, name : v[self.printAttribut]});
                 } else {
                     return _.template('<%= name %>', { name : v[self.printAttribut] });

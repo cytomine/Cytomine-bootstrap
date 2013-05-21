@@ -71,7 +71,7 @@ class SecurityACL {
             return Storage.executeQuery(
                     "select distinct storage "+
                     "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Storage as storage "+
-                    "where aclObjectId.objectId = project.id " +
+                    "where aclObjectId.objectId = storage.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
         }

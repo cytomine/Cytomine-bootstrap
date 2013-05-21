@@ -78,7 +78,30 @@ class ImagePropertiesService implements Serializable{
             case "jp2":
                 extractUsefulTif(image)
                 break;
+            case "scn":
+                extractUsefulSCN(image)
+
         }
+    }
+
+    private def extractUsefulSCN(AbstractImage image) {
+        log.info "extract properties from mrxs : " + image.getFilename()
+        //Magnificiation
+        def magnificationProperty = ImageProperty.findByImageAndKey(image, "leica.objective")
+        if (magnificationProperty) image.setMagnification(Integer.parseInt(magnificationProperty.getValue()))
+        else log.info "magnificationProperty is null"
+        //Width
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
+        if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
+        else log.info "widthProperty is null"
+        //Height
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
+        if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
+        else log.info "heightProperty is null"
+        //Resolution
+        def resolutionProperty = ImageProperty.findByImageAndKey(image, "openslide.mpp-x")
+        if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
+        else log.info "resolutionProperty is null"
     }
 
     private def extractUsefulTif(AbstractImage image) {

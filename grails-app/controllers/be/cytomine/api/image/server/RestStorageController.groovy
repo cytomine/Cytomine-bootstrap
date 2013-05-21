@@ -1,14 +1,18 @@
 package be.cytomine.api.image.server
 
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.server.Storage
+import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import grails.converters.JSON
 
 class RestStorageController extends RestController {
 
     def cytomineService
     def storageService
+    def secUserService
 
     /**
      * List all project available for the current user
@@ -63,6 +67,25 @@ class RestStorageController extends RestController {
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    /**
+     * Create a storage for user with default parameters
+     */
+    def create = {
+        println params
+        def id = params.long('user')
+
+        println ">>> < user id : $id"
+        SecUser user = secUserService.read(id)
+        if (user instanceof User) {
+            if (Storage.findByUser(user)) {
+                new AlreadyExistException("A storage already exists for user $user.username")
+            } else {
+                storageService.initUserStorage((User)user)
+                responseSuccess(Storage.findByUser(user))
+            }
         }
     }
 }

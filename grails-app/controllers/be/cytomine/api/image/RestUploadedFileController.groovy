@@ -55,8 +55,8 @@ class RestUploadedFileController extends RestController {
         SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
 
-        int id_project = params.int("idProject")
-        int id_storage = params.int("idStorage")
+        Integer id_project = params.int("idProject")
+        Integer id_storage = params.int("idStorage")
 
         println "id_project : $id_project"
         println "id_storage : $id_storage"
@@ -87,7 +87,7 @@ class RestUploadedFileController extends RestController {
                     ext : extension,
                     size : f.size,
                     contentType : f.contentType,
-                    projects : [id_project],
+                    projects : (id_project ? [id_project]: []),
                     storages : [id_storage],
                     user : currentUser
             )
@@ -145,13 +145,13 @@ class RestUploadedFileController extends RestController {
             //delete main uploaded file
             if (!deployedFiles.contains(uploadedFile_copy)) {
                 fileSystemService.deleteFile(uploadedFile_copy.absolutePath)
-                uploadedFile_copy.delete()
+                //uploadedFile_copy.delete()
             }
             //delete nested uploaded file
             deployedFiles.each {
                 log.info "delete local files"
                 fileSystemService.deleteFile(it.absolutePath)
-                it.delete()
+                //it.delete()
             }
 
             //try to discover size & metadata

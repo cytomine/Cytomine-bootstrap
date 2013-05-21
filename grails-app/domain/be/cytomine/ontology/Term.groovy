@@ -106,6 +106,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
         JSON.registerObjectMarshaller(Term) {
             def returnArray = [:]
+            returnArray['class'] = it.class
             returnArray['id'] = it.id
             returnArray['name'] = it.name
             returnArray['comment'] = it.comment

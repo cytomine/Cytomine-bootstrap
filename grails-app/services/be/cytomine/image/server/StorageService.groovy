@@ -5,6 +5,10 @@ import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import org.springframework.security.acls.domain.BasePermission
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.core.context.SecurityContextHolder
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 import static org.springframework.security.acls.domain.BasePermission.WRITE
@@ -13,6 +17,7 @@ class StorageService extends ModelService {
 
     def cytomineService
     def transactionService
+    def permissionService
 
     static transactional = true
 
@@ -83,12 +88,53 @@ class StorageService extends ModelService {
         return [domain.id, domain.name]
     }
 
-   void deleteDependentImageServerStorage(Storage storage, Transaction transaction, Task task = null){
-       //throw new CytomineMethodNotYetImplementedException("cannot yet delete imageServerStorage, implement service first!")
-   }
-   void  deleteDependentStorageAbstractImage(Storage storage, Transaction transaction, Task task = null) {
-       //throw new CytomineMethodNotYetImplementedException("cannot yet delete StorageAbstractImage, implement service first!")
+    void deleteDependentImageServerStorage(Storage storage, Transaction transaction, Task task = null){
+        //throw new CytomineMethodNotYetImplementedException("cannot yet delete imageServerStorage, implement service first!")
+    }
+    void  deleteDependentStorageAbstractImage(Storage storage, Transaction transaction, Task task = null) {
+        //throw new CytomineMethodNotYetImplementedException("cannot yet delete StorageAbstractImage, implement service first!")
 
-   }
+    }
+
+
+    def initUserStorage(SecUser user) {  //:to do => use command instead of domains
+        //SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        String storage_base_path = grailsApplication.config.storage_path
+        String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
+
+        log.info ("create storage for $user.username")
+        Storage storage = new Storage(
+                name: "$user.username storage",
+                basePath: remotePath,
+                ip: "10.1.0.106",
+                username: "storage",
+                password: "bioinfo;3u54",
+                keyFile: null,
+                port: 22,
+                user: user
+        )
+
+        if (storage.validate()) {
+            storage.save()
+            permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
+            /*fileSystemService.makeRemoteDirectory(
+                    storage.getIp(),
+                    storage.getPort(),
+                    storage.getUsername(),
+                    storage.getPassword(),
+                    storage.getKeyFile(),
+                    storage.getBasePath())*/
+
+            for (imageServer in ImageServer.findAll()) {
+                ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
+                imageServerStorage.save(flush : true)
+            }
+        } else {
+            storage.errors.each {
+                log.error it
+            }
+        }
+
+    }
 
 }
