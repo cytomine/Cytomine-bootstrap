@@ -19,8 +19,15 @@ var DashboardReviewPanel = Backbone.View.extend({
         ],
             function (ReviewPanelTpl,ReviewActionTpl, TermSpanTpl) {
                 self.termSpanTemplate = TermSpanTpl;
+
+                //show review tab
+                $("#explorer-tab").find("a[href='#tabs-reviewdash-"+window.app.status.currentProject+"']").parent().show();
+
+
+                //get image to review
                 new ImageInstanceModel({id: image}).fetch({
                     success: function (model, response) {
+                        //get only userjob that add annotation for this image
                         new UserJobCollection({project: window.app.status.currentProject, image: image}).fetch({
                             success: function (collection, response) {
                                 self.userJobForImage = collection;
@@ -33,6 +40,7 @@ var DashboardReviewPanel = Backbone.View.extend({
 
                                 $(self.el).append(_.template(ReviewPanelTpl,{idImage: image,imageFilename:model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),projectName:self.model.get('name'),reviewer:reviewer, validate:model.get('reviewStop')}));
 
+                                //if no reviewer, allow to start review
                                 if(reviewer==null) {
                                     $("a#startToReview"+image).click(function(evt){
                                          evt.preventDefault();
@@ -81,9 +89,6 @@ var DashboardReviewPanel = Backbone.View.extend({
         } else {
             self.render(image,user,term);
         }
-//        self.annotationListing.render(self.model.id,image,user,term)
-//        self.changeSelectedFilter(user,term);
-//        self.initStatsReview(image,user);
     },
     marskAsReviewed : function(id, terms, reviewed) {
         var self = this;
@@ -192,9 +197,6 @@ var DashboardReviewPanel = Backbone.View.extend({
         var idTerm = $(termBox).data("term");
         var idAnnotation = ui.draggable.data('annotation');
 
-        console.log("###############################################################");
-        console.log("###############################################################");
-        console.log("###############################################################");
         var allChecked = _.map($("#annotationReviewListing").find(".component").find('input:checked'),function(elem) {
             return $(elem).data("annotation");
         });

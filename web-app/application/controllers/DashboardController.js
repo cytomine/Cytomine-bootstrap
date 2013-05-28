@@ -24,6 +24,7 @@ var DashboardController = Backbone.Router.extend({
     },
 
     init: function (project, callback) {
+        $(window).scrollTop(0);
         console.log("window.app.status.currentProject=" + window.app.status.currentProject + " new project=" + project);
         if (window.app.status.currentProject != undefined && window.app.status.currentProject != project) {
             this.destroyView();

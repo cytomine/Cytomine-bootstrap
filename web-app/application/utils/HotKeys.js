@@ -39,6 +39,12 @@ var HotKeys = {
                     }
                 }
         );
+        $(document).bind('keydown.w',function (evt){
+                    if(self.checkMode("review") || self.checkMode("image")) {
+                        self.doClick("div"+window.location.hash.toString(),".magicWandButton");
+                    }
+                }
+        );
         $(document).bind('keydown.e',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
                         self.doClick("div"+window.location.hash.toString(),".editButton");

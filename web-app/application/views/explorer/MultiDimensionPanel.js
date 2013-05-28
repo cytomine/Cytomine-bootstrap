@@ -82,22 +82,32 @@ var MultiDimensionPanel = SideBarPanel.extend({
                 console.log("spinner:"+'#spinner'+text);
                 el.find('#spinner'+text).spinner({hold:true,value:value,min:min,max:max,disabled:(min==max && max==0)});
 
-                console.log("changed");
+//                console.log("changed");
+//                el.find('#spinner'+text).on("changed",function() {
+//                    el.find(".goToImage").empty();
+//                    el.find(".goToImage").text("Go to layer c:" + self.getValue("Channel") +" z:" + self.getValue("Zstack") +" s:" + self.getValue("Slice") +" t:" + self.getValue("Time"));
+//                });
+
+
                 el.find('#spinner'+text).on("changed",function() {
-                    el.find(".goToImage").empty();
                     el.find(".goToImage").text("Go to layer c:" + self.getValue("Channel") +" z:" + self.getValue("Zstack") +" s:" + self.getValue("Slice") +" t:" + self.getValue("Time"));
+                });
+
+                //if button up/down are used, go to image automat.
+                el.find('#spinner'+text).find("button.spinner-up").click(function() {
+                   $(".goToImage").click();
+                });
+                el.find('#spinner'+text).find("button.spinner-down").click(function() {
+                   $(".goToImage").click();
                 });
             };
 
-             console.log("***********LOAD SPINNER");
             loadSpinner("channel","Channel",data.c);
             loadSpinner("zStack","Zstack",data.z);
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
             el.find(".goToImage").click(function() {
-                console.log("")
-
                 self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"))
 
             });
@@ -117,21 +127,28 @@ var MultiDimensionPanel = SideBarPanel.extend({
         console.log(url) ;
         $.get(url, function(data) {
             var currentImage =  self.browseImageView.model;
-            var idImage = data.image
+            var idImage = data.image;
+            var image = new ImageInstanceModel(data.model);
+
 
             if(idImage==currentImage.id) {
                 return;
             }
 
+            //get current position, next image will be opened at the same position/zoom level
+            var zoom = self.browseImageView.map.zoom;
+            var x = self.browseImageView.map.center.lon;
+            var y = self.browseImageView.map.center.lat;
+
             if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
+                window.app.setNewImageWithPosition(image,x,y,zoom);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
                 $("#closeTab" +self.browseImageView.divPrefixId+ "-"+currentImage.id).click();
-                console.log("2.GOTO="+"#closeTab" +self.browseImageView.divPrefixId+ "-"+currentImage.id);
                 window.location = "#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-";
-                console.log("1.GOTO="+"#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-");
             } else {
                 new ImageReviewModel({id: idImage}).save({}, {
                     success: function (model, response) {
                         window.app.view.message("Image", response.message, "success");
+                        window.app.setNewImageWithPosition(model,x,y,zoom);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
                         $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ currentImage.id).click();
                         window.location = '#'+ self.browseImageView.divPrefixId  + '-' + currentImage.get('project') + '-' + response.imageinstance.id + '-';
                     },

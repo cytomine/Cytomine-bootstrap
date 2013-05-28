@@ -81,19 +81,31 @@ var ExplorerTabs = Backbone.View.extend({
         });
         self.tabs.push({idImage: idImage, view: view});
 
-        new ImageInstanceModel({id: idImage}).fetch({
-            success: function (model, response) {
-                view.model = model;
-                view.render();
-                $("#closeTabtabs-image-" + idImage).on("click", function (e) {
-                    var idImage = $(this).attr("data-image");
-                    self.removeTab(idImage, "image");
-                    self.showLastTab(idImage);
-                });
-                self.showTab(idImage, "image");
-
+        var openTab = function(model) {
+            view.model = model.image;
+            view.render();
+            if(model.position) {
+                view.position = {x:model.x,y:model.y,zoom:model.zoom}
             }
-        });
+
+            $("#closeTabtabs-image-" + idImage).on("click", function (e) {
+                var idImage = $(this).attr("data-image");
+                self.removeTab(idImage, "image");
+                self.showLastTab(idImage);
+            });
+            self.showTab(idImage, "image");
+        }
+
+        var imageNew = window.app.popNewImage();
+        if(imageNew && imageNew.image && imageNew.image.id==idImage) {
+            openTab(imageNew)
+        } else {
+            new ImageInstanceModel({id: idImage}).fetch({
+                success: function (model, response) {
+                    openTab({image:model, position: false});
+                }
+            });
+        }
     },
     addReviewImageView: function (idImage, options) {
         console.log("addReviewImageView:" + idImage);
@@ -230,6 +242,9 @@ var ExplorerTabs = Backbone.View.extend({
         tabs.append(_.template("<li><a href='#tabs-algos-<%= idProject %>' data-toggle='tab'><i class='icon-tasks' /> Jobs</a></li>", { idProject: window.app.status.currentProject}));
         tabs.append(_.template("<li><a href='#tabs-config-<%= idProject %>' data-toggle='tab'><i class='icon-wrench' /> Configuration</a></li>", { idProject: window.app.status.currentProject}));
         tabs.append(_.template("<li><a href='#tabs-reviewdash-<%= idProject %>' data-toggle='tab'><i class='icon-chevron-down' /> Review</a></li>", { idProject: window.app.status.currentProject}));
+
+        //hide review tab
+        tabs.find("a[href='#tabs-reviewdash-"+window.app.status.currentProject+"']").parent().hide();
 
 
         $(document).on('click','a[data-toggle="tab"]', function (e) {

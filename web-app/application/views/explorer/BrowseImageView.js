@@ -198,6 +198,14 @@ var BrowseImageView = Backbone.View.extend({
 
         console.log("show!");
         console.log(options.goToAnnotation);
+
+        console.log(this.position);
+        if(this.position) {
+            console.log("moveTo");
+            self.map.moveTo(new OpenLayers.LonLat(self.position.x, self.position.y), Math.max(0, self.position.zoom));
+        }
+
+
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
@@ -718,8 +726,6 @@ var BrowseImageView = Backbone.View.extend({
 
             }
         });
-
-        console.log("INDEX_BROWSEIMAGE = " + this.map.getLayerIndex(this.map.annotationProperties));
 
     },
     broadcastPosition: function () {

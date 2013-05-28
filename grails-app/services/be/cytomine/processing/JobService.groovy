@@ -40,7 +40,9 @@ class JobService extends ModelService {
     }
 
     def list(List<Project> projects) {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        projects.each { project ->
+            SecurityACL.check(project,READ)
+        }
         Job.findAllByProjectInList(projects,[sort: "created", order: "desc"])
     }
 

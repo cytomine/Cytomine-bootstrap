@@ -64,7 +64,7 @@ grails.project.dependency.resolution = {
         compile ":grails-ant:0.1.3"
 
  //       test ':code-coverage:1.2'
-        test ':code-coverage:1.2.6'
+        runtime ':code-coverage:1.2.6'
 
 
         test ':selenium-rc:1.0.2'

@@ -408,6 +408,7 @@ class UserAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
+        log.info "add"
         SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 

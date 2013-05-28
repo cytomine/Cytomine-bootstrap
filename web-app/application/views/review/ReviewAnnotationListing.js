@@ -45,12 +45,27 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
 
         $("#annotationReviewListing").find("#reviewAll").click(function() {
+            $("#annotationReviewListing").find(".component").find('input').prop('checked', true);
             self.reviewChecked();
         });
 
         $("#annotationReviewListing").find("#checkAll").click(function() {
-            $("#annotationReviewListing").find(".component").find('input').attr("checked",true);
+            $("#annotationReviewListing").find(".component").find('input').prop('checked', true);
+
         });
+        $("#annotationReviewListing").find("#unCheckAll").click(function() {
+            $("#annotationReviewListing").find(".component").find('input').prop('checked', false);
+        });
+
+
+        $('.check:button').click(function(){
+              var checked = !$(this).data('checked');
+              $('input:checkbox').prop('checked', checked);
+              $(this).val(checked ? 'uncheck all' : 'check all' )
+              $(this).data('checked', checked);
+        });
+
+
         self.refresh();
         return this;
     },
@@ -232,7 +247,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         $(thumb.el).find(".terms").append(termNames.join(", "));
 
         $(thumb.el).append('<div class="component text-center"></div>');
-
+        $(thumb.el).css("max-width","200px");
         $(thumb.el).find(".component").append('<button  style="display:inline;" data-annotation = "'+annotation.id+'" class="btn review" style="min-width:100%;">Accept</button>');
         $(thumb.el).find(".component").append('<input data-annotation="'+annotation.id+'" style="display:inline;" type="checkbox" value="takeMe">');
 

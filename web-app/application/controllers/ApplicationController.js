@@ -74,7 +74,25 @@ var ApplicationController = Backbone.Router.extend({
         }
     },
 
-
+    //tmp area where we store the image
+    //usefull if we already have the image when we open explore (no GET image)
+    setNewImage : function(image) {
+       this.newImage = {};
+       this.newImage.position = false;
+       this.newImage.image = image;
+    },
+    setNewImageWithPosition : function(image,x,y,zoom) {
+       this.setNewImage(image);
+       this.newImage.position = true;
+       this.newImage.x = x;
+       this.newImage.y = y;
+       this.newImage.zoom = zoom;
+    },
+    popNewImage : function() {
+        var newImage = this.newImage
+        this.newImage = null;
+       return newImage
+    },
     start: function () {
         window.app.controllers.image = new ImageController();
         window.app.controllers.project = new ProjectController();

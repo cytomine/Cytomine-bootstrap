@@ -89,6 +89,7 @@ class ImageSequence extends CytomineDomain implements Serializable {
             returnArray['imageGroup'] = it.imageGroup.id
             returnArray['created'] = it.created?.time?.toString()
             returnArray['updated'] = it.updated?.time?.toString()
+            returnArray['model'] = it.image
             return returnArray
         }
     }
