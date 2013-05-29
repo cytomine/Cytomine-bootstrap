@@ -88,6 +88,7 @@ var ImageTabsView = Backbone.View.extend({
         require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {
            self.doLayout(actionMenuTpl)
         });
+        return this;
     },
     doLayout: function (actionMenuTpl) {
         var self = this;

@@ -179,19 +179,22 @@ class AdminController extends RestController {
     }
 
 
+    /*
+     * e24_metripol_result_I0.png
+      e24_metripol_result_phi.png
+      e24_metripol_result_sin_delta.png
+      e25_metripol_result_I0.png
+      e25_metripol_result_phi.png
+      e25_metripol_result_sin_delta.png
+     *
+     */
 
 
-
-
-
-
-
-
-
-
-
-
-
+      /*
+      _I0.png
+      _phi.png
+      _sin_delta.png
+       */
 
 
 
@@ -261,10 +264,6 @@ class AdminController extends RestController {
                     throw new Exception();
                 }
             }
-
-
-
-
 
         }
 

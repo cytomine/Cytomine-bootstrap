@@ -50,7 +50,7 @@ var ExplorerController = Backbone.Router.extend({
         });
     },
     browse: function (idProject, idImage, idAnnotation) {
-        console.log("browse2");
+        $(window).scrollTop(0);
         /*
          if (window.app.secondaryWindow) {
          window.app.secondaryWindow.location = window.location;
@@ -87,7 +87,7 @@ var ExplorerController = Backbone.Router.extend({
 
 
     review: function (idProject, idImage) {
-        console.log("review:" + idProject + "-" + idImage);
+        $(window).scrollTop(0);
 
         var self = this;
         //create tabs if not exist

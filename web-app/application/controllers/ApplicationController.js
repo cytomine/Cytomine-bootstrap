@@ -66,6 +66,7 @@ var ApplicationController = Backbone.Router.extend({
                 });
             });
         }
+//        Feedback({h2cPath:'lib/feedback.js-master/examples/js/html2canvas.js',appendTo:document.getElementById('feebackCapture')});
     },
 
     modelFetched: function (cpt, expected) {

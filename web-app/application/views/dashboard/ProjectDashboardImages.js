@@ -15,7 +15,9 @@ var ProjectDashboardImages = Backbone.View.extend({
         }
     },
     refreshImagesTable: function () {
+        console.log("refreshImagesTable");
         if (this.imagesTabsView == null) {
+            console.log(this.imagesTabsView);
             this.imagesTabsView = new ImageTabsView({
                 model: new ImageInstanceCollection({project: this.model.get('id')}),
                 el: $("#tabs-projectImageListing" + this.model.get('id')),
@@ -23,6 +25,7 @@ var ProjectDashboardImages = Backbone.View.extend({
                 idProject: this.model.id
             }).render();
         } else {
+            console.log("this.imagesTabsView.refresh()");
             this.imagesTabsView.refresh();
         }
     }

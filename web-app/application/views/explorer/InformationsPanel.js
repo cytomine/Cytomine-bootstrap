@@ -28,6 +28,10 @@ var InformationsPanel = SideBarPanel.extend({
         });
         return this;
     },
+
+
+
+
     /**
      * Render the html into the DOM element associated to the view
      * @param tpl
@@ -50,21 +54,17 @@ var InformationsPanel = SideBarPanel.extend({
             new ImageInstanceModel({next:true, id:self.model.id}).fetch({
                 success:function (model, response) {
                     if(model.get('project')) {
-
-                        if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
-                            window.app.setNewImage(model);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
-                            $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
-                            //hack: close go to dashboard
-                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
+                        if(self.browseImageView.getMode()=='image' || model.get('reviewUser')!=null) {
+                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
-                                success: function (model, response) {
-                                    window.app.view.message("Image", response.message, "success");
-                                    window.app.setNewImage(model);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
-                                    $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
-                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
+                                success: function (review, response) {
+                                    model.fetch({
+                                        success:function (model, response2) {
+                                           window.app.view.message("Image", response.message, "success");
+                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                                        }
+                                    });
                                 },
                                 error: function (model, response) {
                                     var json = $.parseJSON(response.responseText);
@@ -84,20 +84,17 @@ var InformationsPanel = SideBarPanel.extend({
             new ImageInstanceModel({previous:true, id:self.model.id}).fetch({
                 success:function (model, response) {
                     if(model.get('project')) {
-
-                        if(self.browseImageView.divPrefixId=='tabs-image' || model.get('reviewUser')!=null) {
-                            window.app.setNewImage(model);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
-                            $("#closeTab" +self.browseImageView.divPrefixId+ "-"+self.model.id).click();
-                            window.location = "#" + self.browseImageView.divPrefixId + "-"+model.get('project')+"-"+model.id+"-";
+                        if(self.browseImageView.getMode()=='image' || model.get('reviewUser')!=null) {
+                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
-                                success: function (model, response) {
-                                    window.app.view.message("Image", response.message, "success");
-                                    window.app.setNewImage(model);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
-                                    $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ self.model.id).click();
-                                    window.location = '#'+ self.browseImageView.divPrefixId  + '-' + self.model.get('project') + '-' + response.imageinstance.id + '-';
+                                success: function (review, response) {
+                                    model.fetch({
+                                        success:function (model, response2) {
+                                            window.app.view.message("Image", response.message, "success");
+                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                                        }
+                                    });
                                 },
                                 error: function (model, response) {
                                     var json = $.parseJSON(response.responseText);

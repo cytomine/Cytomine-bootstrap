@@ -12,6 +12,7 @@ var BrowseImageView = Backbone.View.extend({
      * @param options
      */
     initialize: function (options) {
+
         console.log("initialize");
         console.log(options);
         this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
@@ -36,12 +37,7 @@ var BrowseImageView = Backbone.View.extend({
         if (options.review != undefined) {
             this.review = options.review;
         }
-        if (!this.review) {
-            this.divPrefixId = "tabs-image";
-        }
-        else {
-            this.divPrefixId = "tabs-review";
-        }
+        this.divPrefixId = "tabs-"+this.getMode();
 
         _.bindAll(this, "initVectorLayers");
     },
@@ -54,12 +50,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         console.log("BrowseImageView:doLayout");
 
-        if (!this.review) {
-            this.divId = "tabs-image-" + window.app.status.currentProject + "-" + this.model.id + "-";
-        }
-        else {
-            this.divId = "tabs-review-" + window.app.status.currentProject + "-" + this.model.id + "-";
-        }
+        this.divId = "tabs-"+self.getMode()+"-" + window.app.status.currentProject + "-" + this.model.id + "-";
 
         var templateData = this.model.toJSON();
 
@@ -146,6 +137,14 @@ var BrowseImageView = Backbone.View.extend({
     deleteTermFromReviewPanel: function (idTerm) {
         if (this.review) {
             this.reviewPanel.deleteTermChoice(idTerm, this.currentAnnotation.id);
+        }
+    },
+    getMode : function() {
+        if (!this.review) {
+            return "image"
+        }
+        else {
+            return "review"
         }
     },
     /**
@@ -1078,6 +1077,21 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().measureOnSelect = true;
             self.getUserLayer().disableHightlight();
         });
+
+//        toolbar.find('a[id=camera' + this.model.get('id') + ']').click(function () {
+//            console.log("cheese!");
+//
+//            html2canvas($("body"), {
+//                onrendered: function(canvas) {
+//                    console.log("canvas is done");
+//                    // canvas is the final rendered <canvas> element
+//                    var data = canvas.toDataURL();
+//                    console.log("image is done");
+//                    console.log(data);
+//                    // data is the Base64-encoded image
+//                }
+//            });
+//        });
 
 
         /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {

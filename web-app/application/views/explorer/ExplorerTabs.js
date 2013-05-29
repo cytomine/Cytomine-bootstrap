@@ -133,24 +133,40 @@ var ExplorerTabs = Backbone.View.extend({
         });
         self.tabs.push({idImage: "review-" + idImage, view: view});
 
-        new ImageInstanceModel({id: idImage}).fetch({
-            success: function (model, response) {
-                view.model = model;
-                view.render();
-                $("#closeTabtabs-review-" + idImage).on("click", function (e) {
-                    var idImage = $(this).attr("data-image");
-                    self.removeTab(idImage, "review");
-                    self.showLastTab(idImage);
-                });
-                self.showTab(idImage, "review");
 
-                if (model.get("inReview") == false && model.get("reviewed") == false) {
 
-                    self.removeTab(idImage, "review");
-                    window.app.view.message("Review image", "You must first start reviewing picture before review it!", "warning");
-                }
+
+
+        var openTab = function(model) {
+            view.model = model.image;
+            console.log(view.model);
+            view.render();
+            $("#closeTabtabs-review-" + idImage).on("click", function (e) {
+                var idImage = $(this).attr("data-image");
+                self.removeTab(idImage, "review");
+                self.showLastTab(idImage);
+            });
+            self.showTab(idImage, "review");
+
+            if (model.image.get("inReview") == false && model.image.get("reviewed") == false) {
+
+                self.removeTab(idImage, "review");
+                window.app.view.message("Review image", "You must first start reviewing picture before review it!", "warning");
             }
-        });
+        }
+
+        var imageNew = window.app.popNewImage();
+        console.log("imageNew="+imageNew);
+        if(imageNew && imageNew.image && imageNew.image.id==idImage) {
+            openTab(imageNew);
+        } else {
+            new ImageInstanceModel({id: idImage}).fetch({
+                success: function (model, response) {
+                    console.log("ImageInstanceModel="+idImage);
+                    openTab({image:model, position: false});
+                }
+            });
+        }
     },
 
     /**
@@ -213,6 +229,20 @@ var ExplorerTabs = Backbone.View.extend({
         window.app.controllers.browse.tabs.triggerRoute = true;
     },
     /**
+     * Go to a specific image and close another one (usefull for next/previous or multidim go to)
+     */
+    goToImage : function(idImageToOpen,idProject, idImageToClose, mode, imageToOpen,x,y,zoom) {
+        var self = this;
+        if(imageToOpen && x) {
+            window.app.setNewImageWithPosition(imageToOpen,x,y,zoom);
+        } else if(imageToOpen) {
+            window.app.setNewImage(imageToOpen);
+       }
+        window.app.controllers.browse.tabs.removeTab(idImageToClose,mode) //TODO support REVIEW TOO!!!!
+        window.location = "#tabs-" + mode + "-"+idProject+"-"+idImageToOpen+"-";
+    },
+
+    /**
      * Return the number of opened tabs
      */
     size: function () {
@@ -257,6 +287,7 @@ var ExplorerTabs = Backbone.View.extend({
 
         $("#explorer > .browser").show();
         $("#explorer > .noProject").hide();
+
     },
     /**
      * Ask to the dashboard view to refresh

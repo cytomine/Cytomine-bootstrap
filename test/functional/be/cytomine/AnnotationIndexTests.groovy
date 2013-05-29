@@ -84,6 +84,18 @@ class AnnotationIndexTests {
         checkAnnotationIndexReviewed(project,user1,user2)
     }
 
+    def testIndexAlgoReviewedAnnotationWithoutannotationIndex() {
+        //create project, with 2 users
+        //for bug fix: see if annotation index row is created if user/image is not created and user do a review
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        UserJob user1 = BasicInstanceBuilder.getUserJob(USERJOB1,PASSWORD)
+        UserJob user2 = BasicInstanceBuilder.getUserJob(USERJOB2,PASSWORD)
+        Infos.addUserRight(user1.user.username,project)
+        Infos.addUserRight(user2.user.username,project)
+
+        checkAnnotationIndexReviewedWithoutAnnotationIndex(project,user1,user2)
+    }
+
 
 
 
@@ -221,6 +233,45 @@ class AnnotationIndexTests {
         assert getCountAnnotationValue(json,user1.id, false)==3
         assert getCountAnnotationValue(json,user1.id, true)==1
     }
+
+
+    private checkAnnotationIndexReviewedWithoutAnnotationIndex(Project project, SecUser user1, SecUser user2) {
+        //create image
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,user1.username, PASSWORD)
+        assert 200 == result.code
+
+        //list index, check if 0
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data).collection
+        assert json.size()==0
+        assert getCountAnnotationValue(json,user1.id, false)==0
+        assert getCountAnnotationValue(json,user1.id, true)==0
+
+        //add annotation by user 1
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotationNotExist(project,image)
+        result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        int idAnnotation = result.data.id
+        result = ReviewedAnnotationAPI.addReviewAnnotation(idAnnotation,user1.username, PASSWORD)
+        assert 200 == result.code
+
+        //list index, check if 1 for user and 0 for other
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data).collection
+
+
+        assert json.size()==2
+        assert getCountAnnotationValue(json,user1.id, false)==0
+        assert getCountAnnotationValue(json,user1.id, true)==1
+        assert getCountAnnotationValue(json,User.findByUsername(Infos.GOODLOGIN).id, false)==1
+        assert getCountAnnotationValue(json,User.findByUsername(Infos.GOODLOGIN).id, true)==0
+
+    }
+
+
 
     private Long getCountAnnotationValue(def json, Long idUser, boolean reviewed) {
         println json

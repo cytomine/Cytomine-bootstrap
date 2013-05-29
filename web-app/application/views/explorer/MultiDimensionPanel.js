@@ -141,16 +141,12 @@ var MultiDimensionPanel = SideBarPanel.extend({
             var y = self.browseImageView.map.center.lat;
 
             if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
-                window.app.setNewImageWithPosition(image,x,y,zoom);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                $("#closeTab" +self.browseImageView.divPrefixId+ "-"+currentImage.id).click();
-                window.location = "#" + self.browseImageView.divPrefixId + "-"+currentImage.get('project')+"-"+idImage+"-";
+                window.app.controllers.browse.tabs.goToImage(idImage,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),image,x,y,zoom);
             } else {
                 new ImageReviewModel({id: idImage}).save({}, {
                     success: function (model, response) {
                         window.app.view.message("Image", response.message, "success");
-                        window.app.setNewImageWithPosition(model,x,y,zoom);  //store image in tmp area, when opening tab we will check first if image is there, otherwise we do fetch
-                        $("#closeTab" +self.browseImageView.divPrefixId+ "-"+ currentImage.id).click();
-                        window.location = '#'+ self.browseImageView.divPrefixId  + '-' + currentImage.get('project') + '-' + response.imageinstance.id + '-';
+                        window.app.controllers.browse.tabs.goToImage(idImage,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),image,x,y,zoom);
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);

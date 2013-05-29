@@ -1,8 +1,14 @@
+import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
+import be.cytomine.image.multidim.ImageGroup
+import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.ontology.AnnotationIndex
+import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
@@ -89,6 +95,11 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
         }
 
+        if(ImageSequence.findAllByImageInList(ImageInstance.findAllByProject(Project.read(18054742))).isEmpty()) {
+            mergeMultiDimImage18054742()
+        }
+
+
         if(AnnotationIndex.count()==0) {
 
 
@@ -165,19 +176,89 @@ class BootStrap {
     }
 
 
-    def merge57() {
-        //read all images
-
-        //sort by filename
-
-        //split(".").
 
 
+    def mergeMultiDimImage18054742() {
+        int idProject = 18054742
+        Project project = Project.read(idProject)
+        def images = ImageInstance.findAllByProject(project)
+        def filenames = images.collect{
+            println it.baseImage.originalFilename
+            String fileNameEnd = it.baseImage.originalFilename.replace("_sin_delta.png","")
+            fileNameEnd = fileNameEnd.replace("_I0.png","")
+            fileNameEnd = fileNameEnd.replace("_phi.png","")
+            fileNameEnd
+        }
+        println filenames
+        filenames = filenames.unique().sort()
+        /**
+         * SELECT ai.original_filename
+         FROM abstract_image ai, image_instance ii
+         WHERE ai.id = ii.base_image_id
+         AND ii.project_id = 18054742
+         ORDER BY ai.original_filename;
+
+         */
 
 
+        filenames.each { filename ->
+
+            images = ImageInstance.findAllByProjectAndBaseImageInList(project,AbstractImage.findAllByOriginalFilenameLike("${filename}%"))
+//            println "images=$images"
+
+            println "groupame=$filename"
+
+            ImageGroup imageGroup = new ImageGroup(project:project,name:filename)
+            saveDomain(imageGroup)
+
+            def channels = []
+            //sort slice index (convert to long to avoid: string sort like 10, 1, 20...)
+
+
+//              println "${filename}_I0.png"
+//               println "img=${img}"
+//              println "project=$project"
+            def img = AbstractImage.findAllByOriginalFilenameLike("${filename}_I0.png")
+            if(img) {
+                channels << ImageInstance.findByProjectAndBaseImageInList(project,img)
+            }
+            img = AbstractImage.findAllByOriginalFilenameLike("${filename}_phi.png")
+              if(img) {
+                  channels << ImageInstance.findByProjectAndBaseImageInList(project,img)
+              }
+            img = AbstractImage.findAllByOriginalFilenameLike("${filename}_sin_delta.png")
+              if(img) {
+                  channels << ImageInstance.findByProjectAndBaseImageInList(project,img)
+             }
+//              channels << ImageInstance.findByProjectAndBaseImageInList(project,AbstractImage.findAllByOriginalFilenameLike("${filename}_phi.png"))
+//              channels << ImageInstance.findByProjectAndBaseImageInList(project,AbstractImage.findAllByOriginalFilenameLike("${filename}_sin_delta.png"))
+
+            println channels
+
+            channels.eachWithIndex{ channel, index ->
+                println "file=${channel.baseImage.filename}"
+                ImageSequence imageSequence = new  ImageSequence(image:channel,channel:index,zStack:0,slice:0,time:0,imageGroup:imageGroup)
+                saveDomain(imageSequence)
+
+            }
+
+        }
 
     }
 
+
+
+    def saveDomain(def newObject) {
+        newObject.checkAlreadyExist()
+        if (!newObject.validate()) {
+            log.error newObject.errors
+            log.error newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: true)) {
+            throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+    }
 
 
 }
