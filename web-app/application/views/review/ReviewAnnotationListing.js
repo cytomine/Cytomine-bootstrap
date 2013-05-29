@@ -248,6 +248,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
         $(thumb.el).append('<div class="component text-center"></div>');
         $(thumb.el).css("max-width","200px");
+        $(thumb.el).find(".component").append('<button  data-toggle="modal" data-target="#browseReviewModal" style="display:inline;" data-annotation = "'+annotation.id+'" class="btn openBrowseReview" style="min-width:100%;">Open</button>');
         $(thumb.el).find(".component").append('<button  style="display:inline;" data-annotation = "'+annotation.id+'" class="btn review" style="min-width:100%;">Accept</button>');
         $(thumb.el).find(".component").append('<input data-annotation="'+annotation.id+'" style="display:inline;" type="checkbox" value="takeMe">');
 
@@ -267,6 +268,59 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
 
 
+        console.log("registerReviewPopup");
+//        require([
+//            "text!application/templates/review/ReviewBrowse.tpl.html"
+//        ],
+//        function (tpl) {
+            var modal = new CustomModal({
+                idModal : "browseReviewModal",
+                button : $(thumb.el).find("button.openBrowseReview"),
+                header :"BrowseAnnotation",
+                body :'<div id="browseAnnotationModal"></div>',
+                width : 900,
+                height : 800,
+                callBack : function() {
 
+                    new ImageInstanceModel({id: annotation.get('image')}).fetch({
+                        success: function (model, response) {
+
+                           var view = new BrowseImageView({
+                               addToTab : false,
+                               initCallback: function () {
+                                   view.show({goToAnnotation : {value: annotation.id}})
+                               },
+                               el: $("#browseAnnotationModal")
+                           });
+                           view.model = model;
+                           view.render();
+
+                        }
+                    });
+                }
+            });
+            modal.addButtons("closeBrowseReview","Close",true);
+//        });
+
+
+
+
+
+
+
+
+//
+//        $(thumb.el).find("button.openBrowseReview").click(function() {
+////            self.container.registerReviewPopup($(this).data('annotation'));
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//        });
     }
 });

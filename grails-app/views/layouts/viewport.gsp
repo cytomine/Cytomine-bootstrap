@@ -83,7 +83,7 @@ body {
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
 
-<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>
+%{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>

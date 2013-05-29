@@ -176,6 +176,31 @@ var DashboardReviewPanel = Backbone.View.extend({
           } );
 
     },
+//
+//    registerReviewPopup : function(annotation) {
+//        console.log("registerReviewPopup");
+//        var self = this;
+//        require([
+//            "text!application/templates/review/ReviewBrowse.tpl.html"
+//        ],
+//        function (tpl) {
+//            var modal = new CustomModal({
+//                idModal : "browseReviewModal",
+//                button : $("#browseReviewModalButton"),
+//                header :"BrowseAnnotation",
+//                body :tpl,
+//                width : 900,
+//                height : 800
+//            });
+//            modal.addButtons("closeBrowseReview","Close",true);
+//            $('#myModal').modal(options)
+//        });
+//
+//    },
+
+
+
+
 
 
 

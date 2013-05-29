@@ -38,7 +38,10 @@ var BrowseImageView = Backbone.View.extend({
             this.review = options.review;
         }
         this.divPrefixId = "tabs-"+this.getMode();
-
+        this.addToTab = true;
+        if (options.addToTab != undefined) {
+            this.addToTab = options.addToTab;
+        }
         _.bindAll(this, "initVectorLayers");
     },
 
@@ -73,10 +76,13 @@ var BrowseImageView = Backbone.View.extend({
 
         var dataName = 'data-name=<%= idImage %>';
 
-        var tabs = $('#explorer-tab');
-        tabs.append(_.template(tabTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), originalFilename: this.model.get('originalFilename'), shortOriginalFilename: shortOriginalFilename}));
-        var dropdownTpl = '<li class="dropdown"><a href="#" id="' + self.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + self.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
-        tabs.append(_.template(dropdownTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), filename: this.model.get('filename')}));
+        if(this.addToTab) {
+            var tabs = $('#explorer-tab');
+            tabs.append(_.template(tabTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), originalFilename: this.model.get('originalFilename'), shortOriginalFilename: shortOriginalFilename}));
+            var dropdownTpl = '<li class="dropdown"><a href="#" id="' + self.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + self.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
+            tabs.append(_.template(dropdownTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), filename: this.model.get('filename')}));
+
+        }
 
         if (this.review && this.model.get('reviewed')) {
             self.changeValidateColor(true);
