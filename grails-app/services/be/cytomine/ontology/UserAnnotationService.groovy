@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.sql.AnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
@@ -54,47 +55,20 @@ class UserAnnotationService extends ModelService {
         annotation
     }
 
-    def list(Project project) {
+    def list(Project project,def propertiesToShow = null) {
         SecurityACL.check(project.container(),READ)
-        UserAnnotation.findAllByProject(project)
+        selectUserAnnotation(new AnnotationListing(project: project.id, columnToPrint: propertiesToShow))
     }
 
     /**
-     * List annotation where a user from 'userList' has added term 'realTerm' and for which a specific job has predicted 'suggestedTerm'
-     * @param project Annotation project
-     * @param userList Annotation user list filter
-     * @param realTerm Annotation term (add by user)
-     * @param suggestedTerm Annotation predicted term (from job)
-     * @param job Job that make prediction
-     * @return
+     * List annotation created by user
+     * @param image Image filter
      */
-    def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
-        SecurityACL.check(project.container(),READ)
-        log.info "list with suggestedTerm"
-        if (userList.isEmpty()) {
-            return []
-        }
-        //Get last userjob
-        SecUser user = UserJob.findByJob(job)
-
-        //Get all annotation from this project with this term
-        def annotationFromProjectWithTerm = UserAnnotation.executeQuery(
-                "SELECT ua " +
-                "FROM UserAnnotation ua, AnnotationTerm at " +
-                "WHERE ua.id = at.userAnnotation.id " +
-                "AND ua.project = :project " +
-                "AND at.term = :realTerm " +
-                "AND at.user.id IN (:userList)", [userList: userList, realTerm: realTerm, project: project])
-
-        def algoAnnotationsTerm = AnnotationTerm.executeQuery("SELECT ua " +
-                "FROM AlgoAnnotationTerm aat, UserAnnotation ua " +
-                "WHERE aat.userJob = :user " +
-                "AND aat.term = :suggestedTerm " +
-                "AND aat.annotationIdent = ua.id " +
-                "AND aat.annotationIdent IN (:annotations)", [user: user, suggestedTerm: suggestedTerm, annotations: annotationFromProjectWithTerm.collect {it.id}.unique()])
-
-        return algoAnnotationsTerm
+    def listLight(ImageInstance image,def propertiesToShow = null) {
+        SecurityACL.check(image.project,READ)
+        selectUserAnnotation(new AnnotationListing(images: [image.id], columnToPrint: propertiesToShow))
     }
+
 
     /**
      * List annotation created by user
@@ -111,38 +85,15 @@ class UserAnnotationService extends ModelService {
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             throw new IllegalArgumentException("Method not supported for this type of data!!!")
         } else {
-            String request
+            def request
             if (multipleTerm)
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                        " FROM user_annotation a, annotation_term at2, annotation_term at3\n" +
-                        " WHERE a.project_id = " + project.id + "\n" +
-                        " AND a.id = at2.user_annotation_id\n" +
-                        " AND a.id = at3.user_annotation_id\n" +
-                        " AND at2.id <> at3.id \n" +
-                        " AND at2.term_id <> at3.term_id \n" +
-                        " AND at2.user_id IN (" + userList.join(",") + ") \n" +
-                        (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
-                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
-                        " ORDER BY id desc, term"
+                request = new AnnotationListing(project: project.id,usersForTerm: userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,multipleTerm: true)
             else if (noTerm)
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,null as term, null as annotationTerms,null as userTerm,a.wkt_location as location  \n" +
-                        " FROM user_annotation a LEFT JOIN (SELECT * from annotation_term x where x.user_id IN (" + userList.join(",") + ")) at ON a.id = at.user_annotation_id \n" +
-                        " WHERE a.project_id = " + project.id + "\n" +
-                        " AND at.id IS NULL\n" +
-                        " AND a.user_id IN (" + userList.join(",") + ") \n" +
-                        (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
-                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
-                        " ORDER BY id desc, term"
-            else
-                request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                        " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id \n" +
-                        " WHERE a.project_id = " + project.id + "\n" +
-                        " AND a.user_id IN (" + userList.join(",") + ") \n" +
-                        (imageInstanceList.size() == project.countImageInstance() ? "" : "AND a.image_id IN(" + imageInstanceList.join(",") + ") \n") +
-                        (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
-                        " ORDER BY id desc, term"
-
-            selectUserAnnotationFull(request)
+                request = new AnnotationListing(project: project.id,users : userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,noTerm: true)
+            else {
+                request = new AnnotationListing(project: project.id,users : userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,)
+            }
+            selectUserAnnotation(request)
         }
     }
 
@@ -350,18 +301,7 @@ class UserAnnotationService extends ModelService {
         selectUserAnnotationLightForRetrieval(request)
     }
 
-    /**
-     * List annotation created by user
-     * @param image Image filter
-     */
-    def listLight(ImageInstance image) {
-        SecurityACL.check(image.project,READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
-                " WHERE a.image_id = " + image.id + "\n" +
-                " ORDER BY id desc, term"
-        selectUserAnnotationFull(request)
-    }
+
 
 
     private def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
@@ -400,6 +340,44 @@ class UserAnnotationService extends ModelService {
             }
             return criteria
         }
+    }
+
+
+    /**
+     * List annotation where a user from 'userList' has added term 'realTerm' and for which a specific job has predicted 'suggestedTerm'
+     * @param project Annotation project
+     * @param userList Annotation user list filter
+     * @param realTerm Annotation term (add by user)
+     * @param suggestedTerm Annotation predicted term (from job)
+     * @param job Job that make prediction
+     * @return
+     */
+    def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
+        SecurityACL.check(project.container(),READ)
+        log.info "list with suggestedTerm"
+        if (userList.isEmpty()) {
+            return []
+        }
+        //Get last userjob
+        SecUser user = UserJob.findByJob(job)
+
+        //Get all annotation from this project with this term
+        def annotationFromProjectWithTerm = UserAnnotation.executeQuery(
+                "SELECT ua " +
+                "FROM UserAnnotation ua, AnnotationTerm at " +
+                "WHERE ua.id = at.userAnnotation.id " +
+                "AND ua.project = :project " +
+                "AND at.term = :realTerm " +
+                "AND at.user.id IN (:userList)", [userList: userList, realTerm: realTerm, project: project])
+
+        def algoAnnotationsTerm = AnnotationTerm.executeQuery("SELECT ua " +
+                "FROM AlgoAnnotationTerm aat, UserAnnotation ua " +
+                "WHERE aat.userJob = :user " +
+                "AND aat.term = :suggestedTerm " +
+                "AND aat.annotationIdent = ua.id " +
+                "AND aat.annotationIdent IN (:annotations)", [user: user, suggestedTerm: suggestedTerm, annotations: annotationFromProjectWithTerm.collect {it.id}.unique()])
+
+        return algoAnnotationsTerm
     }
 
     /**
@@ -562,6 +540,133 @@ class UserAnnotationService extends ModelService {
     def getStringParamsI18n(def domain) {
         return [domain.user.toString(), domain.image?.baseImage?.filename]
     }
+
+
+
+
+
+
+    /**
+      * Execute request and format result into a list of map
+      */
+     def selectUserAnnotation(AnnotationListing al) {
+
+         def data = []
+         long lastAnnotationId = -1
+         long lastTermId = -1
+         boolean first = true;
+
+         def realColumn = []
+        def request = al.getAnnotationsRequest()
+         println  request
+         println dataSource
+         boolean termAsked = false
+
+         new Sql(dataSource).eachRow(request) {
+             /**
+              * If an annotation has n multiple term, it will be on "n" lines.
+              * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
+              * For the other lines, we add term data to the last annotation
+              */
+             if (it.id != lastAnnotationId) {
+                 if(first) {
+                     al.getAllPropertiesName().each { columnName ->
+                           if(columnExist(it,columnName)) {
+                               realColumn << columnName
+                           }
+                     }
+                     first = false
+                 }
+
+
+                 def item = [:]
+                 item['class'] = 'be.cytomine.ontology.UserAnnotation'
+
+
+
+
+
+
+
+
+
+                 realColumn.each { columnName ->
+                     item[columnName]=it[columnName]
+                 }
+
+                 if(al.columnToPrint.contains('term')) {
+                     termAsked = true
+                     item['term'] = (it.term ? [it.term] : [])
+                     item['userByTerm'] = (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : [])
+                 }
+
+
+                 if(al.columnToPrint.contains('url')) {
+                     item['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(it.id)
+                     item['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256)
+                     item['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(it.id)
+                     item['imageURL'] = UrlApi.getAnnotationURL(it.project, it.image, it.id)
+                 }
+
+
+                 data << item
+             } else {
+                 if (it.term) {
+                     data.last().term.add(it.term)
+                     data.last().term.unique()
+                     if (it.term == lastTermId) {
+                         data.last().userByTerm.last().user.add(it.userTerm)
+                         data.last().userByTerm.last().user.unique()
+                     } else {
+                         data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
+                     }
+                 }
+             }
+             if (termAsked) {
+                 lastTermId = it.term
+                lastAnnotationId = it.id
+             }
+
+         }
+         data
+     }
+
+
+     protected static boolean columnExist(ResultSet rs, String column) {
+         ResultSetMetaData rsMetaData = rs.getMetaData();
+         int numberOfColumns = rsMetaData.getColumnCount();
+
+         // get the column names; column indexes start from 1
+         for (int i = 1; i < numberOfColumns + 1; i++) {
+             String columnName = rsMetaData.getColumnName(i);
+             // Get the name of the column's table name
+             if (column.equals(columnName)) {
+                 return true
+             }
+         }
+         return false
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

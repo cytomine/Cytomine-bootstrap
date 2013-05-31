@@ -1,6 +1,7 @@
 package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
@@ -37,12 +38,7 @@ class RestUserAnnotationController extends RestController {
     def dataSource
     def paramsService
 
-    /**
-     * List all annotation with light format
-     */
-    def list = {
-        responseSuccess(userAnnotationService.listLightForRetrieval())
-    }
+
 
     /**
      * List user annotation by image
@@ -50,10 +46,86 @@ class RestUserAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
-            responseSuccess(userAnnotationService.listLight(image))
+            responseSuccess(userAnnotationService.listLight(image,getPropertyGroup(params)))
         } else {
             responseNotFound("Image", params.id)
         }
+    }
+
+
+    def getPropertyGroup(params) {
+        def propertiesToPrint = []
+
+        if(params.getBoolean('showBasic')) {
+            propertiesToPrint << 'basic'
+        }
+
+        if(params.getBoolean('showMeta')) {
+            propertiesToPrint << 'meta'
+        }
+
+        if(params.getBoolean('showWKT')) {
+            propertiesToPrint << 'wkt'
+        }
+
+        if(params.getBoolean('showGIS')) {
+            propertiesToPrint << 'gis'
+        }
+
+        if(params.getBoolean('showTerm')) {
+            propertiesToPrint << 'term'
+        }
+
+        if(params.getBoolean('showUrl')) {
+            propertiesToPrint << 'url'
+        }
+
+        if(propertiesToPrint.isEmpty() || params.getBoolean('showAll')) {
+            propertiesToPrint << 'basic'
+            propertiesToPrint << 'meta'
+            propertiesToPrint << 'wkt'
+            propertiesToPrint << 'gis'
+            propertiesToPrint << 'term'
+            propertiesToPrint << 'url'
+        }
+
+        if(params.getBoolean('hideBasic')) {
+            propertiesToPrint  = propertiesToPrint - 'basic'
+        }
+
+        if(params.getBoolean('hideMeta')) {
+            propertiesToPrint = propertiesToPrint - 'meta'
+        }
+
+        if(params.getBoolean('hideWKT')) {
+            propertiesToPrint = propertiesToPrint -  'wkt'
+        }
+
+        if(params.getBoolean('hideGIS')) {
+            propertiesToPrint = propertiesToPrint -  'gis'
+        }
+
+        if(params.getBoolean('hideTerm')) {
+            propertiesToPrint = propertiesToPrint -  'term'
+        }
+
+        if(params.getBoolean('hideUrl')) {
+            propertiesToPrint = propertiesToPrint - 'url'
+        }
+
+        if(propertiesToPrint.isEmpty()) {
+            throw new ObjectNotFoundException("You must ask at least one properties group for request.")
+        }
+
+        propertiesToPrint
+    }
+
+
+    /**
+     * List all annotation with light format
+     */
+    def list = {
+        responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
     /**

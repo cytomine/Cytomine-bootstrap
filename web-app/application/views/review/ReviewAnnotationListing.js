@@ -278,8 +278,8 @@ var ReviewAnnotationListing = Backbone.View.extend({
                 button : $(thumb.el).find("button.openBrowseReview"),
                 header :"BrowseAnnotation",
                 body :'<div id="browseAnnotationModal"></div>',
-                width : 900,
-                height : 800,
+                width : Math.round($(window).width()*0.75),
+                height : Math.round($(window).height()*0.75),
                 callBack : function() {
 
                     new ImageInstanceModel({id: annotation.get('image')}).fetch({
@@ -287,7 +287,9 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
                            var view = new BrowseImageView({
                                addToTab : false,
+                               review: true,
                                initCallback: function () {
+                                   console.log("initCallback");
                                    view.show({goToAnnotation : {value: annotation.id}})
                                },
                                el: $("#browseAnnotationModal")

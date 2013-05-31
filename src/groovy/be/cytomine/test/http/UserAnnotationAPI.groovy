@@ -40,9 +40,23 @@ class UserAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByImage(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/userannotation.json"
+    static def listByImage(Long id, String username, String password, List propertiesToShow = null) {
+        println "propertiesToShow=$propertiesToShow"
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/userannotation.json?" + buildPropertiesToShowURLParams(propertiesToShow)
+        println "url=$URL"
         return doGET(URL, username, password)
+    }
+
+    static def buildPropertiesToShowURLParams(List propertiesToShow) {
+
+        println "propertiesToShow=$propertiesToShow"
+        if(!propertiesToShow)  return ""
+        def params = []
+        propertiesToShow.each {
+            params << it + "=true"
+        }
+        println "params=${params.join("&")}"
+        return params.join("&")
     }
 
     static def listByTerm(Long id, String username, String password) {

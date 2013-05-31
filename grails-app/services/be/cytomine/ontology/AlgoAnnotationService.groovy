@@ -289,19 +289,20 @@ class AlgoAnnotationService extends ModelService {
             return annotations
         } else {
             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
-            long start = new Date().time
             int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
-            def annotations = AlgoAnnotation.createCriteria().list {
-                eq("project", project)
-                lte('countReviewedAnnotations',maxReviewed)
-                inList("user.id", userList)
-                inList("image.id", imageInstanceList)
-                fetchMode 'image', FetchMode.JOIN
-                fetchMode 'image.baseImage', FetchMode.JOIN
-                order 'created', 'desc'
-            }
-            long end = new Date().time
-            return annotations
+
+            String request = "" +
+                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user\n" +
+                    "FROM algo_annotation a, algo_annotation_term at\n" +
+                    "WHERE a.id = at.annotation_ident\n" +
+                    "AND a.project_id = ${project.id}\n" +
+                    "AND a.count_reviewed_annotations = 0\n" +
+                    "AND a.user_id IN (${userList.join(",")})\n" +
+                    "AND a.image_id IN (${imageInstanceList.join(",")})\n" +
+                    "ORDER BY id desc"
+
+             println request
+            return selecAlgoAnnotationLight(request)
         }
     }
 
@@ -331,7 +332,7 @@ class AlgoAnnotationService extends ModelService {
                     "AND at.user_job_id IN (${userList.join(',')}) \n" +
                     (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
                     "AND at.annotation_ident = a.id \n" +
-                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
+                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
                     "UNION \n" +
                     "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
                     "FROM user_annotation a, algo_annotation_term at \n" +
@@ -340,7 +341,7 @@ class AlgoAnnotationService extends ModelService {
                     "AND at.user_job_id IN (${userList.join(',')}) \n" +
                     (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')}) \n" :" ") +
                     "AND at.annotation_ident = a.id \n" +
-                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
+                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
                     "ORDER BY rate desc \n"
 
              println request

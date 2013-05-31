@@ -212,7 +212,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
-
+             console.log("GO TO ANNOTATION") ;
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
                     var layer = _.find(self.layers, function (layer) {
@@ -324,7 +324,7 @@ var BrowseImageView = Backbone.View.extend({
         var self = this;
         this.layersLoaded++;
 
-        if (self.review == false && this.layersLoaded == (window.app.models.userLayer.length + 1)) { //+1 for review layer
+        if (self.review == false && this.layersLoaded == (window.app.models.userLayer.length + 1)) { //+1 for review layer in browse mode
 
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
@@ -353,6 +353,10 @@ var BrowseImageView = Backbone.View.extend({
 
             self.initAutoAnnoteTools();
 
+        }  else {
+            if (_.isFunction(self.initCallback)) {
+                self.initCallback.call();
+            }
         }
     },
     /**

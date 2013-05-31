@@ -414,6 +414,26 @@ class BasicInstanceBuilder {
         annotation
     }
 
+    static UserAnnotation getUserAnnotationNotExist(ImageInstance image, User user, Term term) {
+        UserAnnotation annotation = new UserAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image:image,
+                user: user,
+                project:image.project
+        )
+        println annotation.user
+        annotation = saveDomain(annotation)
+
+       if(term) {
+           def at = getAnnotationTermNotExist(annotation,true)
+            at.term = term
+            at.user = user
+            saveDomain(at)
+       }
+
+        annotation
+    }
+
     static ReviewedAnnotation getReviewedAnnotationNotExist(ImageInstance image, String polygon, User user, Term term) {
         def annotation = getUserAnnotationNotExist(image,polygon,user,term)
 
