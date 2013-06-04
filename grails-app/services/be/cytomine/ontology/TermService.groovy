@@ -24,7 +24,6 @@ class TermService extends ModelService {
     def relationTermService
     def modelService
 
-    def annotationFilterService
     def dataSource
 
     protected def secUserService
@@ -101,13 +100,20 @@ class TermService extends ModelService {
         }
 
         projects.each { project ->
-            def annotations = UserAnnotation.createCriteria().list {
-                eq("project", project)
-                inList("user", secUserService.listLayers(project))
-            }
-            annotations.each { annotation ->
-                if (annotation.terms().contains(term)) {
-                    count[project.name] = count[project.name] + 1;
+
+            println "project=$project"
+
+            println "secUserService.listLayers(project)=${secUserService.listLayers(project)}"
+            def layers = secUserService.listLayers(project)
+            if(!layers.isEmpty()) {
+                def annotations = UserAnnotation.createCriteria().list {
+                    eq("project", project)
+                    inList("user", layers)
+                }
+                annotations.each { annotation ->
+                    if (annotation.terms().contains(term)) {
+                        count[project.name] = count[project.name] + 1;
+                    }
                 }
             }
         }

@@ -1,7 +1,9 @@
 package be.cytomine.utils
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.sql.AnnotationListing
 import groovy.sql.Sql
 
 /**
@@ -95,4 +97,41 @@ class ParamsService {
         }
         return data
     }
+
+
+    public List<String> getPropertyGroupToShow(params) {
+        def propertiesToPrint = []
+
+        //map group properties and the url params name
+        def assoc = [showBasic:'basic',showMeta:'meta',showWKT:'wkt',showGIS:'gis',showTerm:'term',showImage:'image',showAlgo:'algo']
+
+        //show if ask
+        assoc.each { show, group ->
+            if(params.getBoolean(show)) {
+                propertiesToPrint << group
+            }
+        }
+
+        //if no specific show asked show default prop
+        if(params.getBoolean('showDefault') || propertiesToPrint.isEmpty()) {
+            AnnotationListing.availableColumnDefault.each {
+                propertiesToPrint << it
+            }
+            propertiesToPrint.unique()
+        }
+
+        //hide if asked
+        assoc.each { show, group ->
+            if(params.getBoolean(show.replace('show','hide'))) {
+                propertiesToPrint = propertiesToPrint - group
+            }
+        }
+
+        if(propertiesToPrint.isEmpty()) {
+            throw new ObjectNotFoundException("You must ask at least one properties group for request.")
+        }
+
+        propertiesToPrint
+    }
+
 }

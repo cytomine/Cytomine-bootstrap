@@ -100,7 +100,7 @@ class UserAnnotationAPI extends DomainAPI {
     }
 
     static def listByImageAndUser(Long idImage,Long idUser, String bbox, boolean netReviewedOnly,Integer force,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/userannotation.json?bbox=$bbox&notreviewed=$netReviewedOnly" + (force? "&force=$force": "")
+        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/userannotation.json?bbox=${bbox.replace(" ","%20")}&notreviewed=$netReviewedOnly" + (force? "&force=$force": "")
         return doGET(URL, username, password)
     }
 

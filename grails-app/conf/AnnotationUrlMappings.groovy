@@ -47,6 +47,9 @@ class AnnotationUrlMappings {
         "/api/userannotation/$id"(controller:"restUserAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/userannotation/search"(controller:"restUserAnnotation"){
+            action = [GET: "search"]
+        }
         "/api/project/$id/userannotation"(controller: "restUserAnnotation"){
              action = [GET:"listByProject"]
          }

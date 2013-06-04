@@ -44,7 +44,7 @@ class RestReviewedAnnotationController extends RestController {
         def annotations = []
         def projects = projectService.list()
         projects.each {
-            annotations.addAll(reviewedAnnotationService.list(it))
+            annotations.addAll(reviewedAnnotationService.list(it,paramsService.getPropertyGroupToShow(params)))
         }
         responseSuccess(annotations)
     }
@@ -56,11 +56,11 @@ class RestReviewedAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         if (image && params.bbox) {
-            def data = reviewedAnnotationService.list(image,(String)params.bbox)
+            def data = reviewedAnnotationService.list(image,(String)params.bbox,['basic','wkt','term'])
             responseSuccess(data)
         }
         else if(image) {
-            responseSuccess(reviewedAnnotationService.list(image))
+            responseSuccess(reviewedAnnotationService.list(image,paramsService.getPropertyGroupToShow(params)))
         }
         else {
             responseNotFound("Image", params.idImage)
@@ -74,9 +74,9 @@ class RestReviewedAnnotationController extends RestController {
         def image = imageInstanceService.read(params.long('idImage'))
         def user = secUserService.read(params.idUser)
         if (image && user && params.bbox) {
-            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox))
+            responseSuccess(reviewedAnnotationService.list(image, user, (String) params.bbox,['basic','wkt','term']))
         } else if (image && user) {
-            responseSuccess(reviewedAnnotationService.list(image, user))
+            responseSuccess(reviewedAnnotationService.list(image, user,paramsService.getPropertyGroupToShow(params)))
         }
         else if (!user) {
             responseNotFound("User", params.idUser)
@@ -93,11 +93,11 @@ class RestReviewedAnnotationController extends RestController {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         Term term = termService.read(params.long('idTerm'))
         if (image && term) {
-            def list = reviewedAnnotationService.list(image,term)
+            def list = reviewedAnnotationService.list(image,term,paramsService.getPropertyGroupToShow(params))
             responseSuccess(list)
         }
         else if(image) {
-            responseSuccess(reviewedAnnotationService.list(image))
+            responseSuccess(reviewedAnnotationService.list(image,paramsService.getPropertyGroupToShow(params)))
         }
         else {
             responseNotFound("Image", params.idImage)
@@ -110,7 +110,7 @@ class RestReviewedAnnotationController extends RestController {
     def listByProject = {
         Project project = projectService.read(params.long('idproject'))
         if (project) {
-            responseSuccess(reviewedAnnotationService.list(project))
+            responseSuccess(reviewedAnnotationService.list(project,paramsService.getPropertyGroupToShow(params)))
         }
         else {
             responseNotFound("Project", params.idproject)
@@ -139,7 +139,7 @@ class RestReviewedAnnotationController extends RestController {
                } else if (termList.isEmpty()) {
                    responseNotFound("Term", params.terms)
                } else {
-                   def list = reviewedAnnotationService.list(project, termList, userList, imageInstanceList )
+                   def list = reviewedAnnotationService.list(project, termList, userList, imageInstanceList ,null, paramsService.getPropertyGroupToShow(params))
                    responseSuccess(list)
                }
            } else {
@@ -159,14 +159,14 @@ class RestReviewedAnnotationController extends RestController {
             responseNotFound("Project", params.idproject)
         }
         else {
-            List<Long> userList = paramsService.getParamsUserList(params.users, project)
+            List<Long> userList = paramsService.getParamsSecUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
             def list
             if (userList.isEmpty() || imageInstanceList.isEmpty()) {
                 list = []
             } else {
-                list = reviewedAnnotationService.list(project, [term.id], userList, imageInstanceList)
+                list = reviewedAnnotationService.list(project, [term.id], userList, imageInstanceList,null,paramsService.getPropertyGroupToShow(params))
             }
             responseSuccess(list)
         }

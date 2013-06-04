@@ -14,6 +14,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
@@ -38,94 +40,16 @@ class RestUserAnnotationController extends RestController {
     def dataSource
     def paramsService
 
-
-
     /**
      * List user annotation by image
      */
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
-            responseSuccess(userAnnotationService.listLight(image,getPropertyGroup(params)))
+            responseSuccess(userAnnotationService.listLight(image,paramsService.getPropertyGroupToShow(params)))
         } else {
             responseNotFound("Image", params.id)
         }
-    }
-
-
-    def getPropertyGroup(params) {
-        def propertiesToPrint = []
-
-        if(params.getBoolean('showBasic')) {
-            propertiesToPrint << 'basic'
-        }
-
-        if(params.getBoolean('showMeta')) {
-            propertiesToPrint << 'meta'
-        }
-
-        if(params.getBoolean('showWKT')) {
-            propertiesToPrint << 'wkt'
-        }
-
-        if(params.getBoolean('showGIS')) {
-            propertiesToPrint << 'gis'
-        }
-
-        if(params.getBoolean('showTerm')) {
-            propertiesToPrint << 'term'
-        }
-
-        if(params.getBoolean('showUrl')) {
-            propertiesToPrint << 'url'
-        }
-
-        if(propertiesToPrint.isEmpty() || params.getBoolean('showAll')) {
-            propertiesToPrint << 'basic'
-            propertiesToPrint << 'meta'
-            propertiesToPrint << 'wkt'
-            propertiesToPrint << 'gis'
-            propertiesToPrint << 'term'
-            propertiesToPrint << 'url'
-        }
-
-        if(params.getBoolean('hideBasic')) {
-            propertiesToPrint  = propertiesToPrint - 'basic'
-        }
-
-        if(params.getBoolean('hideMeta')) {
-            propertiesToPrint = propertiesToPrint - 'meta'
-        }
-
-        if(params.getBoolean('hideWKT')) {
-            propertiesToPrint = propertiesToPrint -  'wkt'
-        }
-
-        if(params.getBoolean('hideGIS')) {
-            propertiesToPrint = propertiesToPrint -  'gis'
-        }
-
-        if(params.getBoolean('hideTerm')) {
-            propertiesToPrint = propertiesToPrint -  'term'
-        }
-
-        if(params.getBoolean('hideUrl')) {
-            propertiesToPrint = propertiesToPrint - 'url'
-        }
-
-        if(propertiesToPrint.isEmpty()) {
-            throw new ObjectNotFoundException("You must ask at least one properties group for request.")
-        }
-
-        propertiesToPrint
-    }
-
-
-    /**
-     * List all annotation with light format
-     */
-    def list = {
-        responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
     /**
@@ -138,7 +62,7 @@ class RestUserAnnotationController extends RestController {
             List<Long> userList = paramsService.getParamsUserList(params.users, project)
             List<Long> imageInstanceList = paramsService.getParamsImageInstanceList(params.images, project)
 
-            def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly)
+            def list = userAnnotationService.listLight(project, userList, imageInstanceList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly,paramsService.getPropertyGroupToShow(params))
             responseList(list)
         } else {
             responseNotFound("Project", params.id)
@@ -153,17 +77,15 @@ class RestUserAnnotationController extends RestController {
         println "listByImageAndUser"
         def image = imageInstanceService.read(params.long('idImage'))
         def user = secUserService.read(params.idUser)
-        println "image=$image"
-        println "user=$user"
-        println "bbox=${params.bbox}"
         if (image && user && params.bbox) {
             boolean notReviewedOnly = params.getBoolean("notreviewed")
             Integer force = params.getInt('force')
             Geometry boundingbox = GeometryUtils.createBoundingBox(params.bbox)
-            def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly,force)
+
+            def data = userAnnotationService.listLight(image, user, boundingbox, notReviewedOnly,force,['basic','wkt','term'])
             responseSuccess(data)
         } else if (image && user) {
-            responseSuccess(userAnnotationService.listLight(image, user))
+            responseSuccess(userAnnotationService.listLight(image, user,paramsService.getPropertyGroupToShow(params)))
         } else if (!user) {
             responseNotFound("User", params.idUser)
         } else if (!image) {
@@ -192,17 +114,69 @@ class RestUserAnnotationController extends RestController {
                 if (userList.isEmpty() || imageInstanceList.isEmpty()) {
                     list = []
                 } else {
-                    list = userAnnotationService.list(project, term, userList, imageInstanceList,notReviewedOnly)
+                    list = userAnnotationService.list(project, term, userList, imageInstanceList,notReviewedOnly,paramsService.getPropertyGroupToShow(params))
                 }
                 list = mergeResults(list)
                 responseList(list)
             }
             else {
                 Term suggestedTerm = termService.read(params.suggestTerm)
-                def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')))
+                def list = userAnnotationService.list(project, userList, term, suggestedTerm, Job.read(params.long('job')),paramsService.getPropertyGroupToShow(params))
                 responseSuccess(list)
             }
         }
+    }
+
+
+    /**
+     * List all annotation with light format
+     */
+    def list = {
+        responseSuccess(userAnnotationService.listLightForRetrieval())
+    }
+
+
+    def search = {
+
+        AnnotationListing al = new UserAnnotationListing()
+        al.columnToPrint = paramsService.getPropertyGroupToShow(params)
+        al.project = params.getLong('project')
+        al.user = params.getLong('user')
+        al.term = params.getLong('term')
+        al.image = params.getLong('image')
+        al.suggestedTerm = params.getLong('suggestedTerm')
+
+        def users = params.get('users')
+        if(users) {
+            al.users = params.get('users').split(",").collect{Long.parseLong(it)}
+        }
+
+        def images = params.get('images')
+        if(images) {
+            al.images = params.get('images').split(",").collect{Long.parseLong(it)}
+        }
+
+        def terms = params.get('terms')
+        if(terms) {
+            al.terms = params.get('terms').split(",").collect{Long.parseLong(it)}
+        }
+
+        def usersForTerm = params.get('usersForTerm')
+        if(usersForTerm) {
+            al.usersForTerm = params.get('usersForTerm').split(",").collect{Long.parseLong(it)}
+        }
+
+        def userForTermAlgo = params.get('userForTermAlgo')
+        if(userForTermAlgo) {
+            al.userForTermAlgo = params.get('userForTermAlgo').split(",").collect{Long.parseLong(it)}
+        }
+
+        al.notReviewedOnly = params.getBoolean('notReviewedOnly')
+        al.noTerm = params.getBoolean('noTerm')
+        al.multipleTerm = params.getBoolean('multipleTerm')
+        al.bbox = params.get('bbox')
+
+        responseSuccess(userAnnotationService.listGeneric(al))
     }
 
     /**
@@ -456,14 +430,15 @@ class RestUserAnnotationController extends RestController {
     private def mergeResults(def list) {
         //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
         if (list.isEmpty() || list[0] instanceof UserAnnotation || list[0].class.equals("be.cytomine.ontology.UserAnnotation")) return list
-        def result = []
-        list.each {
-            UserAnnotation annotation = it[0]
-            annotation.rate = it[1]
-            annotation.idTerm = it[2]
-            annotation.idExpectedTerm = it[3]
-            result << annotation
-        }
-        return result
+//        def result = []
+//        list.each {
+//            UserAnnotation annotation = it[0]
+//            annotation.rate = it[1]
+//            annotation.idTerm = it[2]
+//            annotation.idExpectedTerm = it[3]
+//            result << annotation
+//        }
+//        return result
+        return list
     }
 }

@@ -130,7 +130,7 @@ class RestAnnotationDomainController extends RestController {
     def downloadIncludedAnnotation = {
         println "downloadIncludedAnnotation"
         def image = imageInstanceService.read(params.long('idImage'))
-        def lists = getIncludedAnnotation(params)
+        def lists = getIncludedAnnotation(params,['basic','meta','gis','image','term'])
         downloadPdf(lists,image.project)
     }
 
@@ -186,7 +186,7 @@ class RestAnnotationDomainController extends RestController {
     }
 
 
-    def getIncludedAnnotation(params){
+    private def getIncludedAnnotation(params, def propertiesToShow = null){
         def image = imageInstanceService.read(params.long('idImage'))
 
         //get area
@@ -210,13 +210,13 @@ class RestAnnotationDomainController extends RestController {
         def response
         if(!user) {
             //goto reviewed
-            response = reviewedAnnotationService.list(image,geometry,terms,annotation)
+            response = reviewedAnnotationService.listIncluded(image,geometry,terms,annotation,propertiesToShow)
         } else if (user.algo()) {
             //goto algo
-            response = algoAnnotationService.list(image,geometry,user,terms,annotation)
+            response = algoAnnotationService.list(image,geometry,user,terms,annotation,propertiesToShow)
         }  else {
             //goto user annotation
-            response = userAnnotationService.list(image,geometry,user,terms,annotation)
+            response = userAnnotationService.list(image,geometry,user,terms,annotation,propertiesToShow)
         }
         response
 

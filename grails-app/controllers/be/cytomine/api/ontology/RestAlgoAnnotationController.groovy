@@ -45,7 +45,7 @@ class RestAlgoAnnotationController extends RestController {
         //get all user's project and list all algo annotation
         def projects = projectService.list()
         projects.each {
-            annotations.addAll(algoAnnotationService.list(it))
+            annotations.addAll(algoAnnotationService.list(it,paramsService.getPropertyGroupToShow(params)))
         }
         responseSuccess(annotations)
     }
@@ -133,7 +133,7 @@ class RestAlgoAnnotationController extends RestController {
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
-            responseSuccess(algoAnnotationService.list(image))
+            responseSuccess(algoAnnotationService.list(image,paramsService.getPropertyGroupToShow(params)))
         }
         else {
             responseNotFound("Image", params.id)
@@ -151,7 +151,7 @@ class RestAlgoAnnotationController extends RestController {
             List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
             List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
             boolean notReviewedOnly = params.getBoolean("notreviewed")
-            def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly)
+            def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly,paramsService.getPropertyGroupToShow(params))
             responseSuccess(list)
         }
         else {
@@ -172,9 +172,9 @@ class RestAlgoAnnotationController extends RestController {
 
         if (image && user && bbox) {
             Integer force = params.getInt('force')
-            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly,force))
+            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly,force,['basic','wkt','term']))
         } else if (image && user) {
-            responseSuccess(algoAnnotationService.list(image, user))
+            responseSuccess(algoAnnotationService.list(image, user,paramsService.getPropertyGroupToShow(params)))
         } else if (!user) {
             responseNotFound("User", params.idUser)
         } else if (!image) {
@@ -198,7 +198,7 @@ class RestAlgoAnnotationController extends RestController {
             if (term == null) {
                 responseNotFound("Term", params.idterm)
             } else if (!params.suggestTerm) {
-                def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList,notReviewedOnly)
+                def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList,notReviewedOnly,paramsService.getPropertyGroupToShow(params))
                 responseSuccess(list)
             }
         } else {

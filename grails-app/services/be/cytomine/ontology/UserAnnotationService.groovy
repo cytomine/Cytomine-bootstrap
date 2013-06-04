@@ -3,6 +3,7 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -14,6 +15,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
@@ -41,6 +43,7 @@ class UserAnnotationService extends ModelService {
     def reviewedAnnotationService
     def propertyService
     def kmeansGeometryService
+    def annotationListingService
 
 
     def currentDomain() {
@@ -57,7 +60,12 @@ class UserAnnotationService extends ModelService {
 
     def list(Project project,def propertiesToShow = null) {
         SecurityACL.check(project.container(),READ)
-        selectUserAnnotation(new AnnotationListing(project: project.id, columnToPrint: propertiesToShow))
+        annotationListingService.executeRequest(new UserAnnotationListing(project: project.id, columnToPrint: propertiesToShow))
+    }
+
+    def listGeneric(UserAnnotationListing al) {
+        SecurityACL.check(al.container(),READ)
+        annotationListingService.executeRequest(al)
     }
 
     /**
@@ -66,7 +74,7 @@ class UserAnnotationService extends ModelService {
      */
     def listLight(ImageInstance image,def propertiesToShow = null) {
         SecurityACL.check(image.project,READ)
-        selectUserAnnotation(new AnnotationListing(images: [image.id], columnToPrint: propertiesToShow))
+        annotationListingService.executeRequest(new UserAnnotationListing(image: image.id, columnToPrint: propertiesToShow))
     }
 
 
@@ -80,20 +88,40 @@ class UserAnnotationService extends ModelService {
      * @param multipleTerm Only get annotation with multiple (diff) term
      * @return Annotation listing (light)
      */
-    def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false) {
+    def listLight(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false,def propertiesToShow = null) {
         SecurityACL.check(project.container(),READ)
         if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
             throw new IllegalArgumentException("Method not supported for this type of data!!!")
         } else {
             def request
             if (multipleTerm)
-                request = new AnnotationListing(project: project.id,usersForTerm: userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,multipleTerm: true)
+                request = new UserAnnotationListing(
+                        columnToPrint: propertiesToShow,
+                        project: project.id,
+                        usersForTerm: userList,
+                        images: imageInstanceList,
+                        notReviewedOnly:notReviewedOnly,
+                        multipleTerm: true
+                )
             else if (noTerm)
-                request = new AnnotationListing(project: project.id,users : userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,noTerm: true)
+                request = new UserAnnotationListing(
+                        columnToPrint: propertiesToShow,
+                        project: project.id,
+                        users : userList,
+                        images: imageInstanceList,
+                        notReviewedOnly:notReviewedOnly,
+                        noTerm: true
+                )
             else {
-                request = new AnnotationListing(project: project.id,users : userList,images: imageInstanceList,notReviewedOnly:notReviewedOnly,)
+                request = new UserAnnotationListing(
+                        columnToPrint: propertiesToShow,
+                        project: project.id,
+                        users : userList,
+                        images: imageInstanceList,
+                        notReviewedOnly:notReviewedOnly
+                )
             }
-            selectUserAnnotation(request)
+            annotationListingService.executeRequest(request)
         }
     }
 
@@ -104,34 +132,145 @@ class UserAnnotationService extends ModelService {
      * @param user Annotation user filter
      * @return Annotation listing (light)
      */
-    def listLight(ImageInstance image, SecUser user) {
+    def listLight(ImageInstance image, SecUser user,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-//
-//        def rule = kmeansGeometryService.mustBeReduce(image,user)
-//
-//        if(rule==kmeansGeometryService.FULL) {
-            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                    " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
-                    " WHERE a.image_id = " + image.id + "\n" +
-                    " AND a.user_id = " + user.id + "\n" +
-                    " ORDER BY id desc, term"
-            return selectUserAnnotationFull(request)
-//        } else if(rule==kmeansGeometryService.KMEANSFULL){
-//            println "mustBeReduce"
-//            String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-//                              "from user_annotation \n " +
-//                              "where image_id = ${image.id} " +
-//                              "and user_id = ${user.id} " +
-//                              "and ST_IsEmpty(st_centroid(location))=false "
-//             kmeansGeometryService.doKeamsFullRequest(request)
-//        } else {
-//            println "mustBeReduce"
-//            String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-//                              "from user_annotation \n " +
-//                              "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n "
-//             kmeansGeometryService.doKeamsSoftRequest(request)
-//        }
+        annotationListingService.executeRequest(new UserAnnotationListing(columnToPrint: propertiesToShow,user : user.id,image: image.id))
     }
+
+
+
+    /**
+     * List annotation created by user
+     * Rem1: We use SQL request (instead of using GORM/hibernate), this improve a lot perf.
+     * @param image Image list
+     * @param user Annotation user filter
+     * @param bbox Geometry restricted Area
+     * @param notReviewedOnly Don't get annotation that have been reviewed
+     * @return Annotation listing (light)
+     */
+    def listLight(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null,def propertiesToShow = null) {
+        SecurityACL.check(image.container(),READ)
+        println "listLight"
+
+        SecurityACL.check(image.container(),READ)
+
+        //if forced, use value in params, othewise compute if its good to kmeans (large bbox + lot of annotations to print)
+        def rule = force
+        if (!force) {
+            rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
+        }
+
+        AnnotationListing al
+        if(rule==kmeansGeometryService.FULL) {
+            al = new UserAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    user : user.id,image:
+                    image.id,
+                    notReviewedOnly: notReviewedOnly,
+                    bbox :bbox,
+                    kmeans: false
+            )
+            return annotationListingService.executeRequest(al)
+
+        } else if(rule==kmeansGeometryService.KMEANSFULL){
+             al = new UserAnnotationListing(
+                     columnToPrint: propertiesToShow,
+                     user : user.id,
+                     image: image.id,
+                     avoidEmptyCentroid: true,
+                     bbox : bbox,
+                     kmeans: true
+             )
+             return kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
+        } else {
+            al = new UserAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    user : user.id,
+                    image: image.id,
+                    avoidEmptyCentroid: true,
+                    bbox : bbox,
+                    kmeans: true
+            )
+            return kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
+        }
+    }
+
+    /**
+     * List annotation created by user
+     * Rem1: We use SQL request (instead of using GORM/hibernate), this improve a lot perf.
+     * @param project Project annotation filter
+     * @param term Term filter
+     * @param userList User filter
+     * @param imageInstanceList Image filter
+     * @return Annotation listing (light)
+     */
+    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList, boolean notReviewedOnly = false,def propertiesToShow = null) {
+        SecurityACL.check(project.container(),READ)
+            boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
+            AnnotationListing al = new UserAnnotationListing(
+                    columnToPrint: propertiesToShow.unique(),
+                    project : project.id,
+                    term : term.id,
+                    users : userList,
+                    images : (allImages? null : imageInstanceList),
+                    notReviewedOnly : notReviewedOnly,
+                    orderBy: ['rate':'desc','id':'desc']
+            )
+            return annotationListingService.executeRequest(al)
+    }
+
+
+    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
+        SecurityACL.check(image.container(),READ)
+        AnnotationListing al = new UserAnnotationListing(
+                columnToPrint: propertiesToShow,
+                image : image.id,
+                user : user.id,
+                terms : terms,
+                excludedAnnotation: annotation?.id,
+                bbox: geometry
+        )
+        annotationListingService.executeRequest(al)
+    }
+
+    /**
+     * List all annotation with a very light strcuture: id, project and crop url
+     * Use for retrieval server (suggest term)
+     */
+    def listLightForRetrieval() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
+        String request = "SELECT a.id as id, a.project_id as project FROM user_annotation a WHERE GeometryType(a.location) != 'POINT' ORDER BY id desc"
+        selectUserAnnotationLightForRetrieval(request)
+    }
+
+    /**
+     * List annotation where a user from 'userList' has added term 'realTerm' and for which a specific job has predicted 'suggestedTerm'
+     * @param project Annotation project
+     * @param userList Annotation user list filter
+     * @param realTerm Annotation term (add by user)
+     * @param suggestedTerm Annotation predicted term (from job)
+     * @param job Job that make prediction
+     * @return
+     */
+    def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job,def propertiesToShow = null) {
+        SecurityACL.check(project.container(),READ)
+        log.info "list with suggestedTerm"
+        if (userList.isEmpty()) {
+            return []
+        }
+        //Get last userjob
+        SecUser user = UserJob.findByJob(job)
+        AnnotationListing al = new UserAnnotationListing(
+                columnToPrint: propertiesToShow,
+                project : project.id,
+                users : userList,
+                term : realTerm.id,
+                suggestedTerm: suggestedTerm.id,
+                userForTermAlgo: user.id
+        )
+        annotationListingService.executeRequest(al)
+    }
+
 
     /**
      * List annotations according to some filters parameters (rem : use list light if you only need the response, not
@@ -144,9 +283,9 @@ class UserAnnotationService extends ModelService {
      */
     def list(ImageInstance image, Geometry bbox, List<Long> termsIDS, List<Long> userIDS) {
         //:to do use listlight and parse WKT instead ?
-        Collection<UserAnnotation> annotations_in_roi = []
+        Collection<UserAnnotation> annotationsInRoi = []
 
-        annotations_in_roi = UserAnnotation.createCriteria()
+        annotationsInRoi = UserAnnotation.createCriteria()
                 .add(Restrictions.in("user.id", userIDS))
                 .add(Restrictions.eq("image.id", image.id))
                 .add(SpatialRestrictions.intersects("location",bbox))
@@ -154,230 +293,19 @@ class UserAnnotationService extends ModelService {
 
         Collection<UserAnnotation> annotations = []
 
-        if (!annotations_in_roi.isEmpty()) {
+        if (!annotationsInRoi.isEmpty()) {
             annotations = (Collection<UserAnnotation>) AnnotationTerm.createCriteria().list {
                 inList("term.id", termsIDS)
                 join("userAnnotation")
                 createAlias("userAnnotation", "a")
                 projections {
-                    inList("a.id", annotations_in_roi.collect{it.id})
+                    inList("a.id", annotationsInRoi.collect{it.id})
                     groupProperty("userAnnotation")
                 }
             }
         }
 
         return annotations
-    }
-
-    /**
-     * List annotation created by user
-     * Rem1: We use SQL request (instead of using GORM/hibernate), this improve a lot perf.
-     * @param image Image list
-     * @param user Annotation user filter
-     * @param bbox Geometry restricted Area
-     * @param notReviewedOnly Don't get annotation that have been reviewed
-     * @return Annotation listing (light)
-     */
-    def listLight(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null) {
-        SecurityACL.check(image.container(),READ)
-        println "listLight"
-
-        SecurityACL.check(image.container(),READ)
-
-        //if forced, use value in params, othewise compute if its good to kmeans (large bbox + lot of annotations to print)
-        def rule = force
-        if (!force) {
-            rule = kmeansGeometryService.mustBeReduce(image,user,bbox)
-        }
-
-        if(rule==kmeansGeometryService.FULL) {
-            String request = "SELECT DISTINCT annotation.id, annotation.wkt_location, at.term_id \n" +
-                                " FROM user_annotation annotation LEFT OUTER JOIN annotation_term at ON annotation.id = at.user_annotation_id\n" +
-                                " WHERE annotation.image_id = $image.id\n" +
-                                " AND annotation.user_id= $user.id\n" +
-                                (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n" +
-                                " ORDER BY annotation.id desc"
-            return selectUserAnnotationLight(request)
-        } else if(rule==kmeansGeometryService.KMEANSFULL){
-            String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-                              "from user_annotation \n " +
-                              "where image_id = ${image.id} " +
-                              "and user_id = ${user.id} " +
-                              "and ST_IsEmpty(st_centroid(location))=false " +
-                              "and ST_Intersects(user_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-             kmeansGeometryService.doKeamsFullRequest(request)
-        } else {
-            String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-                              "from user_annotation \n " +
-                              "where image_id = ${image.id} and user_id = ${user.id} and ST_IsEmpty(st_centroid(location))=false \n " +
-                              "and ST_Intersects(user_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-             kmeansGeometryService.doKeamsSoftRequest(request)
-        }
-
-
-    }
-
-    /**
-     * List annotation created by user
-     * Rem1: We use SQL request (instead of using GORM/hibernate), this improve a lot perf.
-     * @param project Project annotation filter
-     * @param term Term filter
-     * @param userList User filter
-     * @param imageInstanceList Image filter
-     * @return Annotation listing (light)
-     */
-    def list(Project project, Term term, List<Long> userList, List<Long> imageInstanceList, boolean notReviewedOnly = false) {
-        SecurityACL.check(project.container(),READ)
-        if (!userList.isEmpty() && userList.getAt(0) instanceof UserJob) {
-            listForUserJob(project, term, userList, imageInstanceList)
-        } else {
-            println "xxx="+ imageInstanceList.size()
-            println "yyy="+ ImageInstance.countByProject(project)
-
-            boolean allImages = ImageInstance.countByProject(project)==imageInstanceList.size()
-            println "allImages="+ allImages
-            String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-                    " FROM user_annotation a, annotation_term at,annotation_term at2,annotation_term at3\n" +
-                    " WHERE a.id = at.user_annotation_id \n" +
-                    " AND a.project_id = " + project.id + "\n" +
-                    " AND at3.term_id = " + term.id + "\n" +
-                    " AND a.id = at2.user_annotation_id\n" +
-                    " AND a.id = at3.user_annotation_id\n" +
-                    " AND at.user_id IN (" + userList.collect {it}.join(",") + ") \n" +
-                    (!allImages? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
-                    (notReviewedOnly? "AND a.count_reviewed_annotations=0" : "" ) +
-                    " ORDER BY id desc, term"
-            selectUserAnnotationFull(request)
-        }
-    }
-
-
-    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
-        SecurityACL.check(image.container(),READ)
-         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at.term_id as term, at.id as annotationTerms,at.user_id as userTerm,a.wkt_location as location, ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename \n" +
-                 "FROM user_annotation a, annotation_term at, abstract_image ai, image_instance ii \n" +
-                 "WHERE a.id = at.user_annotation_id \n" +
-                 "AND a.image_id = ${image.id} \n" +
-                 "AND a.user_id = ${user.id} \n" +
-                 "AND a.image_id = ii.id  \n" +
-                 "AND ii.base_image_id = ai.id  \n" +
-                 "AND a.id = at.user_annotation_id \n" +
-                 "AND at.term_id IN (${terms.join(',')})\n" +
-                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
-                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
-
-        selectUserAnnotationFull(request)
-    }
-
-
-
-
-
-
-
-
-
-//
-//    @PreAuthorize("#project.hasPermission('READ') or hasRole('ROLE_ADMIN')")
-//    def listLight(Project project) {
-//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, a.count_reviewed_annotations as countReviewedAnnotations,at2.term_id as term, at2.id as annotationTerms,at2.user_id as userTerm,a.wkt_location as location  \n" +
-//                " FROM user_annotation a LEFT OUTER JOIN annotation_term at2 ON a.id = at2.user_annotation_id\n" +
-//                " WHERE a.project_id = " + project.id + "\n"+
-//                " ORDER BY id desc, term"
-//        selectUserAnnotationFull(request)
-//    }
-
-    /**
-     * List all annotation with a very light strcuture: id, project and crop url
-     * Use for retrieval server (suggest term)
-     */
-    def listLightForRetrieval() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
-        String request = "SELECT a.id as id, a.project_id as project\n" +
-                " FROM user_annotation a\n" +
-                " WHERE GeometryType(a.location) != 'POINT'\n"
-        " ORDER BY id desc"
-        selectUserAnnotationLightForRetrieval(request)
-    }
-
-
-
-
-    private def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList) {
-        //TODO: must be improved!!!!!!!!!!
-        if (userList.isEmpty()) return []
-        if (imageInstanceList.isEmpty()) return []
-        if (imageInstanceList.size() == project.countImages) {
-            def criteria = AlgoAnnotationTerm.withCriteria() {
-                createAlias("userAnnotation", "a")
-                eq('project', project)
-                eq('term', term)
-                inList('userJob.id', userList)
-                projections {
-                    groupProperty("userAnnotation")
-                    groupProperty("rate")
-                    groupProperty("term.id")
-                    groupProperty("expectedTerm.id")
-                }
-                order 'rate', 'desc'
-            }
-            return criteria
-        } else {
-            def criteria = AlgoAnnotationTerm.withCriteria() {
-                createAlias("userAnnotation", "a")
-                eq('project', project)
-                eq('term', term)
-                inList('userJob.id', userList)
-                inList("a.image.id", imageInstanceList)
-                projections {
-                    groupProperty("userAnnotation")
-                    groupProperty("rate")
-                    groupProperty("term.id")
-                    groupProperty("expectedTerm.id")
-                }
-                order 'rate', 'desc'
-            }
-            return criteria
-        }
-    }
-
-
-    /**
-     * List annotation where a user from 'userList' has added term 'realTerm' and for which a specific job has predicted 'suggestedTerm'
-     * @param project Annotation project
-     * @param userList Annotation user list filter
-     * @param realTerm Annotation term (add by user)
-     * @param suggestedTerm Annotation predicted term (from job)
-     * @param job Job that make prediction
-     * @return
-     */
-    def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job) {
-        SecurityACL.check(project.container(),READ)
-        log.info "list with suggestedTerm"
-        if (userList.isEmpty()) {
-            return []
-        }
-        //Get last userjob
-        SecUser user = UserJob.findByJob(job)
-
-        //Get all annotation from this project with this term
-        def annotationFromProjectWithTerm = UserAnnotation.executeQuery(
-                "SELECT ua " +
-                "FROM UserAnnotation ua, AnnotationTerm at " +
-                "WHERE ua.id = at.userAnnotation.id " +
-                "AND ua.project = :project " +
-                "AND at.term = :realTerm " +
-                "AND at.user.id IN (:userList)", [userList: userList, realTerm: realTerm, project: project])
-
-        def algoAnnotationsTerm = AnnotationTerm.executeQuery("SELECT ua " +
-                "FROM AlgoAnnotationTerm aat, UserAnnotation ua " +
-                "WHERE aat.userJob = :user " +
-                "AND aat.term = :suggestedTerm " +
-                "AND aat.annotationIdent = ua.id " +
-                "AND aat.annotationIdent IN (:annotations)", [user: user, suggestedTerm: suggestedTerm, annotations: annotationFromProjectWithTerm.collect {it.id}.unique()])
-
-        return algoAnnotationsTerm
     }
 
     /**
@@ -541,227 +469,6 @@ class UserAnnotationService extends ModelService {
         return [domain.user.toString(), domain.image?.baseImage?.filename]
     }
 
-
-
-
-
-
-    /**
-      * Execute request and format result into a list of map
-      */
-     def selectUserAnnotation(AnnotationListing al) {
-
-         def data = []
-         long lastAnnotationId = -1
-         long lastTermId = -1
-         boolean first = true;
-
-         def realColumn = []
-        def request = al.getAnnotationsRequest()
-         println  request
-         println dataSource
-         boolean termAsked = false
-
-         new Sql(dataSource).eachRow(request) {
-             /**
-              * If an annotation has n multiple term, it will be on "n" lines.
-              * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
-              * For the other lines, we add term data to the last annotation
-              */
-             if (it.id != lastAnnotationId) {
-                 if(first) {
-                     al.getAllPropertiesName().each { columnName ->
-                           if(columnExist(it,columnName)) {
-                               realColumn << columnName
-                           }
-                     }
-                     first = false
-                 }
-
-
-                 def item = [:]
-                 item['class'] = 'be.cytomine.ontology.UserAnnotation'
-
-
-
-
-
-
-
-
-
-                 realColumn.each { columnName ->
-                     item[columnName]=it[columnName]
-                 }
-
-                 if(al.columnToPrint.contains('term')) {
-                     termAsked = true
-                     item['term'] = (it.term ? [it.term] : [])
-                     item['userByTerm'] = (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : [])
-                 }
-
-
-                 if(al.columnToPrint.contains('url')) {
-                     item['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(it.id)
-                     item['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256)
-                     item['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(it.id)
-                     item['imageURL'] = UrlApi.getAnnotationURL(it.project, it.image, it.id)
-                 }
-
-
-                 data << item
-             } else {
-                 if (it.term) {
-                     data.last().term.add(it.term)
-                     data.last().term.unique()
-                     if (it.term == lastTermId) {
-                         data.last().userByTerm.last().user.add(it.userTerm)
-                         data.last().userByTerm.last().user.unique()
-                     } else {
-                         data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
-                     }
-                 }
-             }
-             if (termAsked) {
-                 lastTermId = it.term
-                lastAnnotationId = it.id
-             }
-
-         }
-         data
-     }
-
-
-     protected static boolean columnExist(ResultSet rs, String column) {
-         ResultSetMetaData rsMetaData = rs.getMetaData();
-         int numberOfColumns = rsMetaData.getColumnCount();
-
-         // get the column names; column indexes start from 1
-         for (int i = 1; i < numberOfColumns + 1; i++) {
-             String columnName = rsMetaData.getColumnName(i);
-             // Get the name of the column's table name
-             if (column.equals(columnName)) {
-                 return true
-             }
-         }
-         return false
-     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Execute request and format result into a list of map
-     */
-    private def selectUserAnnotationFull(String request) {
-        log.info "REQUEST=" + request
-        def data = []
-        long lastAnnotationId = -1
-        long lastTermId = -1
-        boolean first = true;
-        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
-        def realColumn = []
-
-        new Sql(dataSource).eachRow(request) {
-            /**
-             * If an annotation has n multiple term, it will be on "n" lines.
-             * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
-             * For the other lines, we add term data to the last annotation
-             */
-            if (it.id != lastAnnotationId) {
-                if(first) {
-                    optionalColumn.each { columnName ->
-                          if(columnExist(it,columnName)) {
-                              realColumn << columnName
-                          }
-                    }
-                    first = false
-                }
-
-
-                def item = ['class': 'be.cytomine.ontology.UserAnnotation',
-                                        id: it.id,
-                                        image: it.image,
-                                        geometryCompression: it.geometryCompression,
-                                        project: it.project,
-                                        container: it.project,
-                                        user: it.user,
-                                        nbComments: it.nbComments,
-                                        created: it.created,
-                                        updated: it.updated,
-                                        reviewed: (it.countReviewedAnnotations > 0),
-                                        cropURL: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
-                                        smallCropURL: UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
-                                        url: UrlApi.getUserAnnotationCropWithAnnotationId(it.id),
-                                        imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
-                                        term: (it.term ? [it.term] : []),
-                                        userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
-                                        location: it.location ]
-
-                realColumn.each { columnName ->
-                    item[columnName]=it[columnName]
-                }
-                data << item
-            } else {
-                if (it.term) {
-                    data.last().term.add(it.term)
-                    data.last().term.unique()
-                    if (it.term == lastTermId) {
-                        data.last().userByTerm.last().user.add(it.userTerm)
-                        data.last().userByTerm.last().user.unique()
-                    } else {
-                        data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
-                    }
-                }
-            }
-            lastTermId = it.term
-            lastAnnotationId = it.id
-        }
-        data
-    }
-
-    /**
-     * Execute request and format result into a list of map
-     */
-    private def selectUserAnnotationLight(String request) {
-        def data = []
-        long lastAnnotationId = -1
-        new Sql(dataSource).eachRow(request) {
-
-            long idAnnotation = it[0]
-            String location = it[1]
-            def idTerm = it[2]
-
-            if (idAnnotation != lastAnnotationId) {
-                data << [id: idAnnotation, location: location, term: idTerm ? [idTerm] : []]
-            } else {
-                if (idTerm)
-                    data.last().term.add(idTerm)
-            }
-            lastAnnotationId = idAnnotation
-        }
-        data
-    }
 
     /**
      * Execute request and format result into a list of map

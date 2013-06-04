@@ -7,6 +7,7 @@ import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -31,6 +32,7 @@ class ReviewedAnnotationService extends ModelService {
     def modelService
     def dataSource
     def kmeansGeometryService
+    def annotationListingService
 
     def currentDomain() {
         return ReviewedAnnotation
@@ -74,36 +76,60 @@ class ReviewedAnnotationService extends ModelService {
         data
     }
 
-    def list(Project project) {
+    def list(Project project, def propertiesToShow = null) {
         SecurityACL.check(project.container(),READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
-                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
-                " WHERE a.project_id = " + project.id + "\n" +
-                " ORDER BY id desc, term"
-        selectReviewedAnnotationFull(request)
+//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
+//                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
+//                " WHERE a.project_id = " + project.id + "\n" +
+//                " ORDER BY id desc, term"
+//        selectReviewedAnnotationFull(request)
+
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                project: project.id
+        )
+        annotationListingService.executeRequest(al)
+
     }
 
-    def list(ImageInstance image) {
+    def list(ImageInstance image, def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
-                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
-                " WHERE a.image_id = " + image.id + "\n" +
-                " ORDER BY id desc, term"
-        selectReviewedAnnotationFull(request)
+//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
+//                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
+//                " WHERE a.image_id = " + image.id + "\n" +
+//                " ORDER BY id desc, term"
+//        selectReviewedAnnotationFull(request)
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                image: image.id
+        )
+        annotationListingService.executeRequest(al)
     }
 
-    def list(ImageInstance image, String geometry, List<Long> terms, AnnotationDomain annotation = null) {
+    def listIncluded(ImageInstance image, String geometry, List<Long> terms, AnnotationDomain annotation = null, def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename  \n" +
-                 "FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id, abstract_image ai, image_instance ii\n" +
-                 "WHERE a.image_id = ${image.id} \n" +
-                 "AND at.term_id IN (${terms.join(',')})\n" +
-                 "AND a.image_id = ii.id  \n" +
-                 "AND ii.base_image_id = ai.id  \n" +
-                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
-                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
-        println request
-        selectReviewedAnnotationFull(request)
+//         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename  \n" +
+//                 "FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id, abstract_image ai, image_instance ii\n" +
+//                 "WHERE a.image_id = ${image.id} \n" +
+//                 "AND at.term_id IN (${terms.join(',')})\n" +
+//                 "AND a.image_id = ii.id  \n" +
+//                 "AND ii.base_image_id = ai.id  \n" +
+//                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
+//                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
+//
+//        println request
+//        selectReviewedAnnotationFull(request)
+        println "1terms=$terms"
+        println propertiesToShow
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                image: image.id,
+                terms : terms,
+                excludedAnnotation: annotation?.id,
+                bbox : geometry
+        )
+        annotationListingService.executeRequest(al)
+
     }
 
     /*def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
@@ -131,9 +157,9 @@ class ReviewedAnnotationService extends ModelService {
      * @param bbox Boundary area filter
      * @return Reviewed Annotation list
      */
-    def list(ImageInstance image, String bbox) {
+    def list(ImageInstance image, String bbox, def propertiesToShow = null) {
         Geometry boundingbox = GeometryUtils.createBoundingBox(bbox)
-        list(image, boundingbox)
+        list(image, boundingbox,propertiesToShow)
     }
 
     /**
@@ -142,7 +168,7 @@ class ReviewedAnnotationService extends ModelService {
      * @param bbox Boundary area filter
      * @return Reviewed Annotation list
      */
-    def list(ImageInstance image, Geometry bbox) {
+    def list(ImageInstance image, Geometry bbox, def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
 
 
@@ -172,42 +198,80 @@ class ReviewedAnnotationService extends ModelService {
                 log.info "ratio=$ratio"
 
                 println "zoomToLow="+zoomToLow
-                String request
+                String subRequest
                 if (zoomToLow) {
-                    request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                            " FROM reviewed_annotation reviewed\n" +
-                            " WHERE reviewed.image_id = $image.id\n" +
-                            " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
-                            " ORDER BY numberOfCoveringAnnotation asc, id asc"
+                    subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) "
                 } else {
                     //too heavy to use with little zoom
-                    request = "SELECT reviewed.id, reviewed.wkt_location, (SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) FROM reviewed_annotation ga, reviewed_annotation gb WHERE ga.id=reviewed.id AND ga.id<>gb.id AND ga.image_id=gb.image_id AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0))) as numberOfCoveringAnnotation\n" +
-                            " FROM reviewed_annotation reviewed\n" +
-                            " WHERE reviewed.image_id = $image.id\n" +
-                            " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
-                            " ORDER BY numberOfCoveringAnnotation asc, id asc"
-                }
-                  println request
-                def sql = new Sql(dataSource)
+                    subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) "
 
-                def data = []
-                sql.eachRow(request) {
-                    data << [id: it[0], location: it[1], term: []]
                 }
-                data
-            } else if(rule==kmeansGeometryService.KMEANSFULL){
-                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-                                  "from reviewed_annotation \n " +
-                                  "where image_id = ${image.id} " +
-                                  "and ST_IsEmpty(st_centroid(location))=false " +
-                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-                 kmeansGeometryService.doKeamsFullRequest(request)
+
+                subRequest =  subRequest +
+                        "FROM reviewed_annotation ga, reviewed_annotation gb " +
+                    "WHERE ga.id=a.id " +
+                    "AND ga.id<>gb.id " +
+                    "AND ga.image_id=gb.image_id " +
+                    "AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox.toString() + "',0)))\n"
+
+                ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                        columnToPrint: propertiesToShow,
+                        image: image.id,
+                        bbox : bbox,
+                        orderBy: ['numberOfCoveringAnnotation':'asc','id':'asc']
+                )
+
+                al.addExtraColumn("numberOfCoveringAnnotation",subRequest)
+                annotationListingService.executeRequest(al)
+//
+//                String request = "SELECT reviewed.id, reviewed.wkt_location, $subRequest as numberOfCoveringAnnotation\n" +
+//                        " FROM reviewed_annotation reviewed\n" +
+//                        " WHERE reviewed.image_id = $image.id\n" +
+//                        " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
+//                        " ORDER BY numberOfCoveringAnnotation asc, id asc"
+
+//
+////
+////
+////                  println request
+//                def sql = new Sql(dataSource)
+//
+//                def data = []
+//                sql.eachRow(request) {
+//                    data << [id: it[0], location: it[1], term: []]
+//                }
+//                data
             } else {
-                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-                                  "from reviewed_annotation \n " +
-                                  "where image_id = ${image.id}  \n " +
-                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-                 kmeansGeometryService.doKeamsSoftRequest(request)
+
+                ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                        columnToPrint: propertiesToShow,
+                        kmeans: true,
+                        image: image.id,
+                        avoidEmptyCentroid : true,
+                        bbox : bbox
+                )
+
+
+
+                if(rule==kmeansGeometryService.KMEANSFULL){
+//                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+//                                  "from reviewed_annotation \n " +
+//                                  "where image_id = ${image.id} " +
+//                                  "and ST_IsEmpty(st_centroid(location))=false " +
+//                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+
+
+
+//                    annotationListingService.executeRequest(al)
+
+                 kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
+            } else {
+//                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
+//                                  "from reviewed_annotation \n " +
+//                                  "where image_id = ${image.id}  \n " +
+//                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+                 kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
+            }
             }
     }
 
@@ -219,8 +283,8 @@ class ReviewedAnnotationService extends ModelService {
      * @param userIDS id in order to filters on user. NULL value means no filter
      * @return Reviewed Annotation list
      */
-    def list(ImageInstance image, SecUser user, String bbox) {
-        return list(image,  GeometryUtils.createBoundingBox(bbox))
+    def list(ImageInstance image, SecUser user, String bbox,def propertiesToShow = null) {
+        return list(image,  GeometryUtils.createBoundingBox(bbox),propertiesToShow)
     }
 
     /**
@@ -231,123 +295,138 @@ class ReviewedAnnotationService extends ModelService {
      * @param userIDS id in order to filters on user. NULL value means no filter
      * @return Reviewed Annotation list
      */
-    def list(ImageInstance image, SecUser user, Geometry bbox) {
+    def list(ImageInstance image, SecUser user, Geometry bbox,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        ReviewedAnnotation.createCriteria()
-                .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq("image", image))
-                .add(SpatialRestrictions.within("location",bbox))
-                .list()
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                user : user.id,
+                image: image.id,
+                bbox : bbox.toText()
+        )
+        annotationListingService.executeRequest(al)
     }
 
-    def list(ImageInstance image, Term term) {
+    def list(ImageInstance image, Term term,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        def reviewed = ReviewedAnnotation.createCriteria().list {
-            createAlias "terms", "t"
-            eq("image", image)
-            eq("t.id", term.id)
-            order("created", "desc")
-        }
-        reviewed
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                term : term.id,
+                image: image.id,
+        )
+        annotationListingService.executeRequest(al)
     }
 
-    def list(ImageInstance image, SecUser user) {
+    def list(ImageInstance image, SecUser user,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        ReviewedAnnotation.createCriteria()
-                .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq("image", image))
-                .list()
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                user : user.id,
+                image: image.id,
+        )
+        annotationListingService.executeRequest(al)
     }
 
-    def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null) {
+    def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null,def propertiesToShow = null) {
         SecurityACL.check(project.container(),READ)
-        boolean filterOnImages = ImageInstance.countByProject(project) != imageInstanceList.size()
-        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent   \n" +
-                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
-                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
-                " AND a.project_id = " + project.id + "\n" +
-                " AND at.term_id IN  (" + termList.join(",") + ")\n" +
-                " AND a.id = at.reviewed_annotation_terms_id\n" +
-                " AND a.user_id IN (" + userList.join(",") + ") \n" +
-                (filterOnImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
-                (bbox ? " AND ST_Intersects(a.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
-                " ORDER BY id desc, term"
-        selectReviewedAnnotationFull(request)
+//        boolean filterOnImages = ImageInstance.countByProject(project) != imageInstanceList.size()
+//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent   \n" +
+//                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
+//                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
+//                " AND a.project_id = " + project.id + "\n" +
+//                " AND at.term_id IN  (" + termList.join(",") + ")\n" +
+//                " AND a.id = at.reviewed_annotation_terms_id\n" +
+//                " AND a.user_id IN (" + userList.join(",") + ") \n" +
+//                (filterOnImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
+//                (bbox ? " AND ST_Intersects(a.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
+//                " ORDER BY id desc, term"
+//        selectReviewedAnnotationFull(request)
+
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                project : project.id,
+                terms : termList,
+                users : userList,
+                images : imageInstanceList,
+                bbox : bbox?.toText()
+        )
+        annotationListingService.executeRequest(al)
+
+
     }
 
     /**
-     * Execute request and format result into a list of map
-     */
-    private def selectReviewedAnnotationFull(String request) {
-        def data = []
-        long lastAnnotationId = -1
-        long lastTermId = -1
-        boolean first = true;
-        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
-        def realColumn = []
-
-        new Sql(dataSource).eachRow(request) {
-            /**
-             * If an annotation has n multiple term, it will be on "n" lines.
-             * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
-             * For the other lines, we add term data to the last annotation
-             */
-            if (it.id != lastAnnotationId) {
-
-                if(first) {
-                    optionalColumn.each { columnName ->
-                          if(columnExist(it,columnName)) {
-                              realColumn << columnName
-                          }
-                    }
-                    first = false
-                }
-
-                def item = [
-                            'class': 'be.cytomine.ontology.ReviewedAnnotation',
-                            id: it.id,
-                            image: it.image,
-                            geometryCompression: it.geometryCompression,
-                            project: it.project,
-                            container: it.project,
-                            user: it.user,
-                            nbComments: it.nbComments,
-                            created: it.created,
-                            updated: it.updated,
-                            reviewed: (it.countReviewedAnnotations > 0),
-                            cropURL: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
-                            smallCropURL: UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
-                            url: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
-                            imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
-                            term: (it.term ? [it.term] : []),
-                            userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
-                            location: it.location,
-                            parentIdent:it.parent
-                ]
-
-                println "realColumn=$realColumn"
-                realColumn.each { columnName ->
-                    item[columnName]=it[columnName]
-                }
-                data << item
-
-            } else {
-                if (it.term) {
-                    data.last().term.add(it.term)
-                    data.last().term.unique()
-                    if (it.term == lastTermId) {
-                        data.last().userByTerm.last().user.add(it.userTerm)
-                        data.last().userByTerm.last().user.unique()
-                    } else {
-                        data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
-                    }
-                }
-            }
-            lastTermId = it.term
-            lastAnnotationId = it.id
-        }
-        data
-    }
+//     * Execute request and format result into a list of map
+//     */
+//    private def selectReviewedAnnotationFull(String request) {
+//        def data = []
+//        long lastAnnotationId = -1
+//        long lastTermId = -1
+//        boolean first = true;
+//        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
+//        def realColumn = []
+//
+//        new Sql(dataSource).eachRow(request) {
+//            /**
+//             * If an annotation has n multiple term, it will be on "n" lines.
+//             * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
+//             * For the other lines, we add term data to the last annotation
+//             */
+//            if (it.id != lastAnnotationId) {
+//
+//                if(first) {
+//                    optionalColumn.each { columnName ->
+//                          if(columnExist(it,columnName)) {
+//                              realColumn << columnName
+//                          }
+//                    }
+//                    first = false
+//                }
+//
+//                def item = [
+//                            'class': 'be.cytomine.ontology.ReviewedAnnotation',
+//                            id: it.id,
+//                            image: it.image,
+//                            geometryCompression: it.geometryCompression,
+//                            project: it.project,
+//                            container: it.project,
+//                            user: it.user,
+//                            nbComments: it.nbComments,
+//                            created: it.created,
+//                            updated: it.updated,
+//                            reviewed: (it.countReviewedAnnotations > 0),
+//                            cropURL: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
+//                            smallCropURL: UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256),
+//                            url: UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id),
+//                            imageURL: UrlApi.getAnnotationURL(it.project, it.image, it.id),
+//                            term: (it.term ? [it.term] : []),
+//                            userByTerm: (it.term ? [[id: it.annotationTerms, term: it.term, user: [it.userTerm]]] : []),
+//                            location: it.location,
+//                            parentIdent:it.parent
+//                ]
+//
+//                println "realColumn=$realColumn"
+//                realColumn.each { columnName ->
+//                    item[columnName]=it[columnName]
+//                }
+//                data << item
+//
+//            } else {
+//                if (it.term) {
+//                    data.last().term.add(it.term)
+//                    data.last().term.unique()
+//                    if (it.term == lastTermId) {
+//                        data.last().userByTerm.last().user.add(it.userTerm)
+//                        data.last().userByTerm.last().user.unique()
+//                    } else {
+//                        data.last().userByTerm.add([id: it.annotationTerms, term: it.term, user: [it.userTerm]])
+//                    }
+//                }
+//            }
+//            lastTermId = it.term
+//            lastAnnotationId = it.id
+//        }
+//        data
+//    }
 
 
     /**

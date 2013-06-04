@@ -9,6 +9,9 @@ import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
+import be.cytomine.sql.AlgoAnnotationListing
+import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -32,6 +35,7 @@ class AlgoAnnotationService extends ModelService {
     def dataSource
     def reviewedAnnotationService
     def kmeansGeometryService
+    def annotationListingService
 
     def currentDomain() {
         return AlgoAnnotation
@@ -53,28 +57,32 @@ class AlgoAnnotationService extends ModelService {
         annotation
     }
 
-    def list(ImageInstance image) {
+    def list(ImageInstance image, def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        AlgoAnnotation.findAllByImage(image)
+        AnnotationListing al = new AlgoAnnotationListing(columnToPrint: propertiesToShow,image : image.id)
+        annotationListingService.executeRequest(al)
     }
 
-    def list(Project project) {
+    def list(Project project,def propertiesToShow = null) {
         SecurityACL.check(project,READ)
-        AlgoAnnotation.findAllByProject(project)
+        AnnotationListing al = new AlgoAnnotationListing(columnToPrint: propertiesToShow,project : project.id)
+        annotationListingService.executeRequest(al)
     }
 
-    def list(Job job) {
+    def list(Job job,def propertiesToShow = null) {
         SecurityACL.check(job.container(),READ)
-        List<UserJob> user = UserJob.findAllByJob(job);
-        List<AlgoAnnotation> algoAnnotations = []
-        user.each {
-            algoAnnotations.addAll(AlgoAnnotation.findAllByUser(it))
+        List<UserJob> users = UserJob.findAllByJob(job);
+        List algoAnnotations = []
+        users.each { user ->
+            AnnotationListing al = new AlgoAnnotationListing(columnToPrint: propertiesToShow,user : user.id)
+            algoAnnotations.addAll(annotationListingService.executeRequest(al))
         }
         return algoAnnotations
     }
 
-    def list(ImageInstance image, SecUser user) {
-        return AlgoAnnotation.findAllByImageAndUser(image, user)
+    def list(ImageInstance image, SecUser user,def propertiesToShow = null) {
+        AnnotationListing al = new AlgoAnnotationListing(columnToPrint: propertiesToShow,image : image.id,user:user.id)
+        annotationListingService.executeRequest(al)
     }
 
     /**
@@ -85,7 +93,7 @@ class AlgoAnnotationService extends ModelService {
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
-    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly,Integer force = null) {
+    def list(ImageInstance image, SecUser user, String bbox, Boolean notReviewedOnly,Integer force = null,def propertiesToShow = null) {
         list(image, user, GeometryUtils.createBoundingBox(bbox), notReviewedOnly,force)
     }
 
@@ -97,7 +105,7 @@ class AlgoAnnotationService extends ModelService {
      * @param notReviewedOnly Flag to get only annotation that are not reviewed
      * @return Algo Annotation list
      */
-    def list(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null) {
+    def list(ImageInstance image, SecUser user, Geometry bbox, Boolean notReviewedOnly,Integer force = null,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
 
         //we use SQL request (not hibernate) to speedup time request
@@ -108,75 +116,63 @@ class AlgoAnnotationService extends ModelService {
         }
         println "RULEX=$rule"
         if(rule==kmeansGeometryService.FULL) {
-            String request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
-                                " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
-                                " WHERE annotation.image_id = $image.id\n" +
-                                " AND annotation.user_id= $user.id\n" +
-                                (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
-                                " AND ST_Intersects(annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) " +
-                                " ORDER BY annotation.id "
+//            String request = "SELECT annotation.id, annotation.wkt_location, at.term_id \n" +
+//                                " FROM algo_annotation annotation LEFT OUTER JOIN algo_annotation_term at ON annotation.id = at.annotation_ident\n" +
+//                                " WHERE annotation.image_id = $image.id\n" +
+//                                " AND annotation.user_id= $user.id\n" +
+//                                (notReviewedOnly ? " AND annotation.count_reviewed_annotations = 0\n" : "") +
+//                                " AND ST_Intersects(annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) " +
+//                                " ORDER BY annotation.id "
 
-            return selectAlgoAnnotationLight(request)
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    image : image.id,
+                    user:user.id,
+                    notReviewedOnly:notReviewedOnly,
+                    bbox:bbox
+            )
+            annotationListingService.executeRequest(al)
+
         } else if(rule==kmeansGeometryService.KMEANSFULL){
             println "mustBeReduce"
-            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 15) OVER (), location\n" +
-                           " from algo_annotation \n" +
-                           " where image_id = ${image.id} " +
-                           " and user_id = ${user.id} " +
-                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-                          // " and ST_IsEmpty(st_centroid(location))=false \n"
-             kmeansGeometryService.doKeamsFullRequest(request)
+//            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 15) OVER (), location\n" +
+//                           " from algo_annotation \n" +
+//                           " where image_id = ${image.id} " +
+//                           " and user_id = ${user.id} " +
+//                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
+//                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+//
+
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    image : image.id,
+                    user:user.id,
+                    notReviewedOnly:notReviewedOnly,
+                    bbox:bbox.toString(),
+                    kmeans: true
+            )
+             kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
         } else {
             println "mustBeReduce"
-            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n" +
-                           " from algo_annotation \n" +
-                           " where image_id = ${image.id} " +
-                           " and user_id = ${user.id} " +
-                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
-                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-                           //" and ST_IsEmpty(st_centroid(location))=false \n"
-             kmeansGeometryService.doKeamsSoftRequest(request)
+//            String request =  " select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n" +
+//                           " from algo_annotation \n" +
+//                           " where image_id = ${image.id} " +
+//                           " and user_id = ${user.id} " +
+//                            (notReviewedOnly ? " AND algo_annotation.count_reviewed_annotations = 0\n" : " ") +
+//                            "and ST_Intersects(algo_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
+//                           //" and ST_IsEmpty(st_centroid(location))=false \n"
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    image : image.id,
+                    user:user.id,
+                    notReviewedOnly:notReviewedOnly,
+                    bbox:bbox.toString(),
+                    kmeans: true
+            )
+             kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
         }
 
 
-    }
-
-    def selectAlgoAnnotationLight(def request) {
-        def sql = new Sql(dataSource)
-
-        def data = []
-
-        /*
-        Request result will come like this if an annotation ahs multiple term;
-        -annotation A - Term 1
-        -annotation B - Term 1
-        -annotation B - Term 2
-        ...
-        So during the sql result loop, we will group term by annotation like this:
-        -annotation A - Term 1
-        -annotation B - Term 1 & Term 2
-        */
-
-        long lastAnnotationId = -1
-
-        sql.eachRow(request) {
-
-            long idAnnotation = it[0]
-            String location = it[1]
-            def idTerm = it[2]
-
-            if (idAnnotation != lastAnnotationId) {
-                //if its a new annotation, create a new data line
-                data << [id: idAnnotation, location: location, term: idTerm ? [idTerm] : []]
-            } else {
-                //annotation id is the same as the previous iteration, so, just add term
-                if (idTerm)
-                    data.last().term.add(idTerm)
-            }
-            lastAnnotationId = idAnnotation
-        }
-        data
     }
 
     /**
@@ -188,7 +184,7 @@ class AlgoAnnotationService extends ModelService {
      * @param multipleTerm Flag to get only annotation with many terms
      * @return Algo annotation list
      */
-    def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false) {
+    def list(Project project, List<Long> userList, List<Long> imageInstanceList, boolean noTerm, boolean multipleTerm,boolean notReviewedOnly = false,def propertiesToShow = null) {
         SecurityACL.check(project,READ)
         log.info("project/userList/noTerm/multipleTerm project=$project.id userList=$userList imageInstanceList=${imageInstanceList.size()} noTerm=$noTerm multipleTerm=$multipleTerm notReviewedOnly=$notReviewedOnly")
         if (userList.isEmpty()) {
@@ -200,109 +196,172 @@ class AlgoAnnotationService extends ModelService {
             //TODO: could be improve with a single SQL Request
             //get all algoannotationterm where annotation id is twice
 
-            def data = []
+            def annotations = []
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    usersForTermAlgo: userList,
+                    multipleTerm:  true,
+                    images:  imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
 
-            def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
-                eq("project", project)
-                inList("userJob.id", userList)
-                projections {
-                    groupProperty("annotationIdent")
-                    groupProperty("annotationClassName")
-                    countDistinct("term")
-                    countDistinct('created', 'createdSort')
-                }
-                order('createdSort', 'desc')
-            }
-            annotationsWithTerms.each {
-                String id = it[0]
-                String className = it[1]
-                Long termNumber = (Long) it[2]
+            )
+            annotations.addAll(annotationListingService.executeRequest(al))
 
-                if (termNumber > 1) {
-                    AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id, className)
 
-                    def avoid = (notReviewedOnly && annotation.hasReviewedAnnotation())
+            AnnotationListing al2 = new UserAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    usersForTermAlgo: userList,
+                    multipleTerm: true,
+                    images:  imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
 
-                    if (!avoid && imageInstanceList.contains(annotation.image.id)) {
-                        data << annotation
-                    }
-                }
-            }
-            return data
+            )
+            annotations.addAll(annotationListingService.executeRequest(al2))
+
+            return annotations
+
+
+//            def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
+//                eq("project", project)
+//                inList("userJob.id", userList)
+//                projections {
+//                    groupProperty("annotationIdent")
+//                    groupProperty("annotationClassName")
+//                    countDistinct("term")
+//                    countDistinct('created', 'createdSort')
+//                }
+//                order('createdSort', 'desc')
+//            }
+//            annotationsWithTerms.each {
+//                String id = it[0]
+//                String className = it[1]
+//                Long termNumber = (Long) it[2]
+//
+//                if (termNumber > 1) {
+//                    AnnotationDomain annotation = AlgoAnnotationTerm.retrieveAnnotationDomain(id, className)
+//
+//                    def avoid = (notReviewedOnly && annotation.hasReviewedAnnotation())
+//
+//                    if (!avoid && imageInstanceList.contains(annotation.image.id)) {
+//                        data << annotation
+//                    }
+//                }
+//            }
+//            return data
         }
         else if (noTerm) {
             log.info "noTerm"
-            //TODO: could be improve with a single SQL Request
-            def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
-                eq("project", project)
-                inList("userJob.id", userList)
-                projections {
-                    groupProperty("annotationIdent")
-                }
-            }
-
-            //annotationsWithTerms = annotationsWithTerms.collect{it[0]}
-
-            //inList crash is argument is an empty list so we have to use if/else at this time
             def annotations = []
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    users: userList,
+                    noAlgoTerm: true,
+                    images:  imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
 
-            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
+            )
+            annotations.addAll(annotationListingService.executeRequest(al))
 
-            if (annotationsWithTerms.size() == 0) {
-                annotations.addAll(UserAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image.id", imageInstanceList)
-                    inList("user.id", userList)
-                    lt('countReviewedAnnotations',maxReviewed)
-                    order 'created', 'desc'
-                })
-                annotations.addAll(AlgoAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image.id", imageInstanceList)
-                    inList("user.id", userList)
-                    lt('countReviewedAnnotations',maxReviewed)
-                    order 'created', 'desc'
-                })
-            } else {
-                annotations.addAll(UserAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image.id", imageInstanceList)
-                    inList("user.id", userList)
-                    lt('countReviewedAnnotations',maxReviewed)
-                    not {
-                        inList("id", annotationsWithTerms)
-                    }
-                    order 'created', 'desc'
-                })
-                annotations.addAll(AlgoAnnotation.createCriteria().list {
-                    eq("project", project)
-                    inList("image.id", imageInstanceList)
-                    inList("user.id", userList)
-                    lt('countReviewedAnnotations',maxReviewed)
-                    not {
-                        inList("id", annotationsWithTerms)
-                    }
-                    order 'created', 'desc'
-                })
-            }
+
+//            AnnotationListing al2 = new UserAnnotationListing(
+//                    columnToPrint: propertiesToShow,
+//                    project : project.id,
+//                    usersForTermAlgo: userList,
+//                    noTerm: true,
+//                    images:  imageInstanceList,
+//                    notReviewedOnly : notReviewedOnly
+//
+//            )
+//            annotations.add(annotationListingService.executeRequest(al2))
+
+
+
+//            //TODO: could be improve with a single SQL Request
+//            def annotationsWithTerms = AlgoAnnotationTerm.withCriteria() {
+//                eq("project", project)
+//                inList("userJob.id", userList)
+//                projections {
+//                    groupProperty("annotationIdent")
+//                }
+//            }
+//
+//            //annotationsWithTerms = annotationsWithTerms.collect{it[0]}
+//
+//            //inList crash is argument is an empty list so we have to use if/else at this time
+//            def annotations = []
+//
+//            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
+//
+//            if (annotationsWithTerms.size() == 0) {
+//                annotations.addAll(UserAnnotation.createCriteria().list {
+//                    eq("project", project)
+//                    inList("image.id", imageInstanceList)
+//                    inList("user.id", userList)
+//                    lt('countReviewedAnnotations',maxReviewed)
+//                    order 'created', 'desc'
+//                })
+//                annotations.addAll(AlgoAnnotation.createCriteria().list {
+//                    eq("project", project)
+//                    inList("image.id", imageInstanceList)
+//                    inList("user.id", userList)
+//                    lt('countReviewedAnnotations',maxReviewed)
+//                    order 'created', 'desc'
+//                })
+//            } else {
+//                annotations.addAll(UserAnnotation.createCriteria().list {
+//                    eq("project", project)
+//                    inList("image.id", imageInstanceList)
+//                    inList("user.id", userList)
+//                    lt('countReviewedAnnotations',maxReviewed)
+//                    not {
+//                        inList("id", annotationsWithTerms)
+//                    }
+//                    order 'created', 'desc'
+//                })
+//                annotations.addAll(AlgoAnnotation.createCriteria().list {
+//                    eq("project", project)
+//                    inList("image.id", imageInstanceList)
+//                    inList("user.id", userList)
+//                    lt('countReviewedAnnotations',maxReviewed)
+//                    not {
+//                        inList("id", annotationsWithTerms)
+//                    }
+//                    order 'created', 'desc'
+//                })
+//            }
 
             return annotations
         } else {
             log.info "findAllByProjectAndUserInList=" + project + " users=" + userList
-            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
+//            int maxReviewed = (notReviewedOnly? 0 : Integer.MAX_VALUE)
+//
+//            String request = "" +
+//                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user\n" +
+//                    "FROM algo_annotation a, algo_annotation_term at\n" +
+//                    "WHERE a.id = at.annotation_ident\n" +
+//                    "AND a.project_id = ${project.id}\n" +
+//                    "AND a.count_reviewed_annotations = 0\n" +
+//                    "AND a.user_id IN (${userList.join(",")})\n" +
+//                    "AND a.image_id IN (${imageInstanceList.join(",")})\n" +
+//                    "ORDER BY id desc"
+//
+//             println request
+//            return selecAlgoAnnotationLight(request)
 
-            String request = "" +
-                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user\n" +
-                    "FROM algo_annotation a, algo_annotation_term at\n" +
-                    "WHERE a.id = at.annotation_ident\n" +
-                    "AND a.project_id = ${project.id}\n" +
-                    "AND a.count_reviewed_annotations = 0\n" +
-                    "AND a.user_id IN (${userList.join(",")})\n" +
-                    "AND a.image_id IN (${imageInstanceList.join(",")})\n" +
-                    "ORDER BY id desc"
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    users: userList,
+                    images:  imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
 
-             println request
-            return selecAlgoAnnotationLight(request)
+            )
+            annotationListingService.executeRequest(al)
+
+
         }
     }
 
@@ -314,7 +373,7 @@ class AlgoAnnotationService extends ModelService {
      * @param imageInstanceList Annotation Imageinstance
      * @return Algo Annotation List
      */
-    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList,Boolean notReviewedOnly = false) {
+    def listForUserJob(Project project, Term term, List<Long> userList, List<Long> imageInstanceList,Boolean notReviewedOnly = false,def propertiesToShow = null) {
         SecurityACL.check(project,READ)
         if (userList.isEmpty()) {
             return []
@@ -324,80 +383,88 @@ class AlgoAnnotationService extends ModelService {
             //Get all images
             println "listForUserJob"
 
-            String request = "" +
-                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
-                    "FROM algo_annotation a, algo_annotation_term at \n" +
-                    "WHERE at.project_id = ${project.id} \n" +
-                    "AND at.term_id = ${term.id} \n" +
-                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
-                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
-                    "AND at.annotation_ident = a.id \n" +
-                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
-                    "UNION \n" +
-                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
-                    "FROM user_annotation a, algo_annotation_term at \n" +
-                    "WHERE at.project_id = ${project.id} \n" +
-                    "AND at.term_id = ${term.id} \n" +
-                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
-                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')}) \n" :" ") +
-                    "AND at.annotation_ident = a.id \n" +
-                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
-                    "ORDER BY rate desc \n"
+            def annotations = []
+            AnnotationListing al = new AlgoAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    suggestedTerm : term.id,
+                    usersForTermAlgo: userList,
+                    images : imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
+            )
+            annotations.addAll(annotationListingService.executeRequest(al))
 
-             println request
-            return selecAlgoAnnotationLight(request)
+
+            AnnotationListing al2 = new UserAnnotationListing(
+                    columnToPrint: propertiesToShow,
+                    project : project.id,
+                    suggestedTerm : term.id,
+                    usersForTermAlgo: userList,
+                    images : imageInstanceList,
+                    notReviewedOnly : notReviewedOnly
+            )
+            annotations.addAll(annotationListingService.executeRequest(al2))
+
+            return annotations
+
+
+
+//            String request = "" +
+//                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
+//                    "FROM algo_annotation a, algo_annotation_term at \n" +
+//                    "WHERE at.project_id = ${project.id} \n" +
+//                    "AND at.term_id = ${term.id} \n" +
+//                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
+//                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')})\n " :" ") +
+//                    "AND at.annotation_ident = a.id \n" +
+//                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
+//                    "UNION \n" +
+//                    "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image , false as algo, a.created as created, a.project_id as project, at.user_job_id as user \n" +
+//                    "FROM user_annotation a, algo_annotation_term at \n" +
+//                    "WHERE at.project_id = ${project.id} \n" +
+//                    "AND at.term_id = ${term.id} \n" +
+//                    "AND at.user_job_id IN (${userList.join(',')}) \n" +
+//                    (imageInstanceList.size() != project.countImages? "AND a.image_id IN (${imageInstanceList.join(',')}) \n" :" ") +
+//                    "AND at.annotation_ident = a.id \n" +
+//                    (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" ) +
+//                    "ORDER BY rate desc \n"
+//
+////             println request
+//            return selecAlgoAnnotationLight(request)
         }
     }
 
-    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null) {
+    def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-         String request = "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename \n" +
-                 "FROM algo_annotation a, algo_annotation_term at, abstract_image ai, image_instance ii \n" +
-                 "WHERE a.id = at.annotation_ident \n" +
-                 "AND a.image_id = ${image.id} \n" +
-                 "AND a.user_id = ${user.id} \n" +
-                 "AND a.image_id = ii.id  \n" +
-                 "AND ii.base_image_id = ai.id  \n" +
-                 "AND at.term_id IN (${terms.join(',')})\n" +
-                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
-                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
 
-        println request
-        selecAlgoAnnotationLight(request)
+        def annotations = []
+        AnnotationListing al = new AlgoAnnotationListing(
+                columnToPrint: propertiesToShow,
+                image : image.id,
+                user : user.id,
+                suggestedTerms : terms,
+                excludedAnnotation : annotation?.id,
+                bbox: geometry
+        )
+        annotations.addAll(annotationListingService.executeRequest(al))
+        return annotations
+
+//         String request = "SELECT a.id as id, count_reviewed_annotations as countReviewedAnnotations, at.rate as rate, at.term_id as term, at.expected_term_id as expterm, a.image_id as image, true as algo, a.created as created, a.project_id as project, at.user_job_id as user,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename \n" +
+//                 "FROM algo_annotation a, algo_annotation_term at, abstract_image ai, image_instance ii \n" +
+//                 "WHERE a.id = at.annotation_ident \n" +
+//                 "AND a.image_id = ${image.id} \n" +
+//                 "AND a.user_id = ${user.id} \n" +
+//                 "AND a.image_id = ii.id  \n" +
+//                 "AND ii.base_image_id = ai.id  \n" +
+//                 "AND at.term_id IN (${terms.join(',')})\n" +
+//                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
+//                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
+//
+//        println request
+//        selecAlgoAnnotationLight(request)
     }
 
-    /**
-     * Execute request and format result into a list of map
-     */
-    private def selecAlgoAnnotationLight(String request) {
-        def data = []
-        boolean first = true;
-        def optionalColumn = ["area","perimeter","x","y","originalfilename"]
-        def realColumn = []
-        new Sql(dataSource).eachRow(request) {
 
-            if(first) {
-                optionalColumn.each { columnName ->
-                      if(columnExist(it,columnName)) {
-                          realColumn << columnName
-                      }
-                }
-                first = false
-            }
-
-            def url = (it.algo? UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256) : UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256))
-
-            def item =  [id: it.id, rate: it.rate,idTerm:it.term,idExpectedTerm:it.expterm,image:it.image,smallCropURL: url, created: it.created,project:it.project, reviewed : (it.countReviewedAnnotations > 0), user: it.user]
-
-            realColumn.each { columnName ->
-                item[columnName]=it[columnName]
-            }
-
-            data << item
-
-        }
-        data
-    }
 
     /**
      * Add the new domain with JSON data
