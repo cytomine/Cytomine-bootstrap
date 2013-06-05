@@ -14,6 +14,11 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.sql.AlgoAnnotationListing
+import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.ReviewedAnnotationListing
+import be.cytomine.sql.UserAnnotationListing
+import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
@@ -39,6 +44,7 @@ class RestAnnotationDomainController extends RestController {
     def paramsService
     def userService
     def exportService
+    def annotationListingService
 
     /**
      * List annotation by project
@@ -98,6 +104,113 @@ class RestAnnotationDomainController extends RestController {
                 forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
             }
         }
+    }
+
+    private def createRequest(AnnotationListing al, def params) {
+
+//        AnnotationListing al = new UserAnnotationListing()
+        al.columnToPrint = paramsService.getPropertyGroupToShow(params)
+        al.project = params.getLong('project')
+        al.user = params.getLong('user')
+        al.userJob = params.getLong('userJob')
+        al.term = params.getLong('term')
+        al.image = params.getLong('image')
+        al.suggestedTerm = params.getLong('suggestedTerm')
+        al.userForTermAlgo = params.getLong('userForTermAlgo')
+
+        def users = params.get('users')
+        if(users) {
+            al.users = params.get('users').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def images = params.get('images')
+        if(images) {
+            al.images = params.get('images').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def terms = params.get('terms')
+        if(terms) {
+            al.terms = params.get('terms').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def usersForTerm = params.get('usersForTerm')
+        if(usersForTerm) {
+            al.usersForTerm = params.get('usersForTerm').split(",").collect{Long.parseLong(it)}
+        }
+
+        def suggestedTerms = params.get('suggestedTerms')
+        if(suggestedTerms) {
+            al.suggestedTerms = params.get('suggestedTerms').split(",").collect{Long.parseLong(it)}
+        }
+
+//        def userForTermAlgo = params.get('userForTermAlgo')
+//        if(userForTermAlgo) {
+//            al.userForTermAlgo = params.get('userForTermAlgo').split(",").collect{Long.parseLong(it)}
+//        }
+
+        def usersForTermAlgo = params.get('usersForTermAlgo')
+        if(usersForTermAlgo) {
+            al.usersForTermAlgo = params.get('usersForTermAlgo').split(",").collect{Long.parseLong(it)}
+        }
+
+        al.notReviewedOnly = params.getBoolean('notReviewedOnly')
+        al.noTerm = params.getBoolean('noTerm')
+        al.noAlgoTerm = params.getBoolean('noAlgoTerm')
+        al.multipleTerm = params.getBoolean('multipleTerm')
+
+        if(params.get('bbox')) {
+            al.bbox = GeometryUtils.createBoundingBox(params.get('bbox')).toText()
+        }
+
+        println "**** ${al.userForTermAlgo}"
+
+        annotationListingService.listGeneric(al)
+
+    }
+
+
+    def search = {
+        println "###########################################"
+
+        AnnotationListing al
+        //isReviewedAnnotationAsked
+        def result = []
+        if(isReviewedAnnotationAsked(params)) {
+            al = new ReviewedAnnotationListing()
+            result = createRequest(al, params)
+        } else if(isAlgoAnnotationAsked(params)) {
+            al = new AlgoAnnotationListing()
+            result.addAll(createRequest(al, params))
+            params.suggestedTerm = params.term
+            params.term = null
+            params.usersForTermAlgo = params.users
+            params.users = null
+            al = new UserAnnotationListing()
+            result.addAll(createRequest(al, params))
+        } else {
+            al = new UserAnnotationListing()
+            result = createRequest(al, params)
+        }
+        responseSuccess(result)
+    }
+
+    private boolean isReviewedAnnotationAsked(def params) {
+        return params.getBoolean('reviewed')
+    }
+
+    private boolean isAlgoAnnotationAsked(def params) {
+        def idUser = params.getLong('user')
+        if(idUser) {
+           return SecUser.read(idUser).algo()
+        } else {
+           def idUsers = params.get('users')
+            if(idUsers) {
+                def ids= idUsers.replace("_",",").split(",").collect{Long.parseLong(it)}
+                return !ids.isEmpty() && SecUser.read(ids.first()).algo()
+            }
+        }
+        //if no other filter, just take user annotation
+        return false
     }
 
     /**
@@ -187,6 +300,7 @@ class RestAnnotationDomainController extends RestController {
 
 
     private def getIncludedAnnotation(params, def propertiesToShow = null){
+
         def image = imageInstanceService.read(params.long('idImage'))
 
         //get area
@@ -218,6 +332,7 @@ class RestAnnotationDomainController extends RestController {
             //goto user annotation
             response = userAnnotationService.list(image,geometry,user,terms,annotation,propertiesToShow)
         }
+        println "END" + AnnotationListing.availableColumnDefault
         response
 
     }

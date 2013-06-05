@@ -360,7 +360,7 @@ class UserAnnotationListingTests {
      }
 
     private static void checkUserAnnotationResultNumber(String url,int expectedResult) {
-        String URL = Infos.CYTOMINEURL+"api/userannotation/search?$url"
+        String URL = Infos.CYTOMINEURL+"api/annotation/search?$url"
         def result = DomainAPI.doGET(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)

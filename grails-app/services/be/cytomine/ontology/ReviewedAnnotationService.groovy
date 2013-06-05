@@ -119,8 +119,7 @@ class ReviewedAnnotationService extends ModelService {
 //
 //        println request
 //        selectReviewedAnnotationFull(request)
-        println "1terms=$terms"
-        println propertiesToShow
+
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(
                 columnToPrint: propertiesToShow,
                 image: image.id,

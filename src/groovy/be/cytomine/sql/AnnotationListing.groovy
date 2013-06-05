@@ -19,7 +19,7 @@ abstract class AnnotationListing {
     /**
      *  default property group to show
      */
-    static  def availableColumnDefault = ['basic','meta','term']
+    static final def availableColumnDefault = ['basic','meta','term']
 
     /**
      *  all properties group available, each value is a list of assoc [propertyName, SQL columnName/methodName)
@@ -69,20 +69,13 @@ abstract class AnnotationListing {
      */
     def getAllPropertiesName(List groups = getAvailableColumn().collect { it.key }) {
         def propNames = []
-        println "groups=$groups"
         groups.each { groupName ->
-            println "groupName=$groupName"
-            println "availableColumn.get(groupName)=${getAvailableColumn().get(groupName)}"
-            println "availableColumn.get(groupName).value=${getAvailableColumn().get(groupName).value}"
            getAvailableColumn().get(groupName).each { assoc ->
-               println "assoc=${assoc}"
                 assoc.each {
-                    println "it.key=${it.key}"
                     propNames << it.key
                 }
             }
         }
-        println "propNames=$propNames"
         propNames
     }
 
@@ -90,29 +83,25 @@ abstract class AnnotationListing {
      * Get all properties to print
      */
     def buildColumnToPrint() {
+        println "availableColumnDefault=$availableColumnDefault"
         if(!columnToPrint) {
-            columnToPrint = availableColumnDefault
+            columnToPrint = availableColumnDefault.clone()
         }
 
         def columns = []
         println "columnToPrint=$columnToPrint"
 
         getAvailableColumn().each {
-            println "group=${it.key}"
            if(columnToPrint.contains(it.key)) {
                it.value.each { columnAssoc ->
                    columns << columnAssoc
                }
            }
         }
-
-        println "extraColmun=$extraColmun"
         extraColmun.each {
             println it
             columns << it
         }
-
-        println "columns=${columns}"
         return columns
     }
 
@@ -481,6 +470,30 @@ class AlgoAnnotationListing extends AnnotationListing {
 
         return from +"\n" + where
      }
+
+    def getTermConst() {
+        if(term) {
+            addIfMissingColumn('term')
+            return " AND aat.term_id = ${term}\n"
+        } else return ""
+    }
+
+    def getTermsConst() {
+        println "2terms=$terms"
+        if(terms) {
+            addIfMissingColumn('term')
+            return "AND aat.term_id IN (${terms.join(',')})\n"
+        } else return ""
+    }
+
+
+    def getUserConst() {
+        return (user? "AND a.user_id = ${user}\n" : "")
+    }
+
+    def getUsersConst() {
+        return (users? "AND a.user_id IN (${users.join(",")})\n" : "")
+    }
 }
 
 
@@ -542,7 +555,7 @@ class ReviewedAnnotationListing extends AnnotationListing {
                      " AND at.term_id <> at2.term_id \n"
           } else if(noTerm) {
               from = "$from LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id "
-              where = "$where AND at.id IS NULL \n"
+              where = "$where AND at.reviewed_annotation_terms_id IS NULL \n"
           }  else {
               if(columnToPrint.contains('term')) {
                   from = "$from LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id"

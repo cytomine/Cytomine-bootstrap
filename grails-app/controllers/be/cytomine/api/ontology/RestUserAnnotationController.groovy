@@ -14,7 +14,9 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
@@ -39,12 +41,71 @@ class RestUserAnnotationController extends RestController {
     def mailService
     def dataSource
     def paramsService
+    def annotationListingService
+
+    def search = {
+
+        AnnotationListing al
+        //isReviewedAnnotationAsked
+
+        if(isReviewedAnnotationAsked(params)) {
+            al = new ReviewedAnnotationListing()
+        } else if(isAlgoAnnotationAsked(params)) {
+            al = new AlgoAnnotationListing()
+        } else {
+            al = new UserAnnotationListing()
+        }
+
+        al.columnToPrint = paramsService.getPropertyGroupToShow(params)
+
+        al.project = params.getLong('project')
+        al.user = params.getLong('user')
+        al.term = params.getLong('term')
+        al.image = params.getLong('image')
+        al.suggestedTerm = params.getLong('suggestedTerm')
+
+        def users = params.get('users')
+        if(users) {
+            al.users = params.get('users').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def images = params.get('images')
+        if(images) {
+            al.images = params.get('images').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def terms = params.get('terms')
+        if(terms) {
+            al.terms = params.get('terms').replace("_",",").split(",").collect{Long.parseLong(it)}
+        }
+
+        def usersForTerm = params.get('usersForTerm')
+        if(usersForTerm) {
+            al.usersForTerm = params.get('usersForTerm').split(",").collect{Long.parseLong(it)}
+        }
+
+        def userForTermAlgo = params.get('userForTermAlgo')
+        if(userForTermAlgo) {
+            al.userForTermAlgo = params.get('userForTermAlgo').split(",").collect{Long.parseLong(it)}
+        }
+
+        al.notReviewedOnly = params.getBoolean('notReviewedOnly')
+        al.noTerm = params.getBoolean('noTerm')
+        al.multipleTerm = params.getBoolean('multipleTerm')
+        al.bbox = params.get('bbox')
+
+        responseSuccess(annotationListingService.listGeneric(al))
+    }
+
+
+
 
     /**
      * List user annotation by image
      */
     def listByImage = {
         ImageInstance image = imageInstanceService.read(params.long('id'))
+        println "1propertiesToShow=${paramsService.getPropertyGroupToShow(params)}"
         if (image) {
             responseSuccess(userAnnotationService.listLight(image,paramsService.getPropertyGroupToShow(params)))
         } else {
@@ -135,49 +196,6 @@ class RestUserAnnotationController extends RestController {
         responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
-
-    def search = {
-
-        AnnotationListing al = new UserAnnotationListing()
-        al.columnToPrint = paramsService.getPropertyGroupToShow(params)
-        al.project = params.getLong('project')
-        al.user = params.getLong('user')
-        al.term = params.getLong('term')
-        al.image = params.getLong('image')
-        al.suggestedTerm = params.getLong('suggestedTerm')
-
-        def users = params.get('users')
-        if(users) {
-            al.users = params.get('users').split(",").collect{Long.parseLong(it)}
-        }
-
-        def images = params.get('images')
-        if(images) {
-            al.images = params.get('images').split(",").collect{Long.parseLong(it)}
-        }
-
-        def terms = params.get('terms')
-        if(terms) {
-            al.terms = params.get('terms').split(",").collect{Long.parseLong(it)}
-        }
-
-        def usersForTerm = params.get('usersForTerm')
-        if(usersForTerm) {
-            al.usersForTerm = params.get('usersForTerm').split(",").collect{Long.parseLong(it)}
-        }
-
-        def userForTermAlgo = params.get('userForTermAlgo')
-        if(userForTermAlgo) {
-            al.userForTermAlgo = params.get('userForTermAlgo').split(",").collect{Long.parseLong(it)}
-        }
-
-        al.notReviewedOnly = params.getBoolean('notReviewedOnly')
-        al.noTerm = params.getBoolean('noTerm')
-        al.multipleTerm = params.getBoolean('multipleTerm')
-        al.bbox = params.get('bbox')
-
-        responseSuccess(userAnnotationService.listGeneric(al))
-    }
 
     /**
      * Download report with annotation

@@ -10,6 +10,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -27,6 +28,11 @@ class AnnotationListingService extends ModelService {
     def transactionService
     def dataSource
 
+
+    def listGeneric(AnnotationListing al) {
+        SecurityACL.check(al.container(),READ)
+        executeRequest(al)
+    }
 
     def executeRequest(AnnotationListing al) {
         selectGenericAnnotation(al)

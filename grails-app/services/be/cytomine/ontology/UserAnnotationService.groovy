@@ -63,17 +63,13 @@ class UserAnnotationService extends ModelService {
         annotationListingService.executeRequest(new UserAnnotationListing(project: project.id, columnToPrint: propertiesToShow))
     }
 
-    def listGeneric(UserAnnotationListing al) {
-        SecurityACL.check(al.container(),READ)
-        annotationListingService.executeRequest(al)
-    }
-
     /**
      * List annotation created by user
      * @param image Image filter
      */
     def listLight(ImageInstance image,def propertiesToShow = null) {
         SecurityACL.check(image.project,READ)
+        println "propertiesToShow=$propertiesToShow"
         annotationListingService.executeRequest(new UserAnnotationListing(image: image.id, columnToPrint: propertiesToShow))
     }
 
@@ -214,7 +210,7 @@ class UserAnnotationService extends ModelService {
                     users : userList,
                     images : (allImages? null : imageInstanceList),
                     notReviewedOnly : notReviewedOnly,
-                    orderBy: ['rate':'desc','id':'desc']
+                    orderBy: ['id':'desc']
             )
             return annotationListingService.executeRequest(al)
     }
@@ -222,6 +218,7 @@ class UserAnnotationService extends ModelService {
 
     def list(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
+        println "x" + AnnotationListing.availableColumnDefault
         AnnotationListing al = new UserAnnotationListing(
                 columnToPrint: propertiesToShow,
                 image : image.id,
