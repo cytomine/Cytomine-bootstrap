@@ -9,6 +9,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
+import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
 
@@ -93,8 +94,8 @@ class RestJobController extends RestController {
     def add = {
         try {
             def result = jobService.add(request.JSON)
-            def idJob = result?.data?.job?.id
-            jobService.executeJob(Job.get(idJob))
+            long idJob = result?.data?.job?.id
+            jobService.createUserJob(User.read(springSecurityService.principal.id), Job.get(idJob))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -114,6 +115,44 @@ class RestJobController extends RestController {
      */
     def delete = {
         delete(jobService, JSON.parse("{id : $params.id}"),null)
+    }
+
+    def execute = {
+        long idJob = params.long("id")
+        Job job = Job.get(idJob)
+        jobService.executeJob(job, false)
+        responseSuccess(job)
+    }
+
+    def preview = {
+        long idJob = params.long("id")
+        Job job = Job.get(idJob)
+        jobService.executeJob(job, true)
+        responseSuccess(job)
+    }
+
+    def getPreviewRoi = {
+        Job job = jobService.read(params.long('id'))
+        byte[] data = job.software.service.getPreviewROI(job)
+        if (data) {
+            response.setHeader "Content-disposition", "inline"
+            response.outputStream << data
+            response.outputStream.flush()
+        } else {
+            responseNotFound("JobData", "getPreviewRoi")
+        }
+    }
+
+    def getPreview = {
+        Job job = jobService.read(params.long('id'))
+        byte[] data = job.software.service.getPreview(job)
+        if (data) {
+            response.setHeader "Content-disposition", "inline"
+            response.outputStream << data
+            response.outputStream.flush()
+        } else {
+            responseNotFound("JobData", "getPreview")
+        }
     }
 
     /**

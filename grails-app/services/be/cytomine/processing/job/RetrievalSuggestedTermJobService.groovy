@@ -42,7 +42,7 @@ class RetrievalSuggestedTermJobService extends AbstractJobService {
         log.info "Execute Job..."
     }
 
-    def execute(Job job) {
+    def execute(Job job, UserJob userJob, boolean preview) {
 
         String[] jobParams = getParametersValues(job)
         String[] mainArgs = createArgsArray(job)

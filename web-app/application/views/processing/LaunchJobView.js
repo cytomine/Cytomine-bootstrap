@@ -4,6 +4,7 @@ var LaunchJobView = Backbone.View.extend({
     project: null,
     parent: null,
     params: [],
+    job : null,
     paramsViews: [],
     initialize: function (options) {
         this.width = options.width;
@@ -26,14 +27,12 @@ var LaunchJobView = Backbone.View.extend({
     loadResult: function (JobLaunchTpl) {
 
         var self = this;
-        var content = _.template(JobLaunchTpl, {});
+        var content = _.template(JobLaunchTpl, {softwareName : self.software.get('name'), projectName : self.project.get('name')});
 
         $(self.el).empty();
         $(self.el).append(content);
         self.params = [];
         self.paramsViews = [];
-
-        $("#jobTitle").append("<h3>Run job from " + self.software.get('name') + " on project " + self.project.get('name') + " </h3>");
 
         _.each(self.software.get('parameters'), function (param) {
             self.params.push(param);
@@ -41,7 +40,10 @@ var LaunchJobView = Backbone.View.extend({
         });
 
         self.printSoftwareParams();
-//        self.checkEntryValidation();
+
+        $("#previewJobBtn").on("click", function (evt) {
+            self.createJobFromParam(self.previewJob);
+        });
     },
     getParamView: function (param) {
         if (param.type == "String") {
@@ -65,21 +67,21 @@ var LaunchJobView = Backbone.View.extend({
         if (param.type == "Domain") {
             return new InputListDomainView({param: param, multiple: false});
         }
-
-
         else {
             return new InputTextView({param: param});
         }
     },
     printSoftwareParams: function () {
         var self = this;
+
         if (self.software == undefined) {
             return;
         }
 
-        $('#launchJobParamsTable').find('tbody').empty();
+        var launchJobParamsTable = $('#launchJobParamsTable');
+        var tbody = launchJobParamsTable.find("tbody");
 
-        var tbody = $('#launchJobParamsTable').find("tbody");
+        tbody.empty();
 
         _.each(self.paramsViews, function (paramView) {
             paramView.addRow(tbody);
@@ -89,38 +91,77 @@ var LaunchJobView = Backbone.View.extend({
     },
 
 
-    createJobFromParam: function () {
+    createJobFromParam: function (callback) {
         var self = this;
         //retrieve an array of param
 
         var params = self.retrieveParams();
         //create job model
 
-        var job = self.createJobModel(params);
+        if (!self.job)
+            self.job = self.createJobModel(params);
+        else
+            self.job.set({params : params});
         //create a job, in post data, add param array
 //        console.log("job.set()...");
 //        job.set('jobParameters',params);
 //        //send job
 
-        self.saveJobModel(job);
+        self.saveJobModel(self.job, callback);
 
         //adapt grails to support jobparams inside job (put private and public key)
 
         //close windows (ok in dialog), refresh daashboardalog view
     },
+    executeJob : function(idJob) {
+        console.log("execute " + idJob);
+        var job = new JobModel({ id : idJob})
+        $.post(job.executeUrl())
+            .done(function() {
+             console.log("job launched");
+            })
+            .fail(function() { console.log("error"); })
+            .always(function() { console.log("finished"); });
+    },
+    previewJob : function(idJob) {
+        var job = new JobModel({ id : idJob})
+        $.post(job.previewUrl())
+        .done(function() {
+            var interval = setInterval(function() {
+                var previewJob = $("#previewJob");
+                previewJob.html('<div class="progress progress-striped active"><div class="bar" style="width: 90%;"></div></div>');
+                job.fetch({
+                    success : function(model, response) {
+                        if (model.isPreviewed()) {
+                            $("#previewJob").empty();
+                            $("#previewJob").html(_.template("<img src='<%= previewRoiUrl %>' style='height : 200px;'/><img src='<%= previewUrl %>' style='height : 200px;'/>", {
+                                previewRoiUrl : model.previewRoiUrl(),
+                                previewUrl : model.previewUrl()
+                            }));
+                            clearInterval(interval);
+                        }
+                    },
+                    error : function(model, response){
+                        //display error message + clear interval
+                        clearInterval(interval);
+                    }
+                })
+            }, 2000);
+        })
+        .fail(function() { console.log("error"); })
+        .always(function() { console.log("finished"); });
+    },
     createJobModel: function (params) {
         var self = this;
-        var job = new JobModel({
+        return new JobModel({
             software: self.software.id,
             project: self.project.id,
             params: params
         });
-        return job;
     },
     retrieveParams: function () {
         var self = this;
         var jobParams = [];
-
         _.each(self.paramsViews, function (paramView) {
             var softwareParam = paramView.param;
             var value = paramView.getStringValue();
@@ -129,13 +170,16 @@ var LaunchJobView = Backbone.View.extend({
         });
         return jobParams;
     },
-    saveJobModel: function (job) {
+    saveJobModel: function (job, callback) {
         var self = this;
         job.save({}, {
             success: function (model, response) {
+                self.job = model;
                 window.app.view.message("Add Job", response.message, "success");
-
                 self.parent.changeJobSelection(model.get('job').id);
+                if (callback) {
+                    callback(model.get('job').id);
+                }
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -163,15 +207,10 @@ var InputTextView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        var self = this;
-        var classRequier = "";
-        if (self.param.required) {
-            classRequier = 'border-style: solid; border-width: 2px;';
-        }
-        else {
-            classRequier = 'border-style: solid;border-width: 2px;';
-        }
-        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" style="' + classRequier + '"></div></div>';
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="<%= value%>" <%= required %>></div></div>', {
+               value : this.getDefaultValue(),
+               required: (self.param.required) ? "required" : ""
+        });
     },
     getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
@@ -214,15 +253,10 @@ var InputNumberView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        var self = this;
-        var classRequier = "";
-        if (self.param.required) {
-            classRequier = 'border-style: solid; border-width: 2px;';
-        }
-        else {
-            classRequier = 'border-style: solid;border-width: 2px;';
-        }
-        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + self.getDefaultValue() + '" ' + classRequier + '"></div></div>';
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="<%= value%>" <%= required %>></div></div>', {
+            value : this.getDefaultValue(),
+            required: (self.param.required) ? "required" : ""
+        });
     },
     getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
@@ -287,15 +321,9 @@ var InputDateView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        var self = this;
-        var classRequier = "";
-        if (self.param.required) {
-            classRequier = 'border-style: solid; border-width: 2px;';
-        }
-        else {
-            classRequier = 'border-style: dotted;border-width: 2px;';
-        }
-        return '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" style="' + classRequier + '"></div></div>';
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" <%= required %>></div></div>', {
+            required: (self.param.required) ? "required" : ""
+        });
     },
     getDefaultValue: function () {
         return window.app.replaceVariable(this.param.defaultParamValue)
@@ -346,7 +374,9 @@ var InputBooleanView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        return '<div><input type="checkbox" class="span3" ' + this.getDefaultValue() + ' /></div>';
+        return _.template('<div><input type="checkbox" class="span3" <%= value %> ></input></div>', {
+            value : this.getDefaultValue()
+        });
     },
     getDefaultValue: function () {
         if (this.param.type == "Boolean" && this.param.defaultParamValue != undefined && this.param.defaultParamValue.toLowerCase() == "true") {

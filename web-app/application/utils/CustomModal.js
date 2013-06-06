@@ -19,14 +19,14 @@ var CustomModal = Backbone.View.extend({
         //when click on button to open modal, build modal html, append to doc and open modal
         self.button.unbind();
         self.button.click(function () {
-            console.log("click!");
             require([
                 "text!application/templates/utils/CustomModal.tpl.html"
             ],
              function (tplModal) {
-                 $("#modals").empty();
+                 var modal = $("#modals");
+                 modal.empty();
                  var htmlModal = _.template(tplModal,{id:self.idModal,header:self.header,body:self.body,width:self.width,height:self.height,halfWidth:(self.width/2), buttons:self.buttons});
-                 $("#modals").append(htmlModal);
+                 modal.append(htmlModal);
                  _.each(self.buttons,function(b) {
                      $("#"+b.id).click(function() {
                          if(b.callBack) {

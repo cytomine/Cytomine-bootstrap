@@ -41,6 +41,11 @@ class JobDataService extends ModelService {
         JobData.findAllByJob(job)
     }
 
+    def list(Job job, String key) {
+        SecurityACL.check(job.container(),READ)
+        JobData.findAllByJobAndKey(job, key)
+    }
+
     /**
      * Add the new domain with JSON data
      * @param json New domain data
@@ -87,5 +92,20 @@ class JobDataService extends ModelService {
         if(jobData.value) {
             jobData.value.delete()
         }
+    }
+
+    /**
+     * Return associated data of JobData instance domain attached to a Job
+     * @param job a Job instance
+     * @param key which identifies the JobData
+     * @return a byte array, the data attached to JobData
+     */
+    def getJobDataBinaryValue(Job job, String key) {
+        Collection<JobData> jobDataCollection = list(job, key)
+        if (jobDataCollection.size() == 0) {
+            return null //no preview available
+        }
+        JobData jobData = jobDataCollection.pop()
+        return jobData.value?.data
     }
 }

@@ -20,7 +20,7 @@ class HelloWorldJobService extends AbstractJobService {
         log.info "Do nothing..."
     }
 
-    def execute(Job job) {
+    def execute(Job job, UserJob userJob, boolean preview) {
         log.info "Hello world"
     }
 

@@ -2,6 +2,7 @@ package be.cytomine.processing.job
 
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.processing.Job
+import be.cytomine.processing.JobData
 import be.cytomine.processing.JobParameter
 import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.UserJob
@@ -171,7 +172,25 @@ abstract class AbstractJobService {
      * Launch the job
      * This method must retrieve all parameters, format them and execute job
      */
-    public abstract def execute(Job job);
+    public abstract def execute(Job job, UserJob userJob, boolean preview);
+
+    /**
+     * Return the ROI used for the preview
+     * @param job
+     * @return
+     */
+    public def getPreviewROI(Job job) {
+        return null
+    }
+
+    /**
+     * Return the ROI used for the preview
+     * @param job
+     * @return
+     */
+    public def getPreview(Job job) {
+        return null
+    }
 
     protected def createArgsArray(Job job) {
         String[] args = job.software.executeCommand.split(" ")

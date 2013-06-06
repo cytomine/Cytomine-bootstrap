@@ -36,7 +36,8 @@ var DownloadFiles = Backbone.View.extend({
                         row.append('<td>' + data.get("filename") + '</td>');
                         row.append('<td>' + data.get("key") + '</td>');
                         row.append('<td>' + self.convertSize(data.get("size")) + '</td>');
-                        row.append('<td><a href="/api/jobdata/' + data.id + '/download" class="btn btn-large btn-primary">' + data.get("filename") + '</a></td>');
+                        row.append('<td><a href="/api/jobdata/' + data.id + '/view" class="badge badge-info">' + data.get("filename") + '</a></td>');
+                        row.append('<td><a href="/api/jobdata/' + data.id + '/download" class="badge badge-info">' + data.get("filename") + '</a></td>');
                     });
 
                 }

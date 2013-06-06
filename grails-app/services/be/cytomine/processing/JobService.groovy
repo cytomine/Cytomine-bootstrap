@@ -114,7 +114,7 @@ class JobService extends ModelService {
                 }
             }
 
-        return result
+            return result
         }
     }
 
@@ -149,17 +149,17 @@ class JobService extends ModelService {
         return [domain.id, domain.software.name]
     }
 
-     List<UserJob> getAllLastUserJob(Project project, Software software) {
+    List<UserJob> getAllLastUserJob(Project project, Software software) {
         SecurityACL.check(project,READ)
-         //TODO: inlist bad performance
-         List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
-         List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
-         return userJob
+        //TODO: inlist bad performance
+        List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
+        List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
+        return userJob
     }
 
-     private UserJob getLastUserJob(Project project, Software software) {
-         List<UserJob> userJobs = getAllLastUserJob(project,software)
-         return userJobs.isEmpty()? null : userJobs.first()
+    private UserJob getLastUserJob(Project project, Software software) {
+        List<UserJob> userJobs = getAllLastUserJob(project,software)
+        return userJobs.isEmpty()? null : userJobs.first()
     }
 
 
@@ -241,19 +241,25 @@ class JobService extends ModelService {
     /**
      * Create a new user that will be link with the job and launch the exe with parameters
      * @param job Job to launch
+     * @param preview indicates if the  Job should only computes the preview or not
      * @return The job
      */
-    public def executeJob(Job job) {
+    public def executeJob(Job job, boolean preview) {
         SecurityACL.check(job.container(),READ)
-        log.info "Create UserJob..."
-        UserJob userJob = createUserJob(User.read(springSecurityService.principal.id), job)
+
+        UserJob userJob = UserJob.findByJob(job)
+
         job.software.service.init(job, userJob)
 
-        log.info "Launch async..."
-        //backgroundService.execute("RunJobAsynchronously", {
-            log.info "Launch thread";
-            job.software.service.execute(job)
-        //})
+        println "preciew ???? $preview"
+
+        job.software.service.execute(job, userJob, preview)
+
+
+
+        log.info "Launch thread";
+
+
         job
     }
 
@@ -282,7 +288,7 @@ class JobService extends ModelService {
     private def getJOBResponseList(List<Job> jobs) {
         def data = []
         jobs.each {
-           def job = [:]
+            def job = [:]
             job.id = it.id
             job.status = it.status
             job.number = it.number

@@ -145,7 +145,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getPreviewURL() {
         if (this.width != null && this.height != null)
-            return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 2548, 2548)
+            return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 512, 512)
         else
             return null
     }

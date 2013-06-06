@@ -44,6 +44,18 @@ var JobModel = Backbone.Model.extend({
     },
     isWait: function () {
         return (this.get('status') == 6)
+    },
+    isPreviewed: function () {
+        return (this.get('status') == 7)
+    },
+    executeUrl : function() {
+        return "/api/job/" + this.id + "/execute";
+    },
+    previewUrl : function() {
+        return "/api/job/" + this.id + "/preview";
+    },
+    previewRoiUrl : function() {
+        return "/api/job/" + this.id + "/preview_roi";
     }
 });
 

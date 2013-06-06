@@ -104,6 +104,27 @@ class RestJobDataController extends RestController {
     }
 
     /**
+     * View a job data file
+     */
+    def view = {
+        log.info "View file jobdata = " + params.getLong('id')
+        JobData jobData = jobDataService.read(params.getLong('id'))
+        if(!jobData) {
+            responseNotFound("JobData", params.id)
+        } else {
+            //response.setContentType "image/png"
+            response.setHeader "Content-disposition", "inline"
+
+            if(!grailsApplication.config.cytomine.jobdata.filesystem) {
+                response.outputStream << readFromDatabase(jobData)
+            } else {
+                response.outputStream << readFromFileSystem(jobData)
+            }
+            response.outputStream.flush()
+        }
+    }
+
+    /**
      * Download a job data file
      */
     def download = {
@@ -112,8 +133,9 @@ class RestJobDataController extends RestController {
         if(!jobData) {
             responseNotFound("JobData", params.id)
         } else {
+            response.setContentType "application/octet-stream"
             response.setHeader "Content-disposition", "attachment; filename=${jobData.filename}"
-            response.contentType = "application/octet-stream"
+
             if(!grailsApplication.config.cytomine.jobdata.filesystem) {
                 response.outputStream << readFromDatabase(jobData)
             } else {

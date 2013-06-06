@@ -23,6 +23,7 @@ class Job extends CytomineDomain  {
     public static int FAILED = 4
     public static int INDETERMINATE = 5
     public static int WAIT = 6
+    public static int REVIEW_DONE = 7
 
     /**
      * Job progression
@@ -68,7 +69,7 @@ class Job extends CytomineDomain  {
         progress(min: 0, max: 100)
         project(nullable:true)
         statusComment(nullable:true)
-        status(range: 0..6)
+        status(range: 0..7)
         rate(nullable: true)
     }
 

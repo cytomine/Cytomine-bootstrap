@@ -34,7 +34,7 @@ class PyxitSuggestedTermJobService extends AbstractJobService {
         }
     }
 
-    def execute(Job job) {
+    def execute(Job job, UserJob userJob, boolean preview) {
         //get job params
         String[] jobParams = getParameters(job)
         String[] args = new String[jobParams.length+2]

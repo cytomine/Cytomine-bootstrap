@@ -164,7 +164,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             callBack: function() {launchView.render();}
         });
         modalLaunch.addButtons("closeNewJob","Close",false);
-        modalLaunch.addButtons("createNewJob","Create new job",true,function() {launchView.createJobFromParam();});
+        modalLaunch.addButtons("createNewJob","Create new job",true,function() {launchView.createJobFromParam(launchView.executeJob);});
 
 
         //init modal for job compare

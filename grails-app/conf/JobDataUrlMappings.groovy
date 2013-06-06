@@ -20,5 +20,9 @@ class JobDataUrlMappings {
         "/api/jobdata/$id/download"(controller:"restJobData"){
             action = [GET: "download"]
         }
+
+        "/api/jobdata/$id/view"(controller:"restJobData"){
+            action = [GET: "view"]
+        }
     }
 }

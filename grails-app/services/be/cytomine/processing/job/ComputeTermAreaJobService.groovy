@@ -21,7 +21,7 @@ class ComputeTermAreaJobService extends AbstractJobService{
         log.info "Execute Job..."
     }
 
-    def execute(Job job) {
+    def execute(Job job, UserJob userJob, boolean preview) {
 
         //get job params
         String[] jobParams = getParametersValues(job)

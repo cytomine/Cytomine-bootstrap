@@ -267,25 +267,28 @@ var JobSelectionView = Backbone.View.extend({
     },
     getStateElement: function (job) {
         if (job.isNotLaunch()) {
-            return '<span class="label btn-inverse">not launch</span> ';
+            return '<span class="label btn-inverse">Not Launch</span> ';
         }
         else if (job.isInQueue()) {
-            return '<span class="label btn-info">in queue</span> ';
+            return '<span class="label btn-info">In queue</span> ';
         }
         else if (job.isRunning()) {
-            return '<span class="label btn-primary">running</span> ';
+            return '<span class="label btn-primary">Running</span> ';
         }
         else if (job.isSuccess()) {
-            return '<span class="label btn-success">success</span> ';
+            return '<span class="label btn-success">Success</span> ';
         }
         else if (job.isFailed()) {
-            return '<span class="label btn-danger">failed</span> ';
+            return '<span class="label btn-danger">Failed</span> ';
         }
         else if (job.isIndeterminate()) {
-            return '<span class="label btn-inverse">indetereminate</span> ';
+            return '<span class="label btn-inverse">Indetereminate</span> ';
         }
         else if (job.isWait()) {
-            return '<span class="label btn-warning">wait</span> ';
+            return '<span class="label btn-warning">Wait</span> ';
+        }
+        else if (job.isPreviewed()) {
+            return '<span class="label btn-info">Previewed</span> ';
         }
         else {
             return "no supported";
