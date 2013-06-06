@@ -2,6 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
@@ -9,6 +10,7 @@ import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 class RestPropertyController extends RestController {
 
@@ -38,12 +40,17 @@ class RestPropertyController extends RestController {
         }
     }
     def listByAnnotation = {
-        def annotationId = params.long('idAnnotation')
-        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
-        if(annotation) {
-            responseSuccess(propertyService.list(annotation))
-        } else {
-            responseNotFound("Annotation",params.idAnnotation)
+        try {
+            def annotationId = params.long('idAnnotation')
+            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
+            if(annotation) {
+                responseSuccess(propertyService.list(annotation))
+            } else {
+                responseNotFound("Annotation",params.idAnnotation)
+            }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
     def listByImageInstance = {

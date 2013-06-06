@@ -104,12 +104,17 @@ class RestUserAnnotationController extends RestController {
      * List user annotation by image
      */
     def listByImage = {
+        try {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         println "1propertiesToShow=${paramsService.getPropertyGroupToShow(params)}"
         if (image) {
             responseSuccess(userAnnotationService.listLight(image,paramsService.getPropertyGroupToShow(params)))
         } else {
             responseNotFound("Image", params.id)
+        }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 

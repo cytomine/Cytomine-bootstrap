@@ -65,7 +65,7 @@ class UserAnnotationListingTests {
         json = (JSON.parse(result.data))
         checkForProperties(json.collection.get(0),['id','originalfilename'],['term','location'])
 
-        expectedProp = ['showWKT', 'hideWKT']
+        expectedProp = ['showWKT', 'hideWKT','hideBasic','hideMeta']
         result = UserAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,expectedProp)
         assert 404 == result.code
     }

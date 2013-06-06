@@ -26,7 +26,7 @@ class UrlMappings {
         "500"(controller: "errors", action: "error403", exception: AccessDeniedException)
         "500"(controller: "errors", action: "error403", exception: NotFoundException)
         "500"(controller: "errors", action: "error403", exception: ForbiddenException)
-        "500"(controller: "errors", action: "error404", exception: ObjectNotFoundException)
+ //       "500"(controller: "errors", action: "error404", exception: ObjectNotFoundException)
 
         "/processing/detect/$image/$x/$y"(controller:"processing") {
             action = [GET : "detect"]

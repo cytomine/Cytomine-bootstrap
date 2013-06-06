@@ -15,8 +15,14 @@ class ErrorsController extends RestController {
     def error404 = {
         println params
         println request
-        println request.exception?.getMessage()
-        println request['javax.servlet.error.exception']?.cause?.cause.getMessage()
+        println request.exception
+        println request.exception.getMessage()
+        println request.exception.cause
+
+        println request.exception.cause.metaClass.methods
+
+        println request['javax.servlet.error.exception'].getMessage()
+        println request['javax.servlet.error.exception']?.cause
         response.status = 404
         render(contentType: 'text/json') {
             errors(message: "Resource not found!")

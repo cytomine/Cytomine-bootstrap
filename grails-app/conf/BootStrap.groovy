@@ -95,9 +95,6 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
         }
 
-        if((Environment.getCurrent() != Environment.DEVELOPMENT) && ImageSequence.findAllByImageInList(ImageInstance.findAllByProject(Project.read(18054742))).isEmpty()) {
-            mergeMultiDimImage18054742()
-        }
 
 
         if(AnnotationIndex.count()==0) {

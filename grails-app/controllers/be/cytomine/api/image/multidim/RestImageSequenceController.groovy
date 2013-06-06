@@ -1,5 +1,6 @@
 package be.cytomine.api.image.multidim
 
+import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
@@ -58,16 +59,21 @@ class RestImageSequenceController extends RestController {
     }
 
     def getByImageGroupAndIndex = {
-        ImageGroup imageGroup = imageGroupService.read(params.long('id'))
-        if (imageGroup)  {
-            Integer zStack = params.int("zstack")
-            Integer time = params.int("time")
-            Integer channel = params.int("channel")
-            Integer slice = params.int("slice")
-            responseSuccess(imageSequenceService.get(imageGroup,channel,zStack,slice,time))
-        }
-        else {
-            responseNotFound("ImageSequence", "ImageInstance", params.id)
+        try {
+            ImageGroup imageGroup = imageGroupService.read(params.long('id'))
+            if (imageGroup)  {
+                Integer zStack = params.int("zstack")
+                Integer time = params.int("time")
+                Integer channel = params.int("channel")
+                Integer slice = params.int("slice")
+                responseSuccess(imageSequenceService.get(imageGroup,channel,zStack,slice,time))
+            }
+            else {
+                responseNotFound("ImageSequence", "ImageInstance", params.id)
+            }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 
