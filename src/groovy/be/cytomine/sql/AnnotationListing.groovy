@@ -28,27 +28,44 @@ abstract class AnnotationListing {
     abstract def availableColumn
 
     def columnToPrint
+
     def project = null
-    def users = null
     def user = null
-    def userJob = null
     def term = null
-    def terms = null
-    def usersForTerm = null
-    def images = null
     def image = null
+    def suggestedTerm = null
+    def userForTermAlgo = null
+//    def jobForTermAlgo = null
+    def users = null //for user that draw annotation
+    def usersForTerm = null //for user that add a term to annotation
+    def usersForTermAlgo = null
+    def terms = null
+    def images = null
+
+    def suggestedTerms = null
+
     def notReviewedOnly = false
     def noTerm = false
     def noAlgoTerm = false
     def multipleTerm = false
+
+
     def bbox = null
+
+    def parents
+
+
+
+
+
+
+
+
+
+    //not used for search critera (just for specific request
     def avoidEmptyCentroid = false
     def excludedAnnotation = null
     boolean kmeans = false
-    def suggestedTerm = null
-    def suggestedTerms = null
-    def userForTermAlgo = null
-    def usersForTermAlgo = null
 
     abstract def getFrom()
 
@@ -87,6 +104,8 @@ abstract class AnnotationListing {
         if(!columnToPrint) {
             columnToPrint = availableColumnDefault.clone()
         }
+        columnToPrint.add('basic') //mandatory to have id
+        columnToPrint = columnToPrint.unique()
 
         def columns = []
         println "columnToPrint=$columnToPrint"
@@ -145,10 +164,11 @@ abstract class AnnotationListing {
                 getTermConst() +
                 getTermsConst() +
                 getUserConst() +
-                getUserJobForTermConst()+
+                getParentsConst() +
                 getUsersForTermAlgoConst()+
                 getExcludedAnnotationConst() +
                 getUserForTermAlgoConst() +
+//                getJobForTermAlgoConst() +
                 getSuggestedTermConst()+
                 getSuggestedTermsConst() +
                 getNotReviewedOnlyConst() +
@@ -238,6 +258,13 @@ abstract class AnnotationListing {
          } else return ""
      }
 
+    def getParentsConst() {
+        if(parents) {
+            return " AND a.parent_ident IN (${parents.join(",")})\n"
+        } else return ""
+    }
+
+
      def getTermsConst() {
          println "2terms=$terms"
          if(terms) {
@@ -276,14 +303,14 @@ abstract class AnnotationListing {
          } else return ""
      }
 
-    def getUserJobForTermConst() {
-        if(userJob) {
-            println "******************** 4"
-            addIfMissingColumn('algo')
-            addIfMissingColumn('term')
-            return "AND aat.user_job_id = $userJob\n"
-        } else return ""
-    }
+//    def getJobForTermAlgoConst() {
+//        if(jobForTermAlgo) {
+//            println "******************** 3"
+//            addIfMissingColumn('term')
+//            addIfMissingColumn('algo')
+//            return "AND aat.user_job_id = (SELECT id FROM sec_user${jobForTermAlgo})\n"
+//        } else return ""
+//    }
 
     def getUsersForTermAlgoConst() {
         if(usersForTermAlgo) {

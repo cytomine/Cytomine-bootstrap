@@ -107,27 +107,26 @@ class AbstractImageService extends ModelService {
             log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
 
             def abstractImages = StorageAbstractImage.findAllByStorageInList(storageService.list()).collect { it.abstractImage.id }
+            if(!abstractImages.isEmpty())   {
+                log.info "${abstractImages.size()} offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
+                PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
+                    inList("id", abstractImages)
+                    ilike("filename", "%" + filenameSearch + "%")
+                    between('created', dateAddedStart, dateAddedStop)
 
-            log.info "offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
-            PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
-                inList("id", abstractImages)
-                ilike("filename", "%" + filenameSearch + "%")
-                between('created', dateAddedStart, dateAddedStop)
-
-            }
-            data.page = page + ""
-            data.records = results.totalCount
-            data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
-            data.rows = results.list
-            /*} else {
-                //GORM GOTCHA: list in inList cannot be empty
+                }
                 data.page = page + ""
-                data.records = 0
-                data.total = 0
-                data.rows = []
-            }*/
-
-
+                data.records = results.totalCount
+                data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
+                data.rows = results.list
+                /*} else {
+                    //GORM GOTCHA: list in inList cannot be empty
+                    data.page = page + ""
+                    data.records = 0
+                    data.total = 0
+                    data.rows = []
+                }*/
+            }
         }
         return data
     }

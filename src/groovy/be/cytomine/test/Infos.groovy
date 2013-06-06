@@ -1,5 +1,6 @@
 package be.cytomine.test
 
+import be.cytomine.image.server.Storage
 import grails.util.Holders
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 
@@ -96,7 +97,19 @@ class Infos {
         SCH.clearContext()
     }
 
+    static void addUserRight(User user, Storage storage) {
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+        aclUtilService.addPermission storage, user.username, ADMINISTRATION
+        aclUtilService.addPermission storage, user.username, READ
+        aclUtilService.addPermission storage, user.username, WRITE
+        aclUtilService.addPermission storage, user.username, DELETE
+
+        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+        sessionFactory.currentSession.flush()
+        SCH.clearContext()
+    }
     /**
      * Print all right info for a specific domain
      * @param domain Domain to check

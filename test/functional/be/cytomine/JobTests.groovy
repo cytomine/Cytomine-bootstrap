@@ -199,11 +199,14 @@ class JobTests  {
         //add reviewed annotation
         ReviewedAnnotation reviewed = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         reviewed.project = job.project
+        reviewed.image = a1.image
         reviewed.parentIdent = a1.id
         reviewed.parentClassName = a1.class.getName()
         BasicInstanceBuilder.checkDomain(reviewed)
         BasicInstanceBuilder.saveDomain(reviewed)
 
+        println "ReviewedAnnotation project=${reviewed.project.id} & parent=${reviewed.parentIdent}"
+        println "ReviewedAnnotation job.project=${job.project.id}"
         //count data = 1-1
         assert AlgoAnnotationTerm.findAllByUserJobInList(UserJob.findAllByJob(job)).size() == 1
         assert AlgoAnnotation.findAllByUserInList(UserJob.findAllByJob(job)).size() == 1

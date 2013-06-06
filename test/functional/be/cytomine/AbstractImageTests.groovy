@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.AbstractImage
-
+import be.cytomine.image.server.Storage
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
@@ -54,6 +54,7 @@ class AbstractImageTests {
 
 
   void testListImages() {
+      Storage storage = BasicInstanceBuilder.getStorage()
       BasicInstanceBuilder.getAbstractImage()
       def result = AbstractImageAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
@@ -62,6 +63,7 @@ class AbstractImageTests {
   }
 
     void testListImagesDatatable() {
+        Storage storage = BasicInstanceBuilder.getStorage()
         def abstractImage = BasicInstanceBuilder.getAbstractImage()
         AbstractImageGroup aig = new AbstractImageGroup(abstractImage: abstractImage,group:Group.findByName(Infos.GOODLOGIN))
         BasicInstanceBuilder.saveDomain(aig)

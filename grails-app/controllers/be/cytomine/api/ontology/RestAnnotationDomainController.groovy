@@ -12,8 +12,10 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
 import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
@@ -112,7 +114,10 @@ class RestAnnotationDomainController extends RestController {
         al.columnToPrint = paramsService.getPropertyGroupToShow(params)
         al.project = params.getLong('project')
         al.user = params.getLong('user')
-        al.userJob = params.getLong('userJob')
+        if(params.getLong("job")) {
+            al.user = UserJob.findByJob(Job.read(params.getLong("job")))?.id
+        }
+
         al.term = params.getLong('term')
         al.image = params.getLong('image')
         al.suggestedTerm = params.getLong('suggestedTerm')
@@ -307,6 +312,7 @@ class RestAnnotationDomainController extends RestController {
         def geometry = params.geometry
         AnnotationDomain annotation = null
         if(!geometry) {
+            println params.long('annotation')
             annotation = AnnotationDomain.getAnnotationDomain(params.long('annotation'))
             geometry = annotation.location.toText()
         }

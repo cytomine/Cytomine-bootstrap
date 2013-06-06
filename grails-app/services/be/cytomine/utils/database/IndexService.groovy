@@ -43,10 +43,13 @@ class IndexService {
              * Annotation
              */
             createIndex(statement, "user_annotation", "image_id");
+            createIndex(statement, "user_annotation", "user_id");
             createIndex(statement, "user_annotation", "created");
             createIndex(statement, "user_annotation", "project_id");
             createIndex(statement, "user_annotation", "location", "GIST");
+
             createIndex(statement, "algo_annotation", "image_id");
+            createIndex(statement, "algo_annotation", "user_id");
             createIndex(statement, "algo_annotation", "created");
             createIndex(statement, "algo_annotation", "project_id");
             createIndex(statement, "algo_annotation", "location", "GIST");
@@ -55,6 +58,7 @@ class IndexService {
              * ReviewedAnnotation
              */
             createIndex(statement, "reviewed_annotation", "project_id");
+            createIndex(statement, "reviewed_annotation", "user_id");
             createIndex(statement, "reviewed_annotation", "image_id");  //GIST
             createIndex(statement, "reviewed_annotation", "location", "GIST");
 

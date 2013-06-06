@@ -100,15 +100,12 @@ class AnnotationListingService extends ModelService {
                           item['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(it.id)
                           item['imageURL'] = UrlApi.getAnnotationURL(it.project, it.image, it.id)
                       }else if(al.getClass().name.contains("ReviewedAnnotation")) {
-                                                item['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id)
-                                                item['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256)
-                                                item['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id)
-                                                item['imageURL'] = UrlApi.getAnnotationURL(it.project, it.image, it.id)
-                                            }
-
-
+                            item['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id)
+                            item['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(it.id, 256)
+                            item['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(it.id)
+                            item['imageURL'] = UrlApi.getAnnotationURL(it.project, it.image, it.id)
+                      }
                   }
-
                   data << item
               } else {
                   if (it.term) {
@@ -130,6 +127,7 @@ class AnnotationListingService extends ModelService {
           }
           data
       }
+
 
 
 }

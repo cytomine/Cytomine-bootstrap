@@ -11,6 +11,7 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
         if(!options)  return;
         if(options.max) {
             this.paginator_ui.perPage = options.max;
+            options.max=undefined;
         } else {
             this.paginator_ui.perPage = 0;
         }

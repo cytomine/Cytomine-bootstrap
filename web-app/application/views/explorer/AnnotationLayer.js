@@ -151,12 +151,8 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
     }
 
-    var annotationsCollection = null;
-    if (!this.reviewLayer) {
-        annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, term: undefined, notReviewedOnly: reviewMode}).url().replace("json", "jsonp");
-    } else {
-        annotationsCollection = new AnnotationReviewedCollection({image: this.imageID, term: undefined, map: browseImageView}).url().replace("json", "jsonp");
-    }
+    var annotationsCollection = new Annotation2Collection({user: this.userID, image: this.imageID, notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true}).url().replace("json", "jsonp");
+
 
     console.log("Get annotations for layers:"+annotationsCollection);
 

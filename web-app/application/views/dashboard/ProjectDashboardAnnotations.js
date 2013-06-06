@@ -753,9 +753,12 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
 
         var reviewedRadioValue = $('input[name=annotationClass]:checked').val();
         var reviewed = reviewedRadioValue == "inReviewed"
-        console.log("reviewed:"+reviewed);
 
-        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, users: usersFilter, images: imagesFilter,reviewed:reviewed, max: 30});
+        var noTerm = (idTerm == -1? true : undefined);
+        var multipleTerm = (idTerm == -2? true: undefined);
+        idTerm = (idTerm != -1 && idTerm != -2? idTerm: undefined);
+
+        var collection = new Annotation2Collection({project: self.model.id, term: idTerm, noTerm:noTerm,multipleTerm:multipleTerm,users: usersFilter, images: imagesFilter,reviewed:reviewed, max: 30});
 
         $($elem).empty();
         self.annotationsViews[idTerm] = new AnnotationView({

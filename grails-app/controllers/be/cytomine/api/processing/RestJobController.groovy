@@ -123,16 +123,18 @@ class RestJobController extends RestController {
      */
     def deleteAllJobData = {
         Job job = jobService.read(params.long('id'));
+
         if (!job) {
             responseNotFound("Job",params.id)
         } else {
-
+            println "1project=${job.project.id}"
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
             //TODO:: Optim instead of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
             taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
-            List<ReviewedAnnotation> reviewed = jobService.hasReviewedAnnotation(annotations)
+            println "2project=${job.project.id}"
+            List<ReviewedAnnotation> reviewed = jobService.hasReviewedAnnotation(annotations,job)
 
             if(!reviewed.isEmpty()) {
                 taskService.finishTask(task)
@@ -168,7 +170,8 @@ class RestJobController extends RestController {
             Task task = taskService.read(params.long('task'))
             log.info "load all algo annotations..."
             taskService.updateTask(task,10,"Looking for algo annotations...")
-            List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
+            def annotations = algoAnnotationService.list(job,['basic'])
+            boolean reviewed = jobService.hasReviewedAnnotation(annotations,job).size()
             log.info "load all annotations..."
             taskService.updateTask(task,50,"Looking for algo annotations term...")
             long annotationsTermNumber = algoAnnotationTermService.count(job)
@@ -176,7 +179,7 @@ class RestJobController extends RestController {
             taskService.updateTask(task,75,"Looking for all job data...")
             List<JobData> jobDatas = jobDataService.list(job)
             taskService.finishTask(task)
-            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:jobService.hasReviewedAnnotation(annotations).size()])
+            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:reviewed])
 
         }
     }

@@ -27,7 +27,10 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class AnnotationValidatorTests {
 
-   public static SELF_INTERSECT = "POLYGON((13688 75041,13687 75040,13688 75041,13689 75041,13688 75041))"
+   public static SELF_INTERSECT_CANNOT_MAKE_VALID = "POLYGON((13688 75041,13687 75040,13688 75041,13689 75041,13688 75041))"
+
+    public static SELF_INTERSECT = "POLYGON((0 0, 10 10, 0 10, 10 0, 0 0))"
+
 
    public static GEOMETRY_COLLECTION = "GEOMETRYCOLLECTION(POLYGON((14512 10384,14480 10384,14464 10400,14472 10400,14480 10408,14488 10400,14496 10400,14512 10384)),LINESTRING(14512 10384,14520 10384))"
 
@@ -52,6 +55,14 @@ class AnnotationValidatorTests {
         json.location = SELF_INTERSECT
         def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+    }
+
+    public void testAnnotationNotValidBis() {
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
+        def json = JSON.parse(annotationToAdd.encodeAsJSON())
+        json.location = SELF_INTERSECT_CANNOT_MAKE_VALID
+        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 400 == result.code
     }
 
     public void testAnnotationGeometry() {

@@ -10,8 +10,10 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
+import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import groovy.sql.Sql
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -26,6 +28,8 @@ class JobService extends ModelService {
     def backgroundService
     def jobDataService
     def secUserService
+    def annotationListingService
+    def dataSource
 
     def currentDomain() {
         return Job
@@ -184,10 +188,14 @@ class JobService extends ModelService {
     /**
      * Chek if job has reviewed annotation
      */
-    public def hasReviewedAnnotation(List<AlgoAnnotation> annotations) {
+    public def hasReviewedAnnotation(def annotations, def job) {
         List<Long> annotationsId = annotations.collect{ it.id }
         if (annotationsId.isEmpty()) []
-        return ReviewedAnnotation.findAllByParentIdentInList(annotationsId)
+        println "4project=${job.project.id}"
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(project:job.project.id, parents:annotationsId)
+
+
+        return annotationListingService.listGeneric(al)
     }
 
     /**
@@ -197,7 +205,11 @@ class JobService extends ModelService {
         SecurityACL.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
-        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
+        def request = "delete from algo_annotation where user_id in (" + usersId.join(',') +")"
+        println request
+        new Sql(dataSource).execute(request,[])
+
+//        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
     }
 
     /**
@@ -207,7 +219,11 @@ class JobService extends ModelService {
         SecurityACL.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
-        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
+//        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
+        def request = "delete from algo_annotation_term where user_job_id in ("+ usersId.join(',')+")"
+        println request
+        new Sql(dataSource).execute(request,[])
+
     }
 
     /**

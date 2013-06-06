@@ -273,7 +273,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     public void makeValid() {
         Geometry geom = new WKTReader().read(this.location.toText())
-        Geometry validGeom = null
+        Geometry validGeom
         String type = geom.getGeometryType().toUpperCase()
 
         println "*******************************"
@@ -288,6 +288,8 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             validGeom = geom.buffer(0)
             this.location = validGeom
             this.wktLocation = validGeom.toText()
+            geom = new WKTReader().read(this.location.toText())
+            type = geom.getGeometryType().toUpperCase()
         }
 
         if (geom.isEmpty()) {

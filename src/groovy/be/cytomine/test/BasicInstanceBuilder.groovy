@@ -231,9 +231,9 @@ class BasicInstanceBuilder {
     static AlgoAnnotation getAlgoAnnotationNotExist(Job job = getJob(), UserJob user = getUserJob(),boolean save = false) {
         AlgoAnnotation annotation = new AlgoAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
-                image:getImageInstance(),
+                image:getImageInstanceNotExist(job.project,true),
                 user: user,
-                project:getImageInstance().project
+                project:job.project
         )
         save ? saveDomain(annotation) : checkDomain(annotation)
     }
@@ -861,6 +861,7 @@ class BasicInstanceBuilder {
         if(!storage) {
             storage = new Storage(name:"bidon",basePath:"storagepath",ip:"192.168.0.0",user: getUser1(),port: 123)
             saveDomain(storage)
+            Infos.addUserRight(User.findByUsername(Infos.GOODLOGIN),storage)
         }
         return storage
     }
