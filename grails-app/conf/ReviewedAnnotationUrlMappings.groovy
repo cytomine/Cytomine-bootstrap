@@ -21,20 +21,6 @@ class ReviewedAnnotationUrlMappings {
             action = [POST:"add"]
          }
 
-        //?params.users+images+terms+conflict
-        "/api/project/$idproject/reviewedannotation"(controller: "restReviewedAnnotation"){
-             action = [GET:"listByProjectImageTermAndUser"]
-         }
-        "/api/imageinstance/$idImage/reviewedannotation"(controller: "restReviewedAnnotation"){
-             action = [GET:"listByImage"]
-         }
-        "/api/term/$idTerm/imageinstance/$idImage/reviewedannotation"(controller: "restReviewedAnnotation"){
-             action = [GET:"listByImageAndTerm"]
-         }
-        "/api/user/$idUser/imageinstance/$idImage/reviewedannotation"(controller:"restReviewedAnnotation"){
-            action = [GET:"listByImageAndUser"]
-        }
-
         "/api/annotation/$id/review"(controller: "restReviewedAnnotation"){
             action = [POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }

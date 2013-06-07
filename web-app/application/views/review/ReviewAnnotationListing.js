@@ -78,7 +78,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         console.log((self.user? [self.user] : null)) ;
         $(self.el).find("#AnnotationNotReviewed").find("div").remove();
         $(self.el).find("#AnnotationNotReviewed").append('<div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>');
-        self.model = new Annotation2Collection({project: self.project, images:[self.image], term: self.term, user: self.user,reviewed:false, notReviewedOnly:true});
+        self.model = new AnnotationCollection({project: self.project, images:[self.image], term: self.term, user: self.user,reviewed:false, notReviewedOnly:true});
         self.model.goTo(this.page,{
             success: function (collection, response) {
                 $(self.el).find("#AnnotationNotReviewed").find("div").remove();

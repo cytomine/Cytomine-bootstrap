@@ -9,6 +9,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.sql.AnnotationListing
@@ -215,6 +216,8 @@ class UserAnnotationListingTests {
 
         def dataSet = createAnnotationSet()
 
+        println "TERMS=${Term.list().collect{it}.join(", ")}"
+
         def result = UserAnnotationAPI.listByProjectAndTerm(dataSet.project.id,dataSet.term.id,dataSet.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -288,6 +291,12 @@ class UserAnnotationListingTests {
         BasicInstanceBuilder.checkDomain(suggest)
         BasicInstanceBuilder.saveDomain(suggest)
 
+        println "project=${annotation.project.id}"
+        println "a.term=${annotation.terms().collect{it.id}.join(",")}"
+        println "at.term=${suggest.term.id}"
+        println "job=${job.id}"
+        println "user=${UserJob.findByJob(job).id}"
+
         def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -349,8 +358,6 @@ class UserAnnotationListingTests {
         checkUserAnnotationResultNumber("user=${dataSet.user.id}&image=${dataSet.image.id}&project=${dataSet.project.id}",2)
 
         checkUserAnnotationResultNumber("user=${dataSet.user.id}&image=${dataSet.image.id}&project=${dataSet.project.id}&term=${dataSet.term.id}",1)
-
-        checkUserAnnotationResultNumber("user=${dataSet.user.id}&image=${dataSet.image.id}&project=${dataSet.project.id}&term=${dataSet.term.id}&suggestedTerm=123",0)
 
 
         checkUserAnnotationResultNumber("users=${dataSet.user.id}&images=${dataSet.image.id}&project=${dataSet.project.id}",2)
@@ -609,13 +616,13 @@ class UserAnnotationListingTests {
     void testListUserAnnotationByProjectAndTermWithUserNullWithCredential() {
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
         def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
+        assert 404 == result.code
     }
 
     void testListUserAnnotationByProjectAndTermAndUserAndImageWithCredential() {
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
-
-        def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        println "SecUser=${SecUser.list().collect{it.id}.join(', ')}"
+        def result = UserAnnotationAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id,annotationTerm.userAnnotation.image.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray

@@ -1,9 +1,13 @@
 package be.cytomine.sql
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.Term
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * User: lrollus
@@ -54,22 +58,18 @@ abstract class AnnotationListing {
 
     def parents
 
-
-
-
-
-
-
-
-
     //not used for search critera (just for specific request
     def avoidEmptyCentroid = false
     def excludedAnnotation = null
-    boolean kmeans = false
+    def  kmeans = false
+
+    def kmeansValue = 3
 
     abstract def getFrom()
 
     abstract def getDomainClass()
+    
+    abstract def  buildExtraRequest()
 
     def extraColmun = [:]
 
@@ -144,6 +144,8 @@ abstract class AnnotationListing {
      * Generate SQL request string
      */
     def getAnnotationsRequest() {
+        
+        buildExtraRequest()
 
         def columns = buildColumnToPrint()
         def sqlColumns = []
@@ -185,7 +187,7 @@ abstract class AnnotationListing {
       * Generate SQL string for SELECT with only asked properties
       */
      def getSelect(def columns) {
-         if(!kmeans) {
+         if(!(kmeansValue<3)) {
              def requestHeadList = []
              columns.each {
                  requestHeadList << it.value + " as " + it.key
@@ -232,11 +234,25 @@ abstract class AnnotationListing {
      }
 
      def getImageConst() {
-         return (image? "AND a.image_id = ${image}\n" : "")
+         if(image) {
+             if(!ImageInstance.read(image)) {
+                throw new ObjectNotFoundException("Image $image not exist!")
+            }
+             return "AND a.image_id = ${image}\n"
+         } else {
+            return ""
+         }
      }
 
      def getUserConst() {
-         return (user? "AND a.user_id = ${user}\n" : "")
+         if(user) {
+             if(!SecUser.read(user)) {
+                 throw new ObjectNotFoundException("User $user not exist!")
+             }
+             return "AND a.user_id = ${user}\n"
+         } else {
+             return ""
+         }
      }
 
      def getNotReviewedOnlyConst() {
@@ -253,6 +269,9 @@ abstract class AnnotationListing {
 
      def getTermConst() {
          if(term) {
+             if(!Term.read(term)) {
+                 throw new ObjectNotFoundException("Term $term not exist!")
+             }
              addIfMissingColumn('term')
              return " AND at.term_id = ${term}\n"
          } else return ""
@@ -266,7 +285,6 @@ abstract class AnnotationListing {
 
 
      def getTermsConst() {
-         println "2terms=$terms"
          if(terms) {
              addIfMissingColumn('term')
              return "AND at.term_id IN (${terms.join(',')})\n"
@@ -279,6 +297,9 @@ abstract class AnnotationListing {
 
      def getSuggestedTermConst() {
          if(suggestedTerm) {
+             if(!Term.read(suggestedTerm)) {
+                 throw new ObjectNotFoundException("Term $suggestedTerm not exist!")
+             }
              println "******************** 1"
              addIfMissingColumn('algo')
              return "AND aat.term_id = ${suggestedTerm}\n"
@@ -323,7 +344,7 @@ abstract class AnnotationListing {
 
 
     def getOrderBy() {
-        if(kmeans) return ""
+        if(kmeansValue<3) return ""
         if(!orderBy) {
             return "ORDER BY a.id desc " + (columnToPrint.contains("term")? ", term " : "")
         } else {
@@ -418,6 +439,9 @@ class UserAnnotationListing extends AnnotationListing {
 
         return from +"\n" + where
      }
+    def buildExtraRequest() {
+        
+    }   
 }
 
 
@@ -497,6 +521,10 @@ class AlgoAnnotationListing extends AnnotationListing {
 
         return from +"\n" + where
      }
+    
+    def buildExtraRequest() {
+        
+    }
 
     def getTermConst() {
         if(term) {
@@ -521,6 +549,9 @@ class AlgoAnnotationListing extends AnnotationListing {
     def getUsersConst() {
         return (users? "AND a.user_id IN (${users.join(",")})\n" : "")
     }
+    
+    
+    
 }
 
 
@@ -598,4 +629,56 @@ class ReviewedAnnotationListing extends AnnotationListing {
 
         return from +"\n" + where
      }
+
+
+    def buildExtraRequest() {
+
+        if(kmeansValue==3 && image && bbox) {
+            /**
+             * We will sort annotation so that big annotation that covers a lot of annotation comes first (appear behind little annotation so we can select annotation behind other)
+             * We compute in 'gc' the set of all other annotation that must be list
+             * For each review annotation, we compute the number of other annotation that cover it (ST_CoveredBy => t or f => 0 or 1)
+             *
+             * ST_CoveredBy will return false if the annotation is not perfectly "under" the compare annotation (if some points are outside)
+             * So in gc, we increase the size of each compare annotation just for the check
+             * So if an annotation x is under y but x has some point next outside y, x will appear top (if no resize, it will appear top or behind).
+             */
+            def xfactor = "1.28"
+            def yfactor = "1.28"
+            def image = ImageInstance.read(image)
+            //TODO:: get zoom info from UI client, display with scaling only with hight zoom (< annotations)
+
+            double imageWidth = image.baseImage.width
+            def bboxLocal = new WKTReader().read(bbox)
+            double bboxWidth = bboxLocal.getEnvelopeInternal().width
+            double ratio = bboxWidth/imageWidth*100
+
+            boolean zoomToLow = ratio > 50
+
+            println "imageWidth=$imageWidth"
+            println "bboxWidth=$bboxWidth"
+            println "ratio=$ratio"
+
+            println "zoomToLow="+zoomToLow
+            String subRequest
+            if (zoomToLow) {
+                subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) "
+            } else {
+                //too heavy to use with little zoom
+                subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,ST_Translate(ST_Scale(gb.location, $xfactor, $yfactor), ST_X(ST_Centroid(gb.location))*(1 - $xfactor), ST_Y(ST_Centroid(gb.location))*(1 - $yfactor) ))::integer) "
+
+            }
+
+            subRequest =  subRequest +
+                    "FROM reviewed_annotation ga, reviewed_annotation gb " +
+                "WHERE ga.id=a.id " +
+                "AND ga.id<>gb.id " +
+                "AND ga.image_id=gb.image_id " +
+                "AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox + "',0)))\n"
+
+            orderBy = ['numberOfCoveringAnnotation':'asc','id':'asc']
+            addExtraColumn("numberOfCoveringAnnotation",subRequest)
+        }
+    }
+
 }

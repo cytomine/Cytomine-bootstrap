@@ -73,6 +73,7 @@ var ExplorerTabs = Backbone.View.extend({
         }
 
         var tabs = $("#explorer-tab-content");
+        console.log("TEMP:BrowseImageView");
         var view = new BrowseImageView({
             initCallback: function () {
                 view.show(options)

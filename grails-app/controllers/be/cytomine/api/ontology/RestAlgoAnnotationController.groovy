@@ -22,8 +22,6 @@ import java.text.SimpleDateFormat
  */
 class RestAlgoAnnotationController extends RestController {
 
-
-
     def exportService
     def algoAnnotationService
     def termService
@@ -125,87 +123,6 @@ class RestAlgoAnnotationController extends RestController {
         def json = JSON.parse("{id : $params.id}")
         delete(algoAnnotationService, json,null)
     }
-
-    /**
-     * List annotation created by algo for a specific image.
-     * This image must be accessible for the current user
-     */
-    def listByImage = {
-        ImageInstance image = imageInstanceService.read(params.long('id'))
-        if (image) {
-            responseSuccess(algoAnnotationService.list(image,paramsService.getPropertyGroupToShow(params)))
-        }
-        else {
-            responseNotFound("Image", params.id)
-        }
-    }
-
-    /**
-     * List annotation created by algo for a specific project
-     */
-    def listByProject = {
-        Project project = projectService.read(params.long('id'))
-
-        if (project) {
-            //retrieve all image/user for the filter
-            List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
-            List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
-            boolean notReviewedOnly = params.getBoolean("notreviewed")
-            def list = algoAnnotationService.list(project, userList, imagesList, (params.noTerm == "true"), (params.multipleTerm == "true"),notReviewedOnly,paramsService.getPropertyGroupToShow(params))
-            responseSuccess(list)
-        }
-        else {
-            responseNotFound("Project", params.id)
-        }
-    }
-
-    /**
-     * List all annotation created by algo for a specific image and user.
-     * If bbox params is set, it will retrieve annotation in the bbox specified area
-     */
-    def listByImageAndUser = {
-
-        def image = imageInstanceService.read(params.long('idImage'))
-        def user = secUserService.read(params.idUser)
-        String bbox = params.bbox
-        boolean notReviewedOnly = params.getBoolean("notreviewed")
-
-        if (image && user && bbox) {
-            Integer force = params.getInt('force')
-            responseSuccess(algoAnnotationService.list(image,user,bbox,notReviewedOnly,force,['basic','wkt','term']))
-        } else if (image && user) {
-            responseSuccess(algoAnnotationService.list(image, user,paramsService.getPropertyGroupToShow(params)))
-        } else if (!user) {
-            responseNotFound("User", params.idUser)
-        } else if (!image) {
-            responseNotFound("Image", params.idImage)
-        }
-    }
-
-    /**
-     * List all annotation created by algo for specific project and a term
-     */
-    def listAnnotationByProjectAndTerm = {
-        log.info "listAnnotationByProjectAndTerm"
-        Term term = termService.read(params.long('idterm'))
-        Project project = projectService.read(params.long('idproject'))
-
-        if (project) {
-            boolean notReviewedOnly = params.getBoolean("notreviewed")
-            List<Long> userList = paramsService.getParamsSecUserList(params.users,project)
-            List<Long> imagesList = paramsService.getParamsImageInstanceList(params.images,project)
-
-            if (term == null) {
-                responseNotFound("Term", params.idterm)
-            } else if (!params.suggestTerm) {
-                def list = algoAnnotationService.listForUserJob(project, term, userList, imagesList,notReviewedOnly,paramsService.getPropertyGroupToShow(params))
-                responseSuccess(list)
-            }
-        } else {
-            responseNotFound("Project", params.id)
-        }
-    }
-
 
     def downloadDocumentByProject = {
         //TODO:: should be refactor! We should have a specific service

@@ -189,7 +189,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
         $("#infoDisplaySelect").append(loadingAlert);
 
         if (self.nameDomain == "Annotation") {
-            new Annotation2Collection({project: self.model.id}).fetch({
+            new AnnotationCollection({project: self.model.id}).fetch({
                 success: function (collection, response) {
                     self.annotationCollection = collection;
                     addValueSelect(collection, ident);

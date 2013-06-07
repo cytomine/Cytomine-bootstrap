@@ -176,7 +176,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
              height : Math.round($(window).height() - 200),
              callBack: function() {
                  console.log("callBack");
-                 new Annotation2Collection({project: self.project.id, term: term, suggestedTerm: suggestTerm, jobForTermAlgo: self.model.get('userJob')}).fetch({
+                 new AnnotationCollection({project: self.project.id, term: term, suggestedTerm: suggestTerm, jobForTermAlgo: self.model.get('userJob')}).fetch({
                      success: function (collection, response) {
                          console.log("AnnotationQuestionableView");
                          var panel = new AnnotationQuestionableView({

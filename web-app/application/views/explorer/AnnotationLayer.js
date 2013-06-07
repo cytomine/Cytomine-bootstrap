@@ -151,7 +151,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
     }
 
-    var annotationsCollection = new Annotation2Collection({user: this.userID, image: this.imageID, notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true}).url().replace("json", "jsonp");
+    var annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true, kmeans:true}).url().replace("json", "jsonp");
 
 
     console.log("Get annotations for layers:"+annotationsCollection);

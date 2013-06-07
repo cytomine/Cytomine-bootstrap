@@ -24,27 +24,27 @@ class ReviewedAnnotationAPI extends DomainAPI {
     }
 
     static def listByProject(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&project=$id"
         return doGET(URL, username, password)
     }
 
     static def listByProject(Long id, Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&project=$id&user="+idUser
         return doGET(URL, username, password)
     }
 
     static def listByProject(Long id, Long idUser, Long idImage, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser+"&images="+idImage
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&project=$id&users="+idUser+"&images="+idImage
         return doGET(URL, username, password)
     }
 
     static def listByProject(Long id, Long idUser, Long idImage, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/$id/reviewedannotation.json?users="+idUser+"&images="+idImage+"&terms="+idTerm
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&project=$id&users="+idUser+"&images="+idImage+"&term="+idTerm
         return doGET(URL, username, password)
     }
 
     static def listByImageAndTerm(Long idImage, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/term/$idTerm/imageinstance/$idImage/reviewedannotation.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&term=$idTerm&image=$idImage"
         return doGET(URL, username, password)
     }
 
@@ -53,17 +53,17 @@ class ReviewedAnnotationAPI extends DomainAPI {
     }
 
     static def listByImage(Long id, String bbox, String username,String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$id/reviewedannotation.json" + (bbox? "?bbox=$bbox" : "")
+        String URL = Infos.CYTOMINEURL + "api/annotation/search?reviewed=true&image=$id" + (bbox? "&bbox=$bbox" : "")
         return doGET(URL, username, password)
     }
 
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/reviewedannotation.json?conflict=true"
+        String URL = Infos.CYTOMINEURL+"api/annotation/search?reviewed=true&user=$idUser&image="+idImage+"&conflict=true"
         return doGET(URL, username, password)
     }
 
     static def listByImageAndUserAndBBOX(Long idImage,Long idUser, String bbox, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/reviewedannotation.json?bbox=$bbox"
+        String URL = Infos.CYTOMINEURL+"api/annotation/search?reviewed=true&user="+ idUser +"&image="+idImage+"&bbox=$bbox"
         return doGET(URL, username, password)
     }
 

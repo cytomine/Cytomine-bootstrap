@@ -93,7 +93,7 @@ var AnnotationsPanel = Backbone.View.extend({
         }
     },
     refreshAnnotations: function (idTerm, el) {
-        new Annotation2Collection({image: this.model.id, term: idTerm}).fetch({
+        new AnnotationCollection({image: this.model.id, term: idTerm}).fetch({
             success: function (collection, response) {
                 el.empty();
                 var view = new AnnotationView({

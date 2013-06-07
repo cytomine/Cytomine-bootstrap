@@ -47,7 +47,7 @@ var AnnotationReviewedModel = Backbone.Model.extend({
     }
 });
 
-var Annotation2Collection = PaginatedCollection.extend({
+var AnnotationCollection = PaginatedCollection.extend({
     model: AnnotationModel,
      initialize: function (options) {
          this.initPaginator(options);

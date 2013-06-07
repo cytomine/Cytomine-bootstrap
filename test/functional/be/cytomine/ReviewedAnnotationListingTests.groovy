@@ -83,17 +83,17 @@ class ReviewedAnnotationListingTests {
          assert ReviewedAnnotationAPI.containsInJSONList(annotation.id,json)
      }
 
-     void testListReviewedAnnotationByProjectAndUserAndImageWithImageNotExist() {
-         def annotation = BasicInstanceBuilder.getReviewedAnnotation()
-         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assert 404 == result.code
-     }
+//     void testListReviewedAnnotationByProjectAndUserAndImageWithImageNotExist() {
+//         def annotation = BasicInstanceBuilder.getReviewedAnnotation()
+//         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//         assert 404 == result.code
+//     }
 
-     void testListReviewedAnnotationByProjectAndUserAndImageWithUserNotExist() {
-         def annotation = BasicInstanceBuilder.getReviewedAnnotation()
-         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,-99,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assert 404 == result.code
-     }
+//     void testListReviewedAnnotationByProjectAndUserAndImageWithUserNotExist() {
+//         def annotation = BasicInstanceBuilder.getReviewedAnnotation()
+//         def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,-99,annotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//         assert 404 == result.code
+//     }
 
      void testListReviewedAnnotationByProjectAndUserAndImageAndTerm() {
          def annotation = BasicInstanceBuilder.getReviewedAnnotation()

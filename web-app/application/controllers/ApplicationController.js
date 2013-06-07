@@ -47,7 +47,7 @@ var ApplicationController = Backbone.Router.extend({
         self.models.ontologiesLigth = new OntologyCollection({light: true});
         self.models.disciplines = new DisciplineCollection();
         self.models.projects = new ProjectCollection({user: undefined});
-        self.models.annotations = new Annotation2Collection({});
+        self.models.annotations = new AnnotationCollection({});
 
         //"hashtable" with custom collection (useful in software page)
         self.models.currentCollection = {};

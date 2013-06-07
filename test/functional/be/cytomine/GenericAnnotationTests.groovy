@@ -117,7 +117,7 @@ class GenericAnnotationTests  {
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
 
-        def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.retrieveAnnotationDomain().image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id,annotationTerm.retrieveAnnotationDomain().image.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray
@@ -125,8 +125,8 @@ class GenericAnnotationTests  {
 
     void testListAnnotationByProjectAndTermAndUserAndImageWithCredentialForAnnotationUser() {
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
-
-        def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id, annotationTerm.userAnnotation.user.id,annotationTerm.userAnnotation.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        println "SecUser1=${SecUser.list().collect{it.id}.join(', ')}"
+        def result = AnnotationDomainAPI.listByProjectAndTerm(annotationTerm.userAnnotation.project.id, annotationTerm.term.id,annotationTerm.userAnnotation.image.id, annotationTerm.userAnnotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray

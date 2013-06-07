@@ -54,6 +54,16 @@ class ReviewedAnnotationService extends ModelService {
         annotation
     }
 
+    def list(Project project, def propertiesToShow = null) {
+        SecurityACL.check(project.container(),READ)
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: propertiesToShow,
+                project: project.id
+        )
+        annotationListingService.executeRequest(al)
+
+    }
+
     def stats(ImageInstance image) {
         String request = "SELECT user_id, count(*), sum(count_reviewed_annotations) as total \n" +
                 "FROM user_annotation ua\n" +
@@ -76,49 +86,9 @@ class ReviewedAnnotationService extends ModelService {
         data
     }
 
-    def list(Project project, def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
-//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
-//                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
-//                " WHERE a.project_id = " + project.id + "\n" +
-//                " ORDER BY id desc, term"
-//        selectReviewedAnnotationFull(request)
-
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                project: project.id
-        )
-        annotationListingService.executeRequest(al)
-
-    }
-
-    def list(ImageInstance image, def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
-//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent  \n" +
-//                " FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id\n" +
-//                " WHERE a.image_id = " + image.id + "\n" +
-//                " ORDER BY id desc, term"
-//        selectReviewedAnnotationFull(request)
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                image: image.id
-        )
-        annotationListingService.executeRequest(al)
-    }
 
     def listIncluded(ImageInstance image, String geometry, List<Long> terms, AnnotationDomain annotation = null, def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-//         String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent,ST_area(location) as area, ST_perimeter(location) as perimeter, ST_X(ST_centroid(location)) as x,ST_Y(ST_centroid(location)) as y, ai.original_filename as originalfilename  \n" +
-//                 "FROM reviewed_annotation a LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id, abstract_image ai, image_instance ii\n" +
-//                 "WHERE a.image_id = ${image.id} \n" +
-//                 "AND at.term_id IN (${terms.join(',')})\n" +
-//                 "AND a.image_id = ii.id  \n" +
-//                 "AND ii.base_image_id = ai.id  \n" +
-//                 (annotation? "AND a.id <> ${annotation.id} \n" :"")+
-//                 "AND ST_Intersects(a.location,ST_GeometryFromText('${geometry}',0));"
-//
-//        println request
-//        selectReviewedAnnotationFull(request)
 
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(
                 columnToPrint: propertiesToShow,
@@ -130,25 +100,6 @@ class ReviewedAnnotationService extends ModelService {
         annotationListingService.executeRequest(al)
 
     }
-
-    /*def list(Project project, List<Long> userList, List<Long> imageList, List<Long> termList) {
-        SecurityACL.check(project.container(),READ)
-        def reviewed = ReviewedAnnotation.createCriteria().list {
-            eq("project", project)
-            inList("user.id", userList)
-            inList("image.id", imageList)
-            order("created", "desc")
-        }
-        def annotationWithThisTerm = []
-        reviewed.each { review ->
-            boolean hasTerm = false
-            review.terms().each { term ->
-                if (termList.contains(term.id)) hasTerm = true
-            }
-            if (hasTerm) annotationWithThisTerm << review
-        }
-        return annotationWithThisTerm
-    } */
 
     /**
      * List validate annotation
@@ -222,24 +173,7 @@ class ReviewedAnnotationService extends ModelService {
 
                 al.addExtraColumn("numberOfCoveringAnnotation",subRequest)
                 annotationListingService.executeRequest(al)
-//
-//                String request = "SELECT reviewed.id, reviewed.wkt_location, $subRequest as numberOfCoveringAnnotation\n" +
-//                        " FROM reviewed_annotation reviewed\n" +
-//                        " WHERE reviewed.image_id = $image.id\n" +
-//                        " AND ST_Intersects(reviewed.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" +
-//                        " ORDER BY numberOfCoveringAnnotation asc, id asc"
 
-//
-////
-////
-////                  println request
-//                def sql = new Sql(dataSource)
-//
-//                def data = []
-//                sql.eachRow(request) {
-//                    data << [id: it[0], location: it[1], term: []]
-//                }
-//                data
             } else {
 
                 ReviewedAnnotationListing al = new ReviewedAnnotationListing(
@@ -249,109 +183,17 @@ class ReviewedAnnotationService extends ModelService {
                         avoidEmptyCentroid : true,
                         bbox : bbox
                 )
-
-
-
                 if(rule==kmeansGeometryService.KMEANSFULL){
-//                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-//                                  "from reviewed_annotation \n " +
-//                                  "where image_id = ${image.id} " +
-//                                  "and ST_IsEmpty(st_centroid(location))=false " +
-//                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
 
-
-
-//                    annotationListingService.executeRequest(al)
-
-                 kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
-            } else {
-//                String request =  "select kmeans(ARRAY[ST_X(st_centroid(location)), ST_Y(st_centroid(location))], 5) OVER (), location\n " +
-//                                  "from reviewed_annotation \n " +
-//                                  "where image_id = ${image.id}  \n " +
-//                                  "and ST_Intersects(reviewed_annotation.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n"
-                 kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
-            }
+                    kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
+                } else {
+                     kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
+                }
             }
     }
 
-    /**
-     * List validate annotation
-     * @param image Image filter
-     * @param bbox Boundary area filter (String)
-     * @param termsIDS id in order to filters on term. NULL value means no filter
-     * @param userIDS id in order to filters on user. NULL value means no filter
-     * @return Reviewed Annotation list
-     */
-    def list(ImageInstance image, SecUser user, String bbox,def propertiesToShow = null) {
-        return list(image,  GeometryUtils.createBoundingBox(bbox),propertiesToShow)
-    }
-
-    /**
-     * List validate annotation
-     * @param image Image filter
-     * @param bbox Boundary area filter (Geometry)
-     * @param termsIDS id in order to filters on term. NULL value means no filter
-     * @param userIDS id in order to filters on user. NULL value means no filter
-     * @return Reviewed Annotation list
-     */
-    def list(ImageInstance image, SecUser user, Geometry bbox,def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                user : user.id,
-                image: image.id,
-                bbox : bbox.toText()
-        )
-        annotationListingService.executeRequest(al)
-    }
-
-    def list(ImageInstance image, Term term,def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                term : term.id,
-                image: image.id,
-        )
-        annotationListingService.executeRequest(al)
-    }
-
-    def list(ImageInstance image, SecUser user,def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                user : user.id,
-                image: image.id,
-        )
-        annotationListingService.executeRequest(al)
-    }
-
-    def list(Project project, List<Long> termList, List<Long> userList, List<Long> imageInstanceList, Geometry bbox = null,def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
-//        boolean filterOnImages = ImageInstance.countByProject(project) != imageInstanceList.size()
-//        String request = "SELECT a.id as id, a.image_id as image, a.geometry_compression as geometryCompression, a.project_id as project, a.user_id as user,a.count_comments as nbComments,extract(epoch from a.created)*1000 as created, extract(epoch from a.updated)*1000 as updated, 1 as countReviewedAnnotations,at.term_id as term, at.reviewed_annotation_terms_id as annotationTerms,a.user_id as userTerm,a.wkt_location as location,parent_ident as parent   \n" +
-//                " FROM reviewed_annotation a, reviewed_annotation_term at\n" +
-//                " WHERE a.id = at.reviewed_annotation_terms_id \n" +
-//                " AND a.project_id = " + project.id + "\n" +
-//                " AND at.term_id IN  (" + termList.join(",") + ")\n" +
-//                " AND a.id = at.reviewed_annotation_terms_id\n" +
-//                " AND a.user_id IN (" + userList.join(",") + ") \n" +
-//                (filterOnImages ? " AND a.image_id IN (" + imageInstanceList.collect {it}.join(",") + ") \n" : "") +
-//                (bbox ? " AND ST_Intersects(a.location,ST_GeometryFromText('" + bbox.toString() + "',0))\n" : "") +
-//                " ORDER BY id desc, term"
-//        selectReviewedAnnotationFull(request)
-
-        ReviewedAnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: propertiesToShow,
-                project : project.id,
-                terms : termList,
-                users : userList,
-                images : imageInstanceList,
-                bbox : bbox?.toText()
-        )
-        annotationListingService.executeRequest(al)
 
 
-    }
 
     /**
 //     * Execute request and format result into a list of map

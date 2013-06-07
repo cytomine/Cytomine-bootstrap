@@ -7,6 +7,14 @@
 class AnnotationUrlMappings {
 
     static mappings = {
+
+        /**
+         * Annotation search
+         */
+        "/api/annotation/search"(controller:"restAnnotationDomain"){
+            action = [GET: "search"]
+        }
+
         /**
          * Annotation generic
          */
@@ -19,24 +27,6 @@ class AnnotationUrlMappings {
         "/api/annotation/$id"(controller:"restAnnotationDomain"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/imageinstance/$id/annotation"(controller:"restAnnotationDomain"){
-            action = [GET:"listByImage"]
-        }
-        "/api/project/$id/annotation"(controller: "restAnnotationDomain"){
-             action = [GET:"listByProject"]
-         }
-        "/api/imageinstance/$id/annotation"(controller:"restAnnotationDomain"){
-            action = [GET:"listByImage"]
-        }
-        "/api/user/$idUser/imageinstance/$idImage/annotation"(controller:"restAnnotationDomain"){
-            action = [GET:"listByImageAndUser"]
-        }
-        "/api/project/$id/annotation/download"(controller: "restAnnotationDomain"){
-            action = [GET:"downloadDocumentByProject"]
-        }
-        "/api/term/$idterm/project/$idproject/annotation"(controller:"restAnnotationDomain"){
-            action = [GET: "listAnnotationByProjectAndTerm"]
-        }
 
         /**
          * User Annotation
@@ -48,25 +38,7 @@ class AnnotationUrlMappings {
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
-        "/api/project/$id/userannotation"(controller: "restUserAnnotation"){
-             action = [GET:"listByProject"]
-         }
-        "/api/imageinstance/$id/userannotation"(controller:"restUserAnnotation"){
-            action = [GET:"listByImage"]
-        }
-        "/api/user/$idUser/imageinstance/$idImage/userannotation"(controller:"restUserAnnotation"){
-            action = [GET:"listByImageAndUser"]
-        }
-        "/api/term/$idterm/project/$idproject/userannotation"(controller:"restUserAnnotation"){
-            action = [GET: "listAnnotationByProjectAndTerm"]
-        }
-        "/api/term/$idterm/imageinstance/$idimageinstance/userannotation"(controller:"restAnnotationTerm"){
-            action = [GET: "listAnnotationByProjectAndImageInstance"]
-        }
 
-        "/api/project/$id/userannotation/download"(controller: "restUserAnnotation"){
-            action = [GET:"downloadDocumentByProject"]
-        }
 
         /**
          * Comment annotation
@@ -101,24 +73,8 @@ class AnnotationUrlMappings {
         "/api/algoannotation/$id"(controller:"restAlgoAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/imageinstance/$id/algoannotation"(controller:"restAlgoAnnotation"){
-            action = [GET:"listByImage"]
-        }
-        "/api/project/$id/algoannotation"(controller: "restAlgoAnnotation"){
-             action = [GET:"listByProject"]
-         }
-        "/api/imageinstance/$id/algoannotation"(controller:"restAlgoAnnotation"){
-            action = [GET:"listByImage"]
-        }
-        "/api/user/$idUser/imageinstance/$idImage/algoannotation"(controller:"restAlgoAnnotation"){
-            action = [GET:"listByImageAndUser"]
-        }
-        "/api/project/$id/algoannotation/download"(controller: "restAlgoAnnotation"){
-            action = [GET:"downloadDocumentByProject"]
-        }
-        "/api/term/$idterm/project/$idproject/algoannotation"(controller:"restAlgoAnnotation"){
-            action = [GET: "listAnnotationByProjectAndTerm"]
-        }
+
+
 
         /**
          * Annotation correction
@@ -127,7 +83,18 @@ class AnnotationUrlMappings {
             action = [POST:"addCorrection"]
         }
 
-
+        /**
+         * Reporting
+         */
+        "/api/project/$id/userannotation/download"(controller: "restUserAnnotation"){
+            action = [GET:"downloadDocumentByProject"]
+        }
+        "/api/project/$id/algoannotation/download"(controller: "restAlgoAnnotation"){
+            action = [GET:"downloadDocumentByProject"]
+        }
+        "/api/project/$id/annotation/download"(controller: "restAnnotationDomain"){
+              action = [GET:"downloadDocumentByProject"]
+          }
         "/api/imageinstance/$idImage/annotation/included"(controller:"restAnnotationDomain"){
                 action = [GET: "listIncludedAnnotation"]
          }
@@ -135,9 +102,5 @@ class AnnotationUrlMappings {
             action = [GET:"downloadIncludedAnnotation"]
         }
 
-
-        "/api/annotation/search"(controller:"restAnnotationDomain"){
-            action = [GET: "search"]
-        }
     }
 }

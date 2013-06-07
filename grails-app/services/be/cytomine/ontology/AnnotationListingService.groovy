@@ -1,6 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -27,15 +28,66 @@ class AnnotationListingService extends ModelService {
     def cytomineService
     def transactionService
     def dataSource
+    def kmeansGeometryService
 
 
     def listGeneric(AnnotationListing al) {
+        println "p=${al.kmeansValue}"
+        println "kmeans=${al.kmeans}"
         SecurityACL.check(al.container(),READ)
+        if(al.kmeans && !al.kmeansValue) {
+            if(!al.image || !al.user || !al.bbox) {
+                throw new WrongArgumentException("If you want to use kmeans, you must provide image (=${al.image}, user (=${al.user}) and bbox (=${al.bbox})")
+            }
+            def rule = kmeansGeometryService.mustBeReduce(al.image,al.user,al.bbox)
+            al.kmeansValue = rule
+            println "s=${al.kmeansValue}"
+        }
         executeRequest(al)
     }
 
     def executeRequest(AnnotationListing al) {
-        selectGenericAnnotation(al)
+
+
+        println "x=${al.kmeansValue}"
+        if(al.kmeansValue==kmeansGeometryService.FULL) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            selectGenericAnnotation(al)
+        } else if(al.kmeansValue==kmeansGeometryService.KMEANSFULL) {
+            kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())
+        } else {
+            kmeansGeometryService.doKeamsSoftRequest(al.getAnnotationsRequest())
+        }
+
     }
 
     /**

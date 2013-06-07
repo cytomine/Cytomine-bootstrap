@@ -44,84 +44,101 @@ class RestAnnotationDomainController extends RestController {
     def algoAnnotationService
     def reviewedAnnotationService
     def paramsService
-    def userService
     def exportService
     def annotationListingService
 
+
+
     /**
-     * List annotation by project
-     * If user filter is set, redirect request to the user type controller
+     * Search service for all annotation type
+     * see AnnotationListing for all filters available
      */
-    def listByProject = {
-
-        Project project = projectService.read(params.long('id'))
-
-        if (project) {
-            List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
-            if (!userList.isEmpty() && userList.get(0)?.algo()) {
-                forward(controller: "restAlgoAnnotation", action: "listByProject")
-            } else {
-                forward(controller: "restUserAnnotation", action: "listByProject")
-            }
-        }
-        else {
-            responseNotFound("Project", params.id)
+    def search = {
+         try {
+             AnnotationListing al
+             def result = []
+             if(isReviewedAnnotationAsked(params)) {
+                 al = new ReviewedAnnotationListing()
+                 result = createRequest(al, params)
+             } else if(isAlgoAnnotationAsked(params)) {
+                 al = new AlgoAnnotationListing()
+                 result.addAll(createRequest(al, params))
+                 params.suggestedTerm = params.term
+                 params.term = null
+                 params.usersForTermAlgo = params.users
+                 params.users = null
+                 al = new UserAnnotationListing() //if algo, we look for user_annotation JOIN algo_annotation_term  too
+                 result.addAll(createRequest(al, params))
+             } else {
+                 al = new UserAnnotationListing()
+                 result = createRequest(al, params)
+             }
+             responseSuccess(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 
     /**
-     * List annotation by image and user
-     * Redirect to the user corresponding controller
+     * Check if we ask reviewed annotation
      */
-    def listByImageAndUser = {
-        def user = SecUser.read(params.idUser)
-        if (user) {
-            if (user.algo()) {
-                forward(controller: "restAlgoAnnotation", action: "listByImageAndUser")
-            } else {
-                forward(controller: "restUserAnnotation", action: "listByImageAndUser")
-            }
+    private boolean isReviewedAnnotationAsked(def params) {
+        return params.getBoolean('reviewed')
+    }
+
+    /**
+     * Check if we ask algo annotation
+     */
+    private boolean isAlgoAnnotationAsked(def params) {
+        def idUser = params.getLong('user')
+        if(idUser) {
+           def user = SecUser.read(idUser)
+           if(!user) {
+               throw new ObjectNotFoundException("User $user not exist!")
+           }
+           return user.algo()
         } else {
-            responseNotFound("User", params.idUser)
+           def idUsers = params.get('users')
+            if(idUsers) {
+                def ids= idUsers.replace("_",",").split(",").collect{Long.parseLong(it)}
+                def user = SecUser.read(ids.first())
+                if(!user) {
+                    throw new ObjectNotFoundException("User $user not exist!")
+                }
+                return !ids.isEmpty() && user.algo()
+            }
         }
+        //if no other filter, just take user annotation
+        return false
     }
 
     /**
-     * List annotation by project and term
+     * Fill AnnotationListing al thanks to params data
      */
-    def listAnnotationByProjectAndTerm = {
-
-        Project project = projectService.read(params.long('idproject'))
-        println "listAnnotationByProjectAndTerm"
-        if(params.getBoolean('reviewed')) {
-            forward(controller: "restReviewedAnnotation", action: "listAnnotationByProjectAndTerm")
-        } else {
-
-            List<SecUser> userList = paramsService.getParamsSecUserDomainList(params.users, project)
-            if (!userList.isEmpty() && userList.get(0)?.algo()) {
-                println "listAnnotationByProjectAndTerm algo"
-                forward(controller: "restAlgoAnnotation", action: "listAnnotationByProjectAndTerm")
-            } else {
-                println "listAnnotationByProjectAndTerm user"
-                forward(controller: "restUserAnnotation", action: "listAnnotationByProjectAndTerm")
-            }
-        }
-    }
-
     private def createRequest(AnnotationListing al, def params) {
 
-//        AnnotationListing al = new UserAnnotationListing()
         al.columnToPrint = paramsService.getPropertyGroupToShow(params)
         al.project = params.getLong('project')
         al.user = params.getLong('user')
         if(params.getLong("job")) {
             al.user = UserJob.findByJob(Job.read(params.getLong("job")))?.id
         }
+        if(params.getLong("jobForTermAlgo")) {
+            al.userForTermAlgo = UserJob.findByJob(Job.read(params.getLong("job")))?.id
+        }
 
         al.term = params.getLong('term')
         al.image = params.getLong('image')
         al.suggestedTerm = params.getLong('suggestedTerm')
         al.userForTermAlgo = params.getLong('userForTermAlgo')
+
+        al.kmeansValue = params.getLong('kmeansValue')
+        println "a=${al.kmeansValue}"
+        if(!al.kmeansValue || al.kmeansValue == 0) {
+            al.kmeansValue = 3
+        }
+        println "b=${al.kmeansValue}"
 
         def users = params.get('users')
         if(users) {
@@ -148,11 +165,6 @@ class RestAnnotationDomainController extends RestController {
             al.suggestedTerms = params.get('suggestedTerms').split(",").collect{Long.parseLong(it)}
         }
 
-//        def userForTermAlgo = params.get('userForTermAlgo')
-//        if(userForTermAlgo) {
-//            al.userForTermAlgo = params.get('userForTermAlgo').split(",").collect{Long.parseLong(it)}
-//        }
-
         def usersForTermAlgo = params.get('usersForTermAlgo')
         if(usersForTermAlgo) {
             al.usersForTermAlgo = params.get('usersForTermAlgo').split(",").collect{Long.parseLong(it)}
@@ -162,60 +174,13 @@ class RestAnnotationDomainController extends RestController {
         al.noTerm = params.getBoolean('noTerm')
         al.noAlgoTerm = params.getBoolean('noAlgoTerm')
         al.multipleTerm = params.getBoolean('multipleTerm')
+        al.kmeans = params.getBoolean('kmeans')
 
         if(params.get('bbox')) {
             al.bbox = GeometryUtils.createBoundingBox(params.get('bbox')).toText()
         }
-
-        println "**** ${al.userForTermAlgo}"
-
+        println "kmeans=${al.kmeans}"
         annotationListingService.listGeneric(al)
-
-    }
-
-
-    def search = {
-        println "###########################################"
-
-        AnnotationListing al
-        //isReviewedAnnotationAsked
-        def result = []
-        if(isReviewedAnnotationAsked(params)) {
-            al = new ReviewedAnnotationListing()
-            result = createRequest(al, params)
-        } else if(isAlgoAnnotationAsked(params)) {
-            al = new AlgoAnnotationListing()
-            result.addAll(createRequest(al, params))
-            params.suggestedTerm = params.term
-            params.term = null
-            params.usersForTermAlgo = params.users
-            params.users = null
-            al = new UserAnnotationListing()
-            result.addAll(createRequest(al, params))
-        } else {
-            al = new UserAnnotationListing()
-            result = createRequest(al, params)
-        }
-        responseSuccess(result)
-    }
-
-    private boolean isReviewedAnnotationAsked(def params) {
-        return params.getBoolean('reviewed')
-    }
-
-    private boolean isAlgoAnnotationAsked(def params) {
-        def idUser = params.getLong('user')
-        if(idUser) {
-           return SecUser.read(idUser).algo()
-        } else {
-           def idUsers = params.get('users')
-            if(idUsers) {
-                def ids= idUsers.replace("_",",").split(",").collect{Long.parseLong(it)}
-                return !ids.isEmpty() && SecUser.read(ids.first()).algo()
-            }
-        }
-        //if no other filter, just take user annotation
-        return false
     }
 
     /**
@@ -333,10 +298,10 @@ class RestAnnotationDomainController extends RestController {
             response = reviewedAnnotationService.listIncluded(image,geometry,terms,annotation,propertiesToShow)
         } else if (user.algo()) {
             //goto algo
-            response = algoAnnotationService.list(image,geometry,user,terms,annotation,propertiesToShow)
+            response = algoAnnotationService.listIncluded(image,geometry,user,terms,annotation,propertiesToShow)
         }  else {
             //goto user annotation
-            response = userAnnotationService.list(image,geometry,user,terms,annotation,propertiesToShow)
+            response = userAnnotationService.listIncluded(image,geometry,user,terms,annotation,propertiesToShow)
         }
         println "END" + AnnotationListing.availableColumnDefault
         response

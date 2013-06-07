@@ -213,6 +213,7 @@ var BrowseImageView = Backbone.View.extend({
 
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
              console.log("GO TO ANNOTATION") ;
+
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
                     var layer = _.find(self.layers, function (layer) {
@@ -220,7 +221,7 @@ var BrowseImageView = Backbone.View.extend({
                     });
                     if (layer) {
                         layer.showFeature(annotation.get("id"));
-                        self.goToAnnotation(layer, annotation);
+                        self.goToAnnotation(addVlayer, annotation);
                         self.setLayerVisibility(layer, true);
                         setTimeout(function () {
                             var feature = layer.getFeature(annotation.id)
@@ -354,9 +355,9 @@ var BrowseImageView = Backbone.View.extend({
             self.initAutoAnnoteTools();
 
         }  else {
-            if (_.isFunction(self.initCallback)) {
-                self.initCallback.call();
-            }
+//            if (_.isFunction(self.initCallback)) {
+//                self.initCallback.call();
+//            }
         }
     },
     /**
