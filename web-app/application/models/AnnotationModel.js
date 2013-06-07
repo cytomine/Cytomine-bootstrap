@@ -63,7 +63,7 @@ var AnnotationCollection = PaginatedCollection.extend({
                  text = text + "&" + key + "=" + this.filters[key];
              }
          }
-        return 'api/annotation/search.json?'+text
+        return 'api/annotation.json?'+text
     }
 });
 

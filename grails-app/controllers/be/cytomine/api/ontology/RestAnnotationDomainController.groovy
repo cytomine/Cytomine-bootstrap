@@ -135,10 +135,6 @@ class RestAnnotationDomainController extends RestController {
 
         al.kmeansValue = params.getLong('kmeansValue')
         println "a=${al.kmeansValue}"
-        if(!al.kmeansValue || al.kmeansValue == 0) {
-            al.kmeansValue = 3
-        }
-        println "b=${al.kmeansValue}"
 
         def users = params.get('users')
         if(users) {

@@ -8,12 +8,12 @@ class AnnotationUrlMappings {
 
     static mappings = {
 
-        /**
-         * Annotation search
-         */
-        "/api/annotation/search"(controller:"restAnnotationDomain"){
-            action = [GET: "search"]
-        }
+//        /**
+//         * Annotation search
+//         */
+//        "/api/annotation/search"(controller:"restAnnotationDomain"){
+//            action = []
+//        }
 
         /**
          * Annotation generic
@@ -22,7 +22,7 @@ class AnnotationUrlMappings {
             action = [PUT:"union", GET:"union"]
         }
         "/api/annotation"(controller:"restAnnotationDomain"){
-            action = [GET: "list",POST:"add"]
+            action = [GET: "search",POST:"add"]
         }
         "/api/annotation/$id"(controller:"restAnnotationDomain"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]

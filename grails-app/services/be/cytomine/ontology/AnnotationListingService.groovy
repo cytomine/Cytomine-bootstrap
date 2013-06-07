@@ -42,6 +42,9 @@ class AnnotationListingService extends ModelService {
             def rule = kmeansGeometryService.mustBeReduce(al.image,al.user,al.bbox)
             al.kmeansValue = rule
             println "s=${al.kmeansValue}"
+        } else {
+            //no kmeans
+            al.kmeansValue = kmeansGeometryService.FULL
         }
         executeRequest(al)
     }

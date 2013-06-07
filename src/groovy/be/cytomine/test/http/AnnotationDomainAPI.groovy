@@ -23,56 +23,56 @@ class AnnotationDomainAPI extends DomainAPI {
 
 
     static def listByProject(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?project=$id"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?project=$id"
         return doGET(URL, username, password)
     }
 
     static def listByProject(Long id, Long idUser, Long idImage, String username, String password) {
         //String URL = Infos.CYTOMINEURL + "api/project/$id/userannotation.json?users="+idUser+"&images="+idImage
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?project=$id&users="+idUser+"&images="+idImage
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?project=$id&users="+idUser+"&images="+idImage
         return doGET(URL, username, password)
     }
 
     static def listByTerm(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?term=$id"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$id"
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?term=$idTerm&project=$idProject&users="+idUser
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser
         return doGET(URL, username, password)
     }
 
 
 
     static def listByProjectAndTerm(Long idProject, Long idTerm,Long idImage, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&image=$idImage"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&image=$idImage"
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndTermWithSuggest(Long idProject, Long idTerm,Long idSuggest, Long idJob,String username, String password) {
         //String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/annotation.json?suggestTerm="+idSuggest+"&job=$idJob"
-        String URL = Infos.CYTOMINEURL + "api/annotation/search.json?term=$idTerm&project=$idProject&suggestedTerm=$idSuggest&jobForTermAlgo=$idJob"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&suggestedTerm=$idSuggest&jobForTermAlgo=$idJob"
         return doGET(URL, username, password)
     }
 
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation/search.json?user="+ idUser +"&image="+idImage
+        String URL = Infos.CYTOMINEURL+"api/annotation.json?user="+ idUser +"&image="+idImage
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsers(Long id,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation/search.json?project=$id&users=" +idUser
+        String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&users=" +idUser
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsersWithoutTerm(Long id,Long idUser, Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation/search.json?project=$id&noTerm=true&users=$idUser"+ (idImage? "&image="+idImage:"")
+        String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&noTerm=true&users=$idUser"+ (idImage? "&image="+idImage:"")
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsersSeveralTerm(Long id,Long idUser, Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation/search.json?project=$id&multipleTerm=true&users=" +idUser + (idImage? "&image="+idImage:"")
+        String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&multipleTerm=true&users=" +idUser + (idImage? "&image="+idImage:"")
         return doGET(URL, username, password)
     }
 

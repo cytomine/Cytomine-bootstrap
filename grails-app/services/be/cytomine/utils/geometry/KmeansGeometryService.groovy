@@ -7,6 +7,7 @@ import be.cytomine.security.SecUser
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.io.WKTReader
 import groovy.sql.Sql
 
 class KmeansGeometryService {
@@ -81,6 +82,11 @@ class KmeansGeometryService {
 
         data
     }
+
+    public int mustBeReduce(Long image, Long user, String bbox) {
+        mustBeReduce(ImageInstance.read(image),SecUser.read(user),new WKTReader().read(bbox))
+    }
+
 
     public int mustBeReduce(ImageInstance image, SecUser user, Geometry bbox) {
         if (image.baseImage.width==null) {

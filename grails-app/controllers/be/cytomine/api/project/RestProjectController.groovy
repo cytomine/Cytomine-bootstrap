@@ -137,7 +137,6 @@ class RestProjectController extends RestController {
     def dataSource
 
     private def doGenericRequest(String request,Boolean fullData) {
-        log.info "REQUEST=" + request
         def data = []
 
         new Sql(dataSource).eachRow(request) {
