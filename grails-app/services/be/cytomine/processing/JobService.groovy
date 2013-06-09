@@ -47,36 +47,7 @@ class JobService extends ModelService {
      * List max job for a project and a software
      * Light flag allow to get a light list with only main job properties
      */
-    def list(def softwares_id, def projects_id, boolean light) {
-        Collection<Project> projects = null
-        if (projects_id) {
-            projects = []
-            projects_id.each { idProject ->
-                Project project = Project.read(idProject)
-                if(project) {
-                    SecurityACL.check(project,READ)
-                    projects << project
-                }
-            }
-        } else {
-            projects = SecurityACL.getProjectList(cytomineService.currentUser)
-        }
-
-        Collection<Software> softwares = null
-        if (softwares_id) {
-            softwares = []
-            softwares_id.each { idSoftware ->
-                Software software = Software.read(idSoftware)
-                if(software) {
-                    SecurityACL.check(software,READ)
-                    softwares << software
-                }
-            }
-        } else {
-            softwares = SoftwareProject.findAllByProjectInList(projects).collect { it.software }
-        }
-
-        if (projects.size() == 0 || softwares.size() == 0) return []
+    def list(def softwares, def projects, boolean light) {
 
         def jobs = Job.findAllBySoftwareInListAndProjectInList(softwares, projects, [sort : "created", order : "desc"])
 

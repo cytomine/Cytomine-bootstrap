@@ -31,6 +31,11 @@ class SoftwareService extends ModelService {
         Software.read(id)
     }
 
+    def readMany(def ids) {
+        //TODO: check authorization?
+        Software.findAllByIdInList(ids)
+    }
+
     def list() {
         SecurityACL.checkUser(cytomineService.currentUser)
         Software.list()

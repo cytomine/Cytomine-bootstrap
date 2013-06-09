@@ -52,6 +52,16 @@ class ProjectService extends ModelService {
         project
     }
 
+    def readMany(def ids) {
+        def projects = Project.findAllByIdInList(ids)
+        if(projects) {
+            projects.each { project ->
+                SecurityACL.check(project,READ)
+            }
+        }
+        projects
+    }
+
     def get(def id, def domain) {
         def project = Project.get(id)
         if(project) {

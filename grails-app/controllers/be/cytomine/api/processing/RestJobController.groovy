@@ -2,6 +2,7 @@ package be.cytomine.api.processing
 
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -35,50 +36,24 @@ class RestJobController extends RestController {
      */
     def list = {
         Boolean light = params.boolean('light') ? params.boolean('light') : false;
-        def softwares = params.software ? params.software.split(',') : null
-        def projects = params.project ? params.project.split(',') : null
+        def softwares_id = params.software ? params.software.split(',').collect { Long.parseLong(it)} : null
+        def projects_id = params.project ? params.project.split(',').collect { Long.parseLong(it)} : null
+
+        Collection<Project> projects
+        if (projects_id) {
+            projects = projectService.readMany(projects_id)
+        } else {
+            projects = projectService.list(cytomineService.currentUser)
+        }
+
+        Collection<Software> softwares
+        if (softwares_id) {
+            softwares = softwareService.readMany(softwares_id)
+        } else {
+            softwares = Software.list() //implement security ?
+        }
 
         responseSuccess(jobService.list(softwares, projects, light))
-
-    }
-
-    /**
-     * List all job for a project
-     */
-    def listByProject = {
-        boolean light = params.light==null ? false : params.boolean('light')
-
-        Project project = projectService.read(params.long('project'))
-        if(project) {
-            log.info "project="+project.id + " software="+params.software
-            if(params.software!=null) {
-                Software software = Software.read(params.software)
-                if(software) {
-                    responseSuccess(jobService.list(software,project,light))
-                } else {
-                    responseNotFound("Job", "Software", params.software)
-                }
-            } else {
-                responseSuccess(jobService.list(project,light))
-            }
-        } else {
-            responseNotFound("Job", "Project", params.id)
-        }
-    }
-
-    /**
-     * List all job for a software and a project
-     */
-    def listBySoftwareAndProject = {
-        Software software = softwareService.read(params.long('software'));
-        Project project = projectService.read(params.long('project'));
-        if (!software) {
-            responseNotFound("Job", "Software", params.idSoftware)
-        } else if (!project) {
-            responseNotFound("Job", "Project", params.idProject)
-        } else {
-            responseSuccess(jobService.list(software, project,false))
-        }
     }
 
     /**
