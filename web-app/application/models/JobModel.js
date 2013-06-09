@@ -7,16 +7,12 @@
  */
 var JobModel = Backbone.Model.extend({
     url: function () {
-        if (this.project != undefined && this.software != undefined) {
-            return "api/project/" + this.project + "/job.json?software=" + this.software;
-        } else {
-            var base = 'api/job';
-            var format = '.json';
-            if (this.isNew()) {
-                return base + format;
-            }
-            return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+        var base = 'api/job';
+        var format = '.json';
+        if (this.isNew()) {
+            return base + format;
         }
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
     initialize: function (options) {
         this.project = options.project;
@@ -24,6 +20,16 @@ var JobModel = Backbone.Model.extend({
         this.light = options.light;
         this.max = options.max;
     },
+    executeUrl : function() {
+        return "/api/job/" + this.id + "/execute";
+    },
+    previewUrl : function() {
+        return "/api/job/" + this.id + "/preview";
+    },
+    previewRoiUrl : function() {
+        return "/api/job/" + this.id + "/preview_roi";
+    },
+    //to do : put theses methods into JOB MARSHALLER
     isNotLaunch: function () {
         return (this.get('status') == 0)
     },
@@ -47,15 +53,6 @@ var JobModel = Backbone.Model.extend({
     },
     isPreviewed: function () {
         return (this.get('status') == 7)
-    },
-    executeUrl : function() {
-        return "/api/job/" + this.id + "/execute";
-    },
-    previewUrl : function() {
-        return "/api/job/" + this.id + "/preview";
-    },
-    previewRoiUrl : function() {
-        return "/api/job/" + this.id + "/preview_roi";
     }
 });
 
@@ -64,14 +61,17 @@ var JobCollection = PaginatedCollection.extend({
     model: JobModel,
 
     url: function () {
-        if (this.project != undefined && this.software != undefined) {
-            var l = this.light == undefined ? "" : "&light=" + this.light;
-            return "api/project/" + this.project + "/job.json?software=" + this.software + l;
-        } else if (this.project != undefined) {
-            return "api/project/" + this.project + "/job.json";
-        } else {
-            return "api/job.json";
+        var query_params = [];
+        if (this.project) {
+            query_params.push("project=" + this.project);
         }
+        if (this.software) {
+            query_params.push("software=" + this.software);
+        }
+        if (this.light) {
+            query_params.push("light=" + this.light);
+        }
+        return "api/job.json?" + query_params.join("&");
     },
     initialize: function (options) {
         this.initPaginator(options);

@@ -28,12 +28,7 @@ class JobAPI extends DomainAPI {
     }
 
     static def listBySoftwareAndProject(Long idSoftware, Long idProject,String username, String password, boolean light) {
-        String URL = ""
-        if(!light) {
-            URL = Infos.CYTOMINEURL + "api/software/$idSoftware/project/$idProject/job.json"
-        } else {
-            URL = Infos.CYTOMINEURL + "api/project/$idProject/job.json?software="+idSoftware + "&light=true&max=5"
-        }
+        String URL = Infos.CYTOMINEURL + "api/job.json?software=$idSoftware&project=$idProject&light=$light"
         return doGET(URL, username, password)
     }
 

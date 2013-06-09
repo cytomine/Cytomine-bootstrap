@@ -40,10 +40,16 @@ class JobTests  {
         assert json.collection instanceof JSONArray
 
         result = JobAPI.listBySoftwareAndProject(-99,job.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
-        assert 404 == result.code
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        assert json.collection.size() == 0
 
         result = JobAPI.listBySoftwareAndProject(job.software.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD,false)
-        assert 404 == result.code
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        assert json.collection.size() == 0
     }
 
     void testListJobBySoftwareAndProjectWithCredentialLight() {

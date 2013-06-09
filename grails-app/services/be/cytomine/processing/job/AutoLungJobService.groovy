@@ -40,6 +40,10 @@ class AutoLungJobService  extends AbstractJobService {
         AutoLungJob.triggerNow([ job : job, userJob: userJob, preview : preview])
     }
 
+    public boolean previewAvailable() {
+        return true
+    }
+
     def getPreviewROI(Job job) {
         return jobDataService.getJobDataBinaryValue(job, "preview_before")
     }

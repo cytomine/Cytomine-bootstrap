@@ -9,6 +9,7 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
@@ -33,8 +34,12 @@ class RestJobController extends RestController {
      * List all job
      */
     def list = {
-        def projects = projectService.list(cytomineService.currentUser)
-        responseSuccess(jobService.list(projects))
+        Boolean light = params.boolean('light') ? params.boolean('light') : false;
+        def softwares = params.software ? params.software.split(',') : null
+        def projects = params.project ? params.project.split(',') : null
+
+        responseSuccess(jobService.list(softwares, projects, light))
+
     }
 
     /**
@@ -43,7 +48,7 @@ class RestJobController extends RestController {
     def listByProject = {
         boolean light = params.light==null ? false : params.boolean('light')
 
-        Project project = projectService.read(params.long('id'))
+        Project project = projectService.read(params.long('project'))
         if(project) {
             log.info "project="+project.id + " software="+params.software
             if(params.software!=null) {
@@ -65,8 +70,8 @@ class RestJobController extends RestController {
      * List all job for a software and a project
      */
     def listBySoftwareAndProject = {
-        Software software = softwareService.read(params.long('idSoftware'));
-        Project project = projectService.read(params.long('idProject'));
+        Software software = softwareService.read(params.long('software'));
+        Project project = projectService.read(params.long('project'));
         if (!software) {
             responseNotFound("Job", "Software", params.idSoftware)
         } else if (!project) {

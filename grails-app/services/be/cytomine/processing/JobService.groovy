@@ -1,10 +1,9 @@
 package be.cytomine.processing
 
+import be.cytomine.Exception.CytomineMethodNotYetImplementedException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
@@ -30,6 +29,7 @@ class JobService extends ModelService {
     def secUserService
     def annotationListingService
     def dataSource
+    //def softwareService
 
     def currentDomain() {
         return Job
@@ -43,34 +43,43 @@ class JobService extends ModelService {
         job
     }
 
-    def list(List<Project> projects) {
-        projects.each { project ->
-            SecurityACL.check(project,READ)
-        }
-        Job.findAllByProjectInList(projects,[sort: "created", order: "desc"])
-    }
-
-    /**
-     * List max job for a project
-     * Light flag allow to get a light list with only main job properties
-     */
-    def list(Project project, boolean light) {
-        SecurityACL.check(project,READ)
-        def jobs = Job.findAllByProject(project, [sort: "created", order: "desc"])
-        if(!light) {
-            return jobs
-        } else {
-            getJOBResponseList(jobs)
-        }
-    }
-
     /**
      * List max job for a project and a software
      * Light flag allow to get a light list with only main job properties
      */
-    def list(Software software, Project project, boolean light) {
-        SecurityACL.check(project,READ)
-        def jobs = Job.findAllBySoftwareAndProject(software, project, [sort: "created", order: "desc"])
+    def list(def softwares_id, def projects_id, boolean light) {
+        Collection<Project> projects = null
+        if (projects_id) {
+            projects = []
+            projects_id.each { idProject ->
+                Project project = Project.read(idProject)
+                if(project) {
+                    SecurityACL.check(project,READ)
+                    projects << project
+                }
+            }
+        } else {
+            projects = SecurityACL.getProjectList(cytomineService.currentUser)
+        }
+
+        Collection<Software> softwares = null
+        if (softwares_id) {
+            softwares = []
+            softwares_id.each { idSoftware ->
+                Software software = Software.read(idSoftware)
+                if(software) {
+                    SecurityACL.check(software,READ)
+                    softwares << software
+                }
+            }
+        } else {
+            softwares = SoftwareProject.findAllByProjectInList(projects).collect { it.software }
+        }
+
+        if (projects.size() == 0 || softwares.size() == 0) return []
+
+        def jobs = Job.findAllBySoftwareInListAndProjectInList(softwares, projects, [sort : "created", order : "desc"])
+
         if(!light) {
             jobs.each {
                 //compute success rate if not yet done
@@ -245,6 +254,11 @@ class JobService extends ModelService {
      * @return The job
      */
     public def executeJob(Job job, boolean preview) {
+
+        if (preview && !job.software.service.previewAvailable()) {
+            throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
+        }
+
         SecurityACL.check(job.container(),READ)
 
         UserJob userJob = UserJob.findByJob(job)

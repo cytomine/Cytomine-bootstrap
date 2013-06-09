@@ -23,7 +23,7 @@ class Job extends CytomineDomain  {
     public static int FAILED = 4
     public static int INDETERMINATE = 5
     public static int WAIT = 6
-    public static int REVIEW_DONE = 7
+    public static int PREVIEWED = 7
 
     /**
      * Job progression
@@ -162,6 +162,38 @@ class Job extends CytomineDomain  {
 
     public String toString() {
         software.getName() + "[" + software.getId() + "]"
+    }
+
+    public isNotLaunch () {
+        return status == NOTLAUNCH
+    }
+
+    public isInQueue () {
+        return status == INQUEUE
+    }
+
+    public isRunning () {
+        return status == RUNNING
+    }
+
+    public isSuccess () {
+        return status == SUCCESS
+    }
+
+    public isFailed () {
+        return status == FAILED
+    }
+
+    public isIndeterminate () {
+        return status == INDETERMINATE
+    }
+
+    public isWait () {
+        return status == WAIT
+    }
+
+    public isPreviewed () {
+        return status == PREVIEWED
     }
 
 }

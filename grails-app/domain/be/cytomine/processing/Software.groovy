@@ -43,14 +43,20 @@ class Software extends CytomineDomain {
     String description
 
     /**
-     * Command to execute software
+     * Result sample (image, report, ...)
+     */
+    byte[] resultSample
+
+    /**
+     * (deprecated) Command to execute software
      */
     String executeCommand
 
     static constraints = {
         name(nullable: false, unique: true)
         resultName(nullable:true)
-        description(nullable:true, blank : false)
+        description(nullable:true, blank : false, maxSize: 65560)
+        resultSample(nullable:true)
         executeCommand(nullable: true)
     }
 

@@ -1,5 +1,6 @@
 package be.cytomine.processing.job
 
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
@@ -175,12 +176,20 @@ abstract class AbstractJobService {
     public abstract def execute(Job job, UserJob userJob, boolean preview);
 
     /**
+     * Indicates if a preview is available for the software
+     * @return
+     */
+    public boolean previewAvailable() {
+        return false
+    }
+
+    /**
      * Return the ROI used for the preview
      * @param job
      * @return
      */
     public def getPreviewROI(Job job) {
-        return null
+        throw new ObjectNotFoundException("Preview roi not available")
     }
 
     /**
@@ -189,7 +198,7 @@ abstract class AbstractJobService {
      * @return
      */
     public def getPreview(Job job) {
-        return null
+        throw new ObjectNotFoundException("Preview not available")
     }
 
     protected def createArgsArray(Job job) {

@@ -11,7 +11,6 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
@@ -67,7 +66,7 @@ class ProjectService extends ModelService {
         Project.list(sort: "name")
     }
 
-    def list(User user) {
+    def list(SecUser user) {
         SecurityACL.checkUser(cytomineService.currentUser)
         //faster to get it from database table (getProjectList) than PostFilter
         SecurityACL.getProjectList(user)

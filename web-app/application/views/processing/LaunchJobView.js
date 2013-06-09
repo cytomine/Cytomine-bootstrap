@@ -4,7 +4,6 @@ var LaunchJobView = Backbone.View.extend({
     project: null,
     parent: null,
     params: [],
-    job : null,
     paramsViews: [],
     initialize: function (options) {
         this.width = options.width;
@@ -92,29 +91,17 @@ var LaunchJobView = Backbone.View.extend({
 
 
     createJobFromParam: function (callback) {
-        var self = this;
-        //retrieve an array of param
-
-        var params = self.retrieveParams();
         //create job model
+        var job = this.createJobModel(this.retrieveParams());
 
-        if (!self.job)
-            self.job = self.createJobModel(params);
-        else
-            self.job.set({params : params});
-        //create a job, in post data, add param array
-//        console.log("job.set()...");
-//        job.set('jobParameters',params);
-//        //send job
-
-        self.saveJobModel(self.job, callback);
+        //save it
+        this.saveJobModel(job, callback);
 
         //adapt grails to support jobparams inside job (put private and public key)
 
         //close windows (ok in dialog), refresh daashboardalog view
     },
     executeJob : function(idJob) {
-        console.log("execute " + idJob);
         var job = new JobModel({ id : idJob})
         $.post(job.executeUrl())
             .done(function() {
@@ -129,7 +116,7 @@ var LaunchJobView = Backbone.View.extend({
         .done(function() {
             var interval = setInterval(function() {
                 var previewJob = $("#previewJob");
-                previewJob.html('<div class="progress progress-striped active"><div class="bar" style="width: 90%;"></div></div>');
+                previewJob.html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>');
                 job.fetch({
                     success : function(model, response) {
                         if (model.isPreviewed()) {
@@ -174,7 +161,6 @@ var LaunchJobView = Backbone.View.extend({
         var self = this;
         job.save({}, {
             success: function (model, response) {
-                self.job = model;
                 window.app.view.message("Add Job", response.message, "success");
                 self.parent.changeJobSelection(model.get('job').id);
                 if (callback) {
