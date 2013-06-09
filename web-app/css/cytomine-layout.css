@@ -85,7 +85,7 @@ div.olControlOverviewMapElement {
 
 div .sidebar-map {
     z-index: 800;
-    background-color: rgb(90, 89, 89);
+    background-color: #000;
     padding: 0px;
     width: 261px;
 }
@@ -94,7 +94,7 @@ div .sidebar-toolbar {
     z-index: 800;
     position : absolute;
     right: 5px;
-    top: 85px;
+    top: 95px;
 }
 
 div .toolbar-group > .btn {
@@ -111,13 +111,13 @@ div .toolbar-group > .btn {
 div .sidebar-map-left {
     position : absolute;
     left: 10px;
-    bottom: 85px;
+    bottom: 95px;
 }
 
 div .sidebar-map-right {
     position : absolute;
     right: 43px;
-    top: 85px;
+    top: 95px;
 }
 
 .sidebar-content ul {
@@ -127,24 +127,26 @@ div .sidebar-map-right {
 div .sidebar-content h3 {
     color:#fff;
     margin:0;
-    background-color:#5a5959;
+    background-color:#000;
     padding:0px 10px 0px 10px;
-    background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
+    /*background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
+    text-shadow:0 -1px 1px #333;*/
     border-top:solid #6b6b6b 1px;
     border-bottom:solid #3d3d3d 1px;
-    text-shadow:0 -1px 1px #333;
+
     font-size: 11px;
     line-height: 23px;
     text-transform: uppercase;
 }
 
 div .sidebar-content {
-    box-shadow:0 1px 0 #727272;
+    /*box-shadow:0 1px 0 #727272;*/
     color:#fff;
+    background-color:#000;
     font-size:13px;
     display:block;
     padding:0px 0px 0px 0px;
-    text-shadow:0 1px 1px #000;
+    /*text-shadow:0 1px 1px #000;*/
 }
 
 div .popupPanel a {
