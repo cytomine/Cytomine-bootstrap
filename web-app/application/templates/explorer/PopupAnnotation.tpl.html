@@ -1,5 +1,5 @@
-<h3>Current selection</h3>
-<div class="popupPanel">
+<h3><i class="toggle-content-info icon-plus icon-white icon-small"></i> Current selection</h3>
+<div class="popupPanel annotation-info-panel">
     <ul>
         <li style="color:#FFFFFF;"><b>Area </b> : <%= area %> <%= areaUnit %></li>
         <li style="color:#FFFFFF;"><b>Perimeter</b> : <%= perimeter %> <%= perimeterUnit %></li>
@@ -12,12 +12,12 @@
             annotation</a></li>
     </ul>
 </div>
-<h3>Annotation Preview</h3>
-<div style="padding-left : 3px;padding-right: 3px;text-align: center;">
+<h3><i class="toggle-content-preview icon-plus icon-white icon-small"></i> Annotation Preview</h3>
+<div class="annotation-preview-panel" style="padding-left : 3px;padding-right: 3px;text-align: center;">
     <img src="<%= smallCropURL %>" style="max-width: 256px;max-height: 256px;"/>
 </div>
-<h3>Similarities</h3>
-<div class="popupPanel">
+<h3><i class="toggle-content-suggested icon-plus icon-white icon-small"></i>Similarities</h3>
+<div class="popupPanel-suggest annotation-suggested-panel">
     <ul>
         <li style="color:#FFFFFF;"><b>Suggested term</b> :
             <div id="suggTerm<%= id %>"></div>
@@ -26,9 +26,13 @@
             similar annotations...</label></li>
     </ul>
 </div>
-<h3>Properties</h3>
-<div class="popupPanel">
+<h3><i class="toggle-content-property icon-plus icon-white icon-small"></i> Properties</h3>
+<div class="popupPanel annotation-property-panel">
     <ul>
         <li style="color:#FFFFFF;"><a href="#tabs-annotationproperties-<%= project %>-<%= id %>">Add a property</a></li>
     </ul>
+</div>
+<h3><i class="toggle-content-description icon-plus icon-white icon-small"></i> Description</h3>
+<div class="popupPanel annotation-description-panel">
+    A description
 </div>

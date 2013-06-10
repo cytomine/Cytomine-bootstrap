@@ -1,6 +1,7 @@
 package be.cytomine.test
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
@@ -16,6 +17,7 @@ import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.*
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -929,6 +931,12 @@ class BasicInstanceBuilder {
         def parameter =   new SoftwareParameter(name: getRandomString(),software:software,type:"String")
         checkDomain(parameter)
     }
+
+    static Description getDescriptionNotExist(CytomineDomain domain,boolean save = false) {
+        Description description = new Description(domainClassName: domain.class.name, domainIdent: domain.id, data: "A description for this domain!")
+        save ? saveDomain(description) : checkDomain(description)
+    }
+
 
     static ImageServer getImageServer() {
 

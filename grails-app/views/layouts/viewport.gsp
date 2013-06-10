@@ -241,6 +241,8 @@ body {
 <script type="text/javascript" src="application/views/explorer/MultiDimensionPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/InformationsPanel.js" ></script>
 <script type="text/javascript" src="application/views/explorer/AnnotationPropertyPanel.js" ></script>
+<script type="text/javascript" src="application/views/explorer/AnnotationPopupPanel.js" ></script>
+
 
 <script type="text/javascript" src="application/views/upload/UploadFormView.js" ></script>
 
