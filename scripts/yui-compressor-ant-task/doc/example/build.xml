@@ -150,6 +150,7 @@
 <fileset dir="${src.dir}" includes="application/views/explorer/MultiDimensionPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/InformationsPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/explorer/AnnotationPropertyPanel.js"/>
+<fileset dir="${src.dir}" includes="application/views/explorer/AnnotationPopupPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/upload/UploadFormView.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageReviewAction.js"/>
 <fileset dir="${src.dir}" includes="application/views/image/ImageThumbView.js"/>

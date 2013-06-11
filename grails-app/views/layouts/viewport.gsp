@@ -39,6 +39,7 @@
 
 
 
+
 <style type="text/css">
 body {
     padding-top: 55px;
@@ -98,6 +99,23 @@ body {
 <script type="text/javascript" src="lib/underscore.js"></script>
 <script type="text/javascript" src="lib/backbone.js"></script>
 <script type="text/javascript" src="lib/backbone.paginator.js"></script>
+
+<!-- wysihtml5 -->
+%{--<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/libs/css/bootstrap-wysihtml5.css"/>--}%
+%{--<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/libs/css/bootstrap.min.css"></link>--}%
+%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0.js"></script>--}%
+%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/jquery-1.7.2.min.js"></script>--}%
+%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap.min.js"></script>--}%
+%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap-wysihtml5.js"></script>--}%
+
+
+
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css">
+%{--<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css"></link>--}%
+<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
+%{--<script src="libs/js/jquery-1.7.1.min.js"></script>--}%
+%{--<script src="libs/js/bootstrap.min.js"></script>--}%
+<script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
 
 
 <script type="text/javascript" src="lib/json2.js"></script>
@@ -163,13 +181,16 @@ body {
 
 <script type="text/javascript" src="application/models/PaginatorModel.js" ></script>
 
+<script type="text/javascript" src="application/models/DescriptionModel.js" ></script>
+<script type="text/javascript" src="application/models/DisciplineModel.js" ></script>
+
 <script type="text/javascript" src="application/models/UploadedFileModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationsFilterModel.js" ></script>
 <script type="text/javascript" src="application/models/ImageModel.js" ></script>
 <script type="text/javascript" src="application/models/TermModel.js" ></script>
 <script type="text/javascript" src="application/models/ImageFilter.js" ></script>
 <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
-<script type="text/javascript" src="application/models/DisciplineModel.js" ></script>
+
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
 <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
@@ -188,6 +209,9 @@ body {
 <script type="text/javascript" src="application/models/AnnotationPropertyModel.js" ></script>
 <script type="text/javascript" src="application/models/ImageInstancePropertyModel.js" ></script>
 <script type="text/javascript" src="application/models/ProjectPropertyModel.js" ></script>
+
+
+
 
 <!-- View -->
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
