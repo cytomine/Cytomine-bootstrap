@@ -46,3 +46,67 @@ var CustomModal = Backbone.View.extend({
         });
     }
 });
+
+var DescriptionModal = {
+
+    initDescriptionModal : function(container,idDescription,domainIdent, domainClassName, text,callback) {
+        var width = Math.round($(window).width()*0.50);
+         var modal = new CustomModal({
+             idModal : "descriptionModal"+domainIdent,
+             button : container.find("a.description"),
+             header :"Description",
+             body :'<div id="description'+domainIdent+'"><textarea style="width: '+(width-100)+'px;" id="descriptionArea'+domainIdent+'" placeholder="Enter text ...">'+text+'</textarea></div>',
+             width : width,
+             height : Math.round($(window).height()*0.50),
+             callBack : function() {
+                 $("#descriptionArea"+domainIdent).wysihtml5({});
+
+                 $("#saveDescription"+idDescription).click(function(e) {
+
+                         new DescriptionModel({id:idDescription,domainIdent: domainIdent, domainClassName: domainClassName}).save({
+                             domainIdent: domainIdent,
+                             domainClassName: domainClassName,
+                             data :  $("#descriptionArea"+domainIdent).val()
+                         }, {success: function (termModel, response) {
+                             callback();
+                          }, error: function (model, response) {
+                              var json = $.parseJSON(response.responseText);
+                              window.app.view.message("Correct term", "error:" + json.errors, "");
+                          }});
+
+                 });
+
+             }
+         });
+         modal.addButtons("saveDescription"+idDescription,"Save",true);
+         modal.addButtons("closeDescription"+idDescription,"Close",false);
+
+    },
+    initDescriptionView : function(domainIdent, domainClassName, container, maxPreviewCharNumber, callback) {
+         var self = this;
+        new DescriptionModel({domainIdent: domainIdent, domainClassName: domainClassName}).fetch(
+                {success: function (description, response) {
+                    container.empty();
+                    var text = description.get('data');
+                    var textButton = "Edit";
+                    if(text.replace(/<[^>]*>/g, "").length>maxPreviewCharNumber) {
+                        text = text.substr(0,maxPreviewCharNumber)+"...";
+                        textButton = "See full text and edit"
+                    }
+                    container.append(text);
+                    container.append(' <a href="#descriptionModal'+domainIdent+'" role="button" class="description" data-toggle="modal">'+textButton+'</a>');
+
+                    self.initDescriptionModal(container,description.id,domainIdent,domainClassName,description.get('data'),callback);
+                }, error: function (model, response) {
+                    container.empty();
+                    container.append(' <a href="#descriptionModal'+domainIdent+'" role="button" class="description" data-toggle="modal">Add description</a>');
+                    self.initDescriptionModal(container,null,domainIdent,domainClassName,"",callback);
+
+                }});
+
+    }
+}
+
+
+
+

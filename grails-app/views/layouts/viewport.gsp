@@ -101,20 +101,9 @@ body {
 <script type="text/javascript" src="lib/backbone.paginator.js"></script>
 
 <!-- wysihtml5 -->
-%{--<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/libs/css/bootstrap-wysihtml5.css"/>--}%
-%{--<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/libs/css/bootstrap.min.css"></link>--}%
-%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0.js"></script>--}%
-%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/jquery-1.7.2.min.js"></script>--}%
-%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap.min.js"></script>--}%
-%{--<script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap-wysihtml5.js"></script>--}%
 
-
-
-<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css">
-%{--<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css"></link>--}%
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 <script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
-%{--<script src="libs/js/jquery-1.7.1.min.js"></script>--}%
-%{--<script src="libs/js/bootstrap.min.js"></script>--}%
 <script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
 
 

@@ -69,13 +69,8 @@
 <fileset dir="${src.dir}" includes="lib/underscore.js"/>
 <fileset dir="${src.dir}" includes="lib/backbone.js"/>
 <fileset dir="${src.dir}" includes="lib/backbone.paginator.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/jquery-1.7.2.min.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap.min.js"/>
-<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/bootstrap-wysihtml5.js"/>
-<fileset dir="${src.dir}" includes="libs/js/wysihtml5-0.3.0_rc2.min.js"/>
-<fileset dir="${src.dir}" includes="libs/js/jquery-1.7.1.min.js"/>
-<fileset dir="${src.dir}" includes="libs/js/bootstrap.min.js"/>
+<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"/>
+<fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"/>
 <fileset dir="${src.dir}" includes="lib/json2.js"/>
 <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"/>
 <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"/>

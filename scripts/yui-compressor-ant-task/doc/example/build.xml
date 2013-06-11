@@ -80,13 +80,14 @@
 <fileset dir="${src.dir}" includes="application/controllers/AccountController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/PhonoController.js"/>
 <fileset dir="${src.dir}" includes="application/models/PaginatorModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/DescriptionModel.js"/>
+<fileset dir="${src.dir}" includes="application/models/DisciplineModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/UploadedFileModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/AnnotationsFilterModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ImageModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/TermModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ImageFilter.js"/>
 <fileset dir="${src.dir}" includes="application/models/OntologyModel.js"/>
-<fileset dir="${src.dir}" includes="application/models/DisciplineModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/UserModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ProjectModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/AnnotationModel.js"/>

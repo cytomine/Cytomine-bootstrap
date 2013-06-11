@@ -125,7 +125,7 @@ class RestAnnotationDomainController extends RestController {
             al.user = UserJob.findByJob(Job.read(params.getLong("job")))?.id
         }
         if(params.getLong("jobForTermAlgo")) {
-            al.userForTermAlgo = UserJob.findByJob(Job.read(params.getLong("job")))?.id
+            al.userForTermAlgo = UserJob.findByJob(Job.read(params.getLong("jobForTermAlgo")))?.id
         }
 
         al.term = params.getLong('term')
