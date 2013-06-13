@@ -9,6 +9,7 @@ import be.cytomine.ontology.Relation
  */
 class RestRelationController extends RestController {
 
+
     def springSecurityService
     def relationService
 

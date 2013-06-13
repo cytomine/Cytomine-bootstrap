@@ -81,13 +81,18 @@ body {
 
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
+
+<!-- RequireJS -->
+<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
+
+
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
 
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
 
-<!-- RequireJS -->
-<script type="text/javascript" src="lib/requirejs/require.js"></script>
+
 
 <!-- Twitter bootstrap -->
 <!--<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>-->

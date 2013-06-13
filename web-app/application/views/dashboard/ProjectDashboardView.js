@@ -138,7 +138,9 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     fetchProjectInfo: function () {
         var self = this;
+        console.log("a");
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
+            console.log("b");
             //Description
 //            var maxLengthDescription = 30;
 //            var shortDescription;
@@ -150,12 +152,26 @@ var ProjectDashboardView = Backbone.View.extend({
 //            self.model.set({ "shortDescription" : shortDescription});
 
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
+            console.log("c");
 
-            $("#projectInfoPanel").find(".description")
+            $("#projectInfoPanel").find(".description");
+            console.log("d");
             //initDescriptionView(domainIdent, domainClassName, container, maxPreviewCharNumber);
             console.log("test");
             console.log(DescriptionModal);
-            DescriptionModal.initDescriptionView(self.model.id, self.model.get('class'), $("#projectInfoPanel").find(".description"), 150, function() {self.fetchProjectInfo();});
+            DescriptionModal.initDescriptionView(self.model.id, self.model.get('class'), $("#projectInfoPanel").find(".description"), 150,
+                    function() {
+                        var text = $("#projectInfoPanel").find(".description").html();
+                        $("#projectInfoPanel").find(".description").empty().append(text.replace(new RegExp("<h.>", "g"),'<br>').replace(new RegExp("</h.>", "g"),'<br>'));
+                    },
+                    function() {
+                        self.fetchProjectInfo();
+                    }
+            );
+
+
+
+
             //Get users list
             $("#projectInfoUserList").empty();
             var users = []

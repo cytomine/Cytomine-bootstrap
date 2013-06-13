@@ -68,8 +68,6 @@ class Project extends CytomineDomain implements Serializable {
      */
     boolean retrievalAllOntology = true
 
-    String description
-
     static belongsTo = [ontology: Ontology]
     static hasMany = [retrievalProjects : Project]
 
@@ -77,7 +75,6 @@ class Project extends CytomineDomain implements Serializable {
     static constraints = {
         name(maxSize: 150, unique: true, blank: false)
         discipline(nullable: true)
-        description(type: 'text', maxSize: 4096, nullable: true)
     }
 
     /**
@@ -147,8 +144,6 @@ class Project extends CytomineDomain implements Serializable {
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
-        domain.description = JSONUtils.getJSONAttrStr(json, 'description')
-
         if(!json.retrievalProjects.toString().equals("null")) {
             domain.retrievalProjects?.clear()
             json.retrievalProjects.each { idProject ->
@@ -190,7 +185,6 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
             returnArray['created'] = project.created?.time?.toString()
             returnArray['updated'] = project.updated?.time?.toString()
-            returnArray['description'] = project.description
             return returnArray
         }
     }

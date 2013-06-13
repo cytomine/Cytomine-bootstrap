@@ -55,11 +55,11 @@ class RestUploadedFileController extends RestController {
         SecUser currentUser = cytomineService.getCurrentUser()
         String errorMessage = ""
 
-        Integer id_project = params.int("idProject")
-        Integer id_storage = params.int("idStorage")
+        Integer idProject = params.int("idProject")
+        Integer idStorage = params.int("idStorage")
 
-        println "id_project : $id_project"
-        println "id_storage : $id_storage"
+        println "idProject : $idProject"
+        println "idStorage : $idStorage"
 
         //get file to upload
         def f = request.getFile('files[]')
@@ -87,8 +87,8 @@ class RestUploadedFileController extends RestController {
                     ext : extension,
                     size : f.size,
                     contentType : f.contentType,
-                    projects : (id_project ? [id_project]: []),
-                    storages : [id_storage],
+                    projects : (idProject ? [idProject]: []),
+                    storages : [idStorage],
                     user : currentUser
             )
             uploadedFile.save(flush : true)
@@ -112,7 +112,9 @@ class RestUploadedFileController extends RestController {
         }
 
         //Convert and deploy
+        println "Convert and deploy"
         backgroundService.execute("convertAndDeployImage", {
+            println "uploadedFile_copy"
             UploadedFile uploadedFile_copy = UploadedFile.get(uploadedFile.id)
             def uploadedFiles = convertImagesService.convertUploadedFile(uploadedFile_copy, currentUser)
             Collection<AbstractImage> abstractImagesCreated = []

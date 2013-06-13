@@ -136,6 +136,7 @@ abstract class AnnotationListing {
             if(projectList.size()>1) {
                 throw new WrongArgumentException("Images from filter must all be from the same project!")
             }
+            return projectList.first()
         }
         throw new WrongArgumentException("There is no project or image filter. We cannot check acl!")
     }

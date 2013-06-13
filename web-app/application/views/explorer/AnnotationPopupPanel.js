@@ -275,63 +275,68 @@ showSimilarAnnotation: function (model) {
      });
  },
     retrieveDescription : function(annotation) {
+        var self = this;
         var content = $(".textcontent"+annotation.id);
         console.log("retrieveDescription");
+        DescriptionModal.initDescriptionView(annotation.id, annotation.get('class'), content, 150, function() {
+            var text = content.html();
+            content.empty().append(text.replace(new RegExp("<h.>", "g"),'<br>').replace(new RegExp("</h.>", "g"),'<br>'));
+        },function() {self.render();});
 
-        var initOpenDialog = function(text, id) {
-            var width = Math.round($(window).width()*0.50);
-            var modal = new CustomModal({
-                idModal : "annotationDescriptionModal",
-                button : content.find("a.description"),
-                header :"Annotation description",
-                body :'<div id="annotationDescription'+annotation.id+'"><textarea style="width: '+(width-100)+'px;" id="descriptionArea'+annotation.id+'" placeholder="Enter text ...">'+text+'</textarea></div>',
-                width : width,
-                height : Math.round($(window).height()*0.50),
-                callBack : function() {
-                    $("#descriptionArea"+annotation.id).wysihtml5({});
-
-                    $("#saveAnnotationDescription").click(function(e) {
-
-                            new DescriptionModel({id:id,domainIdent: annotation.id, domainClassName: annotation.get('class')}).save({
-                                domainIdent: annotation.id,
-                                domainClassName: annotation.get('class'),
-                                data :  $("#descriptionArea"+annotation.id).val()
-                            }, {success: function (termModel, response) {
-
-                             }, error: function (model, response) {
-                                 var json = $.parseJSON(response.responseText);
-                                 window.app.view.message("Correct term", "error:" + json.errors, "");
-                             }});
-
-                    });
-                }
-            });
-            modal.addButtons("saveAnnotationDescription","Save",true);
-            modal.addButtons("closeAnnotationDescription","Close",false);
-        }
-
-
-        new DescriptionModel({domainIdent: annotation.id, domainClassName: annotation.get('class')}).fetch(
-                {success: function (description, response) {
-                    content.empty();
-                    var text = description.get('data');
-                    var textButton = "";
-                    var textWithoutHtml = text.replace(/<[^>]*>/g, "");
-                    if(textWithoutHtml.length>150) {
-                        text = text.substr(0,150)+"...";
-                        textButton = "See all and edit"
-                    } else {
-                        textButton = "Edit"
-                    }
-                    content.append(text);
-                    content.append(' <a href="#annotationDescriptionModal" role="button" class="description" data-toggle="modal">'+textButton+'</a>');
-
-                    initOpenDialog(text,description.id);
-                }, error: function (model, response) {
-                    content.empty();
-                    content.append(' <a href="#annotationDescriptionModal" role="button" class="description" data-toggle="modal">Add description</a>');
-                    initOpenDialog("",null);
-
-                }});
+//        var initOpenDialog = function(text, id) {
+//            var width = Math.round($(window).width()*0.50);
+//            var modal = new CustomModal({
+//                idModal : "annotationDescriptionModal",
+//                button : content.find("a.description"),
+//                header :"Annotation description",
+//                body :'<div id="annotationDescription'+annotation.id+'"><textarea style="width: '+(width-100)+'px;" id="descriptionArea'+annotation.id+'" placeholder="Enter text ...">'+text+'</textarea></div>',
+//                width : width,
+//                height : Math.round($(window).height()*0.50),
+//                callBack : function() {
+//                    $("#descriptionArea"+annotation.id).wysihtml5({});
+//
+//                    $("#saveAnnotationDescription").click(function(e) {
+//
+//                            new DescriptionModel({id:id,domainIdent: annotation.id, domainClassName: annotation.get('class')}).save({
+//                                domainIdent: annotation.id,
+//                                domainClassName: annotation.get('class'),
+//                                data :  $("#descriptionArea"+annotation.id).val()
+//                            }, {success: function (termModel, response) {
+//
+//                             }, error: function (model, response) {
+//                                 var json = $.parseJSON(response.responseText);
+//                                 window.app.view.message("Correct term", "error:" + json.errors, "");
+//                             }});
+//
+//                    });
+//                }
+//            });
+//            modal.addButtons("saveAnnotationDescription","Save",true);
+//            modal.addButtons("closeAnnotationDescription","Close",false);
+//        }
+//
+//
+//        new DescriptionModel({domainIdent: annotation.id, domainClassName: annotation.get('class')}).fetch(
+//                {success: function (description, response) {
+//                    content.empty();
+//                    var text = description.get('data');
+//                    var textButton = "";
+//                    var textWithoutHtml = text.replace(/<[^>]*>/g, "");
+//                    if(textWithoutHtml.length>150) {
+//                        text = text.substr(0,150)+"...";
+//                        textButton = "See all and edit"
+//                    } else {
+//                        textButton = "Edit"
+//                    }
+//                    content.append(text);
+//                    content.append(' <a href="#annotationDescriptionModal" role="button" class="description" data-toggle="modal">'+textButton+'</a>');
+//
+//                    initOpenDialog(text,description.id);
+//                }, error: function (model, response) {
+//                    content.empty();
+//                    content.append(' <a href="#annotationDescriptionModal" role="button" class="description" data-toggle="modal">Add description</a>');
+//                    initOpenDialog("",null);
+//
+//                }});
     }
 });

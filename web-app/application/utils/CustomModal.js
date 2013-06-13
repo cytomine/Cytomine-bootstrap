@@ -50,14 +50,15 @@ var CustomModal = Backbone.View.extend({
 var DescriptionModal = {
 
     initDescriptionModal : function(container,idDescription,domainIdent, domainClassName, text,callback) {
-        var width = Math.round($(window).width()*0.50);
+        var width = Math.round($(window).width()*0.75);
+        var height =  Math.round($(window).height()*0.75);
          var modal = new CustomModal({
              idModal : "descriptionModal"+domainIdent,
              button : container.find("a.description"),
              header :"Description",
-             body :'<div id="description'+domainIdent+'"><textarea style="width: '+(width-100)+'px;" id="descriptionArea'+domainIdent+'" placeholder="Enter text ...">'+text+'</textarea></div>',
+             body :'<div id="description'+domainIdent+'"><textarea style="width: '+(width-100)+'px;height: '+(height-100)+'px;" id="descriptionArea'+domainIdent+'" placeholder="Enter text ...">'+text+'</textarea></div>',
              width : width,
-             height : Math.round($(window).height()*0.50),
+             height : height,
              callBack : function() {
                  $("#descriptionArea"+domainIdent).wysihtml5({});
 
@@ -82,7 +83,7 @@ var DescriptionModal = {
          modal.addButtons("closeDescription"+idDescription,"Close",false);
 
     },
-    initDescriptionView : function(domainIdent, domainClassName, container, maxPreviewCharNumber, callback) {
+    initDescriptionView : function(domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet,callbackUpdate) {
          var self = this;
         new DescriptionModel({domainIdent: domainIdent, domainClassName: domainClassName}).fetch(
                 {success: function (description, response) {
@@ -95,12 +96,13 @@ var DescriptionModal = {
                     }
                     container.append(text);
                     container.append(' <a href="#descriptionModal'+domainIdent+'" role="button" class="description" data-toggle="modal">'+textButton+'</a>');
+                    callbackGet();
 
-                    self.initDescriptionModal(container,description.id,domainIdent,domainClassName,description.get('data'),callback);
+                    self.initDescriptionModal(container,description.id,domainIdent,domainClassName,description.get('data'),callbackUpdate);
                 }, error: function (model, response) {
                     container.empty();
                     container.append(' <a href="#descriptionModal'+domainIdent+'" role="button" class="description" data-toggle="modal">Add description</a>');
-                    self.initDescriptionModal(container,null,domainIdent,domainClassName,"",callback);
+                    self.initDescriptionModal(container,null,domainIdent,domainClassName,"",callbackUpdate);
 
                 }});
 

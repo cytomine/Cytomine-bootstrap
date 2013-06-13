@@ -671,7 +671,7 @@ class BasicInstanceBuilder {
         def name = "BasicProject".toUpperCase()
         def project = Project.findByName(name)
         if (!project) {
-            project = new Project(name: name, ontology: getOntology(), discipline: getDiscipline(), description: "BasicDescription")
+            project = new Project(name: name, ontology: getOntology(), discipline: getDiscipline())
             saveDomain(project)
             try {
                 Infos.addUserRight(Infos.GOODLOGIN,project)
@@ -682,7 +682,7 @@ class BasicInstanceBuilder {
 
 
     static Project getProjectNotExist(boolean save = false) {
-        Project project = new Project(name: getRandomString(), ontology: saveDomain(getOntologyNotExist()), discipline: getDiscipline(), description: "BasicDescription" )
+        Project project = new Project(name: getRandomString(), ontology: saveDomain(getOntologyNotExist()), discipline: getDiscipline()  )
         if(save) {
             saveDomain(project)
             Infos.addUserRight(Infos.GOODLOGIN,project)
