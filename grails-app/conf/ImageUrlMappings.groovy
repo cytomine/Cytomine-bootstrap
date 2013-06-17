@@ -11,6 +11,9 @@ class ImageUrlMappings {
         "/api/image"(controller: "restImage"){
             action = [GET:"list", POST:"add"]
         }
+        "/api/camera"(controller: "restImage"){
+            action = [POST:"camera"]
+        }
         "/api/image/$id"(controller: "restImage"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }

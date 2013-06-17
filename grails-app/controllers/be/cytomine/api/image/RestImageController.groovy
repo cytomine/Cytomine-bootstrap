@@ -18,6 +18,7 @@ import grails.converters.JSON
 import ij.ImagePlus
 import ij.process.ImageProcessor
 import ij.process.PolygonFiller
+import sun.misc.BASE64Decoder
 
 import javax.imageio.ImageIO
 import java.awt.BasicStroke
@@ -384,6 +385,33 @@ class RestImageController extends RestController {
                 return null
             }
         }
+    }
+
+    public static BufferedImage decodeToImage(String imageString) {
+
+        BufferedImage image = null;
+        byte[] imageByte;
+        try {
+            BASE64Decoder decoder = new BASE64Decoder();
+            imageByte = decoder.decodeBuffer(imageString);
+            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+            image = ImageIO.read(bis);
+            bis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    def camera = {
+        println "camera"
+        println params.data
+        BASE64Decoder decoder = new BASE64Decoder();
+        byte[] imageByte = decoder.decodeBuffer(params.data);
+        response.setContentType "application/octet-stream"
+        response.setHeader "Content-disposition", "attachment; filename=capture.png"
+        response.getOutputStream() << imageByte
+        response.getOutputStream().flush()
     }
 }
 

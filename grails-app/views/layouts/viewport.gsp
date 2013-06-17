@@ -85,8 +85,6 @@ body {
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
-
-
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
 
 

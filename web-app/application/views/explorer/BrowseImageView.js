@@ -1089,20 +1089,35 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
 
-//        toolbar.find('a[id=camera' + this.model.get('id') + ']').click(function () {
-//            console.log("cheese!");
-//
-//            html2canvas($("body"), {
-//                onrendered: function(canvas) {
-//                    console.log("canvas is done");
-//                    // canvas is the final rendered <canvas> element
-//                    var data = canvas.toDataURL();
-//                    console.log("image is done");
-//                    console.log(data);
-//                    // data is the Base64-encoded image
-//                }
-//            });
-//        });
+        toolbar.find('a[id=camera' + this.model.get('id') + ']').click(function () {
+            alert(":-)");
+            var tiles = self.map.baseLayer.grid;
+            var newCanvas = document.createElement('canvas');
+            var newContext = newCanvas.getContext("2d");
+            var newCanvasWidth = tiles[0].length * tiles[0][0].size.w;
+            var newCanvasHeight = tiles.length * tiles[0][0].size.h;
+            newCanvas.width = newCanvasWidth;
+            newCanvas.height = newCanvasHeight;
+            //newCanvas.display = 'none';
+            document.body.appendChild(newCanvas);
+            var mapContainerDiv = $("#maptabs-image" + self.model.id).children().children()[0];
+            var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
+            var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
+            for (var row = 0; row < tiles.length; row++) {
+                for (var col = 0; col < tiles[row].length; col++) {
+                    var tile = tiles[row][col];
+                    var tileCtx = tile.getCanvasContext();
+                    if (tileCtx) {
+                        newContext.drawImage(
+                            tileCtx.canvas,
+                            viewPositionLeft + tile.position.x,
+                            viewPositionTop + tile.position.y);
+                    }
+                }
+            }
+            $.post("api/camera", {data: newCanvas.toDataURL('image/png')});
+            document.body.removeChild(newCanvas);
+        });
 
 
         /*toolbar.find('input[id=irregular' + this.model.get('id') + ']').click(function () {
