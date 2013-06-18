@@ -130,7 +130,7 @@ abstract class AnnotationListing {
      */
     CytomineDomain container() {
         if(project) return Project.read(project)
-        if(image) return ImageInstance.read(image)
+        if(image) return ImageInstance.read(image)?.container()
         if(images) {
             def projectList = images.collect{ImageInstance.read(it).project}.unique()
             if(projectList.size()>1) {
@@ -391,7 +391,8 @@ class UserAnnotationListing extends AnnotationListing {
             gis : [area: 'ST_area(a.location)',perimeter:'ST_perimeter(a.location)',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
             term : [term : 'at.term_id', annotationTerms : 'at.id', userTerm: 'at.user_id'],
             image : [originalfilename : 'ai.original_filename'],
-            algo : [id:'aat.id',rate:'aat.rate',idTerm:'aat.term_id',idExpectedTerm:'aat.expected_term_id']
+            algo : [id:'aat.id',rate:'aat.rate',idTerm:'aat.term_id',idExpectedTerm:'aat.expected_term_id'],
+            user : [creator:'u.username',lastname: 'u.lastname',firstname: 'u.firstname']
         ]
 
 
@@ -425,6 +426,10 @@ class UserAnnotationListing extends AnnotationListing {
 
           }
 
+         if(columnToPrint.contains('user')) {
+             from = "$from, sec_user u "
+             where = "$where AND a.user_id = u.id \n"
+         }
 
          if(columnToPrint.contains('image')) {
              from = "$from, abstract_image ai, image_instance ii "
@@ -483,7 +488,8 @@ class AlgoAnnotationListing extends AnnotationListing {
             wkt : [location:'a.wkt_location'],
             gis : [area: 'ST_area(a.location)',perimeter:'ST_perimeter(a.location)',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
             term : [term : 'aat.term_id', annotationTerms : 'aat.id', userTerm: 'aat.user_job_id',rate:'aat.rate'],
-            image : [originalfilename : 'ai.original_filename']
+            image : [originalfilename : 'ai.original_filename'],
+            user : [creator:'u.username',software: 's.name',job: 'j.created']
         ]
 
 
@@ -518,6 +524,13 @@ class AlgoAnnotationListing extends AnnotationListing {
                  where = "$where AND a.image_id = ii.id \n" +
                          "AND ii.base_image_id = ai.id\n"
              }
+
+              if(columnToPrint.contains('user')) {
+                  from = "$from, sec_user u, job j, software s "
+                  where = "$where AND a.user_id = u.id \n" +
+                          "AND u.job_id = j.id\n" +
+                          "AND j.software_id = s.id\n"
+              }
           }
 
         return from +"\n" + where
@@ -592,6 +605,7 @@ class ReviewedAnnotationListing extends AnnotationListing {
             term : [term : 'at.term_id', annotationTerms: "0",userTerm: 'a.user_id'],//user who add the term, is the user that create reviewedannotation (a.user_id)
             image : [originalfilename : 'ai.original_filename'],
             algo : [id:'aat.id',rate:'aat.rate'],
+            user : [creator:'u.username',lastname: 'u.lastname',firstname: 'u.firstname']
         ]
 
 
@@ -626,6 +640,11 @@ class ReviewedAnnotationListing extends AnnotationListing {
              from = "$from, abstract_image ai, image_instance ii "
              where = "$where AND a.image_id = ii.id \n" +
                      "AND ii.base_image_id = ai.id\n"
+         }
+
+         if(columnToPrint.contains('user')) {
+             from = "$from, sec_user u "
+             where = "$where AND a.user_id = u.id \n"
          }
 
         return from +"\n" + where
