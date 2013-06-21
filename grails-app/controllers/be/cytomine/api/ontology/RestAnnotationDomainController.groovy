@@ -55,30 +55,165 @@ class RestAnnotationDomainController extends RestController {
      */
     def search = {
          try {
-             AnnotationListing al
-             def result = []
-             if(isReviewedAnnotationAsked(params)) {
-                 al = new ReviewedAnnotationListing()
-                 result = createRequest(al, params)
-             } else if(isAlgoAnnotationAsked(params)) {
-                 al = new AlgoAnnotationListing()
-                 result.addAll(createRequest(al, params))
-                 params.suggestedTerm = params.term
-                 params.term = null
-                 params.usersForTermAlgo = params.users
-                 params.users = null
-                 al = new UserAnnotationListing() //if algo, we look for user_annotation JOIN algo_annotation_term  too
-                 result.addAll(createRequest(al, params))
-             } else {
-                 al = new UserAnnotationListing()
-                 result = createRequest(al, params)
-             }
-             responseSuccess(result)
+             responseSuccess(doSearch(params).result)
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
     }
+
+    def downloadSearched = {
+        println "downloadSearched"
+        def lists = doSearch(params)
+        downloadDocument(lists.result,lists.project)
+    }
+
+
+    private doSearch(def params) {
+        AnnotationListing al
+        def result = []
+        if(isReviewedAnnotationAsked(params)) {
+            al = new ReviewedAnnotationListing()
+            result = createRequest(al, params)
+        } else if(isAlgoAnnotationAsked(params)) {
+            al = new AlgoAnnotationListing()
+            result.addAll(createRequest(al, params))
+            params.suggestedTerm = params.term
+            params.term = null
+            params.usersForTermAlgo = params.users
+            params.users = null
+            al = new UserAnnotationListing() //if algo, we look for user_annotation JOIN algo_annotation_term  too
+            result.addAll(createRequest(al, params))
+        } else {
+            al = new UserAnnotationListing()
+            result = createRequest(al, params)
+        }
+        [result: result, project: al.container().container()]
+    }
+
+
+
+    private downloadDocument(def annotations, Project project) {
+        println "downloadDocument"
+        def ignoredField = ['class','image','project','user','container','userByTerm']
+
+        if (params?.format && params.format != "html") {
+            def exporterIdentifier = params.format;
+            if (exporterIdentifier == "xls") {
+                exporterIdentifier = "excel"
+            }
+            response.contentType = grailsApplication.config.grails.mime.types[params.format]
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
+            String datePrefix = simpleFormat.format(new Date())
+            response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations.${params.format}")
+
+            def terms = termService.list(project)
+            def termsIndex = [:]
+            terms.each {
+                termsIndex.put(it.id,it)
+            }
+
+            def exportResult = []
+
+            def fields = ['indice']
+
+
+            if(!annotations.isEmpty()) {
+                annotations.first().each {
+                    println it.key + "=" + it.value
+                    if(!ignoredField.contains(it.key)) {
+                        fields << it.key
+                    }
+                }
+            }
+            annotations.eachWithIndex { annotation, i ->
+
+                def data = annotation
+                annotation.indice = i+1
+                annotation.eachWithIndex {
+                    if(it.key.equals("updated") || it.key.equals("created")) {
+                        it.value = it.value? new Date((long)it.value) : null
+                    }
+                    if(it.key.equals("area") || it.key.equals("perimeter") || it.key.equals("x") || it.key.equals("y")) {
+                        it.value = (int)Math.floor(it.value)
+                    }
+
+                    if(it.key.equals("term")) {
+                        def termList = []
+                        it.value.each { termId ->
+                            termList << termsIndex[termId]
+                        }
+                        it.value = termList
+                    }
+
+                    //annotation[it.key]=it.value
+                }
+
+                exportResult.add(data)
+
+
+
+//                data.id = annotation.id
+//                data.area = (int) Math.floor(annotation.area)
+//                data.perimeter = (int) Math.floor(annotation.perimeter)
+//                data.XCentroid = (int) Math.floor(annotation.x)
+//                data.YCentroid = (int) Math.floor(annotation.y)
+//
+//                data.image = annotation.image
+//                data.filename = annotation.originalfilename
+//                data.user = usersIndex.get(annotation.user)
+//                data.term = annotation.term.collect {termsIndex.get(it).name}.join(", ")
+//                data.cropURL = annotation.cropURL
+//                data.cropGOTO = UrlApi.getAnnotationURL(project.id, data.image, data.id)
+//                exportResult.add(data)
+            }
+
+
+
+
+            def labels = [:]
+            fields.each {
+                labels[it]=it
+            }
+            println "exporterIdentifier=$exporterIdentifier"
+            println  "exportResult=${exportResult.size()}"
+            println "fields=${fields}"
+            println "labels=${labels}"
+//
+//            Map formatters = [author: upperCase]
+//         	Map parameters = [title: "Cool books", "column.widths": [0.2, 0.3, 0.5]]
+
+            exportService.export(exporterIdentifier, response.outputStream, exportResult,fields,labels,[:],[:])
+//            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Check if we ask reviewed annotation
@@ -635,6 +770,9 @@ class RestAnnotationDomainController extends RestController {
 
         //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
+        if(!newGeometry.isValid()) {
+            throw new WrongArgumentException("Your annotation cannot be self-intersected.")
+        }
 
         def result
         if (!remove) {
@@ -680,6 +818,9 @@ class RestAnnotationDomainController extends RestController {
 
         //Create the new geometry
         Geometry newGeometry = new WKTReader().read(newLocation)
+        if(!newGeometry.isValid()) {
+            throw new WrongArgumentException("Your annotation cannot be self-intersected.")
+        }
 
         def result
         if (!remove) {

@@ -71,7 +71,9 @@ body {
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>
+%{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
+<script type="text/javascript" src="lib/OpenLayers-2.12/OpenLayers.js"></script>
+
 
 <!-- fileupload -->
 %{--<script type="text/javascript" src="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"></script>--}%

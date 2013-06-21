@@ -436,6 +436,11 @@ class GenericAnnotationTests  {
         doFreeHandAnnotationAdd(annotation,true)
     }
 
+    void testFreehandAnnotationCorrectionReviewedAddBadGeom() {
+        def annotation = BasicInstanceBuilder.createReviewAnnotation(BasicInstanceBuilder.getImageInstance())
+        doFreeHandAnnotationAddWithSelfIntersectPolygon(annotation,true)
+    }
+
     void testFreehandAnnotationCorrectionUserRem() {
         def annotation = BasicInstanceBuilder.getUserAnnotationNotExist(BasicInstanceBuilder.getProject(),true)
         doFreeHandAnnotationRem(annotation,false)
@@ -469,6 +474,27 @@ class GenericAnnotationTests  {
         assert new WKTReader().read(expectedLocation).equals(annotation.location)
         //assertEquals(expectedLocation,annotationToFill.location.toString())
     }
+
+    private void doFreeHandAnnotationAddWithSelfIntersectPolygon(def annotation,boolean reviewMode) {
+        String basedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
+        String addedLocation = "POLYGON((0 0, 10 10, 0 10, 10 0, 0 0))"
+        String expectedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
+
+        //add annotation with empty space inside it
+        annotation.user = User.findByUsername(Infos.GOODLOGIN)
+        annotation.location = new WKTReader().read(basedLocation)
+        assert annotation.save(flush: true)  != null
+
+        //correct remove
+        def json = [:]
+        json.location = addedLocation
+        json.image = annotation.image.id
+        json.review = reviewMode
+        json.remove = false
+        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 400 == result.code
+    }
+
 
     private void doFreeHandAnnotationRem(def annotation, boolean reviewMode) {
         String basedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"

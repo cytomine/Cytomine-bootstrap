@@ -24,6 +24,9 @@ class AnnotationUrlMappings {
         "/api/annotation"(controller:"restAnnotationDomain"){
             action = [GET: "search",POST:"add"]
         }
+        "/api/annotation/download"(controller:"restAnnotationDomain"){
+            action = [GET: "downloadSearched"]
+        }
         "/api/annotation/$id"(controller:"restAnnotationDomain"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }

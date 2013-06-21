@@ -769,9 +769,9 @@ AnnotationLayer.prototype = {
         this.magicOnClick = false;
         for (key in this.controls) {
             var control = this.controls[key];
-            if (name == key) {
+            if (name == key || key == "select") {
                 control.activate();
-
+                console.log("Activate "+key);
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];
@@ -780,6 +780,7 @@ AnnotationLayer.prototype = {
                 }
             } else {
                 control.deactivate();
+                console.log("Desactivate "+key);
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];

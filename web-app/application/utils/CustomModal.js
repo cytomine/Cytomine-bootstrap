@@ -16,9 +16,12 @@ var CustomModal = Backbone.View.extend({
    },
    registerModal : function() {
         var self = this;
+       console.log("registerModal");
+       console.log(self.button.length);
         //when click on button to open modal, build modal html, append to doc and open modal
         self.button.unbind();
         self.button.click(function () {
+            console.log("click show modal");
             require([
                 "text!application/templates/utils/CustomModal.tpl.html"
             ],
@@ -52,6 +55,10 @@ var DescriptionModal = {
     initDescriptionModal : function(container,idDescription,domainIdent, domainClassName, text,callback) {
         var width = Math.round($(window).width()*0.75);
         var height =  Math.round($(window).height()*0.75);
+        console.log("initDescriptionModal");
+        console.log(container.find("a.description").html());
+
+
          var modal = new CustomModal({
              idModal : "descriptionModal"+domainIdent,
              button : container.find("a.description"),

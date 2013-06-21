@@ -256,9 +256,7 @@ abstract class AnnotationListing {
          }
      }
 
-     def getNotReviewedOnlyConst() {
-         return (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" )
-     }
+     abstract def getNotReviewedOnlyConst()
 
      def getIntersectConst() {
          return (bbox? "AND ST_Intersects(a.location,ST_GeometryFromText('${bbox.toString()}',0))\n" : "")
@@ -447,7 +445,11 @@ class UserAnnotationListing extends AnnotationListing {
      }
     def buildExtraRequest() {
         
-    }   
+    }
+
+    def getNotReviewedOnlyConst() {
+        return (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" )
+    }
 }
 
 
@@ -563,9 +565,10 @@ class AlgoAnnotationListing extends AnnotationListing {
     def getUsersConst() {
         return (users? "AND a.user_id IN (${users.join(",")})\n" : "")
     }
-    
-    
-    
+
+    def getNotReviewedOnlyConst() {
+        return (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" )
+    }
 }
 
 
@@ -700,5 +703,9 @@ class ReviewedAnnotationListing extends AnnotationListing {
             addExtraColumn("numberOfCoveringAnnotation",subRequest)
         }
     }
+    def getNotReviewedOnlyConst() {
+        return ""
+    }
+
 
 }

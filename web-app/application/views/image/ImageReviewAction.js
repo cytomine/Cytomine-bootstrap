@@ -23,6 +23,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#validateimage" + self.model.id).hide();
             el.find("#unvalidateimage" + self.model.id).hide();
             el.find("#moreinfo" + self.model.id).show();
+            el.find("#description" + self.model.id).show();
         } else if (self.isInReviewing()) {
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
@@ -38,6 +39,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#validateimage" + self.model.id).show();
             el.find("#unvalidateimage" + self.model.id).hide();
             el.find("#moreinfo" + self.model.id).show();
+            el.find("#description" + self.model.id).show();
         } else {
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
@@ -48,6 +50,7 @@ var ImageReviewAction = Backbone.View.extend({
             el.find("#validateimage" + self.model.id).hide();
             el.find("#unvalidateimage" + self.model.id).show();
             el.find("#moreinfo" + self.model.id).show();
+            el.find("#description" + self.model.id).show();
         }
 
         el.find("#startreview" + self.model.id).on("click", function () {
@@ -76,6 +79,20 @@ var ImageReviewAction = Backbone.View.extend({
         $(document).on('click',"a.moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
             new ImagePropertiesView({model: self.model}).render();
+            return false;
+        });
+
+        $(document).on('click',"a.description" + self.model.id,function () {
+            console.log("Click");
+            new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
+                   {success: function (description, response) {
+                       DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),description.id,self.model.id,self.model.get('class'),description.get('data'),function() { });
+                       el.find(".action"+self.model.id).find('a.description').click();
+                   }, error: function (model, response) {
+                       DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),null,self.model.id,self.model.get('class'),"",function() { });
+                       el.find(".action"+self.model.id).find('a.description').click();
+
+                   }});
             return false;
         });
     },
