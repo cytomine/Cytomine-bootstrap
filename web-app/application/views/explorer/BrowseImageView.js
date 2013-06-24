@@ -212,7 +212,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
-             console.log("GO TO ANNOTATION") ;
+            console.log("GO TO ANNOTATION") ;
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
@@ -479,7 +479,7 @@ var BrowseImageView = Backbone.View.extend({
     } ,
 
     createAnnotationPropertiesPanel : function() {
-      //annotationProperties
+        //annotationProperties
         var self = this;
 
         this.annotationProperties = new AnnotationPropertyPanel({
@@ -676,13 +676,14 @@ var BrowseImageView = Backbone.View.extend({
             };
             imageFilters.each(function (imageFilter) {
                 var url = _.map(zoomify_urls, function (url) {
-					console.log(imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url);
+                    console.log(imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url);
                     return imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url;
                 });
                 var layer = new OpenLayers.Layer.Zoomify(
                     imageFilter.get("name"),
                     url,
                     new OpenLayers.Size(metadata.width, metadata.height));
+                layer.imageFilter = imageFilter;
                 /*layer.transitionEffect = 'resize';*/
 
                 self.addBaseLayer(layer);
@@ -1090,33 +1091,22 @@ var BrowseImageView = Backbone.View.extend({
         });
 
         toolbar.find('a[id=camera' + this.model.get('id') + ']').click(function () {
-            alert(":-)");
-            var tiles = self.map.baseLayer.grid;
-            var newCanvas = document.createElement('canvas');
-            var newContext = newCanvas.getContext("2d");
-            var newCanvasWidth = tiles[0].length * tiles[0][0].size.w;
-            var newCanvasHeight = tiles.length * tiles[0][0].size.h;
-            newCanvas.width = newCanvasWidth;
-            newCanvas.height = newCanvasHeight;
-            //newCanvas.display = 'none';
-            document.body.appendChild(newCanvas);
-            var mapContainerDiv = $("#maptabs-image" + self.model.id).children().children()[0];
-            var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
-            var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
-            for (var row = 0; row < tiles.length; row++) {
-                for (var col = 0; col < tiles[row].length; col++) {
-                    var tile = tiles[row][col];
-                    var tileCtx = tile.getCanvasContext();
-                    if (tileCtx) {
-                        newContext.drawImage(
-                            tileCtx.canvas,
-                            viewPositionLeft + tile.position.x,
-                            viewPositionTop + tile.position.y);
-                    }
+            //use webservice
+            var mapBounds = self.map.getExtent();
+            var x = mapBounds.left;
+            var y = self.model.get('height') - mapBounds.top;
+            var width = mapBounds.right - mapBounds.left;
+            var height = mapBounds.top - mapBounds.bottom;
+            var url = "api/imageinstance/"+self.model.id+"/window_url-"+x+"-"+y+"-"+width+"-"+height;
+            $.get(url, function(data) {
+                window_url = data.url;
+                var imageFilter= self.map.baseLayer.imageFilter;
+                if (imageFilter) {
+                    window_url = imageFilter.get('processingServer') + imageFilter.get("baseUrl") + window_url;
                 }
-            }
-            $.post("api/camera", {data: newCanvas.toDataURL('image/png')});
-            document.body.removeChild(newCanvas);
+                window.open(window_url);
+            });
+
         });
 
 

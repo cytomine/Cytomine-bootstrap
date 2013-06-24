@@ -37,7 +37,6 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var layerID = "layerSwitch-" + model.get("id") + "-" + new Date().getTime(); //index of the layer in this.layers array
         var liLayer = _.template("<li><input type='radio' id='<%=   id %>' name='<%=   radioName %>' checked/><span style='color : #ffffff;'> <%=   name %></span></li>", {id: layerID, radioName: radioName, name: layer.name.substr(0, 15)});
         $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").append(liLayer);
-        $("#" + this.browseImageView.divId).find("#layerSwitcher" + this.model.get("id")).find(".baseLayers").find("#" + layerID);
         $("#" + layerID).change(function () {
             self.browseImageView.map.setBaseLayer(layer);
         });
@@ -125,16 +124,10 @@ var LayerSwitcherPanel = SideBarPanel.extend({
     doLayout: function (tpl) {
         var self = this;
         var content = _.template(tpl, {id: self.model.get("id"), isDesktop: !window.app.view.isMobile});
-        $("#" + this.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).html(content);
-        console.log("test");
-        console.log("test: "+ self.browseImageView.divId + " " + "#layerSwitcher" + self.model.get("id") + " .followUser");
-        console.log($("#" + self.browseImageView.divId).length);
-        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).length);
-        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").length);
-        console.log($("#" + self.browseImageView.divId + " > #layerSwitcher" + self.model.get("id")+" > .followUser").length);
+        var mapDiv = $("#" + this.browseImageView.divId);
+        mapDiv.find("#layerSwitcher" + self.model.get("id")).html(content);
 
-
-        $("#" + self.browseImageView.divId).on('change',".followUser", function (e) {
+        mapDiv.on('change',".followUser", function (e) {
             var followUser = $(this).is(':checked');
             $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
                 $(this).attr('checked', false);
@@ -146,8 +139,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             if (!followUser) {
                 return;
             }
-            var user = $(this).attr("data-user-id");
-            self.userFollowed = user;
+            self.userFollowed = $(this).attr("data-user-id");
             self.startFollowing();
 
         });
@@ -178,7 +170,5 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var elContent2 = el.find(".layerSwitcherContent2");
         this.initToggle(el, elContent1, sourceEvent1, "layerSwitcherContent1");
         this.initToggle(el, elContent2, sourceEvent2, "layerSwitcherContent2");
-
-        console.log($("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find(".followUser").length);
     }
 });

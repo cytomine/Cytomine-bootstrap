@@ -8,25 +8,13 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Envelope
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.LineString
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-import ij.ImagePlus
-import ij.process.ImageProcessor
-import ij.process.PolygonFiller
 import sun.misc.BASE64Decoder
 
 import javax.imageio.ImageIO
-import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
-import java.awt.Rectangle
 import java.awt.RenderingHints
-import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
 
 /**
@@ -387,13 +375,13 @@ class RestImageController extends RestController {
         }
     }
 
-    public static BufferedImage decodeToImage(String imageString) {
+    public static BufferedImage base64ToImage(String base64ImageString) {
 
         BufferedImage image = null;
         byte[] imageByte;
         try {
             BASE64Decoder decoder = new BASE64Decoder();
-            imageByte = decoder.decodeBuffer(imageString);
+            imageByte = decoder.decodeBuffer(base64ImageString);
             ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
             image = ImageIO.read(bis);
             bis.close();
@@ -405,9 +393,12 @@ class RestImageController extends RestController {
 
     def camera = {
         println "camera"
-        println params.data
+        println params.imgdata
+        //:to do : save image in database ?
+        //:+ send email
+        String imageData = params.imgdata.replace(' ', '+')
         BASE64Decoder decoder = new BASE64Decoder();
-        byte[] imageByte = decoder.decodeBuffer(params.data);
+        byte[] imageByte = decoder.decodeBuffer(imageData);
         response.setContentType "application/octet-stream"
         response.setHeader "Content-disposition", "attachment; filename=capture.png"
         response.getOutputStream() << imageByte

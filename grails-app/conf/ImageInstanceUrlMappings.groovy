@@ -23,6 +23,9 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/window-$x-$y-$w-$h"(controller: "restImageInstance"){
             action = [GET:"window"]
         }
+        "/api/imageinstance/$id/window_url-$x-$y-$w-$h"(controller: "restImageInstance"){
+            action = [GET:"windowUrl"]
+        }
         "/api/imageinstance/$id/mask"(controller: "restImageInstance"){
             action = [GET:"mask", POST : "putMask"]
         }

@@ -9,6 +9,7 @@ import ij.gui.Wand
 import ij.process.ImageConverter
 import ij.process.ImageProcessor
 
+import java.awt.Color
 import java.awt.image.BufferedImage
 
 /**
@@ -173,5 +174,24 @@ class ImageProcessingService {
         Coordinate[] coordinates = new Coordinate[interestingPoints.size()]
         interestingPoints.toArray(coordinates)
         coordinates
+    }
+
+    public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
+        //TODO:: document this method
+        int width = image.getWidth()
+        int height = image.getHeight()
+        int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width)
+        int[] maskPixels = mask.getRGB(0, 0, width, height, null, 0, width)
+        int black_rgb = Color.BLACK.getRGB()
+        for (int i = 0; i < imagePixels.length; i++)
+        {
+            int color = imagePixels[i] & 0x00FFFFFF; // mask away any alpha present
+            int alphaValue = (maskPixels[i] == black_rgb) ? 0x00 : 0xFF
+            int maskColor = alphaValue << 24 // shift value into alpha bits
+            imagePixels[i] = color | maskColor
+        }
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+        combined.setRGB(0, 0, width, height, imagePixels, 0, width)
+        return combined
     }
 }

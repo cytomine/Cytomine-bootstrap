@@ -111,6 +111,16 @@ class RestImageInstanceController extends RestController {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
     }
 
+    def windowUrl = {
+        ImageInstance image = ImageInstance.read(params.long('id'))
+        AbstractImage abstractImage = image.getBaseImage()
+        int x = Integer.parseInt(params.x)
+        int y = abstractImage.getHeight() - Integer.parseInt(params.y)
+        int w = Integer.parseInt(params.w)
+        int h = Integer.parseInt(params.h)
+        responseSuccess([url : abstractImage.getCropURL(x, y, w, h)])
+    }
+
     def window = {
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
@@ -120,13 +130,13 @@ class RestImageInstanceController extends RestController {
         int w = Integer.parseInt(params.w)
         int h = Integer.parseInt(params.h)
 
-        if (w * h > MAX_SIZE_WINDOW_REQUEST) {
-            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
-        }
         int maxZoom = abstractImage.getZoomLevels().max
         int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
         int resizeWidth = w / Math.pow(2, zoom)
         int resizeHeight = h / Math.pow(2, zoom)
+        if (resizeWidth * resizeHeight > MAX_SIZE_WINDOW_REQUEST) {
+            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
+        }
         try {
             String url = abstractImage.getCropURL(x, y, w, h)
             BufferedImage bufferedImage = getImageFromURL(url)
@@ -240,7 +250,7 @@ class RestImageInstanceController extends RestController {
         mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry], boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
 
         if (withAlpha)
-            return applyMaskToAlpha(crop, mask)
+            return imageProcessingService.applyMaskToAlpha(crop, mask)
         else
             return mask
     }
@@ -332,57 +342,6 @@ class RestImageInstanceController extends RestController {
             }
         }
 
-    }
-
-    private BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
-        //TODO:: document this method
-        int width = image.getWidth()
-        int height = image.getHeight()
-        int[] imagePixels = image.getRGB(0, 0, width, height, null, 0, width)
-        int[] maskPixels = mask.getRGB(0, 0, width, height, null, 0, width)
-        int black_rgb = Color.BLACK.getRGB()
-        for (int i = 0; i < imagePixels.length; i++)
-        {
-            int color = imagePixels[i] & 0x00FFFFFF; // mask away any alpha present
-            int alphaValue = (maskPixels[i] == black_rgb) ? 0x00 : 0xFF
-            int maskColor = alphaValue << 24 // shift value into alpha bits
-            imagePixels[i] = color | maskColor
-        }
-        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-        combined.setRGB(0, 0, width, height, imagePixels, 0, width)
-        return combined
-    }
-
-
-
-
-    def putMask = {
-        //TODO:: document this method
-        //Load request attachment
-        MultipartFile uploadedFile = ((MultipartHttpServletRequest)request).getFile('mask')
-        ImagePlus original = new ImagePlus("ori", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
-        ImagePlus copy = new ImagePlus("copy", ImageIO.read ( new ByteArrayInputStream ( uploadedFile.getBytes() )))
-
-        //Extract params
-        Integer resultWidth = params.int("resultwidth")
-        if (!resultWidth) resultWidth = MAX_SIZE
-        double scale = resultWidth / original.getWidth()
-
-        // Get polygons
-        Collection<Coordinate[]> components = imageProcessingService.getConnectedComponents(original, copy, 50)
-        String[] polygons = new String[components.size()]
-        int i = 0
-        components.each { coordinates ->
-            coordinates.each { coordinate ->
-                coordinate.y = original.getHeight() - coordinate.y
-                coordinate.x = coordinate.x * scale
-                coordinate.y = coordinate.y * scale
-
-            }
-            polygons[i] = imageProcessingService.getWKTPolygon(coordinates)
-            i++
-        }
-        response(["polygons" : polygons])
     }
 
 }

@@ -49,17 +49,12 @@ class ImageUrlMappings {
         "/api/annotation/$id/cropMin"(controller: "restImage"){
             action = [GET:"cropAnnotationMin"]
         }
-
-
-
-
         "/api/userannotation/$id/$zoom/crop"(controller: "restImage"){
             action = [GET:"cropUserAnnotation"]
         }
         "/api/userannotation/$id/crop"(controller: "restImage"){
             action = [GET:"cropUserAnnotation"]
         }
-
         "/api/algoannotation/$id/$zoom/crop"(controller: "restImage"){
             action = [GET:"cropAlgoAnnotation"]
         }
