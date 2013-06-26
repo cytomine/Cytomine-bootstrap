@@ -148,6 +148,9 @@ class UnionGeometryService {
 
                      based.location = based.location.union()
 
+
+                     based.location =  based.location.buffer(-bufferLength)
+
                      //based.location = simplifyGeometryService.simplifyPolygon(based.location.toText()).geometry
                      //based.location = based.location.union(compared.location)
                      removedByUnion.put(compared.id, based.id)

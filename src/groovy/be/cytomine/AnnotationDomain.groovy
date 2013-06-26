@@ -277,7 +277,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         String type = geom.getGeometryType().toUpperCase()
 
         println "*******************************"
-        println "geom="+geom
         println "type=" + type
         println "valid=" + geom.isValid()
         println "*******************************"

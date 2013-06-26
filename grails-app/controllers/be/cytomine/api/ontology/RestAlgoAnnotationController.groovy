@@ -242,8 +242,9 @@ class RestAlgoAnnotationController extends RestController {
                 //little image with a lot of annotataion must be very short window size
                 def annotationNumber = annotationIndexService.count(image,user)
                 def imageSize = image.baseImage.width*image.baseImage.height
-                area = Math.sqrt(imageSize)/(annotationNumber/1000)
+                area = (Math.sqrt(imageSize)/(annotationNumber/1000))/4
                 area = Math.max(area,500)
+                println "area=$area"
             }
             unionAnnotations(image, user, term, minIntersectLength, bufferLength,area)
             def data = [:]
