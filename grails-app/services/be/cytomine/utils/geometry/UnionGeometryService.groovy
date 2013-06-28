@@ -1,6 +1,7 @@
 package be.cytomine.utils.geometry
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
@@ -8,6 +9,8 @@ import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
+import be.cytomine.sql.AlgoAnnotationListing
+import be.cytomine.sql.AnnotationListing
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryCollection
@@ -27,6 +30,10 @@ class UnionGeometryService {
 
     def simplifyGeometryService
 
+    static transactional = false
+
+
+
     public void unionPicture(ImageInstance image, SecUser user, Term term, Integer areaWidth, Integer areaHeight,def bufferLength, def minIntersectLength) {
          //makeValidPolygon(image,user)
 
@@ -35,16 +42,36 @@ class UnionGeometryService {
 
          def areas = computeArea(image,areaWidth,areaHeight)
 
+        def unionedAnnotation = []
+
          areas.eachWithIndex { it, i ->
              log.info("******************** ${i}/${areas.size()}")
              boolean restart = true
 
              int max = 100
              while(restart && (max>0)) {
-                 restart = unionArea(image,user,term,it,bufferLength,minIntersectLength)
+                 def result = unionArea(image,user,term,it,bufferLength,minIntersectLength)
+                 restart = result.restart
+                 unionedAnnotation.addAll(result.unionedAnnotation)
                  max--
              }
          }
+
+        unionedAnnotation.unique()
+
+        println "SIMPLIFY NOW"
+        unionedAnnotation.each { idAnnotation ->
+            try {
+                def annotation = AnnotationDomain.getAnnotationDomain(idAnnotation)
+                if(annotation && annotation.location.getNumPoints()>10000) {
+                    println  annotation.id + "=" + annotation.location.getNumPoints()
+                    def simplified = simplifyGeometryService.simplifyPolygon(annotation.location.toText())
+                    annotation.location = simplified.geometry
+                    algoAnnotationService.saveDomain(annotation)
+                }
+            }catch(ObjectNotFoundException e) {
+            }
+        }
      }
 //
 //     private makeValidPolygon(ImageInstance image, SecUser user) {
@@ -107,10 +134,11 @@ class UnionGeometryService {
 
 
 
-     private boolean unionArea(ImageInstance image, SecUser user, Term term, Geometry bbox, def bufferLength, def minIntersectLength) {
+     private def unionArea(ImageInstance image, SecUser user, Term term, Geometry bbox, def bufferLength, def minIntersectLength) {
          log.info "unionArea... ${bbox.toString()}"
          List intersectAnnotation = intersectAnnotation(image,user,term,bbox,bufferLength,minIntersectLength)
          boolean mustBeRestart = false
+         def unionedAnnotation = []
 
          intersectAnnotation.each {
              HashMap<Long, Long> removedByUnion = new HashMap<Long, Long>(1024)
@@ -148,15 +176,16 @@ class UnionGeometryService {
 
                      based.location = based.location.union()
 
-
-                     based.location =  based.location.buffer(-bufferLength)
+                     if(bufferLength) {
+                         based.location =  based.location.buffer(-bufferLength)
+                     }
 
                      //based.location = simplifyGeometryService.simplifyPolygon(based.location.toText()).geometry
                      //based.location = based.location.union(compared.location)
                      removedByUnion.put(compared.id, based.id)
 
                      //save new annotation with union location
-
+                     unionedAnnotation << based.id
                      if(based.algoAnnotation) {
                          algoAnnotationService.saveDomain(based)
                          //remove old annotation with data
@@ -172,7 +201,7 @@ class UnionGeometryService {
 
                  }
          }
-         return mustBeRestart
+         return [restart: mustBeRestart, unionedAnnotation : unionedAnnotation]
      }
 
     static Geometry combineIntoOneGeometry( Collection<Geometry> geometryCollection ){

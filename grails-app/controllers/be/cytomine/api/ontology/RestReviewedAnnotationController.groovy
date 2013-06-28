@@ -476,10 +476,10 @@ class RestReviewedAnnotationController extends RestController {
                 def centroid = annotation.getCentroid()
                 def data = [:]
                 data.id = annotation.id
-                data.perimeterUnit = annotation.getPerimeterUnit()
-                data.areaUnit = annotation.getAreaUnit()
-                data.area = annotation.computeArea()
-                data.perimeter = annotation.computePerimeter()
+                data.perimeterUnit = annotation.retrievePerimeterUnit()
+                data.areaUnit = annotation.retrieveAreaUnit()
+                data.area = annotation.area
+                data.perimeter = annotation.perimeter
                 if (centroid != null) {
                     data.XCentroid = (int) Math.floor(centroid.x)
                     data.YCentroid = (int) Math.floor(centroid.y)

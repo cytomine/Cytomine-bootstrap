@@ -105,7 +105,9 @@ class JobService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Job job, def jsonNewData) {
+        log.info "update"
         SecurityACL.check(job.container(),READ)
+        log.info "SecurityACL.check"
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),job, jsonNewData)
     }

@@ -177,10 +177,10 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             returnArray['container'] = annotation.project.id
             returnArray['user'] = annotation.user?.id
             returnArray['nbComments'] = annotation.countComments
-            returnArray['area'] = annotation.computeArea()
-            returnArray['perimeterUnit'] = annotation.getPerimeterUnit()
-            returnArray['areaUnit'] = annotation.getAreaUnit()
-            returnArray['perimeter'] = annotation.computePerimeter()
+            returnArray['area'] = annotation.area
+            returnArray['perimeterUnit'] = annotation.retrievePerimeterUnit()
+            returnArray['areaUnit'] = annotation.retrieveAreaUnit()
+            returnArray['perimeter'] = annotation.perimeter
             returnArray['centroid'] = annotation.getCentroid()
             returnArray['created'] = annotation.created ? annotation.created.time.toString() : null
             returnArray['updated'] = annotation.updated ? annotation.updated.time.toString() : null

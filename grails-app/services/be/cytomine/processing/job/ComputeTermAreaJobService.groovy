@@ -10,7 +10,7 @@ import grails.converters.JSON
  */
 class ComputeTermAreaJobService extends AbstractJobService{
 
-    static transactional = false
+//    static transactional = false
 
     def jobParameterService
 

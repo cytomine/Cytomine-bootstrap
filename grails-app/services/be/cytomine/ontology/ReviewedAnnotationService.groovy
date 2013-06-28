@@ -168,10 +168,12 @@ class ReviewedAnnotationService extends ModelService {
                         columnToPrint: propertiesToShow,
                         image: image.id,
                         bbox : bbox,
-                        orderBy: ['numberOfCoveringAnnotation':'asc','id':'asc']
+                        orderBy: ['id':'asc']
+                        //orderBy: ['numberOfCoveringAnnotation':'asc','id':'asc']
                 )
 
-                al.addExtraColumn("numberOfCoveringAnnotation",subRequest)
+                //DISABLE COVER BY FOR PERF
+                //al.addExtraColumn("numberOfCoveringAnnotation",subRequest)
                 annotationListingService.executeRequest(al)
 
             } else {

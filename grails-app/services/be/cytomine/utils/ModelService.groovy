@@ -37,6 +37,7 @@ abstract class ModelService {
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
         if (!newObject.save(flush: true)) {
+            log.info "error"
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
     }
@@ -117,7 +118,7 @@ abstract class ModelService {
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "${getServiceName()} commandService=" + commandService + " c=" + c
+        log.info "${getServiceName()} commandService =" + commandService + " c=" + c
         return commandService.processCommand(c)
     }
 
@@ -212,11 +213,16 @@ abstract class ModelService {
      */
     def edit(CytomineDomain domain, boolean printMessage) {
         //Build response message
+        log.info "edit"
         def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
         //Save update
+        log.info "beforeUpdate"
         beforeUpdate(domain)
+        log.info "saveDomain"
         saveDomain(domain)
+        log.info "afterUpdate"
         afterUpdate(domain,response)
+        log.info "response"
         return response
     }
 
@@ -298,7 +304,7 @@ abstract class ModelService {
         for (int i = 1; i < numberOfColumns + 1; i++) {
             String columnName = rsMetaData.getColumnName(i);
             // Get the name of the column's table name
-            if (column.equals(columnName)) {
+            if (column.toLowerCase().equals(columnName.toLowerCase())) {
                 return true
             }
         }

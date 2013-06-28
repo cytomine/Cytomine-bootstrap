@@ -184,10 +184,10 @@ class RestAlgoAnnotationController extends RestController {
                 Term term = annotationTerm.term
                 def data = [:]
                 data.id = annotation.id
-                data.area = annotation.computeArea()
-                data.perimeterUnit = annotation.getPerimeterUnit()
-                data.areaUnit = annotation.getAreaUnit()
-                data.perimeter = annotation.computePerimeter()
+                data.area = annotation.area
+                data.perimeterUnit = annotation.retrievePerimeterUnit()
+                data.areaUnit = annotation.retrieveAreaUnit()
+                data.perimeter = annotation.perimeter
                 if (centroid != null) {
                     data.XCentroid = (int) Math.floor(centroid.x)
                     data.YCentroid = (int) Math.floor(centroid.y)

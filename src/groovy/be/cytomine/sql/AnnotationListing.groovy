@@ -386,7 +386,7 @@ class UserAnnotationListing extends AnnotationListing {
 
             ],
             wkt : [location:'a.wkt_location'],
-            gis : [area: 'ST_area(a.location)',perimeter:'ST_perimeter(a.location)',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
+            gis : [area: 'area',areaUnit: 'area_unit', perimeter:'perimeter',perimeterUnit : 'perimeter_unit', x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
             term : [term : 'at.term_id', annotationTerms : 'at.id', userTerm: 'at.user_id'],
             image : [originalfilename : 'ai.original_filename'],
             algo : [id:'aat.id',rate:'aat.rate',idTerm:'aat.term_id',idExpectedTerm:'aat.expected_term_id'],
@@ -488,7 +488,7 @@ class AlgoAnnotationListing extends AnnotationListing {
 
             ],
             wkt : [location:'a.wkt_location'],
-            gis : [area: 'ST_area(a.location)',perimeter:'ST_perimeter(a.location)',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
+            gis : [area: 'area',areaUnit: 'area_unit', perimeter:'perimeter',perimeterUnit : 'perimeter_unit',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
             term : [term : 'aat.term_id', annotationTerms : 'aat.id', userTerm: 'aat.user_job_id',rate:'aat.rate'],
             image : [originalfilename : 'ai.original_filename'],
             user : [creator:'u.username',software: 's.name',job: 'j.created']
@@ -604,7 +604,7 @@ class ReviewedAnnotationListing extends AnnotationListing {
 
             ],
             wkt : [location:'a.wkt_location'],
-            gis : [area: 'ST_area(a.location)',perimeter:'ST_perimeter(a.location)',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
+            gis : [area: 'area',areaUnit: 'area_unit', perimeter:'perimeter',perimeterUnit : 'perimeter_unit',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
             term : [term : 'at.term_id', annotationTerms: "0",userTerm: 'a.user_id'],//user who add the term, is the user that create reviewedannotation (a.user_id)
             image : [originalfilename : 'ai.original_filename'],
             algo : [id:'aat.id',rate:'aat.rate'],
@@ -699,8 +699,9 @@ class ReviewedAnnotationListing extends AnnotationListing {
                 "AND ga.image_id=gb.image_id " +
                 "AND ST_Intersects(gb.location,ST_GeometryFromText('" + bbox + "',0)))\n"
 
-            orderBy = ['numberOfCoveringAnnotation':'asc','id':'asc']
-            addExtraColumn("numberOfCoveringAnnotation",subRequest)
+            //orderBy = ['numberOfCoveringAnnotation':'asc','id':'asc']
+            orderBy = ['id':'desc']
+            //addExtraColumn("numberOfCoveringAnnotation",subRequest)
         }
     }
     def getNotReviewedOnlyConst() {

@@ -13,6 +13,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
+import be.cytomine.utils.GisUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
@@ -134,6 +135,8 @@ class AnnotationListingService extends ModelService {
                       item[columnName]=it[columnName]
                   }
 
+
+
                   if(al.columnToPrint.contains('term')) {
                       termAsked = true
                       item['term'] = (it.term ? [it.term] : [])
@@ -142,6 +145,11 @@ class AnnotationListingService extends ModelService {
 
                   if(al.columnToPrint.contains('image')) {
                       item['originalfilename'] = (it.originalfilename ? it.originalfilename : null)
+                  }
+
+                  if(al.columnToPrint.contains('gis')) {
+                      item['perimeterUnit'] = (it.perimeterUnit ? GisUtils.retrieveUnit(it.perimeterUnit) : null)
+                      item['areaUnit'] = (it.areaUnit ? GisUtils.retrieveUnit(it.areaUnit) : null)
                   }
 
                   if(al.columnToPrint.contains('meta')) {

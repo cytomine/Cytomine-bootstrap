@@ -9,6 +9,7 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
+import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
@@ -67,6 +68,11 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     Long idTerm
     Long idExpectedTerm
 
+    Double area
+    Double perimeter
+    Integer areaUnit
+    Integer perimeterUnit
+
 
     static belongsTo = [ImageInstance, Project]
 
@@ -77,6 +83,10 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         geometryCompression(nullable: true)
         project(nullable:true)
         wktLocation(nullable:false, empty:false)
+        area(nullable:true)
+        perimeter(nullable:true)
+        areaUnit(nullable:true)
+        perimeterUnit(nullable:true)
     }
 
     static mapping = {
@@ -101,6 +111,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     def beforeUpdate() {
         super.beforeUpdate()
         this.makeValid()
+        this.computeGIS()
         wktLocation = location.toText()
     }
 
@@ -111,7 +122,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         if (id == null) {
             id = sequenceService.generateID()
         }
-
+        this.computeGIS()
         if(!wktLocation)
             wktLocation = location.toText()
     }
@@ -158,6 +169,14 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
           return this.image?.baseImage?.getFilename()
       }
 
+    def retrieveAreaUnit() {
+        GisUtils.retrieveUnit(areaUnit)
+    }
+
+    def retrievePerimeterUnit() {
+        GisUtils.retrieveUnit(perimeterUnit)
+    }
+
     /**
      * Get the container domain for this domain (usefull for security)
      * @return Container of this domain
@@ -166,15 +185,28 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         return project;
     }
 
-    def getArea() {
-        //TODO: must be compute with zoom level
-        return location.area
+    def computeGIS() {
+        def image = this.image.baseImage
+
+        //compute unit
+        if (image.resolution == null) {
+            perimeterUnit = GisUtils.PIXELv
+            areaUnit = GisUtils.PIXELS2v
+        } else {
+            perimeterUnit = GisUtils.MMv
+            areaUnit = GisUtils.MICRON2v
+        }
+
+        if (image.resolution == null) {
+            area = Math.round(this.location.getArea())
+            perimeter = Math.round(this.location.getLength())
+        } else {
+            area = Math.round(this.location.getArea() * image.resolution * image.resolution)
+            perimeter = Math.round(this.location.getLength() * image.resolution / 1000)
+        }
+
     }
 
-    def getPerimeter() {
-        //TODO: must be compute with zoom level
-        return location.getLength()
-    }
 
     def getCentroid() {
         if (location.area < 1) return null
@@ -211,26 +243,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     def toCropURL(int zoom) {
         def boundaries = getBoundaries()
         return image.baseImage.getCropURL(boundaries.topLeftX, boundaries.topLeftY, boundaries.width, boundaries.height, zoom)
-    }
-
-    def getPerimeterUnit() {
-        if (this.image.baseImage.resolution == null) return "pixels"
-        else return "mm"
-    }
-
-    def getAreaUnit() {
-        if (this.image.baseImage.resolution == null) return "pixels"
-        else return "microns²"
-    }
-
-    def computeArea() {
-        if (this.image.baseImage.resolution == null) return Math.round(this.getArea())// + " pixels²"
-        else return Math.round(this.getArea() * this.image.baseImage.resolution * this.image.baseImage.resolution)// + "1000000 µm² = 1  mm²"
-    }
-
-    def computePerimeter() {
-        if (this.image.baseImage.resolution == null) return Math.round(this.getPerimeter())// + " pixels"
-        else return Math.round(this.getPerimeter() * this.image.baseImage.resolution / 1000)// + " 1000 µm = 1 mm"
     }
 
     def getCallBack() {

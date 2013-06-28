@@ -193,6 +193,7 @@ var InputTextView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
+        var self = this;
         return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="<%= value%>" <%= required %>></div></div>', {
                value : this.getDefaultValue(),
                required: (self.param.required) ? "required" : ""

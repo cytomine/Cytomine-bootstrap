@@ -7,7 +7,10 @@ import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AnnotationIndex
+import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
@@ -95,55 +98,53 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
         }
 
-
-
-        if(AnnotationIndex.count()==0) {
-
-
-               sessionFactory.currentSession.doWork(
-                       new Work() {
-                           public void execute(Connection connection) throws SQLException
-                           {
-                               try {
-                                   def statement = connection.createStatement()
-                                   statement.execute("  INSERT INTO annotation_index(user_id,image_id,count_annotation,count_reviewed_annotation,id,version) \n" +
-                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
-                                           "            FROM algo_annotation ua \n" +
-                                           "            GROUP by ua.user_id, ua.image_id\n" +
-                                           "            UNION\n" +
-                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
-                                           "            FROM user_annotation ua \n" +
-                                           "            GROUP by ua.user_id, ua.image_id\n" +
-                                           "            ORDER BY count desc;")
-                               } catch (org.postgresql.util.PSQLException e) {
-                                   log.info e
-                               }
-                           }
-                       }
-               )
-
-
-        }
-
-        //create SCN MIME
-        Mime mime = new Mime(extension : "scn", mimeType : "openslide/scn")
-        if (mime.validate()) {
-            mime.save()
-            for (imageServer in ImageServer.list()) {
-                MimeImageServer mimeImageServer = new MimeImageServer( mime : mime, imageServer : imageServer)
-                if (mimeImageServer.validate()) {
-                    mimeImageServer.save()
-                } else {
-                    mimeImageServer.errors?.each {
-                        println it
-                    }
-                }
-            }
-        } else {
-            mime.errors?.each {
-                println it
-            }
-        }
+//        if(AnnotationIndex.count()==0) {
+//
+//
+//               sessionFactory.currentSession.doWork(
+//                       new Work() {
+//                           public void execute(Connection connection) throws SQLException
+//                           {
+//                               try {
+//                                   def statement = connection.createStatement()
+//                                   statement.execute("  INSERT INTO annotation_index(user_id,image_id,count_annotation,count_reviewed_annotation,id,version) \n" +
+//                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
+//                                           "            FROM algo_annotation ua \n" +
+//                                           "            GROUP by ua.user_id, ua.image_id\n" +
+//                                           "            UNION\n" +
+//                                           "            SELECT ua.user_id, ua.image_id, count(*) as count, (SELECT count(*) FROM reviewed_annotation r WHERE r.user_id=ua.user_id AND r.image_id = ua.image_id),nextval('hibernate_sequence'),0 \n" +
+//                                           "            FROM user_annotation ua \n" +
+//                                           "            GROUP by ua.user_id, ua.image_id\n" +
+//                                           "            ORDER BY count desc;")
+//                               } catch (org.postgresql.util.PSQLException e) {
+//                                   log.info e
+//                               }
+//                           }
+//                       }
+//               )
+//
+//
+//        }
+//
+//        //create SCN MIME
+//        Mime mime = new Mime(extension : "scn", mimeType : "openslide/scn")
+//        if (mime.validate()) {
+//            mime.save()
+//            for (imageServer in ImageServer.list()) {
+//                MimeImageServer mimeImageServer = new MimeImageServer( mime : mime, imageServer : imageServer)
+//                if (mimeImageServer.validate()) {
+//                    mimeImageServer.save()
+//                } else {
+//                    mimeImageServer.errors?.each {
+//                        println it
+//                    }
+//                }
+//            }
+//        } else {
+//            mime.errors?.each {
+//                println it
+//            }
+//        }
 
         //bootstrapProdDataService.initUserStorages()
 
@@ -171,6 +172,8 @@ class BootStrap {
 //           }
 //        }
     }
+
+
 
 
 
@@ -245,14 +248,14 @@ class BootStrap {
 
 
 
-    def saveDomain(def newObject) {
+    def saveDomain(def newObject, boolean flush = true) {
         newObject.checkAlreadyExist()
         if (!newObject.validate()) {
             log.error newObject.errors
             log.error newObject.retrieveErrors().toString()
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
-        if (!newObject.save(flush: true)) {
+        if (!newObject.save(flush: flush)) {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
     }

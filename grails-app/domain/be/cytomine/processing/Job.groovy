@@ -120,23 +120,41 @@ class Job extends CytomineDomain  {
         JSON.registerObjectMarshaller(Job) {
             def job = [:]
             job.id = it.id
+            println "0"
             job.algoType = ResponseService.getClassName(it).toLowerCase()
+            println "1"
             job.progress = it.progress
+            println "2"
             job.status = it.status
+            println "3"
             job.number = it.number
+            println "4"
             job.statusComment = it.statusComment
+            println "5"
             job.project = it.project?.id
+            println "6"
             job.software = it.software?.id
+            println "7"
             job.softwareName = it.software?.name
+            println "8"
             job.rate = it.rate
+            println "9"
             job.created = it.created?.time?.toString()
+            println "10"
             job.updated = it.updated?.time?.toString()
+            println "11"
             job.dataDeleted = it.dataDeleted
+            println "12"
             try {
+                println "13"
                 UserJob user = UserJob.findByJob(it)
+                println "14"
                 job.username = user?.humanUsername()
+                println "15"
                 job.userJob = user.id
+                println "16"
                 job.jobParameters = it.parameters()
+                println "17"
             } catch (Exception e) {
                 log.info e
             }

@@ -57,9 +57,13 @@ class RestController {
      */
     public Object update(def service, def json) {
         try {
+            log.info "update"
             def domain =  service.retrieve(json)
+            log.info "service.retrieve ok"
             def result = service.update(domain,json)
+            log.info "service.update ok"
             responseResult(result)
+            log.info "responseResult"
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)

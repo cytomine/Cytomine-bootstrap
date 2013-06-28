@@ -7,15 +7,19 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.io.WKTReader
 import geb.Browser
 import grails.plugins.springsecurity.Secured
+import groovy.sql.Sql
 
 @Secured(['ROLE_ADMIN'])
 class AdminController extends RestController {
@@ -27,6 +31,124 @@ class AdminController extends RestController {
     def index() {
       //don't remove this, it calls admin/index.gsp layout !
     }
+
+    def dataSource
+
+    def area() {
+        println System.currentTimeMillis()
+//        def projects = Project.list()
+
+//        projects.eachWithIndex { project, pi ->
+//            println "Annotation project $pi=${project.name}"
+//            ReviewedAnnotation.findAllByProject(project).each {
+//                try {
+//                saveDomain(it)
+//                }catch(Exception e) {
+//                    println e
+//                }
+//            }
+//            //cleanUpGorm()
+//
+//            UserAnnotation.findAllByProject(project).each {
+//                try {
+//                saveDomain(it)
+//                }catch(Exception e) {
+//                    println e
+//                }
+//            }
+//            //cleanUpGorm()
+//
+//            AlgoAnnotation.findAllByProject(project).each {
+//                try {
+//                saveDomain(it)
+//                }catch(Exception e) {
+//                    println e
+//                }
+//            }
+//           // cleanUpGorm()
+//        }
+//        println System.currentTimeMillis()
+
+        Project.findAll().each { project ->
+            ImageInstance.findAllByProject(project).each { image ->
+
+                println "${project.name} Image ${image.baseImage.originalFilename}"
+
+
+                if(image.baseImage.resolution==null) {
+                   ReviewedAnnotation.executeUpdate("update ReviewedAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.PIXELv,aunit:GisUtils.PIXELS2v,image:image])
+                   AlgoAnnotation.executeUpdate("update AlgoAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.PIXELv,aunit:GisUtils.PIXELS2v,image:image])
+                   UserAnnotation.executeUpdate("update UserAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.PIXELv,aunit:GisUtils.PIXELS2v,image:image])
+                } else {
+                    ReviewedAnnotation.executeUpdate("update ReviewedAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.MMv,aunit:GisUtils.MICRON2v,image:image])
+                    AlgoAnnotation.executeUpdate("update AlgoAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.MMv,aunit:GisUtils.MICRON2v,image:image])
+                    UserAnnotation.executeUpdate("update UserAnnotation set perimeterUnit = :punit, areaUnit = :aunit where image = :image",[punit:GisUtils.MMv,aunit:GisUtils.MICRON2v,image:image])
+                }
+
+
+                if(image.baseImage.resolution==null) {
+                    new Sql(dataSource).executeUpdate('update reviewed_annotation set perimeter = round(ST_perimeter(location)), area = round(ST_area(location)) where image_id = ?', [image.id])
+                    new Sql(dataSource).executeUpdate('update algo_annotation set perimeter = round(ST_perimeter(location)), area = round(ST_area(location)) where image_id = ?', [image.id])
+                    new Sql(dataSource).executeUpdate('update user_annotation set perimeter = round(ST_perimeter(location)), area = round(ST_area(location)) where image_id = ?', [image.id])
+                 } else {
+                    new Sql(dataSource).executeUpdate('update reviewed_annotation set perimeter = round(ST_perimeter(location)*'+image.baseImage.resolution+'/1000), ' +
+                            'area = round(ST_area(location)*'+(image.baseImage.resolution*image.baseImage.resolution)+') where image_id = ?', [image.id])
+                    new Sql(dataSource).executeUpdate('update algo_annotation set perimeter = round(ST_perimeter(location)*'+image.baseImage.resolution+'/1000), ' +
+                            'area = round(ST_area(location)*'+(image.baseImage.resolution*image.baseImage.resolution)+') where image_id = ?', [image.id])
+                    new Sql(dataSource).executeUpdate('update user_annotation set perimeter = round(ST_perimeter(location)*'+image.baseImage.resolution+'/1000), ' +
+                            'area = round(ST_area(location)*'+(image.baseImage.resolution*image.baseImage.resolution)+') where image_id = ?', [image.id])
+                 }
+
+
+//
+//
+//
+//              if (image.resolution == null) {
+//                  area = Math.round(this.location.getArea())
+//                  perimeter = Math.round(this.location.getLength())
+//              } else {
+//                  area = Math.round(this.location.getArea() * image.resolution * image.resolution)
+//                  perimeter = Math.round(this.location.getLength() * image.resolution / 1000)
+//              }
+
+
+
+
+            }
+
+
+        }
+
+    }
+
+
+    def saveDomain(def newObject) {
+        newObject.checkAlreadyExist()
+        if (!newObject.validate()) {
+            log.error newObject.errors
+            log.error newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: true)) {
+            throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+    }
+
+
+
+    def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
+    /**
+     * Clean GORM cache
+     */
+    public void cleanUpGorm() {
+        def session = sessionFactory.currentSession
+        session.flush()
+        session.clear()
+        propertyInstanceMap.get().clear()
+    }
+
+
+
 
     def test_annotation() {
         //testCyto()
@@ -292,17 +414,6 @@ class AdminController extends RestController {
 
     }
 
-    def saveDomain(def newObject) {
-        newObject.checkAlreadyExist()
-        if (!newObject.validate()) {
-            log.error newObject.errors
-            log.error newObject.retrieveErrors().toString()
-            throw new WrongArgumentException(newObject.retrieveErrors().toString())
-        }
-        if (!newObject.save(flush: true)) {
-            throw new InvalidRequestException(newObject.retrieveErrors().toString())
-        }
-    }
 
     def testCyto() {
         Browser.drive {

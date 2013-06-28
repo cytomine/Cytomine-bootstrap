@@ -343,4 +343,82 @@ class AlgoAnnotationTests  {
         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
     }
 
+
+    void testUnionAlgoAnnotationKeepGoodValue() {
+         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+         image.save(flush: true)
+         assert AlgoAnnotation.findAllByImage(image).size()==0
+
+         def a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
+
+         a1.location = new WKTReader().read("POLYGON ((0 0, 0 5100, 10000 5100, 10000 0, 0 0))")
+         a1.image = image
+         a1.project = image.project
+         assert a1.save(flush: true)  != null
+
+         def a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
+         a2.location = new WKTReader().read("POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))")
+         a2.image = image
+         a2.project = image.project
+         assert a2.save(flush: true)  != null
+
+         def at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+         def at2 = BasicInstanceBuilder.getAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+         at2.term = at1.term
+         at2.save(flush:true)
+
+         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
+
+         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
+
+         println  AlgoAnnotation.findAllByImage(a1.image).first().location
+
+     }
+
+
+
+
+    void testUnionAlgoAnnotationVeryBigAnnotationMustBeSimplified() {
+         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+         image.save(flush: true)
+         assert AlgoAnnotation.findAllByImage(image).size()==0
+
+         def a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
+
+         a1.location = new WKTReader().read("POLYGON ((14761 7489, 14765 7489, 14765 7495, 14761 7495, 14761 7489))")
+         a1.image = image
+         a1.project = image.project
+         assert a1.save(flush: true)  != null
+
+         def a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
+         a2.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/very_big_annotation.txt').text)
+         a2.image = image
+         a2.project = image.project
+         assert a2.save(flush: true)  != null
+
+         def at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(a1.user.job,a1,a1.user)
+         def at2 = BasicInstanceBuilder.getAlgoAnnotationTerm(a2.user.job,a2,a2.user)
+         at2.term = at1.term
+         at2.save(flush:true)
+
+        println  "NB POINTS START=" +a2.id+"="+a2.location.getNumPoints()
+
+         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
+
+         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
+         def annotationAlone = AlgoAnnotation.findAllByImage(a1.image).first()
+         println  "NB POINTS END=" +annotationAlone.id + "=" + annotationAlone.location.getNumPoints()
+         annotationAlone.refresh()
+         println  "NB POINTS END=" +annotationAlone.id + "=" + annotationAlone.location.getNumPoints()
+
+        println annotationAlone.location.toText()
+
+     }
+
 }

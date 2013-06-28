@@ -38,7 +38,7 @@ class HttpClient {
     BasicHttpContext localcontext
     URL URL
     HttpResponse response
-    int timeout = 30000;
+    int timeout = 300000;
 
     private Log log = LogFactory.getLog(HttpClient.class)
 

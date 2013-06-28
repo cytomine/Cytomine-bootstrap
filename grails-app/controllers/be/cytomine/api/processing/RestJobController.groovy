@@ -75,7 +75,7 @@ class RestJobController extends RestController {
         try {
             def result = jobService.add(request.JSON)
             long idJob = result?.data?.job?.id
-            jobService.createUserJob(User.read(springSecurityService.principal.id), Job.get(idJob))
+            jobService.createUserJob(User.read(springSecurityService.principal.id), Job.read(idJob))
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
@@ -87,6 +87,7 @@ class RestJobController extends RestController {
      * Update a job
      */
     def update = {
+        log.info "update"
         update(jobService, request.JSON)
     }
 
@@ -99,14 +100,14 @@ class RestJobController extends RestController {
 
     def execute = {
         long idJob = params.long("id")
-        Job job = Job.get(idJob)
+        Job job = Job.read(idJob)
         jobService.executeJob(job, false)
         responseSuccess(job)
     }
 
     def preview = {
         long idJob = params.long("id")
-        Job job = Job.get(idJob)
+        Job job = Job.read(idJob)
         jobService.executeJob(job, true)
         responseSuccess(job)
     }
