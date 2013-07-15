@@ -53,11 +53,11 @@ class RetrievalHttpUtils {
             send ContentType.JSON, jsonStr
 
             response.success = { resp, json ->
-                Logger.getLogger(this).info("response succes: ${resp.statusLine}")
+                log.info "RESPONSEX=${resp.statusLine}"
                 return json.toString()
             }
             response.failure = { resp ->
-                Logger.getLogger(this).info("response error: ${resp.statusLine}")
+                log.info "RESPONSEERRORX=${resp.statusLine}"
                 return ""
             }
         }

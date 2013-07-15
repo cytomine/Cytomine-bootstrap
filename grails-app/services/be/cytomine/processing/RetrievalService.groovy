@@ -157,28 +157,27 @@ class RetrievalService {
     }
 
 
-    public static def indexAnnotationSynchronous(String json, String url) {
-        Logger.getLogger(this).info("index synchronous json")
-        Logger.getLogger(this).info("url = " + url)
+    public def indexAnnotationSynchronous(String json, String url) {
+        log.info("index synchronous json")
         String res = "/retrieval-web/api/resource.json"
         RetrievalHttpUtils.getPostResponse(url, res, json)
     }
 
-    public static def indexAnnotationSynchronous(Long id) {
+    public def indexAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("index synchronous id")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource.json"
         RetrievalHttpUtils.getPostResponse(server.url, res, UserAnnotation.read(id))
     }
 
-    public static def deleteAnnotationSynchronous(Long id) {
+    public def deleteAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("delete synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource/"+id+".json"
         RetrievalHttpUtils.getDeleteResponse(server.url,res)
     }
 
-    public static def deleteContainerSynchronous(Long id) {
+    public def deleteContainerSynchronous(Long id) {
         Logger.getLogger(this).info("delete container synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/container/" + id + ".json"
@@ -186,23 +185,46 @@ class RetrievalService {
     }
 
 
-    public static def indexAnnotationAsynchronous(AnnotationDomain annotation,RetrievalServer server) {
+    public def indexAnnotationAsynchronous(AnnotationDomain annotation,RetrievalServer server) {
         //indexAnnotationSynchronous(annotation)
-        Logger.getLogger(this).info("index asynchronous")
+        log.info "indexAnnotationAsynchronous"
         String url = server.url
         def json = annotation.encodeAsJSON()
 
-        Asynchronizer.withAsynchronizer() {
-            Closure indexAnnotation = {
-                try {
-                indexAnnotationSynchronous(json,url)
-            } catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
-            Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
-            annotationIndexing()
+//        Asynchronizer.withAsynchronizer() {
+//            Closure indexAnnotation = {
+//                try {
+//                indexAnnotationSynchronous(json,url)
+//            } catch (Exception e) {throw new ServerException("Retrieval Exception: "+e)}}
+//            Closure annotationIndexing = indexAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
+//            annotationIndexing()
+//        }
+        log.info "runAsync"
+        runAsync {
+            log.info "indexAnnotationSynchronous"
+            indexAnnotationSynchronous(json,url)
         }
+
+
     }
 
-    public static def deleteAnnotationAsynchronous(Long id) {
+//    def myMethod(){
+//        ..do some stuff
+//        runAsync {
+//            //this will be in its own trasaction
+//            //since each of these service methods are Transactional
+//            calcAging()
+//        }
+//        .. do some other stuff while aging is calced in background
+//    }
+//
+//    def calcAging(){
+//        ...do long process
+//    }
+
+
+
+    public def deleteAnnotationAsynchronous(Long id) {
         Logger.getLogger(this).info("delete asynchronous")
         Asynchronizer.withAsynchronizer() {
             Closure deleteAnnotation = {
@@ -215,11 +237,11 @@ class RetrievalService {
         }
     }
 
-    public static def deleteContainerAsynchronous(String id) {
+    public def deleteContainerAsynchronous(String id) {
         deleteContainerAsynchronous(Long.parseLong(id))
     }
 
-    public static def deleteContainerAsynchronous(Long id) {
+    public def deleteContainerAsynchronous(Long id) {
         Logger.getLogger(this).info("delete asynchronous")
         Asynchronizer.withAsynchronizer() {
             Closure deleteContainer = {
@@ -233,7 +255,7 @@ class RetrievalService {
     }
 
 
-    public static def updateAnnotationAsynchronous(Long id) {
+    public  def updateAnnotationAsynchronous(Long id) {
         Logger.getLogger(this).info("update asynchronous")
         Asynchronizer.doParallel() {
             Closure deleteAnnotation = {
@@ -285,7 +307,7 @@ class RetrievalService {
         resources
     }
 
-    private static String getGetResponse(String URL) {
+    private String getGetResponse(String URL) {
         HttpClient client = new HttpClient();
         client.connect(URL, "xxx", "xxx");
         client.get()

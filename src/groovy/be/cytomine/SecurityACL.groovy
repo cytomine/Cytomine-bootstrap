@@ -55,8 +55,8 @@ class SecurityACL {
 
     static void check(CytomineDomain domain, Permission permission) {
           if (domain) {
-              if (!domain.checkPermission(permission)) {
-                  throw new ForbiddenException("You don't have the right to read this resource! ${domain.class.getName()}")
+              if (!domain.container().checkPermission(permission)) {
+                  throw new ForbiddenException("You don't have the right to read this resource! Description for ${domain.class.getName()}")
               }
           } else {
               throw new ObjectNotFoundException("ACL error: domain is null! Unable to process project auth checking")

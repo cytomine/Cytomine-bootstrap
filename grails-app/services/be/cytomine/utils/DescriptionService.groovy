@@ -66,7 +66,7 @@ class DescriptionService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Description description, def jsonNewData) {
-        SecurityACL.check(description.container(),WRITE)
+        SecurityACL.check(description.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), description,jsonNewData)
     }
@@ -81,7 +81,7 @@ class DescriptionService extends ModelService {
      */
     def delete(Description domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),DELETE)
+        SecurityACL.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

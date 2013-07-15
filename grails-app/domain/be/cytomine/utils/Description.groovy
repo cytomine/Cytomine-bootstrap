@@ -92,7 +92,17 @@ class Description extends CytomineDomain implements Serializable {
      * @return Container of this domain
      */
     public CytomineDomain container() {
-        return this
+        return getDomain()?.container()
+    }
+
+    public setDomain(CytomineDomain domain) {
+        domainClassName = domain.class.name
+        domainIdent = domain.id
+    }
+
+
+    public getDomain() {
+        Class.forName(domainClassName, false, Thread.currentThread().contextClassLoader).read(domainIdent)
     }
 
 }

@@ -264,7 +264,9 @@ class UserAnnotationService extends ModelService {
         log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
             log.info "index userAnnotation " + id + " on  " + retrieval.url
+            println "####################################### 1"
             retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(id), RetrievalServer.findByDescription("retrieval"))
+            println "####################################### 2"
 
         }
     }
