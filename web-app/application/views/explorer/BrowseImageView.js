@@ -933,17 +933,35 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("point");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=regular4' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=irregular4' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            if(!self.getUserLayer().irregular) {
+                self.getUserLayer().toggleIrregular();
+            }
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(4);
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=regular30' + this.model.get('id') + ']').click(function () {
+        toolbar.find('a[id=irregular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            if(!self.getUserLayer().irregular) {
+                self.getUserLayer().toggleIrregular();
+            }
+            self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().setSides(15);
+            self.getUserLayer().toggleControl("regular");
+            self.getUserLayer().disableHightlight();
+        });
+        toolbar.find('a[id=regular30' + this.model.get('id') + ']').click(function () {
+            console.log("toggle");
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
+            if(self.getUserLayer().irregular) {
+                self.getUserLayer().toggleIrregular();
+            }
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().setSides(15);
             self.getUserLayer().toggleControl("regular");
