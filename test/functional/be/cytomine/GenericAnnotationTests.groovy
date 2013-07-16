@@ -11,7 +11,9 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.AlgoAnnotationAPI
 import be.cytomine.test.http.ReviewedAnnotationAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -683,6 +685,95 @@ class GenericAnnotationTests  {
         result = AnnotationDomainAPI.downloadIncluded("POLYGON ((2 2, 3 2, 3 4, 2 4, 2 2))", image.id, user1.id, [term1.id,term2.id], "csv",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
+
+
+    def testUserAnnotationSimplificationWithParameter() {
+
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/very_big_annotation.txt').text)
+        assert annotation.location.numPoints > 500
+
+        int maxPoint
+        int minPoint
+
+        maxPoint = 50
+        minPoint = 10
+
+        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+        maxPoint = 150
+        minPoint = 100
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation.txt').text)
+        assert annotation.location.numPoints > 500
+        result = UserAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+        maxPoint = 1000
+        minPoint = 400
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation.txt').text)
+        assert annotation.location.numPoints > 500
+        result = UserAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+    }
+
+
+    def testAlgoAnnotationSimplificationWithParameter() {
+        def geometryVeryBig = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation.txt').text)
+        def annotation = BasicInstanceBuilder.getAlgoAnnotation()
+        UserJob user = annotation.user
+        annotation.location =  geometryVeryBig
+
+
+        int maxPoint
+        int minPoint
+
+        maxPoint = 50
+        minPoint = 10
+
+        def result = AlgoAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint, user.username, 'PasswordUserJob')
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+        maxPoint = 150
+        minPoint = 100
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation.txt').text)
+        assert annotation.location.numPoints > 500
+        result = AlgoAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint,user.username, 'PasswordUserJob')
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+        maxPoint = 1000
+        minPoint = 400
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation.txt').text)
+        assert annotation.location.numPoints > 500
+        result = AlgoAnnotationAPI.create(annotation.encodeAsJSON(), minPoint,maxPoint,user.username, 'PasswordUserJob')
+        assert 200 == result.code
+        annotation = result.data
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+    }
+
+
+
+
+
 
 
 

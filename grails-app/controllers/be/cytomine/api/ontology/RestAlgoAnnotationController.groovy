@@ -95,7 +95,10 @@ class RestAlgoAnnotationController extends RestController {
         if (json.isNull('location')) {
             throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
         }
-        def result = algoAnnotationService.add(json)
+        def minPoint = params.getLong('minPoint')
+        def maxPoint = params.getLong('maxPoint')
+
+        def result = algoAnnotationService.add(json,minPoint,maxPoint)
         return result
     }
 

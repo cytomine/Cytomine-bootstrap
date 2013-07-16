@@ -157,14 +157,14 @@ class UserAnnotationService extends ModelService {
      * @param json New domain data
      * @return Response structure (created domain data,..)
      */
-    def add(def json) {
+    def add(def json,def minPoint = null, def maxPoint = null) {
         log.info "add"
         SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
         try {
-            def data = simplifyGeometryService.simplifyPolygon(json.location)
+            def data = simplifyGeometryService.simplifyPolygon(json.location,minPoint,maxPoint)
             json.location = new WKTWriter().write(data.geometry)
             json.geometryCompression = data.rate
         } catch (Exception e) {
@@ -175,7 +175,7 @@ class UserAnnotationService extends ModelService {
         Transaction transaction = transactionService.start()
 
         //Synchronzed this part of code, prevent two annotation to be add at the same time
-        synchronized (this.getClass()) {
+        //synchronized (this.getClass()) {
             //Add annotation user
             json.user = currentUser.id
             //Add Annotation
@@ -207,7 +207,7 @@ class UserAnnotationService extends ModelService {
             }
 
             return result
-        }
+        //}
     }
 
     /**

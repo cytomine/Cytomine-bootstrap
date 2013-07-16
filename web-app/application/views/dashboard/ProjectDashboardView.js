@@ -204,7 +204,9 @@ var ProjectDashboardView = Backbone.View.extend({
 
                                 var positions = "";
                                 _.each(user.get('position'), function (position) {
-                                    var position = _.template(userOnlineTpl, {project: self.model.id, filename: window.app.minString(position.filename, 15, 10), image: position.image});
+                                    console.log(position);
+                                    var image = new ImageModel(position);
+                                    var position = _.template(userOnlineTpl, {project: self.model.id, filename: window.app.minString(image.getVisibleName(window.app.status.currentProjectModel.get('blindMode')), 15, 10), image: position.image});
                                     positions += position;
                                 });
                                 var onlineUser = _.template("<div id='onlineUser-<%= id %>'><%= user %><ul><%= positions %></ul></div>", {

@@ -265,7 +265,7 @@ class RestUserController extends RestController {
                 usersId.remove(currenUser)
             }
             //add position to the current user
-            userInfo['position'] << [image: it[1], filename: it[2], date: it[3]]
+            userInfo['position'] << [id: it[1],image: it[1], filename: it[2], originalFilename:it[2], date: it[3]]
             previousUser = currenUser
         }
         //user online with no image open

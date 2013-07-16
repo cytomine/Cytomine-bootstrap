@@ -97,13 +97,13 @@ class AlgoAnnotationService extends ModelService {
      * @param json New domain data
      * @return Response structure (created domain data,..)
      */
-    def add(def json) {
+    def add(def json, def minPoint = null, def maxPoint = null) {
         SecurityACL.check(json.project, Project, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
         try {
-            def data = simplifyGeometryService.simplifyPolygon(json.location)
+            def data = simplifyGeometryService.simplifyPolygon(json.location,minPoint,maxPoint)
             json.location = new WKTWriter().write(data.geometry)
             json.geometryCompression = data.rate
         } catch (Exception e) {
