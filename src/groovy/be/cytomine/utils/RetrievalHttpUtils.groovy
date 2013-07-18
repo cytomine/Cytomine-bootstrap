@@ -22,7 +22,7 @@ class RetrievalHttpUtils {
     private static Log log = LogFactory.getLog(RetrievalHttpUtils.class)
 
     public static String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch) {
-        println "getPostSearchResponse not mocked"
+
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
         def params = ["id": annotation.id, "url": urlAnnotation, "containers": projectsSearch]
@@ -44,7 +44,7 @@ class RetrievalHttpUtils {
     }
 
     public static String getPostResponse(String URL, String resource, def jsonStr) {
-        println "getPostSearchResponse not mocked"
+
         def http = new HTTPBuilder(URL)
         http.auth.basic 'xxx', 'xxx'
 

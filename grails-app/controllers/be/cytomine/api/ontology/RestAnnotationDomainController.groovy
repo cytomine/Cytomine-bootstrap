@@ -46,6 +46,7 @@ class RestAnnotationDomainController extends RestController {
     def paramsService
     def exportService
     def annotationListingService
+    def simplifyGeometryService
 
 
 
@@ -528,6 +529,34 @@ class RestAnnotationDomainController extends RestController {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
+    }
+
+    def simplify = {
+
+        try {
+            //extract params
+            def minPoint = params.getLong('minPoint')
+            def maxPoint = params.getLong('maxPoint')
+            def idAnnotation = params.getLong('id')
+
+            //retrieve annotation
+            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(idAnnotation)
+
+            //apply simplify
+            def result = simplifyGeometryService.simplifyPolygon(annotation.location.toText(),minPoint,maxPoint)
+            annotation.location = result.geometry
+            annotation.geometryCompression = result.rate
+            userAnnotationService.saveDomain(annotation)  //saveDomain is same method in algo/reviewedannotationservice
+            //update geom
+            responseSuccess(annotation)
+
+
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+
+
     }
 
     /**

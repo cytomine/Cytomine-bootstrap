@@ -134,4 +134,9 @@ class AnnotationDomainAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotation/included/download?format=$format&geometry=${geometry.replace(" ","%20")}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
         return doGET(URL, username, password)
     }
+
+    static def simplifyAnnotation(def id, def minPoint, def maxPoint, String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/annotation/$id/simplify.json?minPoint=$minPoint&maxPoint=$maxPoint"
+        return doPUT(URL,"", username, password)
+    }
 }

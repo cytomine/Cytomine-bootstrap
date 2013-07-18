@@ -771,6 +771,35 @@ class GenericAnnotationTests  {
     }
 
 
+    def testSimplifyService() {
+
+        //create annotation
+        def annotation = BasicInstanceBuilder.getAlgoAnnotation()
+        UserJob user = annotation.user
+
+        //add very big geometry
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/very_big_annotation.txt').text)
+        annotation.save(flush:true)
+        assert annotation.location.numPoints > 500
+
+        int maxPoint
+        int minPoint
+
+        //simplify
+        maxPoint = 50
+        minPoint = 10
+
+        def result = AnnotationDomainAPI.simplifyAnnotation(annotation.id,minPoint,maxPoint,user.username, 'PasswordUserJob')
+        assert 200==result.code
+
+        //check if points are ok
+        annotation.refresh()
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+    }
+
+
 
 
 

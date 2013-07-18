@@ -93,6 +93,10 @@ class AlgoAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def create(String jsonAnnotation,String username, String password) {
+        create(jsonAnnotation,null,null,username,password)
+    }
+
     static def create(String jsonAnnotation,def minPoint,def maxPoint, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/algoannotation.json?"+(minPoint? "&minPoint=$minPoint": "")+(maxPoint? "&maxPoint=$maxPoint": "")
         def result = doPOST(URL, jsonAnnotation,username, password)

@@ -115,7 +115,10 @@ class TriggerService {
     String getProjectAnnotationCountTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementProjectAnnotation() RETURNS TRIGGER AS \$incProjAnn\$
+        DECLARE
+            current_id image_instance.id%TYPE;
         BEGIN
+            SELECT project.id INTO current_id FROM project, image_instance WHERE project.id = image_instance.project_id AND image_instance.id = NEW.image_id FOR UPDATE;
             UPDATE project
             SET count_annotations = count_annotations + 1
             FROM image_instance
@@ -211,7 +214,10 @@ class TriggerService {
     String getImageAnnotationCountTriggerIncr() {
         String createFunction = """
         CREATE OR REPLACE FUNCTION incrementImageAnnotation() RETURNS trigger as \$incImageAnn\$
+        DECLARE
+            current_id image_instance.id%TYPE;
         BEGIN
+            SELECT image_instance.id INTO current_id FROM image_instance WHERE image_instance.id = NEW.image_id FOR UPDATE;
             UPDATE image_instance
             SET count_image_annotations = count_image_annotations + 1
             WHERE image_instance.id = NEW.image_id;

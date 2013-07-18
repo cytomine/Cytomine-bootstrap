@@ -30,6 +30,9 @@ class AnnotationUrlMappings {
         "/api/annotation/$id"(controller:"restAnnotationDomain"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/annotation/$id/simplify"(controller:"restAnnotationDomain"){
+            action = [PUT:"simplify"]
+        }
 
         /**
          * User Annotation
