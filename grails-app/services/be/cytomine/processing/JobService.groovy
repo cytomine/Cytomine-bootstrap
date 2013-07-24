@@ -4,11 +4,13 @@ import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
+import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -170,7 +172,7 @@ class JobService extends ModelService {
     /**
      * Chek if job has reviewed annotation
      */
-    public def hasReviewedAnnotation(def annotations, def job) {
+    public def getReviewedAnnotation(def annotations, def job) {
         List<Long> annotationsId = annotations.collect{ it.id }
         if (annotationsId.isEmpty()) []
         println "4project=${job.project.id}"
@@ -178,6 +180,22 @@ class JobService extends ModelService {
 
 
         return annotationListingService.listGeneric(al)
+    }
+
+    public boolean hasReviewedAnnotation(def job) {
+        println job
+        def user = UserJob.findByJob(job)
+        if(!user) {
+           return true
+        }
+
+        def annotations = annotationListingService.listGeneric(new AlgoAnnotationListing(project:job.project.id,user:user.id))
+        println "Job ${job.id} has ${annotations.size()} annotations"
+        if (annotations.isEmpty()) return false
+        ReviewedAnnotationListing al = new ReviewedAnnotationListing(project:job.project.id, parents:annotations.collect{ it.id })
+        def list = annotationListingService.listGeneric(al)
+        println "Job ${job.id} has ${list.size()} annotations reviewed"
+        return !list.isEmpty()
     }
 
     /**

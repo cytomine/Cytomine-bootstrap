@@ -27,6 +27,8 @@ class Task {
      */
     Long userIdent
 
+    boolean printInActivity = false
+
 
     def sequenceService
 
@@ -37,6 +39,7 @@ class Task {
         map.progress = progress
         map.project = projectIdent
         map.user = userIdent
+        map.printInActivity = printInActivity
         map.comments = getLastComments(5)
         return map
     }
@@ -62,7 +65,7 @@ class Task {
 
         if(!isAlreadyInDatabase) {
             id = AH.application.mainContext.sequenceService.generateID()
-            sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id) VALUES ($id,$progress,$projectIdent,$userIdent)")
+            sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id,print_in_activity) VALUES ($id,$progress,$projectIdent,$userIdent,$printInActivity)")
         } else {
             sql.executeUpdate("UPDATE task set progress=${progress} WHERE id=$id")
             println "UPDATE task set progress=${progress} WHERE id=$id"
@@ -85,6 +88,20 @@ class Task {
         }
         closeSQL(sql)
         return task
+    }
+
+    def listFromDatabase(def idProject) {
+        def comments = []
+         null
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT comment, timestamp FROM task_comment tc, task t WHERE tc.task_id = t.id  AND project_id = $idProject and t.print_in_activity=true ORDER BY timestamp DESC") {
+            TaskComment comment = new TaskComment()
+            comment.comment = it[0]
+            comment.timestamp = it[1]
+            comments << comment
+        }
+        closeSQL(sql)
+        return comments
     }
 
     def addComment(String comment) {

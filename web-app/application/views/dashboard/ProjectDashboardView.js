@@ -34,13 +34,24 @@ var ProjectDashboardView = Backbone.View.extend({
         var self = this;
         $(self.el).append(_.template(tpl, self.model.toJSON()));
         window.app.controllers.browse.tabs.addDashboard(self);
-
+        $('#activityTab a').click(function (e) {
+          e.preventDefault();
+          $(this).tab('show');
+        })
         //Refresh dashboard
         setInterval(function () {
             if ($("#tabs-dashboard-" + self.model.id).hasClass('active')) {
                 self.refreshDashboard();
             }
         }, 60000);
+
+        setInterval(function () {
+            if ($("#tabs-dashboard-" + self.model.id).hasClass('active')) {
+                self.fetchTasks();
+                self.fetchCommands();
+            }
+        }, 5000);
+
     },
     refreshImagesThumbs: function () {
         if (this.projectDashboardImages == null) {
@@ -127,6 +138,7 @@ var ProjectDashboardView = Backbone.View.extend({
                 self.model = model;
                 self.fetchProjectInfo();
                 self.fetchCommands();
+                self.fetchTasks();
                 self.fetchUsersOnline();
 
                 if (self.projectStats == null) {
@@ -152,7 +164,35 @@ var ProjectDashboardView = Backbone.View.extend({
 //            self.model.set({ "shortDescription" : shortDescription});
 
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
-            console.log("c");
+
+
+            var updateProjectClosed = function(close) {
+                self.model.set({isClosed: close});
+
+                self.model.save({}, {
+                        success: function (model, response) {
+                            self.model = model;
+                            self.refreshDashboard();
+                        },
+                        error: function (model, response) {
+                            console.log(response);
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Project", json.errors[0], "error");
+                        }
+                    }
+                );
+
+            }
+
+            $("#projectInfoPanel").find("#closeProject").click(function() {
+                updateProjectClosed(true);
+            });
+            $("#projectInfoPanel").find("#uncloseProject").click(function() {
+                updateProjectClosed(false);
+            });
+
+            self.initClearDataModal();
+
 
             $("#projectInfoPanel").find(".description");
             console.log("d");
@@ -187,6 +227,60 @@ var ProjectDashboardView = Backbone.View.extend({
         $("#seeDescriptionProject-" + self.model.id).on("click", function () {
             new ProjectDescriptionDialog({model: self.model, el: $("#explorer")}).render();
         });
+    },
+    initClearDataModal : function() {
+         var self = this;
+        var dropAllDataView = function() {
+            new TaskModel({project: self.model.id, printInActivity: true}).save({}, {
+                    success: function (task, response) {
+                        console.log(response.task);
+                        $("#jobDataClear"+self.model.id).empty();
+                        $("#jobDataClear"+self.model.id).append('<div class="alert alert-info"><i class="icon-refresh"/> Loading...Cytomine is deleting all unused data... You can close this windows and check the progress in project dashboard "Last tasks" view  </div>');
+                        $("#jobDataClear"+self.model.id).append('<div id="task-' + response.task.id + '"></div>');
+                        var timer = window.app.view.printTaskEvolution(response.task, $("#jobDataClear"+self.model.id).find("#task-" + response.task.id), 1000);
+
+                        //load all job data
+                        new JobDataClearModel({id: self.model.id, task: response.task.id}).fetch({
+                                success: function (model, response) {
+                                    console.log("data loaded:" + model.toJSON());
+                                    clearInterval(timer);
+
+                                    $("#jobDataClear"+self.model.id).empty();
+                                    $("#jobDataClear"+self.model.id).append("Clear is done!");
+
+                                },
+                                error: function (collection, response) {
+                                    clearInterval(timer);
+                                    console.log("error getting job data stat");
+                                }}
+                        );
+
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Task", json.errors, "error");
+                    }
+                }
+            );
+        }
+
+
+
+        var modal = new CustomModal({
+                      idModal : "clearjobdataModal",
+                      button : $("#clearjobdata"),
+                      header :"Clear unused data",
+                      body :'<div class="span3" id="jobDataClear'+self.model.id+'" style="min-width: 600px;">This will drop all data from job that are not reviewed. Are you sure? </div>',
+                      width : 700,
+                      height : 200
+          });
+         modal.addButtons("dropAllData","Drop all data",true,false,dropAllDataView);
+         modal.addButtons("closeHotKeys","Close",false,true);
+
+         $("#dropAllData").click(function(event) {
+             event.preventDefault();
+
+         });
     },
     fetchUsersOnline: function () {
         var self = this;
@@ -236,13 +330,13 @@ var ProjectDashboardView = Backbone.View.extend({
             function (commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
                 var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView, fullData: true});
                 var commandCallback = function (collection, response) {
-                    $("#lastactionitem").empty();
+                    $("#lastcommandsitem").empty();
                     if (collection.size() == 0) {
                         var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>", {});
-                        $("#lastactionitem").append(noDataAlert);
+                        $("#lastcommandsitem").append(noDataAlert);
                     }
-                    $("#lastactionitem").append("<ul></ul>");
-                    var ulContainer = $("#lastactionitem").find("ul");
+                    $("#lastcommandsitem").append("<ul></ul>");
+                    var ulContainer = $("#lastcommandsitem").find("ul");
                     collection.each(function (commandHistory) {
 
                         var action = self.decodeCommandAction(commandHistory,commandAnnotationTpl,commandGenericTpl,commandImageInstanceTpl);
@@ -257,6 +351,32 @@ var ProjectDashboardView = Backbone.View.extend({
                     }
                 });
             });
+    },
+    fetchTasks: function () {
+        var self = this;
+
+        var commandCollection = new TaskCommentsCollection({project: self.model.get('id'), max: 10});
+        var commandCallback = function (collection, response) {
+            $("#lasttasksitem").empty();
+            if (collection.size() == 0) {
+                var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>", {});
+                $("#lasttasksitem").append(noDataAlert);
+            }
+            $("#lasttasksitem").append("<ul></ul>");
+            var ulContainer = $("#lasttasksitem").find("ul");
+            collection.each(function (task) {
+                var dateCreated = new Date();
+                dateCreated.setTime(task.get('timestamp'));
+                var action = "<i>- <b>"+dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString()+"</b> : "+task.get('comment')+"<br></i>";
+                ulContainer.append(action);
+            });
+        }
+        commandCollection.fetch({
+            success: function (collection, response) {
+                commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+            }
+        });
+
     },
     decodeCommandAction : function(commandHistory,commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
         var self = this;

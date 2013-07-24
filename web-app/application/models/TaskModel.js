@@ -11,15 +11,38 @@ var TaskModel = Backbone.Model.extend({
         var base = 'api/task';
         var format = '.json';
         if (this.isNew()) {
-            return base + format;
+            url = base + format;
+        } else {
+            var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
         }
-        var url = base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
-        if (this.project) {
-            return url + "?project=" + this.project;
-        }
-        return url;
+        url = url +"?"
+       if (this.project) {
+           url = url + "&project=" + this.project;
+       }
+       if (this.printInActivity) {
+           url = url + "&printInActivity=" + this.printInActivity;
+       }
+       return url;
+
     },
     initialize: function (options) {
         this.project = options.project;
+        this.printInActivity = options.printInActivity;
+    }
+});
+
+
+var TaskCommentsCollection = PaginatedCollection.extend({
+    model: TaskModel,
+    url: function () {
+        return "api/project/"+ this.project +"/task/comment.json";
+    },
+    initialize: function (options) {
+        this.initPaginator(options);
+        if (options != undefined) {
+            this.project = options.project;
+        }
+    }, comparator: function (comment) {
+        return -comment.get("timestamp");
     }
 });

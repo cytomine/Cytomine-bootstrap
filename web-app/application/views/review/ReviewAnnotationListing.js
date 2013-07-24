@@ -301,7 +301,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
                     });
                 }
             });
-            modal.addButtons("closeBrowseReview","Close",true);
+            modal.addButtons("closeBrowseReview","Close",true,true);
 //        });
 
 

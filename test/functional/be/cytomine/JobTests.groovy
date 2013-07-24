@@ -1,9 +1,11 @@
 package be.cytomine
 
 import be.cytomine.processing.Job
+import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobAPI
+import be.cytomine.test.http.TaskAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -220,5 +222,55 @@ class JobTests  {
         assert 400 == result.code
     }
 
+
+
+
+    void testPurgeJobData() {
+
+        //create job 1 & 2
+        Job job1 = BasicInstanceBuilder.getJobNotExist(true)
+        Job job2 = BasicInstanceBuilder.getJobNotExist(true)
+        UserJob userJob1 = BasicInstanceBuilder.getUserJobNotExist(true)
+        UserJob userJob2 = BasicInstanceBuilder.getUserJobNotExist(true)
+        userJob1.job = job1
+        userJob2.job = job2
+
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+        //update job 1 & 2 project
+        job1.project = project
+        job2.project = project
+        BasicInstanceBuilder.saveDomain(job1)
+        BasicInstanceBuilder.saveDomain(job2)
+        BasicInstanceBuilder.saveDomain(userJob1)
+        BasicInstanceBuilder.saveDomain(userJob2)
+
+        //add two annotation with at + add jobdata
+        println "Job1=${job1}"
+        println "Job2=${job2}"
+        println "UserJob.findByJob(job1)=${UserJob.findByJob(job1)}"
+        AlgoAnnotation annotation1 = BasicInstanceBuilder.getAlgoAnnotationNotExist(job1,UserJob.findByJob(job1),true)
+        AlgoAnnotation annotation2 = BasicInstanceBuilder.getAlgoAnnotationNotExist(job2, UserJob.findByJob(job2),true)
+
+        //add a review for annotation from job 1
+        ReviewedAnnotation reviewed1 = BasicInstanceBuilder.createReviewAnnotation(annotation1)
+
+        def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def jsonTask = JSON.parse(result.data)
+
+        project.refresh()
+        assert project.countJobAnnotations==2
+        //purge
+        result = JobAPI.purgeProjectData(project.id,jsonTask.task.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        //check if annot job 1 is still there & job 2 deleted
+        assert AlgoAnnotation.countByUser(UserJob.findByJob(job1))==1
+        assert AlgoAnnotation.countByUser(UserJob.findByJob(job2))==0
+        project.refresh()
+        assert project.countJobAnnotations==1
+    }
 
 }

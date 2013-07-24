@@ -155,7 +155,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                     height : Math.round($(window).height() - 75),
                     callBack: fillMatrix
                 });
-                modal.addButtons("closeHotKeys","Close",true);
+                modal.addButtons("closeHotKeys","Close",true,true);
             }
         );
     },
@@ -192,7 +192,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
                  });
              }
          });
-         modalCompare.addButtons("closeCompare","Close",false);
+         modalCompare.addButtons("closeCompare","Close",false,true);
     },
 
     tableElement: 'userRetrievalSuggestMatrixDataTable',

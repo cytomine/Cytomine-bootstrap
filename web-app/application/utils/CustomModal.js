@@ -11,8 +11,8 @@ var CustomModal = Backbone.View.extend({
        this.registerModal();
 
    },
-   addButtons : function(id,text,primary, callBack) {
-       this.buttons.push({id:id,text:text,primaryClass:(primary? 'btn-primary' :''),callBack:callBack});
+   addButtons : function(id,text,primary,close,callBack) {
+       this.buttons.push({id:id,text:text,close: (close?'modal':''),primaryClass:(primary? 'btn-primary' :''),callBack:callBack});
    },
    registerModal : function() {
         var self = this;
@@ -29,6 +29,7 @@ var CustomModal = Backbone.View.extend({
                  var modal = $("#modals");
                  modal.empty();
                  var htmlModal = _.template(tplModal,{id:self.idModal,header:self.header,body:self.body,width:self.width,height:self.height,halfWidth:(self.width/2), buttons:self.buttons});
+
                  modal.append(htmlModal);
                  _.each(self.buttons,function(b) {
                      $("#"+b.id).click(function() {
@@ -86,8 +87,8 @@ var DescriptionModal = {
 
              }
          });
-         modal.addButtons("saveDescription"+idDescription,"Save",true);
-         modal.addButtons("closeDescription"+idDescription,"Close",false);
+         modal.addButtons("saveDescription"+idDescription,"Save",true,true);
+         modal.addButtons("closeDescription"+idDescription,"Close",false,true);
 
     },
     initDescriptionView : function(domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet,callbackUpdate) {

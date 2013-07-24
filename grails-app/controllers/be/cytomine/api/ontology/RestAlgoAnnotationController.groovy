@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
  * Controller that handle request on annotation created by software (job)
  * Annotation my be created by humain (RestUserAnnotationController).
  */
-class RestAlgoAnnotationController extends RestController {
+class  RestAlgoAnnotationController extends RestController {
 
     def exportService
     def algoAnnotationService

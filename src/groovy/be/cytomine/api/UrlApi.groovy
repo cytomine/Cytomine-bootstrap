@@ -52,7 +52,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAlgoAnnotationCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/algoannotation/idAnnotation/crop.jpg"
+        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg"
     }
 
     /**

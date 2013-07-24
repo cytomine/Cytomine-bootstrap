@@ -154,7 +154,7 @@ class RestJobController extends RestController {
             taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
             println "2project=${job.project.id}"
-            List<ReviewedAnnotation> reviewed = jobService.hasReviewedAnnotation(annotations,job)
+            def reviewed = jobService.getReviewedAnnotation(annotations,job)
 
             if(!reviewed.isEmpty()) {
                 taskService.finishTask(task)
@@ -183,7 +183,7 @@ class RestJobController extends RestController {
      * Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files
      */
     def listAllJobData = {
-        Job job = jobService.read(params.long('id'));
+        Job job = jobService.read(params.long('id'))
         if (!job)
             responseNotFound("Job",params.id)
         else {
@@ -191,7 +191,7 @@ class RestJobController extends RestController {
             log.info "load all algo annotations..."
             taskService.updateTask(task,10,"Looking for algo annotations...")
             def annotations = algoAnnotationService.list(job,['basic'])
-            boolean reviewed = jobService.hasReviewedAnnotation(annotations,job).size()
+            int reviewed = jobService.getReviewedAnnotation(annotations,job).size()
             log.info "load all annotations..."
             taskService.updateTask(task,50,"Looking for algo annotations term...")
             long annotationsTermNumber = algoAnnotationTermService.count(job)
@@ -202,5 +202,47 @@ class RestJobController extends RestController {
             responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:reviewed])
 
         }
+    }
+
+
+    def purgeJobNotReviewed = {
+        //retrieve project
+        Project  project = projectService.read(params.long('id'))
+        if (!project)
+            responseNotFound("Project",params.project)
+        else {
+            //retrieve task
+            Task task = taskService.read(params.long('task'))
+            log.info "Looking for all jobs..."
+            taskService.updateTask(task,1,"Looking for all jobs...")
+            //get all jobs
+            def jobs = Job.findAllByProjectAndDataDeleted(project,false)
+
+            jobs.eachWithIndex { job, i ->
+                //check if job has reviewed annotation
+                boolean isReviewed = jobService.hasReviewedAnnotation(job)
+
+                //if job has no reviewed annotation deleteAllAlgoAnnotationsTerm / deleteAllAlgoAnnotations / deleteAllJobData
+                if(!isReviewed) {
+                    removeJobData(job)
+                    int pogress = (int)Math.floor((double)i/(double)jobs.size()*100)
+                    taskService.updateTask(task,pogress,"Delete data for job: ${job.software.name} #${job.number}")
+                }
+
+            }
+            taskService.finishTask(task)
+            project.refresh()
+            responseSuccess(project)
+        }
+
+    }
+
+
+    private def removeJobData(Job job) {
+        jobService.deleteAllAlgoAnnotationsTerm(job)
+        jobService.deleteAllAlgoAnnotations(job)
+        jobService.deleteAllJobData(job)
+        job.dataDeleted = true;
+        job.save(flush:true)
     }
 }

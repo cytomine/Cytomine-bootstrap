@@ -15,5 +15,9 @@ class TaskUrlMappings {
         "/api/task/$id"(controller:"restTask"){
             action = [GET:"show"]
         }
+
+        "/api/project/$idProject/task/comment"(controller:"restTask"){
+            action = [GET:"listCommentByProject"]
+        }
     }
 }

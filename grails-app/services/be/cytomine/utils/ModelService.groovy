@@ -101,10 +101,8 @@ abstract class ModelService {
                     dependencyMethodName << "$it"
                 }
             }
-            println "${dependencyMethodName.unique()}"
             dependencyMethodName.unique().eachWithIndex { method, index ->
                 taskService.updateTask(task, (int)((double)index/(double)numberOfDirectDependence)*100, "")
-                println "$method"
                 this."$method"(domainToDelete,c.transaction,task)
             }
             task

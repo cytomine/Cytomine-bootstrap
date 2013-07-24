@@ -315,6 +315,15 @@ class BasicInstanceBuilder {
         review
     }
 
+    static ReviewedAnnotation createReviewAnnotation(AnnotationDomain annotation) {
+        ReviewedAnnotation review = getReviewedAnnotationNotExist()
+        review.project = annotation.project
+        review.image = annotation.image
+        review.putParentAnnotation(annotation)
+        saveDomain(review)
+        review
+    }
+
     static ReviewedAnnotation getReviewedAnnotation() {
          def basedAnnotation = saveDomain(getUserAnnotationNotExist())
          def image = getImageInstance()

@@ -16,6 +16,9 @@ var JobDataModel = Backbone.Model.extend({
     }
 });
 
+
+
+
 // define our collection
 var JobDataCollection = PaginatedCollection.extend({
     model: JobDataModel,
@@ -44,6 +47,24 @@ var JobDataStatsModel = Backbone.Model.extend({
         }
         else {
             return "api/job/" + this.id + "/alldata.json?task=" + this.task;
+        }
+    },
+    initialize: function (options) {
+        this.id = options.id;
+        this.task = options.task;
+    }
+});
+
+
+
+var JobDataClearModel = Backbone.Model.extend({
+    url: function () {
+        console.log("task=" + this.task);
+        if (this.task == null || this.task == undefined) {
+            return "api/project/" + this.id + "/job/purge.json";
+        }
+        else {
+            return "api/project/" + this.id + "/job/purge.json?task=" + this.task;
         }
     },
     initialize: function (options) {

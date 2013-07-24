@@ -3,6 +3,7 @@ package be.cytomine.utils
 import be.cytomine.SecurityACL
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class TaskService  {
 
@@ -20,15 +21,21 @@ class TaskService  {
         task
     }
 
+    def listLastComments(Project project) {
+       SecurityACL.check(project,READ)
+       def comments = new Task().listFromDatabase(project.id)
+       return comments
+    }
+
     /**
      * Create a new task
      * @param project Project concerning by this task
      * @param user User that create the task
      * @return Task created
      */
-    def createNewTask(Project project, SecUser user) {
+    def createNewTask(Project project, SecUser user, boolean printInActivity) {
         SecurityACL.checkUser(cytomineService.currentUser)
-        Task task = new Task(projectIdent: project?.id, userIdent: user.id)
+        Task task = new Task(projectIdent: project?.id, userIdent: user.id,printInActivity:printInActivity)
         //task.addToComments("Task started...")
         task = task.saveOnDatabase()
         return task
@@ -59,7 +66,7 @@ class TaskService  {
             }
             SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
             task.progress = progress
-            task.addComment(comment)
+            task.addComment(progress+"%:" + comment)
             task = task.saveOnDatabase()
             return task
     }

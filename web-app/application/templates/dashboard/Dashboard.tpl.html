@@ -15,9 +15,26 @@
         <div class="span5">
             <h4 class="header_h"><i class="icon-fire" style="margin-top: 5px;"></i> Activity</h4>
 
-            <div id="lastactionitem" style="max-height: 250px; overflow: auto;">
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            <ul class="nav nav-tabs" id="activityTab">
+              <li class="active"><a href="#lastcommandsitemtab">Last commands</a></li>
+              <li><a href="#lasttasksitemtab">Last tasks</a></li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="lastcommandsitemtab" id="home">
+                  <div id="lastcommandsitem" style="max-height: 250px; overflow: auto;">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                  </div>
+              </div>
+              <div class="tab-pane" id="lasttasksitemtab" id="profile">
+                  <div id="lasttasksitem" style="max-height: 250px; overflow: auto;">
+                      <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                  </div>
+              </div>
             </div>
+
+
+
         </div>
     </div>
     <div class="row" style="padding : 30px;">

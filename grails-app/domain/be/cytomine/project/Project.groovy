@@ -68,6 +68,8 @@ class Project extends CytomineDomain implements Serializable {
      */
     boolean retrievalAllOntology = true
 
+    boolean isClosed = false
+
     static belongsTo = [ontology: Ontology]
     static hasMany = [retrievalProjects : Project]
 
@@ -122,6 +124,8 @@ class Project extends CytomineDomain implements Serializable {
      * @return Domain with json data filled
      */           
     static Project insertDataIntoDomain(def json,def domain = new Project()) {
+        println  json
+        println  json.isClosed
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
         domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
@@ -143,6 +147,9 @@ class Project extends CytomineDomain implements Serializable {
         domain.blindMode = JSONUtils.getJSONAttrBoolean(json, 'blindMode', false)
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
+
+        domain.isClosed = JSONUtils.getJSONAttrBoolean(json, 'isClosed', false)
+
 
         if(!json.retrievalProjects.toString().equals("null")) {
             domain.retrievalProjects?.clear()
@@ -183,6 +190,7 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
+            returnArray['isClosed'] = project.isClosed
             returnArray['created'] = project.created?.time?.toString()
             returnArray['updated'] = project.updated?.time?.toString()
             return returnArray

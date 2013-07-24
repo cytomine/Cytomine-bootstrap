@@ -160,11 +160,11 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             header :"Launch new job",
             body :"<div id='jobComparatorDialogParent'></div>",
             width : Math.round($(window).width() - 200),
-            height : Math.round($(window).height() - 75),
+            height : Math.round($(window).height() - 150),
             callBack: function() {launchView.render();}
         });
-        modalLaunch.addButtons("closeNewJob","Close",false);
-        modalLaunch.addButtons("createNewJob","Create new job",true,function() {launchView.createJobFromParam(launchView.executeJob);});
+        modalLaunch.addButtons("closeNewJob","Close",false,true);
+        modalLaunch.addButtons("createNewJob","Create new job",true,true,function() {launchView.createJobFromParam(launchView.executeJob);});
 
 
         //init modal for job compare
@@ -192,7 +192,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                         });
             }
         });
-        modalCompare.addButtons("closeCompare","Close",false);
+        modalCompare.addButtons("closeCompare","Close",false,true);
 
 
         //init modal for job filter
@@ -213,7 +213,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
                 }).render();
             }
         });
-        modalCompare.addButtons("closeCompare","Close",false);
+        modalCompare.addButtons("closeCompare","Close",false,true);
     },
     printComparatorLaunch: function () {
         var self = this;

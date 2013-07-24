@@ -147,7 +147,7 @@ var ApplicationView = Backbone.View.extend({
                 width : 900,
                 height : 800
             });
-            modal.addButtons("closeHotKeys","Close",true);
+            modal.addButtons("closeHotKeys","Close",true,true);
         });
         return this;
     },

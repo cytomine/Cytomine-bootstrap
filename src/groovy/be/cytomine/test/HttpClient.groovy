@@ -124,7 +124,7 @@ class HttpClient {
      * Response is saved and can be retrieved with getResponseCode()/getResponseData()
      * @param data Data for post action
      */
-    void post(String data) {
+    void post(def data) {
         log.debug("Post " + URL.toString())
         HttpPost httpPost = new HttpPost(URL.toString());
         log.debug("Post send :" + data.replace("\n", ""))

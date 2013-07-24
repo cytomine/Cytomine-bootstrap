@@ -800,7 +800,35 @@ class GenericAnnotationTests  {
     }
 
 
+    def testSimplifyServiceWithEmptySpace() {
 
+        //create annotation
+        def annotation = BasicInstanceBuilder.getAlgoAnnotation()
+        UserJob user = annotation.user
+
+        //add very big geometry
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/annotationbig_emptyspace.txt').text)
+        annotation.save(flush:true)
+        assert annotation.location.numPoints > 500
+        println "AAA NUMBER OF POINT: " + annotation.location.numPoints
+        int maxPoint
+        int minPoint
+
+        //simplify
+        maxPoint = 5000
+        minPoint = 1000
+
+        def result = AnnotationDomainAPI.simplifyAnnotation(annotation.id,minPoint,maxPoint,user.username, 'PasswordUserJob')
+        assert 200==result.code
+
+        //check if points are ok
+        annotation.refresh()
+        assert annotation.location.numPoints <= maxPoint
+        assert annotation.location.numPoints >= minPoint
+
+        println "BBB NUMBER OF POINT: " + annotation.location.numPoints
+
+    }
 
 
 

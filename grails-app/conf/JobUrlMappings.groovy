@@ -20,5 +20,9 @@ class JobUrlMappings {
         "/api/job/$id/preview" (controller : "restJob") {
             action = [POST : "preview", GET : "getPreview"]
         }
+
+        "/api/project/$id/job/purge"(controller : "restJob") {
+            action = [POST : "purgeJobNotReviewed", GET : "purgeJobNotReviewed"]
+        }
     }
 }

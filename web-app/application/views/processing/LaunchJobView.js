@@ -528,6 +528,11 @@ var InputListDomainView = Backbone.View.extend({
         var cell = self.trElem.find("td#" + self.param.id);
         cell.empty();
         cell.append(self.getHtmlElem());
+        if(self.multiple) {
+            cell.append('<button class="btn" id="checkAll'+self.param.id+'">Check All</button>');
+            cell.append('<button class="btn" id="uncheckAll'+self.param.id+'">Uncheck All</button>');
+        }
+
 
         var magicSuggestData = self.collection.toJSON();
         var magicSuggestValue = undefined;
@@ -548,12 +553,20 @@ var InputListDomainView = Backbone.View.extend({
             value : magicSuggestValue,
             width : 550,
             renderer: function(v){
+                var item
                 if (v.thumb) { //image/annotation model
-                    return _.template('<div><div style="float:left; width : 128px;"><img src="<%= thumb %>" style="max-width : 64px; max-height : 64px;" /></div><div style="padding-left: 20px;"><%= name %></div></div><div style="clear:both;"></div>', { thumb : v.thumb, name : v[self.printAttribut]});
+                    item =  _.template('<div><div style="float:left; width : 128px;"><img src="<%= thumb %>" style="max-width : 64px; max-height : 64px;" /></div><div style="padding-left: 20px;"><%= name %></div></div><div style="clear:both;"></div>', { thumb : v.thumb, name : v[self.printAttribut]});
                 } else {
-                    return _.template('<%= name %>', { name : v[self.printAttribut] });
+                    item = _.template('<%= name %>', { name : v[self.printAttribut] });
                 }
+                return item;
             }
+        });
+        $("#checkAll"+self.param.id).click(function() {
+            self.elemSuggest.addToSelection(magicSuggestData);
+        });
+        $("#uncheckAll"+self.param.id).click(function() {
+            self.elemSuggest.removeFromSelection(magicSuggestData);
         });
 
         $(self.elemSuggest).on("selectionchange", function (e) {

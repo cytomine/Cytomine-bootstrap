@@ -33,7 +33,13 @@ class RestTaskController extends RestController {
     def add = {
         Project project = projectService.read(request.JSON.project)
         SecUser user = cytomineService.getCurrentUser()
-        Task task = taskService.createNewTask(project,user)
+        boolean printInActivity = params.getBoolean('printInActivity')
+        Task task = taskService.createNewTask(project,user,printInActivity)
         responseSuccess([task:task.getMap()])
+    }
+
+    def listCommentByProject = {
+        Project project = projectService.read(params.long('idProject'))
+        responseSuccess(taskService.listLastComments(project))
     }
 }

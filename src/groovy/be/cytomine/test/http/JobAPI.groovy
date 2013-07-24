@@ -64,4 +64,9 @@ class JobAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def purgeProjectData(def id,def task,String username,String password) {
+        String URL = Infos.CYTOMINEURL + "/api/project/$id/job/purge?task=$task"
+        return doPOST(URL,"", username, password)
+    }
+
 }

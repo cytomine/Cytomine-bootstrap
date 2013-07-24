@@ -173,15 +173,16 @@ class UserAnnotationService extends ModelService {
 
         //Start transaction
         Transaction transaction = transactionService.start()
-
+        def annotationID
+        def result
         //Synchronzed this part of code, prevent two annotation to be add at the same time
-        //synchronized (this.getClass()) {
+//        synchronized (this.getClass()) {
             //Add annotation user
             json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
-            def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
-            def annotationID = result?.data?.annotation?.id
+            result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
+            annotationID = result?.data?.annotation?.id
             log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
             if (annotationID) {
@@ -192,6 +193,9 @@ class UserAnnotationService extends ModelService {
                     }
                 }
             }
+
+//        }
+
 
             //add annotation on the retrieval
             if (annotationID && UserAnnotation.read(annotationID).location.getNumPoints() >= 3) {
@@ -207,7 +211,6 @@ class UserAnnotationService extends ModelService {
             }
 
             return result
-        //}
     }
 
     /**

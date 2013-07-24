@@ -8,5 +8,13 @@
     <li>Number of reviewed annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfReviewedAnnotations %></a></li>
     <li>Description : <div class="description"></div></li>
     <li><a id="seeUsersProjectList-<%= id %>">More Details...</a></li>
+
+    <% if (!isClosed) { %>
+        <button class="btn btn-warning" id="closeProject">Close project</button>
+    <% } else { %>
+        <button class="btn btn-info" id="uncloseProject">Unclose project</button>
+        <button class="btn btn-info" href="#clearjobdataModal"  data-toggle="modal" id="clearjobdata">Clear job data</button>
+    <% }%>
+
 </ul>
 
