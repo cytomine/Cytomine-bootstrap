@@ -34,6 +34,7 @@ class DeleteCommand extends Command {
         def response = service.destroy(oldDomain, printMessage)
         fillCommandInfoJSON(backup, response.data.message)
         return response
+
     }
 
     /**

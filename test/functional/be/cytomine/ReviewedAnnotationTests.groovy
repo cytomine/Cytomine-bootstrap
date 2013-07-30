@@ -740,9 +740,10 @@ class ReviewedAnnotationTests  {
         image.refresh()
         image.project.refresh()
 
-        assert annotation.countReviewedAnnotations==0
+
         assert image.countImageReviewedAnnotations==0
         assert image.project.countReviewedAnnotations==nbreRevAnnotationProject
+        assert annotation.countReviewedAnnotations==0
     }
 
     void testAnnotationReviewedCounterForAnnotationUser() {

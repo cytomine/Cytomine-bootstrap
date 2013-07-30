@@ -14,12 +14,15 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.io.WKTReader
 import geb.Browser
 import grails.plugins.springsecurity.Secured
+import grails.validation.Validateable
 import groovy.sql.Sql
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 @Secured(['ROLE_ADMIN'])
 class AdminController extends RestController {
@@ -27,12 +30,76 @@ class AdminController extends RestController {
 
     def grailsApplication
     def modelService
+    def springSecurityService
 
     def index() {
       //don't remove this, it calls admin/index.gsp layout !
     }
 
     def dataSource
+
+
+    public ArrayList[] splitList(def list, long number) {
+            //split indexCollection files list for each server
+            ArrayList[] pictureByServer = new ArrayList[number];
+            // initialize all your small ArrayList groups
+            for (int i = 0; i < number; i++){
+                pictureByServer[i] = new ArrayList();
+            }
+
+            double idx = 0d;
+            double incrx = (double) ((double) number / (double) list.size());
+            // put your results into those arrays
+            for (int i = 0; i < list.size(); i++) {
+                pictureByServer[(int) Math.floor(idx)].add(list.get(i));
+                idx = idx + incrx;
+            }
+            return pictureByServer;
+    }
+
+    def multi() {
+
+        def list = []
+
+        (0..10000).each {
+           //UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(ImageInstance.read(16642l),User.read(16l),null)
+           if(it%100==0) {
+               cleanUpGorm()
+           }
+        }
+
+
+        list = UserAnnotation.findAllByImage(ImageInstance.read(16642l))
+
+
+        println "delete..."
+
+        println "springSecurityService=$springSecurityService"
+        println "principal=${springSecurityService.principal}"
+
+        def listThread = []
+
+        def listArray = splitList(list,10)
+
+        listArray.eachWithIndex { l, i->
+
+            def th = Thread.start {
+                l.each {  annotation ->
+                    println annotation.project.name
+                   new Sql(dataSource).execute("delete from user_annotation where id=${annotation.id}",[])
+                }
+
+
+            }
+            listThread << th
+        }
+
+        listThread.eachWithIndex { t,i->
+            t.join()
+            println "Thread $i is finished"
+        }
+
+    }
 
     def area() {
         println System.currentTimeMillis()

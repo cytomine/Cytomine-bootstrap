@@ -8,6 +8,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.*
 import be.cytomine.project.Project
+import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
@@ -42,6 +43,7 @@ class RestImageInstanceController extends RestController {
     def reviewedAnnotationService
     def secUserService
     def termService
+    def annotationListingService
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
@@ -214,10 +216,12 @@ class RestImageInstanceController extends RestController {
 
             ArrayList<Geometry> geometries
             if (review) {
-                def reviewedAnnotations = reviewedAnnotationService.list(image.getProject(), termsIDS, userIDS, imageIDS, roiGeometry)
-                geometries = reviewedAnnotations.collect {
+                ReviewedAnnotationListing ral = new ReviewedAnnotationListing(project: image.getProject().id, terms: termsIDS, users: userIDS, images:imageIDS, bbox:roiGeometry, columnToPrint:['basic','meta','wkt','term']  )
+                def result = annotationListingService.listGeneric(ral)
+                geometries = result.collect {
                     new WKTReader().read(it["location"])
                 }
+
             } else {
                 Collection<UserAnnotation> annotations = userAnnotationService.list(image, roiGeometry, termsIDS, userIDS)
                 geometries = annotations.collect { geometry ->

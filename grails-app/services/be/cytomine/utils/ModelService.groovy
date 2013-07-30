@@ -108,12 +108,10 @@ abstract class ModelService {
             task
 
         }
-
         initCommandService()
         c.saveOnUndoRedoStack = this.isSaveOnUndoRedoStack() //need to use getter method, to get child value
         c.service = this
         c.serviceName = getServiceName()
-        log.info "${getServiceName()} commandService =" + commandService + " c=" + c
         return commandService.processCommand(c)
     }
 

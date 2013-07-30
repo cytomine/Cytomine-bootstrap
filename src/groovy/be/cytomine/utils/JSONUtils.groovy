@@ -123,7 +123,12 @@ class JSONUtils {
      */
     static public def getJSONAttrDomain(def json, String attr, def domain, String column, String columnType, boolean mandatory) {
         if (json[attr] != null && !json[attr].toString().equals("null")) {
-            def domainRead = domain.findWhere("$column": convertValue(json[attr].toString(), columnType))
+            def domainRead
+            if(column.equals('id')) {
+                domainRead = domain.read(Long.parseLong(json[attr].toString()))
+            } else {
+                domainRead = domain.findWhere("$column": convertValue(json[attr].toString(), columnType))
+            }
             if (!domainRead) {
                 throw new WrongArgumentException("$attr was not found with id:${json[attr]}")
             }

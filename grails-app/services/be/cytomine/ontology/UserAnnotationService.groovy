@@ -159,6 +159,7 @@ class UserAnnotationService extends ModelService {
      */
     def add(def json,def minPoint = null, def maxPoint = null) {
         log.info "add"
+
         SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
@@ -181,7 +182,9 @@ class UserAnnotationService extends ModelService {
             json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
+        //def image = ImageInstance.lock(Long.parseLong(json["image"].toString()))
             result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
+
             annotationID = result?.data?.annotation?.id
             log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
@@ -256,6 +259,9 @@ class UserAnnotationService extends ModelService {
         SecurityACL.checkIsSameUser(domain.user,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
+//        new Sql(dataSource).execute("delete from annotation_term where user_annotation_id=${domain.id}",[])
+//        new Sql(dataSource).execute("delete from user_annotation where id=${domain.id}",[])
+//        return [status:200,data:[]]
     }
 
     /**

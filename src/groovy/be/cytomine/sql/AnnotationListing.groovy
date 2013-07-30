@@ -178,7 +178,7 @@ abstract class AnnotationListing {
                 getUsersForTermConst() +
                 getAvoidEmptyCentroidConst() +
                 getIntersectConst() +
-                getOrderBy()
+                createOrderBy()
 
         return  getSelect(sqlColumns) + getFrom() + whereRequest
 
@@ -341,17 +341,7 @@ abstract class AnnotationListing {
         } else return ""
     }
 
-
-    def getOrderBy() {
-        if(kmeansValue<3) return ""
-        if(!orderBy) {
-            return "ORDER BY a.id desc " + (columnToPrint.contains("term")? ", term " : "")
-        } else {
-            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
-        }
-     }
-
-
+    abstract def createOrderBy()
 
 }
 
@@ -450,6 +440,30 @@ class UserAnnotationListing extends AnnotationListing {
     def getNotReviewedOnlyConst() {
         return (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" )
     }
+
+    def createOrderBy() {
+        if(kmeansValue<3) return ""
+        def orderByRate = (usersForTermAlgo || userForTermAlgo || suggestedTerm || suggestedTerms)
+        if(orderByRate) {
+            return "ORDER BY aat.rate desc"
+        }else if(!orderBy) {
+            return "ORDER BY a.id desc " + (columnToPrint.contains("term")? ", term " : "")
+        } else {
+            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
+        }
+     }
+
+
+//    def createOrderBy() {
+//
+//        if(kmeansValue<3) return ""
+//        if(!orderBy) {
+//            return "ORDER BY " + (columnToPrint.contains("term")? "aat.rate desc ," : "")  + " a.id desc "
+//        }else {
+//            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
+//        }
+//     }
+
 }
 
 
@@ -569,6 +583,16 @@ class AlgoAnnotationListing extends AnnotationListing {
     def getNotReviewedOnlyConst() {
         return (notReviewedOnly? "AND a.count_reviewed_annotations=0\n" : "" )
     }
+
+    def createOrderBy() {
+
+        if(kmeansValue<3) return ""
+        if(!orderBy) {
+            return "ORDER BY " + (columnToPrint.contains("term")? "aat.rate desc ," : "")  + " a.id desc "
+        }else {
+            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
+        }
+     }
 }
 
 
@@ -707,6 +731,14 @@ class ReviewedAnnotationListing extends AnnotationListing {
     def getNotReviewedOnlyConst() {
         return ""
     }
+    def createOrderBy() {
+        if(kmeansValue<3) return ""
+        if(!orderBy) {
+            return "ORDER BY a.id desc " + (columnToPrint.contains("term")? ", term " : "")
+        } else {
+            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
+        }
+     }
 
 
 }

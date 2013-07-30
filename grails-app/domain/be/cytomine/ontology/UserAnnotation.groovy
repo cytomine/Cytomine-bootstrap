@@ -144,6 +144,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
             domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
             domain.location = new WKTReader().read(json.location)
             domain.image = JSONUtils.getJSONAttrDomain(json, "image", new ImageInstance(), true)
+            //domain.imageId = Long.parseLong(json["image"].toString())
             domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
             domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
 

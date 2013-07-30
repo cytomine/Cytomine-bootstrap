@@ -103,7 +103,9 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
      */
     public beforeInsert() {
         super.beforeInsert()
-        project = image.project
+        if(!project) {
+            project = image.project
+        }
         this.makeValid()
         wktLocation = location.toText()
     }
@@ -288,10 +290,10 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         Geometry validGeom
         String type = geom.getGeometryType().toUpperCase()
 
-        println "*******************************"
-        println "type=" + type
-        println "valid=" + geom.isValid()
-        println "*******************************"
+//        println "*******************************"
+//        println "type=" + type
+//        println "valid=" + geom.isValid()
+//        println "*******************************"
 
         if (!geom.isValid()) {
             println "Geometry is not valid"

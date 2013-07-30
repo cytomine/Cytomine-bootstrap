@@ -73,12 +73,15 @@ class RestAnnotationDomainController extends RestController {
     private doSearch(def params) {
         AnnotationListing al
         def result = []
+
         if(isReviewedAnnotationAsked(params)) {
             al = new ReviewedAnnotationListing()
             result = createRequest(al, params)
         } else if(isAlgoAnnotationAsked(params)) {
+            println "#####################################################################"
             al = new AlgoAnnotationListing()
             result.addAll(createRequest(al, params))
+            println "#####################################################################"
             params.suggestedTerm = params.term
             params.term = null
             params.usersForTermAlgo = params.users

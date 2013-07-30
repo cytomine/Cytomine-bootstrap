@@ -221,7 +221,7 @@ var BrowseImageView = Backbone.View.extend({
                     });
                     if (layer) {
                         layer.showFeature(annotation.get("id"));
-                        self.goToAnnotation(addVlayer, annotation);
+                        self.goToAnnotation(layer, annotation);
                         self.setLayerVisibility(layer, true);
                         setTimeout(function () {
                             var feature = layer.getFeature(annotation.id)

@@ -66,8 +66,6 @@ class CommandService {
                 item.save(flush: true,failOnError: true)
             }
         }
-        log.debug "result.status=" + result.status
-        log.info "processCommand result"
         return result
     }
 }
