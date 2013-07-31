@@ -54,7 +54,12 @@ var AnnotationCollection = PaginatedCollection.extend({
          this.filters = options;
      },
     comparator: function (annotation) {
-        return -annotation.get("id");
+        if(annotation.get("rate")) {
+            return -annotation.get("rate")
+        } else {
+            return -annotation.get("id");
+        }
+
     },
     url : function () {
         var text = "";

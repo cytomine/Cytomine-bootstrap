@@ -31,9 +31,16 @@ class AdminController extends RestController {
     def grailsApplication
     def modelService
     def springSecurityService
+    def archiveCommandService
 
     def index() {
       //don't remove this, it calls admin/index.gsp layout !
+    }
+
+
+    def archive() {
+        archiveCommandService.archiveOldCommand()
+        responseSuccess([])
     }
 
     def dataSource

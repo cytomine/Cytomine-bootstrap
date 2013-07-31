@@ -176,8 +176,7 @@ class UserAnnotationService extends ModelService {
         Transaction transaction = transactionService.start()
         def annotationID
         def result
-        //Synchronzed this part of code, prevent two annotation to be add at the same time
-//        synchronized (this.getClass()) {
+
             //Add annotation user
             json.user = currentUser.id
             //Add Annotation
@@ -196,8 +195,6 @@ class UserAnnotationService extends ModelService {
                     }
                 }
             }
-
-//        }
 
 
             //add annotation on the retrieval
@@ -273,9 +270,7 @@ class UserAnnotationService extends ModelService {
         log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
             log.info "index userAnnotation " + id + " on  " + retrieval.url
-            println "####################################### 1"
             retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(id), RetrievalServer.findByDescription("retrieval"))
-            println "####################################### 2"
 
         }
     }

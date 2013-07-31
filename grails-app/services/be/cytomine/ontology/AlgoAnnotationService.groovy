@@ -113,17 +113,14 @@ class AlgoAnnotationService extends ModelService {
         //Start transaction
         Transaction transaction = transactionService.start()
 
-        //Synchronzed this part of code, prevent two annotation to be add at the same time
-//        synchronized (this.getClass()) {
-            //Add annotation user
-            json.user = currentUser.id
-            //Add Annotation
-            log.debug this.toString()
-            Command command = new AddCommand(user: currentUser, transaction: transaction)
-            def result = executeCommand(command,null,json)
+        //Add annotation user
+        json.user = currentUser.id
+        //Add Annotation
+        log.debug this.toString()
+        Command command = new AddCommand(user: currentUser, transaction: transaction)
+        def result = executeCommand(command,null,json)
 
-            return result
-//        }
+        return result
     }
 
     /**
