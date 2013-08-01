@@ -1,5 +1,7 @@
 package be.cytomine.utils.database
 
+import groovy.sql.Sql
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -13,16 +15,17 @@ class IndexService {
     def grailsApplication
     public final static String SEQ_NAME = "CYTOMINE_SEQ"
     static transactional = true
+    def dataSource
 
     /**
      * Create domain index
      */
     def initIndex() {
-        sessionFactory.getCurrentSession().clear();
-        def connection = sessionFactory.currentSession.connection()
+//        sessionFactory.getCurrentSession().clear();
+//        def connection = sessionFactory.currentSession.connection()
 
         try {
-            def statement = connection.createStatement()
+           def statement
 
             /**
              * Abastract Image //already created (via unique) on filename
@@ -114,6 +117,10 @@ class IndexService {
             createIndex(statement, "command_history", "user_id");
             createIndex(statement, "command_history", "created");
             createIndex(statement, "command_history", "command_id");
+
+            createIndex(statement, "undo_stack_item", "command_id");
+            createIndex(statement, "redo_stack_item", "command_id");
+
             /**
              * Term
              */
@@ -147,9 +154,27 @@ class IndexService {
      */
     def createIndex(def statement, String table, String col, String type) {
         String name = table + "_" + col + "_index"
-        String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
-        log.info reqcreate
-        try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}
+
+
+        boolean alreadyExist = false
+
+        new Sql(dataSource).eachRow("select indexname from pg_indexes where indexname like ?",[name]) {
+            alreadyExist = true
+        }
+
+        //try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}
+        try {
+            if(alreadyExist) {
+                log.info "$name already exist, don't create it"
+            } else {
+                String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
+                log.info reqcreate
+                new Sql(dataSource).execute(reqcreate)
+            }
+
+        } catch(Exception e) {
+            println e
+        }
     }
 
 }

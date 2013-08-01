@@ -23,13 +23,13 @@ class ArchiveCommandService {
     def dataSource
 
     public def archiveOldCommand() {
-        Date before = getMonthBefore(new Date(), 1)
+        Date before = getMonthBefore(new Date(), 13)
         archive(before)
     }
 
     public def archive(Date before) {
         Date today = new Date()
-        File directory = new File("oldcommand/${Environment.getCurrent()}")
+        File directory = new File("/var/log/cytomine/${Environment.getCurrent()}")
         def subdirectory = new File(directory.absolutePath)
         if (!subdirectory.exists()) {
             subdirectory.mkdirs()
@@ -61,10 +61,10 @@ class ArchiveCommandService {
         request = "delete from undo_stack_item where extract(epoch from created)*1000 < ${before.getTime()}"
         println request
         new Sql(dataSource).execute(request)
-        request = "delete from redo_stack_item where extract(epoch from created)*1000 < ${before.getTime()}"
+        request = "delete from redo_stack_item"
          println request
          new Sql(dataSource).execute(request)
-        request = "delete from command where extract(epoch from created)*1000 < ${before.getTime()}"
+        request = "delete from command where extract(epoch from created)*1000 < ${before.getTime()-10000}"
          println request
          new Sql(dataSource).execute(request)
     }

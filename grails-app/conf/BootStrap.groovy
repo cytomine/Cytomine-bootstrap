@@ -70,7 +70,7 @@ class BootStrap {
         marshallersService.initMarshallers()
         sequenceService.initSequences()
         triggerService.initTrigger()
-        //indexService.initIndex()
+        indexService.initIndex()
         grantService.initGrant()
         tableService.initTable()
         termService.initialize()
