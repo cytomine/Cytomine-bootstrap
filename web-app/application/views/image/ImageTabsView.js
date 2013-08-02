@@ -109,47 +109,47 @@ var ImageTabsView = Backbone.View.extend({
                 {
                     property: 'originalFilename',
                     label: 'Name',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'width',
                     label: 'Width',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'height',
                     label: 'Height',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'magnification',
                     label: 'X',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'resolution',
                     label: 'Resolution',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'numberOfAnnotations',
                     label: 'User an.',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'numberOfJobAnnotations',
                     label: 'Algo an.',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'numberOfReviewedAnnotations',
                     label: 'Valid an.',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'mime',
                     label: 'Mime',
-                    sortable: true
+                    sortable: false
                 },
                 {
                     property: 'created',

@@ -191,15 +191,15 @@ class RestJobController extends RestController {
             log.info "load all algo annotations..."
             taskService.updateTask(task,10,"Looking for algo annotations...")
             def annotations = algoAnnotationService.list(job,['basic'])
-            int reviewed = jobService.getReviewedAnnotation(annotations,job).size()
-            log.info "load all annotations..."
+            def reviewed = jobService.getReviewedAnnotation(annotations,job)
+            log.info "load all annotations...$reviewed"
             taskService.updateTask(task,50,"Looking for algo annotations term...")
             long annotationsTermNumber = algoAnnotationTermService.count(job)
             log.info "load all job data..."
             taskService.updateTask(task,75,"Looking for all job data...")
             List<JobData> jobDatas = jobDataService.list(job)
             taskService.finishTask(task)
-            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:reviewed])
+            responseSuccess([annotations:annotations.size(),annotationsTerm:annotationsTermNumber,jobDatas:jobDatas.size(), reviewed:reviewed.size()])
 
         }
     }

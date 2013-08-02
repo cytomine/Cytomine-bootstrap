@@ -130,16 +130,23 @@ class RestProjectController extends RestController {
                    (user? "AND ch.user_id =  ${user.id} " : " ") +
                    "ORDER BY created desc LIMIT $max OFFSET $offset"
         }
-
-        doGenericRequest(request,fullData)
+        println request
+        def result = doGenericRequest(request,fullData)
+        return result
     }
 
     def dataSource
 
     private def doGenericRequest(String request,Boolean fullData) {
         def data = []
+        Long start = System.currentTimeMillis()
+
 
         new Sql(dataSource).eachRow(request) {
+            if(data.isEmpty()) {
+                println "TOTAL1=${System.currentTimeMillis()-start}ms"
+                start = System.currentTimeMillis()
+            }
             def line = [id:it.id,created:it.created,message:it.message,prefix:it.prefixAction,prefixAction:it.prefixAction,user:it.user,project:it.project]
             if(fullData) {
                 line.data = it.data
@@ -150,6 +157,7 @@ class RestProjectController extends RestController {
             data << line
 
         }
+        println "TOTAL2=${System.currentTimeMillis()-start}ms"
         data
     }
 

@@ -58,6 +58,7 @@ var JobSelectionView = Backbone.View.extend({
     },
     refreshWithDate: function (date) {
         var self = this;
+        console.log("refreshWithDate")
         new JobCollection({ project: self.project.id, software: self.software.id, light: true}).fetch({
             success: function (collection, response) {
                 self.jobs = collection;

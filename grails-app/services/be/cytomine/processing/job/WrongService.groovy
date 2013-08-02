@@ -1,5 +1,7 @@
 package be.cytomine.processing.job
 
+import be.cytomine.processing.Job
+
 class WrongService {
 
     static transactional = true
@@ -11,5 +13,8 @@ class WrongService {
      * SERVICE MUST BE DELETE AFTER THE SERVICENAME HAS BEEN SET FOR EACH SOFTWARE
      */
 
-
+    @Override
+    Double computeRate(Job job) {
+        return null;
+    }
 }

@@ -50,7 +50,7 @@ var ProjectDashboardView = Backbone.View.extend({
                 self.fetchTasks();
                 self.fetchCommands();
             }
-        }, 5000);
+        }, 60000);
 
     },
     refreshImagesThumbs: function () {

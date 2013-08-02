@@ -57,6 +57,7 @@ var ActivityView = Backbone.View.extend({
             $("#projectHeaderActivity").append('<br><div class="row-fluid" id="onlineUserActivity"></div>');
         } else {
             $("#projectHeaderActivity").append("<h1>Activity for All projects</h1>");
+            $("#projectHeaderActivity").append("<h4>For the last month</h4>");
         }
     },
     createProjectOnlineUserView : function() {

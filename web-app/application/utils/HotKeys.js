@@ -1,8 +1,10 @@
 var HotKeys = {
     initHotKeys : function() {
+        console.log("initHotKeys");
         var self = this;
 
         $(document).bind('keydown.a',function (evt){
+                    console.log("press a");
                     if(self.checkMode("review")) {
                         self.doClick("div"+window.location.hash.toString(),".acceptButton");
                     }

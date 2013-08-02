@@ -86,11 +86,13 @@ var JobDeleteAllDataView = Backbone.View.extend({
                         new JobDataStatsModel({id: self.model.id, task: task.id}).destroy(
                             {
                                 success: function (model, response) {
+                                    console.log("delete all!");
                                     clearInterval(timer);
                                     $("#jobDataStat-" + self.model.id).find("#task-" + task.id).empty();
                                     window.app.view.message("Project", response.message, "success");
-                                    self.dialog.close();
+                                    console.log("self.container.refresh()");
                                     self.container.refresh();
+                                    self.dialog.close();
                                 },
                                 error: function (model, response) {
                                     clearInterval(timer);

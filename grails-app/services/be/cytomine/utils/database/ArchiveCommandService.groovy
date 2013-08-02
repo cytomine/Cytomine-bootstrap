@@ -23,13 +23,13 @@ class ArchiveCommandService {
     def dataSource
 
     public def archiveOldCommand() {
-        Date before = getMonthBefore(new Date(), 13)
+        Date before = getMonthBefore(new Date(), 1)
         archive(before)
     }
 
     public def archive(Date before) {
         Date today = new Date()
-        File directory = new File("/var/log/cytomine/${Environment.getCurrent()}")
+        File directory = new File("oldcommand/${Environment.getCurrent()}")
         def subdirectory = new File(directory.absolutePath)
         if (!subdirectory.exists()) {
             subdirectory.mkdirs()

@@ -174,7 +174,10 @@ class JobService extends ModelService {
      */
     public def getReviewedAnnotation(def annotations, def job) {
         List<Long> annotationsId = annotations.collect{ it.id }
-        if (annotationsId.isEmpty()) []
+        println "annotationsId=$annotationsId"
+        if (annotationsId.isEmpty()) {
+            return  []
+        }
         println "4project=${job.project.id}"
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(project:job.project.id, parents:annotationsId)
 

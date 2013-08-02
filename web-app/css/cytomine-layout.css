@@ -713,5 +713,5 @@ div.olControlZoomPanel .olControlZoomToMaxExtentItemInactive {
 }
 
 .termHovered {
-    background-color: #3fb618;
+    border-color:#3fb618;
 }

@@ -100,6 +100,12 @@ body {
 <!-- Fuel ux -->
 <script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
 
+%{--<script src="lib/fuelux/datagrid.js" type="text/javascript"></script>--}%
+%{--<script src="lib/fuelux-2.3/dist/all.js" type="text/javascript"></script>--}%
+%{--<script src="lib/fuelux-2.3/lib/require.js" type="text/javascript"></script>--}%
+
+
+
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>
 <script type="text/javascript" src="lib/backbone.js"></script>
