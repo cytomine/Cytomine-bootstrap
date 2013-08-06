@@ -84,6 +84,7 @@ body {
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
 
+
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
@@ -99,12 +100,6 @@ body {
 
 <!-- Fuel ux -->
 <script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
-
-%{--<script src="lib/fuelux/datagrid.js" type="text/javascript"></script>--}%
-%{--<script src="lib/fuelux-2.3/dist/all.js" type="text/javascript"></script>--}%
-%{--<script src="lib/fuelux-2.3/lib/require.js" type="text/javascript"></script>--}%
-
-
 
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>
@@ -376,14 +371,14 @@ body {
 
 </body>
 <g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">
-    <script type="text/javascript" src="lib.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
-    <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'} />" ></script>
+    <script type="text/javascript" src="lib.js?version=${grailsApplication.metadata.'app.version'}" ></script>
+    <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'}" ></script>
 
 </g:if>
 <script type="text/javascript">
     $(function() {
         require(
-                { urlArgs: "bust=" + (new Date()).getTime() }
+                { urlArgs: "bust=" + ${grailsApplication.metadata.'app.version'} }
         );
         window.app = new ApplicationController();
     });

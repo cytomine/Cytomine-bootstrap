@@ -830,6 +830,19 @@ class GenericAnnotationTests  {
 
     }
 
+    def testSimplifyServiceWithHole() {
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/big_annotation_hole.txt').text)
+        println "START NUMBER OF POINT:" + annotation.location.numPoints
+
+        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        annotation = result.data
+        println "END NUMBER OF POINT:" + annotation.location.numPoints
+
+    }
+
 
 
 

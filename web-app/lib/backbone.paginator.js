@@ -94,7 +94,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 
       // Create default values if no others are specified
       queryOptions = _.defaults(queryOptions, {
-        timeout: 25000,
+        timeout: 120000,
         cache: false,
         type: 'GET',
         dataType: 'jsonp'
@@ -788,7 +788,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 
       // Create default values if no others are specified
       queryOptions = _.defaults(queryOptions, {
-        timeout: 25000,
+        timeout: 120000,
         cache: false,
         type: 'GET',
         dataType: 'jsonp'

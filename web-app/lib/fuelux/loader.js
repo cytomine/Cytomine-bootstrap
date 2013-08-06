@@ -8,6 +8,6 @@
 
 define('jquery', [], function () { return jQuery; });
 
-define('lib/fuelux/loader', ['lib/fuelux/all'], function () {});
+define('fuelux/loader', ['fuelux/all'], function () {});
 
-require('lib/fuelux/loader');
+require('fuelux/loader');

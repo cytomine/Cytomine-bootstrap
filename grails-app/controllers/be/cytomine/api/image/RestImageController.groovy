@@ -246,8 +246,10 @@ class RestImageController extends RestController {
                 def value = params.max_size
                 params.max_size=null
                 def cropURL = getCropAnnotationURL(annotation,params)
+                println "Read image..."
                 BufferedImage image = ImageIO.read(new URL(cropURL));
-                if(value) {
+                println "Image read..."
+                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
                 image = createCropWithDraw(annotation,image)
@@ -273,7 +275,7 @@ class RestImageController extends RestController {
                 params.max_size=null
                 def cropURL = getCropAnnotationURL(annotation,params)
                 BufferedImage image = ImageIO.read(new URL(cropURL));
-                if(value) {
+                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
                 image = createCropWithDraw(annotation,image)
@@ -299,7 +301,7 @@ class RestImageController extends RestController {
                 params.max_size=null
                 def cropURL = getCropAnnotationURL(annotation,params)
                 BufferedImage image = ImageIO.read(new URL(cropURL));
-                if(value) {
+                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
                     image = scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
                 }
                 image = createCropWithDraw(annotation,image)

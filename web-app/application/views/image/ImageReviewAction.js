@@ -84,18 +84,25 @@ var ImageReviewAction = Backbone.View.extend({
 
         $(document).on('click',"a.description" + self.model.id,function () {
             console.log("Click");
-            new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
-                   {success: function (description, response) {
-                       DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),description.id,self.model.id,self.model.get('class'),description.get('data'),function() { });
-                       el.find(".action"+self.model.id).find('a.description').click();
-                   }, error: function (model, response) {
-                       DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),null,self.model.id,self.model.get('class'),"",function() { });
-                       el.find(".action"+self.model.id).find('a.description').click();
+            if(!self.disableEvent) {
+                new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
+                       {success: function (description, response) {
+                           self.disableEvent = true;
+                           DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),description.id,self.model.id,self.model.get('class'),description.get('data'),function() { });
+                           el.find(".action"+self.model.id).find('a.description').click();
+                       }, error: function (model, response) {
+                           self.disableEvent = true;
+                           DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),null,self.model.id,self.model.get('class'),"",function() { });
+                           el.find(".action"+self.model.id).find('a.description').click();
 
-                   }});
+                       }});
+            } else {
+                self.disableEvent = false;
+            }
             return false;
         });
     },
+    disableEvent : false,
     startReviewing: function () {
         var self = this;
         console.log("startReviewing");

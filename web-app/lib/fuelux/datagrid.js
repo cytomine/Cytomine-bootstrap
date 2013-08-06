@@ -171,16 +171,12 @@ define(function(require) {
 		},
 
 		headerClicked: function (e) {
-            console.log("headerClicked");
 			var $target = $(e.target);
 			if (!$target.hasClass('sortable')) return;
 
 			var direction = this.options.dataOptions.sortDirection;
 			var sort = this.options.dataOptions.sortProperty;
 			var property = $target.data('property');
-            console.log("property="+property);
-            console.log("sort="+sort);
-
 
 			if (sort === property) {
 				this.options.dataOptions.sortDirection = (direction === 'asc') ? 'desc' : 'asc';
@@ -188,8 +184,6 @@ define(function(require) {
 				this.options.dataOptions.sortDirection = 'asc';
 				this.options.dataOptions.sortProperty = property;
 			}
-
-
 
 			this.options.dataOptions.pageIndex = 0;
 			this.updateColumns($target, this.options.dataOptions.sortDirection);

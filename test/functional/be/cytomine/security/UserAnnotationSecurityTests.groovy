@@ -63,6 +63,46 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
 
     }
 
+    //A project admin must be able to update/delete an annotation from another user
+    void testAnnotationSecurityForProjectAdmin() {
+        //Get User 1
+        User user1 = getUser1()
+
+        //Get User 2
+        User user2 = getUser2()
+
+        //Create project with user 1
+        ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        Project project = image.project
+
+        //Add project right for user 2
+        def resAddUser = ProjectAPI.addUserProject(project.id, user2.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        Infos.printRight(project)
+        assert 200 == resAddUser.code
+
+        //Add annotation 1 with user 2
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist()
+        annotation.image = image
+        annotation.project = image.project
+        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
+        assert 200 == result.code
+        annotation = result.data
+
+        //Get/List annotation 1 with user 1
+        assert (200 == UserAnnotationAPI.show(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+        result = UserAnnotationAPI.listByProject(project.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        assert 200 == result.code
+        assert (true ==UserAnnotationAPI.containsInJSONList(annotation.id, JSON.parse(result.data)))
+
+        //update annotation 1 with user 1
+        assert (200 == UserAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+
+        //Delete annotation 1 with user 2
+        assert (200 == UserAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1).code)
+    }
+
+
+
     void testAnnotationSecurityForProjectUserAndAnnotationCreator() {
         //Get User 1
         User user = getUser1()
@@ -193,5 +233,8 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         assert (401 == UserAnnotationAPI.update(annotation.id,annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
         assert (401 == UserAnnotationAPI.delete(annotation.id, SecurityTestsAbstract.USERNAMEBAD, SecurityTestsAbstract.PASSWORDBAD).code)
     }
+
+
+
 
 }

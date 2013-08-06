@@ -23,6 +23,17 @@ class SimplifyGeometryService {
      */
     def simplifyPolygon(String form, def minPoint = null, def maxPoint = null) {
         Geometry annotationFull = new WKTReader().read(form);
+        println "annotationFull.getNumGeometries()=${annotationFull.getNumGeometries()}"
+        println "annotationFull.getNumInteriorRing()=${annotationFull.getNumInteriorRing()}"
+        int numOfGeometry = annotationFull.getNumGeometries()*annotationFull.getNumInteriorRing()
+        numOfGeometry = Math.max(1,numOfGeometry)
+        if(numOfGeometry>10) {
+            numOfGeometry = numOfGeometry/2
+        }
+
+        println "numOfGeometry=$numOfGeometry"
+
+
 //        log.info "minPoint=$minPoint maxPoint=$maxPoint"
         Geometry lastAnnotationFull = annotationFull
         double ratioMax = 1.3d
@@ -30,13 +41,13 @@ class SimplifyGeometryService {
         /* Number of point (ex: 500 points) */
         double numberOfPoint = annotationFull.getNumPoints()
         /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
-        double rateLimitMax = Math.max(numberOfPoint / ratioMax, 150)
+        double rateLimitMax = Math.max(numberOfPoint / ratioMax, numOfGeometry*200)
         if(maxPoint) {
             //overide if max/minpoint is in argument
             rateLimitMax = maxPoint
         }
         /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
-        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), 100)
+        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), numOfGeometry*100)
         if(minPoint) {
             //overide if max/minpoint is in argument
             rateLimitMin = minPoint
@@ -53,6 +64,7 @@ class SimplifyGeometryService {
 //        println "numberOfPoint=$numberOfPoint"
         Boolean isPolygonAndNotValid = (annotationFull instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotationFull).isValid())
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
+            println "simplify"
             rate = i
             if (isPolygonAndNotValid) {
                 lastAnnotationFull = TopologyPreservingSimplifier.simplify(annotationFull, rate)
@@ -64,6 +76,7 @@ class SimplifyGeometryService {
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
         }
+        println "POINTS="+lastAnnotationFull.getNumPoints()
         return [geometry: annotationFull, rate: rate]
     }
 
