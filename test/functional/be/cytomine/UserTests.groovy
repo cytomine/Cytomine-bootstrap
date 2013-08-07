@@ -65,12 +65,54 @@ class UserTests  {
         assert 200 == result.code
     }
 
-    void testShowUserWithCredential() {
+    void testShowUserWithId() {
         def result = UserAPI.show(BasicInstanceBuilder.getUser().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
+
+    void testShowUserWithUsername() {
+        def result = UserAPI.show(BasicInstanceBuilder.getUser().username, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
+
+    void testShowKeysWithUsername() {
+        def user = BasicInstanceBuilder.getUser()
+        def result = UserAPI.keys(user.username, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.publicKey.equals(user.publicKey)
+        assert json.privateKey.equals(user.privateKey)
+
+        result = UserAPI.keys(user.username, user.username, "password")
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.publicKey.equals(user.publicKey)
+        assert json.privateKey.equals(user.privateKey)
+    }
+
+    void testShowKeysWithId() {
+        def user = BasicInstanceBuilder.getUser()
+        def result = UserAPI.keys(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.publicKey.equals(user.publicKey)
+        assert json.privateKey.equals(user.privateKey)
+
+        result = UserAPI.keys(user.id, user.username, "password")
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.publicKey.equals(user.publicKey)
+        assert json.privateKey.equals(user.privateKey)
+    }
+
 
     void testShowCurrentUser() {
         def result = UserAPI.showCurrent(Infos.GOODLOGIN, Infos.GOODPASSWORD)

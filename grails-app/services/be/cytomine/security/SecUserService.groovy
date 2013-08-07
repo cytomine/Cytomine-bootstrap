@@ -57,6 +57,12 @@ class SecUserService extends ModelService {
         SecUser.get(id)
     }
 
+    def findByUsername(def username) {
+        if(!username) return null
+        SecurityACL.checkUser(cytomineService.currentUser)
+        SecUser.findByUsername(username)
+    }
+
     SecUser getByPublicKey(String key) {
         SecurityACL.checkUser(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
@@ -91,7 +97,7 @@ class SecUserService extends ModelService {
     }
 
     def listUsers(Project project) {
-        //SecurityACL.check(project,READ)  TODO: security isue during bootstrap, uncomment me after bootstrap run!!!!!
+        SecurityACL.check(project,READ)
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users

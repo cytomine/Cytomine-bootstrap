@@ -13,7 +13,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
         label : "${value}",
         fontColor: "red",
         fontSize: "13px",
-        fontWeight: "bold",
+        fontWeight: "bold"
     }});
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {

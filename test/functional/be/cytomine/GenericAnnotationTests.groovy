@@ -469,6 +469,7 @@ class GenericAnnotationTests  {
         json.image = annotation.image.id
         json.review = reviewMode
         json.remove = false
+        json.layers = [annotation.user.id]
         def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
@@ -493,9 +494,11 @@ class GenericAnnotationTests  {
         json.image = annotation.image.id
         json.review = reviewMode
         json.remove = false
+        json.layers = [annotation.user.id]
         def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
+
 
 
     private void doFreeHandAnnotationRem(def annotation, boolean reviewMode) {
@@ -514,6 +517,7 @@ class GenericAnnotationTests  {
         json.image = annotation.image.id
         json.review = reviewMode
         json.remove = true
+        json.layers = [annotation.user.id]
         def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
@@ -845,12 +849,54 @@ class GenericAnnotationTests  {
 
 
 
+    def testAnnotationNotWorking() {
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
+        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/annotation_not_working.txt').text)
+
+        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        annotation = result.data
+
+    }
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+//
+//    private void doFreeHandAnnotationRem(def annotation, boolean reviewMode) {
+//        String basedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
+//        String removedLocation = "POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))"
+//        String expectedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
+//
+//        //add annotation with empty space inside it
+//        annotation.user = User.findByUsername(Infos.GOODLOGIN)
+//        annotation.location = new WKTReader().read(basedLocation)
+//        assert annotation.save(flush: true)  != null
+//
+//        //correct remove
+//        def json = [:]
+//        json.location = removedLocation
+//        json.image = annotation.image.id
+//        json.review = reviewMode
+//        json.remove = true
+//        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assert 200 == result.code
+//
+//        annotation.refresh()
+//        assert new WKTReader().read(expectedLocation).equals(annotation.location)
+//    }
+//
 
 
 

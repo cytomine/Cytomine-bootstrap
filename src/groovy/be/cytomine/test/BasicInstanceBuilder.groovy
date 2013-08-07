@@ -117,6 +117,7 @@ class BasicInstanceBuilder {
             user.generateKeys()
             saveDomain(user)
         }
+        SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
         user
     }
 

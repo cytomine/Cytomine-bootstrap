@@ -1,5 +1,6 @@
 package be.cytomine.api.security
 
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
@@ -114,9 +115,33 @@ class RestUserController extends RestController {
      * @return user an User into the specified format
      */
     def show = {
-        SecUser user = secUserService.read(params.long('id'))
+        def id = params.long('id')
+        SecUser user
+        if(id) {
+            user = secUserService.read(id)
+        } else {
+            user = secUserService.findByUsername(params.id)
+        }
+
         if (user) {
             responseSuccess(user)
+        } else {
+            responseNotFound("User", params.id)
+        }
+    }
+
+    def keys = {
+
+        def id = params.long('id')
+        SecUser user
+        if(id) {
+            user = secUserService.read(id)
+        } else {
+            user = secUserService.findByUsername(params.id)
+        }
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        if (user) {
+            responseSuccess([publicKey:user.publicKey,privateKey:user.privateKey])
         } else {
             responseNotFound("User", params.id)
         }

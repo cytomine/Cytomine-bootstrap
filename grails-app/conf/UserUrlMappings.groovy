@@ -14,6 +14,9 @@ class UserUrlMappings {
         "/api/user/$id"(controller:"restUser"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/user/$id/keys"(controller:"restUser"){
+            action = [GET:"keys"]
+        }
         "/api/user/current"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }

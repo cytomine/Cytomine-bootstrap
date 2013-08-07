@@ -28,7 +28,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
-<link rel='stylesheet' href='lib/OpenLayers-2.12/theme/default/style.css' type='text/css'/>
+<link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
 
 <!--<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>-->
 <link rel="stylesheet" href="css/cosmo/bootstrap.min.css" />
@@ -72,7 +72,7 @@ body {
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
-<script type="text/javascript" src="lib/OpenLayers-2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
 
 
 <!-- fileupload -->

@@ -5,6 +5,7 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
@@ -27,7 +28,7 @@ import grails.converters.JSON
 import groovy.sql.Sql
 
 import java.text.SimpleDateFormat
-
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 /**
  * Controller that handle request on annotation.
  * It's main utility is to redirect request to the correct controller: user/algo/reviewed
@@ -668,18 +669,19 @@ class RestAnnotationDomainController extends RestController {
         boolean review = json.review
         long idImage = json.image
         boolean remove = json.remove
+        def layers = json.layers
         try {
             List<Long> idsReviewedAnnotation = []
             List<Long> idsUserAnnotation = []
 
             //if review mode, priority is done to reviewed annotation correction
             if (review) {
-                idsReviewedAnnotation = findAnnotationIdThatTouch(location, idImage, cytomineService.currentUser.id, "reviewed_annotation")
+                idsReviewedAnnotation = findAnnotationIdThatTouch(location, layers,idImage, "reviewed_annotation")
             }
 
             //there is no reviewed intersect annotation or user is not in review mode
             if (idsReviewedAnnotation.isEmpty()) {
-                idsUserAnnotation = findAnnotationIdThatTouch(location, idImage, cytomineService.currentUser.id, "user_annotation")
+                idsUserAnnotation = findAnnotationIdThatTouch(location, layers, idImage, "user_annotation")
             }
 
             log.info "idsReviewedAnnotation=$idsReviewedAnnotation"
@@ -691,9 +693,9 @@ class RestAnnotationDomainController extends RestController {
             }
 
             if (!idsUserAnnotation.isEmpty()) {
-                responseResult(doCorrectUserAnnotation(idsUserAnnotation, location, remove))
+                responseResult(doCorrectUserAnnotation(idsUserAnnotation,location, remove))
             } else {
-                responseResult(doCorrectReviewedAnnotation(idsReviewedAnnotation, location, remove))
+                responseResult(doCorrectReviewedAnnotation(idsReviewedAnnotation,location, remove))
             }
 
         } catch (CytomineException e) {
@@ -710,18 +712,30 @@ class RestAnnotationDomainController extends RestController {
      * @param table Table that store annotation (user, algo, reviewed)
      * @return List of annotation id from idImage and idUser that touch location
      */
-    def findAnnotationIdThatTouch(String location, long idImage, long idUser, String table) {
+    def findAnnotationIdThatTouch(String location, def layers, long idImage, String table) {
+        ImageInstance image = ImageInstance.read(idImage)
+        boolean projectAdmin = image.project.checkPermission(ADMINISTRATION)
+        if(!projectAdmin) {
+            layers = layers.findAll{(it+"")==(cytomineService.currentUser.id+"")}
+        }
 
-        String request = "SELECT annotation.id\n" +
+
+        String request = "SELECT annotation.id,user_id\n" +
                 "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
-                "AND user_id = $idUser\n" +
+                "AND user_id IN (${layers.join(',')})\n" +
                 "AND ST_Intersects(annotation.location,ST_GeometryFromText('" + location + "',0));"
 
         def sql = new Sql(dataSource)
         List<Long> ids = []
+        List<Long> users = []
         sql.eachRow(request) {
             ids << it[0]
+            users << it[1]
+        }
+        users.unique()
+        if(users.size()>1) {
+            throw new WrongArgumentException("Annotations from multiple users are under this area. You can correct only annotation from 1 user (hide layer if necessary)")
         }
         return ids
     }

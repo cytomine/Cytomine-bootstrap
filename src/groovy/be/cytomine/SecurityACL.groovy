@@ -12,6 +12,9 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
 import org.springframework.security.acls.model.Permission
 
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+import static org.springframework.security.acls.domain.BasePermission.READ
+
 /**
  * User: lrollus
  * Date: 17/01/13
@@ -63,6 +66,7 @@ class SecurityACL {
           }
 
       }
+
 
     static public List<Storage> getStorageList(SecUser user) {
         //faster method
@@ -155,6 +159,24 @@ class SecurityACL {
         if (!currentUser.admin && (user.id!=currentUser.id)) {
             throw new ForbiddenException("You don't have the right to read this resource! You must be the same user!")
         }
+    }
+
+    static public def checkIsSameUserOrAdminContainer(CytomineDomain domain,SecUser user,SecUser currentUser) {
+        println "user=${user.username}"
+        println "currentUser=${currentUser.username}"
+        boolean isNotSameUser = (!currentUser.admin && (user.id!=currentUser.id))
+        println "isNotSameUser=$isNotSameUser"
+        if (isNotSameUser) {
+            if (domain) {
+                println "Admin=${domain.container().checkPermission(ADMINISTRATION)}"
+                if (!domain.container().checkPermission(ADMINISTRATION)) {
+                    throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
+                }
+            } else {
+                throw new ObjectNotFoundException("ACL error: domain is null! Unable to process project auth checking")
+            }
+        }
+
     }
 
     static public def checkIsCreator(CytomineDomain domain,SecUser currentUser) {

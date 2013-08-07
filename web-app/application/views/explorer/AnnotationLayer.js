@@ -169,7 +169,7 @@ var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, 
             url: annotationsCollection,
             format: new OpenLayers.Format.Cytomine({ annotationLayer: this}),
             callbackKey: "callback"
-        }),
+        }) ,
         'styleMap': styleMap
 
     });
@@ -417,7 +417,7 @@ AnnotationLayer.prototype = {
                     holeModifier: "altKey"
                 }
             }),
-            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer),
+            'modify': new OpenLayers.Control.ModifyFeature(this.vectorsLayer,{handlerOptions : {standalone:true}}),
             'select': selectFeature
         }
         this.controls.freehand.freehand = true;
@@ -546,7 +546,8 @@ AnnotationLayer.prototype = {
             location: geomwkt,
             image: this.imageID,
             review: self.reviewMode,
-            remove: remove
+            remove: remove,
+            layers: self.browseImageView.getVisibleLayer()
         });
 
         annotationCorrection.save({}, {
@@ -770,7 +771,7 @@ AnnotationLayer.prototype = {
         for (key in this.controls) {
             var control = this.controls[key];
             if (name == key || key == "select") {
-                control.activate();
+                if(!control.active) control.activate();
                 console.log("Activate "+key);
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {

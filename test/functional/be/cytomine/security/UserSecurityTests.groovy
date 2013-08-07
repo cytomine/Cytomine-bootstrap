@@ -1,13 +1,14 @@
 package be.cytomine.security
 
 import be.cytomine.project.Project
-
+import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 
 import be.cytomine.test.BasicInstanceBuilder
 import grails.converters.JSON
 import be.cytomine.test.http.UserAPI
 import be.cytomine.image.ImageInstance
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,6 +30,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //Check if admin can read/add/update/del
         assert (200 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
         assert (200 == UserAPI.show(user1.id,USERNAMEADMIN,PASSWORDADMIN).code)
+        assert (200 == UserAPI.keys(user1.username,USERNAMEADMIN, PASSWORDADMIN).code)
         assert (true ==UserAPI.containsInJSONList(user1.id,JSON.parse(UserAPI.list(USERNAMEADMIN,PASSWORDADMIN).data)))
         assert (200 == UserAPI.update(user1.id,user1.encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)
 
@@ -47,6 +49,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //Check if himself can read/add/update/del
         assert (403 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME1,PASSWORD1).code)
         assert (200 == UserAPI.show(user1.id,USERNAME1,PASSWORD1).code)
+        assert (200 == UserAPI.keys(user1.username,USERNAME1, PASSWORD1).code)
         assert (true ==UserAPI.containsInJSONList(user1.id,JSON.parse(UserAPI.list(USERNAME1,PASSWORD1).data)))
         assert (200 == UserAPI.update(user1.id,user1.encodeAsJSON(),USERNAME1,PASSWORD1).code)
 
@@ -69,6 +72,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //Check if another user can read/add/update/del
         assert (403 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME2,PASSWORD2).code)
         assert (200 == UserAPI.show(user1.id,USERNAME2,PASSWORD2).code)
+        assert (403 == UserAPI.keys(user1.username,USERNAME2, PASSWORD2).code)
         assert (true ==UserAPI.containsInJSONList(user1.id,JSON.parse(UserAPI.list(USERNAME2,PASSWORD2).data)))
         assert (403 == UserAPI.update(user1.id,user1.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
@@ -86,6 +90,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //Check if a non connected user can read/add/update/del
         assert (401 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
         assert (401 == UserAPI.show(user1.id,USERNAMEBAD,PASSWORDBAD).code)
+        assert (401 == UserAPI.keys(user1.username,USERNAMEBAD, PASSWORDBAD).code)
         assert (401 == UserAPI.update(user1.id,user1.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
 
         //check if a non connected user  can add/del user from project
@@ -96,4 +101,5 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //Check if a non connected user  can del
         assert (401 == UserAPI.delete(user1.id,USERNAMEBAD,PASSWORDBAD).code)
     }
+
 }
