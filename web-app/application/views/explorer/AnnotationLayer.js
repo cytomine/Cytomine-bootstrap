@@ -553,7 +553,9 @@ AnnotationLayer.prototype = {
         annotationCorrection.save({}, {
             success: function (annotation, response) {
                 window.app.view.message("Annotation updated", "Annotation updated with success", "success");
-                self.vectorsLayer.refresh();
+                _.each(self.browseImageView.getUserLayerCanEdit(),function(layer) {
+                    layer.vectorsLayer.refresh();
+                });
                 if (self.reviewMode) {
                     self.browseImageView.refreshReviewLayer();
                 }
