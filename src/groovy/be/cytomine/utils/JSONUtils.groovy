@@ -2,6 +2,8 @@ package be.cytomine.utils
 
 import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
+import grails.converters.JSON
+import org.json.JSONArray
 
 /**
  * User: lrollus
@@ -139,6 +141,20 @@ class JSONUtils {
             }
             return null
         }
+    }
+
+    static public def getJSONList(def item) {
+        if(item==null) {
+            return []
+        } else if(item instanceof List || item instanceof ArrayList) {
+           return item
+        } else if(item instanceof JSONArray) {
+            return item
+        }else if(item instanceof String) {
+            return JSON.parse(item)
+        }
+        println "item.class=${item.class}"
+        return item
     }
 
 

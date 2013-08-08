@@ -18,9 +18,9 @@ var AddProjectDialog = Backbone.View.extend({
             "text!application/templates/project/DisciplinesChoicesRadio.tpl.html",
             "text!application/templates/project/UsersChoices.tpl.html"
         ],
-            function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
-                self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl);
-            });
+                function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
+                    self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl);
+                });
         return this;
     },
     doLayout: function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
@@ -136,29 +136,28 @@ var AddProjectDialog = Backbone.View.extend({
 
             //create ontology
             var projectName = $("#project-name").val().toUpperCase().trim();
-            if(projectName!="") {
+            if (projectName != "") {
                 var ontology = new OntologyModel({name: projectName}).save({name: projectName}, {
-                                    success: function (model, response) {
-                                        window.app.view.message("Ontology", response.message, "success");
-                                        var id = response.ontology.id;
-                                        window.app.models.ontologies.add(model);
+                            success: function (model, response) {
+                                window.app.view.message("Ontology", response.message, "success");
+                                var id = response.ontology.id;
+                                window.app.models.ontologies.add(model);
 
-                                        var choice = _.template(ontologiesChoicesRadioTpl, {id: id, name: model.get("name")});
-                                        $("#projectontology").prepend(choice);
-                                        $("#projectontology").val(id);
+                                var choice = _.template(ontologiesChoicesRadioTpl, {id: id, name: model.get("name")});
+                                $("#projectontology").prepend(choice);
+                                $("#projectontology").val(id);
 
 
-                                    },
-                                    error: function (model, response) {
-                                        var json = $.parseJSON(response.responseText);
-                                        window.app.view.message("Ontology", json.errors, "error");
-                                    }
-                                }
-                            );
-            }  else {
+                            },
+                            error: function (model, response) {
+                                var json = $.parseJSON(response.responseText);
+                                window.app.view.message("Ontology", json.errors, "error");
+                            }
+                        }
+                );
+            } else {
                 window.app.view.message("Project", "You must first write a valid project name!", "error");
             }
-
 
 
         })
@@ -167,20 +166,20 @@ var AddProjectDialog = Backbone.View.extend({
         var self = this;
         var allUser = null;
 
-        var loadUser = function() {
+        var loadUser = function () {
             var allUserArray = [];
 
-            allUser.each(function(user) {
-                allUserArray.push({id:user.id,label:user.prettyName()});
+            allUser.each(function (user) {
+                allUserArray.push({id: user.id, label: user.prettyName()});
             });
 
             self.userMaggicSuggest = $('#projectuser').magicSuggest({
-                         data: allUserArray,
-                         displayField: 'label',
-                         value: [window.app.status.user.id],
-                         width: 590,
-                         maxSelection:null
-                     });
+                data: allUserArray,
+                displayField: 'label',
+                value: [window.app.status.user.id],
+                width: 590,
+                maxSelection: null
+            });
         }
 
         new UserCollection({}).fetch({
@@ -264,21 +263,21 @@ var AddProjectDialog = Backbone.View.extend({
         $(self.addProjectCheckedDisciplinesRadioElem).attr("checked", false);
         $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
-    initProgressBar : function() {
-        console.log("initProgressBar");
-        var divToFill = $("#login-form-add-project");
-        divToFill.empty();
-        $("#login-form-add-project-titles").empty();
-        divToFill.append('' +
-            '<br><br><div id="progressBarCreateProject" class="progress progress-striped active">' +
-            '   <div class="bar" style="width:0%;"></div>' +
-            '</div><br><br>');
-        $("#addproject").find(".modal-footer").empty();
-    },
-    changeProgressBarStatus: function(progress) {
-        console.log("changeProgressBarStatus:"+progress);
+//    initProgressBar : function() {
+//        console.log("initProgressBar");
+//        var divToFill = $("#login-form-add-project");
+//        divToFill.empty();
+//        $("#login-form-add-project-titles").empty();
+//        divToFill.append('' +
+//            '<br><br><div id="progressBarCreateProject" class="progress progress-striped active">' +
+//            '   <div class="bar" style="width:0%;"></div>' +
+//            '</div><br><br>');
+//        $("#addproject").find(".modal-footer").empty();
+//    },
+    changeProgressBarStatus: function (progress) {
+        console.log("changeProgressBarStatus:" + progress);
         var progressBar = $("#progressBarCreateProject").find(".bar");
-        progressBar.css("width",progress+"%");
+        progressBar.css("width", progress + "%");
     },
 
     createProject: function () {
@@ -299,8 +298,8 @@ var AddProjectDialog = Backbone.View.extend({
         var blindMode = $("input#blindMode").is(':checked');
         var privateLayer = $("input#privateLayer").is(':checked');
 
-        console.log("blindMode="+blindMode);
-        console.log("privateLayer="+privateLayer);
+        console.log("blindMode=" + blindMode);
+        console.log("privateLayer=" + privateLayer);
 
         var retrievalDisable = $("input#retrievalProjectNone").is(':checked');
         var retrievalProjectAll = $("input#retrievalProjectAll").is(':checked');
@@ -310,59 +309,46 @@ var AddProjectDialog = Backbone.View.extend({
             projectRetrieval = $("#retrievalproject").multiselectNext('selectedValues');
         }
 
-        self.initProgressBar();
-        var totalOperation = users.length + 1; //N users +1 for project creation
-        self.changeProgressBarStatus((1/totalOperation)*100);
+//        self.initProgressBar();
+//        var totalOperation = users.length + 1; //N users +1 for project creation
+//        self.changeProgressBarStatus((1/totalOperation)*100);
+
+        console.log("initProgressBar");
+        var divToFill = $("#login-form-add-project");
+        divToFill.hide();
+//        $("#login-form-add-project-titles").empty();
+        $("#addproject").find(".modal-footer").hide();
 
 
-        //create project
-        new ProjectModel({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
-                success: function (model, response) {
-                    console.log("1. Project added!");
-                    window.app.view.message("Project", response.message, "success");
-                    var id = response.project.id;
 
-                    //create user-project "link"
-                    var total = users.length;
-                    var counter = 0;
-                    if (total == 0) {
-                        self.addDeleteUserProjectCallback(0, 0);
-                    }
-                    _.each(users, function (user) {
-                        console.log("Add user "+ user);
-                        new ProjectUserModel({project: id, user: user}).save({}, {
+        new TaskModel({project: null}).save({}, {
+            success: function (task, response) {
+                $("#progressBarAddProjectContainer").append('<br><br><div id="task-' + response.task.id + '"></div><br><br>');
+                console.log(response.task);
+                var timer = window.app.view.printTaskEvolution(response.task, $("#progressBarAddProjectContainer").find("#task-" + response.task.id), 1000);
+
+                //create project
+                new ProjectModel({task:response.task.id,users: users, name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, privateLayer: privateLayer}, {
                             success: function (model, response) {
-                                console.log("2. User added");
-                                self.addUserProjectCallback(total, ++counter);
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
-                            }, error: function (model, response) {
-                                self.addUserProjectCallback(total, ++counter);
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
+                                console.log("1. Project added!");
+                                clearInterval(timer);
+                                window.app.view.message("Project", response.message, "success");
+                                var id = response.project.id;
+                                self.projectsPanel.refresh();
+                                $("#addproject").modal("hide");
+                                $("#addproject").remove();
+                            },
+                            error: function (model, response) {
                                 var json = $.parseJSON(response.responseText);
-                                window.app.view.message("User", json.errors, "error");
-                            }});
-
-                    });
-
-                },
-                error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Project", json.errors, "error");
-                    $('#login-form-add-project').stepy('step', 1);
-                    //$("#projecterrorlabel").show();
-                }
+                                clearInterval(timer);
+                                window.app.view.message("Project", json.errors, "error");
+                                divToFill.show();
+                                $("#progressBarAddProjectContainer").empty();
+                                $("#addproject").find(".modal-footer").show();
+                                $('#login-form-add-project').stepy('step', 1);
+                            }
+                        });
             }
-        );
-    },
-    addUserProjectCallback: function (total, counter) {
-        console.log("3. addUserProjectCallback=" + counter +"/"+total);
-        if (counter < total) {
-            return;
-        }
-        var self = this;
-        console.log("4. refresh");
-        self.projectsPanel.refresh();
-        $("#addproject").modal("hide");
-        $("#addproject").remove();
+        });
     }
 });

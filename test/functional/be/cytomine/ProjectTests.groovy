@@ -94,7 +94,27 @@ class ProjectTests  {
         Project project = result.data
         result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+
+        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.GOODLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
     }
+
+    void testAddProjectWithUser() {
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
+        def user =  BasicInstanceBuilder.getUser()
+        def json = JSON.parse(projectToAdd.encodeAsJSON())
+        json.users = [user.id]
+        json.admins = [user.id]
+        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        Project project = result.data
+        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.GOODLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
+    }
+
+
 
     void testAddProjectWithNameAlreadyExist() {
         def projectToAdd = BasicInstanceBuilder.getProject()
@@ -315,4 +335,6 @@ class ProjectTests  {
         assert project.countAnnotations == 0
         assert image.countImageAnnotations == 0
     }
+
+
 }

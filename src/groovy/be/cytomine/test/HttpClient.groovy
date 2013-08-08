@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.protocol.ClientContext
+import org.apache.http.entity.BasicHttpEntity
 import org.apache.http.entity.ContentProducer
 import org.apache.http.entity.EntityTemplate
 import org.apache.http.entity.InputStreamEntity
@@ -124,21 +125,34 @@ class HttpClient {
      * Response is saved and can be retrieved with getResponseCode()/getResponseData()
      * @param data Data for post action
      */
-    void post(def data) {
-        log.debug("Post " + URL.toString())
-        HttpPost httpPost = new HttpPost(URL.toString());
-        log.debug("Post send :" + data.replace("\n", ""))
-        //write data
-        ContentProducer cp = new ContentProducer() {
-            public void writeTo(OutputStream outstream) throws IOException {
-                Writer writer = new OutputStreamWriter(outstream, "UTF-8");
-                writer.write(data);
-                writer.flush();
-            }
-        };
-        HttpEntity entity = new EntityTemplate(cp);
-        httpPost.setEntity(entity);
+//    void post(def data) {
+//        log.debug("Post " + URL.toString())
+//        HttpPost httpPost = new HttpPost(URL.toString());
+//        log.info("Post send :" + data.replace("\n", ""))
+//        //write data
+//        ContentProducer cp = new ContentProducer() {
+//            public void writeTo(OutputStream outstream) throws IOException {
+//                Writer writer = new OutputStreamWriter(outstream, "UTF-8");
+//                writer.write(data);
+//                writer.flush();
+//            }
+//        };
+//        HttpEntity entity = new EntityTemplate(cp);
+//        httpPost.setEntity(entity);
+//
+//        response = client.execute(targetHost, httpPost, localcontext);
+//    }
 
+    public void post(String data) throws Exception {
+        HttpPost httpPost = new HttpPost(URL.toString());
+//        httpPost.addHeader("Content-Type","application/json")
+//        httpPost.addHeader("host",this.host)
+        log.debug("Post send :" + data.replace("\n", ""));
+        //write data
+        BasicHttpEntity entity = new BasicHttpEntity();
+        entity.setContent(new ByteArrayInputStream(data.getBytes()));
+        entity.setContentLength((long)data.getBytes().length);
+        httpPost.setEntity(entity);
         response = client.execute(targetHost, httpPost, localcontext);
     }
 

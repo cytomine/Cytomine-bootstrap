@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
+import groovy.sql.Sql
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.MutableAcl
 import org.springframework.security.acls.model.NotFoundException
@@ -15,29 +16,9 @@ class PermissionService {
     def aclUtilService
     def aclPermissionFactory
     def objectIdentityRetrievalStrategy
+    def dataSource
+    def cytomineService
 
-    /**
-     * Add Permission right
-     * @param domain
-     * @param username
-     * @param permission
-     */
-    void addPermission(def domain, String username, int permission) {
-        addPermission(domain, username, aclPermissionFactory.buildFromMask(permission))
-    }
-
-    void addPermission(def domain, String username, Permission permission) {
-        synchronized (this.getClass()) {
-            log.info "Add Permission " +  permission.mask + " for " + username + " to " + domain.class + " " + domain.id
-            ObjectIdentity oi = new ObjectIdentityImpl(domain.class, domain.id);
-            try {
-                aclService.readAclById(oi);
-            } catch (NotFoundException nfe) {
-                aclService.createAcl objectIdentityRetrievalStrategy.getObjectIdentity(domain)
-            }
-            aclUtilService.addPermission(domain, username, permission)
-        }
-    }
 
     synchronized void deletePermission(CytomineDomain domain, String username, Permission permission) {
         def acl = aclUtilService.readAcl(domain)
@@ -50,4 +31,117 @@ class PermissionService {
         }
         aclService.updateAcl(acl)
     }
+
+    /**
+     * Add Permission right
+     * @param domain
+     * @param username
+     * @param permission
+     */
+    void addPermission(def domain, String username, int permission) {
+        addPermission(domain, username, aclPermissionFactory.buildFromMask(permission))
+    }
+
+    void addPermission(def domain, String username, Permission permission) {
+
+        //get domain class id
+        def ac = getAclClass(domain)
+
+        //get acl sid for current user (run request)
+        def sidCurrentUser = getAclSid(cytomineService.currentUser.username)
+
+        //get acl object id
+        def aoi = getAclObjectIdentity(domain, ac, sidCurrentUser)
+
+        //get acl sid for the user
+        def sid = getAclSid(username)
+
+        //get acl entry
+        def ace = getAclEntry(aoi,sid,permission.mask)
+
+
+
+
+//        id   | ace_order | acl_object_identity | audit_failure | audit_success | granting | mask |  sid
+//    --------+-----------+---------------------+---------------+---------------+----------+------+--------
+//     333386 |         0 |              304690 | f             | f             | t        |   16 | 304445
+//     333387 |         1 |              304690 | f             | f             | t        |   16 | 304436
+//     333388 |         2 |              304690 | f             | f             | t        |   16 | 304451
+//     333389 |         3 |              304690 | f             | f             | t        |   16 | 304700
+//     333390 |         4 |              304690 | f             | f             | t        |   16 | 304706
+//     333391 |         5 |              304690 | f             | f             | t        |   16 | 304713
+//     333392 |         6 |              304690 | f             | f             | t        |   16 | 304721
+//     333393 |         7 |              304690 | f             | f             | t        |   16 | 304730
+
+
+
+    }
+
+    public void getAclEntry(def aoi, def sid, def mask) {
+        def ace = executeAclRequest("SELECT id FROM acl_entry WHERE acl_object_identity = ? AND mask = ? AND sid=?",[aoi,mask,sid])
+        if (!ace) {
+            def max = executeAclRequest("SELECT max(ace_order) FROM acl_entry WHERE acl_object_identity = ?",[aoi])
+            if(max==null) {
+                max=0
+            } else {
+                max = max +1
+            }
+            executeAclInsert("" +
+                    "INSERT INTO acl_entry(id,ace_order,acl_object_identity,audit_failure,audit_success,granting,mask,sid) " +
+                    "VALUES(nextval('hibernate_sequence'),?,?,false,false,true,?,?)",[max,aoi,mask,sid])
+
+            ace = executeAclRequest("SELECT id FROM acl_entry WHERE acl_object_identity = ? AND mask = ? AND sid=?",[aoi,mask,sid])
+        }
+        ace
+    }
+
+    public def getAclObjectIdentity(domain, ac, sidCurrentUser) {
+        def aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
+        if (!aoi) {
+            //id=nextVal()
+            executeAclInsert("" +
+                    "INSERT INTO acl_object_identity(id,object_id_class,entries_inheriting,object_id_identity,owner_sid,parent_object) " +
+                    "VALUES (nextval('hibernate_sequence'),?,true,?,?,null)",[ac, domain.id,sidCurrentUser])
+            aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
+        }
+        aoi
+    }
+
+    public def getAclSid(String username) {
+        def sidCurrentUser = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])
+        if (!sidCurrentUser) {
+            executeAclInsert("INSERT INTO acl_sid(id,principal,sid) VALUES(nextval('hibernate_sequence'),true,?)",[username])
+            sidCurrentUser = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])
+        }
+        sidCurrentUser
+    }
+
+    public def getAclClass(domain) {
+        def ac = executeAclRequest("SELECT id FROM acl_class WHERE class = ?",[domain.class.name])
+        if (!ac) {
+            executeAclInsert("INSERT INTO acl_class(id,class) VALUES(nextval('hibernate_sequence'),${domain.class.name})")
+            ac = executeAclRequest("SELECT id FROM acl_class WHERE class = ?",[domain.class.name])
+        }
+        ac
+    }
+
+    def executeAclRequest(String request,def params = []) {
+        println request
+        def id = null
+        new Sql(dataSource).eachRow(request,params) {
+            id = it[0]
+        }
+        return id
+    }
+
+    def executeAclInsert(String request,def params = []) {
+        println request
+        def id = null
+        new Sql(dataSource).execute(request,params)
+    }
+
+
 }
+
+
+

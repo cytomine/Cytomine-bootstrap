@@ -13,8 +13,10 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
 import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
+import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
@@ -39,6 +41,7 @@ class ProjectService extends ModelService {
     def userAnnotationService
     def imageSequenceService
     def propertyService
+    def secUserService
 
     def currentDomain() {
         Project
@@ -101,11 +104,48 @@ class ProjectService extends ModelService {
      * @param json New domain data
      * @return Response structure (created domain data,..)
      */
-    def add(def json) {
+    def add(def json,Task task = null) {
+        taskService.updateTask(task,5,"Start creating project ${json.name}")
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.checkUser(currentUser)
+        taskService.updateTask(task,10,"Check retrieval consistency")
         checkRetrievalConsistency(json)
-        return executeCommand(new AddCommand(user: currentUser),null,json)
+        def result = executeCommand(new AddCommand(user: currentUser),null,json)
+        def project = Project.read(result?.data?.project.id)
+        taskService.updateTask(task,20,"Project $project created")
+        log.info "project=" + project + " json.users=" + json.users + " json.admins=" + json.admins
+        //Add annotation-term if term
+        int progress = 20
+        if (project) {
+            def users = JSONUtils.getJSONList(json.users);
+            log.info "users=${users}"
+            if (users) {
+                users.each { idUser ->
+                    SecUser user = SecUser.read(Long.parseLong(idUser+""))
+                    log.info "addUserToProject project=${project} user=${user}"
+                    secUserService.addUserFromProject(user, project, false)
+                    progress = progress + (40/users.size())
+                    taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as User")
+                }
+            }
+            def admins = JSONUtils.getJSONList(json.admins);
+            log.info "admins=${admins}"
+            if (admins) {
+                admins.each { idUser ->
+                    SecUser user = SecUser.read(Long.parseLong(idUser+""))
+                    if(user.id!=cytomineService.currentUser.id) {
+                        //current user is already added to admin group
+                        log.info "addUserToProject project=${project} user=${user}"
+                        secUserService.addUserFromProject(user, project, true)
+                        progress = progress + (40/admins.size())
+                        taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as Admin")
+                    }
+
+                }
+            }
+        }
+        return result
+
     }
 
     /**
@@ -137,7 +177,10 @@ class ProjectService extends ModelService {
 
     def afterAdd(Project domain, def response) {
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
-        aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+        if(!domain.hasPermission(ADMINISTRATION)) {
+            log.info("force to put it in list")
+            aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+        }
     }
 
 
