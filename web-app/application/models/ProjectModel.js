@@ -10,6 +10,7 @@ var ProjectModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/project';
         var format = '.json';
+        console.log(this);
         if (this.task != null && this.task != undefined) {
             format = format+"?task="+this.task
         }

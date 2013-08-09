@@ -846,25 +846,25 @@ class GenericAnnotationTests  {
         println "END NUMBER OF POINT:" + annotation.location.numPoints
 
     }
-
-
-
-    def testAnnotationNotWorking() {
-        Project project = BasicInstanceBuilder.getProjectNotExist(true)
-        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
-        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/annotation_not_working.txt').text)
-
-        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        annotation = result.data
-
-    }
-
-
-
-
-
-
+//
+//
+//
+//    def testAnnotationNotWorking() {
+//        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+//        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
+//        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/annotation_not_working.txt').text)
+//
+//        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assert 200 == result.code
+//        annotation = result.data
+//
+//    }
+//
+//
+//
+//
+//
+//
 
 
 

@@ -1,11 +1,7 @@
 package be.cytomine.security
 
-import be.cytomine.CytomineDomain
+import be.cytomine.Exception.ObjectNotFoundException
 import groovy.sql.Sql
-import org.springframework.security.acls.domain.ObjectIdentityImpl
-import org.springframework.security.acls.model.MutableAcl
-import org.springframework.security.acls.model.NotFoundException
-import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.Permission
 
 class PermissionService {
@@ -20,16 +16,27 @@ class PermissionService {
     def cytomineService
 
 
-    synchronized void deletePermission(CytomineDomain domain, String username, Permission permission) {
-        def acl = aclUtilService.readAcl(domain)
-        log.info "Delete Permission " +  permission.mask + " for " + username + " from " + domain.class + " " + domain.id
-        // Remove all permissions associated with this particular recipient
-        acl.entries.eachWithIndex { entry, i ->
-            if (entry.sid.getPrincipal().equals(username) && entry.permission.equals(permission)) {
-                acl.deleteAce(i)
-            }
-        }
-        aclService.updateAcl(acl)
+//    synchronized void deletePermission(CytomineDomain domain, String username, Permission permission) {
+//        def acl = aclUtilService.readAcl(domain)
+//        log.info "Delete Permission " +  permission.mask + " for " + username + " from " + domain.class + " " + domain.id
+//        // Remove all permissions associated with this particular recipient
+//        acl.entries.eachWithIndex { entry, i ->
+//            if (entry.sid.getPrincipal().equals(username) && entry.permission.equals(permission)) {
+//                acl.deleteAce(i)
+//            }
+//        }
+//        aclService.updateAcl(acl)
+//    }
+
+    void deletePermission(def domain, String username, Permission permission) {
+        println "Delete permission for $username, ${permission.mask}, ${domain.id}"
+        def aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
+        int mask = permission.mask
+        def sid = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])
+
+        if(!aoi || !sid) throw ObjectNotFoundException("User ${username} or Object ${domain.id} are not in ACL")
+
+        executeAclCUD("DELETE FROM acl_entry WHERE acl_object_identity = ? AND mask = ? AND sid = ?",[aoi,mask,sid])
     }
 
     /**
@@ -86,7 +93,7 @@ class PermissionService {
             } else {
                 max = max +1
             }
-            executeAclInsert("" +
+            executeAclCUD("" +
                     "INSERT INTO acl_entry(id,ace_order,acl_object_identity,audit_failure,audit_success,granting,mask,sid) " +
                     "VALUES(nextval('hibernate_sequence'),?,?,false,false,true,?,?)",[max,aoi,mask,sid])
 
@@ -99,7 +106,7 @@ class PermissionService {
         def aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
         if (!aoi) {
             //id=nextVal()
-            executeAclInsert("" +
+            executeAclCUD("" +
                     "INSERT INTO acl_object_identity(id,object_id_class,entries_inheriting,object_id_identity,owner_sid,parent_object) " +
                     "VALUES (nextval('hibernate_sequence'),?,true,?,?,null)",[ac, domain.id,sidCurrentUser])
             aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
@@ -110,7 +117,7 @@ class PermissionService {
     public def getAclSid(String username) {
         def sidCurrentUser = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])
         if (!sidCurrentUser) {
-            executeAclInsert("INSERT INTO acl_sid(id,principal,sid) VALUES(nextval('hibernate_sequence'),true,?)",[username])
+            executeAclCUD("INSERT INTO acl_sid(id,principal,sid) VALUES(nextval('hibernate_sequence'),true,?)",[username])
             sidCurrentUser = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])
         }
         sidCurrentUser
@@ -119,24 +126,23 @@ class PermissionService {
     public def getAclClass(domain) {
         def ac = executeAclRequest("SELECT id FROM acl_class WHERE class = ?",[domain.class.name])
         if (!ac) {
-            executeAclInsert("INSERT INTO acl_class(id,class) VALUES(nextval('hibernate_sequence'),${domain.class.name})")
+            executeAclCUD("INSERT INTO acl_class(id,class) VALUES(nextval('hibernate_sequence'),?)",[domain.class.name])
             ac = executeAclRequest("SELECT id FROM acl_class WHERE class = ?",[domain.class.name])
         }
         ac
     }
 
     def executeAclRequest(String request,def params = []) {
-        println request
         def id = null
+        println request
         new Sql(dataSource).eachRow(request,params) {
             id = it[0]
         }
         return id
     }
 
-    def executeAclInsert(String request,def params = []) {
-        println request
-        def id = null
+    def executeAclCUD(String request,def params = []) {
+        //println request
         new Sql(dataSource).execute(request,params)
     }
 

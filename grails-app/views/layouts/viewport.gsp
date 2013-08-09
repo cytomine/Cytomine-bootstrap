@@ -375,14 +375,28 @@ body {
     <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'}" ></script>
 
 </g:if>
+
+<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
 <script type="text/javascript">
     $(function() {
         require(
-                { urlArgs: "bust=" + ${grailsApplication.metadata.'app.version'} }
+                { urlArgs: "bust=" + (new Date()).getTime() }
         );
         window.app = new ApplicationController();
     });
 </script>
+</g:if>
+
+<g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">
+<script type="text/javascript">
+    $(function() {
+        require(
+                { urlArgs: "bust=" + (new Date()).getTime()  }
+        );
+        window.app = new ApplicationController();
+    });
+</script>
+</g:if>
 
 <!-- Google Charts -->
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>

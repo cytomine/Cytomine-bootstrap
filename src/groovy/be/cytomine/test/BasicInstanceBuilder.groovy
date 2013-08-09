@@ -123,6 +123,7 @@ class BasicInstanceBuilder {
     }
 
 
+
     static User getUser1() {
         return User.findByUsername("lrollus")
     }
@@ -851,7 +852,14 @@ class BasicInstanceBuilder {
     static User getUserNotExist(boolean save = false) {
        User user = new User(username: getRandomString(),firstname: "BasicNotExist",lastname: "UserNotExist",email: "BasicNotExist@User.be",password: "password",enabled: true)
         user.generateKeys()
-        save ? saveDomain(user) :  checkDomain(user)
+        if(save) {
+            saveDomain(user)
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
+        } else {
+            checkDomain(user)
+        }
+
+        user
     }
 
     static Group getGroup() {

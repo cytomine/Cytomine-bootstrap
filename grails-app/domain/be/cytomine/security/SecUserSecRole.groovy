@@ -26,7 +26,9 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
     }
 
     static SecUserSecRole create(SecUser secUser, SecRole secRole, boolean flush = true) {
-        new SecUserSecRole(secUser: secUser, secRole: secRole).save(flush: flush, insert: true)
+        if(!get(secUser.id,secRole.id)) {
+            new SecUserSecRole(secUser: secUser, secRole: secRole).save(flush: flush, insert: true)
+        }
     }
 
     static boolean remove(SecUser secUser, SecRole secRole, boolean flush = false) {

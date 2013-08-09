@@ -404,8 +404,6 @@ class AlgoAnnotationTests  {
          at2.term = at1.term
          at2.save(flush:true)
 
-        println  "NB POINTS START=" +a2.id+"="+a2.location.getNumPoints()
-
          assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
          def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.GOODLOGIN, Infos.GOODPASSWORD)

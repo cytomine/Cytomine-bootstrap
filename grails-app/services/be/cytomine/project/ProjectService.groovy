@@ -42,6 +42,7 @@ class ProjectService extends ModelService {
     def imageSequenceService
     def propertyService
     def secUserService
+    def permissionService
 
     def currentDomain() {
         Project
@@ -116,10 +117,14 @@ class ProjectService extends ModelService {
         log.info "project=" + project + " json.users=" + json.users + " json.admins=" + json.admins
         //Add annotation-term if term
         int progress = 20
+
         if (project) {
             def users = JSONUtils.getJSONList(json.users);
+            def admins = JSONUtils.getJSONList(json.admins);
             log.info "users=${users}"
             if (users) {
+                users.addAll(admins)
+                users = users.unique()
                 users.each { idUser ->
                     SecUser user = SecUser.read(Long.parseLong(idUser+""))
                     log.info "addUserToProject project=${project} user=${user}"
@@ -128,7 +133,6 @@ class ProjectService extends ModelService {
                     taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as User")
                 }
             }
-            def admins = JSONUtils.getJSONList(json.admins);
             log.info "admins=${admins}"
             if (admins) {
                 admins.each { idUser ->
@@ -154,10 +158,64 @@ class ProjectService extends ModelService {
      * @param jsonNewData New domain datas
      * @return  Response structure (new domain data, old domain data..)
      */
-    def update(Project project, def jsonNewData) {
+    def update(Project project, def jsonNewData,task = null) {
+        taskService.updateTask(task,5,"Start editing project ${project.name}")
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.check(project.container(),WRITE)
-        return executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
+        def result = executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
+
+        project = Project.read(result?.data?.project.id)
+        taskService.updateTask(task,20,"Project ${project.name} edited")
+
+
+        def users = jsonNewData.users
+        def admins = jsonNewData.admins
+
+        if(users) {
+            def projectOldUsers = secUserService.listUsers(project).collect{it.id}.sort() //[a,b,c]
+            def projectNewUsers = JSONUtils.getJSONList(jsonNewData.users).collect{Long.parseLong(it+"")}.sort() //[a,b,x]
+            projectNewUsers.addAll(JSONUtils.getJSONList(jsonNewData.admins).collect{Long.parseLong(it+"")})  //add new admin as user too
+            projectNewUsers.add(currentUser.id)
+            projectNewUsers = projectNewUsers.unique()
+            println "projectOldUsers=$projectOldUsers"
+            println "projectNewUsers=$projectNewUsers"
+            changeProjectUser(project,projectNewUsers,projectOldUsers,false,task,20)
+        }
+
+        if(admins) {
+            def projectOldAdmins = secUserService.listAdmins(project).collect{it.id}.sort() //[a,b,c]
+            def projectNewAdmins = JSONUtils.getJSONList(jsonNewData.admins).collect{Long.parseLong(it+"")}.sort() //[a,b,x]
+            projectNewAdmins.add(currentUser.id)
+            projectNewAdmins = projectNewAdmins.unique()
+            println "projectOldAdmins=$projectOldAdmins"
+            println "projectNewAdmins=$projectNewAdmins"
+            changeProjectUser(project,projectNewAdmins,projectOldAdmins,true,task,60)
+        }
+        return result
+    }
+
+    private changeProjectUser(Project project, def projectNewUsers, def projectOldUsers, boolean admin, Task task, int progressStart) {
+        int progress = progressStart
+        def projectAddUser = projectNewUsers - projectOldUsers
+        def projectDeleteUser = projectOldUsers - projectNewUsers
+
+        println "projectAddUser=$projectAddUser"
+        println "projectDeleteUser=$projectDeleteUser"
+        projectAddUser.each { idUser ->
+            SecUser user = SecUser.read(Long.parseLong(idUser+""))
+            log.info "projectAddUser project=${project} user=${user}"
+            secUserService.addUserFromProject(user, project, admin)
+            progress = progress + (40/projectAddUser.size())
+            taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as ${admin? "Admin" : "User"}")
+        }
+
+        projectDeleteUser.each { idUser ->
+            SecUser user = SecUser.read(Long.parseLong(idUser+""))
+            log.info "projectDeleteUser project=${project} user=${user}"
+            secUserService.deleteUserFromProject(user, project, admin)
+            progress = progress + (40/projectDeleteUser.size())
+            taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as ${admin? "Admin" : "User"}")
+        }
     }
 
     /**
@@ -177,11 +235,17 @@ class ProjectService extends ModelService {
 
     def afterAdd(Project domain, def response) {
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
+        if(!domain.hasPermission(READ)) {
+            log.info("force to put it in list")
+            permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.READ)
+        }
         if(!domain.hasPermission(ADMINISTRATION)) {
             log.info("force to put it in list")
-            aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+            permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
         }
     }
+
+
 
 
     protected def beforeDelete(Project domain) {

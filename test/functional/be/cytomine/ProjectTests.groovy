@@ -139,15 +139,58 @@ class ProjectTests  {
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
 
-    void testEditProjectWithBadName() {
-        Project projectToAdd = BasicInstanceBuilder.getProject()
-        Project projectToEdit = Project.get(projectToAdd.id)
-        def jsonProject = projectToEdit.encodeAsJSON()
-        def jsonUpdate = JSON.parse(jsonProject)
-        jsonUpdate.name = null
-        jsonProject = jsonUpdate.encodeAsJSON()
-        def result = ProjectAPI.update(projectToAdd.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 400 == result.code
+    void testEditProjectCorrectWithUser() {
+        def creator = User.findByUsername(Infos.GOODLOGIN)
+        def user1 =  BasicInstanceBuilder.getUserNotExist(true)
+        def user2 =  BasicInstanceBuilder.getUserNotExist(true)
+        def user3 =  BasicInstanceBuilder.getUserNotExist(true)
+        def user4 =  BasicInstanceBuilder.getUserNotExist(true)
+        println "creator=${creator.id}"
+        println "user1=${user1.id}"
+        println "user2=${user2.id}"
+        println "user3=${user3.id}"
+        println "user4=${user4.id}"
+
+        def project = BasicInstanceBuilder.getProjectNotExist(false)
+
+        def json = JSON.parse(project.encodeAsJSON())
+        json.users = [creator.id,user2.id,user4.id]
+        json.admins = [creator.id,user1.id]
+
+        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        project = result.data
+        Infos.printRight(project)
+        def usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        def adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        assert ProjectAPI.containsInJSONList(creator.id,usersList)
+        assert ProjectAPI.containsInJSONList(creator.id,adminsList)
+        assert ProjectAPI.containsInJSONList(user1.id,usersList)
+        assert ProjectAPI.containsInJSONList(user1.id,adminsList)
+        assert ProjectAPI.containsInJSONList(user2.id,usersList)
+        assert ProjectAPI.containsInJSONList(user4.id,usersList)
+
+
+
+        json = JSON.parse(project.encodeAsJSON())
+        json.users = [creator.id,user3.id,user4.id,user1.id]
+        json.admins = [creator.id,user3.id]
+
+        result = ProjectAPI.update(project.id,json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        assert ProjectAPI.containsInJSONList(creator.id,usersList)
+        assert ProjectAPI.containsInJSONList(creator.id,adminsList)
+        Infos.printRight(project)
+        assert ProjectAPI.containsInJSONList(user1.id,usersList)
+        assert !ProjectAPI.containsInJSONList(user1.id,adminsList)
+        assert !ProjectAPI.containsInJSONList(user2.id,usersList)
+        assert ProjectAPI.containsInJSONList(user3.id,adminsList)
+        assert ProjectAPI.containsInJSONList(user4.id,usersList)
 
     }
 

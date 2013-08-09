@@ -15,15 +15,14 @@ var AddProjectDialog = Backbone.View.extend({
         require([
             "text!application/templates/project/ProjectAddDialog.tpl.html",
             "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
-            "text!application/templates/project/DisciplinesChoicesRadio.tpl.html",
-            "text!application/templates/project/UsersChoices.tpl.html"
+            "text!application/templates/project/DisciplinesChoicesRadio.tpl.html"
         ],
-                function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
-                    self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl);
+                function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
+                    self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
                 });
         return this;
     },
-    doLayout: function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl, usersChoicesTpl) {
+    doLayout: function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
         var self = this;
         var dialog = _.template(projectAddDialogTpl, {});
         $("#editproject").replaceWith("");
@@ -162,6 +161,7 @@ var AddProjectDialog = Backbone.View.extend({
 
         })
     },
+
     createUserList: function () {
         var self = this;
         var allUser = null;
@@ -174,6 +174,14 @@ var AddProjectDialog = Backbone.View.extend({
             });
 
             self.userMaggicSuggest = $('#projectuser').magicSuggest({
+                data: allUserArray,
+                displayField: 'label',
+                value: [window.app.status.user.id],
+                width: 590,
+                maxSelection: null
+            });
+
+            self.adminMaggicSuggest = $('#projectadmin').magicSuggest({
                 data: allUserArray,
                 displayField: 'label',
                 value: [window.app.status.user.id],
@@ -263,17 +271,6 @@ var AddProjectDialog = Backbone.View.extend({
         $(self.addProjectCheckedDisciplinesRadioElem).attr("checked", false);
         $(self.addProjectCheckedUsersCheckboxElem).attr("checked", false);
     },
-//    initProgressBar : function() {
-//        console.log("initProgressBar");
-//        var divToFill = $("#login-form-add-project");
-//        divToFill.empty();
-//        $("#login-form-add-project-titles").empty();
-//        divToFill.append('' +
-//            '<br><br><div id="progressBarCreateProject" class="progress progress-striped active">' +
-//            '   <div class="bar" style="width:0%;"></div>' +
-//            '</div><br><br>');
-//        $("#addproject").find(".modal-footer").empty();
-//    },
     changeProgressBarStatus: function (progress) {
         console.log("changeProgressBarStatus:" + progress);
         var progressBar = $("#progressBarCreateProject").find(".bar");
@@ -294,7 +291,7 @@ var AddProjectDialog = Backbone.View.extend({
         }
         var ontology = $("#projectontology").val();
         var users = self.userMaggicSuggest.getValue();
-
+        var admins = self.adminMaggicSuggest.getValue();
         var blindMode = $("input#blindMode").is(':checked');
         var privateLayer = $("input#privateLayer").is(':checked');
 
@@ -308,10 +305,6 @@ var AddProjectDialog = Backbone.View.extend({
         if (retrievalProjectSome) {
             projectRetrieval = $("#retrievalproject").multiselectNext('selectedValues');
         }
-
-//        self.initProgressBar();
-//        var totalOperation = users.length + 1; //N users +1 for project creation
-//        self.changeProgressBarStatus((1/totalOperation)*100);
 
         console.log("initProgressBar");
         var divToFill = $("#login-form-add-project");
@@ -328,7 +321,7 @@ var AddProjectDialog = Backbone.View.extend({
                 var timer = window.app.view.printTaskEvolution(response.task, $("#progressBarAddProjectContainer").find("#task-" + response.task.id), 1000);
 
                 //create project
-                new ProjectModel({task:response.task.id,users: users, name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, privateLayer: privateLayer}, {
+                new ProjectModel({task:response.task.id,users: users, admins: admins,name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, privateLayer: privateLayer}, {
                             success: function (model, response) {
                                 console.log("1. Project added!");
                                 clearInterval(timer);

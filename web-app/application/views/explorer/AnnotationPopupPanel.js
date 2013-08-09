@@ -132,7 +132,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
             return false;
         });
         if (window.app.status.currentProjectModel.get('privateLayer') || window.app.status.currentProjectModel.get('retrievalDisable')) {
-            $("#loadSimilarAnnotation" + annotation.id).html("Retrieval not available");
+            $("#loadSimilarAnnotation" + annotation.id).html("Retrieval is disabled");
         } else {
             self.showSimilarAnnotation(annotation);
         }

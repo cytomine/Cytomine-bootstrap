@@ -91,7 +91,7 @@ class ProjectUserSecurityTests extends SecurityTestsAbstract {
       assert (403 ==ProjectAPI.deleteUserProject(project.id, user3.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
       //check if user2 can delete himself project
-      assert (403 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (200 ==ProjectAPI.deleteUserProject(project.id, user2.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
 
   }
 

@@ -11,15 +11,14 @@ var EditProjectDialog = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/project/ProjectEditDialog.tpl.html",
-            "text!application/templates/project/UsersChoices.tpl.html"
+            "text!application/templates/project/ProjectEditDialog.tpl.html"
         ],
-            function (projectEditDialogTpl, usersChoicesTpl) {
-                self.doLayout(projectEditDialogTpl, usersChoicesTpl);
+            function (projectEditDialogTpl) {
+                self.doLayout(projectEditDialogTpl);
             });
         return this;
     },
-    doLayout: function (projectEditDialogTpl, usersChoicesTpl) {
+    doLayout: function (projectEditDialogTpl) {
         var self = this;
         $("#editproject").replaceWith("");
         $("#addproject").replaceWith("");
@@ -102,6 +101,7 @@ var EditProjectDialog = Backbone.View.extend({
         var self = this;
         var allUser = null;
         var projectUser = null;
+        var projectAdmin = null;
 
 
 
@@ -120,10 +120,23 @@ var EditProjectDialog = Backbone.View.extend({
                 projectUserArray.push(user.id);
             });
 
+            var projectAdminArray=[]
+            projectAdmin.each(function(user) {
+                projectAdminArray.push(user.id);
+            });
+
             self.userMaggicSuggest = $('#projectedituser').magicSuggest({
                          data: allUserArray,
                          displayField: 'label',
                          value: projectUserArray,
+                         width: 590,
+                         maxSelection:null
+                     });
+
+            self.adminMaggicSuggest = $('#projecteditadmin').magicSuggest({
+                         data: allUserArray,
+                         displayField: 'label',
+                         value: projectAdminArray,
                          width: 590,
                          maxSelection:null
                      });
@@ -139,6 +152,13 @@ var EditProjectDialog = Backbone.View.extend({
             success: function (projectUserCollection, response) {
                 projectUser = projectUserCollection;
                 window.app.models.projectUser = projectUserCollection;
+                loadUser();
+            }});
+
+        new UserCollection({project: self.model.id, admin:true}).fetch({
+            success: function (projectUserCollection, response) {
+                projectAdmin = projectUserCollection;
+                window.app.models.projectAddmin = projectUserCollection;
                 loadUser();
             }});
     },
@@ -261,6 +281,7 @@ var EditProjectDialog = Backbone.View.extend({
 
         var name = $("#project-edit-name").val().toUpperCase();
         var users = self.userMaggicSuggest.getValue();
+        var admins = self.adminMaggicSuggest.getValue();
         var retrievalDisable = $('#login-form-edit-project').find("input#retrievalProjectNone").is(':checked');
         var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
         var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
@@ -271,127 +292,45 @@ var EditProjectDialog = Backbone.View.extend({
         var blindMode = $("input#blindMode").is(':checked');
         var privateLayer = $("input#privateLayer").is(':checked');
 
-        console.log("blindMode="+blindMode);
-        console.log("privateLayer="+privateLayer);
-
-        var projectOldUsers = []; //[a,b,c]
-        var projectNewUsers = null;  //[a,b,x]
-        var projectAddUser = null;
-        var projectDeleteUser = null;
-        var jsonuser = [];
-
-        window.app.models.projectUser.each(function (user) {
-            jsonuser.push(user.id);
-        });
-
-        _.each(jsonuser,
-            function (user) {
-                projectOldUsers.push(user)
-            });
-        projectOldUsers.sort();
-        projectNewUsers = users;
-        projectNewUsers.sort();
-        //var diff = self.diffArray(projectOldUsers,projectNewUsers);
-        projectAddUser = self.diffArray(projectNewUsers, projectOldUsers); //[x] must be added
-        projectDeleteUser = self.diffArray(projectOldUsers, projectNewUsers); //[c] must be deleted
-        console.log("projectOldUsers=" + projectOldUsers);
-        console.log("projectNewUsers=" + projectNewUsers);
-        console.log("projectAddUser=" + projectAddUser);
-        console.log("projectDeleteUser=" + projectDeleteUser);
-
-
-
-        self.initProgressBar();
-        var totalOperation = projectAddUser.length + projectDeleteUser.length + 1; //N users +1 for project creation
-        self.changeProgressBarStatus((1/totalOperation)*100);
-
-
-        //edit project
-        var project = self.model;
-        project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer});
-
-        project.save({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
-                success: function (model, response) {
-
-
-                    window.app.view.message("Project", response.message, "success");
-
-                    var id = response.project.id;
-
-                    /*_.each(projectOldUsers,function(user){
-
-                     _.each(projectNewUsers,function(user){
-
-                     _.each(projectAddUser,function(user){
-
-                     _.each(projectDeleteUser,function(user){*/
-                    var total = projectAddUser.length + projectDeleteUser.length;
-                    var counter = 0;
-                    if (total == 0) {
-                        self.addDeleteUserProjectCallback(0, 0);
-                    }
-                    _.each(projectAddUser, function (user) {
-
-                        new ProjectUserModel({project: id, user: user}).save({}, {
-                            success: function (model, response) {
-                                self.addDeleteUserProjectCallback(total, ++counter);
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
-                            }, error: function (model, response) {
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
-                                var json = $.parseJSON(response.responseText);
-                                window.app.view.message("User", json.errors[0], "error");
-
-                            }});
-                    });
-                    _.each(projectDeleteUser, function (user) {
-                        //use fake ID since backbone > 0.5 : we should destroy only object saved or fetched
-                        new ProjectUserModel({id: 1, project: id, user: user}).destroy({
-                            success: function (model, response) {
-                                self.addDeleteUserProjectCallback(total, ++counter);
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
-                            }, error: function (model, response) {
-                                self.changeProgressBarStatus(((counter+1)/totalOperation)*100);
-                                var json = $.parseJSON(response.responseText);
-                                window.app.view.message("User", json.errors[0], "error");
-                            }});
-                    });
-
-                },
-                error: function (model, response) {
-                    console.log(response);
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Project", json.errors[0], "error");
-
-                    //$("#projectediterrorlabel").show();
-
-
-                }
-            }
-        );
-    },
-    initProgressBar : function() {
-        console.log("initProgressBar");
         var divToFill = $("#login-form-edit-project");
-        divToFill.empty();
-        $("#login-form-edit-project-titles").empty();
-        divToFill.append('' +
-            '<br><br><div id="progressBarEditProject" class="progress progress-striped active">' +
-            '   <div class="bar" style="width:0%;"></div>' +
-            '</div><br><br>');
-        $("#editproject").find(".modal-footer").empty();
-    },
-    changeProgressBarStatus: function(progress) {
-        console.log("changeProgressBarStatus:"+progress);
-        var progressBar = $("#progressBarEditProject").find(".bar");
-        progressBar.css("width",progress+"%");
-    },
-    addDeleteUserProjectCallback: function (total, counter) {
-        if (counter < total) {
-            return;
-        }
-        var self = this;
-        self.projectPanel.refresh();
-        $("#editproject").modal('hide');
-        $("#editproject").remove();
+        divToFill.hide();
+//        $("#login-form-add-project-titles").empty();
+        $("#editproject").find(".modal-footer").hide();
+
+
+        var project = self.model;
+        new TaskModel({project: null}).save({}, {
+            success: function (task, response) {
+                $("#progressBarEditProjectContainer").append('<br><br><div id="task-' + response.task.id + '"></div><br><br>');
+                console.log(response.task);
+                var timer = window.app.view.printTaskEvolution(response.task, $("#progressBarEditProjectContainer").find("#task-" + response.task.id), 1000);
+                console.log(response);
+                console.log(response.task);
+                console.log(response.task.id);
+                var taskId = response.task.id;
+                //create project
+                project.task = taskId
+                project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer});
+                project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
+                            success: function (model, response) {
+                                console.log("1. Project edited!");
+                                clearInterval(timer);
+                                window.app.view.message("Project", response.message, "success");
+                                var id = response.project.id;
+                                $("#editproject").modal("hide");
+                                $("#editproject").remove();
+                            },
+                            error: function (model, response) {
+                                var json = $.parseJSON(response.responseText);
+                                clearInterval(timer);
+                                window.app.view.message("Project", json.errors, "error");
+                                divToFill.show();
+                                $("#progressBarEditProjectContainer").empty();
+                                $("#editproject").find(".modal-footer").show();
+                                $('#login-form-edit-project').stepy('step', 1);
+                            }
+                        });
+            }
+        });
     }
 });

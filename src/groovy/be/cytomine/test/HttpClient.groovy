@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.protocol.ClientContext
 import org.apache.http.entity.BasicHttpEntity
+import org.apache.http.entity.BufferedHttpEntity
 import org.apache.http.entity.ContentProducer
 import org.apache.http.entity.EntityTemplate
 import org.apache.http.entity.InputStreamEntity
@@ -151,8 +152,10 @@ class HttpClient {
         //write data
         BasicHttpEntity entity = new BasicHttpEntity();
         entity.setContent(new ByteArrayInputStream(data.getBytes()));
-        entity.setContentLength((long)data.getBytes().length);
-        httpPost.setEntity(entity);
+
+        BufferedHttpEntity ent = new BufferedHttpEntity(entity);
+        //entity.setContentLength((long)data.getBytes().length);
+        httpPost.setEntity(ent);
         response = client.execute(targetHost, httpPost, localcontext);
     }
 

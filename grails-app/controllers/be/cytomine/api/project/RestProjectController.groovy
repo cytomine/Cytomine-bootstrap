@@ -211,8 +211,10 @@ class RestProjectController extends RestController {
      */
     def update = {
         try {
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
             def domain = projectService.retrieve(request.JSON)
-            def result = projectService.update(domain,request.JSON)
+            def result = projectService.update(domain,request.JSON,task)
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)

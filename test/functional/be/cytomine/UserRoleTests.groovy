@@ -52,7 +52,7 @@ class UserRoleTests  {
   }
 
   void testDeleteUserRole() {
-      def user = BasicInstanceBuilder.getUser()
+      def user = BasicInstanceBuilder.getUserNotExist(true)
       def role = SecRole.findByAuthority("ROLE_USER")
       def userole = SecUserSecRole.create(user,role,true)
 

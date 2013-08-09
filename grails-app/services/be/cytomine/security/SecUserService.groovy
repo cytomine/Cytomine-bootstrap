@@ -154,11 +154,13 @@ class SecUserService extends ModelService {
      */
     def listLayers(Project project) {
         SecurityACL.check(project,READ)
+
         Collection<SecUser> users = listUsers(project)
         SecUser currentUser = cytomineService.getCurrentUser()
-        if (project.privateLayer && users.contains(currentUser)) {
+        //if user is admin of the project, show all layers
+        if (!project.checkPermission(ADMINISTRATION) && project.privateLayer && users.contains(currentUser)) {
             return [currentUser]
-        } else if (!project.privateLayer) {
+        } else if (!project.privateLayer || project.checkPermission(ADMINISTRATION)) {
             return  users
         } else { //should no arrive but possible if user is admin and not in project
             []
@@ -287,6 +289,7 @@ class SecUserService extends ModelService {
             if(admin) {
                 synchronized (this.getClass()) {
                     permissionService.addPermission(project,user.username,ADMINISTRATION)
+                    permissionService.addPermission(project,user.username,READ)
                     permissionService.addPermission(project.ontology,user.username,READ)
                 }
             }
@@ -320,7 +323,7 @@ class SecUserService extends ModelService {
                 //TODO:: a user admin can remove another admin user?
                 permissionService.deletePermission(project,user.username,ADMINISTRATION)
                 //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                permissionService.deletePermission(project.ontology,user.username,READ)
+                //permissionService.deletePermission(project.ontology,user.username,READ)
             }
             else {
                 permissionService.deletePermission(project,user.username,READ)
