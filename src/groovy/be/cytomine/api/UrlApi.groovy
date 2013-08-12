@@ -14,6 +14,10 @@ class UrlApi {
 
     def grailsApplication
 
+    static def getApiURL(String type, Long id) {
+        return "${serverUrl()}/api/$type/${id}.json"
+    }
+
     /**
      * Return cytomine url to get an image metadata
      * @param url Cytomine base url
@@ -118,6 +122,10 @@ class UrlApi {
      */
     static def getBrowseImageInstanceURL(Long idProject, Long idImage) {
         return  "${serverUrl()}/#tabs-image-$idProject-$idImage-"
+    }
+
+    static def getDashboardURL(Long idProject) {
+        return  "${serverUrl()}/#tabs-dashboard-$idProject"
     }
 
     /**

@@ -1,5 +1,6 @@
 package be.cytomine.search
 
+import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -41,20 +42,21 @@ class SearchService extends ModelService {
             listTable.add("project")
             listType.add(Project.class.getName())
 
-            blocSelect = "SELECT DISTINCT pro.id, pro.name, '<domain>' " +
-                    "FROM <table> as pro, property as p" + getSecurityTable(currentUser) +
+            blocSelect = "SELECT DISTINCT pro.id as id, extract(epoch from pro.created)*1000 as created, '<domain>' as class, pro.name as name, d.data as description, null as user, null as userfullname, pro.name as projectName, null as imageName, pro.id as project " +
+                    "FROM <table> as pro LEFT OUTER JOIN description as d ON d.domain_ident = pro.id, property as p" + getSecurityTable(currentUser) + "  " +
                     "WHERE pro.id = p.domain_ident "
-
             //Add Security
             blocSelect += getSecurityJoin("pro.id", currentUser)
         } else if (filter.equals(SearchFilter.IMAGE)) {
             listTable.add("image_instance")
             listType.add(ImageInstance.class.getName())
 
-            blocSelect = "SELECT DISTINCT ii.id, ai.filename, '<domain>', ai.id " +
-                    "FROM abstract_image as ai, <table> as ii, property as p" + getSecurityTable(currentUser) +
+            blocSelect = "SELECT DISTINCT ii.id as id, extract(epoch from ii.created)*1000 as created, '<domain>' as class, ai.filename as name, d.data as description, ii.user_id as user, su.lastname || ' ' || su.firstname as userfullname, pro.name as projectName, ai.filename as imageName, ai.id as baseImage, pro.id as project   " +
+                    "FROM abstract_image as ai , <table> as ii LEFT OUTER JOIN description as d ON d.domain_ident = ii.id, property as p" + getSecurityTable(currentUser) + ",  sec_user as su, project as pro " +
                     "WHERE ai.id = ii.base_image_id "  +
-                    "AND ii.id = p.domain_ident "
+                    "AND ii.id = p.domain_ident " +
+                    "AND ii.user_id = su.id " +
+                    "AND ii.project_id = pro.id "
 
             //Add Security
             blocSelect += getSecurityJoin("ii.project_id", currentUser)
@@ -67,9 +69,13 @@ class SearchService extends ModelService {
             listType.add(AlgoAnnotation.class.getName())
             listType.add(ReviewedAnnotation.class.getName())
 
-            blocSelect = "SELECT DISTINCT a.id, a.created, '<domain>' " +
-                    "FROM <table> as a, property as p" + getSecurityTable(currentUser) +
-                    "WHERE a.id = p.domain_ident "
+            blocSelect = "SELECT DISTINCT a.id as id, extract(epoch from a.created)*1000 as created, '<domain>' as class, null as name, d.data as description, a.user_id as user, su.lastname || ' ' || su.firstname as userfullname, pro.name as projectName, ai.filename as imageName, ai.id as baseImage , pro.id as project, ii.id as image  " +
+                    "FROM <table> as a LEFT OUTER JOIN description as d ON d.domain_ident = a.id, property as p" + getSecurityTable(currentUser) + ", sec_user as su, project as pro, image_instance as ii, abstract_image as ai "  +
+                    "WHERE a.id = p.domain_ident " +
+                    "AND su.id = a.user_id " +
+                    "AND pro.id = a.project_id " +
+                    "AND ii.base_image_id = ai.id " +
+                    "AND ii.id = a.image_id "
 
             //Add Security
             blocSelect += getSecurityJoin("a.project_id", currentUser)
@@ -149,35 +155,38 @@ class SearchService extends ModelService {
 
         new Sql(dataSource).eachRow(request) {
             def dataTmp = [:]
-            //ID
-            Long id = it[0]
-            dataTmp.id = id
 
-            //NAME
-            String name = it[1]
-            dataTmp.name = name
+            //SELECT DISTINCT pro.id as id, pro.created as created, '<domain>' as class, pro.name as name, d.data as description, null as user, null as userfullname, pro.name as projectName, null as imageName " +
 
-            //TYPE --> CLASS
-            String type = it[2]
-            dataTmp.type = type
+            dataTmp.id = it.id
+            dataTmp.created = it.created
+            dataTmp.class = it.class
+            dataTmp.name = it.name
+            dataTmp.description = it.description
+            dataTmp.user = it.user
+            dataTmp.userfullname = it.userfullname
+            dataTmp.projectName = it.projectName
+            dataTmp.imageName = it.imageName
 
-            //URL FOR PROJECT/ANNOTATION/IMAGE
-            if (type.equals(ImageInstance.class.getName())) {
-                domain = "imageinstance"
+            if (it.class.equals(ImageInstance.class.getName())) {
 
-                String idBaseImage = it[3]
-                String image = "${serverUrl()}/api/image/$idBaseImage/thumb"
-                dataTmp.image = image
-            } else if (type.equals(Project.class.getName())) {
-                domain = "project"
-            } else if (type.equals(UserAnnotation.class.getName()) || type.equals(AlgoAnnotation.class.getName()) || type.equals(ReviewedAnnotation.class.getName())) {
-                domain = "annotation"
+               dataTmp.urlImage = UrlApi.getAbstractImageThumbURL(it.baseImage)
+               dataTmp.urlGoTo =  UrlApi.getBrowseImageInstanceURL(it.project, it.id)
+               dataTmp.urlApi = UrlApi.getApiURL("imageinstance",it.id)
 
-                String cropImage = "${serverUrl()}/api/annotation/$id/crop.jpg"
-                dataTmp.cropImage = cropImage
+            } else if (it.class.equals(Project.class.getName())) {
+
+                dataTmp.urlImage = null
+                dataTmp.urlGoTo =  UrlApi.getDashboardURL(it.project)
+                dataTmp.urlApi = UrlApi.getApiURL("project",it.id)
+
+            } else if (it.class.equals(UserAnnotation.class.getName()) || it.class.equals(AlgoAnnotation.class.getName()) || it.class.equals(ReviewedAnnotation.class.getName())) {
+
+                dataTmp.urlImage = UrlApi.getAnnotationMinCropWithAnnotationId(it.id)
+                dataTmp.urlGoTo =  UrlApi.getAnnotationURL(it.project, it.image, it.id)
+                dataTmp.urlApi = UrlApi.getApiURL("annotation",it.id)
+
             }
-            String url = "${serverUrl()}/api/$domain/$id"
-            dataTmp.url = url
 
             data.add(dataTmp)
         }

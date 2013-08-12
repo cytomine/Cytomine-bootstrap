@@ -65,23 +65,6 @@ class PermissionService {
 
         //get acl entry
         def ace = getAclEntry(aoi,sid,permission.mask)
-
-
-
-
-//        id   | ace_order | acl_object_identity | audit_failure | audit_success | granting | mask |  sid
-//    --------+-----------+---------------------+---------------+---------------+----------+------+--------
-//     333386 |         0 |              304690 | f             | f             | t        |   16 | 304445
-//     333387 |         1 |              304690 | f             | f             | t        |   16 | 304436
-//     333388 |         2 |              304690 | f             | f             | t        |   16 | 304451
-//     333389 |         3 |              304690 | f             | f             | t        |   16 | 304700
-//     333390 |         4 |              304690 | f             | f             | t        |   16 | 304706
-//     333391 |         5 |              304690 | f             | f             | t        |   16 | 304713
-//     333392 |         6 |              304690 | f             | f             | t        |   16 | 304721
-//     333393 |         7 |              304690 | f             | f             | t        |   16 | 304730
-
-
-
     }
 
     public void getAclEntry(def aoi, def sid, def mask) {
@@ -134,7 +117,6 @@ class PermissionService {
 
     def executeAclRequest(String request,def params = []) {
         def id = null
-        println request
         new Sql(dataSource).eachRow(request,params) {
             id = it[0]
         }
@@ -142,7 +124,6 @@ class PermissionService {
     }
 
     def executeAclCUD(String request,def params = []) {
-        //println request
         new Sql(dataSource).execute(request,params)
     }
 

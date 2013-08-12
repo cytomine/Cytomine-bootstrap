@@ -31,8 +31,10 @@ environments {
   production {
     dataSource {
       dbCreate = "update"
-      url = "jdbc:postgresql://10.1.0.102:5432/cytomineprod"
-      password = "cytomine_postgres"
+      //url = "jdbc:postgresql://10.1.0.102:5432/cytomineprod"
+        url="jdbc:postgresql://localhost:5432/cytomine"
+        password = "postgres"
+//      password = "cytomine_postgres"
     }
   }
   perf {
