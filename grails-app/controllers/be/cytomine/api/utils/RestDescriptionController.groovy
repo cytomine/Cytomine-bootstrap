@@ -2,14 +2,6 @@ package be.cytomine.api.utils
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-import be.cytomine.ontology.Ontology
-import be.cytomine.processing.Software
-import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.security.User
-import be.cytomine.utils.Task
-import grails.converters.JSON
-import groovy.sql.Sql
 
 /**
  * Controller for a description (big text data/with html format) on a specific domain

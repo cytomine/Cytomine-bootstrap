@@ -22,9 +22,9 @@ var InformationsPanel = SideBarPanel.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/explorer/InformationsPanel.tpl.html"
-        ], function (tpl) {
-            self.doLayout(tpl);
+            "text!application/templates/explorer/InformationsPanel.tpl.html","text!application/templates/image/ImageReviewAction.tpl.html"
+        ], function (tpl,tplaction) {
+            self.doLayout(tpl,tplaction);
         });
         return this;
     },
@@ -36,7 +36,7 @@ var InformationsPanel = SideBarPanel.extend({
      * Render the html into the DOM element associated to the view
      * @param tpl
      */
-    doLayout: function (tpl) {
+    doLayout: function (tpl,tplaction) {
         var self = this;
         var json = self.model.toJSON();
         json.originalFilename = self.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
@@ -49,6 +49,15 @@ var InformationsPanel = SideBarPanel.extend({
         var sourceEvent2 = el.find(".toggle-content2");
         this.initToggle(el, elContent1, sourceEvent1, "infoPanelContent1");
         this.initToggle(el, elContent2, sourceEvent2, "infoPanelContent2");
+
+
+        var content =_.template(tplaction, json);
+        var panel = $('#informationsPanel' + self.model.get('id'));
+        panel.find("#actionExploreButton").append(content);
+
+        var action = new ImageReviewAction({el:panel.find("#actionExploreButton"),model:self.model, container : this});
+        action.configureAction();
+        panel.find("#actionExploreButton").find("button").removeClass("btn-inverse")
 
         $("#getNext"+self.model.id).click(function() {
             new ImageInstanceModel({next:true, id:self.model.id}).fetch({

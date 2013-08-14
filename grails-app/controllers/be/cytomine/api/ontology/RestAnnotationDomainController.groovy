@@ -5,13 +5,10 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
@@ -28,7 +25,9 @@ import grails.converters.JSON
 import groovy.sql.Sql
 
 import java.text.SimpleDateFormat
+
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
+
 /**
  * Controller that handle request on annotation.
  * It's main utility is to redirect request to the correct controller: user/algo/reviewed

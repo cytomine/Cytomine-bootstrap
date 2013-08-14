@@ -50,6 +50,7 @@ body {
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
 <link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 
 
 <!-- JQuery & JQuery UI -->
@@ -108,7 +109,6 @@ body {
 
 <!-- wysihtml5 -->
 
-<link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 <script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
 <script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
 

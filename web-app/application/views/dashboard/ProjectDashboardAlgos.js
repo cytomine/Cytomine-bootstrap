@@ -160,7 +160,8 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             header :"Launch new job",
             body :"<div id='jobComparatorDialogParent'></div>",
             width : Math.round($(window).width() - 200),
-            height : Math.round($(window).height() - 150),
+//            height : Math.round($(window).height() - 150),
+            height: 600,
             callBack: function() {launchView.render();}
         });
         modalLaunch.addButtons("closeNewJob","Close",false,true);

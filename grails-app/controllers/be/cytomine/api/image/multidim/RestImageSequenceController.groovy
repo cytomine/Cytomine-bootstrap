@@ -5,8 +5,8 @@ import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
-import be.cytomine.project.Project
 import grails.converters.JSON
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

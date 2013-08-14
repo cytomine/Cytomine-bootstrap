@@ -1023,6 +1023,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+
             if (!self.review) {
                 _.each(self.getUserLayerCanEdit(),function(layer) {
                     layer.toggleEdit();

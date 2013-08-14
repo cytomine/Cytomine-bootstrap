@@ -82,25 +82,27 @@ var ImageReviewAction = Backbone.View.extend({
             return false;
         });
 
-        $(document).on('click',"a.description" + self.model.id,function () {
-            console.log("Click");
-            if(!self.disableEvent) {
-                new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
-                       {success: function (description, response) {
-                           self.disableEvent = true;
-                           DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),description.id,self.model.id,self.model.get('class'),description.get('data'),function() { });
-                           el.find(".action"+self.model.id).find('a.description').click();
-                       }, error: function (model, response) {
-                           self.disableEvent = true;
-                           DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),null,self.model.id,self.model.get('class'),"",function() { });
-                           el.find(".action"+self.model.id).find('a.description').click();
+        var openDescription = function () {
+                    console.log("Click");
+                    if(!self.disableEvent) {
+                        new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
+                               {success: function (description, response) {
+                                   self.disableEvent = true;
+                                   DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),description.id,self.model.id,self.model.get('class'),description.get('data'),function() { });
+                                   el.find(".action"+self.model.id).find('a.description').click();
+                               }, error: function (model, response) {
+                                   self.disableEvent = true;
+                                   DescriptionModal.initDescriptionModal(el.find(".action"+self.model.id),null,self.model.id,self.model.get('class'),"",function() { });
+                                   el.find(".action"+self.model.id).find('a.description').click();
 
-                       }});
-            } else {
-                self.disableEvent = false;
-            }
-            return false;
-        });
+                               }});
+                    } else {
+                        self.disableEvent = false;
+                    }
+                    return false;
+                }
+        $(document).find("a.description" + self.model.id).unbind('click',openDescription).bind('click',openDescription);
+       // $(document).on('click',"a.description" + self.model.id,openDescription);
     },
     disableEvent : false,
     startReviewing: function () {

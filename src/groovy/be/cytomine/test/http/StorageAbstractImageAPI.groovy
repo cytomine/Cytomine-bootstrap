@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.test.Infos
 import grails.converters.JSON

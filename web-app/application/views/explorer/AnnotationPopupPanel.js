@@ -73,6 +73,9 @@ var AnnotationPopupPanel = SideBarPanel.extend({
        console.log("current annotation = " + annotation.id);
        self.browseImageView.currentAnnotation = annotation;
 
+
+
+
         var terms = [];
         //browse all term and compute the number of user who add this term
 
@@ -112,6 +115,18 @@ var AnnotationPopupPanel = SideBarPanel.extend({
 
         elem.html(content);
         elem.show();
+
+        var isProjectAdmin = self.browseImageView.isCurrentUserProjectAdmin();
+        var isSameUser =  annotation.get("user")==window.app.status.user.id
+        console.log("isProjectAdmin="+isProjectAdmin);
+        console.log("isSameUser="+isSameUser);
+
+        if(!isProjectAdmin && !isSameUser) {
+            $("#messageAnnotationCreator").replaceWith('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> You cannot edit this annotation</div>')
+        } else {
+            $("#messageAnnotationCreator").replaceWith('<div style="margin: 10px 10px 10px 0px" class="alert alert-success"> <i class="icon-ok"/> You can edit this annotation</div>')
+        }
+
         $("#annotationHide" + annotation.id).off('click');
         $("#annotationHide" + annotation.id).on('click', function () {
 

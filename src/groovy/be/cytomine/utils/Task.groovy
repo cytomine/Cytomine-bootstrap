@@ -1,8 +1,8 @@
 package be.cytomine.utils
 
+import grails.util.Holders
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import grails.util.Holders
 
 /**
  * A task provide info about a command.

@@ -51,6 +51,7 @@ var OntologyTreeView = Backbone.View.extend({
             selectMode: 2,
             expand: true,
             onExpand: function () {
+                self.computeCorrectTextSize();
             },
             children: this.model.toJSON(),
             onSelect: function (select, node) {
@@ -113,7 +114,34 @@ var OntologyTreeView = Backbone.View.extend({
             }
         });
 
+         self.computeCorrectTextSize();
+
         return this;
+    },
+    computeCorrectTextSize :function() {
+        var originalFontSize = 12;
+       	var sectionWidth = $(this.el).find('.dynatree-container').width()-75;
+
+        $(this.el).find(".dynatree-node").each(function() {
+               var spanWidth = $(this).width();
+                if(spanWidth>0) {
+                    $(this).css({"font-size" : originalFontSize, "line-height" : originalFontSize/1.2 + "px"});
+                }
+
+           });
+
+        $(this.el).find(".dynatree-node").each(function() {
+               var spanWidth = $(this).width();
+                if(spanWidth>0) {
+                    var newFontSize = (sectionWidth/spanWidth) * originalFontSize;
+                    console.log("spanWidth="+spanWidth);
+                    console.log("sectionWidth="+sectionWidth);
+                    console.log("newFontSize="+newFontSize);
+                     newFontSize = Math.min(originalFontSize,newFontSize);
+                    $(this).css({"font-size" : newFontSize, "line-height" : newFontSize/1.2 + "px"});
+                }
+
+           });
     },
     expand: function () {
         $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {

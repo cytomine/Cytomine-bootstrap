@@ -1,6 +1,5 @@
 package be.cytomine.web
 
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.commons.CommonsMultipartResolver

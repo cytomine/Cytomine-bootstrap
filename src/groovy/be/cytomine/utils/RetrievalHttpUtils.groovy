@@ -3,14 +3,8 @@ package be.cytomine.utils
 import be.cytomine.AnnotationDomain
 import be.cytomine.test.HttpClient
 import grails.converters.JSON
-import groovyx.net.http.ContentType
-import groovyx.net.http.HTTPBuilder
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.apache.log4j.Logger
-
-import static groovyx.net.http.Method.DELETE
-import static groovyx.net.http.Method.POST
 
 /**
  * User: lrollus

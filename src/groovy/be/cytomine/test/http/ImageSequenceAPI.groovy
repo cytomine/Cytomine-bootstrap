@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.test.Infos
 import grails.converters.JSON

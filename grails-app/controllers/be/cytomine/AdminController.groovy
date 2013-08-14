@@ -7,22 +7,15 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.io.WKTReader
 import geb.Browser
 import grails.plugins.springsecurity.Secured
-import grails.validation.Validateable
 import groovy.sql.Sql
-import static org.springframework.security.acls.domain.BasePermission.READ
 
 @Secured(['ROLE_ADMIN'])
 class AdminController extends RestController {

@@ -1,11 +1,6 @@
 package be.cytomine.test.http
 
-import be.cytomine.AnnotationDomain
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.Infos
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * User: lrollus

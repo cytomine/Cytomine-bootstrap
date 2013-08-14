@@ -12,9 +12,7 @@ import grails.converters.JSON
 import sun.misc.BASE64Decoder
 
 import javax.imageio.ImageIO
-import java.awt.Color
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.image.BufferedImage
 
 /**

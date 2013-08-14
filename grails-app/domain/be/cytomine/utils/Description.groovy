@@ -2,8 +2,6 @@ package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.ontology.Ontology
-import be.cytomine.project.Discipline
 import grails.converters.JSON
 import org.apache.log4j.Logger
 

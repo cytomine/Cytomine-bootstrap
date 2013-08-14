@@ -345,11 +345,20 @@ var ProjectDashboardView = Backbone.View.extend({
                         }
                     });
                 }
-                commandCollection.fetch({
-                    success: function (collection, response) {
-                        commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                    }
-                });
+
+                if(!window.app.status.currentProjectModel.get('blindMode')) {
+                    commandCollection.fetch({
+                        success: function (collection, response) {
+                            commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                        }
+                    });
+                } else {
+                    $("#lastcommandsitem").empty();
+                    $("#lastcommandsitem").append('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Not available in blind mode!</div>');
+                }
+
+
+
             });
     },
     fetchTasks: function () {
@@ -385,6 +394,8 @@ var ProjectDashboardView = Backbone.View.extend({
         var dateCreated = new Date();
         dateCreated.setTime(commandHistory.get('created'));
         var dateStr = dateCreated.toLocaleDateString() + " " + dateCreated.toLocaleTimeString();
+
+
         if (commandHistory.get('serviceName') == "userAnnotationService" && commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             var cropStyle = "block";
             var cropURL = jsonCommand.cropURL;

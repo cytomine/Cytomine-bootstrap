@@ -13,7 +13,6 @@ import be.cytomine.security.UserGroup
 import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
  * User: lrollus

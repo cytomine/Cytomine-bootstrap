@@ -551,7 +551,21 @@ var InputListDomainView = Backbone.View.extend({
             selectionStacked: false,
             maxSelection: (self.multiple ? null : 1),
             value : magicSuggestValue,
-            width : 550,
+            width : 750,
+//            selectionRenderer: function (a){
+//
+//                if(self.elemSuggest.getSelectedItems().length>5) {
+//                    var maxNumberOfChar = 40;
+//                    var title = a[self.printAttribut];
+//                    if (title.length > maxNumberOfChar) {
+//                        var newTitle = title.substr(0, maxNumberOfChar/2) + "...";
+//                        newTitle = newTitle + title.substr(title.length-(maxNumberOfChar/2), title.length);
+//                    }
+//                    return newTitle;
+//                } else {
+//                    return a[self.printAttribut];
+//                }
+//            },
             renderer: function(v){
                 var item
                 if (v.thumb) { //image/annotation model

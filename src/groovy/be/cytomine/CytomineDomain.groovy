@@ -2,9 +2,6 @@ package be.cytomine
 
 import be.cytomine.security.SecUser
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclEntry
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.*

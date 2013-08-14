@@ -170,7 +170,10 @@ var DashboardController = Backbone.Router.extend({
         var func = function () {
             self.view.refreshDashboard();
             window.app.controllers.browse.tabs.triggerRoute = false;
+            console.log("dashboard");
             var tabs = $("#explorer > .browser").find(".nav-tabs");
+            console.log("tabs="+tabs.length);
+            console.log("tabs.find="+tabs.find('#dashboardLink-' + window.app.status.currentProject));
             tabs.find('#dashboardLink-' + window.app.status.currentProject).click();
             window.app.controllers.browse.tabs.triggerRoute = true;
             if (callback != undefined) {

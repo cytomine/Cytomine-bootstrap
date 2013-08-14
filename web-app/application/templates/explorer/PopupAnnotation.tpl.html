@@ -7,9 +7,8 @@
         <li style="color:#FFFFFF;"><b>Term(s)</b> : <%= terms %></li>
         <% } %>
         <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
-        <li style="color:#FFFFFF;"><a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a> | <a href="#"
-                                                                                                              id="annotationHide<%= id %>">Hide
-            annotation</a></li>
+        <div id="messageAnnotationCreator" style="margin: 10px 10px 0px 0px"></div>
+        <li style="color:#FFFFFF;"><a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a> | <a href="#" id="annotationHide<%= id %>">Hide annotation</a></li>
     </ul>
 </div>
 <h3><i class="toggle-content-preview icon-plus icon-white icon-small"></i> Annotation Preview</h3>

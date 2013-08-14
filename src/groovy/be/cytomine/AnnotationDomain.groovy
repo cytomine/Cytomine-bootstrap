@@ -4,13 +4,11 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationIndex
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.utils.GisUtils
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader

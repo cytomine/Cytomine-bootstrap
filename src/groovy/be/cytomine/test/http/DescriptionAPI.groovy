@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.test.Infos
 import be.cytomine.utils.Description
 import grails.converters.JSON
