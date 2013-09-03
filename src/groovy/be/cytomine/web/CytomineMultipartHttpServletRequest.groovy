@@ -20,13 +20,16 @@ public class CytomineMultipartHttpServletRequest extends CommonsMultipartResolve
 
     public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) {
         try {
+//            println "1"
+//            this.setMaxInMemorySize(-1)
+//            println "2"
             return super.resolveMultipart(request)
         } catch (MaxUploadSizeExceededException e) {
-            println "!!! MaxUploadSizeExceededException Reached !!!"
+            println "!!! MaxUploadSizeExceededException Reached !!! ${e.getMaxUploadSize()}"
             request.setAttribute(FILE_SIZE_EXCEEDED_ERROR, true)
             return new DefaultMultipartHttpServletRequest(request)
         } catch (org.springframework.web.multipart.MultipartException e) {
-            println "!!! MultipartException Reached !!!"
+            println "!!! MultipartException Reached !!! " + e
             //upload cancelled by client
         }
     }

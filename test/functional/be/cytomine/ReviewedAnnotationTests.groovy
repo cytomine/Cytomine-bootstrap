@@ -7,6 +7,7 @@ import be.cytomine.ontology.UserAnnotation
 
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.UserAnnotationAPI
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -47,7 +48,13 @@ class ReviewedAnnotationTests  {
         assert json instanceof JSONObject
     }
 
-
+    void testCountReviewedAnnotationWithCredential() {
+        def result = ReviewedAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.total >= 0
+    }
 
     void testAddReviewedAnnotationCorrect() {
         def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()

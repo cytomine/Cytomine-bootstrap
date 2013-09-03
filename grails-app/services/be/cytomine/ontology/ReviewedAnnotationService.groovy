@@ -7,6 +7,7 @@ import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
@@ -52,6 +53,10 @@ class ReviewedAnnotationService extends ModelService {
             SecurityACL.check(annotation.container(),READ)
         }
         annotation
+    }
+
+    def count(User user) {
+        return ReviewedAnnotation.countByUser(user)
     }
 
     def list(Project project, def propertiesToShow = null) {

@@ -82,6 +82,27 @@ class RestProjectController extends RestController {
     }
 
     /**
+     * List all project available for the current user
+     */
+    def listLightByUser = {
+        User user = secUserService.read(params.long('id'))
+        boolean creator = params.getBoolean('creator')
+        boolean admins = params.getBoolean('admin')
+        boolean users = params.getBoolean('user')
+        if(!user) {
+            responseNotFound("User", params.id)
+        } else if(creator) {
+            responseSuccess(projectService.listByCreator(user))
+        } else if(admins) {
+            responseSuccess(projectService.listByAdmin(user))
+        } else if(users) {
+            responseSuccess(projectService.listByUser(user))
+        }  else {
+            responseSuccess(projectService.listByUser(user))
+        }
+    }
+
+    /**
      * List all retrieval-project for a specific project
      * The suggested term can use data from other project (with same ontology).
      */

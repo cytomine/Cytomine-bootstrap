@@ -58,8 +58,10 @@ class RestUserPositionController extends RestController {
                         updated: new Date(),
                         project : image.project
                 )
+
                 userPosition.save(flush: true)
             }
+
             responseSuccess(userPosition)
         }
     }

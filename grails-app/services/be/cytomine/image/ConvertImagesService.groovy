@@ -25,7 +25,7 @@ class ConvertImagesService {
             log.info uploadedFile.getFilename() + " : FORMAT NOT ALLOWED"
             uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
             uploadedFile.setConverted(false)
-            uploadedFile.save(flush : true)
+            uploadedFile.save(flush : true,failOnError: true)
             return [uploadedFile]
         }
 
@@ -132,12 +132,12 @@ class ConvertImagesService {
 
     private UploadedFile handleSingleFile(UploadedFile uploadedFile, SecUser currentUser) {
 
-        //Check if file must be converted or not...
+        //Check if file must be conve rted or not...
         if (!UploadedFile.mimeToConvert.contains(uploadedFile.getExt())) {
             log.info uploadedFile.getFilename() + " : TO_DEPLOY"
             uploadedFile.setStatus(UploadedFile.TO_DEPLOY)
             uploadedFile.setConverted(false)
-            uploadedFile.save()
+            uploadedFile.save(flush: true,failOnError: true)
             return uploadedFile
             /*uploadedFile.setConvertedExt(uploadedFile.getExt())
             uploadedFile.setConvertedFilename(uploadedFile.getFilename())*/
@@ -172,8 +172,8 @@ class ConvertImagesService {
                     uploadedFile.setStatus(UploadedFile.CONVERTED)
                     /*uploadedFile.setConvertedFilename(convertFileName)
                     uploadedFile.setConvertedExt("tiff")*/
-                    uploadedFile.save()
-                    convertUploadedFile.save()
+                    uploadedFile.save(flush: true,failOnError: true)
+                    convertUploadedFile.save(flush: true,failOnError: true)
                     return convertUploadedFile
                 } else {
                     uploadedFile.setConverted(false)
@@ -184,7 +184,7 @@ class ConvertImagesService {
             } catch (Exception e) {
                 e.printStackTrace()
                 uploadedFile.setStatus(UploadedFile.ERROR_FORMAT)
-                uploadedFile.save()
+                uploadedFile.save(flush: true,failOnError: true)
                 return uploadedFile
             }
 

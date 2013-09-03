@@ -29,5 +29,9 @@ class ProjectUrlMappings {
         "/api/retrieval/$id/project"(controller:"restProject"){
             action = [GET:"listRetrieval"]
         }
+
+        "/api/user/$id/project/light"(controller:"restProject"){
+            action = [GET:"listLightByUser"]
+        }
     }
 }

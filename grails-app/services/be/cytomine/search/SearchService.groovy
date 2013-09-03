@@ -28,7 +28,7 @@ class SearchService extends ModelService {
 
     //Security is made ​​in sql query thanks to currentUser
     //"getSecurityTable" and "getSecurityJoin" manage the security
-    def list(List<String> keywords, String operator, String filter) {
+    def list(List<String> keywords, String operator, String filter, def idsProject) {
         def data = []
         String request = ""
         String blocSelect = ""
@@ -44,7 +44,8 @@ class SearchService extends ModelService {
 
             blocSelect = "SELECT DISTINCT pro.id as id, extract(epoch from pro.created)*1000 as created, '<domain>' as class, pro.name as name, d.data as description, null as user, null as userfullname, pro.name as projectName, null as imageName, pro.id as project " +
                     "FROM <table> as pro LEFT OUTER JOIN description as d ON d.domain_ident = pro.id, property as p" + getSecurityTable(currentUser) + "  " +
-                    "WHERE pro.id = p.domain_ident "
+                    "WHERE pro.id = p.domain_ident " +
+                    (idsProject? "AND pro.id IN (${idsProject.join(",")}) " : "")
             //Add Security
             blocSelect += getSecurityJoin("pro.id", currentUser)
         } else if (filter.equals(SearchFilter.IMAGE)) {
@@ -56,7 +57,8 @@ class SearchService extends ModelService {
                     "WHERE ai.id = ii.base_image_id "  +
                     "AND ii.id = p.domain_ident " +
                     "AND ii.user_id = su.id " +
-                    "AND ii.project_id = pro.id "
+                    "AND ii.project_id = pro.id " +
+                    (idsProject? "AND ii.project_id IN (${idsProject.join(",")}) " : "")
 
             //Add Security
             blocSelect += getSecurityJoin("ii.project_id", currentUser)
@@ -75,7 +77,8 @@ class SearchService extends ModelService {
                     "AND su.id = a.user_id " +
                     "AND pro.id = a.project_id " +
                     "AND ii.base_image_id = ai.id " +
-                    "AND ii.id = a.image_id "
+                    "AND ii.id = a.image_id " +
+                    (idsProject? "AND a.project_id IN (${idsProject.join(",")}) " : "")
 
             //Add Security
             blocSelect += getSecurityJoin("a.project_id", currentUser)

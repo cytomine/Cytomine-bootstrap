@@ -51,5 +51,9 @@ class UrlMappings {
         "/api/search"(controller: "search") {
             action = [GET:"listResponse"]
         }
+
+        "/api/news"(controller:"news") {
+            action = [GET:"listNews"]
+        }
     }
 }

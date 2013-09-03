@@ -3,7 +3,7 @@ package be.cytomine
 import be.cytomine.test.Infos
 
 import be.cytomine.test.BasicInstanceBuilder
-
+import be.cytomine.test.http.ImageInstanceAPI
 import grails.converters.JSON
 
 import be.cytomine.test.http.UserPositionAPI
@@ -43,7 +43,7 @@ class UserPositionTests  {
 
     void testAddPosition() {
         def image = BasicInstanceBuilder.getImageInstance()
-        def json = JSON.parse("{image:${image.id},lon:100,lat:100}")
+        def json = JSON.parse("{image:${image.id},lon:100,lat:100, zoom: 1}")
 
         def result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -54,5 +54,23 @@ class UserPositionTests  {
         result = UserPositionAPI.listLastByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
+
+
+    void testGetLastOpenedImage() {
+        def image = BasicInstanceBuilder.getImageInstance()
+        def json = JSON.parse("{image:${image.id},lon:100,lat:100,zoom:1}")
+
+        def result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ImageInstanceAPI.listLastOpened(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert ImageInstanceAPI.containsInJSONList(image.id,json)
+
+    }
+
+
+
 
 }

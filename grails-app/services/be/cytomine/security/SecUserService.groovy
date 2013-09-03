@@ -17,6 +17,7 @@ import be.cytomine.social.LastConnection
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.News
 import be.cytomine.utils.Task
 import be.cytomine.utils.Utils
 import groovy.sql.Sql
@@ -462,6 +463,14 @@ class SecUserService extends ModelService {
     def deleteDependentUploadedFile(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UploadedFile.findAllByUser((User)user).each {
+                it.delete()
+            }
+        }
+    }
+
+    def deleteDependentNews(SecUser user, Transaction transaction, Task task = null) {
+        if(user instanceof User) {
+            News.findAllByUser((User)user).each {
                 it.delete()
             }
         }

@@ -11,6 +11,7 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
+import be.cytomine.security.User
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
@@ -42,6 +43,7 @@ class RestImageInstanceController extends RestController {
     def secUserService
     def termService
     def annotationListingService
+    def cytomineService
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
@@ -50,6 +52,24 @@ class RestImageInstanceController extends RestController {
         if (image) {
             responseSuccess(image)
         } else {
+            responseNotFound("ImageInstance", params.id)
+        }
+    }
+
+    def listByUser = {
+        User user = cytomineService.currentUser
+        if(user) {
+            responseSuccess(imageInstanceService.list(user))
+        }else {
+            responseNotFound("ImageInstance", params.id)
+        }
+    }
+
+    def listLastOpenImage = {
+        User user = cytomineService.currentUser
+        if(user) {
+            responseSuccess(imageInstanceService.listLastOpened(user))
+        }else {
             responseNotFound("ImageInstance", params.id)
         }
     }

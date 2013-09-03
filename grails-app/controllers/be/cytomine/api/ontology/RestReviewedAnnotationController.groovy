@@ -49,6 +49,10 @@ class RestReviewedAnnotationController extends RestController {
         responseSuccess(annotations)
     }
 
+    def countByUser = {
+        responseSuccess([total:reviewedAnnotationService.count(cytomineService.currentUser)])
+    }
+
     def stats = {
         ImageInstance image = imageInstanceService.read(params.long('image'))
         if(image) {

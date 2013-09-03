@@ -91,7 +91,14 @@ class RestUploadedFileController extends RestController {
                     storages : [idStorage],
                     user : currentUser
             )
-            uploadedFile.save(flush : true)
+            if(!uploadedFile.validate()) {
+                log.error uploadedFile.errors
+                response.status = 400;
+                render errorMessage
+                return
+            }
+
+            uploadedFile.save(flush : true, failOnError: true)
         }
         else {
             response.status = 400;
@@ -116,6 +123,8 @@ class RestUploadedFileController extends RestController {
         backgroundService.execute("convertAndDeployImage", {
             println "uploadedFile_copy"
             UploadedFile uploadedFile_copy = UploadedFile.get(uploadedFile.id)
+            println "uploadedFile=$uploadedFile"
+            println "uploadedFile_copy=$uploadedFile_copy"
             def uploadedFiles = convertImagesService.convertUploadedFile(uploadedFile_copy, currentUser)
             Collection<AbstractImage> abstractImagesCreated = []
             Collection<UploadedFile> deployedFiles = []

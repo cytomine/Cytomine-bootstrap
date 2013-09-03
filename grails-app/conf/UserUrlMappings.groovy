@@ -60,5 +60,7 @@ class UserUrlMappings {
         "/api/project/$id/online/user"(controller: "restUser"){
             action = [GET:"listOnlineFriendsWithPosition"]
         }
+
+
     }
 }

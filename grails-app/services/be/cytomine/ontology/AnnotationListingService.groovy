@@ -56,36 +56,6 @@ class AnnotationListingService extends ModelService {
 
         println "x=${al.kmeansValue}"
         if(al.kmeansValue==kmeansGeometryService.FULL) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             selectGenericAnnotation(al)
         } else if(al.kmeansValue==kmeansGeometryService.KMEANSFULL) {
             kmeansGeometryService.doKeamsFullRequest(al.getAnnotationsRequest())

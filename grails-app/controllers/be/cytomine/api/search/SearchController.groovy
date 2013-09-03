@@ -23,6 +23,12 @@ class SearchController extends RestController {
         def keywords = params.get('keywords')
         String operator = params.get('operator')
         String filter = params.get('filter')
+        def idsProjectStr = params.get('projects')
+
+        def idsProject = null
+        if(idsProjectStr) {
+            idsProject = idsProjectStr.split(",")
+        }
 
         if (!keywords) {
             responseError(new InvalidRequestException("Please specify some keywords"))
@@ -52,11 +58,11 @@ class SearchController extends RestController {
 
         def all = []
         if (filter.equals(SearchFilter.PROJECT) || filter.equals(SearchFilter.ALL))
-            all.addAll(searchService.list(listKeyword, operator, SearchFilter.PROJECT))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.PROJECT,idsProject))
         if (filter.equals(SearchFilter.IMAGE) || filter.equals(SearchFilter.ALL))
-            all.addAll(searchService.list(listKeyword, operator, SearchFilter.IMAGE))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.IMAGE,idsProject))
         if (filter.equals(SearchFilter.ANNOTATION) || filter.equals(SearchFilter.ALL))
-            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION))
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION,idsProject))
 
         all.sort{-it.id}
         responseSuccess(all)

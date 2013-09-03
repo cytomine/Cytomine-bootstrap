@@ -4,10 +4,12 @@ import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
 import be.cytomine.command.RedoStackItem
 import be.cytomine.command.UndoStackItem
+import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.utils.News
 import be.cytomine.utils.database.ArchiveCommandService
 import grails.converters.JSON
 import grails.util.Environment
@@ -219,5 +221,42 @@ class GeneralTests  {
 //        assert ids.contains(content1[1].split(";")[0])
 //        assert ids.contains(content1[2].split(";")[0])
 //    }
+
+
+     void testNewsListing() {
+         def data = [
+                 [date:'12/08/2013', text:'A project has now a user and admin list. A project admin is able to edit annotations from other user. Furthermore, a project admin is not affected by the "private layer" options. Only project creator and project admin can raise a user as project admin.'],
+                 [date:'27/07/2013',text:'Project can be locked. If a project is locked, you can delete all job data with no reviewed annotation.'],
+                 [date:'14/06/2013',text:'Project, Image and Annotation can now have a description.'],
+                 [date:'27/05/2013',text:'Review view is now available in project. This helps meet specific needs especially for Cytology review.'],
+                 [date: '08/05/2013',text:'You can now use keyboard shortcuts to perform some actions. Look at the "Help" section on the top of this windows.']
+
+         ]
+
+         data.each {
+
+             News news = new News(added:new SimpleDateFormat("dd/MM/yyyy").parse(it.date),text:it.text, user: User.list().first())
+             assert news.validate()
+             println news.errors
+             assert news.save(flush:true)
+         }
+
+
+         HttpClient client1 = new HttpClient();
+         String URL = Infos.CYTOMINEURL + "api/news.json"
+         client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+         client1.get()
+         int code = client1.getResponseCode()
+         String response = client1.getResponseData()
+         assert code == 200
+         client1.disconnect()
+         def json = JSON.parse(response).collection
+         assert json.size()==5
+
+
+     }
+
+
+
 
 }

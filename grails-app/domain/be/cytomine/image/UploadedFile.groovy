@@ -34,7 +34,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
     String path
     String contentType
     UploadedFile parent
-    int size
+    Long size
     int status = 0
 
     /**

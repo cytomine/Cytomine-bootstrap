@@ -11,12 +11,14 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.converters.JSON
+import groovy.sql.Sql
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
@@ -98,6 +100,34 @@ class ProjectService extends ModelService {
     def lastAction(Project project, def max) {
         SecurityACL.check(project, READ)
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
+    }
+
+
+    def listByCreator(User user) {
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        def data = []
+        new Sql(dataSource).eachRow("select * from creator_project where user_id = ?",[user.id]) {
+            data << [id:it.id, name:it.name]
+        }
+        return data
+    }
+
+    def listByAdmin(User user) {
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        def data = []
+        new Sql(dataSource).eachRow("select * from admin_project where user_id = ?",[user.id]) {
+            data << [id:it.id, name:it.name]
+        }
+        return data
+    }
+
+    def listByUser(User user) {
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        def data = []
+        new Sql(dataSource).eachRow("select * from user_project where user_id = ?",[user.id]) {
+            data << [id:it.id, name:it.name]
+        }
+        return data
     }
 
     /**

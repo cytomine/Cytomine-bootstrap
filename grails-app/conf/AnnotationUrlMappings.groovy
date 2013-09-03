@@ -108,5 +108,13 @@ class AnnotationUrlMappings {
             action = [GET:"downloadIncludedAnnotation"]
         }
 
+
+        "/api/user/$id/userannotation/count"(controller:"restUserAnnotation"){
+            action = [GET: "countByUser"]
+        }
+        "/api/user/$id/reviewedannotation/count"(controller:"restReviewedAnnotation"){
+            action = [GET: "countByUser"]
+        }
+
     }
 }

@@ -12,6 +12,7 @@ import be.cytomine.image.server.RetrievalServer
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.sql.AnnotationListing
@@ -75,6 +76,10 @@ class UserAnnotationService extends ModelService {
                 bbox: geometry
         )
         annotationListingService.executeRequest(al)
+    }
+
+    def count(User user) {
+        return UserAnnotation.countByUser(user)
     }
 
     /**

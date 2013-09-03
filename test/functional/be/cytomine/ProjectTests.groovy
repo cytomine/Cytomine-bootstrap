@@ -54,6 +54,34 @@ class ProjectTests  {
         assert json.collection instanceof JSONArray
     }
 
+    void testListProjectByUserLight() {
+
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        Project project = result.data
+        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        def user1 = User.findByUsername(Infos.GOODLOGIN)
+        def user2 = BasicInstanceBuilder.getUser2()
+
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+    }
+
+
+
+
+
+
     void testListProjectByUserNotExist() {
         def result = ProjectAPI.listByUser(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

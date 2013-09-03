@@ -18,6 +18,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import be.cytomine.security.UserGroup
+import be.cytomine.utils.News
 import grails.util.Environment
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -26,6 +27,7 @@ import org.hibernate.jdbc.Work
 import java.lang.management.ManagementFactory
 import java.sql.Connection
 import java.sql.SQLException
+import java.text.SimpleDateFormat
 
 /**
  * Bootstrap contains code that must be execute during application (re)start
@@ -96,6 +98,10 @@ class BootStrap {
         //if database is empty, create admin user
         if (SecUser.count() == 0) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
+        }
+
+        if (Environment.getCurrent()  != Environment.TEST) {
+            addSomeNews()
         }
 
 //        if(AnnotationIndex.count()==0) {
@@ -261,4 +267,24 @@ class BootStrap {
     }
 
 
+    def addSomeNews() {
+        if(News.count==0) {
+            def data = [
+                    [date:'12/08/2013', text:'A project has now a user and admin list. A project admin is able to edit annotations from other user. Furthermore, a project admin is not affected by the "private layer" options. Only project creator and project admin can raise a user as project admin.'],
+                    [date:'27/07/2013',text:'Project can be locked. If a project is locked, you can delete all job data with no reviewed annotation.'],
+                    [date:'14/06/2013',text:'Project, Image and Annotation can now have a description.'],
+                    [date:'27/05/2013',text:'Review view is now available in project. This helps meet specific needs especially for Cytology review.'],
+                    [date: '08/05/2013',text:'You can now use keyboard shortcuts to perform some actions. Look at the "Help" section on the top of this windows.']
+
+            ]
+
+            data.each {
+
+                News news = new News(added:new SimpleDateFormat("dd/MM/yyyy").parse(it.date),text:it.text, user: User.read(16))
+                assert news.validate()
+                println news.errors
+                assert news.save(flush:true)
+            }
+        }
+    }
 }

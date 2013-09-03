@@ -17,6 +17,9 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/next"(controller: "restImageInstance"){
             action = [GET:"next"]
         }
+        "/api/user/$user/imageinstance/light"(controller: "restImageInstance"){
+            action = [GET:"listByUser"]
+        }
         "/api/imageinstance/$id/previous"(controller: "restImageInstance"){
             action = [GET:"previous"]
         }
@@ -46,6 +49,9 @@ class ImageInstanceUrlMappings {
         }
         "/api/imageinstance/$id/cropgeometry"(controller :"restImageInstance") {
             action = [GET:"cropGeometry"]
+        }
+        "/api/imageinstance/lastopened"(controller :"restImageInstance") {
+            action = [GET:"listLastOpenImage"]
         }
     }
 }

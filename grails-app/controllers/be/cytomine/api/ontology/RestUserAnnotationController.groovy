@@ -42,6 +42,10 @@ class RestUserAnnotationController extends RestController {
         responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
+    def countByUser = {
+        responseSuccess([total:userAnnotationService.count(cytomineService.currentUser)])
+    }
+
 
     /**
      * Download report with annotation

@@ -10,6 +10,7 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -65,6 +66,34 @@ class ImageInstanceService extends ModelService {
         }
         return images
     }
+
+
+    def list(User user) {
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        def data = []
+        new Sql(dataSource).eachRow("select * from user_image where user_id = ?",[user.id]) {
+            data << [id:it.id, filename:it.filename, originalFilename: it.original_filename, projectName:it.project_name]
+        }
+        return data
+    }
+
+    def listLastOpened(User user) {
+        //get id of last open image
+        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        def data = []
+        new Sql(dataSource).eachRow("SELECT image_id, extract(epoch from max(created))*1000 as maxDate\n" +
+                "FROM user_position\n" +
+                "WHERE user_id = ? \n" +
+                "GROUP BY image_id \n" +
+                "ORDER BY maxDate desc;",[user.id]) {
+            data << [id:it.image_id,date:it.maxDate]
+        }
+        return data
+    }
+
+
+
+
 
     def listTree(Project project) {
         SecurityACL.check(project,READ)

@@ -24,6 +24,11 @@ class ImageInstanceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByUser(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL +  "/api/user/$id/imageinstance/light"
+        return doGET(URL, username, password)
+    }
+
     static def listByProjectTree(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json?tree=true"
         return doGET(URL, username, password)
@@ -33,6 +38,13 @@ class ImageInstanceAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + ".json"
         return doGET(URL, username, password)
     }
+
+    static def listLastOpened(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/lastopened.json"
+        return doGET(URL, username, password)
+    }
+
+
 
     static def create(String jsonImageInstance, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/imageinstance.json"

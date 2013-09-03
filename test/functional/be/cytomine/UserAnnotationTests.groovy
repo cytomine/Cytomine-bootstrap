@@ -43,6 +43,14 @@ class UserAnnotationTests  {
         assert json.collection instanceof JSONArray
     }
 
+    void testCountAnnotationWithCredential() {
+        def result = UserAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.total >= 0
+    }
+
     
     void testDownloadUserAnnotationDocument() {
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
