@@ -91,6 +91,7 @@ class TableService {
             }
 
             if(alreadyExist) {
+                println "DROP VIEW $name"
                 new Sql(dataSource).execute("DROP VIEW $name")
 
             }

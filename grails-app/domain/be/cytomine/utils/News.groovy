@@ -32,7 +32,7 @@ class News extends CytomineDomain {
              returnArray['class'] = news.class
              returnArray['text'] = news.text
              returnArray['user'] = news.user.id
-             returnArray['created'] = news.added?.time?.toString()
+             returnArray['added'] = news.added?.time?.toString()
              returnArray['created'] = news.created?.time?.toString()
              returnArray['updated'] = news.updated?.time?.toString()
              return returnArray

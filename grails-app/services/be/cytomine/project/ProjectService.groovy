@@ -76,6 +76,50 @@ class ProjectService extends ModelService {
         project
     }
 
+    /**
+     * List last project opened by user
+     * If the user has less than "max" project opened, add last created project to complete list
+     */
+    def listLastOpened(User user,def max) {
+
+        def data = []
+
+        String request1 = """
+            SELECT project_id as id, updated as date FROM last_connection WHERE user_id = ${user.id}
+            AND updated is not null
+            AND project_id is not null
+            UNION
+            SELECT project_id, created as date
+            FROM last_connection
+            WHERE user_id = 14
+            AND updated is null
+            AND project_id is not null
+            ORDER BY date desc
+            LIMIT $max
+        """
+
+        new Sql(dataSource).eachRow(request1,[]) {
+            data << [id:it.id, date:it.date, opened: true]
+        }
+
+        if(data.size()<max) {
+            //user has open less than max project, so we add last created project
+
+            String request2 = """
+                SELECT id, created as date
+                FROM project
+                WHERE id NOT IN (${data.collect{it.id}.join(',')})
+                ORDER BY date desc
+            """
+
+            new Sql(dataSource).eachRow(request2,[]) {
+                data << [id:it.id, date:it.date, opened: false]
+            }
+
+        }
+        return data
+    }
+
     def list() {
         SecurityACL.checkAdmin(cytomineService.currentUser)
         //list ALL projects,

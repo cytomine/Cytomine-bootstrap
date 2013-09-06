@@ -231,6 +231,7 @@ var ApplicationView = Backbone.View.extend({
     initComponents: function () {
         var self = this;
         require([
+            "text!application/templates/user/UserDashboardComponent.tpl.html",
             "text!application/templates/upload/UploadComponent.tpl.html",
             "text!application/templates/project/ProjectComponent.tpl.html",
             "text!application/templates/ontology/OntologyComponent.tpl.html",
@@ -239,7 +240,17 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/activity/ActivityComponent.tpl.html",
             "text!application/templates/account/AccountComponent.tpl.html"
         ],
-            function (uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
+            function (userDashboardTpl,uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
+
+                self.components.userdashboard = new Component({
+                    el: "#content",
+                    template: _.template(userDashboardTpl, {}),
+                    buttonAttr: {
+                        elButton: "userdashboard-button"
+                    },
+                    divId: "userdashboard"
+                });
+
                 self.components.activity = new Component({
                     el: "#content",
                     template: _.template(activityTpl, {}),

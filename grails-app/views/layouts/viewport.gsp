@@ -172,6 +172,9 @@ body {
 <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
 <script type="text/javascript" src="application/controllers/AccountController.js" ></script>
 <script type="text/javascript" src="application/controllers/PhonoController.js" ></script>
+<script type="text/javascript" src="application/controllers/UserDashboardController.js" ></script>
+
+
 <!-- Models -->
 
 <script type="text/javascript" src="application/models/PaginatorModel.js" ></script>
@@ -209,6 +212,7 @@ body {
 
 
 <!-- View -->
+<script type="text/javascript" src="application/views/user/UserDashboardView.js"></script>
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
 <script type="text/javascript" src="application/views/phono/PhonoMenu.js" ></script>
 <script type="text/javascript" src="application/views/account/AccountDetails.js" ></script>
@@ -239,6 +243,10 @@ body {
 <script type="text/javascript" src="application/views/processing/JobTableView.js"></script>
 <script type="text/javascript" src="application/views/processing/JobSearchEngineView.js"></script>
 <script type="text/javascript" src="application/views/processing/JobDeleteAllDataView.js"></script>
+
+
+
+
 
 <script type="text/javascript" src="application/views/processing/result/RetrievalAlgoResult.js"></script>
 <script type="text/javascript" src="application/views/processing/result/EvolutionAlgoResult.js"></script>

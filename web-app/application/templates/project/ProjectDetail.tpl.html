@@ -1,4 +1,21 @@
 <div id='projectlist<%= id %>' data-id='<%= id %>' class="well span2 projectInfoPanel" style="padding: 5px;margin: 0 15px 15px 0px;min-width: 300px;font-size: 12px;">
+
+    <% if (dateConnection!=null) { %>
+        <div style="text-align: center">
+        <% if (lastConnection) { %>
+            <span class="badge badge-info">Last open</span>
+            <br/>
+            <span class="badge badge-info"><%= dateConnection %></span>
+
+        <% } else { %>
+            <span class="badge badge-default" style="color:#000000;margin:auto;">Created</span>
+            <br/>
+            <span class="badge badge-default" style="color:#000000;margin:auto;"><%= dateConnection %></span>
+        <% } %>
+         </div>
+    <% } %>
+
+
     <a href="#tabs-dashboard-<%= id %>"><h4 style="display:inline"><%= title %></h4></a>
 
     <div style="min-height : 180px;padding-top : 10px;">
@@ -29,17 +46,23 @@
             </li>
         </ul>
     </div>
-    <button class="infoProject btn btn-small" id="infoProjectButton<%= id %>" style="display : inline-block;">Info
-    </button>
-    <button class="editProject btn btn-small" id="editProjectButton<%= id %>" style="display : inline-block;">Edit
-    </button>
-    <button class="deleteProject btn btn-small" id="deleteProjectButton<%= id %>" style="display : inline-block;">
-        Delete
-    </button>
-    <button class="addSlide btn btn-small" id='projectaddimages<%= id %>' type="button">Images</button>
-    <a href="#tabs-dashboard-<%= id %>">
-        <button class="btn btn-inverse btn-small" id='radioprojectchange<%= id %>'>Open</button>
-    </a>
+
+
+    <% if (dateConnection==null) { %>
+        <button class="infoProject btn btn-small" id="infoProjectButton<%= id %>" style="display : inline-block;">Info
+        </button>
+        <button class="editProject btn btn-small" id="editProjectButton<%= id %>" style="display : inline-block;">Edit
+        </button>
+        <button class="deleteProject btn btn-small" id="deleteProjectButton<%= id %>" style="display : inline-block;">
+            Delete
+        </button>
+        <button class="addSlide btn btn-small" id='projectaddimages<%= id %>' type="button">Images</button>
+        <a href="#tabs-dashboard-<%= id %>">
+            <button class="btn btn-inverse btn-small" id='radioprojectchange<%= id %>'>Open</button>
+        </a>
+    <% } else { %>
+            <div style="text-align: center"><a href="#tabs-dashboard-<%= id %>" class="btn btn-primary btn-small">Go to project</a></div>
+    <% } %>
 
 
     <!--<a class="addSlide" id='projectaddimages<%= id %>' href="#project-manage-<%= id %>">Manage samples</a>-->

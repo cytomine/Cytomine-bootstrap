@@ -18,9 +18,11 @@ var ProjectPanelView = Backbone.View.extend({
     loadImagesInAddPanel: true,
     projectsPanel: null,
     container: null,
+    connectionInfo: null,
     initialize: function (options) {
         this.container = options.container;
         this.projectsPanel = options.projectsPanel;
+        this.connectionInfo = options.connectionInfo;
         _.bindAll(this, 'render');
     },
     events: {
@@ -95,6 +97,14 @@ var ProjectPanelView = Backbone.View.extend({
             json.ontologyName = json.ontologyName.substr(0, maxNumberOfChar) + "...";
         }
         json.ontologyId = idOntology;
+
+        if(self.connectionInfo!=null && self.connectionInfo!=undefined) {
+            //dateConnection //lastConnection
+            json.dateConnection =  window.app.convertLongToDate(self.connectionInfo.date);
+            json.lastConnection =  self.connectionInfo.opened;
+        } else {
+            json.dateConnection = null;
+        }
 
         var html = _.template(tpl, json);
 

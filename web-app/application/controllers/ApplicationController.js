@@ -106,6 +106,7 @@ var ApplicationController = Backbone.Router.extend({
         window.app.controllers.activity = new ActivityController();
         window.app.controllers.account = new AccountController();
         window.app.controllers.phono = new PhonoController();
+        window.app.controllers.userdashboard = new UserDashboardController();
         //window.app.controllers.admin        = new AdminController();
         //Start the history
         window.app.view.initPreferences();
@@ -207,7 +208,7 @@ var ApplicationController = Backbone.Router.extend({
     },
 
     initialRoute: function () {
-        this.navigate("#project", true);
+        this.navigate("#userdashboard", true);
     },
     convertLongToDate: function (longDate) {
         var createdDate = new Date();

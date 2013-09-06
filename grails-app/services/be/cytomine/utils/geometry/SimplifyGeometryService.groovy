@@ -23,15 +23,11 @@ class SimplifyGeometryService {
      */
     def simplifyPolygon(String form, def minPoint = null, def maxPoint = null) {
         Geometry annotationFull = new WKTReader().read(form);
-        println "annotationFull.getNumGeometries()=${annotationFull.getNumGeometries()}"
-        println "annotationFull.getNumInteriorRing()=${annotationFull.getNumInteriorRing()}"
         int numOfGeometry = annotationFull.getNumGeometries()*annotationFull.getNumInteriorRing()
         numOfGeometry = Math.max(1,numOfGeometry)
         if(numOfGeometry>10) {
             numOfGeometry = numOfGeometry/2
         }
-
-        println "numOfGeometry=$numOfGeometry"
 
 
 //        log.info "minPoint=$minPoint maxPoint=$maxPoint"
@@ -64,7 +60,7 @@ class SimplifyGeometryService {
 //        println "numberOfPoint=$numberOfPoint"
         Boolean isPolygonAndNotValid = (annotationFull instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotationFull).isValid())
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
-            println "simplify"
+
             rate = i
             if (isPolygonAndNotValid) {
                 lastAnnotationFull = TopologyPreservingSimplifier.simplify(annotationFull, rate)
@@ -76,7 +72,6 @@ class SimplifyGeometryService {
             annotationFull = lastAnnotationFull
             i = i + (incrThreshold * increaseIncrThreshold); maxLoop--;
         }
-        println "POINTS="+lastAnnotationFull.getNumPoints()
         return [geometry: annotationFull, rate: rate]
     }
 

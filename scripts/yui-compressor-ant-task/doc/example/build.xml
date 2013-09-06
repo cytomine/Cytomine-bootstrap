@@ -79,6 +79,7 @@
 <fileset dir="${src.dir}" includes="application/controllers/ActivityController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/AccountController.js"/>
 <fileset dir="${src.dir}" includes="application/controllers/PhonoController.js"/>
+<fileset dir="${src.dir}" includes="application/controllers/UserDashboardController.js"/>
 <fileset dir="${src.dir}" includes="application/models/PaginatorModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/DescriptionModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/DisciplineModel.js"/>
@@ -106,6 +107,7 @@
 <fileset dir="${src.dir}" includes="application/models/AnnotationPropertyModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ImageInstancePropertyModel.js"/>
 <fileset dir="${src.dir}" includes="application/models/ProjectPropertyModel.js"/>
+<fileset dir="${src.dir}" includes="application/views/user/UserDashboardView.js"/>
 <fileset dir="${src.dir}" includes="application/views/activity/ActivityView.js"/>
 <fileset dir="${src.dir}" includes="application/views/phono/PhonoMenu.js"/>
 <fileset dir="${src.dir}" includes="application/views/account/AccountDetails.js"/>

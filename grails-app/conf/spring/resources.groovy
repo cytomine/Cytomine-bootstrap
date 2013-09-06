@@ -10,7 +10,7 @@ beans = {
         maxInMemorySize=10240
 
         //10Gb Max upload size
-        maxUploadSize=10240000000
+        maxUploadSize=102400000000
 
     }
 

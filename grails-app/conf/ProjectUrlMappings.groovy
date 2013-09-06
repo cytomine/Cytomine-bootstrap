@@ -33,5 +33,9 @@ class ProjectUrlMappings {
         "/api/user/$id/project/light"(controller:"restProject"){
             action = [GET:"listLightByUser"]
         }
+
+        "/api/project/lastopened" (controller: "restProject") {
+            action = [GET:"listLastOpened"]
+        }
     }
 }

@@ -58,7 +58,7 @@ class CommandService {
             if (!c.validate()) {
                 log.error c.errors.toString()
             }
-            c.save()
+            c.save(failOnError: true)
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project,user: c.user, message: c.actionMessage)
             ch.save();
             if (c.saveOnUndoRedoStack) {

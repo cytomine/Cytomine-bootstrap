@@ -45,6 +45,11 @@ class RestProjectController extends RestController {
         }
     }
 
+    def listLastOpened = {
+        SecUser user = cytomineService.currentUser
+        responseSuccess(projectService.listLastOpened(user, params.long('max')))
+    }
+
     /**
      * List all project available for this user, that can use a software
      */

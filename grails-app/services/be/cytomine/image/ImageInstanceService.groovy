@@ -1,6 +1,7 @@
 package be.cytomine.image
 
 import be.cytomine.SecurityACL
+import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.ontology.AlgoAnnotation
@@ -71,8 +72,8 @@ class ImageInstanceService extends ModelService {
     def list(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("select * from user_image where user_id = ?",[user.id]) {
-            data << [id:it.id, filename:it.filename, originalFilename: it.original_filename, projectName:it.project_name]
+        new Sql(dataSource).eachRow("select * from user_image where user_image_id = ? order by original_filename",[user.id]) {
+            data << [id:it.id, filename:it.filename, originalFilename: it.original_filename, projectName:it.project_name,  project:it.project_id]
         }
         return data
     }
@@ -81,12 +82,14 @@ class ImageInstanceService extends ModelService {
         //get id of last open image
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("SELECT image_id, extract(epoch from max(created))*1000 as maxDate\n" +
-                "FROM user_position\n" +
-                "WHERE user_id = ? \n" +
-                "GROUP BY image_id \n" +
+        new Sql(dataSource).eachRow("SELECT image_id, base_image_id as abstImage,original_filename,image_instance.project_id as project,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
+                "FROM user_position, image_instance,abstract_image\n" +
+                "WHERE user_position.user_id = ? \n" +
+                "AND user_position.image_id = image_instance.id \n" +
+                "AND abstract_image.id = image_instance.base_image_id \n" +
+                "GROUP BY image_id,abstImage,original_filename,project \n" +
                 "ORDER BY maxDate desc;",[user.id]) {
-            data << [id:it.image_id,date:it.maxDate]
+            data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(it.abstImage),originalFilename:it.original_filename,project:it.project]
         }
         return data
     }
