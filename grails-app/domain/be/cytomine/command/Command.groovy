@@ -78,7 +78,7 @@ class Command extends CytomineDomain {
     Boolean refuseUndo = false
 
     static constraints = {
-        data(type: 'text', nullable: true)
+        data(type: 'text', maxSize: Holders.getGrailsApplication().config.cytomine.maxRequestSize, nullable: true)
         actionMessage(nullable: true)
         project(nullable: true)
         serviceName(nullable: true)
