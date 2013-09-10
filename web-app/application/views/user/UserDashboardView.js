@@ -49,6 +49,8 @@ var UserDashboardView = Backbone.View.extend({
         var elem = $(self.el).find("#userDashboardLastProject");
         console.log("initLastOpenProject");
         $.get("/api/project/lastopened?max=6", function(data) {
+            console.log("GET PROJECT OK");
+            console.log(elem.length);
             var collection = data.collection;
             elem.empty();
             _.each(collection,function(item) {
@@ -63,9 +65,10 @@ var UserDashboardView = Backbone.View.extend({
                         container: self,
                         connectionInfo: item
                     }).render();
-                    elem.append("<div class='span6'>"+$(panel.el).html()+"</div>");
 
-
+                    var str = "<div class='span6'>"+$(panel.el).html()+"</div>";
+                    console.log(str);
+                    elem.append(str);
                 }
             });
             elem.find(".span6").css("margin-left","0px");

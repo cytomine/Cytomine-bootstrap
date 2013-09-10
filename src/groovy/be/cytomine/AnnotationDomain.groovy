@@ -288,11 +288,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         Geometry validGeom
         String type = geom.getGeometryType().toUpperCase()
 
-//        println "*******************************"
-//        println "type=" + type
-//        println "valid=" + geom.isValid()
-//        println "*******************************"
-        println "1=$geom"
         if (!geom.isValid()) {
             println "Geometry is not valid"
             //selfintersect,...
@@ -302,7 +297,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             geom = new WKTReader().read(this.location.toText())
             type = geom.getGeometryType().toUpperCase()
         }
-        println "2=$geom"
         if (geom.isEmpty()) {
             println "Geometry is empty"
             //empty polygon,...

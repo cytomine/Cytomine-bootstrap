@@ -72,8 +72,14 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 // set per-environment serverURL stem for creating absolute links
 environments {
     production {
-        grails.serverURL = "http://beta.cytomine.be"
-        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
+
+        //grails.serverURL = "http://beta.cytomine.be"
+        //grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
+
+        grails.serverURL = "http://localhost:8080"
+//        grails.converters.default.pretty.print = true
+//        grails.plugins.springsecurity.useBasicAuth = true
+        grails.resources.adhoc.patterns = []
     }
     development {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090

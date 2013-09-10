@@ -91,8 +91,8 @@ class TableService {
             }
 
             if(alreadyExist) {
-                println "DROP VIEW $name"
-                new Sql(dataSource).execute("DROP VIEW $name")
+                def req =  "DROP VIEW " + name
+                new Sql(dataSource).execute(req)
 
             }
             log.info reqcreate

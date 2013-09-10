@@ -100,7 +100,6 @@ abstract class AnnotationListing {
      * Get all properties to print
      */
     def buildColumnToPrint() {
-        println "availableColumnDefault=$availableColumnDefault"
         if(!columnToPrint) {
             columnToPrint = availableColumnDefault.clone()
         }
@@ -108,7 +107,6 @@ abstract class AnnotationListing {
         columnToPrint = columnToPrint.unique()
 
         def columns = []
-        println "columnToPrint=$columnToPrint"
 
         getAvailableColumn().each {
            if(columnToPrint.contains(it.key)) {
@@ -118,7 +116,6 @@ abstract class AnnotationListing {
            }
         }
         extraColmun.each {
-            println it
             columns << it
         }
         return columns
@@ -299,16 +296,13 @@ abstract class AnnotationListing {
              if(!Term.read(suggestedTerm)) {
                  throw new ObjectNotFoundException("Term $suggestedTerm not exist!")
              }
-             println "******************** 1"
              addIfMissingColumn('algo')
              return "AND aat.term_id = ${suggestedTerm}\n"
          } else return ""
      }
 
     def getSuggestedTermsConst() {
-        println "2suggestedTerms=$terms"
         if(suggestedTerms) {
-            println "******************** 2"
             addIfMissingColumn('algo')
             return "AND aat.term_id IN (${suggestedTerms.join(",")})\n"
         } else return ""
@@ -316,25 +310,14 @@ abstract class AnnotationListing {
 
      def getUserForTermAlgoConst() {
          if(userForTermAlgo) {
-             println "******************** 3"
              addIfMissingColumn('term')
              addIfMissingColumn('algo')
              return "AND aat.user_job_id = ${userForTermAlgo}\n"
          } else return ""
      }
 
-//    def getJobForTermAlgoConst() {
-//        if(jobForTermAlgo) {
-//            println "******************** 3"
-//            addIfMissingColumn('term')
-//            addIfMissingColumn('algo')
-//            return "AND aat.user_job_id = (SELECT id FROM sec_user${jobForTermAlgo})\n"
-//        } else return ""
-//    }
-
     def getUsersForTermAlgoConst() {
         if(usersForTermAlgo) {
-            println "******************** 5"
             addIfMissingColumn('algo')
             addIfMissingColumn('term')
             return "AND aat.user_job_id IN (${usersForTermAlgo.join(',')})\n"
@@ -424,8 +407,7 @@ class UserAnnotationListing extends AnnotationListing {
              where = "$where AND a.image_id = ii.id \n" +
                      "AND ii.base_image_id = ai.id\n"
          }
-           println "columnToPrint=$columnToPrint"
-          println "columnToPrint=${columnToPrint.contains('algo')}"
+
           if(columnToPrint.contains('algo')) {
               from = "$from, algo_annotation_term aat "
               where = "$where AND aat.annotation_ident = a.id\n"
@@ -564,7 +546,7 @@ class AlgoAnnotationListing extends AnnotationListing {
     }
 
     def getTermsConst() {
-        println "2terms=$terms"
+
         if(terms) {
             addIfMissingColumn('term')
             return "AND aat.term_id IN (${terms.join(',')})\n"
@@ -702,11 +684,6 @@ class ReviewedAnnotationListing extends AnnotationListing {
 
             boolean zoomToLow = ratio > 50
 
-            println "imageWidth=$imageWidth"
-            println "bboxWidth=$bboxWidth"
-            println "ratio=$ratio"
-
-            println "zoomToLow="+zoomToLow
             String subRequest
             if (zoomToLow) {
                 subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) "

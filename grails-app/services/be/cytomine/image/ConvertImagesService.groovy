@@ -200,7 +200,7 @@ class ConvertImagesService {
         }
         log.info "vips is in : $executable"
         //2. Create command
-        def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid"""
+        def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid,,,,8"""
         log.info "$executable $convertCommand"
         //3. Execute
         def ant = new AntBuilder()   // create an antbuilder

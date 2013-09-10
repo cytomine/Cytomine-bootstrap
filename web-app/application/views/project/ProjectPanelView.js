@@ -34,10 +34,12 @@ var ProjectPanelView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
+        console.log("render");
         require([
             "text!application/templates/project/ProjectDetail.tpl.html"
         ],
             function (tpl) {
+                console.log("doLayout");
                 self.doLayout(tpl, false);
             });
 
@@ -108,11 +110,18 @@ var ProjectPanelView = Backbone.View.extend({
 
         var html = _.template(tpl, json);
 
+
         if (replace) {
             $("#projectlist" + json.id).replaceWith(html);
         }
         else {
+//            console.log("APPEND:"+$(self.el).length);
+//            console.log("HTML:"+html);
+
+
             $(self.el).append(html);
+
+            console.log("MUST BE BEFORE APPEND");
         }
 
         self.renderCurrentProjectButton();

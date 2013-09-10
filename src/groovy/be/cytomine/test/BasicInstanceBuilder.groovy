@@ -299,7 +299,6 @@ class BasicInstanceBuilder {
                 user: user,
                 project:project
         )
-        println annotation.user
         annotation = saveDomain(annotation)
 
 
@@ -404,7 +403,6 @@ class BasicInstanceBuilder {
                 user: getUser1(),
                 project:project
         )
-        println annotation.user
         save ? saveDomain(annotation) : checkDomain(annotation)
     }
 
@@ -417,7 +415,6 @@ class BasicInstanceBuilder {
                 user: user,
                 project:project
         )
-        println annotation.user
         annotation = saveDomain(annotation)
 
 
@@ -435,7 +432,6 @@ class BasicInstanceBuilder {
                 user: user,
                 project:image.project
         )
-        println annotation.user
         annotation = saveDomain(annotation)
 
        if(term) {
