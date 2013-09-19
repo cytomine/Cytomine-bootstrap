@@ -107,6 +107,17 @@ class JSONUtils {
         }
     }
 
+    static public List getJSONAttrListLong(def json, String attr) {
+        if (json[attr] != null && !json[attr].toString().equals("null")) {
+            println "1:"+json[attr]
+            println "2:"+json[attr].collect{it}
+            println "3:"+json[attr].collect{Long.parseLong(it+"")}
+            return json[attr].collect{Long.parseLong(it+"")}
+        } else {
+            return null
+        }
+    }
+
     /**
      * Get attr domain value from json
      * Read domain thanks to domain argument class and its id (domain.read)

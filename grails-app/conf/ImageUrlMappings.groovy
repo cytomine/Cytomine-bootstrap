@@ -72,6 +72,26 @@ class ImageUrlMappings {
         "/api/image/$idabstractimage/group/$idgroup"(controller:"restAbstractImageGroup"){
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }
+
+
+        "/api/image/$idImage/properties/clear"(controller:"restUploadedFile"){
+            action = [POST:"clearProperties"]
+        }
+        "/api/image/$idImage/properties/populate"(controller:"restUploadedFile"){
+            action = [POST:"populateProperties"]
+        }
+        "/api/image/$idImage/properties/extract"(controller:"restUploadedFile"){
+            action = [POST:"extractProperties"]
+        }
+
+        "/api/uploadedfile/$uploadedFile/image"(controller:"restUploadedFile"){
+            action = [POST:"createImage"]
+        }
+
+
+
+
+
     }
 }
 

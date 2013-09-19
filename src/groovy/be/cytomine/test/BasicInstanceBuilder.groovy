@@ -6,6 +6,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
+import be.cytomine.image.UploadedFile
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
@@ -575,6 +576,46 @@ class BasicInstanceBuilder {
         Discipline discipline = new Discipline(name: getRandomString())
         checkDomain(discipline)
     }
+
+    static UploadedFile getUploadedFile() {
+        def uploadedFile = UploadedFile.findByFilename("BASICFILENAME")
+        if (!uploadedFile) {
+            uploadedFile = new UploadedFile(
+                    user: getUser1(),
+                    projects:[getProject().id],
+                    storages: [getStorage().id],
+                    filename: "BASICFILENAME",
+                    originalFilename: "originalFilename",
+                    convertedFilename:"originalFilenameConv",
+                    ext: "tiff",
+                    convertedExt: "tiff",
+                    path: "path",
+                    contentType: "tiff/ddd",
+                    size: 1232l
+            )
+            saveDomain(uploadedFile)
+        }
+        uploadedFile
+    }
+
+    static UploadedFile getUploadedFileNotExist(boolean save = false) {
+        UploadedFile uploadedFile = new UploadedFile(
+                user: getUser1(),
+                projects:[getProject().id],
+                storages: [getStorage().id],
+                filename: getRandomString(),
+                originalFilename: "originalFilename",
+                convertedFilename:"originalFilenameConv",
+                ext: "tiff",
+                convertedExt: "tiff",
+                path: "path",
+                contentType: "tiff/ddd",
+                size: 1232l
+        )
+        save ? saveDomain(uploadedFile) : checkDomain(uploadedFile)
+    }
+
+
 
     static AnnotationFilter getAnnotationFilter() {
         def filter = AnnotationFilter.findByName("BASICFILTER")

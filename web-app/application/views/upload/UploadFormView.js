@@ -323,6 +323,8 @@ var UploadFormView = Backbone.View.extend({
             },
 
             _renderTemplate: function (tpl, files) {
+                console.log(uploadFormView);
+                console.log(uploadFormView.fileUploadErrors);
                 var nodes = _.template(tpl, { o: {
                     files: files,
                     formatFileSize: this._formatFileSize,
@@ -674,6 +676,23 @@ var UploadFormView = Backbone.View.extend({
             self.uploadDataTables.fnReloadAjax();
         });
     },
+    refreshProjectAndStorage : function() {
+        var $form = $("#fileupload");
+        var linkProjectSelect = $("#linkProjectSelect");
+        var linkStorageSelect = $("#linkStorageSelect");
+        var idProject = linkProjectSelect.val();
+        var idStorage = linkStorageSelect.val();
+
+        $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@");
+
+            if(idProject==null){
+                $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));
+            } else {
+                $form.prop('action', $form.prop('action').replace("@PROJECT@", idProject));
+            }
+            $form.prop('action', $form.prop('action').replace("@STORAGE@", idStorage));
+    },
+
     doLayout: function (tpl) {
         var self = this;
         $(this.el).html(tpl);
@@ -699,6 +718,7 @@ var UploadFormView = Backbone.View.extend({
                     var selectOption = _.template(optionTpl, project.toJSON());
                     linkProjectSelect.append(selectOption);
                 });
+                self.refreshProjectAndStorage();
             }
         });
         new StorageCollection().fetch({
@@ -708,8 +728,17 @@ var UploadFormView = Backbone.View.extend({
                     var selectOption = _.template(optionTpl, storage.toJSON());
                     linkStorageSelect.append(selectOption);
                 });
+                self.refreshProjectAndStorage();
             }
         });
+
+        linkStorageSelect.change(function() {
+          self.refreshProjectAndStorage();
+        });
+        linkProjectSelect.change(function() {
+          self.refreshProjectAndStorage();
+        });
+
         // Render uploaded file
         this.renderUploadedFiles();
         // Render Upload Form
@@ -717,7 +746,7 @@ var UploadFormView = Backbone.View.extend({
             self.defineFileUpload(uploadTpl, downloadTpl);
             $('#fileupload').fileupload({
                 limitConcurrentUploads: 10,
-                maxFileSize: 5000000000
+                maxFileSize: 100000000000
                 /*acceptFileTypes : "/(\.|\/)(gif|jpe?g|png|tif|tiff|svs|vms|mrxs|scn|ndpi|jp2)$/i",*/
             });
 
@@ -735,6 +764,16 @@ var UploadFormView = Backbone.View.extend({
                     idProject = linkProjectSelect.val();
                 }
                 var idStorage = linkStorageSelect.val();
+
+                var $form = $('#fileupload');
+
+                var input1 = $("<input>").attr("type", "hidden").attr("name", "idProject").val(idProject);
+                $form.append($(input1));
+                var input2 = $("<input>").attr("type", "hidden").attr("name", "idStorage").val(idStorage);
+                $form.append($(input2));
+
+
+
                 data.formData = {idProject: idProject, idStorage : idStorage};
                 return true;
             });

@@ -7,11 +7,17 @@
 class UploadedFileUrlMappings {
 
     static mappings = {
-        "/api/uploadedfile" (controller:"restUploadedFile"){
-            action = [POST : "add", GET : "list"]
+
+        "/api/uploadedfile"(controller:"restUploadedFile"){
+            action = [GET: "list",POST:"add"]
         }
-        "/api/uploadedfile/$id" (controller:"restUploadedFile"){
-            action = [GET : "show"]
+        "/api/uploadedfile/$id"(controller:"restUploadedFile"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+
+
+//        "/uploadedfile" (controller:"restUploadedFile"){
+//            action = [POST : "add"]
+//        }
     }
 }

@@ -96,6 +96,7 @@ class ConvertImagesService {
             uploadedFiles << new_uploadedFile
             if (new_uploadedFile.validate()){
                 UploadedFile converted_uploadedFile = handleSingleFile(new_uploadedFile, currentUser)
+
                 if (converted_uploadedFile != new_uploadedFile && converted_uploadedFile.getStatus() == UploadedFile.TO_DEPLOY) {
                     uploadedFiles << converted_uploadedFile
                 }
@@ -155,6 +156,7 @@ class ConvertImagesService {
             try {
 
                 Boolean success = vipsify(originalFilenameFullPath, convertedFilenameFullPath)
+
                 if (success) {
                     UploadedFile convertUploadedFile = new UploadedFile(
                             originalFilename: uploadedFile.getOriginalFilename(),
@@ -194,6 +196,7 @@ class ConvertImagesService {
 
     private def vipsify(String originalFilenameFullPath, String convertedFilenameFullPath) {
         //1. Look for vips executable
+        println new File(originalFilenameFullPath).exists()
         def executable = "/usr/bin/vips"
         if (System.getProperty("os.name").contains("OS X")) {
             executable = "/usr/local/bin/vips"
@@ -202,14 +205,20 @@ class ConvertImagesService {
         //2. Create command
         def convertCommand = """im_vips2tiff "$originalFilenameFullPath" "$convertedFilenameFullPath":jpeg:95,tile:256x256,pyramid,,,,8"""
         log.info "$executable $convertCommand"
+
+
         //3. Execute
         def ant = new AntBuilder()   // create an antbuilder
+        try {
         ant.exec(outputproperty:"cmdOut",
                 errorproperty: "cmdErr",
                 resultproperty:"cmdExit",
                 failonerror: "true",
                 executable: executable) {
             arg(line:convertCommand)
+        }
+        }catch(Exception e) {
+            log.error e
         }
         log.info "return code:  ${ant.project.properties.cmdExit}"
         log.info "stderr:         ${ant.project.properties.cmdErr}"

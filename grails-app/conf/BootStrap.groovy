@@ -102,6 +102,7 @@ class BootStrap {
 
         if (Environment.getCurrent()  != Environment.TEST) {
             addSomeNews()
+            addImageServerUser()
         }
 
 //        if(AnnotationIndex.count()==0) {
@@ -180,7 +181,25 @@ class BootStrap {
     }
 
 
+    def addImageServerUser() {
 
+
+        def user = SecUser.findByUsername("ImageServer1")
+        if (!user) {
+            user = new User(
+                    username: "ImageServer1",
+                    firstname: "Image",
+                    lastname: "Server",
+                    email: "info@cytomine.be",
+                    password: "passwordIS",
+                    enabled: true)
+            user.generateKeys()
+            saveDomain(user)
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_ADMIN"),true)
+        }
+        user
+    }
 
 
 

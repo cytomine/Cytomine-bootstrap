@@ -1,7 +1,12 @@
 package be.cytomine.image
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.ontology.Ontology
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
@@ -12,9 +17,9 @@ import org.apache.log4j.Logger
  */
 class UploadedFile extends CytomineDomain implements Serializable{
 
-    public static allowedMime = ["svs", "opt", "jp2", "scn"]
-    public static zipMime = ["zip"]
-    public static mimeToConvert = ["jpg", "jpeg", "png", "tiff", "tif","pgm"]//, "ndpi"]
+//    public static allowedMime = ["svs", "opt", "jp2", "scn"]
+//    public static zipMime = ["zip"]
+//    public static mimeToConvert = ["jpg", "jpeg", "png", "tiff", "tif","pgm"]//, "ndpi"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1
     public static int DEPLOYED = 2
@@ -69,6 +74,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
             returnArray['ext'] = it.ext
             returnArray['contentType'] = it.contentType
             returnArray['size'] = it.size
+            returnArray['path'] = it.path
+            returnArray['status'] = it.status
             returnArray['uploaded'] = (it.status == UploadedFile.UPLOADED)
             returnArray['converted'] = (it.status == UploadedFile.CONVERTED)
             returnArray['deployed'] = (it.status == UploadedFile.DEPLOYED)
@@ -79,6 +86,47 @@ class UploadedFile extends CytomineDomain implements Serializable{
             return returnArray
         }
     }
+
+    /**
+     * Insert JSON data into domain in param
+     * @param domain Domain that must be filled
+     * @param json JSON containing data
+     * @return Domain with json data filled
+     */
+    static UploadedFile insertDataIntoDomain(def json, def domain = new UploadedFile()) throws CytomineException {
+        println json
+
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
+        domain.created = JSONUtils.getJSONAttrDate(json,'created')
+        domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
+
+        domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), true)
+
+        domain.projects = JSONUtils.getJSONAttrListLong(json,'projects')
+        domain.storages = JSONUtils.getJSONAttrListLong(json,'storages')
+
+        domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
+        domain.originalFilename = JSONUtils.getJSONAttrStr(json,'originalFilename')
+        domain.convertedFilename = JSONUtils.getJSONAttrStr(json,'convertedFilename')
+        domain.convertedExt = JSONUtils.getJSONAttrStr(json,'convertedExt')
+        domain.ext = JSONUtils.getJSONAttrStr(json,'ext')
+        domain.path = JSONUtils.getJSONAttrStr(json,'path')
+        domain.contentType = JSONUtils.getJSONAttrStr(json,'contentType')
+
+        domain.parent = JSONUtils.getJSONAttrDomain(json, "parent", new UploadedFile(), false)
+
+        domain.size = JSONUtils.getJSONAttrLong(json,'size',0)
+
+        domain.status = JSONUtils.getJSONAttrInteger(json,'status',0)
+
+        domain.converted = JSONUtils.getJSONAttrBoolean(json,'converted',false)
+
+
+        return domain;
+    }
+
+
+
 
     def getAbsolutePath() {
         return [ this.path, this.filename].join(File.separator)

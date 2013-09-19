@@ -89,7 +89,7 @@ body {
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
-<g:if test="${Environment.getCurrent() != Environment.DEVELOPMENT}">
+<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
 
 
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%

@@ -131,10 +131,13 @@ class RestUserController extends RestController {
     }
 
     def keys = {
-
+        def publicKey = params.publicKey
         def id = params.long('id')
         SecUser user
-        if(id) {
+
+        if(publicKey) {
+            user = SecUser.findByPublicKey(publicKey)
+        } else if(id) {
             user = secUserService.read(id)
         } else {
             user = secUserService.findByUsername(params.id)

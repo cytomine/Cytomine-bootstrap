@@ -14,6 +14,7 @@ class RestAbstractImageGroupController extends RestController {
     def abstractImageService
     def abstractImageGroupService
     def groupService
+    def imagePropertiesService
 
     /**
      * Show a link between an abstract image and a group
@@ -44,4 +45,7 @@ class RestAbstractImageGroupController extends RestController {
     def delete = {
         delete(abstractImageGroupService, JSON.parse("{abstractimage: $params.idabstractimage, group: $params.idgroup}"),null)
     }
+
+
+
 }

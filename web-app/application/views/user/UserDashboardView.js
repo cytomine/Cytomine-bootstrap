@@ -67,7 +67,6 @@ var UserDashboardView = Backbone.View.extend({
                     }).render();
 
                     var str = "<div class='span6'>"+$(panel.el).html()+"</div>";
-                    console.log(str);
                     elem.append(str);
                 }
             });

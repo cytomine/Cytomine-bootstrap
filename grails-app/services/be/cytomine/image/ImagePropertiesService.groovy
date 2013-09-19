@@ -49,7 +49,7 @@ class ImagePropertiesService implements Serializable{
                 log.info("new property, $args[0] => $args[1]")
                 property.save();
             }
-            image.save()
+            image.save(flush:true, failOnError: true)
         } catch (java.net.SocketTimeoutException e) {
             log.info "Timeout reached to image : " + image.getFilename()
         } catch (IOException e) {
@@ -82,6 +82,7 @@ class ImagePropertiesService implements Serializable{
                 extractUsefulSCN(image)
 
         }
+        image.save(flush:true, failOnError: true)
     }
 
     private def extractUsefulSCN(AbstractImage image) {

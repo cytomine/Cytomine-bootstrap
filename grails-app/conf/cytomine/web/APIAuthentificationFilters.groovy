@@ -49,7 +49,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
 //            println "content_md5="+content_md5
             String content_type = (request.getHeader("content-type") != null) ? request.getHeader("content-type") : ""
             content_type = (request.getHeader("Content-Type") != null) ? request.getHeader("Content-Type") : content_type
-//            println "content_type="+content_type
+            //println "content_type="+content_type
             String date = (request.getHeader("date") != null) ? request.getHeader("date") : ""
 //            println "date="+date
             String canonicalHeaders = request.getMethod() + "\n" + content_md5 + "\n" + content_type + "\n" + date + "\n"

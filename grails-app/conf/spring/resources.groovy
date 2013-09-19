@@ -14,6 +14,7 @@ beans = {
 
     }
 
+    springConfig.addAlias "springSecurityService", "springSecurityCoreSpringSecurityService"
 
 
 }

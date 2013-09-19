@@ -5,6 +5,8 @@ var AnnotationView = Backbone.View.extend({
     initialize: function (options) {
         this.page = options.page;
         this.term = options.term;
+        this.noTerm = options.noTerm;
+        this.multipleTerm = options.multipleTerm;
         this.annotations = null; //array of annotations that are printed
         if (this.page == undefined) {
             this.page = 0;
@@ -13,7 +15,7 @@ var AnnotationView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-
+        console.log("render");
         self.model.goTo(this.page,{
             success: function (collection, response) {
                 $(self.el).empty();
@@ -30,16 +32,27 @@ var AnnotationView = Backbone.View.extend({
         var self = this;
 
          var nbPages = self.model.getNumberOfPages();
-
+         console.log("initPagination="+nbPages);
          if(nbPages<2) {
              return;
          } else {
 
             require(["text!application/templates/dashboard/Pagination.tpl.html"], function (paginationTpl) {
+                var termRef = null
+                if(self.noTerm) {
+                    termRef = "-1";
+                } else if (self.multipleTerm) {
+                    termRef = "-2";
+                } else {
+                    termRef = self.term;
+                }
 
-                var pagination = _.template(paginationTpl, { term: self.term});
+                console.log("termRef="+termRef);
+                var pagination = _.template(paginationTpl, { term: termRef});
+                console.log(pagination);
                 $(self.el).append(pagination);
-                var $pagination = $(self.el).find("#pagination-term-" + self.term).find("ul");
+                var $pagination = $(self.el).find("#pagination-term-"+termRef).find("ul");
+
                 var className = (self.page == 0) ? "prev disabled" : "";
 
                 var pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>&larr; Previous</a></li>", { className: className, page: self.page - 1});
@@ -60,6 +73,7 @@ var AnnotationView = Backbone.View.extend({
                 var className = (self.page == nbPages - 1) ? "next disabled" : "";
                 pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>Next &rarr;</a></li>", { className: className, page: self.page + 1});
                 $pagination.append(pageLink);
+                console.log("initPagination="+$pagination.length);
                 $pagination.find("a").click(function (event) {
                     event.preventDefault();
                     var page = parseInt($(this).attr("data-page"));

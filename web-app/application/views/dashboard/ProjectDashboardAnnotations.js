@@ -765,7 +765,9 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             page: undefined,
             model: collection,
             term: idTerm,
-            el: $($elem)
+            el: $($elem),
+            noTerm : noTerm,
+            multipleTerm : multipleTerm
         }).render();
         $($elem).parent().find("h4").find(".alert").replaceWith("");
 
