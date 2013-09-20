@@ -3,6 +3,10 @@ package be.cytomine.api.image.server
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
+import be.cytomine.image.Mime
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.ImageServerStorage
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -20,6 +24,32 @@ class RestStorageController extends RestController {
     def list = {
         log.info 'listing storages'
         responseSuccess(storageService.list())
+    }
+
+    def listByMime = {
+        log.info 'listing storages by mime/user'
+        def currentUser = cytomineService.currentUser
+        String ext = params.get('ext')
+
+        Mime mime = Mime.findByExtension(ext)
+        //list all images server for this mime
+        List<ImageServer> servers = MimeImageServer.findAllByMime(mime).collect{it.imageServer}
+
+        //list all storage for this user
+        List<Storage> storages = Storage.findAllByUser(currentUser)
+
+        if(servers.isEmpty()) {
+            responseNotFound("ImageServer", "No image server found for ext=$ext")
+        } else if(storages.isEmpty()) {
+            responseNotFound("Storage", "No storage for user=${currentUser.id}")
+        } else {
+            def serverAvailableForUser = ImageServerStorage.findAllByImageServerInListAndStorageInList(servers,storages)
+            if(serverAvailableForUser.isEmpty()) {
+                responseNotFound("ImageServerStorage", "No imageserver-storage found for servers=${servers} and storages=${storages}")
+            } else {
+                responseSuccess(serverAvailableForUser)
+            }
+        }
     }
 
     /**

@@ -80,4 +80,13 @@ class UploadedFileService extends ModelService {
         return [domain.id, domain.filename]
     }
 
+
+    def deleteDependentUploadedFile(UploadedFile uploadedFile, Transaction transaction,Task task=null) {
+
+        taskService.updateTask(task,task? "Delete ${UploadedFile.countByParent(uploadedFile)} uploadedFile parents":"")
+
+        UploadedFile.findAllByParent(uploadedFile).each {
+            this.delete(it,transaction,null, false)
+        }
+    }
 }

@@ -10,7 +10,7 @@ import be.cytomine.image.UploadedFile
  */
 class ConvertImagesJob {
 
-    def convertImagesService
+//    def convertImagesService
     def cytomineService
 
     static triggers = {
@@ -18,9 +18,9 @@ class ConvertImagesJob {
     }
 
     void execute(context) {
-        UploadedFile.findAllByStatus(UploadedFile.UPLOADED).each { uploadedFile ->
-           convertImagesService.convertUploadedFile(uploadedFile, cytomineService.getCurrentUser())
-        }
+//        UploadedFile.findAllByStatus(UploadedFile.UPLOADED).each { uploadedFile ->
+//           convertImagesService.convertUploadedFile(uploadedFile, cytomineService.getCurrentUser())
+//        }
     }
 
 }

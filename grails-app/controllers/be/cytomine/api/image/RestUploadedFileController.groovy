@@ -23,13 +23,10 @@ import javax.activation.MimetypesFileTypeMap
  */
 class RestUploadedFileController extends RestController {
 
-    def backgroundService
     def cytomineService
     def imagePropertiesService
     def projectService
-    def convertImagesService
-    def deployImagesService
-    def fileSystemService
+
     def mailService
     def storageService
     def grailsApplication

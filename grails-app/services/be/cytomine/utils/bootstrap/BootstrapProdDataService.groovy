@@ -36,7 +36,6 @@ class BootstrapProdDataService {
     def permissionService
     def imagePropertiesService
     def abstractImageService
-    def fileSystemService
 
     public def toVersion1() {
         addPermissionsOnOntologyAndSoftware()
