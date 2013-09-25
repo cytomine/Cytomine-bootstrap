@@ -1,6 +1,8 @@
 package cytomine.web
 
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
+import be.cytomine.utils.SecurityUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.core.codec.Base64
 
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletResponse
 
 class APIAuthentificationFilters implements javax.servlet.Filter {
 
+
     void init(FilterConfig filterConfig) {
 
     }
@@ -25,6 +28,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
     }
 
     void destroy() {}
+
 
     /**
      * http://code.google.com/apis/storage/docs/reference/v1/developer-guidev1.html#authentication
@@ -52,31 +56,26 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             //println "content_type="+content_type
             String date = (request.getHeader("date") != null) ? request.getHeader("date") : ""
 //            println "date="+date
-            String canonicalHeaders = request.getMethod() + "\n" + content_md5 + "\n" + content_type + "\n" + date + "\n"
-//            println "canonicalHeaders="+canonicalHeaders
-            String canonicalExtensionHeaders = ""
+
             String queryString = (request.getQueryString() != null) ? "?" + request.getQueryString() : ""
+
             String path = request.forwardURI //original URI Request
-            String canonicalResource = path + queryString
-            String messageToSign = canonicalHeaders + canonicalExtensionHeaders + canonicalResource
+
+            log.info "content_md5=$content_md5"
+            log.info "content_type=$content_type"
+            log.info "date=$date"
+            log.info "queryString=$queryString"
+            log.info "path=$path"
+            log.info "method=${request.getMethod()}"
             String accessKey = authorization.substring(authorization.indexOf(" ") + 1, authorization.indexOf(":"))
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
-		
             SecUser user = SecUser.findByPublicKey(accessKey)
             if (!user) {
                 return false
             }
-            String key = user.getPrivateKey()
-            SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), "HmacSHA1")
-            // get an hmac_sha1 Mac instance and initialize with the signing key
-            Mac mac = Mac.getInstance("HmacSHA1")
-            mac.init(signingKey)
-            // compute the hmac on input data bytes
-            byte[] rawHmac = mac.doFinal(new String(messageToSign.getBytes(), "UTF-8").getBytes())
 
-            // base64-encode the hmac
-            byte[] signatureBytes = Base64.encode(rawHmac)
-            def signature = new String(signatureBytes)
+            String signature = SecurityUtils.generateKeys(request.getMethod(),content_md5, content_type,date,queryString,path,user)
+            log.info "signature=$signature"
             if (authorizationSign == signature) {
                 //print "authorizationSign == signature : " + authorizationSign + " == " + signature
                 SpringSecurityUtils.reauthenticate user.getUsername(), null

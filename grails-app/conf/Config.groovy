@@ -77,12 +77,14 @@ environments {
         //grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
 
         grails.serverURL = "http://localhost:8080"
+        grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
 //        grails.plugins.springsecurity.useBasicAuth = true
         grails.resources.adhoc.patterns = []
     }
     development {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
+        grails.uploadURL = "http://localhost:9090"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = true
         grails.resources.adhoc.patterns = []

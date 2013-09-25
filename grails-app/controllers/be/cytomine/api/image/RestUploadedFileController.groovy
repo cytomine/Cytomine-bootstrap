@@ -106,6 +106,10 @@ class RestUploadedFileController extends RestController {
         delete(uploadedFileService, JSON.parse("{id : $params.id}"),null)
     }
 
+    def upRedirect = {
+        redirect(url: "http://localhost:9090/upload")
+    }
+
 
     def createImage = {
         long timestamp = new Date().getTime()

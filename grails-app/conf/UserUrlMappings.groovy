@@ -8,6 +8,9 @@ class UserUrlMappings {
 
     static mappings = {
         /* User */
+        "/api/signature"(controller:"restUser"){
+            action = [GET:"signature"]
+        }
         "/api/user"(controller:"restUser"){
             action = [GET:"list",POST:"add"]
         }

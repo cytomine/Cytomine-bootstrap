@@ -78,9 +78,13 @@ body {
 
 <!-- fileupload -->
 %{--<script type="text/javascript" src="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"></script>--}%
-<script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.iframe-transport.js"></script>
-<script type="text/javascript" src="lib/fileupload-7.4.1/js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="lib/fileupload-7.4.1/js/cors/jquery.xdr-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
+
+<script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
+
+
 
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
@@ -117,6 +121,8 @@ body {
 
 
 
+
+<script src="lib/strftime-min.js" type="text/javascript"></script>
 
 <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
 
@@ -344,6 +350,13 @@ body {
             }
 
         }, 1000);
+
+
+//        var date = encodeURIComponent("Wed, 25 Sep 2013 09:55:53 +0000")//"Wed,%2025%20Sep%202013%2009:55:53%20%2B0000"
+//        var  forwardURI = encodeURIComponent("/api/user/lrollus/keys.json")
+//        var method = "GET"
+
+
     </script>
 </g:if>
 </head>
@@ -391,6 +404,7 @@ body {
                 { urlArgs: "bust=" + (new Date()).getTime() }
         );
         window.app = new ApplicationController();
+        window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
     });
 </script>
 </g:if>
@@ -402,6 +416,8 @@ body {
                 { urlArgs: "bust=${grailsApplication.metadata.'app.version'}" }
         );
         window.app = new ApplicationController();
+        window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
+
     });
 </script>
 </g:if>

@@ -35,10 +35,14 @@ var UploadFormView = Backbone.View.extend({
         return this;
     },
     defineFileUpload: function (uploadTpl, downloadTpl) {
+        var self = this;
         var uploadFormView = this;
+
+        var url = window.app.uploadServer +"/upload"
         $.widget('cytomine.fileupload', $.blueimp.fileupload, {
 
             options: {
+                multipart : true,
                 // By default, files added to the widget are uploaded as soon
                 // as the user clicks on the start buttons. To enable automatic
                 // uploads, set the following option to true:
@@ -69,7 +73,48 @@ var UploadFormView = Backbone.View.extend({
                 // The expected data type of the upload response, sets the dataType
                 // option of the $.ajax upload requests:
                 dataType: 'json',
+//                xhrFields: {withCredentials: true},
+//                url: 'http://localhost:9090/upload',
+//                forceIframeTransport: true,
+                url: url,
+//                xhrFields: {
+//                    withCredentials: true
+//                },
+                beforeSend: function (xhr, req) {
+                    console.log('************');
+                    console.log(xhr);
+                    console.log(req);
+//                    console.log(handler);
+//                    console.log(callBack);
+                    while(self.waitForSigned) {
 
+                    }
+
+                    for (var prop in self.headers) {
+                       // important check that this is objects own property
+                       // not from prototype prop inherited
+                       if(self.headers.hasOwnProperty(prop)){
+                         console.log(prop + " = " + self.headers[prop]);
+                           xhr.setRequestHeader(prop,self.headers[prop]);
+                       }
+                    }
+
+                    xhr.setRequestHeader("content-type-full", "");
+
+                    var $form = $("#fileupload");
+                    req.url = req.url + "?" +  $form.prop('action').split("?")[1]
+
+                    console.log(req);
+//                    xhr.setRequestHeader("Content-type","");
+//                    xhr.setRequestHeader("Content-Type","");
+                   //String authorization = "CYTOMINE " + publicKey + ":" + signature;
+
+
+
+
+
+               },
+                //            alert(" SUBMIT TO "+"http://localhost:9090/"+$form.prop('action'));
                 // The add callback is invoked as soon as files are added to the fileupload
                 // widget (via file input selection, drag & drop or add API call).
                 // See the basic file upload widget for more information:
@@ -199,7 +244,11 @@ var UploadFormView = Backbone.View.extend({
 
                 // Callback for upload progress events:
                 progress: function (e, data) {
+                    console.log(data.context)
                     if (data.context) {
+                        console.log(data.loaded);
+                        console.log(data.total);
+                        console.log(data.loaded / data.total * 100+"%");
                         data.context.find('.progressbar div').css(
                             'width',
                             parseInt(data.loaded / data.total * 100, 10) + '%'
@@ -677,7 +726,9 @@ var UploadFormView = Backbone.View.extend({
         });
     },
     refreshProjectAndStorage : function() {
+        var self = this;
         var $form = $("#fileupload");
+
         var linkProjectSelect = $("#linkProjectSelect");
         var linkStorageSelect = $("#linkStorageSelect");
         var idProject = linkProjectSelect.val();
@@ -691,8 +742,34 @@ var UploadFormView = Backbone.View.extend({
                 $form.prop('action', $form.prop('action').replace("@PROJECT@", idProject));
             }
             $form.prop('action', $form.prop('action').replace("@STORAGE@", idStorage));
-    },
 
+
+
+
+
+        var date = new Date().strftime('%a, %d %b %Y %H:%M:%S +0000');
+        var forwardURI = "/upload";
+        var method = "POST";
+        var query = $form.prop('action').split("?")[1]
+
+
+
+        self.waitForSigned = true;
+        $.get( "api/signature.json?date="+encodeURIComponent(date)+"&forwardURI="+forwardURI+"&method="+method+"&queryString="+encodeURIComponent(query), function( data ) {
+          console.log(data);
+
+            var headers = {};
+            headers.authorization = "CYTOMINE " + data.publicKey + ":" + data.signature;
+            //headers.method = method;
+            //headers.forwardURI = $form.prop('action')
+            headers.dateFull = date
+            self.headers = headers;
+            self.waitForSigned = false;
+        });
+
+    },
+    waitForSigned : false,
+    headers : null,
     doLayout: function (tpl) {
         var self = this;
         $(this.el).html(tpl);
@@ -755,7 +832,11 @@ var UploadFormView = Backbone.View.extend({
                 /\/[^\/]*$/,
                 '/cors/result.html?%s'
             );
+            var $form = $("#fileupload");
 
+            $form.submit(function(data) {
+                $.post(window.app.uploadServer + "/"+$form.prop('action'), $(this).serialize());
+            });
             $('#fileupload').bind('fileuploadsubmit', function (e, data) {
                 var linkProjectSelect = $("#linkProjectSelect");
                 var linkWithProject = $("#linkWithProject");
@@ -771,7 +852,6 @@ var UploadFormView = Backbone.View.extend({
                 $form.append($(input1));
                 var input2 = $("<input>").attr("type", "hidden").attr("name", "idStorage").val(idStorage);
                 $form.append($(input2));
-
 
 
                 data.formData = {idProject: idProject, idStorage : idStorage};

@@ -4,6 +4,12 @@ import be.cytomine.Exception.ObjectNotFoundException
 import groovy.sql.Sql
 import org.springframework.security.acls.model.Permission
 
+import org.springframework.security.core.codec.Base64
+
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+
+
 class PermissionService {
 
     static transactional = true
@@ -14,6 +20,9 @@ class PermissionService {
     def objectIdentityRetrievalStrategy
     def dataSource
     def cytomineService
+
+
+
 
 
 //    synchronized void deletePermission(CytomineDomain domain, String username, Permission permission) {

@@ -6,8 +6,10 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.utils.SecurityUtils
 import be.cytomine.utils.Utils
 import grails.converters.JSON
+
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
@@ -148,6 +150,30 @@ class RestUserController extends RestController {
         } else {
             responseNotFound("User", params.id)
         }
+    }
+
+    def signature = {
+        SecUser user = cytomineService.currentUser
+
+        String method = params.get('method')
+        String content_md5 = (params.get("content-MD5") != null) ? params.get("content-MD5") : ""
+        String content_type = (params.get("content-type") != null) ? params.get("content-type") : ""
+        content_type = (params.get("Content-Type") != null) ? params.get("Content-Type") : content_type
+        String date = (params.get("date") != null) ? params.get("date") : ""
+        String queryString = (params.get("queryString") != null) ? "?" + params.get("queryString") : ""
+        String path = params.get('forwardURI') //original URI Request
+
+        log.info "user=$user"
+        log.info "content_md5=$content_md5"
+        log.info "content_type=$content_type"
+        log.info "date=$date"
+        log.info "queryString=$queryString"
+        log.info "path=$path"
+        log.info "method=$method"
+
+        String signature = SecurityUtils.generateKeys(method,content_md5,content_type,date,queryString,path,user)
+
+        responseSuccess([signature:signature, publicKey:user.getPublicKey()])
     }
 
     /**
