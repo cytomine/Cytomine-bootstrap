@@ -260,8 +260,9 @@ class BasicInstanceBuilder {
     //CytomineDomain annotation = (useAlgoAnnotation? saveDomain(getUserAnnotationNotExist()) :  saveDomain(getAlgoAnnotationNotExist()))
 
     static AlgoAnnotationTerm getAlgoAnnotationTerm(Job job = getJob(), AnnotationDomain annotation, UserJob user = getUserJob()) {
-        def term = saveDomain(getTermNotExist())
-
+        def term = getTermNotExist()
+        term.ontology = annotation.project.ontology
+        saveDomain(term)
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,expectedTerm:term,userJob:user,rate:0)
         algoannotationTerm.setAnnotation(annotation)
         saveDomain(algoannotationTerm)
@@ -278,7 +279,9 @@ class BasicInstanceBuilder {
 
     //getAlgoAnnotationTermForAlgoAnnotation
     static AlgoAnnotationTerm getAlgoAnnotationTermNotExist(Job job = getJob(),UserJob userJob = getUserJob(),AnnotationDomain annotation = saveDomain(getUserAnnotationNotExist()),boolean save = false) {
-        def term = saveDomain(getTermNotExist())
+        def term = getTermNotExist()
+        term.ontology = annotation.project.ontology
+        saveDomain(term)
         def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:userJob, expectedTerm: term, rate:1d)
         algoannotationTerm.setAnnotation(annotation)
         algoannotationTerm
@@ -369,7 +372,9 @@ class BasicInstanceBuilder {
 
     static AnnotationTerm getAnnotationTerm() {
         def annotation = saveDomain(getUserAnnotationNotExist())
-        def term = saveDomain(getTermNotExist())
+        def term = getTermNotExist()
+        term.ontology = annotation.project.ontology
+        term = saveDomain(term)
         def user = getUser1()
         saveDomain(new AnnotationTerm(userAnnotation: annotation, term: term,user: user))
     }

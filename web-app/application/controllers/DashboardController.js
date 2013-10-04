@@ -17,6 +17,7 @@ var DashboardController = Backbone.Router.extend({
         "tabs-algos-:project-:software-:job": "algos",
         "tabs-algos-:project-:software-": "algos",
         "tabs-algos-:project": "algos",
+        "tabs-useralgo-:userjob": "useralgos",
         "tabs-reviewdash-:project-:image-:user-:term": "review"
 //        "tabs-review-:project-:user-:term": "review",
 //        "tabs-review-:project": "review"
@@ -65,6 +66,7 @@ var DashboardController = Backbone.Router.extend({
     },
     imagesarray: function (project) {
         var self = this;
+        console.log("imagesarray");
         var func = function () {
             console.log("refreshImagesTable");
             self.view.refreshImagesTable();
@@ -89,12 +91,15 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
     projectProperties : function(project, idDomain) {
+        console.log("projectProperties");
         this.properties(project, idDomain, "Project");
     },
     imageProperties : function(project, idDomain) {
+        console.log("projectProperties");
         this.properties(project, idDomain, "ImageInstance");
     },
     annotationProperties : function(project, idDomain) {
+        console.log("annotationProperties");
         this.properties(project, idDomain, "Annotation");
     },
     properties: function (project, idDomain, nameDomain) {
@@ -111,15 +116,19 @@ var DashboardController = Backbone.Router.extend({
         self.init(project, func);
     },
     algos: function () {
+        console.log("algos");
         this.algos(undefined,undefined,undefined);
     },
     algos: function (project) {
+        console.log("algos");
         this.algos(project,undefined,undefined);
     },
     algos: function (project, software) {
+        console.log("algos");
         this.algos(project,software,undefined);
     },
     algos: function (project, software, job) {
+        console.log("algos");
         var self = this;
         console.log("DashBoard.algos");
         var func = function () {
@@ -132,10 +141,24 @@ var DashboardController = Backbone.Router.extend({
         };
         this.init(project, func);
     },
+    useralgos : function(userjob) {
+
+        new UserModel({id: userjob}).fetch({
+            success: function (model, response) {
+                new JobModel({id: model.get("job")}).fetch({
+                    success: function (job, response) {
+                        window.location = "#tabs-algos-"+job.get('project')+"-"+job.get('software')+"-" + job.get('id')
+                    }
+                });
+            }
+        });
+    },
+
 //    review : function(project) {
 //        this.review(project,null,null)
 //    },
     review : function(project,image,user,term) {
+        console.log("review");
         var self = this;
         var func = function () {
 
@@ -156,6 +179,7 @@ var DashboardController = Backbone.Router.extend({
         this.init(project, func);
     },
     config: function (project) {
+        console.log("config");
         var self = this;
         var func = function () {
             self.view.refreshConfig();
@@ -167,6 +191,7 @@ var DashboardController = Backbone.Router.extend({
 
     dashboard: function (project, callback) {
         var self = this;
+        console.log("dashboard");
         var func = function () {
             self.view.refreshDashboard();
             window.app.controllers.browse.tabs.triggerRoute = false;
@@ -185,6 +210,7 @@ var DashboardController = Backbone.Router.extend({
     },
 
     createView: function (callback) {
+        console.log("createView");
         var self = this;
 
         var nbCollectionToFetch = 6;

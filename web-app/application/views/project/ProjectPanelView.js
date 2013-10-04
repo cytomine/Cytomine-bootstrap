@@ -39,7 +39,6 @@ var ProjectPanelView = Backbone.View.extend({
             "text!application/templates/project/ProjectDetail.tpl.html"
         ],
             function (tpl) {
-                console.log("doLayout");
                 self.doLayout(tpl, false);
             });
 
@@ -115,13 +114,7 @@ var ProjectPanelView = Backbone.View.extend({
             $("#projectlist" + json.id).replaceWith(html);
         }
         else {
-//            console.log("APPEND:"+$(self.el).length);
-//            console.log("HTML:"+html);
-
-
             $(self.el).append(html);
-
-            console.log("MUST BE BEFORE APPEND");
         }
 
         self.renderCurrentProjectButton();
@@ -135,7 +128,6 @@ var ProjectPanelView = Backbone.View.extend({
 
         var self = this;
         $('#editproject').remove();
-        console.log('editProject');
         self.editProjectDialog = new EditProjectDialog({projectPanel: self, el: self.el, model: self.model}).render();
     },
     deleteProject: function () {

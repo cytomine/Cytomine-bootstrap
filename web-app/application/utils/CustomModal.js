@@ -20,17 +20,44 @@ var CustomModal = Backbone.View.extend({
        console.log(self.button.length);
         //when click on button to open modal, build modal html, append to doc and open modal
         self.button.unbind();
-        self.button.click(function () {
+        self.button.click(function (evt) {
+
             console.log("click show modal");
-            require([
-                "text!application/templates/utils/CustomModal.tpl.html"
-            ],
-             function (tplModal) {
+//            require([
+//                "text!application/templates/utils/CustomModal.tpl.html"
+//            ],
+//             function (tplModal) {
+
+            var tplModal = '<div id="<%= id %>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: <%= width %>px;margin-left: -<%= halfWidth %>px;min-height: <%= height %>px;"> '+
+              '<div class="modal-header">'+
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+                '<h3 id="myModalLabel"><%= header %></h3>' +
+              '</div>' +
+              '<div class="modal-body" style="max-height: <%= height %>px;">'+
+                  '<%= body %>' +
+              '</div>' +
+              '<div class="modal-footer">' +
+                  '<% _.each(buttons, function(button) { %> ' +
+                    '<button id="<%=button.id%>" class="btn <%= button.primaryClass %>" data-dismiss="<%= button.close %>" aria-hidden="true"><%= button.text %></button>'+
+                  '<% }) %>'
+              '</div>'+
+            '</div>'
+
+
+
+
+
+                 console.log("init modal content");
                  var modal = $("#modals");
+                 console.log("remove modal content");
                  modal.empty();
+
                  var htmlModal = _.template(tplModal,{id:self.idModal,header:self.header,body:self.body,width:self.width,height:self.height,halfWidth:(self.width/2), buttons:self.buttons});
+                 console.log(htmlModal);
 
                  modal.append(htmlModal);
+
+                 console.log("add button callback");
                  _.each(self.buttons,function(b) {
                      $("#"+b.id).click(function() {
                          if(b.callBack) {
@@ -40,12 +67,14 @@ var CustomModal = Backbone.View.extend({
                      });
                  });
 
+                 console.log("callback");
                  if(self.callBack) {
                      self.callBack();
                  }
 
-             });
-
+//             });
+            console.log("return");
+            $("#modals").find("div").show();
             return true;
         });
     }

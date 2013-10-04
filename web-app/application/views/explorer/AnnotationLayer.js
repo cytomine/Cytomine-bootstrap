@@ -50,8 +50,9 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
 
 });
 
-var AnnotationLayer = function (name, imageID, userID, color, ontologyTreeView, browseImageView, map, reviewMode) {
+var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeView, browseImageView, map, reviewMode) {
     var self = this;
+    this.user = user;
     this.ontologyTreeView = ontologyTreeView;
     this.pointRadius = window.app.view.isMobile ? 12 : 8;
     this.name = name;

@@ -54,14 +54,14 @@ class UserAnnotationDependencyTests  {
 
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,BasicInstanceBuilder.getImageInstance(),true)
 
-        AnnotationTerm at =  BasicInstanceBuilder.getAnnotationTermNotExist()
-        at.userAnnotation = annotation
-        BasicInstanceBuilder.saveDomain(at)
+        AnnotationTerm at =  BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
 
         AlgoAnnotationTerm algoAnnotationTerm1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         algoAnnotationTerm1.term = at.term
         algoAnnotationTerm1.expectedTerm = at.term
         algoAnnotationTerm1.annotation = annotation
+        algoAnnotationTerm1.term.ontology = annotation.project.ontology
+        BasicInstanceBuilder.saveDomain(algoAnnotationTerm1.term)
         BasicInstanceBuilder.saveDomain(algoAnnotationTerm1)
 //
 //        ReviewedAnnotation ra = BasicInstanceBuilder.getReviewedAnnotationNotExist()

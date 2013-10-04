@@ -232,7 +232,8 @@ var BrowseImageView = Backbone.View.extend({
                     } else {
                         new UserModel({id: annotation.get('user')}).fetch({
                             success: function (userAlgo, response) {
-                                var layer = new AnnotationLayer(userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map, this.review);
+                                console.log(userAlgo);
+                                var layer = new AnnotationLayer(userAlgo,userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map, this.review);
                                 layer.isOwner = false;
                                 layer.loadAnnotations(self);
                                 layer.registerEvents(self.map);
@@ -644,7 +645,7 @@ var BrowseImageView = Backbone.View.extend({
             self.map = new OpenLayers.Map("map" + self.divPrefixId + self.model.get('id'), options);
             self.map.events.register('mousemove', self.map, function (e) {
                 var point = self.map.getLonLatFromPixel( this.events.getMousePosition(e) )
-                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: point.lon, y: point.lat});
+                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: point.lon, y: self.model.get('height')-point.lat});
                 $('#mousePositionContent' + self.model.id).html(coordinates);
             });
             self.initOntology();
@@ -1166,12 +1167,12 @@ var BrowseImageView = Backbone.View.extend({
                 return window.app.models.userLayer.get(user.id) != undefined;
             });
             _.each(projectUsers, function (user) {
-                var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map, self.review);
+                var layerAnnotation = new AnnotationLayer(user,user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map, self.review);
                 layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                 layerAnnotation.loadAnnotations(self);
             });
             //init review layer in explore mode
-            var layerAnnotation = new AnnotationLayer("Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
+            var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
             layerAnnotation.isOwner = false;
             layerAnnotation.loadAnnotations(self);
         } else {

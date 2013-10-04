@@ -86,6 +86,16 @@ class AnnotationTermTests  {
 
   }
 
+    void testAddAnnotationTermWithTermFromOtherOntology() {
+         User currentUser = User.findByUsername(Infos.GOODLOGIN)
+        def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
+        annotationTermToAdd.discard()
+        annotationTermToAdd.term = BasicInstanceBuilder.getTermNotExist(true)
+        String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+        def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 400 == result.code
+    }
+
     void testAddAnnotationTermCorrectDeletingOldTerm() {
        User currentUser = User.findByUsername(Infos.GOODLOGIN)
       def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
@@ -153,6 +163,7 @@ class AnnotationTermTests  {
     int idAnnotation = annotationTermToDelete.userAnnotation.id
     int idTerm = annotationTermToDelete.term.id
     int idUser = currentUser.id
+    assert annotationTermToDelete.userAnnotation.project.ontology==annotationTermToDelete.term.ontology
 
     def result = AnnotationTermAPI.deleteAnnotationTerm(idAnnotation,idTerm,idUser,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 200 == result.code

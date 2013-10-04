@@ -42,6 +42,16 @@ class AlgoAnnotationTermTests  {
         assert json instanceof JSONObject
     }
 
+    void testAddAnnotationTermWithTermFromOtherOntology() {
+        def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
+        UserJob currentUserJob = annotationTermToAdd.userJob
+        annotationTermToAdd.discard()
+        annotationTermToAdd.term = BasicInstanceBuilder.getTermNotExist(true)
+        String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
+        def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,annotationTermToAdd.userJob.username,"PasswordUserJob")
+        assert 400 == result.code
+    }
+
     void testAddAlgoAnnotationTermCorrect() {
         def annotationTermToAdd = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         UserJob currentUserJob = annotationTermToAdd.userJob

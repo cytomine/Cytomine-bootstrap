@@ -30,8 +30,8 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
-        annotationTerm.userAnnotation  = annotation
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist(annotation)
+
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
         assert 200 == result.code
         annotationTerm = result.data
@@ -117,8 +117,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
-        annotationTerm.userAnnotation = annotation
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist(annotation)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
         annotationTerm = result.data
@@ -140,8 +139,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
 
         //Add annotation-Term for annotation 1 with cytomine admin
-        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
-        annotationTerm.userAnnotation = annotation
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist(annotation)
         def result = AnnotationTermAPI.createAnnotationTerm(annotationTerm.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
         annotationTerm = result.data

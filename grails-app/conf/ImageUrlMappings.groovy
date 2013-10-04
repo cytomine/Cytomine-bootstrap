@@ -87,11 +87,6 @@ class ImageUrlMappings {
         "/api/uploadedfile/$uploadedFile/image"(controller:"restUploadedFile"){
             action = [POST:"createImage"]
         }
-
-
-
-
-
     }
 }
 

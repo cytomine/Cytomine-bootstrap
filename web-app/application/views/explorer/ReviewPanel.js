@@ -68,7 +68,7 @@ var ReviewPanel = SideBarPanel.extend({
         var self = this;
 
         var layer = "REVIEW";
-        var layerAnnotation = new AnnotationLayer(layer, self.model.get('id'), 0, "#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
+        var layerAnnotation = new AnnotationLayer(null,layer, self.model.get('id'), 0, "#ff0000", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
         layerAnnotation.loadAnnotations(self.browseImageView);
         self.printedLayer.push({id: layer, vectorsLayer: layerAnnotation.vectorsLayer, layer: layerAnnotation});
         var selectFeature = new OpenLayers.Control.SelectFeature([layerAnnotation.vectorsLayer]);
@@ -140,7 +140,7 @@ var ReviewPanel = SideBarPanel.extend({
             user = self.userJobLayers.get(layer);
         }
 
-        var layerAnnotation = new AnnotationLayer(user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
+        var layerAnnotation = new AnnotationLayer(user,user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, true);
         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
         if (layerAnnotation.isOwner) {
             self.browseImageView.userLayer = layerAnnotation;
@@ -222,8 +222,20 @@ var ReviewPanel = SideBarPanel.extend({
         var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
         console.log("#######");
         console.log(this.browseImageView.divId + "=>" + layer);
+
+
+        var isAlgo = self.userJobLayers.get(layer)!=null;     //
+
+        var jobdetails = "";
+        if(isAlgo) {
+            jobdetails =  '<a href="#tabs-useralgo-'+layer+'">See job details...</a>';
+        }
+
+
+
+
        // add to list
-        panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i></span>');
+        panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i> '+jobdetails+' </span>');
         $("#removeReviewLayer" + layer).click(function (elem) {
             self.removeLayerFromReview(layer);
         });

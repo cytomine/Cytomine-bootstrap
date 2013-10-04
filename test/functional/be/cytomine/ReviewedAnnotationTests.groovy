@@ -493,6 +493,22 @@ class ReviewedAnnotationTests  {
 
      }
 
+    void testAddReviewForAnnotationTermWIthBadOntology() {
+         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
+
+         AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
+         Term term =  BasicInstanceBuilder.getTermNotExist(at.term.ontology,true)
+
+         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [BasicInstanceBuilder.getTermNotExist(true).id], Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 400 == result.code
+
+
+     }
+
     void testAddReviewForAlgoAnnotationTerm() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserJob user = BasicInstanceBuilder.getUserJob(image.project)

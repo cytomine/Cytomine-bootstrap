@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
@@ -35,6 +36,10 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
         domain.userAnnotation = JSONUtils.getJSONAttrDomain(json, "userannotation", new UserAnnotation(), true)
         domain.term = JSONUtils.getJSONAttrDomain(json, "term", new Term(), true)
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
+
+        if(domain.term.ontology!=domain.userAnnotation.project.ontology) {
+            throw new WrongArgumentException("Term ${domain.term} from ontology ${domain.term.ontology} is not in ontology from the annotation project (${domain.userAnnotation.project.ontology.id})")
+        }
         return domain;
     }
 

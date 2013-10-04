@@ -122,7 +122,7 @@ class RestUploadedFileController extends RestController {
 
         Sample sample = new Sample(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename())
 
-
+        def projects = []
          //create domains instance
          def ext = uploadedFile.getExt()
          Mime mime = Mime.findByExtension(ext)
@@ -151,8 +151,11 @@ class RestUploadedFileController extends RestController {
                  storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()))
              }
 
+
+
              uploadedFile.getProjects()?.each { project_id ->
                  Project project = projectService.read(project_id)
+                 projects << project
                  ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  project, user :currentUser)
                  imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
              }
@@ -165,7 +168,7 @@ class RestUploadedFileController extends RestController {
                  log.info "Sample error : " + it
              }
          }
-         writeMail(currentUser,abstractImage)
+         writeMail(currentUser,abstractImage,projects)
          responseSuccess([abstractimage: abstractImage])
 
 
@@ -173,8 +176,12 @@ class RestUploadedFileController extends RestController {
 
     }
 
-    private def writeMail(SecUser currentUser, def abstractImage) {
+    def secUserService
+
+    private def writeMail(SecUser currentUser, def abstractImage, def projects) {
      //send email
+
+
             User recipient = null
             if (currentUser instanceof User) {
                 recipient = (User) currentUser
@@ -182,8 +189,20 @@ class RestUploadedFileController extends RestController {
                 UserJob userJob = (UserJob) currentUser
                 recipient = userJob.getUser()
             }
+
+        // send email to uploader + all project admin
+            def users = [recipient]
+            projects.each {
+                users.addAll(secUserService.listAdmins(it))
+            }
+            users.unique()
+
+            log.info "Send mail to $users"
+
+
+
             StringBuffer message = new StringBuffer()
-            message.append("images:<br/>")
+            message.append("New images are available on Cytomine:<br/>")
 
                 for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
                     String url = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
@@ -194,12 +213,26 @@ class RestUploadedFileController extends RestController {
                     message.append("<br />")
 
                 }
+
                 //UrlApi.getBrowseImageInstanceURL(grailsApplication.config.grails.serverURL, )
                 message.append(abstractImage.getFilename())
                 message.append("<br />")
+                 if(projects.isEmpty()) {
+                     message.append("This image is not in a project.")
+
+
+                 } else {
+                     message.append("You can see images in projects: "+projects.collect{it.name}.join(','))
+                 }
+
+
+
+                message.append("<br />")
+
+
 
             if (recipient) {
-                String[] recipients = [recipient.getEmail()]
+                String[] recipients = users.collect{it.getEmail()}
                 mailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
             }
 

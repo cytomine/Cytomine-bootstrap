@@ -162,7 +162,13 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              }
 
              json.terms.each {
-                 domain.addToTerms(Term.read(it))
+                 Term term = Term.read(it)
+                 if(term.ontology!=domain.project.ontology) {
+                     throw new WrongArgumentException("Term ${term} from ontology ${term.ontology} is not in ontology from the annotation project (${domain.project.ontology}")
+                 }
+
+                 domain.addToTerms(term)
+
              }
 
              if (!domain.location) {

@@ -2,6 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
@@ -116,6 +117,11 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
         domain.expectedTerm = JSONUtils.getJSONAttrDomain(json, "expectedTerm", new Term(), false)
         domain.userJob = JSONUtils.getJSONAttrDomain(json, "user", new UserJob(), false)
         domain.rate = JSONUtils.getJSONAttrDouble(json, 'rate', 0)
+
+        if(domain.term?.ontology!=annotation.project.ontology) {
+            throw new WrongArgumentException("Term ${domain.term} from ontology ${domain.term?.ontology} is not in ontology from the annotation project (${annotation?.project?.ontology?.id}")
+        }
+
         return domain;
     }
 

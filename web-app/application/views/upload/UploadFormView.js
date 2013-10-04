@@ -82,36 +82,25 @@ var UploadFormView = Backbone.View.extend({
 //                },
                 beforeSend: function (xhr, req) {
                     console.log('************');
-                    console.log(xhr);
-                    console.log(req);
-//                    console.log(handler);
-//                    console.log(callBack);
+
+                    //wait for request that get the signature from server
                     while(self.waitForSigned) {
 
                     }
 
+                    //add headers for auth
                     for (var prop in self.headers) {
-                       // important check that this is objects own property
-                       // not from prototype prop inherited
                        if(self.headers.hasOwnProperty(prop)){
-                         console.log(prop + " = " + self.headers[prop]);
                            xhr.setRequestHeader(prop,self.headers[prop]);
                        }
                     }
 
+                    //we cannot edit "content-type" so we add content-type-full that will erase content-type on server
                     xhr.setRequestHeader("content-type-full", "");
 
+                    //update url
                     var $form = $("#fileupload");
                     req.url = req.url + "?" +  $form.prop('action').split("?")[1]
-
-                    console.log(req);
-//                    xhr.setRequestHeader("Content-type","");
-//                    xhr.setRequestHeader("Content-Type","");
-                   //String authorization = "CYTOMINE " + publicKey + ":" + signature;
-
-
-
-
 
                },
                 //            alert(" SUBMIT TO "+"http://localhost:9090/"+$form.prop('action'));
@@ -734,7 +723,7 @@ var UploadFormView = Backbone.View.extend({
         var idProject = linkProjectSelect.val();
         var idStorage = linkStorageSelect.val();
 
-        $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@");
+        $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.origin);
 
             if(idProject==null){
                 $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));
@@ -755,14 +744,11 @@ var UploadFormView = Backbone.View.extend({
 
 
         self.waitForSigned = true;
+        //get signature for the request
         $.get( "api/signature.json?date="+encodeURIComponent(date)+"&forwardURI="+forwardURI+"&method="+method+"&queryString="+encodeURIComponent(query), function( data ) {
-          console.log(data);
-
             var headers = {};
             headers.authorization = "CYTOMINE " + data.publicKey + ":" + data.signature;
-            //headers.method = method;
-            //headers.forwardURI = $form.prop('action')
-            headers.dateFull = date
+            headers.dateFull = date //cannot edit date header in browser, so dateFull will overwrite it
             self.headers = headers;
             self.waitForSigned = false;
         });
@@ -823,7 +809,7 @@ var UploadFormView = Backbone.View.extend({
             self.defineFileUpload(uploadTpl, downloadTpl);
             $('#fileupload').fileupload({
                 limitConcurrentUploads: 10,
-                maxFileSize: 100000000000
+                maxFileSize: 100000000000  //100GB
                 /*acceptFileTypes : "/(\.|\/)(gif|jpe?g|png|tif|tiff|svs|vms|mrxs|scn|ndpi|jp2)$/i",*/
             });
 

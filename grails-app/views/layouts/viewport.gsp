@@ -101,7 +101,7 @@ body {
 
 
 <!-- Twitter bootstrap -->
-<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>
+%{--<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>--}%
 
 <!-- Fuel ux -->
 <script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
