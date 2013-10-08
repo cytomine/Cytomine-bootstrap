@@ -93,11 +93,6 @@ body {
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
-<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
-
-
-%{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
-
 
 
 <!-- Twitter bootstrap -->
@@ -105,6 +100,13 @@ body {
 
 <!-- Fuel ux -->
 <script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
+
+<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
+
+
+%{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
+
+
 
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>

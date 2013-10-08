@@ -16,7 +16,8 @@ environments {
   development {
     dataSource {
       dbCreate = "update"
-      url="jdbc:postgresql://localhost:5432/cytomine"
+      url="jdbc:postgresql://db.cytomine.be/cytominedev"
+      //url="jdbc:postgresql://localhost:5432/cytomine"
       password = "postgres"
     }
   }

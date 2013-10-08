@@ -532,8 +532,8 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
+    //simplify an existing annotation
     def simplify = {
-
         try {
             //extract params
             def minPoint = params.getLong('minPoint')
@@ -556,9 +556,20 @@ class RestAnnotationDomainController extends RestController {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }
-
-
     }
+
+
+    def retrieveSimplify = {
+        def minPoint = params.getLong('minPoint')
+        def maxPoint = params.getLong('maxPoint')
+        def json = request.JSON
+        def wkt = json.wkt
+        println wkt
+        def result = simplifyGeometryService.simplifyPolygon(wkt,minPoint,maxPoint)
+        println result.geometry
+        responseSuccess([wkt:result.geometry.toText()])
+    }
+
 
     /**
      * Fill an annotation.

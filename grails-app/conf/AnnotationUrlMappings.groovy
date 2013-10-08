@@ -34,6 +34,12 @@ class AnnotationUrlMappings {
             action = [PUT:"simplify",GET:"simplify"]
         }
 
+        "/api/simplify"(controller:"restAnnotationDomain"){
+            action = [PUT:"retrieveSimplify",POST:"retrieveSimplify"]
+        }
+
+
+
         /**
          * User Annotation
          */

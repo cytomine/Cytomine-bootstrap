@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.protocol.ClientContext
 import org.apache.http.entity.*
+import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.impl.client.BasicAuthCache
 import org.apache.http.impl.client.DefaultHttpClient
@@ -176,6 +177,16 @@ class HttpClient {
         httpPut.setEntity(entity);
 
         response = client.execute(targetHost, httpPut, localcontext);
+    }
+
+    public int post(MultipartEntity entity) throws Exception {
+        log.debug("POST " + URL.toString());
+        HttpPost httpPost = new HttpPost(URL.toString());
+        log.debug("Post send :" + entity);
+        httpPost.setEntity(entity);
+        response = client.execute(targetHost, httpPost, localcontext);
+        return response.getStatusLine().getStatusCode();
+
     }
 
     /**

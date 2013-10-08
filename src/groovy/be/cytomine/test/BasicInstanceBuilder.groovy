@@ -18,6 +18,7 @@ import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.*
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
@@ -484,6 +485,18 @@ class BasicInstanceBuilder {
         )
         save ? saveDomain(sharedannotation) : checkDomain(sharedannotation)
     }
+
+    static AttachedFile getAttachedFileNotExist(boolean save = false) {
+        def attachedFile = new AttachedFile()
+        def project = getProjectNotExist(true)
+        attachedFile.domainClassName = project.class.name
+        attachedFile.domainIdent = project.id
+        File f = new File("test/functional/be/cytomine/utils/simpleFile.txt")
+        attachedFile.filename = f.name
+        attachedFile.data = f.bytes
+        save ? saveDomain(attachedFile) : checkDomain(attachedFile)
+    }
+
 
 
     static ImageFilter getImageFilter() {

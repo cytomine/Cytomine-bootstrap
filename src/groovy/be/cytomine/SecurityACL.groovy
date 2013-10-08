@@ -28,12 +28,16 @@ class SecurityACL {
     }
 
     static void check(def id, Class classObj, String method, Permission permission) {
-        def simpleObject =  Class.forName(classObj.getName(), false, Thread.currentThread().contextClassLoader).read(id)
+        check(id, classObj.getName(), method, permission)
+    }
+
+    static void check(def id, String className, String method, Permission permission) {
+        def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
        if (simpleObject) {
            def containerObject = simpleObject."$method"()
            check(containerObject,permission)
        } else {
-           throw new ObjectNotFoundException("ACL error: ${classObj.getName()} with id ${id} was not found! Unable to process auth checking")
+           throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
        }
 
 

@@ -53,7 +53,7 @@ var CustomModal = Backbone.View.extend({
                  modal.empty();
 
                  var htmlModal = _.template(tplModal,{id:self.idModal,header:self.header,body:self.body,width:self.width,height:self.height,halfWidth:(self.width/2), buttons:self.buttons});
-                 console.log(htmlModal);
+
 
                  modal.append(htmlModal);
 
@@ -87,7 +87,13 @@ var DescriptionModal = {
         var height =  Math.round($(window).height()*0.75);
         console.log("initDescriptionModal");
         console.log(container.find("a.description").html());
+        console.log("BEFORE:"+text);
+       // text = text.split('\\"').join('"');
 
+        console.log("AFTER:"+text);
+
+         //text = text.split('"/api').join('/api');
+//                             text = text.split('download"').join('download');
 
          var modal = new CustomModal({
              idModal : "descriptionModal"+domainIdent,
@@ -127,6 +133,14 @@ var DescriptionModal = {
                     container.empty();
                     var text = description.get('data');
                     var textButton = "Edit";
+//                    console.log("BEFORE:"+text);
+//                    text = text.replace('\\"','"');
+//                    text = text.replace('\\\\"','"');
+//                    text = text.replace('\\"','"');
+                    text = text.split('\\"').join('"');
+//                    text = text.split('"/api').join('/api');
+//                    text = text.split('download"').join('download');
+//                    console.log("AFTER:"+text);
                     if(text.replace(/<[^>]*>/g, "").length>maxPreviewCharNumber) {
                         text = text.substr(0,maxPreviewCharNumber)+"...";
                         textButton = "See full text and edit"

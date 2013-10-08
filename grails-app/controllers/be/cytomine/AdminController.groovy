@@ -12,6 +12,8 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.utils.GisUtils
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.MultiPolygon
 import com.vividsolutions.jts.io.WKTReader
 import geb.Browser
 import grails.plugins.springsecurity.Secured
@@ -25,6 +27,7 @@ class AdminController extends RestController {
     def modelService
     def springSecurityService
     def archiveCommandService
+    def simplifyGeometryService
 
     def index() {
       //don't remove this, it calls admin/index.gsp layout !
@@ -37,6 +40,40 @@ class AdminController extends RestController {
         responseSuccess([])
     }
 
+
+
+    def simplytest = {
+        File f = new File("test2.txt")
+        println f.absolutePath
+        String polygon = f.text
+        println polygon
+
+
+
+        Geometry annotationFull = new WKTReader().read(polygon);
+
+        int numOfGeometry
+        if(annotationFull instanceof MultiPolygon) {
+            for(int i=0;i<annotationFull.getNumGeometries();i++) {
+                println  "******************************"
+                println annotationFull.getGeometryN(i).getNumGeometries()
+                println annotationFull.getGeometryN(i).getNumInteriorRing()
+                numOfGeometry = numOfGeometry + annotationFull.getGeometryN(i).getNumGeometries()*(1+annotationFull.getGeometryN(i).getNumInteriorRing())
+            }
+        } else {
+            numOfGeometry = annotationFull.getNumGeometries()*annotationFull.getNumInteriorRing()
+        }
+
+        println "numOfGeometry=$numOfGeometry"
+
+
+        println "Number of point="+annotationFull.getNumPoints()
+
+        def form = simplifyGeometryService.simplifyPolygon(annotationFull.toText(),2000,10000)
+
+        println "Number of point="+form.geometry.getNumPoints()
+
+    }
 
 
 

@@ -4,6 +4,11 @@ import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.FileBody
+import org.apache.http.entity.mime.content.StringBody
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.json.simple.JSONArray
 
 /**
  * User: lrollus
@@ -129,7 +134,11 @@ class DomainAPI {
         return [data: response, code: code]
     }
 
-    static def doPOST(String URL,def data,String username,String password) {
+    static def doPOST(String URL,JSONObject json,String username,String password) {
+        doPOST(URL,json.toString(),username,password)
+    }
+
+    static def doPOST(String URL,String data,String username,String password) {
         log.info("POST:"+URL)
         HttpClient client = new HttpClient();
         client.connect(URL, username, password);
@@ -172,4 +181,26 @@ class DomainAPI {
         client.disconnect();
         return [data: response, code: code]
     }
+
+
+
+    static def doPOSTUpload(String url,File file,String username,String password) throws Exception {
+
+        MultipartEntity entity = new MultipartEntity();
+        entity.addPart("files[]",new FileBody(file)) ;
+        HttpClient client = new HttpClient();
+        client.connect(url, username, password);
+        client.post(entity)
+        int code = client.getResponseCode()
+        String response = client.getResponseData()
+        client.disconnect();
+        return [data: response, code: code]
+    }
+
+
+
+
+
+
+
 }

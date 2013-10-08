@@ -61,12 +61,12 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
 
             String path = request.forwardURI //original URI Request
 
-            log.info "content_md5=$content_md5"
-            log.info "content_type=$content_type"
-            log.info "date=$date"
-            log.info "queryString=$queryString"
-            log.info "path=$path"
-            log.info "method=${request.getMethod()}"
+//            log.info "content_md5=$content_md5"
+//            log.info "content_type=$content_type"
+//            log.info "date=$date"
+//            log.info "queryString=$queryString"
+//            log.info "path=$path"
+//            log.info "method=${request.getMethod()}"
             String accessKey = authorization.substring(authorization.indexOf(" ") + 1, authorization.indexOf(":"))
             String authorizationSign = authorization.substring(authorization.indexOf(":") + 1)
             SecUser user = SecUser.findByPublicKey(accessKey)
@@ -75,7 +75,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
             }
 
             String signature = SecurityUtils.generateKeys(request.getMethod(),content_md5, content_type,date,queryString,path,user)
-            log.info "signature=$signature"
+//            log.info "signature=$signature"
             if (authorizationSign == signature) {
                 //print "authorizationSign == signature : " + authorizationSign + " == " + signature
                 SpringSecurityUtils.reauthenticate user.getUsername(), null
