@@ -1,0 +1,11 @@
+<div style="padding-left: 5px;text-align: center;">
+    <span class="badge badge-default" style="color:#000000;margin:auto;"><%=  originalFilename  %></span><br/>
+        <div>
+            <a id="lazyLoadImage<%= id %>" href='#tabs-image-<%= project %>-<%=  id  %>-'>
+                <img  src='<%=  thumb  %>'  alt='<%=  originalFilename  %>' style="max-height:260px; max-width:<%=  maxW  %>px !important;"/>
+            </a>
+        </div>
+    <span class="badge badge-info">Last view <%= lastOpen %></span>
+    <br/>
+    <a class="btn btn-primary btn-small" href='#tabs-image-<%= project %>-<%=  id  %>-'> Go to image </a>
+</div>

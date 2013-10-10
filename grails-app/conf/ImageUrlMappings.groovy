@@ -35,6 +35,15 @@ class ImageUrlMappings {
         "/api/image/$id/imageservers"(controller: "restImage"){
             action = [GET:"imageServers"]
         }
+//        "/api/image/$id/imageserversmerge"(controller: "restImage"){
+//            action = [GET:"imageServers"]
+//        }
+//        "/api/image/$id/merge"(controller: "restImage"){
+//            action = [GET:"imageServers"]
+//        }
+
+
+
 
         "/api/project/$id/image"(controller: "restImage"){
             action = [GET:"listByProject"]

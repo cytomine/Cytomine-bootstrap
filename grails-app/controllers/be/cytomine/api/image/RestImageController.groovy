@@ -1,11 +1,18 @@
 package be.cytomine.api.image
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
+import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
+import be.cytomine.image.multidim.ImageGroup
+import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.ProcessingServer
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import grails.converters.JSON
@@ -121,13 +128,6 @@ class RestImageController extends RestController {
         } else {
             responseNotFound("ImageProperty", params.imageproperty)
         }
-    }
-
-    /**
-     * Get all image servers URL for an image
-     */
-    def imageServers = {
-        responseSuccess(abstractImageService.imageServers(params.long('id')))
     }
 
     /**
@@ -403,6 +403,93 @@ class RestImageController extends RestController {
         response.setHeader "Content-disposition", "attachment; filename=capture.png"
         response.getOutputStream() << imageByte
         response.getOutputStream().flush()
+    }
+
+
+    /**
+     * Get all image servers URL for an image
+     */
+    def imageServers = {
+
+        try {
+        def id = params.long('id')
+        def merge = params.get('merge')
+
+        if(merge) {
+            def idImageInstance = params.long('imageinstance')
+            ImageInstance image = ImageInstance.read(idImageInstance)
+
+            log.info "Ai=$id Ii=$idImageInstance"
+
+            ImageSequence sequence = imageSequenceService.get(image)
+
+            if(!sequence) {
+                throw new WrongArgumentException("ImageInstance $idImageInstance is not in a sequence!")
+            }
+
+            ImageGroup group = sequence.imageGroup
+
+            log.info "sequence=$sequence group=$group"
+
+            def images = imageSequenceService.list(group)
+
+            log.info "all image for this group=$images"
+
+
+            ProcessingServer server = ProcessingServer.first()
+
+            def  params = []
+            images.each { seq ->
+                def imageinstance = seq.image
+                def position = -1
+                if(merge=="channel") position = seq.channel
+                if(merge=="zstack") position = seq.zStack
+                if(merge=="slice") position = seq.slice
+                if(merge=="time") position = seq.time
+
+                log.info "seq.image=${seq.image} position=${position}"
+
+                def urls = abstractImageService.imageServers(imageinstance.baseImage.id).imageServersURLs
+
+                log.info "urls=$urls"
+
+                def param = "url$position="+ URLEncoder.encode(urls.first(),"UTF-8") +"&color$position="+ URLEncoder.encode(getColor(position),"UTF-8")
+                log.info "param=$param"
+                params << param
+
+            }
+
+            String url = server.url + "vision/merge?" + params.join("&") +"&zoomify="
+            log.info "url=$url"
+
+            //retrieve all image instance (same sequence)
+
+
+            //get url for each image
+
+            responseSuccess([imageServersURLs : [url]])
+        } else {
+            responseSuccess(abstractImageService.imageServers(id))
+        }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    private static String getColor(int channel) {
+        def rules = [0:"0,0,255",1:"0,255,0",2:"91,59,17",3:"255,0,0"]
+        return rules.get(channel)
+    }
+
+    def imageSequenceService
+
+    def mergeImage = {
+
+
+
+
+
     }
 }
 

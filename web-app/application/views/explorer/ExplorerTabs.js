@@ -57,7 +57,7 @@ var ExplorerTabs = Backbone.View.extend({
      *  @idImage : the id of the Image we want to display
      *  @options : some init options we want to pass the the BrowseImageView Instance
      */
-    addBrowseImageView: function (idImage, options) {
+    addBrowseImageView: function (idImage, options,merge) {
         var self = this;
         var tab = this.getImageView(idImage);
         if (tab != null) {
@@ -71,14 +71,19 @@ var ExplorerTabs = Backbone.View.extend({
             //close review tab for this image if already exist
             $("#closeTabtabs-review-" + idImage).click()
         }
+        console.log("#############################");
+        console.log("Open image:"+idImage);
+        console.log("Merge:"+merge);
+        console.log("#############################");
 
         var tabs = $("#explorer-tab-content");
-        console.log("TEMP:BrowseImageView");
+
         var view = new BrowseImageView({
             initCallback: function () {
                 view.show(options)
             },
-            el: tabs
+            el: tabs,
+            merge : merge
         });
         self.tabs.push({idImage: idImage, view: view});
 
@@ -108,7 +113,7 @@ var ExplorerTabs = Backbone.View.extend({
             });
         }
     },
-    addReviewImageView: function (idImage, options) {
+    addReviewImageView: function (idImage, options,merge) {
         console.log("addReviewImageView:" + idImage);
         var self = this;
         var tab = this.getImageView("review-" + idImage);
@@ -123,14 +128,18 @@ var ExplorerTabs = Backbone.View.extend({
             //close image tab for this image if already exist
             $("#closeTabtabs-image-" + idImage).click()
         }
-
+        console.log("#############################");
+        console.log("Open image:"+idImage);
+        console.log("Merge:"+merge);
+        console.log("#############################");
         var tabs = $("#explorer-tab-content");
         var view = new BrowseImageView({
             initCallback: function () {
                 view.show(options)
             },
             el: tabs,
-            review: true
+            review: true,
+            merge : merge
         });
         self.tabs.push({idImage: "review-" + idImage, view: view});
 
@@ -232,7 +241,7 @@ var ExplorerTabs = Backbone.View.extend({
     /**
      * Go to a specific image and close another one (usefull for next/previous or multidim go to)
      */
-    goToImage : function(idImageToOpen,idProject, idImageToClose, mode, imageToOpen,x,y,zoom) {
+    goToImage : function(idImageToOpen,idProject, idImageToClose, mode, imageToOpen,x,y,zoom,merge) {
         var self = this;
         if(imageToOpen && x) {
             window.app.setNewImageWithPosition(imageToOpen,x,y,zoom);
@@ -240,6 +249,11 @@ var ExplorerTabs = Backbone.View.extend({
             window.app.setNewImage(imageToOpen);
        }
         window.app.controllers.browse.tabs.removeTab(idImageToClose,mode) //TODO support REVIEW TOO!!!!
+
+        if(merge) {
+            mode = mode +"mergechannel"
+        }
+
         window.location = "#tabs-" + mode + "-"+idProject+"-"+idImageToOpen+"-";
     },
 

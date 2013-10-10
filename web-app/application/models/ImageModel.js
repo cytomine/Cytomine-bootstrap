@@ -71,9 +71,25 @@ var ImageCollection = PaginatedCollection.extend({
 
 var ImageServerUrlsModel = Backbone.Model.extend({
     url: function () {
-        return 'api/image/' + this.id + "/imageservers.json";
+        var url = 'api/image/' + this.id + "/imageservers.json?";
+        if(this.merge) {
+            url = url+ "&merge="+this.merge;
+        }
+        if(this.imageinstance) {
+            url = url+ "&imageinstance="+this.imageinstance;
+        }
+        return url;
+    },
+    initialize: function (options) {
+        this.merge = options.merge;
+        this.imageinstance = options.imageinstance;
     }
 });
+
+
+
+
+
 
 var ImageInstanceModel = Backbone.Model.extend({
     url: function () {

@@ -4,10 +4,11 @@ var ExplorerController = Backbone.Router.extend({
 
     routes: {
         "tabs-annotation-:idAnnotation": "browseAnnotation",
-        "tabs-image-:idProject-:idImage-": "browse",
+        "tabs-image-:idProject-:idImage-": "browseSimple",
+        "tabs-imagemergechannel-:idProject-:idImage-": "browseChannel",
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
-        "tabs-review-:idProject-:idImage-": "review",
-
+        "tabs-review-:idProject-:idImage-": "reviewSimple",
+        "tabs-reviewmergechannel-:idProject-:idImage-": "reviewChannel",
         "close": "close",
         "tabs-leaflet-:idProject-:idImage-" : "leaflet"
     },
@@ -49,7 +50,14 @@ var ExplorerController = Backbone.Router.extend({
 
         });
     },
-    browse: function (idProject, idImage, idAnnotation) {
+
+    browseSimple: function (idProject, idImage, idAnnotation) {
+        this.browse(idProject,idImage,idAnnotation,undefined);
+    },
+    browseChannel: function (idProject, idImage, idAnnotation) {
+        this.browse(idProject,idImage,idAnnotation,"channel");
+    },
+    browse: function (idProject, idImage, idAnnotation,merge) {
         $(window).scrollTop(0);
         /*
          if (window.app.secondaryWindow) {
@@ -68,7 +76,7 @@ var ExplorerController = Backbone.Router.extend({
             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value: idAnnotation};
             }
-            self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions);
+            self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions,merge);
             //$('#tabs-image-'+idImage).tab('show');
             // window.app.view.showComponent(self.tabs.container);
             console.log("showView");
@@ -85,8 +93,13 @@ var ExplorerController = Backbone.Router.extend({
         createBrowseImageViewTab();
     },
 
-
-    review: function (idProject, idImage) {
+    reviewSimple: function (idProject, idImage) {
+        this.review(idProject,idImage,undefined);
+    },
+    reviewChannel: function (idProject, idImage) {
+        this.review(idProject,idImage,"channel");
+    },
+    review: function (idProject, idImage,merge) {
         $(window).scrollTop(0);
 
         var self = this;
@@ -98,7 +111,7 @@ var ExplorerController = Backbone.Router.extend({
         var createReviewImageViewTab = function () {
             console.log("createReviewImageViewTab");
             var reviewImageViewInitOptions = {};
-            self.tabs.addReviewImageView(idImage, reviewImageViewInitOptions);
+            self.tabs.addReviewImageView(idImage, reviewImageViewInitOptions,merge);
             //$('#tabs-image-'+idImage).tab('show');
             // window.app.view.showComponent(self.tabs.container);
             console.log("showView");

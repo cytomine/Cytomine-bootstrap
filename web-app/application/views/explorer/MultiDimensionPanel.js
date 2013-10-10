@@ -107,8 +107,18 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
+             $("#spinnerChannel").parent().append('<button class="btn merge">Merge</button>');
+
+
+            $("#spinnerChannel").parent().find(".merge").click(function() {
+                console.log("click on merge")
+                self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
+            });
+
+
+
             el.find(".goToImage").click(function() {
-                self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"))
+                self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"),null);
 
             });
 
@@ -119,7 +129,7 @@ var MultiDimensionPanel = SideBarPanel.extend({
     getValue : function(type){
         return $('#multidimensionPanel' + this.model.get('id')).find('#spinner'+type).spinner('value')
     },
-    goToDimension : function(group, channel, zstack,slice, time) {
+    goToDimension : function(group, channel, zstack,slice, time, merge) {
         var self = this;
 
         ///api/imagegroup/$id/$channel/$zstack/$slice/$time/imagesequence
@@ -136,23 +146,27 @@ var MultiDimensionPanel = SideBarPanel.extend({
             }
 
             //get current position, next image will be opened at the same position/zoom level
-            var zoom = self.browseImageView.map.zoom;
-            var x = self.browseImageView.map.center.lon;
-            var y = self.browseImageView.map.center.lat;
-
-            if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
-                window.app.controllers.browse.tabs.goToImage(idImage,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),image,x,y,zoom);
-            } else {
-                new ImageReviewModel({id: idImage}).save({}, {
-                    success: function (model, response) {
-                        window.app.view.message("Image", response.message, "success");
-                        window.app.controllers.browse.tabs.goToImage(idImage,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),image,x,y,zoom);
-                    },
-                    error: function (model, response) {
-                        var json = $.parseJSON(response.responseText);
-                        window.app.view.message("Image", json.errors, "error");
-                    }});
-            }
+            self.goToOtherImage(currentImage,image,merge);
         });
+    },
+    goToOtherImage : function(currentImage,nextImage,merge) {
+        var self = this;
+        var zoom = self.browseImageView.map.zoom;
+        var x = self.browseImageView.map.center.lon;
+        var y = self.browseImageView.map.center.lat;
+
+        if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
+            window.app.controllers.browse.tabs.goToImage(nextImage.id,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),nextImage,x,y,zoom,merge);
+        } else {
+            new ImageReviewModel({id: idImage}).save({}, {
+                success: function (model, response) {
+                    window.app.view.message("Image", response.message, "success");
+                    window.app.controllers.browse.tabs.goToImage(idImage,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),image,x,y,zoom,merge);
+                },
+                error: function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Image", json.errors, "error");
+                }});
+        }
     }
 });

@@ -93,7 +93,7 @@ body {
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
-
+%{--<script type="text/javascript" src="lib/purl.js"></script>--}%
 
 <!-- Twitter bootstrap -->
 %{--<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>--}%

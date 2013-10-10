@@ -64,14 +64,14 @@ var InformationsPanel = SideBarPanel.extend({
                 success:function (model, response) {
                     if(model.get('project')) {
                         if(self.browseImageView.getMode()=='image' || model.get('reviewUser')!=null) {
-                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model,null);
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (review, response) {
                                     model.fetch({
                                         success:function (model, response2) {
                                            window.app.view.message("Image", response.message, "success");
-                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model,null);
                                         }
                                     });
                                 },
@@ -94,14 +94,14 @@ var InformationsPanel = SideBarPanel.extend({
                 success:function (model, response) {
                     if(model.get('project')) {
                         if(self.browseImageView.getMode()=='image' || model.get('reviewUser')!=null) {
-                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model,null);
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (review, response) {
                                     model.fetch({
                                         success:function (model, response2) {
                                             window.app.view.message("Image", response.message, "success");
-                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model);
+                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model,null);
                                         }
                                     });
                                 },

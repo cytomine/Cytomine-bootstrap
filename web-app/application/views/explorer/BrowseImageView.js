@@ -42,6 +42,7 @@ var BrowseImageView = Backbone.View.extend({
         if (options.addToTab != undefined) {
             this.addToTab = options.addToTab;
         }
+        this.merge = options.merge,
         _.bindAll(this, "initVectorLayers");
     },
 
@@ -742,7 +743,9 @@ var BrowseImageView = Backbone.View.extend({
             t_height = Math.floor(t_height / 2);
         }
         var metadata = {width: self.model.get("width"), height: self.model.get("height"), nbZoom: nbZoom, overviewWidth: 200, overviewHeight: Math.round((200 / self.model.get("width") * self.model.get("height")))};
-        new ImageServerUrlsModel({id: self.model.get('baseImage')}).fetch({
+
+
+        new ImageServerUrlsModel({id: self.model.get('baseImage'), merge:self.merge,imageinstance:self.model.id}).fetch({
             success: function (model, response) {
                 new ProjectImageFilterCollection({ project: self.model.get("project")}).fetch({
                     success: function (imageFilters, response) {
