@@ -94,9 +94,9 @@ class SimplifyGeometryService {
 
     def simplifyPolygon(String form, double rate) {
         Geometry annotation = new WKTReader().read(form);
-        Boolean isPolygonAndNotValid = (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotationFull).isValid())
-        if (isPolygonAndNotValid) {
-            //Preserving polygon shape but slower than DouglasPeuker
+        Boolean isPolygonAndNotValid = (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotation).isValid())
+        Boolean isMultiPolygon = (annotation instanceof com.vividsolutions.jts.geom.MultiPolygon)
+        if (isPolygonAndNotValid || isMultiPolygon) {
             annotation = TopologyPreservingSimplifier.simplify(annotation, rate)
         } else {
             annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)

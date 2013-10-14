@@ -819,7 +819,7 @@ class GenericAnnotationTests  {
         int minPoint
 
         //simplify
-        maxPoint = 5000
+        maxPoint = 5000*10
         minPoint = 1000
 
         def result = AnnotationDomainAPI.simplifyAnnotation(annotation.id,minPoint,maxPoint,user.username, 'PasswordUserJob')

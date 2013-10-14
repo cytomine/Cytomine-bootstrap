@@ -107,11 +107,18 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
-             $("#spinnerChannel").parent().append('<button class="btn merge">Merge</button>');
+            if(data.c) {
+                $("#spinnerChannel").parent().append('<button class="btn merge">Merge</button>');
+            } else {
+                $("#spinnerChannel").parent().append('<div style="width:67px;height:30px;"></div>');
+            }
+
+            $("#spinnerZstack").parent().append('<div style="width:67px;height:30px;"></div>');
+            $("#spinnerSlice").parent().append('<div style="width:67px;height:30px;"></div>');
+            $("#spinnerTime").parent().append('<div style="width:67px;height:30px;"></div>');
 
 
             $("#spinnerChannel").parent().find(".merge").click(function() {
-                console.log("click on merge")
                 self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
             });
 
