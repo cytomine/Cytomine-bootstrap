@@ -207,6 +207,7 @@ div .annotationsPanel {
 {
     background: none;
     border: 0px;
+    color: white;
     /*	text-decoration: underline; */
     /*background: #F2F7FD; /* light blue */
     /*border-color: #B8D6FB; /* darker light blue */
@@ -215,7 +216,7 @@ div .annotationsPanel {
 span.dynatree-active a
 {
     background-image: none !important;
-    color: black !important; /* @ IE6 */
+    color: white !important; /* @ IE6 */
 }
 
 .tree-white > span.dynatree-active a {
@@ -225,8 +226,8 @@ span.dynatree-active a
 
 span.dynatree-selected a
 {
-    background-color : green;
-    color: white !important;
+    background-color : black;
+    /*color: white !important; */
 }
 
 .tree > a {

@@ -169,7 +169,10 @@ var ProjectSearchPanel = Backbone.View.extend({
 
         $(self.searchProjectTextBoxElem).typeahead({source:projectNameArray,minLength:0});
 
-        $(self.searchProjectTextBoxElem).bind('propertychange keyup input paste',function() {self.searchProject();});
+        $(self.searchProjectTextBoxElem).bind('propertychange keyup input paste click change',function() {
+
+            self.searchProject();
+        });
 
     },
     /**
@@ -263,8 +266,9 @@ var ProjectSearchPanel = Backbone.View.extend({
      */
     searchProject: function () {
         var self = this;
+        console.log("searchProject");
         var searchText = $(self.searchProjectTextBoxElem).val();
-
+        console.log("searchText="+searchText);
         var searchOntologies = [];
         var selectedOntology = $("#ontologyChoiceList").val();
         if (selectedOntology != -1) {

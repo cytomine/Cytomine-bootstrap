@@ -30,6 +30,17 @@ class TableService {
             def statement = connection.createStatement()
 
 
+            if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'command' and column_name = 'data'")!=null) {
+                println "Change type..."
+                new Sql(dataSource).executeUpdate("alter table command alter column data type character varying")
+            }
+
+            if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'shared_annotation' and column_name = 'comment'")!=null) {
+                println "Change type..."
+                new Sql(dataSource).executeUpdate("alter table shared_annotation alter column comment type character varying")
+            }
+
+
             String reqcreate
 
             reqcreate = "CREATE VIEW user_project AS\n" +
@@ -79,6 +90,17 @@ class TableService {
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }
+    }
+
+    def executeSimpleRequest(String request) {
+        def response = null
+        println "request = $request"
+        new Sql(dataSource).eachRow(request) {
+            println it[0]
+            response = it[0]
+        }
+        println "response = $response"
+        response
     }
 
     def createRequest(def name,def reqcreate) {

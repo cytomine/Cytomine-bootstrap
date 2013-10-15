@@ -6,6 +6,10 @@ var AnnotationStatus = {
 }
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
+
+
+
+
     var location = annotation.location || annotation.get('location');
     var count = annotation.count ? annotation.count : "";
     var ratio = annotation.ratio ? annotation.ratio : undefined
@@ -36,9 +40,37 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
 OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
     read: function (collection) {
         var self = this;
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+        console.log("######################################");
+
         var features = [];
         var nestedCollection = collection.collection;
+        var termsToShow = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.getTermToShow();
+        var isTermRestriction = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.isTermRestriction(); // //just for perf
+
+        console.log(termsToShow.length);
+        console.log(window.app.status.currentTermsCollection.size());
+
         _.each(nestedCollection, function (annotation) {
+
+            var terms = annotation.term || annotation.get('term');
+            if(terms.length==0){
+                terms.push(0) // 0 = no term
+            }
+
+            if(isTermRestriction) {
+                if(_.intersection(termsToShow,terms).length==0) {
+                    return
+                }
+            }
+
             if (_.indexOf(self.annotationLayer.featuresHidden, annotation.id) != -1) {
                 return;
             }

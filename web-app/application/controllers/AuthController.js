@@ -13,6 +13,7 @@ var AuthController = Backbone.Router.extend({
     doLogin: function () {
         var app = new ApplicationView(); //in order to use message function
         var data = $("#login-form").serialize(); //should be in LoginDIalogView
+
         var location = window.location;
         $.ajax({
             url: 'j_spring_security_check',

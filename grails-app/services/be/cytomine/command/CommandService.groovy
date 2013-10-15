@@ -46,12 +46,12 @@ class CommandService {
      */
     def processCommand(Command c, int successCode) throws CytomineException {
         String postData = c.json?.toString()
-        def maxRequestSize = grailsApplication.config.cytomine.maxRequestSize
+        //def maxRequestSize = grailsApplication.config.cytomine.maxRequestSize
         //check if request data are not too big
-        if (postData && postData.size() >= maxRequestSize) {
-            log.error "c.postData.size() is too big=" + postData.size() + " Command.MAXSIZEREQUEST=" + maxRequestSize
-            throw new TooLongRequestException("Request is too long")
-        }
+//        if (postData && postData.size() >= maxRequestSize) {
+//            log.error "c.postData.size() is too big=" + postData.size() + " Command.MAXSIZEREQUEST=" + maxRequestSize
+//            throw new TooLongRequestException("Request is too long")
+//        }
         //execute command
         def result = c.execute()
         if (result.status == successCode) {

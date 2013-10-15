@@ -34,6 +34,7 @@ class RestImageController extends RestController {
     def projectService
     def segmentationService
 
+    def imageSequenceService
     /**
      * List all abstract image available on cytomine
      */
@@ -436,7 +437,8 @@ class RestImageController extends RestController {
             log.info "all image for this group=$images"
 
 
-            ProcessingServer server = ProcessingServer.first()
+            def servers = ProcessingServer.list()
+            Random myRandomizer = new Random();
 
             def  params = []
             images.each { seq ->
@@ -446,28 +448,29 @@ class RestImageController extends RestController {
                 if(merge=="zstack") position = seq.zStack
                 if(merge=="slice") position = seq.slice
                 if(merge=="time") position = seq.time
-
-                log.info "seq.image=${seq.image} position=${position}"
-
                 def urls = abstractImageService.imageServers(imageinstance.baseImage.id).imageServersURLs
 
-                log.info "urls=$urls"
-
                 def param = "url$position="+ URLEncoder.encode(urls.first(),"UTF-8") +"&color$position="+ URLEncoder.encode(getColor(position),"UTF-8")
-                log.info "param=$param"
                 params << param
 
             }
 
-            String url = server.url + "vision/merge?" + params.join("&") +"&zoomify="
+            String url = "vision/merge?" + params.join("&") +"&zoomify="
             log.info "url=$url"
+
+            def urls = []
+
+            (0..5).each {
+                println "test"
+                urls << servers.get(myRandomizer.nextInt(servers.size())).url + url
+            }
 
             //retrieve all image instance (same sequence)
 
 
             //get url for each image
 
-            responseSuccess([imageServersURLs : [url]])
+            responseSuccess([imageServersURLs : urls])
         } else {
             responseSuccess(abstractImageService.imageServers(id))
         }
@@ -479,18 +482,14 @@ class RestImageController extends RestController {
 
     private static String getColor(int channel) {
         def rules = [0:"0,0,255",1:"0,255,0",2:"91,59,17",3:"255,0,0"]
-        return rules.get(channel)
+        def rule = rules.get(channel)
+        if(!rule) {
+            rule = "255,255,255"
+        }
+        rule
     }
 
-    def imageSequenceService
 
-    def mergeImage = {
-
-
-
-
-
-    }
 }
 
 

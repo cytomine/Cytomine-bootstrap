@@ -14,6 +14,7 @@ class BootstrapTestDataService {
     def dataSource
 
     def initData() {
+
         new Sql(dataSource).executeUpdate("DROP TABLE task_comment")
         new Sql(dataSource).executeUpdate("DROP TABLE task")
 

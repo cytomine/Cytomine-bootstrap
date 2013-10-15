@@ -32,7 +32,7 @@ class SharedAnnotation extends CytomineDomain {
     static hasMany = [receivers : User]
 
     static constraints = {
-        comment(type: 'text', maxSize: Holders.getGrailsApplication().config.cytomine.maxRequestSize, nullable: true)
+        comment(type: 'text', nullable: true)
     }
     
     String toString() {

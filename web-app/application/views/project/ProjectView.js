@@ -168,13 +168,14 @@ var ProjectView = Backbone.View.extend({
      */
     showProjects: function (projectsShow) {
         var self = this;
+        console.log("CONTAINS SHOW="+projectsShow.get(16623));
         self.model.each(function (project) {
             //if project is in project result list, show it
             if (projectsShow.get(project.id) != null) {
-                $(self.projectListElem + project.id).show();
+                $(self.el).find(self.projectListElem + project.id).show();
             }
             else {
-                $(self.projectListElem + project.id).hide();
+                $(self.el).find(self.projectListElem + project.id).hide();
             }
         });
     }

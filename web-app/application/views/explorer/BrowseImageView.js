@@ -277,6 +277,21 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
+    changeTermLayerVisibility : function() {
+
+        //retrieve all layers
+
+        //for each layer
+
+            //update url with new terms
+
+
+
+
+    },
+
+
+
     switchControl: function (controlName) {
         var toolbar = $("#" + this.divId).find('#toolbar' + this.model.get('id'));
         toolbar.find('input[id=' + controlName + this.model.get('id') + ']').click();
@@ -1272,13 +1287,20 @@ var BrowseImageView = Backbone.View.extend({
     getVisibleLayer : function() {
         var self = this;
         var ids = [];
-        console.log(self.layers)
+        console.log(self.layers);
         _.each(self.layers,function(layer) {
             if(layer.vectorsLayer.visibility) {
                 ids.push(layer.userID)
             }
         });
         return ids;
+    },
+    refreshLayers : function() {
+        var self = this;
+        _.each(self.layers,function(layer) {
+            layer.vectorsLayer.refresh();
+        });
+        self.refreshReviewLayer();
     }
 });
 

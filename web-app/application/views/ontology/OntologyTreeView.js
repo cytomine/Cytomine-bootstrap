@@ -27,7 +27,9 @@ var OntologyTreeView = Backbone.View.extend({
             var htmlNode = "<%=   title %> <span style='background-color:<%=   color %>'>&nbsp;&nbsp;</span> ";
             if (!node.data.isFolder) {
                 htmlNode = htmlNode + "(<span id='usercount" + node.data.key + "'>0</span>)";
+                htmlNode = htmlNode + " Show: <input type='checkbox' data-term="+node.data.key+" id='showTerm"+node.data.key+"' class='termVisible' checked>";
             }
+
             var nodeTpl = _.template(htmlNode, {title: title, color: color});
 
 
@@ -96,6 +98,13 @@ var OntologyTreeView = Backbone.View.extend({
             },
             onRender: function (node, nodeSpan) {
                 $(nodeSpan).find("span.dynatree-icon").css({"background-image": "url(css/custom-theme/images/ui-icons_ffffff_256x240.png)"});
+//                self.checkTerm();
+//
+
+
+
+
+
             },
 
             // The following options are only required, if we have more than one tree on one page:
@@ -106,6 +115,9 @@ var OntologyTreeView = Backbone.View.extend({
 
         self.showColors();
 
+        $(this.el).append('Show no term: <input type="checkbox" data-term="0" id="showTerm0" class="termVisible" checked>');
+
+        $(this.el).append('<button class="btn btn-small seeAllTerm">See all</button> <button class="btn btn-small hideAllTerm">Hide all</button>');
 
         //expand root, simpliest way ? 
         $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {
@@ -116,8 +128,38 @@ var OntologyTreeView = Backbone.View.extend({
 
          self.computeCorrectTextSize();
 
+        $(this.el).find(".seeAllTerm").click(function() {
+            $(self.el).find('.tree').dynatree("getRoot").visit(function(node){
+                node.expand(true);
+            });
+            $(self.el).find(".termVisible").prop('checked', true);
+            self.browseImageView.refreshLayers();
+        });
+        $(this.el).find(".hideAllTerm").click(function() {
+            $(self.el).find('.tree').dynatree("getRoot").visit(function(node){
+                node.expand(true);
+            });
+            $(self.el).find(".termVisible").prop('checked', false);
+            self.browseImageView.refreshLayers();
+        });
+
+
+        $(this.el).find(".termVisible").change(function() {
+            self.browseImageView.refreshLayers();
+        });
+
+        $(this.el).find(".dynatree-title").removeAttr("href");
+
         return this;
     },
+//    checkTerm : function() {
+//        console.log("*****************");
+//        console.log($(this.el));
+//        console.log($(this.el).find(".termVisible"));
+//
+//        $(this.el).find(".termVisible").prop('checked', true);
+//    },
+
     computeCorrectTextSize :function() {
         var originalFontSize = 12;
        	var sectionWidth = $(this.el).find('.dynatree-container').width()-75;
@@ -262,6 +304,28 @@ var OntologyTreeView = Backbone.View.extend({
                 }
             }
         );
+    },
+
+    getTermToShow : function() {
+        var terms = []
+        _.each($(this.el).find(".termVisible:checked"),function(item) {
+            var term = $(item).data("term");
+            console.log("term="+term);
+            terms.push(term);
+
+        });
+        return terms;
+    },
+
+    isTermRestriction : function() {
+        //check if 1 or N terms are unchecked
+        var all = $(this.el).find(".termVisible").length;
+        var visible = $(this.el).find(".termVisible:checked").length;
+
+        console.log("all="+all + " visible="+visible);
+
+        return all != visible;
     }
+
 
 });
