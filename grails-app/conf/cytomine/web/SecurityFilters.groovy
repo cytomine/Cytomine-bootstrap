@@ -6,6 +6,7 @@ class SecurityFilters {
     def dependsOn = [APIAuthentificationFilters]
 
     def filters = {
+
         all(uri:'/api/**') {
             before = {
                 if(!springSecurityService.isLoggedIn()) {

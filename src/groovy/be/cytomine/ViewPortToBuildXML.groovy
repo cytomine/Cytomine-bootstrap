@@ -31,10 +31,12 @@ class ViewPortToBuildXML {
 
         //must skip line 0->11 because not valid xml
         String content = convertStreamToString(inputStreamFileSourceFull, 12)
-
+        content = content.replace("<jawr:script src='/i18n/messages.js'></jawr:script>", "")
+        print content
         //convert string to xml element
         def inputStreamFileSource = new ByteArrayInputStream(content.getBytes("UTF-8"));
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+
         Element viewPortXML = builder.parse(inputStreamFileSource).documentElement
 
         //Get lib/app src js files from viewports

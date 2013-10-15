@@ -72,10 +72,6 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 // set per-environment serverURL stem for creating absolute links
 environments {
     production {
-
-        //grails.serverURL = "http://beta.cytomine.be"
-        //grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
-
         grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
@@ -86,7 +82,7 @@ environments {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
         grails.uploadURL = "http://localhost:9090"
         grails.converters.default.pretty.print = true
-        grails.plugins.springsecurity.useBasicAuth = true
+        grails.plugins.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
     }
     test {
@@ -251,13 +247,39 @@ log4j = {
     /*debug 'be.cytomine'
    debug 'grails.app'
    debug 'grails.app.services'
-   debug 'grails.app.controllers*/
+   debug 'grails.app.controllers
+    debug   'grails.plugins.springsecurity'
+    debug   'org.codehaus.groovy.grails.plugins.springsecurity'
+    debug   'org.springframework.security'
+    debug   'org.jasig.cas.client' */
 
     //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
    //debug 'org.hibernate.SQL'
    //trace 'org.hibernate.type'
 }
 
+//CAS
+grails.plugins.springsecurity.cas.useSingleSignout = false
+grails.plugins.springsecurity.cas.active = false
+grails.plugins.springsecurity.cas.loginUri = '/login'
+grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
+grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be:8080/j_spring_cas_security_check'
+grails.plugins.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be:8080'
+grails.plugins.springsecurity.auth.loginFormUrl = '/'
+
+
+//LDAP
+grails.plugins.springsecurity.ldap.active = false
+grails.plugins.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
+grails.plugins.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
+grails.plugins.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
+grails.plugins.springsecurity.ldap.context.server = 'ldap://ldap.ulg.ac.be:389'
+grails.plugins.springsecurity.ldap.authorities.groupSearchBase =
+    'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
+grails.plugins.springsecurity.ldap.mapper.userDetailsClass= 'inetOrgPerson'// 'org.springframework.security.ldap.userdetails.InetOrgPerson'
+grails.plugins.springsecurity.ldap.mapper.usePassword= false
+grails.plugins.springsecurity.ldap.authorities.ignorePartialResultException = true
+grails.plugins.springsecurity.ldap.authorities.retrieveDatabaseRoles = true
 
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'be.cytomine.security.SecUser'
@@ -270,6 +292,8 @@ grails.plugins.springsecurity.controllerAnnotations.staticRules = [
         '/securityInfo/**': ['ROLE_ADMIN']
 ]
 
+//grails.resources.debug=true
+
 grails.plugins.dynamicController.mixins = [
         'com.burtbeckwith.grails.plugins.appinfo.IndexControllerMixin':       'com.burtbeckwith.appinfo_test.AdminManageController',
         'com.burtbeckwith.grails.plugins.appinfo.HibernateControllerMixin':   'com.burtbeckwith.appinfo_test.AdminManageController',
@@ -279,8 +303,21 @@ grails.plugins.dynamicController.mixins = [
         'com.burtbeckwith.grails.plugins.appinfo.PropertiesControllerMixin' : 'com.burtbeckwith.appinfo_test.AdminManageController',
         'com.burtbeckwith.grails.plugins.appinfo.ScopesControllerMixin' :     'com.burtbeckwith.appinfo_test.AdminManageController'
 ]
-grails.plugins.springsecurity.controllerAnnotations.staticRules = [
+/*grails.plugins.springsecurity.controllerAnnotations.staticRules = [
         '/admin/manage/**': ['ROLE_ADMIN']
+]*/
+
+grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
+grails.plugins.springsecurity.interceptUrlMap = [
+        '/admin/**':    ['ROLE_ADMIN'],
+        '/securityInfo/**': ['ROLE_ADMIN'],
+        '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
+        '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/css/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/images/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        //'/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this
+        '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]
 
 

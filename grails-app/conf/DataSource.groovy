@@ -31,13 +31,11 @@ environments {
     }
   }
   production {
-    dataSource {
-      dbCreate = "update"
-      //url = "jdbc:postgresql://10.1.0.102:5432/cytomineprod"
-        url="jdbc:postgresql://localhost:5432/cytomine"
-        password = "postgres"
-//      password = "cytomine_postgres"
-    }
+      dataSource {
+          dbCreate = "update"
+          url="jdbc:postgresql://localhost:5432/cytomine"
+          password = "postgres"
+      }
   }
   perf {
     dataSource {

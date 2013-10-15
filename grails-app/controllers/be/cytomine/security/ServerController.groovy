@@ -4,12 +4,15 @@ import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
 import grails.converters.JSON
 import grails.converters.XML
+import grails.plugins.springsecurity.Secured
 
 class ServerController {
 
     def springSecurityService
     def grailsApplication
 
+
+    @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def ping = {
 
         def jsonContent = request.JSON

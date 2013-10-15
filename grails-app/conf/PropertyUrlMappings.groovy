@@ -7,9 +7,7 @@ class PropertyUrlMappings
             action = [GET:"listAnnotationPosition"]
         }
 
-        /*************/
-        /*  PROJECT  */
-        /*************/
+        //project
         "/api/project/$idProject/property"(controller:"restProperty"){
             action = [GET:"listByProject",POST: "addPropertyProject"]
         }
@@ -20,9 +18,7 @@ class PropertyUrlMappings
             action = [GET:"showProject",PUT:"update", DELETE:"delete"]
         }
 
-        /****************/
-        /*  ANNOTATION  */
-        /****************/
+        //annotation
         "/api/annotation/$idAnnotation/property"(controller:"restProperty"){
             action = [GET:"listByAnnotation",POST: "addPropertyAnnotation"]
         }
@@ -36,9 +32,7 @@ class PropertyUrlMappings
             action = [GET:"listKeyForAnnotation"]
         }
 
-        /*******************/
-        /*  IMAGEINSTANCE  */
-        /*******************/
+        //IMAGEINSTANCE
         "/api/imageinstance/$idImageInstance/property"(controller:"restProperty"){
             action = [GET:"listByImageInstance",POST: "addPropertyImageInstance"]
         }

@@ -583,6 +583,18 @@ var InputListDomainView = Backbone.View.extend({
             self.elemSuggest.removeFromSelection(magicSuggestData);
         });
 
+
+
+        if (self.multiple) {
+            cell.append(_.template("<a class='checkAll<%= id %>'>check all</a>, <a class='uncheckAll<%= id %>'>uncheck all</a>", { id : self.param.id}));
+            $("a.checkAll" + self.param.id).on("click", function (e) {
+                self.elemSuggest.setValue(_.pluck(magicSuggestData, 'id'));
+            });
+            $("a.uncheckAll" + self.param.id).on("click", function (e) {
+                self.elemSuggest.clear();
+            });
+        }
+
         $(self.elemSuggest).on("selectionchange", function (e) {
             self.checkEntryValidation();
         });

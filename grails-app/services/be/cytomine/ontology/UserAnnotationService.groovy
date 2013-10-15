@@ -204,7 +204,7 @@ class UserAnnotationService extends ModelService {
 
             //add annotation on the retrieval
             if (annotationID && UserAnnotation.read(annotationID).location.getNumPoints() >= 3) {
-                if (!currentUser.algo()) {
+                if (false && !currentUser.algo()) {
                     try {
                         if (annotationID) indexRetrievalAnnotation(annotationID)
                     } catch (CytomineException ex) {

@@ -12,6 +12,8 @@ class RemoteCopyService {
         def ip = storage.getIp()
         def port = storage.getPort()
         def password = storage.getPassword()
+        remoteFile = "\'$remoteFile\'"
+        remotePath = "\'$remotePath\'"
         ant.sequential {
             sshexec(
                     host:storage.getIp(),

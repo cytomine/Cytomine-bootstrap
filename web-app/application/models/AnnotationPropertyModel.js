@@ -25,9 +25,7 @@ var AnnotationPropertyCollection = PaginatedCollection.extend({
         this.idAnnotation = options.idAnnotation;
     },
     url: function () {
-        if (this.idAnnotation != undefined) {
-            return "api/annotation/" + this.idAnnotation + "/property.json";
-        }
+        return "api/annotation/" + this.idAnnotation + "/property.json";
     }
 });
 

@@ -98,7 +98,7 @@ class StorageService extends ModelService {
 
 
     def initUserStorage(SecUser user) {  //:to do => use command instead of domains
-        //SecurityContextHolder.context.authentication = new UsernamePasswordAuthenticationToken("lrollus", "lR\$2011", AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+
         String storage_base_path = grailsApplication.config.storage_path
         String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
 
@@ -106,7 +106,7 @@ class StorageService extends ModelService {
         Storage storage = new Storage(
                 name: "$user.username storage",
                 basePath: remotePath,
-                ip: "10.1.0.106",
+                ip: "10.3.1.136",
                 username: "storage",
                 password: "bioinfo;3u54",
                 keyFile: null,

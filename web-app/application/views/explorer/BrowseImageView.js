@@ -182,7 +182,7 @@ var BrowseImageView = Backbone.View.extend({
             if (ctx) {
                 var imgd = ctx.getImageData(0, 0, evt.tile.size.w, evt.tile.size.h);
                 //process PIX
-                //Processing.Threshold.process({canvas :imgd, threshold : 165});
+                Processing.Threshold.process({canvas :imgd, threshold : 165});
 
                 /*Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
                  Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});*/
