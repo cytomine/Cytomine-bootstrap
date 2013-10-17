@@ -190,7 +190,7 @@ div .annotationsPanel {
 .tree > ul.dynatree-container a
     /*, ul.dynatree-container a:visited*/
 {
-    color: black; /* inherit doesn't work on IE */
+    /*color: black; /* inherit doesn't work on IE */
     text-decoration: none;
     vertical-align: top;
     margin: 0px;
@@ -216,7 +216,7 @@ div .annotationsPanel {
 span.dynatree-active a
 {
     background-image: none !important;
-    color: white !important; /* @ IE6 */
+    color: white !important;  @ IE6
 }
 
 .tree-white > span.dynatree-active a {

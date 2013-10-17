@@ -52,6 +52,7 @@ var UploadFormView = Backbone.View.extend({
                 maxNumberOfFiles: undefined,
                 // The maximum allowed file size:
                 maxFileSize: undefined,
+                //maxFileSize: 10,
                 // The minimum allowed file size:
                 minFileSize: 1,
                 // The regular expression for allowed file types, matches
@@ -356,18 +357,21 @@ var UploadFormView = Backbone.View.extend({
                     if (file.error) {
                         valid = false;
                     }
+                    console.log(file.error +" valid="+valid);
                 });
+
                 return valid;
             },
 
             _renderTemplate: function (tpl, files) {
-                console.log(uploadFormView);
-                console.log(uploadFormView.fileUploadErrors);
-                var nodes = _.template(tpl, { o: {
+//                console.log(uploadFormView);
+//                console.log(uploadFormView.fileUploadErrors);
+//                console.log(tpl);
+//                console.log(files);
+                var nodes = _.template(tpl, {fileUploadErrors: uploadFormView.fileUploadErrors, o: {
                     files: files,
                     formatFileSize: this._formatFileSize,
-                    options: this.options,
-                    fileUploadErrors: uploadFormView.fileUploadErrors
+                    options: this.options
                 }});
                 return $(this.options.templateContainer).html(nodes).children();
             },
