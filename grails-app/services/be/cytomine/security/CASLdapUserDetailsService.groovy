@@ -35,7 +35,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
     throws UsernameNotFoundException, DataAccessException {
 
-        User user = User.findByUsername(username)
+        SecUser user = SecUser.findByUsername(username)
 
         if (user == null) { //User does not exists in our database
 

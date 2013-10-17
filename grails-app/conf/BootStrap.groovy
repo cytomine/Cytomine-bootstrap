@@ -90,10 +90,9 @@ class BootStrap {
         }
 
         //create non admin user for test
-        if (Environment.getCurrent()  != Environment.TEST) {
+
             bootstrapUtilsService.createUsers([
                     [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]]])
-        }
 
         //if database is empty, create admin user
         if (SecUser.count() == 0) {

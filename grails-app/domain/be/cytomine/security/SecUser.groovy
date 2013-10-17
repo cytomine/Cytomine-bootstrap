@@ -111,8 +111,11 @@ class SecUser extends CytomineDomain implements Serializable {
     }
 
     protected void encodePassword() {
+        println "encodePassword for user="+username
+        println password
         if (password == "") password = "random_password"
         password = springSecurityService.encodePassword(password)
+        println password
     }
 
     /**

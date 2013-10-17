@@ -9,6 +9,7 @@ import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
@@ -723,6 +724,7 @@ class RestAnnotationDomainController extends RestController {
      * @return List of annotation id from idImage and idUser that touch location
      */
     def findAnnotationIdThatTouch(String location, def layers, long idImage, String table) {
+        println "findAnnotationIdThatTouch"
         ImageInstance image = ImageInstance.read(idImage)
         boolean projectAdmin = image.project.checkPermission(ADMINISTRATION)
         if(!projectAdmin) {
@@ -747,7 +749,57 @@ class RestAnnotationDomainController extends RestController {
         if(users.size()>1) {
             throw new WrongArgumentException("Annotations from multiple users are under this area. You can correct only annotation from 1 user (hide layer if necessary)")
         }
-        return ids
+
+        def annotations = []
+        if(table.equals("user_annotation")) {
+            ids.each {
+                annotations << UserAnnotation.read(it)
+            }
+        } else if(table.equals("reviewed_annotation")) {
+            ids.each {
+                annotations << ReviewedAnnotation.read(it)
+            }
+        }
+
+        println "annotations="+annotations
+
+        def termSizes = [:]
+        annotations.each { annotation ->
+            def terms = annotation.termsId()
+            println "terms="+terms
+            terms.each { term->
+                def value = termSizes.get(term)?:0
+                 println "add term="+value + "+"+annotation.area
+                 termSizes.put(term,value+annotation.area)
+
+            }
+        }
+
+        println "termSizes="+termSizes
+
+        Double min = Double.MAX_VALUE
+        Long goodTerm = null
+
+        termSizes.each {
+           if(min>it.value) {
+               min=it.value
+               goodTerm = it.key
+           }
+        }
+
+        println "goodTerm="+goodTerm
+        println "min="+min
+
+        ids = []
+        annotations.each { annotation ->
+            def terms = annotation.termsId()
+            if(terms.contains(goodTerm)) {
+                ids << annotation.id
+            }
+        }
+        println "ids="+ids
+
+        return ids.unique()
     }
 
     /**
@@ -785,21 +837,26 @@ class RestAnnotationDomainController extends RestController {
      */
     def findUserAnnotationWithTerm(def ids, def termsId) {
         List<UserAnnotation> annotationsWithSameTerm = []
-        ids.each { id ->
-            UserAnnotation compared = UserAnnotation.read(id)
-            List<Long> idTerms = compared.termsId()
-            if (idTerms.size() != termsId.size()) {
-                throw new WrongArgumentException("Annotations have not the same term!")
-            }
+        boolean multipleTerm
+        def termSize = [:]
+        List<UserAnnotation> annotations = []
 
-            idTerms.each { idTerm ->
-                if (!termsId.contains(idTerm)) {
-                    throw new WrongArgumentException("Annotations have not the same term!")
-                }
-            }
-            annotationsWithSameTerm << compared
-        }
-        annotationsWithSameTerm
+        ids.each { id ->
+             UserAnnotation compared = UserAnnotation.read(id)
+             List<Long> idTerms = compared.termsId()
+             if (idTerms.size() != termsId.size()) {
+                 throw new WrongArgumentException("Annotations have not the same term!")
+             }
+
+             idTerms.each { idTerm ->
+                 if (!termsId.contains(idTerm)) {
+                     throw new WrongArgumentException("Annotations have not the same term!")
+                 }
+             }
+             annotationsWithSameTerm << compared
+         }
+         annotationsWithSameTerm
+
     }
 
     /**
