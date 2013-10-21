@@ -780,23 +780,26 @@ class RestAnnotationDomainController extends RestController {
         Double min = Double.MAX_VALUE
         Long goodTerm = null
 
-        termSizes.each {
-           if(min>it.value) {
-               min=it.value
-               goodTerm = it.key
-           }
-        }
+        if(!termSizes.isEmpty()) {
+            termSizes.each {
+               if(min>it.value) {
+                   min=it.value
+                   goodTerm = it.key
+               }
+            }
 
-        println "goodTerm="+goodTerm
-        println "min="+min
+            println "goodTerm="+goodTerm
+            println "min="+min
 
-        ids = []
-        annotations.each { annotation ->
-            def terms = annotation.termsId()
-            if(terms.contains(goodTerm)) {
-                ids << annotation.id
+            ids = []
+            annotations.each { annotation ->
+                def terms = annotation.termsId()
+                if(terms.contains(goodTerm)) {
+                    ids << annotation.id
+                }
             }
         }
+
         println "ids="+ids
 
         return ids.unique()
