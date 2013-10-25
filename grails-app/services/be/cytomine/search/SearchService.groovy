@@ -52,7 +52,7 @@ class SearchService extends ModelService {
             listTable.add("image_instance")
             listType.add(ImageInstance.class.getName())
 
-            blocSelect = "SELECT DISTINCT ii.id as id, extract(epoch from ii.created)*1000 as created, '<domain>' as class, ai.filename as name, d.data as description, ii.user_id as user, su.lastname || ' ' || su.firstname as userfullname, pro.name as projectName, ai.filename as imageName, ai.id as baseImage, pro.id as project   " +
+            blocSelect = "SELECT DISTINCT ii.id as id, extract(epoch from ii.created)*1000 as created, '<domain>' as class, ai.original_filename as name, d.data as description, ii.user_id as user, su.lastname || ' ' || su.firstname as userfullname, pro.name as projectName, ai.filename as imageName, ai.id as baseImage, pro.id as project   " +
                     "FROM abstract_image as ai , <table> as ii LEFT OUTER JOIN description as d ON d.domain_ident = ii.id, property as p" + getSecurityTable(currentUser) + ",  sec_user as su, project as pro " +
                     "WHERE ai.id = ii.base_image_id "  +
                     "AND ii.id = p.domain_ident " +

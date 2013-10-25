@@ -132,6 +132,11 @@ class RestUploadedFileController extends RestController {
              mime = new Mime(extension: ext, mimeType : mimeType)
              mime.save(failOnError: true)
          }
+        println "#################################################################"
+        println "#################################################################"
+        println "##############CREATE IMAGE#################"
+        println "#################################################################"
+        println "#################################################################"
          AbstractImage abstractImage = new AbstractImage(
                  filename: uploadedFile.getFilename(),
                  originalFilename:  uploadedFile.getOriginalFilename(),
@@ -145,7 +150,7 @@ class RestUploadedFileController extends RestController {
              sample.refresh()
              abstractImage.setSample(sample)
              abstractImage.save(flush: true,failOnError: true)
-             abstractImage.save(flush : true,failOnError: true)
+//             abstractImage.save(flush : true,failOnError: true)
 
              storages.each { storage ->
                  storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()))
@@ -168,7 +173,7 @@ class RestUploadedFileController extends RestController {
                  log.info "Sample error : " + it
              }
          }
-         writeMail(currentUser,abstractImage,projects)
+        // writeMail(currentUser,abstractImage,projects)
          responseSuccess([abstractimage: abstractImage])
 
 

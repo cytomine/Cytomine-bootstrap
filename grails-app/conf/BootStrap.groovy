@@ -61,12 +61,7 @@ class BootStrap {
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
-
         log.info "GrailsUtil.environment= " + Environment.getCurrent() + " BootStrap.development=" + Environment.DEVELOPMENT
-
-        if (Environment.getCurrent() == Environment.DEVELOPMENT) { //scripts are not present in productions mode
-            javascriptService.compile();
-        }
 
         //Initialize marshallers and services
         marshallersService.initMarshallers()

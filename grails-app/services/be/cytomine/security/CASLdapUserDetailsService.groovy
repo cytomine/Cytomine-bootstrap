@@ -41,6 +41,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
 
             //fetch its informations through LDAP
             InetOrgPerson inetOrgPerson = (InetOrgPerson) ldapUserDetailsService.loadUserByUsername(username)
+            if(inetOrgPerson==null) return null
 
             User.withTransaction {
 

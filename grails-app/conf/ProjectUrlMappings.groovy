@@ -7,7 +7,7 @@
 class ProjectUrlMappings {
 
     static mappings = {
-        "/api/project"(controller: "restProject"){
+        "/api/project"(controller: "restProject"){  //?(.$format)?
             action = [GET:"list", POST:"add"]
         }
         "/api/project/$id"(controller: "restProject"){

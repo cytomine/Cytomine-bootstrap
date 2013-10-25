@@ -5,8 +5,8 @@ import org.springframework.security.acls.model.NotFoundException
 
 class UrlMappings {
 
-    static mappings = {
-        "/$controller/$action?/$id?"{
+    static mappings = {     //?(.$format)?
+        "/$controller/$action?/$id?(.$format)?"{
             constraints {
                 // apply constraints here
             }

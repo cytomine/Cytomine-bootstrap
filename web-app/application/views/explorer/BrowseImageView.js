@@ -1301,7 +1301,17 @@ var BrowseImageView = Backbone.View.extend({
             layer.vectorsLayer.refresh();
         });
         self.refreshReviewLayer();
+    },
+    opacity : 0.5,
+    setOpacity: function(opacity) {
+        this.opacity = opacity/100
+        this.refreshLayers();
+    },
+    getOpacity: function() {
+        //call every time an annotation is draw, use var instead of spinner.val() each time
+        return this.opacity
     }
+
 });
 
 

@@ -29,15 +29,15 @@ var UserDashboardView = Backbone.View.extend({
         var self = this;
         self.nbreAnnotation= null,
         self.nbreReviewedAnnotation= null,
-        console.log("NBREPROJECT="+$("#userDashboardLastProject").find(".span6").length);
+
         $("#userdashboard").empty();
         $("#userdashboard").replaceWith(_.template(tpl, {}));
         $("#userdashboard").css("display","inline");
         self.el = $("#userdashboard");
-        console.log("NBREPROJECT="+$("#userDashboardLastProject").find(".span6").length);
+
         self.initStats(tpStat);
         self.initLastAction();
-        self.initLastNews();
+//        self.initLastNews();
         self.initGotoProject();
         self.initGotoImage();
         self.initLastOpenedImage(tplImg);
@@ -47,7 +47,7 @@ var UserDashboardView = Backbone.View.extend({
     initLastOpenProject : function() {
         var self = this;
         var elem = $(self.el).find("#userDashboardLastProject");
-        console.log("initLastOpenProject");
+
         $.get("/api/project/lastopened?max=6", function(data) {
             console.log("GET PROJECT OK");
             console.log(elem.length);

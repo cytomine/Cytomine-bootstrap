@@ -75,7 +75,7 @@ environments {
         grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
-//        grails.plugins.springsecurity.useBasicAuth = true
+        grails.plugins.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
     }
     development {
@@ -259,17 +259,17 @@ log4j = {
 }
 
 //CAS
-grails.plugins.springsecurity.cas.useSingleSignout = false
-grails.plugins.springsecurity.cas.active = false
+grails.plugins.springsecurity.cas.useSingleSignout = false //false for beta
+grails.plugins.springsecurity.cas.active = false //false for beta
 grails.plugins.springsecurity.cas.loginUri = '/login'
 grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
-grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be:8080/j_spring_cas_security_check'
-grails.plugins.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be:8080'
+grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'
+grails.plugins.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be'
 grails.plugins.springsecurity.auth.loginFormUrl = '/'
 
 
 //LDAP
-grails.plugins.springsecurity.ldap.active = false
+grails.plugins.springsecurity.ldap.active = false //false for beta
 grails.plugins.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
 grails.plugins.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
 grails.plugins.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
@@ -315,7 +315,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/css/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/images/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        //'/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this
+        //'/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
         '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]

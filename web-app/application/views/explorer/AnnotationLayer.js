@@ -7,9 +7,6 @@ var AnnotationStatus = {
 var AnnotationLayerUtils = AnnotationLayerUtils || {};
 AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
 
-
-
-
     var location = annotation.location || annotation.get('location');
     var count = annotation.count ? annotation.count : "";
     var ratio = annotation.ratio ? annotation.ratio : undefined
@@ -123,7 +120,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
                         }
                     } ,
                     getOpacity: function (feature) {
-                        return 0.6;
+                        return self.browseImageView.getOpacity();
                     },
                     getStrokeColor: function (feature) {
                         var opacity = feature.attributes.opacity
@@ -640,7 +637,7 @@ AnnotationLayer.prototype = {
                         self.controls.select.select(newFeature);
                         var cropURL = annotation.get('cropURL');
                         var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url: cropURL, alt: cropURL});
-                        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message: message, cropImage: cropImage});
+                        var alertMessage = _.template("<p></p><div></div>", { message: message});
                         window.app.view.message("Annotation added", alertMessage, "success");
                         //if(self.reviewMode) self.vectorsLayer.refresh();
                     }

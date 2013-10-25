@@ -28,7 +28,9 @@ var InformationsPanel = SideBarPanel.extend({
         });
         return this;
     },
-
+    refresh: function() {
+      //call when user do action with ImageReviewAction
+    },
 
 
 

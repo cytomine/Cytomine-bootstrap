@@ -415,7 +415,7 @@ var ReviewPanel = SideBarPanel.extend({
         self.browseImageView.removeFeature(annotation.id);
         new AnnotationReviewedModel({id: annotation.get('parentIdent')}).destroy({
             success: function (model, response) {
-                window.app.view.message("Annotation", response.message, "success");
+                window.app.view.message("Annotation rejected", "", "success");
                 _.each(self.printedLayer, function (layer) {
                     layer.vectorsLayer.refresh();
                 });
@@ -430,9 +430,10 @@ var ReviewPanel = SideBarPanel.extend({
         //add the reviewed annotation on the layer + print message
         var newFeature = AnnotationLayerUtils.createFeatureFromAnnotation(response.reviewedannotation);
         var cropURL = annotation.get('cropURL');
-        var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url: cropURL, alt: cropURL});
-        var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message: response.message, cropImage: cropImage});
-        window.app.view.message("Reviewed annotation", alertMessage, "success");
+        //var cropImage = _.template("<img src='<%=   url %>' alt='<%=   alt %>' style='max-width: 175px;max-height: 175px;' />", { url: cropURL, alt: cropURL});
+        //var alertMessage = _.template("<p><%=   message %></p><div><%=   cropImage %></div>", { message: response.message, cropImage: cropImage});
+        //var alertMessage = _.template("<p><%=   message %></p>", { message: response.message});
+        window.app.view.message("Annotation reviewed", "", "success");
         self.reviewLayer.addFeature(newFeature);
         self.reviewLayer.controls.select.unselectAll();
         self.reviewLayer.controls.select.select(newFeature);

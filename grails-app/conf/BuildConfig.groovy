@@ -3,6 +3,7 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.war.file = "target/${appName}.war"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -44,10 +45,14 @@ grails.project.dependency.resolution = {
         //runtime ":yui-minify-resources:0.1.4"
 
 //        compile ":svn:1.0.2"
-        build ":tomcat:$grailsVersion" //build ":tomcat:7.0.42"
+       build ":tomcat:$grailsVersion" //build ":tomcat:7.0.42"
 
-	      
+//        build ":tomcat:7.0.42"
+//        compile ':hibernate:3.6.10.2'
+
         runtime ":hibernate:$grailsVersion" //runtime ":hibernate:3.6.10.1"
+
+
         runtime ':spring-security-core:1.2.7.3'
         runtime ':spring-security-acl:1.1.1'
         runtime ':spring-security-appinfo:1.0'
@@ -55,7 +60,7 @@ grails.project.dependency.resolution = {
 		compile ":spring-security-ldap:1.0.6"
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
-        runtime ':fields:1.3'
+        //runtime ':fields:1.3'
 
         runtime ':twitter-bootstrap:2.0.4'
         runtime ":rabbitmq:1.0.0"
@@ -73,9 +78,9 @@ grails.project.dependency.resolution = {
  //       test ':code-coverage:1.2'
         test ':code-coverage:1.2.6'
 
-
-        test ':selenium-rc:1.0.2'
-//        test ':functional-test:2.0.RC1'
+//
+//        test ':selenium-rc:1.0.2'
+        test ':functional-test:2.0.RC1'
 
         test(":spock:0.7") {
           exclude "spock-grails-support"

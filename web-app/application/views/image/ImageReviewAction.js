@@ -114,7 +114,11 @@ var ImageReviewAction = Backbone.View.extend({
 //                window.app.controllers.dashboard.view.projectDashboardImages.refreshImagesThumbs();
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
-                self.container.refresh();
+                if(self.container) {
+                    self.container.refresh();
+                }
+
+                console.log("Go to review!")
                 window.location = '#tabs-review-' + self.model.get('project') + '-' + self.model.get('id') + '-';
             },
             error: function (model, response) {
@@ -129,7 +133,9 @@ var ImageReviewAction = Backbone.View.extend({
             success: function (model, response) {
                 window.app.view.message("Image", response.message, "success");
                 self.model = new ImageModel(response.imageinstance);
-                self.container.refresh();
+                if(self.container) {
+                    self.container.refresh();
+                }
                 window.location = '#tabs-reviewdash-' + self.model.get('project') + '-' + self.model.get('id') + '-null-null';
             },
             error: function (model, response) {
@@ -147,7 +153,9 @@ var ImageReviewAction = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
                 self.model = new ImageModel(response.imageinstance);
-                self.container.refresh();
+                if(self.container) {
+                    self.container.refresh();
+                }
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -162,7 +170,9 @@ var ImageReviewAction = Backbone.View.extend({
                 window.app.view.message("Image", response.message, "success");
                 console.log(response);
                 self.model = new ImageModel(response.imageinstance);
-                self.container.refresh();
+                if(self.container) {
+                    self.container.refresh();
+                }
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

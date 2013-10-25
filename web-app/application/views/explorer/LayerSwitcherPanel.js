@@ -179,5 +179,16 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var elContent2 = el.find(".layerSwitcherContent2");
         this.initToggle(el, elContent1, sourceEvent1, "layerSwitcherContent1");
         this.initToggle(el, elContent2, sourceEvent2, "layerSwitcherContent2");
+
+        $("#" + this.browseImageView.divId).find("#opacitySelectionSlider").slider({
+            min: 0,
+            max: 100,
+            value:50,
+            change: function (event, ui) {
+                 console.log( ui);
+                self.browseImageView.setOpacity(ui.value);
+            }
+        });
+
     }
 });

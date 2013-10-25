@@ -6,9 +6,8 @@ import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
-import org.apache.http.entity.mime.content.StringBody
+
 import org.codehaus.groovy.grails.web.json.JSONObject
-import org.json.simple.JSONArray
 
 /**
  * User: lrollus
