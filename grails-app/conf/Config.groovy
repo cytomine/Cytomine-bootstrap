@@ -98,10 +98,10 @@ environments {
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
 }
-//coverage {
-//    enableByDefault = false
-//    xml = true
-//}
+coverage {
+    enableByDefault = false
+    xml = true
+}
 elasticSearch {
   /**
    * Date formats used by the unmarshaller of the JSON responses

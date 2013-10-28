@@ -12,7 +12,6 @@
           <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/quartz-monitor-0.3-RC1/grails-app/views" relative="/" />
           <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/database-migration-1.2.1/grails-app/views" relative="/" />
           <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/quartz-1.0-RC9/web-app" relative="/" />
-          <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/functional-test-2.0.RC1/web-app" relative="/" />
         </webroots>
         <sourceRoots />
       </configuration>
@@ -42,11 +41,6 @@
       <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/export-1.5/src/groovy" isTestSource="false" />
       <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/export-1.5/grails-app/services" isTestSource="false" />
       <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/export-1.5/grails-app/taglib" isTestSource="false" />
-    </content>
-    <content url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/functional-test-2.0.RC1">
-      <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/functional-test-2.0.RC1/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/functional-test-2.0.RC1/grails-app/i18n" isTestSource="false" />
-      <sourceFolder url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/functional-test-2.0.RC1/grails-app/controllers" isTestSource="false" />
     </content>
     <content url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/geb-0.9.0" />
     <content url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/hibernate-2.2.4" />
@@ -115,6 +109,7 @@
     <orderEntry type="module-library" exported="">
       <library name="Grails User Library (Cytomine-web-grailsPlugins)">
         <CLASSES>
+          <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/export-1.5/lib" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework.security/spring-security-core/jars/spring-security-core-3.0.7.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework.security/spring-security-web/jars/spring-security-web-3.0.7.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/c3p0/c3p0/jars/c3p0-0.9.1.1.jar!/" />
@@ -153,23 +148,6 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework.security/spring-security-cas-client/jars/spring-security-cas-client-3.0.7.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.tomcat.embed/tomcat-embed-logging-juli/jars/tomcat-embed-logging-juli-7.0.42.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/commons-io/commons-io/jars/commons-io-2.2.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.w3c.css/sac/jars/sac-1.3.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.cssparser/cssparser/jars/cssparser-0.9.7.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.nekohtml/nekohtml/jars/nekohtml-1.9.16.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/xerces/xercesImpl/jars/xercesImpl-2.9.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/commons-codec/commons-codec/jars/commons-codec-1.6.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.2.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.httpcomponents/httpmime/jars/httpmime-4.2.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.commons/commons-lang3/jars/commons-lang3-3.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/xalan/xalan/jars/xalan-2.7.1.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.htmlunit/htmlunit/jars/htmlunit-2.10.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/xml-resolver/xml-resolver/jars/xml-resolver-1.2.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sf.ezmorph/ezmorph/jars/ezmorph-1.0.6.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sf.json-lib/json-lib/jars/json-lib-2.3-jdk15.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.codehaus.groovy.modules.http-builder/http-builder/jars/http-builder-0.5.2.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/net.sourceforge.htmlunit/htmlunit-core-js/jars/htmlunit-core-js-2.10.jar!/" />
-          <root url="file://$USER_HOME$/.grails/2.2.4/projects/cytomine/plugins/export-1.5/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
