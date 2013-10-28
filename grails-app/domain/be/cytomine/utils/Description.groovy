@@ -3,6 +3,7 @@ package be.cytomine.utils
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import grails.converters.JSON
+import grails.util.Holders
 import org.apache.log4j.Logger
 
 /**
@@ -78,7 +79,9 @@ class Description extends CytomineDomain implements Serializable {
             returnArray['id'] = description.id
             returnArray['domainClassName'] = description.domainClassName
             returnArray['domainIdent'] = description.domainIdent
-            returnArray['data'] = description.data
+
+            returnArray['data'] = description.data //'<br/><img src="http://localhost:8080/api/attachedfile/8527848/download.png" align="left"><br/>' //description.data
+
             returnArray['created'] = description.created
             returnArray['updated'] = description.updated
             return returnArray

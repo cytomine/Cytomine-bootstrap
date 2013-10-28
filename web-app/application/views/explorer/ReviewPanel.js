@@ -387,6 +387,17 @@ var ReviewPanel = SideBarPanel.extend({
         this.initToggle(el, elContent1, sourceEvent1, "reviewPanelContent1");
         this.initToggle(el, elContent2, sourceEvent2, "reviewPanelContent2");
         this.initToggle(el, elContent3, sourceEvent3, "reviewPanelContent3");
+
+
+        $("#" + self.browseImageView.divId).find("#opacitySelectionSliderReview").slider({
+            min: 0,
+            max: 100,
+            value:50,
+            change: function (event, ui) {
+                 console.log( ui);
+                self.browseImageView.setOpacity(ui.value);
+            }
+        });
     },
     /**
      * Accept curent annotation for review

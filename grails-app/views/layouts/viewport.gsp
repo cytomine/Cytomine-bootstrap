@@ -64,6 +64,9 @@ body {
 
 
 <link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
+%{--<link rel='stylesheet' href='lib/wysiwyg/website/css/stylesheet.css'/>--}%
+
+
 <!--
 <link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
 <script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
@@ -117,7 +120,10 @@ body {
 
 <script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
 <script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
-
+<!-- wysihtml5 parser rules -->
+%{--<script src="lib/wysiwyg/parser_rules/advanced.js"></script>--}%
+%{--<!-- Library -->--}%
+%{--<script src="lib/wysiwyg/dist/wysihtml5-0.3.0.min.js"></script>--}%
 
 <script type="text/javascript" src="lib/json2.js"></script>
 

@@ -92,8 +92,11 @@ var DescriptionModal = {
 
         console.log("AFTER:"+text);
 
-         //text = text.split('"/api').join('/api');
+//         text = text.split('"/api').join('/api');
 //                             text = text.split('download"').join('download');
+
+        //add host url for images
+        text = text.split('/api/attachedfile').join(window.location.origin+'/api/attachedfile');
 
          var modal = new CustomModal({
              idModal : "descriptionModal"+domainIdent,
@@ -106,11 +109,12 @@ var DescriptionModal = {
                  $("#descriptionArea"+domainIdent).wysihtml5({});
 
                  $("#saveDescription"+idDescription).click(function(e) {
-
+                     // remove the host url for images
+                        text = $("#descriptionArea"+domainIdent).val().split(window.location.origin+'/api/attachedfile').join('/api/attachedfile');
                          new DescriptionModel({id:idDescription,domainIdent: domainIdent, domainClassName: domainClassName}).save({
                              domainIdent: domainIdent,
                              domainClassName: domainClassName,
-                             data :  $("#descriptionArea"+domainIdent).val()
+                             data :  text
                          }, {success: function (termModel, response) {
                              callback();
                           }, error: function (model, response) {
@@ -122,6 +126,85 @@ var DescriptionModal = {
 
              }
          });
+//
+//var modal = new CustomModal({
+//             idModal : "descriptionModal"+domainIdent,
+//             button : container.find("a.description"),
+//             header :"Description",
+//             body :'<div id="description'+domainIdent+'"> ' +
+//                     '<form>' +
+//                       <div id="toolbar"> ' +
+//                         <a data-wysihtml5-command="bold" title="CTRL+B">bold</a> |  ' +
+//                         <a data-wysihtml5-command="italic" title="CTRL+I">italic</a> | ' +
+//                         <a data-wysihtml5-command="createLink">insert link</a> | ' +
+//                         <a data-wysihtml5-command="insertImage">insert image</a> |  ' +
+//                         <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">h1</a> |  ' +
+//                         <a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">h2</a> | ' +
+//                         <a data-wysihtml5-command="insertUnorderedList">insertUnorderedList</a> |   ' +
+//                         <a data-wysihtml5-command="insertOrderedList">insertOrderedList</a> |  ' +
+//                         <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red">red</a> |  ' +
+//                         <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green">green</a> | ' +
+//                         <a data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue">blue</a> |' +
+//                         <a data-wysihtml5-command="undo">undo</a> | ' +
+//                         <a data-wysihtml5-command="redo">redo</a> | ' +
+//                         <a data-wysihtml5-command="insertSpeech">speech</a> ' +
+//                         <a data-wysihtml5-action="change_view">switch to html view</a> ' +
+//
+//                         <div data-wysihtml5-dialog="createLink" style="display: none;"> ' +
+//                           <label>
+//                             Link:
+//                             <input data-wysihtml5-dialog-field="href" value="http://">
+//                           </label>
+//                           <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+//                         </div>
+//
+//                         <div data-wysihtml5-dialog="insertImage" style="display: none;">
+//                           <label>
+//                             Image:
+//                             <input data-wysihtml5-dialog-field="src" value="http://">
+//                           </label>
+//                           <label>
+//                             Align:
+//                             <select data-wysihtml5-dialog-field="className">
+//                               <option value="">default</option>
+//                               <option value="wysiwyg-float-left">left</option>
+//                               <option value="wysiwyg-float-right">right</option>
+//                             </select>
+//                           </label>
+//                           <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+//                         </div>
+//
+//                       </div>
+//                         <textarea id="textarea" placeholder="Enter text ...">
+//
+//
+//
+//                         </textarea>
+//                       <br><input type="reset" value="Reset form!">
+//                     </form>' +
+//                     '</div>',
+//             width : width,
+//             height : height,
+//             callBack : function() {
+//                 $("#descriptionArea"+domainIdent).wysihtml5({});
+//
+//                 $("#saveDescription"+idDescription).click(function(e) {
+//
+//                         new DescriptionModel({id:idDescription,domainIdent: domainIdent, domainClassName: domainClassName}).save({
+//                             domainIdent: domainIdent,
+//                             domainClassName: domainClassName,
+//                             data :  $("#descriptionArea"+domainIdent).val()
+//                         }, {success: function (termModel, response) {
+//                             callback();
+//                          }, error: function (model, response) {
+//                              var json = $.parseJSON(response.responseText);
+//                              window.app.view.message("Correct term", "error:" + json.errors, "");
+//                          }});
+//
+//                 });
+//
+//             }
+//         });
          modal.addButtons("saveDescription"+idDescription,"Save",true,true);
          modal.addButtons("closeDescription"+idDescription,"Close",false,true);
 
