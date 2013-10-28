@@ -75,6 +75,10 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
         $("#selectLayersAnnotationProperty-"+idImage).on("change", function() {
             self.updateAnnotationProperyLayers();
         });
+
+        el.find(".refreshProperties").click(function(elem) {
+           self.initSelect(idImage);
+        })
     },
 
     updateAnnotationProperyLayers : function() {

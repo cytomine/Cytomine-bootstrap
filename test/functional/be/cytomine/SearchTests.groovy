@@ -8,6 +8,7 @@ import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.SearchAPI
+import be.cytomine.utils.Description
 import be.cytomine.utils.SearchFilter
 import be.cytomine.utils.SearchOperator
 import grails.converters.JSON
@@ -135,5 +136,36 @@ class SearchTests {
 
         assert DomainAPI.containsInJSONList(imageInstance1.id, json)
         assert !DomainAPI.containsInJSONList(imageInstance2.id, json)
+    }
+
+
+    void testListWithDescription() {
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        ImageInstance imageInstance1 = BasicInstanceBuilder.getImageInstanceNotExist(project, true)
+        ImageInstance imageInstance2 = BasicInstanceBuilder.getImageInstanceNotExist(project, true)
+
+        Property image1Property1 = BasicInstanceBuilder.getImageInstancePropertyNotExist()
+        image1Property1.value = "Poney"
+        image1Property1.domain = imageInstance1
+        BasicInstanceBuilder.saveDomain(image1Property1)
+
+        Description image2Description1 =  BasicInstanceBuilder.getDescriptionNotExist(imageInstance2,true)
+        image2Description1.data = "Blablbla Cheval Poney Blablabla"
+        BasicInstanceBuilder.saveDomain(image2Description1)
+
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(imageInstance1.id, json)
+        assert DomainAPI.containsInJSONList(imageInstance2.id, json)
+
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        assert DomainAPI.containsInJSONList(imageInstance2.id, json)
+
     }
 }

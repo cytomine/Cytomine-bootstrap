@@ -57,13 +57,16 @@ class SearchController extends RestController {
         listKeyword = keywords.split(",")
 
         def all = []
-        if (filter.equals(SearchFilter.PROJECT) || filter.equals(SearchFilter.ALL))
+        if (filter.equals(SearchFilter.PROJECT) || filter.equals(SearchFilter.ALL)) {
             all.addAll(searchService.list(listKeyword, operator, SearchFilter.PROJECT,idsProject))
-        if (filter.equals(SearchFilter.IMAGE) || filter.equals(SearchFilter.ALL))
-            all.addAll(searchService.list(listKeyword, operator, SearchFilter.IMAGE,idsProject))
-        if (filter.equals(SearchFilter.ANNOTATION) || filter.equals(SearchFilter.ALL))
-            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION,idsProject))
+        }
 
+        if (filter.equals(SearchFilter.IMAGE) || filter.equals(SearchFilter.ALL)) {
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.IMAGE,idsProject))
+        }
+        if (filter.equals(SearchFilter.ANNOTATION) || filter.equals(SearchFilter.ALL)) {
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION,idsProject))
+        }
         all.sort{-it.id}
         responseSuccess(all)
     }

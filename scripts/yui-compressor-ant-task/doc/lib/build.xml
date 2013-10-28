@@ -69,6 +69,8 @@
 <fileset dir="${src.dir}" includes="lib/backbone.paginator.js"/>
 <fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"/>
 <fileset dir="${src.dir}" includes="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"/>
+<fileset dir="${src.dir}" includes="lib/wysiwyg/parser_rules/advanced.js"/>
+<fileset dir="${src.dir}" includes="lib/wysiwyg/dist/wysihtml5-0.3.0.min.js"/>
 <fileset dir="${src.dir}" includes="lib/json2.js"/>
 <fileset dir="${src.dir}" includes="lib/strftime-min.js"/>
 <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"/>
