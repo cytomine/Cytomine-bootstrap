@@ -279,7 +279,11 @@ grails.plugins.springsecurity.interceptUrlMap = [
  */
 Properties props = new Properties()
     File propsFile = new File("${userHome}/.grails/cytomineconfig.properties")
-    props.load(propsFile.newDataInputStream())
+
+    if(propsFile.exists()) {
+        props.load(propsFile.newDataInputStream())
+    }
+
     println "cas.active="+props.getProperty("grails.plugins.springsecurity.cas.active")
     if(props.getProperty("grails.plugins.springsecurity.cas.active").toString()=="true") {
         println("enable CAS")
