@@ -151,11 +151,11 @@ var ReviewPanel = SideBarPanel.extend({
 
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
 //        //disable from selecy list
-        var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
-        selectElem.find("option#" + layer).attr("disabled", "disabled");
-//
-//        //select the first not selected
-        selectElem.val(selectElem.find("option[disabled!=disabled]").first().attr("value"));
+//        var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
+//        selectElem.find("option#" + layer).attr("disabled", "disabled");
+////
+////        //select the first not selected
+//        selectElem.val(selectElem.find("option[disabled!=disabled]").first().attr("value"));
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
         var selectFeature = new OpenLayers.Control.SelectFeature(self.getVisibleVectorsLayer());
 
@@ -206,8 +206,8 @@ var ReviewPanel = SideBarPanel.extend({
         panelElem.find("#reviewLayerElem" + layer).replaceWith("");
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
         //enable from select list
-        var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
-        selectElem.find("option#" + layer).removeAttr("disabled");
+//        var selectElem = panelElem.find("#reviewChoice" + self.model.get("id")).find("select");
+//        selectElem.find("option#" + layer).removeAttr("disabled");
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
     },
     addVectorLayer: function (layer, model, userID) {
@@ -217,28 +217,28 @@ var ReviewPanel = SideBarPanel.extend({
     addToListLayer: function (layer) {
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
 
-        var self = this;
-        //disable from select box
-        var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
-        console.log("#######");
-        console.log(this.browseImageView.divId + "=>" + layer);
-
-
-        var isAlgo = self.userJobLayers.get(layer)!=null;     //
-
-        var jobdetails = "";
-        if(isAlgo) {
-            jobdetails =  '<a href="#tabs-useralgo-'+layer+'">See job details...</a>';
-        }
-
-
-
-
-       // add to list
-        panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i> '+jobdetails+' </span>');
-        $("#removeReviewLayer" + layer).click(function (elem) {
-            self.removeLayerFromReview(layer);
-        });
+//        var self = this;
+//        //disable from select box
+//        var panelElem = $("#" + this.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
+//        console.log("#######");
+//        console.log(this.browseImageView.divId + "=>" + layer);
+//
+//
+//        var isAlgo = self.userJobLayers.get(layer)!=null;     //
+//
+//        var jobdetails = "";
+//        if(isAlgo) {
+//            jobdetails =  '<a href="#tabs-useralgo-'+layer+'">See job details...</a>';
+//        }
+//
+//
+//
+//
+//       // add to list
+//        panelElem.find("#reviewSelection" + self.model.id).append('<span style="display:block;" id="reviewLayerElem' + layer + '">' + self.layerName[layer] + '<i class="icon-remove icon-white" id="removeReviewLayer' + layer + '"></i> '+jobdetails+' </span>');
+//        $("#removeReviewLayer" + layer).click(function (elem) {
+//            self.removeLayerFromReview(layer);
+//        });
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
     },
     currentSelection: [],
@@ -261,7 +261,7 @@ var ReviewPanel = SideBarPanel.extend({
             this.userLayers.each(function (layer) {
                 self.layerName[layer.id] = layer.layerName();
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
-                selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
+//                selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
                 json.push({id:layer.id,name:layer.layerName()});
             });
@@ -271,61 +271,80 @@ var ReviewPanel = SideBarPanel.extend({
                 if (!layer.get("isDeleted")) {
                     self.layerName[layer.id] = layer.layerName();
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
-                    selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
+//                    selectElem.append('<option value="' + layer.id + '" id="' + layer.id + '">' + layer.layerName() + '</option>');
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
                     json.push({id:layer.id,name:layer.layerName()});
                 }
             });
 
 // TODO START: ENABLE THIS IF MAGIC SUGGEST
-//            var suggest = $('#addReviewLayerSelect').magicSuggest({
-//                resultAsString: true,
-//                width: 150,
-//                value: [window.app.status.user.id],
-//                data: json
-//            });
-//            self.currentSelection = [window.app.status.user.id]
+            console.log("el.find('#addReviewLayerSelect')="+el.find('#addReviewLayerSelect').length);
+
+//<div id="addReviewLayerSelect" class="ms-ctn" style="width: 150px; height: 31px;">
+//
+//    <div id="ms-trigger-0" class="ms-trigger">
+//        <div class="ms-trigger-ico">
+//        </div>
+//    </div>
+//    <div class="ms-helper " style="display: none;">
+//    </div>
+//    <div id="ms-sel-ctn-0" class="ms-sel-ctn">
+//        <div class="ms-sel-item ms-sel-text ">Rollus Loïc</div>
+//        <input id="ms-input-0" type="text" class="" value="Type or click here" style="width: 30px;">
+//        <input type="hidden" value="[16]">
+//    </div>
+//</div>
+
+            var suggest = el.find('#addReviewLayerSelect').magicSuggest({
+                resultAsString: true,
+                width: 250,
+                value: [window.app.status.user.id],
+                data: json
+            });
+            self.currentSelection = [window.app.status.user.id]
 //            suggest.render($("#addReviewLayerSelect"));
-//
-//            $(suggest).on("selectionchange", function (e) {
-//                var newSelection = suggest.getValue();
-//                console.log("*************************** selectionchange ***************************");
-//                console.log(newSelection);
-//                _.each(newSelection,function(item) {
-//                    console.log(item);
-//                });
-//
-//
-//
-//                console.log("newSelection="+_.pluck(newSelection, 'id'));
-//
-//
-//                console.log("currentSelection="+self.currentSelection);
-//                var toAdd = _.difference(newSelection, self.currentSelection);
-//                 console.log(toAdd);
-//                _.each(toAdd,function(id) {
-//                    self.currentSelection.push(id);
-//                    self.addLayerToReview(id);
-//                });
-//
-//                var toRem =  _.difference(self.currentSelection,newSelection);
-//                console.log(toRem);
-//                _.each(toRem,function(id) {
-//
-//                    self.currentSelection = _.difference(self.currentSelection,[id]);
-//                    self.removeLayerFromReview(id);
-//                });
-//
-//           });
+
+            $(suggest).on("selectionchange", function (e) {
+                var newSelection = suggest.getValue();
+                console.log("*************************** selectionchange ***************************");
+                console.log(newSelection);
+                _.each(newSelection,function(item) {
+                    console.log(item);
+                });
+
+
+
+                console.log("newSelection="+_.pluck(newSelection, 'id'));
+
+
+                console.log("currentSelection="+self.currentSelection);
+                var toAdd = _.difference(newSelection, self.currentSelection);
+                 console.log(toAdd);
+                _.each(toAdd,function(id) {
+                    self.currentSelection.push(id);
+                    self.addLayerToReview(id);
+                });
+
+                var toRem =  _.difference(self.currentSelection,newSelection);
+                console.log(toRem);
+                _.each(toRem,function(id) {
+
+                    self.currentSelection = _.difference(self.currentSelection,[id]);
+                    self.removeLayerFromReview(id);
+                });
+
+           });
+            el.find('#addReviewLayerSelect').css("height","31px");
+            el.find('#addReviewLayerSelect').find("#ms-input-0").css("width","30px");
 
  // TODO end: ENABLE THIS IF MAGIC SUGGEST
 
 //            //init event
 // TODO start: DISABLE THIS IF MAGIC SUGGEST
 
-            $("#addReviewLayers" + self.model.id).click(function () {
-                self.addLayerToReview(el.find("#reviewChoice" + self.model.get("id")).find("select").val());
-            });
+//            $("#addReviewLayers" + self.model.id).click(function () {
+//                self.addLayerToReview(el.find("#reviewChoice" + self.model.get("id")).find("select").val());
+//            });
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
             $("#reviewMultiple" + self.model.id).click(function () {
                 self.addAllReviewAnnotation();
@@ -346,7 +365,7 @@ var ReviewPanel = SideBarPanel.extend({
             var panel = $("#" + self.browseImageView.divId).find("#reviewPanel" + self.model.get("id"));
             panel.find('#showReviewLayer' + self.model.id).attr("disabled", "disabled");
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
-            panel.find("#addReviewLayerSelect" + self.model.id).attr("disabled", "disabled");
+//            panel.find("#addReviewLayerSelect" + self.model.id).attr("disabled", "disabled");
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
 // TODO end: DISABLE THIS IF MAGIC SUGGEST
 

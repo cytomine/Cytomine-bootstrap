@@ -240,6 +240,7 @@ var BrowseImageView = Backbone.View.extend({
                                 layer.registerEvents(self.map);
                                 layer.showFeature(annotation.get("id"));
                                 self.goToAnnotation(layer, annotation);
+                                self.layerSwitcherPanel.initLayerSelection();
                                 self.setLayerVisibility(layer, true);
                             }
                         });
@@ -261,19 +262,22 @@ var BrowseImageView = Backbone.View.extend({
         });
     },
     setLayerVisibility: function (layer, visibility) {
+        var self = this;
         // manually check (or uncheck) the checkbox in the menu:
         $("#" + this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
             if (layer.name != $(this).attr("value")) {
-                return;
+                return ;
             }
             if (visibility) {
-                if (!$(this).is(':checked')) {
-                    this.click();
-                }
+//                if (!$(this).is(':checked')) {
+//                    this.click();
+//                }
+                self.layerSwitcherPanel.showLayer(layer.userID);
             } else {
-                if ($(this).attr("checked") == "checked") {
-                    this.click();
-                }
+//                if ($(this).attr("checked") == "checked") {
+//                    this.click();
+//                }
+                self.layerSwitcherPanel.hideLayer(layer.userID);
             }
         });
     },
@@ -1193,6 +1197,7 @@ var BrowseImageView = Backbone.View.extend({
             var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
             layerAnnotation.isOwner = false;
             layerAnnotation.loadAnnotations(self);
+            self.layerSwitcherPanel.initLayerSelection();
         } else {
 
             self.reviewPanel.addReviewLayerToReview();

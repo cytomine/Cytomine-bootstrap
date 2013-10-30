@@ -36,7 +36,7 @@ var UserModel = Backbone.Model.extend({
             return this.get("softwareName") + " " + window.app.convertLongToDate(this.get("created"));
         }
         else {
-            return this.get('lastname') + " " + this.get('firstname');
+            return this.get('lastname') + " " + this.get('firstname') + " ("+this.get('username')+")";
         }
     }
 });

@@ -107,6 +107,7 @@ class AbstractImageService extends ModelService {
             log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
 
             def abstractImages = StorageAbstractImage.findAllByStorageInList(storageService.list()).collect { it.abstractImage.id }
+
             if(!abstractImages.isEmpty())   {
                 log.info "${abstractImages.size()} offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
                 PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {

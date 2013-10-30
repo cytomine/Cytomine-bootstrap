@@ -126,52 +126,13 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
-//    boolean hasPermissionBadPerf(def domain,Permission permission) {
-//        try {
-//            SecUser currentUser = cytomineService.getCurrentUser()
-//            String usernameParentUser = currentUser.humanUsername()
-//            int mask = permission.mask
-//
-//            //TODO:: this function is call very often, make a direct SQL request instead 3 request
-//
-//            AclObjectIdentity aclObject = AclObjectIdentity.findByObjectId(domain.id)
-//            AclSid aclSid = AclSid.findBySid(usernameParentUser)
-//            if(!aclObject) return false
-//            if(!aclSid) return false
-//
-//            boolean hasPermission = false;
-//            List<AclEntry> acls = AclEntry.findAllByAclObjectIdentityAndSid(aclObject,aclSid)
-//            acls.each { acl ->
-//                if(acl.mask>=mask) {
-//                    hasPermission=true
-//                }
-//            }
-//            return hasPermission
-//
-//        } catch (Exception e) {
-//            log.error e.toString()
-//            e.printStackTrace()
-//        }
-//        return false
-//    }
-
     def dataSource
     boolean hasPermission(def domain,Permission permission) {
+        println "hasPermission"
         try {
-            SecUser currentUser = cytomineService.getCurrentUser()
+            def masks = getPermission(domain,cytomineService.getCurrentUser())
 
-            String request = "SELECT max(mask) FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
-            "WHERE aoi.object_id_identity = ${domain.id} " +
-            "AND sid.sid = '${currentUser.humanUsername()}' " +
-            "AND ae.acl_object_identity = aoi.id "+
-            "AND ae.sid = sid.id "
-
-            int mask = 0;
-            new Sql(dataSource).eachRow(request) {
-                mask = it[0]
-            }
-
-            return mask >= permission.mask
+            return masks.max() >= permission.mask
 
         } catch (Exception e) {
             log.error e.toString()
@@ -180,7 +141,32 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
+    List getPermission(def domain, def user) {
+        try {
+            println "getPermission"
+            String request = "SELECT mask FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
+            "WHERE aoi.object_id_identity = ${domain.id} " +
+            "AND sid.sid = '${user.humanUsername()}' " +
+            "AND ae.acl_object_identity = aoi.id "+
+            "AND ae.sid = sid.id "
+            println "getPermission ok"
+            def masks = []
+            new Sql(dataSource).eachRow(request) {
+                masks<<it[0]
+            }
+            println "getPermission okok"
+            return masks
+
+        } catch (Exception e) {
+            log.error e.toString()
+            e.printStackTrace()
+        }
+        return []
+    }
+
+
     int compareTo(obj) {
         created.compareTo(obj.created)
     }
+
 }

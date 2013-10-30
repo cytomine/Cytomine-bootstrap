@@ -66,7 +66,14 @@ class UserUrlMappings {
         "/api/project/$id/online/user"(controller: "restUser"){
             action = [GET:"listOnlineFriendsWithPosition"]
         }
+        "/api/ldap/user"(controller:"restUser"){
+            action = [POST:"addFromLDAP"]
+        }
 
+
+        "/api/domain/$domainClassName/$domainIdent/user/$user"(controller:"restACL"){
+            action = [GET:"list",POST:"add",DELETE: "delete"]
+        }
 
     }
 }

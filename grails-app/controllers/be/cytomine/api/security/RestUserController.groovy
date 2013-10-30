@@ -328,4 +328,10 @@ class RestUserController extends RestController {
         }
         responseSuccess(usersWithPosition)
     }
+
+    def CASLdapUserDetailsService
+    def addFromLDAP = {
+        CASLdapUserDetailsService.loadUserByUsername(params.username)
+        responseSuccess(SecUser.findByUsername(params.username))
+    }
 }

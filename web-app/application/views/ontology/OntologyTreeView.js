@@ -81,7 +81,6 @@ var OntologyTreeView = Backbone.View.extend({
                         }
 
                     } else {
-                        console.log("addTermToReviewPanel");
                         self.browseImageView.addTermToReviewPanel(node.data.key);
                     }
 
@@ -176,9 +175,6 @@ var OntologyTreeView = Backbone.View.extend({
                var spanWidth = $(this).width();
                 if(spanWidth>0) {
                     var newFontSize = (sectionWidth/spanWidth) * originalFontSize;
-                    console.log("spanWidth="+spanWidth);
-                    console.log("sectionWidth="+sectionWidth);
-                    console.log("newFontSize="+newFontSize);
                      newFontSize = Math.min(originalFontSize,newFontSize);
                     $(this).css({"font-size" : newFontSize, "line-height" : newFontSize/1.2 + "px"});
                 }
@@ -310,7 +306,6 @@ var OntologyTreeView = Backbone.View.extend({
         var terms = []
         _.each($(this.el).find(".termVisible:checked"),function(item) {
             var term = $(item).data("term");
-            console.log("term="+term);
             terms.push(term);
 
         });
@@ -321,8 +316,6 @@ var OntologyTreeView = Backbone.View.extend({
         //check if 1 or N terms are unchecked
         var all = $(this.el).find(".termVisible").length;
         var visible = $(this.el).find(".termVisible:checked").length;
-
-        console.log("all="+all + " visible="+visible);
 
         return all != visible;
     }

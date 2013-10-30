@@ -23,7 +23,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
 
     LdapUserDetailsService ldapUserDetailsService
-
+    def grailsApplication
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -34,8 +34,11 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
     throws UsernameNotFoundException, DataAccessException {
-
+        println grailsApplication.config.plugins.springsecurity.cas.active
         SecUser user = SecUser.findByUsername(username)
+        if(user==null && !grailsApplication.config.plugins.springsecurity.cas.active)  {
+            return null
+        }
 
         if (user == null) { //User does not exists in our database
 

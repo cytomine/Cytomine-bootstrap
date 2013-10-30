@@ -1,5 +1,6 @@
 package be.cytomine.test
 
+import be.cytomine.CytomineDomain
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
@@ -104,6 +105,24 @@ class Infos {
         aclUtilService.addPermission storage, user.username, READ
         aclUtilService.addPermission storage, user.username, WRITE
         aclUtilService.addPermission storage, user.username, DELETE
+
+        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+        sessionFactory.currentSession.flush()
+        SCH.clearContext()
+    }
+
+    static void addUserRight(User user, CytomineDomain domain, def perms) {
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+
+        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+
+        perms.each {
+            aclUtilService.addPermission domain, user.username, it
+        }
+//        aclUtilService.addPermission domain, user.username, ADMINISTRATION
+//        aclUtilService.addPermission domain, user.username, READ
+//        aclUtilService.addPermission domain, user.username, WRITE
+
 
         def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
         sessionFactory.currentSession.flush()

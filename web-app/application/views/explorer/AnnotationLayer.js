@@ -37,23 +37,11 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
 OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
     read: function (collection) {
         var self = this;
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
-        console.log("######################################");
 
         var features = [];
         var nestedCollection = collection.collection;
         var termsToShow = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.getTermToShow();
         var isTermRestriction = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.isTermRestriction(); // //just for perf
-
-        console.log(termsToShow.length);
-        console.log(window.app.status.currentTermsCollection.size());
 
         _.each(nestedCollection, function (annotation) {
 
