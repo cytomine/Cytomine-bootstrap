@@ -131,8 +131,6 @@ abstract class CytomineDomain  implements Comparable{
 
         try {
             def masks = getPermission(domain,cytomineService.getCurrentUser())
-
-            println masks.max() >= permission.mask
             return masks.max() >= permission.mask
 
         } catch (Exception e) {
@@ -144,9 +142,6 @@ abstract class CytomineDomain  implements Comparable{
 
     List getPermission(def domain, def user) {
         try {
-            println "getPermission on domain ${domain.id}/${domain.class.name}"
-
-
             String request = "SELECT mask FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
             "WHERE aoi.object_id_identity = ${domain.id} " +
             "AND sid.sid = '${user.humanUsername()}' " +
@@ -157,9 +152,6 @@ abstract class CytomineDomain  implements Comparable{
             new Sql(dataSource).eachRow(request) {
                 masks<<it[0]
             }
-
-
-            println masks
             return masks
 
         } catch (Exception e) {

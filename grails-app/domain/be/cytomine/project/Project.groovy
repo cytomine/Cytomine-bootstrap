@@ -28,11 +28,6 @@ class Project extends CytomineDomain implements Serializable {
      */
     Discipline discipline
 
-    /**
-     * Flag if project has private layer
-     * A project user only see its layer
-     */
-    boolean privateLayer = false
 
     boolean blindMode = false
 
@@ -71,6 +66,14 @@ class Project extends CytomineDomain implements Serializable {
     boolean isClosed = false
 
     boolean isReadOnly = false
+    /**
+     * Flag if project has private layer
+     * A project user only see its layer
+     */
+
+    boolean hideUsersLayers = false
+    boolean hideAdminsLayers = false
+
 
     static belongsTo = [ontology: Ontology]
     static hasMany = [retrievalProjects : Project]
@@ -145,13 +148,16 @@ class Project extends CytomineDomain implements Serializable {
 
         domain.retrievalDisable = JSONUtils.getJSONAttrBoolean(json, 'retrievalDisable', false)
         domain.retrievalAllOntology = JSONUtils.getJSONAttrBoolean(json, 'retrievalAllOntology', true)
-        domain.privateLayer = JSONUtils.getJSONAttrBoolean(json, 'privateLayer', false)
+
         domain.blindMode = JSONUtils.getJSONAttrBoolean(json, 'blindMode', false)
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
         domain.isClosed = JSONUtils.getJSONAttrBoolean(json, 'isClosed', false)
         domain.isReadOnly = JSONUtils.getJSONAttrBoolean(json, 'isReadOnly', false)
+
+        domain.hideUsersLayers = JSONUtils.getJSONAttrBoolean(json, 'hideUsersLayers', false)
+        domain.hideAdminsLayers = JSONUtils.getJSONAttrBoolean(json, 'hideAdminsLayers', false)
 
         if(!json.retrievalProjects.toString().equals("null")) {
             domain.retrievalProjects?.clear()
@@ -181,7 +187,6 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['ontology'] = project.ontology?.id
             returnArray['ontologyName'] = project.ontology?.name
             returnArray['discipline'] = project.discipline?.id
-            returnArray['privateLayer'] = (project.privateLayer != null &&  project.privateLayer)
             returnArray['blindMode'] = (project.blindMode != null &&  project.blindMode)
             returnArray['disciplineName'] = project.discipline?.name
             returnArray['numberOfSlides'] = project.countSamples()
@@ -194,6 +199,8 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
             returnArray['isClosed'] = project.isClosed
             returnArray['isReadOnly'] = project.isReadOnly
+            returnArray['hideUsersLayers'] = project.hideUsersLayers
+            returnArray['hideAdminsLayers'] = project.hideAdminsLayers
             returnArray['created'] = project.created?.time?.toString()
             returnArray['updated'] = project.updated?.time?.toString()
             return returnArray

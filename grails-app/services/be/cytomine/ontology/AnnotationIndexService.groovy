@@ -48,7 +48,6 @@ class AnnotationIndexService {
         }
 
         long value = 0
-        println request
         new Sql(dataSource).eachRow(request) {
             def val = it[0]
             val? value = val : 0

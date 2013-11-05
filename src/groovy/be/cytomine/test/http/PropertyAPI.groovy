@@ -32,11 +32,6 @@ class PropertyAPI extends DomainAPI {
     static def create(Long idDomain, String type, String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property.json"
         def result = doPOST(URL,json,username,password)
-        //{"
-        // message":"Project 9,384,520 (TEST1502) added",
-        // "project":{"ontologyName":"LBA","class":"be.cytomine.project.Project","numberOfSlides":-1,"ontology":5500,"privateLayer":false,"retrievalProjects":[],"id":9384520,"numberOfReviewedAnnotations":0,"numberOfJobAnnotations":0,"updated":null,"created":"1360930795928","disciplineName":"CYTOLOGY","name":"TEST1502","numberOfAnnotations":0,"retrievalAllOntology":true,"discipline":26480,"numberOfImages":0,"retrievalDisable":false},
-        // "callback":{"projectID":"9384520","method":"be.cytomine.AddProjectCommand"},
-        // "printMessage":true}
         println "result=$result"
         result.data = Property.get(JSON.parse(result.data)?.property?.id)
         return result
@@ -45,11 +40,6 @@ class PropertyAPI extends DomainAPI {
     //UPDATE
     static def update(def id, Long idDomain, String type, def jsonAnnotationProperty, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property/${id}.json"
-        //{
-        // "message":"Project 9,384,520  (TEST1503) edited",
-        // "project":{"ontologyName":"LBA","class":"be.cytomine.project.Project","numberOfSlides":-1,"ontology":5500,"privateLayer":false,"retrievalProjects":[],"id":9384520,"numberOfReviewedAnnotations":0,"numberOfJobAnnotations":0,"updated":null,"created":"1360930795928","disciplineName":"CYTOLOGY","name":"TEST1503","numberOfAnnotations":0,"retrievalAllOntology":true,"discipline":26480,"numberOfImages":0,"retrievalDisable":false},
-        // "callback":{"projectID":"9384520","method":"be.cytomine.EditProjectCommand"},
-        // "printMessage":true}
         return doPUT(URL,jsonAnnotationProperty,username,password)
     }
 

@@ -148,8 +148,6 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     });
 
 
-
-    console.log("reviewMode=" + reviewMode + " this.reviewLayer=" + this.reviewLayer);
     if (this.reviewLayer) {
         //review layer: paint it green
         styleMap.styles["default"].addRules(rules);
@@ -171,8 +169,6 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
 
     var annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true, kmeans:true}).url().replace("json", "jsonp");
 
-
-    console.log("Get annotations for layers:"+annotationsCollection);
 
 
 
@@ -333,7 +329,7 @@ AnnotationLayer.prototype = {
 
             },
             featureselected: function (evt) {
-                console.log("featureselected");
+
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.idAnnotation = evt.feature.attributes.idAnnotation;
                     if (!self.reviewLayer) {
@@ -353,7 +349,7 @@ AnnotationLayer.prototype = {
 
             },
             'featureunselected': function (evt) {
-                console.log("featureunselected on " + self.name);
+
                 if (self.measureOnSelect) {
                     self.vectorsLayer.removeFeatures(evt.feature);
                 }
@@ -414,7 +410,7 @@ AnnotationLayer.prototype = {
     },
     initControls: function (map, selectFeature) {
         /*if (isOwner) { */
-        console.log("initControls");
+
         this.controls = {
             'freehand': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
                 handlerOptions: {
@@ -446,7 +442,7 @@ AnnotationLayer.prototype = {
     loadAnnotations: function (browseImageView) {
 
         var self = this;
-        console.log("loadAnnotations="+this.vectorsLayer.protocol.options);
+
         browseImageView.addVectorLayer(this, this.userID);
         browseImageView.layerLoadedCallback(self);
     },
@@ -549,12 +545,9 @@ AnnotationLayer.prototype = {
     correctAnnotation: function (feature, remove) {
         var self = this;
 
-        console.log("correctAddAnnotation");
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
 
-        console.log("geomwkt=" + geomwkt);
-        console.log("geomwkt=" + geomwkt.indexOf("LINESTRING"));
         if (geomwkt.indexOf("LINESTRING") != -1) {
             self.vectorsLayer.removeFeatures([feature]);
             return
@@ -591,7 +584,7 @@ AnnotationLayer.prototype = {
 
     /*Add annotation in database*/
     addAnnotation: function (feature) {
-        console.log("addAnnotation");
+
         var alias = this;
         var self = this;
         var format = new OpenLayers.Format.WKT();
@@ -792,7 +785,7 @@ AnnotationLayer.prototype = {
             var control = this.controls[key];
             if (name == key || key == "select") {
                 if(!control.active) control.activate();
-                console.log("Activate "+key);
+
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];
@@ -801,7 +794,7 @@ AnnotationLayer.prototype = {
                 }
             } else {
                 control.deactivate();
-                console.log("Desactivate "+key);
+
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];

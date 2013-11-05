@@ -45,8 +45,6 @@ class SecurityACL {
     }
 
     static void check(def id, String className, Permission permission) {
-        println "id=$id"
-        println "className=${className}"
         try {
             def domain = Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
             if (domain) {
@@ -91,8 +89,6 @@ class SecurityACL {
 
 
     static void checkReadOnly(def id, String className) {
-        println "id=$id"
-        println "className=${className}"
         try {
             def domain = Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
             if (domain) {
@@ -110,13 +106,8 @@ class SecurityACL {
     //check if the container (e.g. Project) is not in readonly. If in readonly, only admins can edit this.
     static void checkReadOnly(CytomineDomain domain) {
         if (domain) {
-            println "checkReadOnly"
             boolean readOnly = !domain.container().canUpdateContent()
             boolean containerAdmin = domain.container().hasPermission(domain.container(),ADMINISTRATION)
-
-            println "readOnly=$readOnly containerAdmin=$containerAdmin"
-            println "-> " + domain.container().id
-
             if(readOnly && !containerAdmin) {
                throw new ForbiddenException("The project for this data is in readonly mode! You must be project admin to add, edit or delete this resource in a readonly project.")
            }

@@ -63,9 +63,25 @@
                 <legend>Project config</legend>
                 <div>
                     <div class="alert alert-info">
-                        If private layer is enabled, a user will not see annotations from other users.
+                        If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
+                        A project admin will still be able to see all layers.
                     </div>
-                    <input type="checkbox" id="privateLayer"> Private Layer
+                    <input type="checkbox" id="hideAdminsLayers"> Hide admins layers
+
+                    <br><br>
+                    <div class="alert alert-info">
+                        If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
+                        A project admin will still be able to see all layers.
+                    </div>
+                    <input type="checkbox" id="hideUsersLayers"> Hide users layers
+
+                    <br><br>
+
+                    <div class="alert alert-info">
+                        If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
+                        A project admin will still be able to see to add/edit or delete data for this project.
+                    </div>
+                    <input type="checkbox" id="isReadOnly"> Read-Only project
 
                     <br><br>
 

@@ -18,6 +18,12 @@ class GenerateMissingStoragesJob {
 
     def storageService
 
+    /**
+     *  This job must be concurrent = false
+     *  If concurrent = true (default), and we add hundred users (time to create storage > 60000ms) => error
+     */
+    def concurrent = false
+
     static triggers = {
         simple name: 'generateMissingStoragesJob', startDelay: 1000, repeatInterval: 60000
     }

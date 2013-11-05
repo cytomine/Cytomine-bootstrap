@@ -91,4 +91,10 @@ class UserAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/user/" + id + ".json"
         return doDELETE(URL,username,password)
     }
+
+    static def listLayers(Long idProject,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "/api/project/$idProject/userlayer"
+        return doGET(URL, username, password)
+    }
+
 }

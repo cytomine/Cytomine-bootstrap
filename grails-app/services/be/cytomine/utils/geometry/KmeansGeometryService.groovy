@@ -98,29 +98,29 @@ class KmeansGeometryService {
 
         double ratio = bboxWidth/imageWidth
 
-        log.info "imageWidth=$imageWidth"
-        log.info "bboxWidth=$bboxWidth"
-        log.info "ratio=$ratio"
+//        log.info "imageWidth=$imageWidth"
+//        log.info "bboxWidth=$bboxWidth"
+//        log.info "ratio=$ratio"
 
         int ratio25 = ((int)((ratio/25d)*100))*25
 
-        log.info "ration25=$ratio25"
+//        log.info "ration25=$ratio25"
 
         def ruleLine = rules.get(Math.min(ratio25,100))
 
-        log.info "ruleLine=$ruleLine"
+//        log.info "ruleLine=$ruleLine"
 
         int numberOfAnnotation = annotationIndexService.count(image,user)
 
         def rule = getRuleForNumberOfAnnotations(numberOfAnnotation, ruleLine)
 
-        log.info "rule=$rule"
+//        log.info "rule=$rule"
 
         return rule
     }
 
     public def getRuleForNumberOfAnnotations(def annotations, def ruleLine) {
-        println "getRuleForNumberOfAnnotations=$annotations"
+//        println "getRuleForNumberOfAnnotations=$annotations"
         if (annotations >= ANNOTATIONSIZE5) return ruleLine.get(ANNOTATIONSIZE5)
         if (annotations >= ANNOTATIONSIZE4) return ruleLine.get(ANNOTATIONSIZE4)
         if (annotations >= ANNOTATIONSIZE3) return ruleLine.get(ANNOTATIONSIZE3)

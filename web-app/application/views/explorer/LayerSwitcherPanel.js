@@ -49,11 +49,6 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         if (userID == "REVIEW") {
             color = "#5BB75B";
         }
-        console.log("####################################");
-//        console.log(layer);
-//        console.log(layer.user);
-//        console.log(model);
-//        console.log(userID);
 
         var button = '<button class="btn btn-small btn-inverse removeImageLayers" id="removeImageLayers'+userID+'" data-user="'+userID+'" style="height:18px;"><i class="icon-minus icon-white"></i></button>'
 
@@ -68,13 +63,10 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
             layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>' data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %> <span class='numberOfAnnotation'></span></span></a>"+button+" </li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
         }
-        console.log("*** addVectorLayer " + model.get("id"));
         $("#" + this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
         $("#" + layerID).click(function () {
-            console.log("click");
             var checked = $(this).is(':checked');
-            console.log("visible:" + checked);
             layer.vectorsLayer.setVisibility(checked);
             self.browseImageView.annotationProperties.updateAnnotationProperyLayers(); //update annotation proprety layers
         });

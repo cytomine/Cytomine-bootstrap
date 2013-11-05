@@ -293,10 +293,14 @@ var AddProjectDialog = Backbone.View.extend({
         var users = self.userMaggicSuggest.getValue();
         var admins = self.adminMaggicSuggest.getValue();
         var blindMode = $("input#blindMode").is(':checked');
-        var privateLayer = $("input#privateLayer").is(':checked');
+        var isReadOnly = $("input#isReadOnly").is(':checked');
+        var hideUsersLayers = $("input#hideUsersLayers").is(':checked');
+        var hideAdminsLayers = $("input#hideAdminsLayers").is(':checked');
 
         console.log("blindMode=" + blindMode);
-        console.log("privateLayer=" + privateLayer);
+        console.log("isReadOnly=" + isReadOnly);
+        console.log("hideUsersLayers=" + hideUsersLayers);
+        console.log("hideAdminsLayers=" + hideAdminsLayers);
 
         var retrievalDisable = $("input#retrievalProjectNone").is(':checked');
         var retrievalProjectAll = $("input#retrievalProjectAll").is(':checked');
@@ -321,7 +325,7 @@ var AddProjectDialog = Backbone.View.extend({
                 var timer = window.app.view.printTaskEvolution(response.task, $("#progressBarAddProjectContainer").find("#task-" + response.task.id), 1000);
 
                 //create project
-                new ProjectModel({task:response.task.id,users: users, admins: admins,name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, privateLayer: privateLayer}, {
+                new ProjectModel({task:response.task.id,users: users, admins: admins,name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, isReadOnly: isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
                             success: function (model, response) {
                                 console.log("1. Project added!");
                                 clearInterval(timer);

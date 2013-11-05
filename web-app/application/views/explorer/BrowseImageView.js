@@ -61,8 +61,7 @@ var BrowseImageView = Backbone.View.extend({
         templateData.project = window.app.status.currentProject;
         templateData.type = self.divPrefixId;
         $(this.el).append(_.template(tpl, templateData));
-        console.log("************MODEL*************");
-        console.log(this.model);
+
         var shortOriginalFilename = this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
         if (shortOriginalFilename.length > 25) {
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
@@ -132,11 +131,11 @@ var BrowseImageView = Backbone.View.extend({
 
     },
     isCurrentAnnotationUser: function () {
-        console.log("isCurrentAnnotationUser=" + window.app.models.projectUser.get(this.currentAnnotation.get('user')));
+
         return window.app.models.projectUser.get(this.currentAnnotation.get('user')) != undefined
     },
     addTermToReviewPanel: function (idTerm) {
-        console.log("addTermToReviewPanel=" + idTerm);
+
         if (this.review) {
             this.reviewPanel.addTermChoice(idTerm, this.currentAnnotation.id);
         }
@@ -402,8 +401,6 @@ var BrowseImageView = Backbone.View.extend({
         return window.app.models.projectAdmin.get(window.app.status.user.id)!=undefined;
     },
     getUserAndReviewLayer: function () {
-        console.log("getUserAndReviewLayer.user=" + this.userLayer.name);
-        console.log("getUserAndReviewLayer.review=" + this.reviewPanel.reviewLayer.name);
         return {user: this.userLayer, review: this.reviewPanel.reviewLayer};
     },
     /**
@@ -439,7 +436,7 @@ var BrowseImageView = Backbone.View.extend({
      */
     reviewLayer: null,
     addVectorLayer: function (layer, userID) {
-        console.log("addVectorLayer");
+
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
 
@@ -457,7 +454,7 @@ var BrowseImageView = Backbone.View.extend({
         }
     },
     showAnnotationInReviewPanel: function (annotation) {
-        console.log("showAnnotationInReviewPanel");
+
         if (this.review) {
             this.reviewPanel.showCurrentAnnotation(annotation);
         }
@@ -485,11 +482,10 @@ var BrowseImageView = Backbone.View.extend({
         }).render();
     },
     createNumberOfAnnotationPerUser : function() {
-        console.log("createNumberOfAnnotationPerUser");
+
         var self = this;
         var refreshData = function() {
             $.get("/api/imageinstance/"+self.model.id+"/annotationindex.json", function(data) {
-                console.log("GET REFRESH");
                 var totalReviewed = 0;
                 _.each (data.collection, function (item){
                     //
@@ -525,7 +521,7 @@ var BrowseImageView = Backbone.View.extend({
     },
     createInformationPanel: function () {
         var self = this;
-        console.log('x:'+self.model.get('originalFilename'));
+
         this.informationsPanel = new InformationsPanel({
             browseImageView: self,
             model: self.model,
@@ -534,7 +530,7 @@ var BrowseImageView = Backbone.View.extend({
     },
     createMultiDimensionPanel: function () {
         var self = this;
-        console.log("createMultiDimensionPanel");
+
         this.multidimensionPanel = new MultiDimensionPanel({
             browseImageView: self,
             model: self.model,

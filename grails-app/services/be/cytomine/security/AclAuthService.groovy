@@ -34,9 +34,7 @@ class AclAuthService extends ModelService {
     def permissionService
 
     def get(CytomineDomain domain, SecUser user) {
-        log.info "Get permission"
         SecurityACL.checkAdmin(cytomineService.currentUser)
-        log.info "Search permission"
         return domain.getPermission(domain,user)
     }
 

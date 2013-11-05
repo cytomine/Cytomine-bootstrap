@@ -92,9 +92,10 @@ var EditProjectDialog = Backbone.View.extend({
             }
         });
 
-
         $("input#blindMode").attr('checked', self.model.get('blindMode'));
-        $("input#privateLayer").attr('checked', self.model.get('privateLayer'));
+        $("input#hideUsersLayers").attr('checked', self.model.get('hideUsersLayers'));
+        $("input#hideAdminsLayers").attr('checked', self.model.get('hideAdminsLayers'));
+        $("input#isReadOnly").attr('checked', self.model.get('isReadOnly'));
 
     },
     createUserList: function () {
@@ -290,7 +291,14 @@ var EditProjectDialog = Backbone.View.extend({
             projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
         }
         var blindMode = $("input#blindMode").is(':checked');
-        var privateLayer = $("input#privateLayer").is(':checked');
+        var isReadOnly = $("input#isReadOnly").is(':checked');
+        var hideUsersLayers = $("input#hideUsersLayers").is(':checked');
+        var hideAdminsLayers = $("input#hideAdminsLayers").is(':checked');
+
+        console.log("blindMode=" + blindMode);
+        console.log("isReadOnly=" + isReadOnly);
+        console.log("hideUsersLayers=" + hideUsersLayers);
+        console.log("hideAdminsLayers=" + hideAdminsLayers);
 
         var divToFill = $("#login-form-edit-project");
         divToFill.hide();
@@ -310,8 +318,8 @@ var EditProjectDialog = Backbone.View.extend({
                 var taskId = response.task.id;
                 //create project
                 project.task = taskId
-                project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer});
-                project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,privateLayer:privateLayer}, {
+                project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
+                project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
                             success: function (model, response) {
                                 console.log("1. Project edited!");
                                 clearInterval(timer);

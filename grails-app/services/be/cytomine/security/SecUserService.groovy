@@ -111,6 +111,7 @@ class SecUserService extends ModelService {
         return user
     }
 
+
     def listAdmins(Project project) {
         SecurityACL.check(project,READ)
         def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
@@ -157,15 +158,36 @@ class SecUserService extends ModelService {
         SecurityACL.check(project,READ)
 
         Collection<SecUser> users = listUsers(project)
+        Collection<SecUser> admins = listAdmins(project)
+
+
         SecUser currentUser = cytomineService.getCurrentUser()
-        //if user is admin of the project, show all layers
-        if (!project.checkPermission(ADMINISTRATION) && project.privateLayer && users.contains(currentUser)) {
+
+        if(project.checkPermission(ADMINISTRATION)) {
+            return users
+        } else if(project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
             return [currentUser]
-        } else if (!project.privateLayer || project.checkPermission(ADMINISTRATION)) {
-            return  users
-        } else { //should no arrive but possible if user is admin and not in project
-            []
-        }
+        } else if(project.hideAdminsLayers && !project.hideUsersLayers && users.contains(currentUser)) {
+            users.removeAll(admins)
+            return users
+        } else if(!project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
+            admins.add(currentUser)
+            return admins
+         }else if(!project.hideAdminsLayers && !project.hideUsersLayers && users.contains(currentUser)) {
+            return users
+         }else { //should no arrive but possible if user is admin and not in project
+             []
+         }
+
+//
+//        //if user is admin of the project, show all layers
+//        if (!project.checkPermission(ADMINISTRATION) && project.privateLayer && users.contains(currentUser)) {
+//            return [currentUser]
+//        } else if (!project.privateLayer || project.checkPermission(ADMINISTRATION)) {
+//            return  users
+//        } else { //should no arrive but possible if user is admin and not in project
+//            []
+//        }
     }
 
     /**
@@ -342,6 +364,10 @@ class SecUserService extends ModelService {
             CommandHistory.findAllByCommand(it).each {it.delete()}
             it.delete()
         }
+    }
+
+    def afterAdd(def domain, def response) {
+        SecUserSecRole.create(domain,SecRole.findByAuthority("ROLE_USER"),true)
     }
 
     def getStringParamsI18n(def domain) {

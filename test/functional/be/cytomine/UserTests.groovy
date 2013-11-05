@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
@@ -376,7 +377,160 @@ class UserTests  {
        assert json instanceof JSONObject
      }
 
+            /**
+         if(project.checkPermission(ADMINISTRATION)) {
+             return users
+         } else if(project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
+             return [currentUser]
+         } else if(project.hideAdminsLayers && !project.hideUsersLayers && users.contains(currentUser)) {
+             users.removeAll(admins)
+             return users
+         } else if(!project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
+             admins.add(currentUser)
+             return admins
+          }else if(!project.hideAdminsLayers && !project.hideUsersLayers && users.contains(currentUser)) {
+             return users
+          }else { //should no arrive but possible if user is admin and not in project
+              []
+          }**/
 
+
+
+    void testListLayerAllLayers() {
+        def simpleUsername1 = "simpleUserListLayer1"
+        def simpleUsername2 = "simpleUserListLayer2"
+        def adminUsername = "adminRO"
+        def password = "password"
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        //by default all is visible!
+        assert !project.hideUsersLayers
+        assert !project.hideAdminsLayers
+
+        //Add a simple project user
+        User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a simple project user
+        User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a project admin
+        User admin = BasicInstanceBuilder.getUser(adminUsername,password)
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //a admin must see all layers
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),admin.id)
+        //a simple user must see all layers too
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),admin.id)
+    }
+
+    void testListLayerAllLayersHideAdminLayers() {
+        def simpleUsername1 = "simpleUserListLayer1"
+        def simpleUsername2 = "simpleUserListLayer2"
+        def adminUsername = "adminRO"
+        def password = "password"
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        project.hideAdminsLayers = true
+        BasicInstanceBuilder.saveDomain(project)
+
+        //Add a simple project user
+        User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a simple project user
+        User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a project admin
+        User admin = BasicInstanceBuilder.getUser(adminUsername,password)
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //a admin must see all layers
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),admin.id)
+        //a simple user must see all layers exept admins layer
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser2.id)
+        assert !checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),admin.id)
+    }
+
+    void testListLayerAllLayersHideUserLayers() {
+        def simpleUsername1 = "simpleUserListLayer1"
+        def simpleUsername2 = "simpleUserListLayer2"
+        def adminUsername = "adminRO"
+        def password = "password"
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        project.hideUsersLayers = true
+        BasicInstanceBuilder.saveDomain(project)
+
+        //Add a simple project user
+        User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a simple project user
+        User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a project admin
+        User admin = BasicInstanceBuilder.getUser(adminUsername,password)
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //a admin must see all layers
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),admin.id)
+        //a simple user must see all admisn layer and his layer
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser1.id)
+        assert !checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),admin.id)
+    }
+
+    void testListLayerAllLayersHideUserLayersAndHideAdminLayers() {
+        def simpleUsername1 = "simpleUserListLayer1"
+        def simpleUsername2 = "simpleUserListLayer2"
+        def adminUsername = "adminRO"
+        def password = "password"
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        project.hideUsersLayers = true
+        project.hideAdminsLayers = true
+        BasicInstanceBuilder.saveDomain(project)
+
+        //Add a simple project user
+        User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a simple project user
+        User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //Add a project admin
+        User admin = BasicInstanceBuilder.getUser(adminUsername,password)
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+
+        //a admin must see all layers
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser2.id)
+        assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),admin.id)
+        //a simple user must see only its own layer
+        assert checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser1.id)
+        assert !checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),simpleUser2.id)
+        assert !checkIfContains(UserAPI.listLayers(project.id,simpleUsername1,password),admin.id)
+    }
+
+    static boolean checkIfContains(def result, def id) {
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        return UserAPI.containsInJSONList(id,json)
+    }
 
 
 }

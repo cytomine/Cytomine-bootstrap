@@ -33,9 +33,6 @@ class AnnotationListingService extends ModelService {
 
 
     def listGeneric(AnnotationListing al) {
-        println "p=${al.kmeansValue}"
-        println "kmeans=${al.kmeans}"
-        println "al.vontainer=${al.container()}"
         SecurityACL.check(al.container(),READ)
         if(al.kmeans && !al.kmeansValue) {
             if(!al.image || !al.bbox) {
@@ -43,7 +40,6 @@ class AnnotationListingService extends ModelService {
             }
             def rule = kmeansGeometryService.mustBeReduce(al.image,al.user,al.bbox)
             al.kmeansValue = rule
-            println "s=${al.kmeansValue}"
         } else {
             //no kmeans
             al.kmeansValue = kmeansGeometryService.FULL
@@ -53,8 +49,6 @@ class AnnotationListingService extends ModelService {
 
     def executeRequest(AnnotationListing al) {
 
-
-        println "x=${al.kmeansValue}"
         if(al.kmeansValue==kmeansGeometryService.FULL) {
             selectGenericAnnotation(al)
         } else if(al.kmeansValue==kmeansGeometryService.KMEANSFULL) {
@@ -77,8 +71,6 @@ class AnnotationListingService extends ModelService {
 
           def realColumn = []
          def request = al.getAnnotationsRequest()
-          println  request
-          println dataSource
           boolean termAsked = false
 
           new Sql(dataSource).eachRow(request) {
