@@ -32,7 +32,6 @@ class RestACLController extends RestController {
     def aclAuthService
 
     def list = {
-        log.info "list"
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
                 responseSuccess(aclAuthService.get(retrieveCytomineDomain(params.domainClassName,params.long('domainIdent')),SecUser.read(params.long('user'))) )

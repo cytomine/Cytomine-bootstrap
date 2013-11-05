@@ -70,6 +70,8 @@ class Project extends CytomineDomain implements Serializable {
 
     boolean isClosed = false
 
+    boolean isReadOnly = false
+
     static belongsTo = [ontology: Ontology]
     static hasMany = [retrievalProjects : Project]
 
@@ -149,7 +151,7 @@ class Project extends CytomineDomain implements Serializable {
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
 
         domain.isClosed = JSONUtils.getJSONAttrBoolean(json, 'isClosed', false)
-
+        domain.isReadOnly = JSONUtils.getJSONAttrBoolean(json, 'isReadOnly', false)
 
         if(!json.retrievalProjects.toString().equals("null")) {
             domain.retrievalProjects?.clear()
@@ -191,6 +193,7 @@ class Project extends CytomineDomain implements Serializable {
             returnArray['retrievalDisable'] = project.retrievalDisable
             returnArray['retrievalAllOntology'] = project.retrievalAllOntology
             returnArray['isClosed'] = project.isClosed
+            returnArray['isReadOnly'] = project.isReadOnly
             returnArray['created'] = project.created?.time?.toString()
             returnArray['updated'] = project.updated?.time?.toString()
             return returnArray
@@ -216,6 +219,11 @@ class Project extends CytomineDomain implements Serializable {
      */
     public CytomineDomain container() {
         return this;
+    }
+
+
+    boolean canUpdateContent() {
+        return !isReadOnly
     }
 
 }

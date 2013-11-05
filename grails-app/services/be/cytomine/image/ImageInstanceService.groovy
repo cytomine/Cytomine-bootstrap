@@ -157,6 +157,7 @@ class ImageInstanceService extends ModelService {
      */
     def add(def json) {
         SecurityACL.check(json.project,Project,READ)
+        SecurityACL.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         synchronized (this.getClass()) {
@@ -174,7 +175,8 @@ class ImageInstanceService extends ModelService {
     def update(ImageInstance domain, def jsonNewData) {
         SecurityACL.check(domain.container(),READ)
         SecurityACL.check(jsonNewData.project,Project,READ)
-
+        SecurityACL.checkReadOnly(domain.container())
+        SecurityACL.checkReadOnly(jsonNewData.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
         executeCommand(c,domain,jsonNewData)
@@ -190,6 +192,7 @@ class ImageInstanceService extends ModelService {
      */
     def delete(ImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecurityACL.check(domain.container(),READ)
+        SecurityACL.checkReadOnly(domain.container())
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

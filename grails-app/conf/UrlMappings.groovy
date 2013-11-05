@@ -55,5 +55,9 @@ class UrlMappings {
         "/api/news"(controller:"news") {
             action = [GET:"listNews"]
         }
+
+        "/loginWithoutLDAP/login" (controller: "login") {
+            action = [GET:"loginWithoutLDAP"]
+        }
     }
 }

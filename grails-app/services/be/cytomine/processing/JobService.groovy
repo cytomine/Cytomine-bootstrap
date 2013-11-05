@@ -75,6 +75,7 @@ class JobService extends ModelService {
      */
     def add(def json) {
         SecurityACL.check(json.project,Project, READ)
+        SecurityACL.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
@@ -109,6 +110,7 @@ class JobService extends ModelService {
     def update(Job job, def jsonNewData) {
         log.info "update"
         SecurityACL.check(job.container(),READ)
+        SecurityACL.checkReadOnly(job.container())
         log.info "SecurityACL.check"
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),job, jsonNewData)
@@ -125,6 +127,8 @@ class JobService extends ModelService {
     def delete(Job domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.check(domain.container(),READ)
+        SecurityACL.checkReadOnly(domain.container())
+
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -23,6 +23,18 @@ class LoginController {
      */
     def springSecurityService
 
+    def loginWithoutLDAP = {
+        if (springSecurityService.isLoggedIn()) {
+            redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
+        }
+        else {
+            render(view:'login')
+        }
+
+        //render view: "index", model: [postUrl: postUrl,
+             //   rememberMeParameter: config.rememberMe.parameter]
+    }
+
     /**
      * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
      */
@@ -39,14 +51,13 @@ class LoginController {
      * Show the login page.
      */
     def auth = {
-
         def config = SpringSecurityUtils.securityConfig
 
         if (springSecurityService.isLoggedIn()) {
             redirect uri: config.successHandler.defaultTargetUrl
             return
         }
-
+        println "render"
         String view = 'auth'
         String postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
         render view: view, model: [postUrl: postUrl,

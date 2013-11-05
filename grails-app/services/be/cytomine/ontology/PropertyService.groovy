@@ -132,6 +132,7 @@ class PropertyService extends ModelService {
 
         if (domain != null) {
             SecurityACL.check(domain.container(),READ)
+            SecurityACL.checkReadOnly(domain.container())
         }
 
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -147,6 +148,7 @@ class PropertyService extends ModelService {
      */
     def update(Property ap, def jsonNewData) {
         SecurityACL.check(ap.container(),READ)
+        SecurityACL.checkReadOnly(ap.container())
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new EditCommand(user: currentUser)
         return executeCommand(command,ap,jsonNewData)
@@ -163,6 +165,7 @@ class PropertyService extends ModelService {
     def delete(Property domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.check(domain.container(),READ)
+        SecurityACL.checkReadOnly(domain.container())
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

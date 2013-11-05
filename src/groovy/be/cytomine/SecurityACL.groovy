@@ -10,6 +10,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
+import be.cytomine.test.Infos
 import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
@@ -62,14 +63,68 @@ class SecurityACL {
     static void check(CytomineDomain domain, Permission permission) {
           if (domain) {
               if (!domain.container().checkPermission(permission)) {
-                  throw new ForbiddenException("You don't have the right to read or modity this resource! Description for ${domain.class.getName()}")
+                  throw new ForbiddenException("You don't have the right to read or modity this resource! ${domain.class.getName()}")
               }
+
           } else {
               throw new ObjectNotFoundException("ACL error: domain is null! Unable to process project auth checking")
           }
 
       }
 
+
+    static void checkReadOnly(def id, Class className) {
+        checkReadOnly(id,className.getName())
+    }
+//
+//    static void check(def id, String className, String method) {
+//        def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+//       if (simpleObject) {
+//           def containerObject = simpleObject."$method"()
+//           checkReadOnly(containerObject)
+//       } else {
+//           throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
+//       }
+//
+//
+//    }
+
+
+    static void checkReadOnly(def id, String className) {
+        println "id=$id"
+        println "className=${className}"
+        try {
+            def domain = Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+            if (domain) {
+                checkReadOnly(domain)
+            } else {
+                throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
+            }
+        } catch(IllegalArgumentException ex) {
+            throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
+        }
+
+    }
+
+
+    //check if the container (e.g. Project) is not in readonly. If in readonly, only admins can edit this.
+    static void checkReadOnly(CytomineDomain domain) {
+        if (domain) {
+            println "checkReadOnly"
+            boolean readOnly = !domain.container().canUpdateContent()
+            boolean containerAdmin = domain.container().hasPermission(domain.container(),ADMINISTRATION)
+
+            println "readOnly=$readOnly containerAdmin=$containerAdmin"
+            println "-> " + domain.container().id
+
+            if(readOnly && !containerAdmin) {
+               throw new ForbiddenException("The project for this data is in readonly mode! You must be project admin to add, edit or delete this resource in a readonly project.")
+           }
+
+        } else {
+            throw new ObjectNotFoundException("ACL error: domain is null! Unable to process project auth checking")
+        }
+      }
 
     static public List<Storage> getStorageList(SecUser user) {
         //faster method

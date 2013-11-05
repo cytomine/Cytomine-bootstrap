@@ -2,6 +2,7 @@ package be.cytomine.api.processing
 
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.processing.Job
@@ -141,9 +142,11 @@ class RestJobController extends RestController {
     def deleteAllJobData = {
         Job job = jobService.read(params.long('id'));
 
+
         if (!job) {
             responseNotFound("Job",params.id)
         } else {
+            SecurityACL.checkReadOnly(job.container())
             println "1project=${job.project.id}"
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."

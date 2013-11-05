@@ -55,6 +55,7 @@ class DescriptionService extends ModelService {
      */
     def add(def json) {
         SecurityACL.check(json.domainIdent,json.domainClassName,READ)
+        SecurityACL.checkReadOnly(json.domainIdent,json.domainClassName)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -67,6 +68,7 @@ class DescriptionService extends ModelService {
      */
     def update(Description description, def jsonNewData) {
         SecurityACL.check(description.container(),READ)
+        SecurityACL.checkReadOnly(description.container())
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), description,jsonNewData)
     }
@@ -82,6 +84,7 @@ class DescriptionService extends ModelService {
     def delete(Description domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.check(domain.container(),READ)
+        SecurityACL.checkReadOnly(domain.container())
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -286,6 +286,7 @@ class ReviewedAnnotationService extends ModelService {
         //read annotation (annotation or annotationIdent)
 
         SecurityACL.check(json.project,Project,READ)
+        SecurityACL.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         Transaction transaction = transactionService.start()
         //Synchronzed this part of code, prevent two annotation to be add at the same time

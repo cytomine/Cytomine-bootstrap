@@ -128,10 +128,11 @@ abstract class CytomineDomain  implements Comparable{
 
     def dataSource
     boolean hasPermission(def domain,Permission permission) {
-        println "hasPermission"
+
         try {
             def masks = getPermission(domain,cytomineService.getCurrentUser())
 
+            println masks.max() >= permission.mask
             return masks.max() >= permission.mask
 
         } catch (Exception e) {
@@ -143,18 +144,22 @@ abstract class CytomineDomain  implements Comparable{
 
     List getPermission(def domain, def user) {
         try {
-            println "getPermission"
+            println "getPermission on domain ${domain.id}/${domain.class.name}"
+
+
             String request = "SELECT mask FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
             "WHERE aoi.object_id_identity = ${domain.id} " +
             "AND sid.sid = '${user.humanUsername()}' " +
             "AND ae.acl_object_identity = aoi.id "+
             "AND ae.sid = sid.id "
-            println "getPermission ok"
+
             def masks = []
             new Sql(dataSource).eachRow(request) {
                 masks<<it[0]
             }
-            println "getPermission okok"
+
+
+            println masks
             return masks
 
         } catch (Exception e) {
@@ -167,6 +172,11 @@ abstract class CytomineDomain  implements Comparable{
 
     int compareTo(obj) {
         created.compareTo(obj.created)
+    }
+
+    boolean canUpdateContent() {
+        //by default, we allow a non-admin user to update domain content
+        return true
     }
 
 }
