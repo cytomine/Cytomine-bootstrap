@@ -40,6 +40,11 @@ class AttachedFileTests {
       assert json instanceof JSONObject
   }
 
+    void testShowAttachedFileNotExist() {
+        def result = AttachedFileAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
 
     void testListAttachedFileByDomain() {
         def domain = BasicInstanceBuilder.getAttachedFileNotExist(true)
@@ -51,10 +56,8 @@ class AttachedFileTests {
     }
 
     void testDownloadAttachedFile() {
-        def result = AttachedFileAPI.download(BasicInstanceBuilder.getAttachedFileNotExist(true).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AttachedFileAPI.download(BasicInstanceBuilder.getAttachedFileNotExist("test/functional/be/cytomine/utils/images/preview.png",true).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONObject
     }
 
   void testAddAttachedFileCorrect() {

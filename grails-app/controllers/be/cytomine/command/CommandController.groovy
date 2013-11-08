@@ -26,7 +26,7 @@ class CommandController extends RestController {
         //There is no command, so nothing to undo
         if (lastCommands.isEmpty()) {
             def data = [success: true, message: messageSource.getMessage('be.cytomine.UndoCommand', [] as Object[], Locale.ENGLISH), callback: null, printMessage: true]
-            responseSuccess([data], 200)
+            responseSuccess([data])
             return
         }
 
@@ -105,7 +105,7 @@ class CommandController extends RestController {
         def results = []
         if (lastCommands.size() == 0) {
             def data = [success: true, message: messageSource.getMessage('be.cytomine.RedoCommand', [] as Object[], Locale.ENGLISH), callback: null, printMessage: true]
-            responseSuccess([data], 200)
+            responseSuccess([data])
             return
         }
 

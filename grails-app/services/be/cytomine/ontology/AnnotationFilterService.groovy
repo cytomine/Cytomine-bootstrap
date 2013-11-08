@@ -34,14 +34,6 @@ class AnnotationFilterService extends ModelService {
         filter
     }
 
-    AnnotationFilter get(def id) {
-        def filter = AnnotationFilter.get(id)
-        if (filter) {
-            SecurityACL.check(filter.container(),READ)
-        }
-        filter
-    }
-
     /**
      * Add the new domain with JSON data
      * @param json New domain data

@@ -2,11 +2,7 @@ package be.cytomine.utils.bootstrap
 
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
-import be.cytomine.security.Group
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.security.UserGroup
+import be.cytomine.security.*
 
 /**
  * Cytomine @ GIGA-ULG

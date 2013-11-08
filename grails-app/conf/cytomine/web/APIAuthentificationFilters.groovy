@@ -1,19 +1,13 @@
 package cytomine.web
 
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.springframework.security.core.codec.Base64
 
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class APIAuthentificationFilters implements javax.servlet.Filter {
 
@@ -33,7 +27,7 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
     /**
      * http://code.google.com/apis/storage/docs/reference/v1/developer-guidev1.html#authentication
      */
-    private boolean tryAPIAuthentification(HttpServletRequest request, HttpServletResponse response) {
+    private boolean tryAPIAuthentification(def request, def response) {
         String authorization = request.getHeader("authorization")
         if (request.getHeader("date") == null) {
             return false

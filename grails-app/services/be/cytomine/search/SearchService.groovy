@@ -7,8 +7,8 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.utils.SearchFilter
 import be.cytomine.utils.ModelService
+import be.cytomine.utils.SearchFilter
 import be.cytomine.utils.SearchOperator
 import grails.util.Holders
 import groovy.sql.Sql

@@ -3,7 +3,8 @@ package be.cytomine.utils
 import be.cytomine.SecurityACL
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class TaskService  {
 

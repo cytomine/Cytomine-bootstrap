@@ -19,8 +19,7 @@ class RestDescriptionController extends RestController {
         println "showByDomain"
         def id = params.long('domainIdent')
         def className = params.get('domainClassName')
-        println "id=$id"
-        println "className=$className"
+
         if(className && id) {
             def desc = descriptionService.get(id,className.replace("_","."))
             if(desc) {

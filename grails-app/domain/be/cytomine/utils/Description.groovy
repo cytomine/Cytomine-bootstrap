@@ -3,7 +3,6 @@ package be.cytomine.utils
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import grails.converters.JSON
-import grails.util.Holders
 import org.apache.log4j.Logger
 
 /**

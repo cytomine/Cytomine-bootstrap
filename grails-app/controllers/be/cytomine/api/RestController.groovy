@@ -157,15 +157,6 @@ class RestController {
     /**
      * Response a successful HTTP message
      * @param data Message content
-     * @param code HTTP code
-     */
-    protected def responseSuccess(data, code) {
-        response(data, code)
-    }
-
-    /**
-     * Response a successful HTTP message
-     * @param data Message content
      */
     protected def responseSuccess(data) {
         if(data instanceof List) {
@@ -194,8 +185,6 @@ class RestController {
         }
 
         responseSuccess ([collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)])
-
-
     }
 
     /**

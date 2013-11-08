@@ -1,10 +1,8 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineMethodNotYetImplementedException
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole

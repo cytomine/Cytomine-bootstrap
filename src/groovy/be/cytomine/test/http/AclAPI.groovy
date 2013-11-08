@@ -1,9 +1,6 @@
 package be.cytomine.test.http
 
-import be.cytomine.security.User
 import be.cytomine.test.Infos
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**
  * User: lrollus
@@ -19,7 +16,7 @@ class AclAPI extends DomainAPI {
 //    }
 
     static def list(String domainClassName, Long domainIdent, Long user, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/$user"
+        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${(user? user : "")}"
         return doGET(URL, username, password)
     }
 

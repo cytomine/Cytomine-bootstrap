@@ -46,6 +46,8 @@ class TriggerService {
 
             statement.execute(getImageTriggerBeforeInsert())
             statement.execute(getImageTriggerAfterInsert())
+            statement.execute(getImageTriggerBeforeDelete())
+            statement.execute(getImageTriggerAfterDelete())
 
             statement.execute(getAnnotationCommentBeforeInsert())
             statement.execute(getAnnotationCommentAfterInsert())
@@ -360,6 +362,76 @@ class TriggerService {
         log.info createTrigger
         return createFunction + dropTrigger + createTrigger
     }
+
+
+
+    String getImageTriggerBeforeDelete() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION beforeDeleteImage() RETURNS TRIGGER AS \$decImageBefore\$
+        DECLARE
+            currentProject  project%ROWTYPE;
+        BEGIN
+            SELECT * INTO currentProject FROM project where id = OLD.project_id FOR UPDATE;
+            RETURN OLD;
+        END ;
+        \$decImageBefore\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS beforeDeleteImage on image_instance;"
+
+        String createTrigger = "CREATE TRIGGER beforeDeleteImage BEFORE DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE beforeDeleteImage(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+    String getImageTriggerAfterDelete() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION afterDeleteImage() RETURNS TRIGGER AS \$decImageAfter\$
+        DECLARE
+            current_project_id image_instance.id%TYPE;
+        BEGIN
+                UPDATE project
+                SET count_images = count_images - 1
+                WHERE project.id = OLD.project_id;
+
+            RETURN OLD;
+        END ;
+         \$decImageAfter\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS afterDeleteImageTrigger on image_instance;"
+
+        String createTrigger = "CREATE TRIGGER afterDeleteImageTrigger AFTER DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE afterDeleteImage(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     String getAnnotationCommentBeforeInsert() {
         String createFunction = """

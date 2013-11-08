@@ -1,8 +1,6 @@
 package be.cytomine.utils
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
-import be.cytomine.processing.JobData
 import grails.converters.JSON
 
 /**

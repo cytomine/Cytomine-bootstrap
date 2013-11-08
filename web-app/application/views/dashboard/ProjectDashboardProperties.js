@@ -27,8 +27,6 @@ var ProjectDashboardProperties = Backbone.View.extend({
         if (nameDomain != undefined) {
             self.nameDomain = nameDomain;
         }
-        console.log("NAMEDOMAIN : ");
-        console.log(self.nameDomain);
 
         if (self.nameDomain != "Project") {
             self.initIdentifiantSelect(idDomain);
@@ -57,11 +55,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
         console.log(self.idDomain);
         //In case of a user use a link in menu explore (popupAnnotation for example)
         if (self.idDomain != null) {
-                console.log("ICI ????");
-                self.refresh(self.idDomain, self.nameDomain);
-//                console.log("OUUUUU ICI ????");
-//                self.initIdentifiantSelect(self.idDomain);
-//                self.initRadioButton();
+            self.refresh(self.idDomain, self.nameDomain);
         }
 
         $("#buttonAnnotationProperty").click(function() {
@@ -219,15 +213,32 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 $(select).removeAttr("disabled");
                 $("#loadingSelect").hide();
             }
-            collection.each(function(options) {
-                var date = window.app.convertLongToDate(options.get('created'));
-                var option = _.template("<option value='<%= id %>'><%= value %> - <%= created %></option>", { id : options.get('id'), value : options.get('id'), created: date});
-                select.append(option);
 
-                if (options.get('id') == id) {
-                    idExist = true;
+            if (_.size(collection) < 1000 || self.nameDomain != "Annotation") {
+                collection.each(function(options) {
+                    var date = window.app.convertLongToDate(options.get('created'));
+                    var option = _.template("<option value='<%= id %>'><%= value %> - <%= created %></option>", { id : options.get('id'), value : options.get('id'), created: date});
+                    select.append(option);
+
+                    if (options.get('id') == id) {
+                        idExist = true;
+                    }
+                });
+            } else {
+                if(!id) {
+                    window.app.view.message("Project", "Too much annotation! Go to image view and select one annotation to add properties.", "warn",6000);
                 }
-            });
+
+               var options = collection.get(id);
+                if (options) {
+                    idExist = true;
+                    var date = window.app.convertLongToDate(options.get('created'));
+                    var option = _.template("<option value='<%= id %>'><%= value %> - <%= created %></option>", { id : options.get('id'), value : options.get('id'), created: date});
+                     select.append(option);
+                    $("#identifiantSelect").hide();
+
+                }
+            }
 
             if (idExist == true) {
                 select.val(id);

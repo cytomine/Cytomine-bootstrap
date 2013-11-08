@@ -93,7 +93,9 @@ coverage {
 	exclusions = [
             "**/be/cytomine/data/**",
             "**/be/cytomine/processing/job/**",
-            "**/be/cytomine/processing/image/filters/**"
+            "**/be/cytomine/processing/image/filters/**",
+            "**/be/cytomine/job/**",
+            "**/twitter/bootstrap**"
     ]
 }
 

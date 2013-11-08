@@ -1,7 +1,5 @@
 package be.cytomine.api.utils
 
-import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
 
 /**
@@ -23,7 +21,13 @@ class RestAttachedFileController extends RestController {
     }
 
     def show = {
-        responseSuccess(attachedFileService.read(params.get('id')))
+        def file = attachedFileService.read(params.get('id'))
+        if(file) {
+            responseSuccess(file)
+        } else {
+            responseNotFound("AttachedFile",params.get('id'))
+        }
+
     }
 
     def download = {

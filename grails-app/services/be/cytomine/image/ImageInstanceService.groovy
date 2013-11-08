@@ -4,11 +4,7 @@ import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.multidim.ImageSequence
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationIndex
-import be.cytomine.ontology.Property
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User

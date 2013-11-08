@@ -5,8 +5,6 @@ import be.cytomine.image.AbstractImageGroup
 import be.cytomine.image.Mime
 import be.cytomine.image.NestedFile
 import be.cytomine.image.server.ImageProperty
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.Ontology

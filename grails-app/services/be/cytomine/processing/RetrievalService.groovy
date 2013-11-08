@@ -2,7 +2,6 @@ package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.Exception.ServerException
 import be.cytomine.SecurityACL
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Ontology
@@ -19,6 +18,7 @@ import org.apache.catalina.core.ApplicationContext
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
+
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**

@@ -1,18 +1,11 @@
 package be.cytomine.utils
 
-import be.cytomine.CytomineDomain
-import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.ontology.*
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
-import groovy.sql.Sql
-import org.springframework.security.acls.model.Permission
 
-import static org.springframework.security.acls.domain.BasePermission.*
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class DescriptionService extends ModelService {
 

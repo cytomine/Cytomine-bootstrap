@@ -2,11 +2,7 @@ package be.cytomine.test
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.image.ImageInstance
-import be.cytomine.image.Mime
-import be.cytomine.image.UploadedFile
+import be.cytomine.image.*
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
@@ -23,7 +19,6 @@ import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
 
 /**
  * Created by IntelliJ IDEA.
@@ -326,6 +321,7 @@ class BasicInstanceBuilder {
         ReviewedAnnotation review = getReviewedAnnotationNotExist()
         review.project = annotation.project
         review.image = annotation.image
+        review.location = annotation.location
         review.putParentAnnotation(annotation)
         saveDomain(review)
         review
@@ -487,17 +483,19 @@ class BasicInstanceBuilder {
     }
 
     static AttachedFile getAttachedFileNotExist(boolean save = false) {
+        getAttachedFileNotExist("test/functional/be/cytomine/utils/simpleFile.txt",save)
+    }
+
+    static AttachedFile getAttachedFileNotExist(String file,boolean save = false) {
         def attachedFile = new AttachedFile()
         def project = getProjectNotExist(true)
         attachedFile.domainClassName = project.class.name
         attachedFile.domainIdent = project.id
-        File f = new File("test/functional/be/cytomine/utils/simpleFile.txt")
+        File f = new File(file)
         attachedFile.filename = f.name
         attachedFile.data = f.bytes
         save ? saveDomain(attachedFile) : checkDomain(attachedFile)
     }
-
-
 
     static ImageFilter getImageFilter() {
        def imagefilter = ImageFilter.findByName("imagetest")
@@ -1077,7 +1075,10 @@ class BasicInstanceBuilder {
     }
 
     static ImageSequence getImageSequenceNotExist(boolean save = false) {
-        ImageSequence seq = new ImageSequence(image:getImageInstance(),slice: 0, zStack:0,time:0,channel:2,imageGroup:getImageGroup())
+        def project = getProjectNotExist(true)
+        def image = getImageInstanceNotExist(project,true)
+        def group =  getImageGroupNotExist(project,true)
+        ImageSequence seq = new ImageSequence(image:image,slice: 0, zStack:0,time:0,channel:2,imageGroup:group)
         save ? saveDomain(seq) : checkDomain(seq)
     }
 
@@ -1132,5 +1133,109 @@ class BasicInstanceBuilder {
 //        assert data.last().time==2
 //        assert data.last().channel==2
         return data
+    }
+
+
+    public ImageInstance initImage() {
+
+        String urlImageServer = "http://is31.cytomine.be"
+
+        ImageServer imageServer = ImageServer.findByUrl(urlImageServer)
+        if(!imageServer) {
+            imageServer = new ImageServer()
+            imageServer.className = "IIPResolver"
+            imageServer.name = "IIP-Openslide2"
+            imageServer.service = "/fcgi-bin/iipsrv.fcgi"
+            imageServer.url =  urlImageServer
+            imageServer.available = true
+            BasicInstanceBuilder.saveDomain(imageServer)
+        }
+
+        Mime mime = Mime.findByExtension("tif")
+        if(!mime) {
+            mime = new Mime()
+            mime.mimeType = "image/tiff"
+            mime.extension = "tif"
+            BasicInstanceBuilder.saveDomain(mime)
+        }
+
+        MimeImageServer mimeImageServer = MimeImageServer.findByMimeAndImageServer(mime,imageServer)
+        if(!mimeImageServer) {
+            mimeImageServer = new MimeImageServer()
+            mimeImageServer.mime = mime
+            mimeImageServer.imageServer = imageServer
+            BasicInstanceBuilder.saveDomain(mimeImageServer)
+        }
+
+        Storage storage = Storage.findByName("lrollus test storage")
+        if(!storage) {
+            storage = new Storage()
+            storage.basePath = "/data/test.cytomine.be/1"
+            storage.name = "lrollus test storage"
+            storage.ip = "10.3.1.136" // still used?
+            storage.password = "toto"
+            storage.port = 22
+            storage.username = "username"
+            storage.user = BasicInstanceBuilder.getUser1()
+            BasicInstanceBuilder.saveDomain(storage)
+        }
+
+        ImageServerStorage imageServerStorage = ImageServerStorage.findByImageServerAndStorage(imageServer,storage)
+        if(!imageServerStorage) {
+            imageServerStorage = new ImageServerStorage()
+            imageServerStorage.storage = storage
+            imageServerStorage.imageServer = imageServer
+            BasicInstanceBuilder.saveDomain(imageServerStorage)
+        }
+
+        AbstractImage abstractImage = AbstractImage.findByFilename("1383567901006/test.tif")
+        if(!abstractImage) {
+            abstractImage = new AbstractImage()
+            abstractImage.filename = "1383567901006/test.tif"
+            abstractImage.originalFilename = "test.tif"
+            abstractImage.path = "1383567901006/test.tif"
+            abstractImage.width = 25088
+            abstractImage.height = 37888
+            abstractImage.magnification = 8
+            abstractImage.resolution = 0.65d
+            abstractImage.mime = mime
+            abstractImage.originalFilename = "test01.jpg"
+            BasicInstanceBuilder.saveDomain(abstractImage)
+        }
+
+        StorageAbstractImage storageAbstractImage =  StorageAbstractImage.findByStorageAndAbstractImage(storage,abstractImage)
+        if(!storageAbstractImage) {
+            storageAbstractImage = new StorageAbstractImage()
+            storageAbstractImage.abstractImage = abstractImage
+            storageAbstractImage.storage = storage
+            BasicInstanceBuilder.saveDomain(storageAbstractImage)
+        }
+
+        Project project = Project.findByName("testimage")
+        if(!project) {
+            project = BasicInstanceBuilder.getProjectNotExist(true)
+            project.name = "testimage"
+            BasicInstanceBuilder.saveDomain(project)
+        }
+
+        ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(abstractImage,project)
+        if(!imageInstance) {
+            imageInstance = new ImageInstance()
+            imageInstance.baseImage = abstractImage
+            imageInstance.project = project
+            imageInstance.user = BasicInstanceBuilder.getUser1()
+            BasicInstanceBuilder.saveDomain(imageInstance)
+        }
+
+
+        ProcessingServer processingServer = ProcessingServer.findByUrl("http://image.cytomine.be")
+        if(!processingServer) {
+            processingServer = new  ProcessingServer()
+            processingServer.url = "http://image.cytomine.be"
+            BasicInstanceBuilder.saveDomain(processingServer)
+        }
+
+        return imageInstance
+
     }
 }

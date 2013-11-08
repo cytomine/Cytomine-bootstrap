@@ -3,7 +3,6 @@ package be.cytomine.ontology
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -24,9 +23,6 @@ import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
 import org.hibernate.criterion.Restrictions
 import org.hibernatespatial.criterion.SpatialRestrictions
-
-import java.sql.ResultSet
-import java.sql.ResultSetMetaData
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 

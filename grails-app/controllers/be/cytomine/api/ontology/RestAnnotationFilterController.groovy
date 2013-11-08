@@ -1,6 +1,5 @@
 package be.cytomine.api.ontology
 
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.ontology.Ontology
@@ -64,9 +63,6 @@ class RestAnnotationFilterController extends RestController {
     def add = {
         def json= request.JSON
         json.user = springSecurityService.principal.id
-        if(!json.project || !Project.read(json.project)) {
-            throw new WrongArgumentException("Annotation filter must have a valid project:"+json.project)
-        }
         add(annotationFilterService, json)
     }
 

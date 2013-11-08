@@ -13,7 +13,7 @@ import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
 import groovy.sql.Sql
 
-import static org.springframework.security.acls.domain.BasePermission.*
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class PropertyService extends ModelService {
 

@@ -9,7 +9,6 @@ import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
 import be.cytomine.project.Project

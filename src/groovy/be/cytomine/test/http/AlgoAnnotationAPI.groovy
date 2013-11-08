@@ -29,62 +29,43 @@ class AlgoAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByTerm(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$id"
-        return doGET(URL, username, password)
-    }
-
     static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
-        //String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser
         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndTerm(Long idProject, Long idTerm,List<ImageInstance> images,Long idUser,String username, String password) {
-        //String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser+"&offset=0&max=5&images=${images.collect{it.id}.join(",")}"
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&images=${images.collect{it.id}.join(",")}"
+         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&images=${images.collect{it.id}.join(",")}"
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndTerm(Long idProject, Long idTerm,Long idImage, Long idUser,String username, String password) {
-        //String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/algoannotation.json?users="+idUser+"&offset=0&max=5&images=${idImage}"
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&images=${idImage}"
+         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&images=${idImage}"
         return doGET(URL, username, password)
     }
 
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
-        //String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/algoannotation.json"
-        String URL = Infos.CYTOMINEURL+"api/annotation.json?user=$idUser&image=$idImage"
-        return doGET(URL, username, password)
-    }
-
-    static def listByImageAndUser(Long idImage,Long idUser, String bbox, boolean netReviewedOnly,String username, String password) {
-        //String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/algoannotation.json?bbox=$bbox&notreviewed=$netReviewedOnly"
-        String URL = Infos.CYTOMINEURL+"api/annotation.json?user=$idUser&image=$idImage&bbox=$bbox&notReviewedOnly=$netReviewedOnly"
+         String URL = Infos.CYTOMINEURL+"api/annotation.json?user=$idUser&image=$idImage"
         return doGET(URL, username, password)
     }
 
     static def listByImageAndUser(Long idImage,Long idUser, String bbox, boolean netReviewedOnly,Integer force,String username, String password) {
-//        String URL = Infos.CYTOMINEURL+"api/user/"+ idUser +"/imageinstance/"+idImage+"/algoannotation.json?bbox=$bbox&notreviewed=$netReviewedOnly" + (force? "&force="+force:"")
         String URL = Infos.CYTOMINEURL+"api/annotation.json?user=$idUser&image=$idImage&bbox=$bbox&notReviewedOnly=$netReviewedOnly" + (force? "&kmeansValue="+force:"")
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsers(Long id,Long idUser, String username, String password) {
-//        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/algoannotation.json?users=" +idUser
         String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&users=" +idUser
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsersWithoutTerm(Long id,Long idUser, String username, String password) {
-//        String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/algoannotation.json?noTerm=true&users=" +idUser
         String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&noTerm=true&users=" +idUser
         return doGET(URL, username, password)
     }
 
     static def listByProjectAndUsersSeveralTerm(Long id,Long idUser, String username, String password) {
-        //String URL = Infos.CYTOMINEURL+"api/project/"+ id +"/algoannotation.json?multipleTerm=true&users=" +idUser
-        String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&multipleTerm=true&users=" +idUser
+         String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&multipleTerm=true&users=" +idUser
         return doGET(URL, username, password)
     }
 
@@ -113,13 +94,6 @@ class AlgoAnnotationAPI extends DomainAPI {
     static def delete(def id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/algoannotation/" + id + ".json"
         return doDELETE(URL,username, password)
-    }
-
-    static def copy(def id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/" + id + "/copy.json"
-        def result = doPOST(URL,"",username, password)
-        result.data = AlgoAnnotation.get(JSON.parse(result.data)?.annotation?.id)
-        return result
     }
 
     static def union(def idImage, def idUser, def idTerm, def minIntersectionLength, def bufferLength, String username, String password) {

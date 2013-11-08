@@ -9,7 +9,7 @@ import ij.gui.Wand
 import ij.process.ImageConverter
 import ij.process.ImageProcessor
 
-import java.awt.Color
+import java.awt.*
 import java.awt.image.BufferedImage
 
 /**

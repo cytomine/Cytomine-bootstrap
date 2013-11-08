@@ -2,7 +2,6 @@ package be.cytomine.processing.job
 
 import be.cytomine.processing.AutoLungJob
 import be.cytomine.processing.Job
-import be.cytomine.processing.JobData
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 

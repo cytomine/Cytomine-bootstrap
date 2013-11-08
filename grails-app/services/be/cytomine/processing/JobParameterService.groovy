@@ -2,7 +2,6 @@ package be.cytomine.processing
 
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService

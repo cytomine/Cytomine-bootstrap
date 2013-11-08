@@ -33,6 +33,11 @@ class UserAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def signature(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/signature.json"
+        return doGET(URL, username, password)
+    }
+
     static def showUserJob(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/userJob/" + id + ".json"
         return doGET(URL, username, password)

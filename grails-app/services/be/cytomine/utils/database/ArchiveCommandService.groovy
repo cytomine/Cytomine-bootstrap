@@ -1,9 +1,6 @@
 package be.cytomine.utils.database
 
-import be.cytomine.command.Command
-import be.cytomine.command.CommandHistory
-import be.cytomine.command.RedoStackItem
-import be.cytomine.command.UndoStackItem
+import be.cytomine.SecurityACL
 import grails.util.Environment
 import groovy.sql.Sql
 
@@ -15,7 +12,7 @@ import groovy.sql.Sql
  * To change this template use File | Settings | File Templates.
  */
 class ArchiveCommandService {
-
+    def cytomineService
     def sessionFactory
     def grailsApplication
     def commandService
@@ -23,11 +20,13 @@ class ArchiveCommandService {
     def dataSource
 
     public def archiveOldCommand() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         Date before = getMonthBefore(new Date(), 1)
         archive(before)
     }
 
     public def archive(Date before) {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         Date today = new Date()
         File directory = new File("oldcommand/${Environment.getCurrent()}")
         def subdirectory = new File(directory.absolutePath)
@@ -86,37 +85,6 @@ class ArchiveCommandService {
         c.add(Calendar.MONTH, -month);  // number of days to add
         def before = c.getTime();  // dt is now the new date
         return before
-    }
-    static Date getDayBefore(Date date, int days) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, -days);  // number of days to add
-        def before = c.getTime();  // dt is now the new date
-        return before
-    }
-
-    static def getDateData(Date date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        [month: c.get(Calendar.MONTH) + 1, year: c.get(Calendar.YEAR), day: c.get(Calendar.DATE)] //month start from 0 to 11
-    }
-
-
-    static def getCSVLine(CommandHistory history) {
-        Command command = history.command
-        if(command) {
-            return [
-                    command.id,
-                    command.actionMessage,
-                    command.created,
-                    command.printMessage,
-                    command.user?.id,
-                    history.prefixAction,
-                    history.message,
-                    history.project?.id
-            ].join(";")  + "\n"
-        }
-        return ""
     }
 
 

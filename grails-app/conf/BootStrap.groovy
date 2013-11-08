@@ -2,31 +2,19 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.image.Mime
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.MimeImageServer
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationIndex
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
-import be.cytomine.security.UserGroup
 import be.cytomine.utils.News
 import grails.util.Environment
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.hibernate.jdbc.Work
 
 import java.lang.management.ManagementFactory
-import java.sql.Connection
-import java.sql.SQLException
 import java.text.SimpleDateFormat
 
 /**

@@ -1,6 +1,7 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
+import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
@@ -28,6 +29,19 @@ class ImageInstanceTests  {
 
         result = ImageInstanceAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
+    }
+
+    void testListImagesInstanceByProjectMaxOffset() {
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+
+
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id,1,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
     }
 
 

@@ -1,8 +1,6 @@
 package be.cytomine.test.http
 
-import be.cytomine.project.Discipline
 import be.cytomine.test.Infos
-import grails.converters.JSON
 
 /**
  * User: lrollus
@@ -28,7 +26,7 @@ class AttachedFileAPI extends DomainAPI {
     }
 
     static def download(Long id,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/attachedfile/${id}.json"
+        String URL = Infos.CYTOMINEURL + "api/attachedfile/${id}/download.json"
         return doGET(URL, username, password)
     }
 

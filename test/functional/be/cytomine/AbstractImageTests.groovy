@@ -28,31 +28,6 @@ import be.cytomine.security.Group
  */
 class AbstractImageTests {
 
-
-    def oldMethod2
-    def oldMethod3
-
-    void setUp()  {
-
-        oldMethod2 = AbstractImageService.metaClass.metadata
-        AbstractImageService.metaClass.metadata = { def id ->
-           return "metdatatext"
-        }
-        oldMethod3 = ImagePropertiesService.metaClass.extractUseful
-        ImagePropertiesService.metaClass.extractUseful = { AbstractImage img ->
-        }
-
-
-
-
-    }
-
-    void tearDown() {
-        AbstractImage.metaClass.metadata = oldMethod2
-        ImagePropertiesService.metaClass.extractUseful = oldMethod3
-    }
-
-
   void testListImages() {
       Storage storage = BasicInstanceBuilder.getStorage()
       BasicInstanceBuilder.getAbstractImage()
@@ -99,12 +74,7 @@ class AbstractImageTests {
   }
 
 
-  void testGetMetadata() {
-      AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-      def result = AbstractImageAPI.getMetadata(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-      assert 200 == result.code
-      def json = JSON.parse(result.data)
-  }
+
 
     void testGetImageProperties() {
         AbstractImage image = BasicInstanceBuilder.getAbstractImage()
@@ -142,60 +112,6 @@ class AbstractImageTests {
     void testGetImageServers() {
         AbstractImage image = BasicInstanceBuilder.getAbstractImage()
         def result = AbstractImageAPI.getInfo(image.id,"imageservers",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
-
-
-    void testGetThumb() {
-        println "AbstractImage.metaClass=${AbstractImage.metaClass}"
-        println "AbstractImage.metaClass.getImageServers=${AbstractImage.metaClass.getImageServers}"
-//        def oldMethod1 = AbstractImage.metaClass.getImageServers
-//        AbstractImage.metaClass.getImageServers  = {->
-//            println "### mocking method"
-//            ImageServer bidon = BasicInstanceBuilder.getImageServer()
-//            return [bidon]
-//        }
-
-        def oldMethod1 = AbstractImage.metaClass.getThumbURL
-        AbstractImage.metaClass.getThumbURL  = {->
-            println "### mocking method"
-            return "http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png"
-        }
-
-        AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-        def result = AbstractImageAPI.getInfo(image.id,"thumb",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-        //PROB LIE AU SETUP METHOD
-        AbstractImage.metaClass.getThumbURL = oldMethod1
-    }
-
-    void testGetPreview() {
-        AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-        def result = AbstractImageAPI.getInfo(image.id,"preview",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
-
-    void testGetAnnotationCrop() {
-        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
-        def result = AbstractImageAPI.getCrop(annotation.id,"annotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
-
-    void testGetUserAnnotationCrop() {
-        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotation()
-        def result = AbstractImageAPI.getCrop(annotation.id,"userannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
-
-    void testGetAlgoAnnotationCrop() {
-        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
-        def result = AbstractImageAPI.getCrop(annotation.id,"algoannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
-
-    void testGetReviewedAnnotationCrop() {
-        ReviewedAnnotation annotation = BasicInstanceBuilder.getReviewedAnnotation()
-        def result = AbstractImageAPI.getCrop(annotation.id,"reviewedannotation",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 

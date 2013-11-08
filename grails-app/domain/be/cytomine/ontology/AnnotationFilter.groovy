@@ -34,7 +34,7 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
     static AnnotationFilter insertDataIntoDomain(def json, def domain = new AnnotationFilter()) throws CytomineException {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json,'name')
-        domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),false)
+        domain.project = JSONUtils.getJSONAttrDomain(json,"project",new Project(),true)
         domain.user = JSONUtils.getJSONAttrDomain(json,"user",new User(),false)
         json.users?.each { userID ->
             SecUser user = SecUser.read(userID)

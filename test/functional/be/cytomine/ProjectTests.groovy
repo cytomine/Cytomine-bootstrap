@@ -408,4 +408,23 @@ class ProjectTests  {
     }
 
 
+    void testProjectCounterImageInstanceCounter() {
+        //create project
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+        assert project.countImageInstance() == 0
+
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.project = project
+        BasicInstanceBuilder.saveDomain(image)
+
+        project.refresh()
+        assert project.countImageInstance() == 1
+
+        image.delete(flush: true)
+
+        project.refresh()
+        assert project.countImageInstance() == 0
+
+    }
 }

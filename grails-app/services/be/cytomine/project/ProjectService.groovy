@@ -17,7 +17,6 @@ import be.cytomine.social.UserPosition
 import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import grails.converters.JSON
 import groovy.sql.Sql
 import org.springframework.security.acls.domain.BasePermission
 

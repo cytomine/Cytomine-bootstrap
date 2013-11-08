@@ -2,8 +2,6 @@ package be.cytomine.image
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.ontology.Ontology
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils

@@ -22,6 +22,11 @@ class AbstractImageGroupAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByUser(Long id,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/user/$id/image.json"
+        return doGET(URL, username, password)
+    }
+
     static def show(Long idImage, Long idGroup, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/image/" + idImage + "/group/" + idGroup + ".json"
         return doGET(URL, username, password)

@@ -23,6 +23,9 @@ import org.apache.http.params.HttpConnectionParams
 import org.apache.http.params.HttpParams
 import org.apache.http.protocol.BasicHttpContext
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -233,4 +236,100 @@ class HttpClient {
         log.debug("Disconnect")
         try {client.getConnectionManager().shutdown();} catch (Exception e) {log.error(e)}
     }
+
+
+//     public BufferedImage readBufferedImageFromURLWithoutKey(String url, String loginHTTP, String passHTTP) throws MalformedURLException, IOException {
+//
+//        URL URL = new URL(url);
+//        HttpHost targetHost = new HttpHost(URL.getHost(), URL.getPort());
+//        DefaultHttpClient client = new DefaultHttpClient();
+//        // Create AuthCache instance
+//        AuthCache authCache = new BasicAuthCache();
+//        // Generate BASIC scheme object and add it to the local
+//        // auth cache
+//        BasicScheme basicAuth = new BasicScheme();
+//        authCache.put(targetHost, basicAuth);
+//
+//        // Add AuthCache to the execution context
+//        BasicHttpContext localcontext = new BasicHttpContext();
+//        localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+//        // Set credentials
+//        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(loginHTTP, passHTTP);
+//        client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
+//
+//        BufferedImage img = null;
+//        HttpGet httpGet = new HttpGet(URL.getPath());
+//        HttpResponse response = client.execute(targetHost, httpGet, localcontext);
+//        int code = response.getStatusLine().getStatusCode();
+//        log.info("url=" + url + " is " + code + "(OK=" + HttpURLConnection.HTTP_OK + ",MOVED=" + HttpURLConnection.HTTP_MOVED_TEMP + ")");
+//
+//        boolean isOK = (code == HttpURLConnection.HTTP_OK);
+//        boolean isFound = (code == HttpURLConnection.HTTP_MOVED_TEMP);
+//        boolean isErrorServer = (code == HttpURLConnection.HTTP_INTERNAL_ERROR);
+//
+//        if (!isOK && !isFound & !isErrorServer) throw new IOException(url + " cannot be read: " + code);
+//        HttpEntity entity = response.getEntity();
+//         log.info "entity="+entity
+//        if (entity != null) {
+//            img = ImageIO.read(entity.getContent());
+//            entity.getContent().close();
+//        }
+//         log.info "img="+img
+//         log.info "img.width="+img?.width
+//        try {client.getConnectionManager().shutdown();} catch (Exception e) {log.error(e)}
+//
+//        return img;
+//
+//    }
+
+    private HttpEntity readDataFromURLWithoutKey(String url, String loginHTTP, String passHTTP) throws MalformedURLException, IOException {
+        String encoded = url;
+
+       URL URL = new URL(encoded);
+       HttpHost targetHost = new HttpHost(URL.getHost(), URL.getPort());
+       DefaultHttpClient client = new DefaultHttpClient();
+       // Create AuthCache instance
+       AuthCache authCache = new BasicAuthCache();
+       // Generate BASIC scheme object and add it to the local
+       // auth cache
+       BasicScheme basicAuth = new BasicScheme();
+       authCache.put(targetHost, basicAuth);
+
+       // Add AuthCache to the execution context
+       BasicHttpContext localcontext = new BasicHttpContext();
+       localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+       // Set credentials
+       UsernamePasswordCredentials creds = new UsernamePasswordCredentials(loginHTTP, passHTTP);
+       client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds);
+
+       HttpGet httpGet = new HttpGet(URL.toString());
+       HttpResponse response = client.execute(targetHost, httpGet, localcontext);
+       int code = response.getStatusLine().getStatusCode();
+       log.info("url=" + encoded + " is " + code + "(OK=" + HttpURLConnection.HTTP_OK + ",MOVED=" + HttpURLConnection.HTTP_MOVED_TEMP + ")");
+
+       boolean isOK = (code == HttpURLConnection.HTTP_OK);
+       boolean isFound = (code == HttpURLConnection.HTTP_MOVED_TEMP);
+       boolean isErrorServer = (code == HttpURLConnection.HTTP_INTERNAL_ERROR);
+
+       if (!isOK && !isFound & !isErrorServer) throw new IOException(url + " cannot be read: " + code);
+       HttpEntity entity = response.getEntity();
+
+       return entity;
+
+   }
+
+
+    public BufferedImage readBufferedImageFromURLWithoutKey(String url, String loginHTTP, String passHTTP) throws MalformedURLException, IOException {
+       HttpEntity entity = readDataFromURLWithoutKey(url,loginHTTP,passHTTP);
+         log.info "entity="+entity
+        BufferedImage img = null;
+        if (entity != null) {
+            img = ImageIO.read(entity.getContent());
+            entity.getContent().close();
+        }
+        return img;
+    }
+
+
+
 }

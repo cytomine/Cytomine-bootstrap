@@ -8,6 +8,7 @@ import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
+import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.News
 import be.cytomine.utils.database.ArchiveCommandService
@@ -167,60 +168,7 @@ class GeneralTests  {
     }
 
 
-//    void testArchiveCommand() {
-//
-//        CommandHistory.list().each {it.delete()}
-//        Command.list().each {
-//            UndoStackItem.findAllByCommand(it).each {it.delete()}
-//            RedoStackItem.findAllByCommand(it).each {it.delete()}
-//            it.delete()
-//        }
-//
-//        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-//        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//
-//        assert Command.list().size()==3
-//        def histories = CommandHistory.list()
-//        assert histories.size()==3
-//
-//        histories[0].created = new SimpleDateFormat("yyyy-MM-dd").parse("2012-12-05")
-//        histories[0].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2012-12-05")
-//        histories[1].created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
-//        histories[1].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
-//        histories[2].created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
-//        histories[2].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
-//
-//        histories.each {
-//            BasicInstanceBuilder.saveDomain(it)
-//            BasicInstanceBuilder.saveDomain(it.command)
-//        }
-//
-//        def ids = CommandHistory.list().collect{it.command.id+""}
-//
-//
-//        FileUtils.deleteDirectory(new File("oldcommand/${Environment.getCurrent()}"));
-//
-//        assert !new File("oldcommand/${Environment.getCurrent()}").exists()
-//
-//        ArchiveCommandService archive = new ArchiveCommandService()
-//        archive.archiveOldCommand()
-//
-//        assert new File("oldcommand/${Environment.getCurrent()}").exists()
-//         def today = new Date()
-//        def firstFile = new File("oldcommand/${Environment.getCurrent()}/${today.year}-${today.month+1}-${today.date}.log")
-//
-//        assert firstFile.exists()
-//
-//        def content1 = firstFile.text.split("\n")
-//
-//        assert content1.size()==3
-//
-//        assert ids.contains(content1[0].split(";")[0])
-//        assert ids.contains(content1[1].split(";")[0])
-//        assert ids.contains(content1[2].split(";")[0])
-//    }
+
 
 
      void testNewsListing() {
@@ -256,6 +204,63 @@ class GeneralTests  {
 
      }
 
+    void testArchiveCommand() {
+
+         CommandHistory.list().each {it.delete()}
+         Command.list().each {
+             UndoStackItem.findAllByCommand(it).each {it.delete()}
+             RedoStackItem.findAllByCommand(it).each {it.delete()}
+             it.delete()
+         }
+
+         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
+         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+         assert Command.list().size()==3
+         def histories = CommandHistory.list()
+         assert histories.size()==3
+
+         histories[0].created = new SimpleDateFormat("yyyy-MM-dd").parse("2012-12-05")
+         histories[0].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2012-12-05")
+         histories[1].created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
+         histories[1].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
+         histories[2].created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
+         histories[2].command.created = new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-12")
+
+         histories.each {
+             BasicInstanceBuilder.saveDomain(it)
+             BasicInstanceBuilder.saveDomain(it.command)
+         }
+
+         def ids = CommandHistory.list().collect{it.command.id+""}
+
+
+         FileUtils.deleteDirectory(new File("oldcommand/${Environment.getCurrent()}"));
+
+         assert !new File("oldcommand/${Environment.getCurrent()}").exists()
+
+ //        ArchiveCommandService archive = new ArchiveCommandService()
+ //        archive.archiveOldCommand()
+         DomainAPI.doGET(Infos.CYTOMINEURL+"archive/archive",Infos.GOODLOGIN,Infos.GOODPASSWORD)
+
+
+
+         assert new File("oldcommand/${Environment.getCurrent()}").exists()
+          def today = new Date()
+         def firstFile = new File("oldcommand/${Environment.getCurrent()}/${today.year}-${today.month+1}-${today.date}.log")
+
+         assert firstFile.exists()
+
+         def content1 = firstFile.text.split("\n")
+
+         assert content1.size()==3
+
+         assert ids.contains(content1[0].split(";")[0])
+         assert ids.contains(content1[1].split(";")[0])
+         assert ids.contains(content1[2].split(";")[0])
+     }
 
 
 

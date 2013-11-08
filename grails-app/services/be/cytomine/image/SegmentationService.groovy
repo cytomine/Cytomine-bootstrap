@@ -7,11 +7,7 @@ import ij.ImagePlus
 import ij.process.ImageProcessor
 import ij.process.PolygonFiller
 
-import java.awt.BasicStroke
-import java.awt.Color
-import java.awt.Graphics2D
-import java.awt.Rectangle
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.geom.Path2D
 import java.awt.image.BufferedImage
 

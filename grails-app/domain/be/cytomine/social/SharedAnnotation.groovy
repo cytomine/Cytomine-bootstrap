@@ -4,7 +4,6 @@ import be.cytomine.CytomineDomain
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
 import grails.converters.JSON
-import grails.util.Holders
 import org.apache.log4j.Logger
 
 /**

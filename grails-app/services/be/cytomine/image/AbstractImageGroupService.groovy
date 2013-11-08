@@ -9,7 +9,6 @@ import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
-import be.cytomine.security.UserGroup
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 
@@ -28,12 +27,6 @@ class AbstractImageGroupService extends ModelService {
 
     def get(AbstractImage abstractimage, Group group) {
         AbstractImageGroup.findByAbstractImageAndGroup(abstractimage, group)
-    }
-
-    def list(user) {
-        SecurityACL.checkUser(cytomineService.currentUser)
-        def groups = UserGroup.findByUser(user).collect{it.group}
-        return AbstractImageGroup.findAllByGroupInList(groups)
     }
 
     /**

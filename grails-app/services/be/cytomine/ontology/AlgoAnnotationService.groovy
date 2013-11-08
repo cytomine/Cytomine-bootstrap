@@ -2,7 +2,6 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.SecurityACL
-import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.Job
@@ -11,14 +10,9 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.AnnotationListing
-import be.cytomine.sql.UserAnnotationListing
-import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTWriter
-import groovy.sql.Sql
-import org.hibernate.FetchMode
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -39,14 +33,6 @@ class AlgoAnnotationService extends ModelService {
 
     def currentDomain() {
         return AlgoAnnotation
-    }
-
-    AlgoAnnotation get(def id) {
-        def annotation = AlgoAnnotation.get(id)
-        if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
-        }
-        annotation
     }
 
     AlgoAnnotation read(def id) {

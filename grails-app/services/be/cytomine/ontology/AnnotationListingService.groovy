@@ -1,23 +1,11 @@
 package be.cytomine.ontology
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
-import be.cytomine.command.*
-import be.cytomine.image.ImageInstance
-import be.cytomine.processing.Job
-import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.security.UserJob
 import be.cytomine.sql.AnnotationListing
-import be.cytomine.sql.UserAnnotationListing
-import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.GisUtils
 import be.cytomine.utils.ModelService
-import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
 
 import static org.springframework.security.acls.domain.BasePermission.READ

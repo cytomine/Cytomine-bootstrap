@@ -38,6 +38,12 @@ class AbstractImageAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def getMetadataExtract(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/image/" + id + "/metadata.json?extract=true"
+        return doGET(URL, username, password)
+    }
+
+
     static def getInfo(Long id, String type,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/image/" + id + "/${type}.json"
         return doGET(URL, username, password)

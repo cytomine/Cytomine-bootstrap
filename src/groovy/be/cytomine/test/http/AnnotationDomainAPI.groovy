@@ -32,17 +32,10 @@ class AnnotationDomainAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByTerm(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$id"
-        return doGET(URL, username, password)
-    }
-
     static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser
         return doGET(URL, username, password)
     }
-
-
 
     static def listByProjectAndTerm(Long idProject, Long idTerm,Long idImage, Long idUser,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser+"&offset=0&max=5&image=$idImage"
@@ -57,11 +50,6 @@ class AnnotationDomainAPI extends DomainAPI {
 
     static def listByImageAndUser(Long idImage,Long idUser, String username, String password) {
         String URL = Infos.CYTOMINEURL+"api/annotation.json?user="+ idUser +"&image="+idImage
-        return doGET(URL, username, password)
-    }
-
-    static def listByProjectAndUsers(Long id,Long idUser, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation.json?project=$id&users=" +idUser
         return doGET(URL, username, password)
     }
 

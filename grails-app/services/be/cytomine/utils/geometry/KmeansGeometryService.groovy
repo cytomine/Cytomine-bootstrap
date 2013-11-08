@@ -1,12 +1,8 @@
 package be.cytomine.utils.geometry
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.*
 import be.cytomine.security.SecUser
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import groovy.sql.Sql
 

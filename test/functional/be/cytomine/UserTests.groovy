@@ -533,4 +533,10 @@ class UserTests  {
     }
 
 
+    void testAPIGetSignature() {
+         ///api/signature
+         assert 200 == UserAPI.signature(Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+     }
+
+
 }

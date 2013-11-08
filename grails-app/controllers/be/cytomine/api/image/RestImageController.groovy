@@ -4,7 +4,6 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
-import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
@@ -136,6 +135,7 @@ class RestImageController extends RestController {
      */
     def thumb = {
         def url = abstractImageService.thumb(params.long('id'))
+        log.info  "url=$url"
         responseImage(url)
     }
 
@@ -152,6 +152,7 @@ class RestImageController extends RestController {
      */
     def cropAnnotation = {
         try {
+            println "params=$params"
             def annotation = AnnotationDomain.getAnnotationDomain(params.id)
             def cropURL = getCropAnnotationURL(annotation,params)
             if(cropURL!=null) {
@@ -166,6 +167,9 @@ class RestImageController extends RestController {
         }
     }
 
+    private BufferedImage createCropWithDraw(AnnotationDomain annotation,String baseImage) {
+        return createCropWithDraw(annotation,getImageFromURL(baseImage))
+    }
 
     private BufferedImage createCropWithDraw(AnnotationDomain annotation,BufferedImage baseImage) {
 
@@ -343,6 +347,7 @@ class RestImageController extends RestController {
      */
     private def getCropAnnotationURL(AnnotationDomain annotation, def params) {
         Integer zoom = 0
+        println "params=$params"
         Integer maxSize = -1
         if (params.max_size != null) {
             maxSize =  Integer.parseInt(params.max_size)
@@ -358,6 +363,7 @@ class RestImageController extends RestController {
         } else {
             try {
                 String cropURL
+                println "maxSize=$maxSize"
                 if (maxSize != -1) {
                     cropURL = abstractImageService.cropWithMaxSize(annotation, maxSize)
                 } else {

@@ -6,8 +6,9 @@ import grails.converters.JSON
 import org.apache.commons.logging.LogFactory
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
-
 import org.codehaus.groovy.grails.web.json.JSONObject
+
+import java.awt.image.BufferedImage
 
 /**
  * User: lrollus
@@ -199,6 +200,21 @@ class DomainAPI {
     }
 
 
+    static def downloadImage(String URL,String username,String password) throws Exception {
+
+        log.info("DOWNLOAD:"+URL)
+        HttpClient client = new HttpClient();
+        BufferedImage image = client.readBufferedImageFromURLWithoutKey(URL, username, password)
+        return [image: image]
+    }
+
+    static def downloadFile(String URL,String username,String password) throws Exception {
+
+        log.info("DOWNLOAD:"+URL)
+        HttpClient client = new HttpClient();
+        def data = client.readFileFromURLWithoutKey(URL, username, password)
+        return [data: data]
+    }
 
 
 

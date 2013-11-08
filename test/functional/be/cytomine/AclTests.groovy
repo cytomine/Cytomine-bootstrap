@@ -45,6 +45,18 @@ class AclTests {
         assert json.collection.size()==2
     }
 
+    void testGetACLBadRequestWrongRequest() {
+        def result = AclAPI.list("badname", null, null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+    void testGetACLBadRequestObjectNotFound() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        def result = AclAPI.list(project.class.name, 1, user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
     void tesTAddACL() {
         User user = BasicInstanceBuilder.getUserNotExist(true)
         Project project = BasicInstanceBuilder.getProjectNotExist(true)
@@ -61,10 +73,39 @@ class AclTests {
 
         result = AclAPI.create(project.class.name, project.id, user.id,"ADMINISTRATION",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
-        json = JSON.parse(result.data)
 
         assert (200 == ProjectAPI.show(project.id,user.username,"password").code)
         assert (200 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
+
+        assert 400 == AclAPI.create(project.class.name, project.id, user.id,"DELETE",Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+        assert 400 == AclAPI.create(project.class.name, project.id, user.id,"WRITE",Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+
+    }
+
+    void tesTAddACLObjectNotFound() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+        def result = AclAPI.create(project.class.name, 1, user.id,"READ",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+
+    void tesTAddACLDefault() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+        assert (403 == ProjectAPI.show(project.id,user.username,"password").code)
+        assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
+
+        //give null
+        def result = AclAPI.create(project.class.name, project.id, user.id,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+
+        //check if null is READ
+        assert (200 == ProjectAPI.show(project.id,user.username,"password").code)
+        assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
 
     }
 
@@ -92,6 +133,16 @@ class AclTests {
 
         assert (403 == ProjectAPI.show(project.id,user.username,"password").code)
         assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
+
+    }
+
+    void testDeleteACLObjectNotFound() {
+         User user = BasicInstanceBuilder.getUserNotExist(true)
+         Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+         def result = AclAPI.delete(project.class.name, 1, user.id,"ADMINISTRATION",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+         def json = JSON.parse(result.data)
 
     }
 

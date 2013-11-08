@@ -178,6 +178,7 @@ class RestImageInstanceController extends RestController {
     def cropGeometry = {
         //TODO:: document this method
         String geometrySTR = params.geometry
+        println params
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.id)

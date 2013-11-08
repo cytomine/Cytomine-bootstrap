@@ -1,10 +1,7 @@
 package be.cytomine.ontology
 
-import be.cytomine.Exception.InvalidRequestException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
-import be.cytomine.utils.ModelService
 import groovy.sql.Sql
 
 class AnnotationIndexService {
@@ -24,11 +21,6 @@ class AnnotationIndexService {
         return data
 
     }
-
-    def get(ImageInstance image, SecUser user) {
-        AnnotationIndex.findByImageAndUser(image,user)
-    }
-
     /**
      * Return the number of annotation created by this user for this image
      * If user is null, return the number of reviewed annotation for this image
@@ -55,14 +47,4 @@ class AnnotationIndexService {
         return value
     }
 
-
-    def count(ImageInstance image, SecUser user, boolean reviewed) {
-
-        def entry = AnnotationIndex.findByImageAndUser(image,user)
-        if(!entry) {
-            return 0
-        } else {
-            reviewed ? entry.countReviewedAnnotation : entry.countAnnotation
-        }
-    }
 }

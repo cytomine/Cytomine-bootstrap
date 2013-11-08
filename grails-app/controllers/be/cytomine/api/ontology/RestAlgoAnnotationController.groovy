@@ -269,28 +269,4 @@ class  RestAlgoAnnotationController extends RestController {
         println "area=$area"
         unionGeometryService.unionPicture(image,user,term,area,area,bufferLength,minIntersectLength)
     }
-
-
-
-
-    /**
-     * Return a list of annotation
-     *  (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate,term &exo term value in annotation]
-     * @param list
-     * @return
-     */
-    private def mergeResults(def list) {
-        //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
-        if (list.isEmpty() || list[0] instanceof AlgoAnnotation) return list
-        def result = []
-        list.each {
-            AnnotationDomain annotation = it[0]
-            annotation.rate = it[1]
-            annotation.idTerm = it[2]
-            annotation.idExpectedTerm = it[3]
-            result << annotation
-
-        }
-        return result
-    }
 }

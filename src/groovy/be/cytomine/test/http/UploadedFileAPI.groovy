@@ -1,7 +1,6 @@
 package be.cytomine.test.http
 
 import be.cytomine.image.UploadedFile
-import be.cytomine.project.Discipline
 import be.cytomine.test.Infos
 import grails.converters.JSON
 

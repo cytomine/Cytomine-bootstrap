@@ -3,23 +3,14 @@ package be.cytomine.utils.geometry
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.AlgoAnnotationTerm
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
-import be.cytomine.sql.AlgoAnnotationListing
-import be.cytomine.sql.AnnotationListing
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.GeometryCollection
 import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
-import com.vividsolutions.jts.operation.union.CascadedPolygonUnion
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import groovy.sql.Sql
 
 class UnionGeometryService {

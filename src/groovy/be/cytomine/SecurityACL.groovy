@@ -10,7 +10,6 @@ import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
-import be.cytomine.test.Infos
 import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION

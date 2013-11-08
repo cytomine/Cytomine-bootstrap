@@ -1,9 +1,6 @@
 package be.cytomine.utils
 
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
-import be.cytomine.command.*
-import be.cytomine.security.SecUser
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -16,7 +13,7 @@ class AttachedFileService extends ModelService {
     def cytomineService
 
     def currentDomain() {
-        return Description
+        return AttachedFile
     }
 
     /**

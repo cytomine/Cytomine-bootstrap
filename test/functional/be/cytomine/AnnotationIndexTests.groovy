@@ -39,6 +39,11 @@ class AnnotationIndexTests {
     static String USERJOB1 = "AnnotationIndexTestsUSERJOB1"
     static String USERJOB2 = "AnnotationIndexTestsUSERJOB2"
 
+    def testIndexWithImageNotExist() {
+        def result = AnnotationIndexAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
     def testIndexUserAnnotation() {
 
         //create project, with 2 users
@@ -95,6 +100,8 @@ class AnnotationIndexTests {
 
         checkAnnotationIndexReviewedWithoutAnnotationIndex(project,user1,user2)
     }
+
+
 
 
 

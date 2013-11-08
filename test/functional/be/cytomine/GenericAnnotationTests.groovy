@@ -43,6 +43,11 @@ class GenericAnnotationTests  {
         assert json instanceof JSONObject
     }
 
+    void testGetAnnotationNotExist() {
+        def result = AnnotationDomainAPI.show(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
     void testGetAnnotationWithCredentialWidthAnnotationUser() {
         def annotation = BasicInstanceBuilder.getUserAnnotation()
         def result = AnnotationDomainAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)

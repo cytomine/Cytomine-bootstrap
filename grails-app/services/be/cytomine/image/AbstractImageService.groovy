@@ -2,7 +2,6 @@ package be.cytomine.image
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
@@ -34,21 +33,9 @@ class AbstractImageService extends ModelService {
         return AbstractImage
     }
 
-    /**
-     * List all images (only for admin!)
-     */
-    def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
-        return AbstractImage.list()
-    }
-
     //TODO: secure! ACL
     AbstractImage read(def id) {
         AbstractImage abstractImage = AbstractImage.read(id)
-        if (abstractImage && !abstractImage) {
-
-            //SecurityCheck.checkReadAuthorization(image.project)
-        }
         abstractImage
     }
 
@@ -64,13 +51,6 @@ class AbstractImageService extends ModelService {
             projections {
                 groupProperty("baseImage")
             }
-        }
-    }
-
-    //TODO: secure!
-    def list(Group group) {
-        AbstractImageGroup.findAllByGroup(group).collect{
-            it.abstractImage
         }
     }
 
@@ -208,7 +188,9 @@ class AbstractImageService extends ModelService {
      */
     def metadata(def id) {
         AbstractImage image = read(id)
-        def url = new URL(image.getMetadataURL())
+        def url = image.getMetadataURL()
+        println url
+        url = new URL(url)
         return url.text
     }
 

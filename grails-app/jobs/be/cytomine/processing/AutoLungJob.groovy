@@ -1,6 +1,5 @@
 package be.cytomine.processing
 
-import be.cytomine.processing.job.AutoLungJobService
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils

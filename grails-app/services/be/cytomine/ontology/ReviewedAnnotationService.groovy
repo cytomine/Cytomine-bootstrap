@@ -2,7 +2,6 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.SecurityACL
-import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
@@ -12,14 +11,8 @@ import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import grails.orm.HibernateCriteriaBuilder
 import groovy.sql.Sql
-import org.hibernate.Criteria
-import org.hibernate.criterion.Restrictions
-import org.hibernatespatial.criterion.SpatialRestrictions
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
