@@ -60,6 +60,11 @@ class ImageInstanceTests  {
         assert json.collection instanceof JSONArray
     }
 
+    void testListImagesInstanceByUserNotExist() {
+        def result = ImageInstanceAPI.listByUser(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
     void testListImagesInstanceWithTreeStructure() {
         BasicInstanceBuilder.getImageInstance()
         def result = ImageInstanceAPI.listByProjectTree(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -237,6 +242,9 @@ class ImageInstanceTests  {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.id+"") == image1.id
+
+        result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
     }
 
     void testGetPreviousImageInstance() {
@@ -256,5 +264,8 @@ class ImageInstanceTests  {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.id+"") == image2.id
+
+        result = ImageInstanceAPI.previous(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
     }
 }

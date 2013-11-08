@@ -66,12 +66,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def listLastOpenImage = {
-        User user = cytomineService.currentUser
-        if(user) {
-            responseSuccess(imageInstanceService.listLastOpened(user))
-        }else {
-            responseNotFound("ImageInstance", params.id)
-        }
+        responseSuccess(imageInstanceService.listLastOpened(cytomineService.currentUser))
     }
 
     def listByProject = {
@@ -117,9 +112,6 @@ class RestImageInstanceController extends RestController {
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)
-        } catch (AccessDeniedException e) {
-             log.error(e)
-             response([success: false, errors: e], 403)
         }
     }
 

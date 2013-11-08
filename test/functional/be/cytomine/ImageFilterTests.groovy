@@ -45,6 +45,19 @@ class ImageFilterTests  {
         assert json.collection instanceof JSONArray
     }
 
+    void testListImageFilterProjectByProject() {
+        def project = BasicInstanceBuilder.getProject()
+        def result = ImageFilterProjectAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+    }
+
+    void testListImageFilterProjectByProjectNotExist() {
+        def result = ImageFilterProjectAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
     void testAddImageFilterProject() {
         def ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
         def result = ImageFilterProjectAPI.create(ifp.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)

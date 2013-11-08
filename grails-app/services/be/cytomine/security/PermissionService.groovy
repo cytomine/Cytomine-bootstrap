@@ -13,6 +13,7 @@ class PermissionService {
     def aclPermissionFactory
     def objectIdentityRetrievalStrategy
     def dataSource
+    def cytomineService
 
 
 
