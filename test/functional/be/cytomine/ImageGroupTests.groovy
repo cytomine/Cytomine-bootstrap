@@ -78,10 +78,6 @@ class ImageGroupTests {
         def imageGroup = BasicInstanceBuilder.getImageGroupNotExist(BasicInstanceBuilder.getProject(),false)
         def result = ImageGroupAPI.create(imageGroup.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
-        ImageGroup image = result.data
-
-        result = ImageGroupAPI.create(imageGroup.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 409 == result.code
     }
 
     void testEditImageGroup() {
