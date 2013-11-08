@@ -20,6 +20,7 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.ProcessingServer
 import be.cytomine.project.Project
+import be.cytomine.server.resolvers.IIPResolver
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
@@ -438,8 +439,6 @@ class ImageServerTests {
         println json
 
     }
-
-
 
 //
 ///////  void testGetMask() {

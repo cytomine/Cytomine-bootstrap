@@ -19,9 +19,7 @@ abstract class Resolver {
     public static Resolver getResolver(String className) {
         /* Init resolvers, maybe we should load it dynamically with name but fails in grails */
         Map<String, Object> resolvers = new HashMap<String,Object>()
-        resolvers.put("DjatokaResolver", new DjatokaResolver())
         resolvers.put("IIPResolver", new IIPResolver())
-        resolvers.put("Sample", new SampleResolver())
         return (Resolver) resolvers.get(className)
 
     }

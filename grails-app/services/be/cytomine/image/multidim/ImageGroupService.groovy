@@ -33,14 +33,6 @@ class ImageGroupService extends ModelService {
         image
     }
 
-    def get(def id) {
-        def image = ImageGroup.get(id)
-        if(image) {
-            SecurityACL.check(image.container(),READ)
-        }
-        image
-    }
-
     def list(Project project) {
         SecurityACL.check(project,READ)
         return ImageGroup.findAllByProject(project)

@@ -172,13 +172,11 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
         def imageServerStorages = getImageServersStorage()
-        log.info "imageServerStorages=$imageServerStorages"
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
             return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
-        log.info "resolver=$resolver"
         if (!resolver) return null
         def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
@@ -186,7 +184,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         String path = getPath()
         int widthImg =  this.getWidth()
         int heightImg = this.getHeight()
-        log.info "baseUrl=$baseUrl"
         resolver.getCropURL(baseUrl, [basePath, path].join(File.separator), topLeftX, topLeftY, width, height, widthImg, heightImg, desiredWidth, desiredHeight)
     }
 

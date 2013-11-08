@@ -54,6 +54,15 @@ class ImageInstanceTests  {
     }
 
 
+    void testListImagesInstanceByUserLigh() {
+        BasicInstanceBuilder.getImageInstance()
+        def result = ImageInstanceAPI.listByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+    }
+
+
 
     void testListImagesInstanceWithTreeStructure() {
         BasicInstanceBuilder.getImageInstance()

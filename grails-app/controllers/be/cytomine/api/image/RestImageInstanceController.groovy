@@ -57,7 +57,7 @@ class RestImageInstanceController extends RestController {
     }
 
     def listByUser = {
-         responseSuccess(imageInstanceService.list(user))
+         responseSuccess(imageInstanceService.list(cytomineService.currentUser))
     }
 
     def listLastOpenImage = {

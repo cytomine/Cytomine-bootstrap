@@ -44,13 +44,6 @@ class ImageInstanceService extends ModelService {
         image
     }
 
-    def get(def id) {
-        def image = ImageInstance.get(id)
-        if(image) {
-            SecurityACL.check(image.container(),READ)
-        }
-        image
-    }
 
     def list(Project project) {
         SecurityACL.check(project,READ)
@@ -129,21 +122,6 @@ class ImageInstanceService extends ModelService {
         }
 
 
-    }
-
-    /**
-     * Get all image id from project
-     */
-    public List<Long> getAllImageId(Project project) {
-        SecurityACL.check(project,READ)
-
-        //better perf with sql request
-        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
-        def data = []
-        new Sql(dataSource).eachRow(request) {
-            data << it[0]
-        }
-        return data
     }
 
     /**

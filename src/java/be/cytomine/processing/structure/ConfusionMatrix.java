@@ -88,27 +88,6 @@ public class ConfusionMatrix {
         result[i] = (double)matrix[i][i]/sum;
     }
 
-    public String toString()  {
-        String matrixStr = "******************************************\n";
-        matrixStr = matrixStr + "X;";
-        for(int j=0;j<matrix.length;j++) {
-            matrixStr = matrixStr + headerInverse.get(j) + ";";
-        }
-        matrixStr = matrixStr + "\n";
-
-        for(int i=0;i<matrix.length;i++) {
-            matrixStr = matrixStr + headerInverse.get(i) + ";";
-            for(int j=0;j<matrix.length;j++) {
-                matrixStr = matrixStr + matrix[i][j]+";";
-            }
-            matrixStr = matrixStr + result[i] + ";";
-            matrixStr = matrixStr + "\n";
-
-        }
-        matrixStr = matrixStr + "******************************************\n";
-        return matrixStr;
-    }
-
     /**
      * Convert confusion matrix object to JSON
      * @return confusion matrix in JSON

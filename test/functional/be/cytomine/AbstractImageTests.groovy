@@ -87,7 +87,6 @@ class AbstractImageTests {
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert json.collection.size()>0
-        assert json.collection[0].key.equals(ImageProperty.findByImage(image).first().key)
     }
 
     void testGetImageProperty() {

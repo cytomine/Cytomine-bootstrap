@@ -103,40 +103,12 @@ abstract class CytomineDomain  implements Comparable{
         return right
     }
 
-    /**
-     *  This method check if current user has permission on a domain
-     * @param domain Domainto check
-     * @param permissionStr Type of permission
-     * @return  True if user has this permission on the specific domain, otherwise false
-     */
-    boolean hasPermission(def domain,String permissionStr) {
-        try {
-            Permission permission = null;
-            if(permissionStr.equals("READ")) permission = READ
-            else if(permissionStr.equals("WRITE")) permission = WRITE
-            else if(permissionStr.equals("DELETE")) permission = DELETE
-            else if(permissionStr.equals("CREATE")) permission = CREATE
-            else if(permissionStr.equals("ADMIN")) permission = ADMINISTRATION
-            hasPermission(domain,permission)
-
-        } catch (Exception e) {
-            log.error e.toString()
-            e.printStackTrace()
-        }
-        return false
-    }
 
     def dataSource
     boolean hasPermission(def domain,Permission permission) {
+        def masks = getPermission(domain,cytomineService.getCurrentUser())
+        return masks.max() >= permission.mask
 
-        try {
-            def masks = getPermission(domain,cytomineService.getCurrentUser())
-            return masks.max() >= permission.mask
-
-        } catch (Exception e) {
-            log.error e.toString()
-            e.printStackTrace()
-        }
         return false
     }
 
@@ -156,7 +128,7 @@ abstract class CytomineDomain  implements Comparable{
             return masks
 
         } catch (Exception e) {
-            log.error e.toString()
+            println e.toString()
             e.printStackTrace()
         }
         return []

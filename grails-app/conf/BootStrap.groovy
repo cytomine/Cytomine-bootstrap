@@ -33,7 +33,7 @@ class BootStrap {
     def termService
     def tableService
     def secUserService
-    def countersService
+
     def retrieveErrorsService
     def bootstrapTestDataService
     def bootstrapProdDataService
