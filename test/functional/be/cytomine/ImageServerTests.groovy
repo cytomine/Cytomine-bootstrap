@@ -58,13 +58,6 @@ class ImageServerTests {
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection.size()>0
-
-        ImageServerAPI.lisImageServerByMime("toto",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 404 == result.code
-
-        def user = BasicInstanceBuilder.getUserNotExist(true)
-        ImageServerAPI.lisImageServerByMime("tiff",user.username, "password")
-        assert 404 == result.code
     }
 
 

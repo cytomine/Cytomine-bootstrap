@@ -1,6 +1,8 @@
 package be.cytomine
 
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
+import be.cytomine.image.server.Storage
 import be.cytomine.project.Discipline
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
@@ -75,4 +77,40 @@ class UploadedFileTests {
       def result = UploadedFileAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
+
+   void testUploadFileWorkflow() {
+       def oneAnotherImage = BasicInstanceBuilder.initImage()
+       UploadedFile uploadedFile = new UploadedFile()
+       uploadedFile.originalFilename = "test.tif"
+       uploadedFile.filename = "/data/test.cytomine.be/1/1383567901007/test.tif"
+       uploadedFile.path = "/tmp/imageserver_buffer"
+       uploadedFile.size = 243464757l
+       uploadedFile.ext = "tif"
+       uploadedFile.contentType  = "image/tiff"
+       uploadedFile.storages = new Long[1]
+       uploadedFile.storages[0] = Storage.findByName("lrollus test storage").id
+       uploadedFile.projects = new Long[1]
+       uploadedFile.projects[0] = oneAnotherImage.project.id
+       uploadedFile.user = oneAnotherImage.user
+       uploadedFile.status = UploadedFile.TO_DEPLOY
+       BasicInstanceBuilder.saveDomain(uploadedFile)
+
+       def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assert 200 == result.code
+       def image = AbstractImage.findByFilename("/data/test.cytomine.be/1/1383567901007/test.tif")
+       assert image
+
+
+       result = UploadedFileAPI.clearAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assert 200 == result.code
+       result = UploadedFileAPI.populateAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assert 200 == result.code
+       result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assert 200 == result.code
+
+   }
+
+
+
+
 }

@@ -172,7 +172,7 @@ class RestUploadedFileController extends RestController {
                  log.info "Sample error : " + it
              }
          }
-        // writeMail(currentUser,abstractImage,projects)
+         writeMail(currentUser,abstractImage,projects)
          responseSuccess([abstractimage: abstractImage])
 
 

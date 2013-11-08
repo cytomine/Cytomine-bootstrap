@@ -38,4 +38,20 @@ class UploadedFileAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/uploadedfile/" + id + ".json"
         return doDELETE(URL,username,password)
     }
+
+    static def createImage(def uploadedFile,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "/api/uploadedfile/$uploadedFile/image"
+        return doPOST(URL, "",username, password)
+    }
+
+
+    static def clearAbstractImageProperties(Long idImage,String username, String password) throws Exception {
+        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/clear.json","",username,password);
+    }
+    static def populateAbstractImageProperties(Long idImage,String username, String password) throws Exception {
+        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/populate.json","",username,password);
+    }
+    static def extractUsefulAbstractImageProperties(Long idImage,String username, String password) throws Exception {
+        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/extract.json","",username,password);
+    }
 }
