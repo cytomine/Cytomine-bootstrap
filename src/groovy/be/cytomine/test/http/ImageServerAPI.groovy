@@ -83,8 +83,47 @@ class ImageServerAPI extends DomainAPI {
         return doGET(URL,username,password)
     }
 
+    static def mask(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/mask.png?x=$x&y=$y&w=$w&h=$h"  + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
+        return downloadImage(URL,username,password)
+    }
 
+    static def maskReviewed(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/mask.png?reviewed=true&x=$x&y=$y&w=$w&h=$h"  + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
+        return downloadImage(URL,username,password)
+    }
 
+    static def maskUserAnnotation(Long idAnnotation, Long idTerm, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask-$idTerm"
+        return downloadImage(URL,username,password)
+    }
+
+    static def maskUserAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask-$idTerm"
+        return downloadImage(URL,username,password)
+    }
+
+    static def maskAlgoAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask-$idTerm"
+        return downloadImage(URL,username,password)
+    }
+
+    static def maskReviewedAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask-$idTerm"
+        return downloadImage(URL,username,password)
+    }
+//    "/api/userannotation/$annotation/mask-$term"(controller: "restImageInstance"){
+//        action = [GET:"cropmask"]
+//    }
+//    "/api/userannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+//        action = [GET:"alphamaskUserAnnotation"]
+//    }
+//    "/api/algoannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+//        action = [GET:"alphamaskAlgoAnnotation"]
+//    }
+//    "/api/reviewedannotation/$annotation/alphamask-$term"(controller: "restImageInstance"){
+//        action = [GET:"alphamaskReviewedAnnotation"]
+//    }
 //    "/api/annotation/$id/crop"(controller: "restImage"){
 //        action = [GET:"cropAnnotation"]
 //    }

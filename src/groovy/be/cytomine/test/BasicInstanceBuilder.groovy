@@ -1136,7 +1136,7 @@ class BasicInstanceBuilder {
     }
 
 
-    public ImageInstance initImage() {
+    public static ImageInstance initImage() {
 
         String urlImageServer = "http://is31.cytomine.be"
 
@@ -1233,6 +1233,16 @@ class BasicInstanceBuilder {
             processingServer = new  ProcessingServer()
             processingServer.url = "http://image.cytomine.be"
             BasicInstanceBuilder.saveDomain(processingServer)
+        }
+
+        ReviewedAnnotation.findAllByImage(imageInstance).each {
+            it.delete(flush: true)
+        }
+        UserAnnotation.findAllByImage(imageInstance).each {
+            AnnotationTerm.findAllByUserAnnotation(it).each { at ->
+                at.delete(flush:true)
+            }
+            it.delete(flush: true)
         }
 
         return imageInstance
