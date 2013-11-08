@@ -22,7 +22,7 @@ class OntologyAPI extends DomainAPI {
     }
 
     static def list(String username, String password, boolean light) {
-        String URL = Infos.CYTOMINEURL + "api/ontology.json" + (light? "?light=true":"")
+        String URL = Infos.CYTOMINEURL +  (light? "api/ontology/light.json":"api/ontology.json")
         return doGET(URL, username, password)
     }
 

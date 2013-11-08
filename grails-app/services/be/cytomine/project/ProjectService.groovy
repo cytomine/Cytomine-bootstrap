@@ -90,7 +90,7 @@ class ProjectService extends ModelService {
             UNION
             SELECT project_id, created as date
             FROM last_connection
-            WHERE user_id = 14
+            WHERE user_id = ${user.id}
             AND updated is null
             AND project_id is not null
             ORDER BY date desc

@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -103,6 +104,9 @@ class PropertyTests {
         assert PropertyAPI.containsStringInJSONList(annotationProperty.key,json);
         println("JSON - project: " + json)
     }
+
+
+
     void testListKeyWithImage () {
         def result = PropertyAPI.listKeyWithImage((BasicInstanceBuilder.getImageInstance()).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -112,6 +116,23 @@ class PropertyTests {
 
         println("JSON - image: " + json)
     }
+
+  //TEST LISTKEY FOR IMAGEINSTANCE
+    void testListKeyForImageInstanceWithProject () {
+        Project project = BasicInstanceBuilder.getProject()
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+
+        Property annotationProperty = BasicInstanceBuilder.getImageInstancePropertyNotExist(image,true)
+
+        def result = PropertyAPI.listKeyForImageInstanceWithProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert PropertyAPI.containsStringInJSONList(annotationProperty.key,json);
+        println("JSON - project: " + json)
+    }
+
 
     void testListKeyWithProjectNotExist () {
         def result = PropertyAPI.listKeyWithProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)

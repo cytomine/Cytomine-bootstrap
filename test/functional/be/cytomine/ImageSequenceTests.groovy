@@ -42,12 +42,12 @@ class ImageSequenceTests {
 
 
     void testListByGroup() {
-        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1","2","3"],["A","B","C"],["10","20","30"])
+        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1","2"],["A"],["10","20"])
         def result = ImageSequenceAPI.list(dataSet.first().imageGroup.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        assert json.collection.size()==(3*3*3*3)
+        assert json.collection.size()==(3*2*1*2)
 
 
         result = ImageSequenceAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -56,19 +56,19 @@ class ImageSequenceTests {
 
 
     void testGetByImage() {
-        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1","2","3"],["A","B","C"],["10","20","30"])
+        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R"],["1"],["A"],["10"])
         def result = ImageSequenceAPI.get(dataSet.first().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
 
-        result = ImageSequenceAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageSequenceAPI.get(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testPossibilitiesByImage() {
-        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1"],["A","B"],["10","20","30"])
+        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1"],["A"],["10","20"])
         def result = ImageSequenceAPI.getSequenceInfo(dataSet.last().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -76,18 +76,15 @@ class ImageSequenceTests {
         assert json instanceof JSONObject
         assert json.channel.join(',').equals("0,1,2")
         assert json.zStack.join(',').equals("0")
-        assert json.slice.join(',').equals("0,1")
-        assert json.time.join(',').equals("0,1,2")
+        assert json.slice.join(',').equals("0")
+        assert json.time.join(',').equals("0,1")
 
-
-
-
-        result = ImageSequenceAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageSequenceAPI.getSequenceInfo(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
     void testGetSpecificIndex() {
-        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1","2","3"],["A","B","C"],["10","20","30"])
+        def dataSet = BasicInstanceBuilder.getMultiDimensionalDataSet(["R","G","B"],["1"],["A"],["10","20"])
         def group = dataSet.last().imageGroup
         def result = ImageSequenceAPI.get(group.id,0,0,0,0,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -101,13 +98,16 @@ class ImageSequenceTests {
         image = ImageInstance.read(json.image)
         assert image.baseImage.filename.startsWith("G-1-A-10")
 
-        result = ImageSequenceAPI.get(group.id,1,2,2,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageSequenceAPI.get(group.id,1,0,0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         json = JSON.parse(result.data)
         image = ImageInstance.read(json.image)
-        assert image.baseImage.filename.startsWith("G-3-C-20")
+        assert image.baseImage.filename.startsWith("G-1-A-20")
 
 
         result = ImageSequenceAPI.get(group.id,1,5,2,5,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+
+        result = ImageSequenceAPI.get(-99,1,0,0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 

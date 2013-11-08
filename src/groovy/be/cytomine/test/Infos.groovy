@@ -5,8 +5,11 @@ import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
+import be.cytomine.security.PermissionService
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.util.Holders
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -25,6 +28,9 @@ import static org.springframework.security.acls.domain.BasePermission.*
 class Infos {
 
     def springSecurityService
+
+    def permissionService
+
 
     public static String CYTOMINEURL = Holders.getGrailsApplication().config.grails.serverURL + "/"
 
@@ -60,86 +66,103 @@ class Infos {
     static void addUserRight(User user, Project project) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        aclUtilService.addPermission project, user.username, ADMINISTRATION
-        aclUtilService.addPermission project.ontology, user.username, READ
-        aclUtilService.addPermission project.ontology, user.username, WRITE
-        aclUtilService.addPermission project.ontology, user.username, DELETE
-
-        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
-        sessionFactory.currentSession.flush()
-        SCH.clearContext()
+        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        service.addPermission(project,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(project,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(project.ontology,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+//        aclUtilService.addPermission project, user.username, ADMINISTRATION
+//        aclUtilService.addPermission project.ontology, user.username, READ
+//        aclUtilService.addPermission project.ontology, user.username, WRITE
+//        aclUtilService.addPermission project.ontology, user.username, DELETE
+//
+//        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+//        sessionFactory.currentSession.flush()
+//        SCH.clearContext()
     }
 
     static void addUserRight(User user, Ontology ontology) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-
-        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        aclUtilService.addPermission ontology, user.username, READ
-        aclUtilService.addPermission ontology, user.username, WRITE
-        aclUtilService.addPermission ontology, user.username, DELETE
-
-        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
-        sessionFactory.currentSession.flush()
-        SCH.clearContext()
+//
+//        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        service.addPermission(ontology,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(ontology,user.username,WRITE,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(ontology,user.username,DELETE,SecUser.findByUsername(Infos.GOODLOGIN))
+//        aclUtilService.addPermission ontology, user.username, READ
+//        aclUtilService.addPermission ontology, user.username, WRITE
+//        aclUtilService.addPermission ontology, user.username, DELETE
+//
+//        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+//        sessionFactory.currentSession.flush()
+//        SCH.clearContext()
     }
 
     static void addUserRight(User user, Software software) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-
-        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        aclUtilService.addPermission software, user.username, ADMINISTRATION
-        aclUtilService.addPermission software, user.username, READ
-        aclUtilService.addPermission software, user.username, WRITE
-        aclUtilService.addPermission software, user.username, DELETE
-
-        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
-        sessionFactory.currentSession.flush()
-        SCH.clearContext()
+        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        service.addPermission(software,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(software,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
+//        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+//        aclUtilService.addPermission software, user.username, ADMINISTRATION
+//        aclUtilService.addPermission software, user.username, READ
+//        aclUtilService.addPermission software, user.username, WRITE
+//        aclUtilService.addPermission software, user.username, DELETE
+//
+//        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+//        sessionFactory.currentSession.flush()
+//        SCH.clearContext()
     }
 
     static void addUserRight(User user, Storage storage) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-
-        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        aclUtilService.addPermission storage, user.username, ADMINISTRATION
-        aclUtilService.addPermission storage, user.username, READ
-        aclUtilService.addPermission storage, user.username, WRITE
-        aclUtilService.addPermission storage, user.username, DELETE
-
-        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
-        sessionFactory.currentSession.flush()
-        SCH.clearContext()
+        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        service.addPermission(storage,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(storage,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
+//        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+//        aclUtilService.addPermission storage, user.username, ADMINISTRATION
+//        aclUtilService.addPermission storage, user.username, READ
+//        aclUtilService.addPermission storage, user.username, WRITE
+//        aclUtilService.addPermission storage, user.username, DELETE
+//
+//        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+//        sessionFactory.currentSession.flush()
+//        SCH.clearContext()
     }
 
     static void addUserRight(User user, CytomineDomain domain, def perms) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
 
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-
+        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
         perms.each {
-            aclUtilService.addPermission domain, user.username, it
+            service.addPermission(domain,user.username,it,SecUser.findByUsername(Infos.GOODLOGIN))
         }
-//        aclUtilService.addPermission domain, user.username, ADMINISTRATION
-//        aclUtilService.addPermission domain, user.username, READ
-//        aclUtilService.addPermission domain, user.username, WRITE
 
-
-        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
-        sessionFactory.currentSession.flush()
-        SCH.clearContext()
+//        perms.each {
+//            aclUtilService.addPermission domain, user.username, it
+//        }
+//////        aclUtilService.addPermission domain, user.username, ADMINISTRATION
+//////        aclUtilService.addPermission domain, user.username, READ
+//////        aclUtilService.addPermission domain, user.username, WRITE
+////
+////
+////        def sessionFactory = Holders.getGrailsApplication().getMainContext().getBean("sessionFactory")
+////        sessionFactory.currentSession.flush()
+////        SCH.clearContext()
     }
     /**
      * Print all right info for a specific domain
      * @param domain Domain to check
      */
     static void printRight(def domain) {
-        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        if(!AclObjectIdentity.findByObjectId(domain.id)) return
-        def acl = aclUtilService.readAcl(domain)
-
-        acl.entries.eachWithIndex { entry, i ->
-            println entry.sid.toString() + " " + findPermissionName(entry.permission)
-        }
+//        def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
+//        if(!AclObjectIdentity.findByObjectId(domain.id)) return
+//        def acl = aclUtilService.readAcl(domain)
+//
+//        acl.entries.eachWithIndex { entry, i ->
+//            println entry.sid.toString() + " " + findPermissionName(entry.permission)
+//        }
+        println domain.getPermission(domain)
     }
 
     /**

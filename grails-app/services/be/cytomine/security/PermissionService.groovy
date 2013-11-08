@@ -54,11 +54,16 @@ class PermissionService {
 
     void addPermission(def domain, String username, Permission permission) {
 
+        addPermission(domain,username,permission,cytomineService.currentUser)
+    }
+
+    void addPermission(def domain, String username, Permission permission,SecUser user) {
+
         //get domain class id
         def ac = getAclClass(domain)
 
         //get acl sid for current user (run request)
-        def sidCurrentUser = getAclSid(cytomineService.currentUser.username)
+        def sidCurrentUser = getAclSid(user.username)
 
         //get acl object id
         def aoi = getAclObjectIdentity(domain, ac, sidCurrentUser)

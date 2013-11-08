@@ -59,4 +59,14 @@ class JobDataAPI extends DomainAPI {
         client.disconnect();
         return [data: data, code: code]
     }
+
+    static def view(def id,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/view.json"
+        HttpClient client = new HttpClient()
+        client.connect(URL, username, password)
+        byte[] data = client.getData()
+        int code = client.getResponseCode()
+        client.disconnect();
+        return [data: data, code: code]
+    }
 }

@@ -51,13 +51,6 @@ class BootStrap {
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
         log.info "GrailsUtil.environment= " + Environment.getCurrent() + " BootStrap.development=" + Environment.DEVELOPMENT
 
-//        if(! grailsApplication.config.grails.plugins.springsecurity.cas.active) {
-//            println "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSS"
-//            println grailsApplication.config.grails.plugins.springsecurity.interceptUrlMap
-//            grailsApplication.config.grails.plugins.springsecurity.interceptUrlMap.remove('/*')
-//            println grailsApplication.config.grails.plugins.springsecurity.interceptUrlMap
-//        }
-
         //Initialize marshallers and services
         marshallersService.initMarshallers()
         sequenceService.initSequences()

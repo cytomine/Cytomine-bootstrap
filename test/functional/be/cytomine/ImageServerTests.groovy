@@ -51,6 +51,22 @@ import java.text.SimpleDateFormat
  */
 class ImageServerTests {
 
+    void testImageServerListByMime() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+
+        def result = ImageServerAPI.lisImageServerByMime(imageInstance.baseImage.mime.extension,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection.size()>0
+
+        ImageServerAPI.lisImageServerByMime("toto",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+
+        def user = BasicInstanceBuilder.getUserNotExist(true)
+        ImageServerAPI.lisImageServerByMime("tiff",user.username, "password")
+        assert 404 == result.code
+    }
+
 
     void testGetMetadata() {
         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
@@ -111,9 +127,12 @@ class ImageServerTests {
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
         annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
         BasicInstanceBuilder.saveDomain(annotation)
+        AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
         ReviewedAnnotation reviewedAnnotation = BasicInstanceBuilder.createReviewAnnotation(annotation)
+        reviewedAnnotation.addToTerms(at.term)
+        BasicInstanceBuilder.saveDomain(reviewedAnnotation)
 
-         def result = ImageServerAPI.maskReviewed(imageInstance.id,7500,16500,2000,2000,null,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = ImageServerAPI.maskReviewed(imageInstance.id,7500,16500,2000,2000,reviewedAnnotation.terms.first().id,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          BufferedImage thumb = result.image
          BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/mask.png"))
          assert thumb.width == expected.width
@@ -366,6 +385,46 @@ class ImageServerTests {
         assert thumb.height == expected.height
 
     }
+
+    void testGetCropUserAnnotationWithDraw() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
+        annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
+        BasicInstanceBuilder.saveDomain(annotation)
+
+        def result = ImageServerAPI.cropUserAnnotation(annotation.id,true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BufferedImage thumb = result.image
+        assert thumb
+
+    }
+
+    void testGetCropAlgoAnnotationWithDraw() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist()
+        annotation.project = imageInstance.project
+        annotation.image = imageInstance
+        annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
+        BasicInstanceBuilder.saveDomain(annotation)
+
+        def result = ImageServerAPI.cropAlgoAnnotation(annotation.id,true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BufferedImage thumb = result.image
+        assert thumb
+
+    }
+
+    void testGetCropReviewedAnnotationWithDraw() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
+        annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
+        BasicInstanceBuilder.saveDomain(annotation)
+        ReviewedAnnotation reviewedAnnotation = BasicInstanceBuilder.createReviewAnnotation(annotation)
+
+        def result = ImageServerAPI.cropReviewedAnnotation(reviewedAnnotation.id,true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BufferedImage thumb = result.image
+        assert thumb
+
+    }
+
 
     void testGetImageServers() {
 

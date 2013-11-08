@@ -104,7 +104,7 @@ class User extends SecUser {
             returnArray['lastname'] = it.lastname
             returnArray['email'] = it.email
             returnArray['sipAccount'] = it.sipAccount
-            if (it.id == it.springSecurityService.principal?.id) {
+            if (!(it.springSecurityService.principal instanceof String) && it.id == it.springSecurityService.principal?.id) {
                 returnArray['publicKey'] = it.publicKey
                 returnArray['privateKey'] = it.privateKey
             }

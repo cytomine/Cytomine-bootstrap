@@ -6,7 +6,7 @@ import be.cytomine.project.Project
 
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-
+import be.cytomine.test.http.SoftwareAPI
 import grails.converters.JSON
 
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -108,5 +108,20 @@ class TaskTests  {
         def task = new Task().getFromDatabase(jsonTask.task.id)
         assert task.progress==100
     }
+
+    void testListTaskCommentForProject() {
+        Project project = BasicInstanceBuilder.getProject()
+        def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def idtask = JSON.parse(result.data).task.id
+        Task task = new Task()
+        task = task.getFromDatabase(idtask)
+        task.addComment("test")
+
+       result = TaskAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       assert 200 == result.code
+       def json = JSON.parse(result.data)
+       assert json instanceof JSONObject
+   }
 
 }

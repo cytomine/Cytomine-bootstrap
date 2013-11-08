@@ -29,5 +29,10 @@ class ProcessingServerTests  {
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
+
+      result = ProcessingServerAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      assert 404 == result.code
   }
+
+
 }

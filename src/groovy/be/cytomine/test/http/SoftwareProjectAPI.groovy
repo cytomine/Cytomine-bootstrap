@@ -32,6 +32,12 @@ class SoftwareProjectAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listSoftwareProjectByProject(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "/api/project/$id/softwareproject"
+        return doGET(URL, username, password)
+    }
+
+
     static def stats(Long idProject, Long idSoftware, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/$idProject/software/$idSoftware/stats.json"
         return doGET(URL, username, password)

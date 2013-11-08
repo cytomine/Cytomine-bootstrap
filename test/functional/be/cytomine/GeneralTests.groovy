@@ -9,6 +9,7 @@ import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
+import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.News
 import be.cytomine.utils.database.ArchiveCommandService
@@ -157,14 +158,9 @@ class GeneralTests  {
     }
 
     void testPing() {
-        HttpClient client = new HttpClient();
-        String url = Infos.CYTOMINEURL + "server/ping.json"
-        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
-        def json = '{"project": "' + BasicInstanceBuilder.getProject().id + '"}'
-        client.post(json)
-        int code = client.getResponseCode()
-        client.disconnect();
-        assert 200 == code
+
+        def result = ProjectAPI.doPing(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
     }
 
 

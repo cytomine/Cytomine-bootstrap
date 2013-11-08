@@ -382,22 +382,6 @@ class RestImageController extends RestController {
         }
     }
 
-    public static BufferedImage base64ToImage(String base64ImageString) {
-
-        BufferedImage image = null;
-        byte[] imageByte;
-        try {
-            BASE64Decoder decoder = new BASE64Decoder();
-            imageByte = decoder.decodeBuffer(base64ImageString);
-            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-            image = ImageIO.read(bis);
-            bis.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
     def camera = {
         println "camera"
         println params.imgdata

@@ -107,11 +107,6 @@ class RestReviewedAnnotationController extends RestController {
      */
     def startImageInstanceReview = {
         try {
-            ImageInstance.list().each {
-                println "*** => " + it.id
-            }
-
-
             def image = imageInstanceService.read(params.long("id"))
             def response = [:]
 

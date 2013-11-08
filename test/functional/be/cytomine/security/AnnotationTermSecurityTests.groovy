@@ -54,6 +54,7 @@ class AnnotationTermSecurityTests extends SecurityTestsAbstract {
         //Add annotation 1 with cytomine admin
         UserAnnotation annotation = UserAnnotationAPI.buildBasicUserAnnotation(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         Infos.addUserRight(user,annotation.project)
+
         //Add annotation-Term for annotation 1 with cytomine admin
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTerm.term.ontology = annotation.project.ontology

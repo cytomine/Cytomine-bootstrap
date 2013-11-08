@@ -15,6 +15,11 @@ class TaskAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByProject(Long idProject, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$idProject/task/comment"
+        return doGET(URL, username, password)
+    }
+
     static def create(Long idProject, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/task.json"
         def result = doPOST(URL,"{project:${idProject}}",username,password)

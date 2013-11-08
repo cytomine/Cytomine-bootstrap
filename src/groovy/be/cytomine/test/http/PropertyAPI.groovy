@@ -28,6 +28,12 @@ class PropertyAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listKeyForImageInstanceWithProject(Long idProject, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/property/key.json?idProject=$idProject"
+        return doGET(URL, username, password)
+    }
+
+
     //ADD
     static def create(Long idDomain, String type, String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property.json"

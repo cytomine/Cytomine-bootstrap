@@ -140,11 +140,12 @@ abstract class CytomineDomain  implements Comparable{
         return false
     }
 
-    List getPermission(def domain, def user) {
+
+    List getPermission(def domain, def user = null) {
         try {
             String request = "SELECT mask FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
             "WHERE aoi.object_id_identity = ${domain.id} " +
-            "AND sid.sid = '${user.humanUsername()}' " +
+                    (user? "AND sid.sid = '${user.humanUsername()}' " : "") +
             "AND ae.acl_object_identity = aoi.id "+
             "AND ae.sid = sid.id "
 

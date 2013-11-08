@@ -6,8 +6,10 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -427,4 +429,36 @@ class ProjectTests  {
         assert project.countImageInstance() == 0
 
     }
+
+    void testLastOpened() {
+        Project project1 = BasicInstanceBuilder.getProjectNotExist(true)
+        Project project2 = BasicInstanceBuilder.getProjectNotExist(true)
+        Project project3 = BasicInstanceBuilder.getProjectNotExist(true)
+
+        def result = ProjectAPI.doPing(project1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        result = ProjectAPI.doPing(project2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ProjectAPI.listLastOpened(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+    }
+
+    void testListCommandHistoryByProject() {
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
+        annotationToAdd.project = BasicInstanceBuilder.getProjectNotExist(true)
+        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ProjectAPI.listCommandHistory(annotationToAdd.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ProjectAPI.listCommandHistory(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+    }
+
 }

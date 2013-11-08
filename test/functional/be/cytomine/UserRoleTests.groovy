@@ -41,6 +41,11 @@ class UserRoleTests  {
         assert 404 == result.code
     }
 
+    void testShowRole() {
+        def result = UserRoleAPI.show(BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+    }
+
 
   void testAddUseRoleCorrect() {
       def idUser = BasicInstanceBuilder.user1.id

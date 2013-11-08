@@ -120,6 +120,9 @@ class JobDataTests  {
         result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
+        result = JobDataAPI.view(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
         //check if byte[] are equals
         assert testData==result.data
     }
@@ -140,6 +143,9 @@ class JobDataTests  {
 
         //download file
         result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = JobDataAPI.view(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         //check if byte[] are equals

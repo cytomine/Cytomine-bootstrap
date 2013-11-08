@@ -141,8 +141,7 @@ class AclTests {
          Project project = BasicInstanceBuilder.getProjectNotExist(true)
 
          def result = AclAPI.delete(project.class.name, 1, user.id,"ADMINISTRATION",Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         assert 200 == result.code
-         def json = JSON.parse(result.data)
+         assert 404 == result.code
 
     }
 

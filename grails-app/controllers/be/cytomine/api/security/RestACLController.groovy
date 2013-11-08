@@ -76,6 +76,7 @@ class RestACLController extends RestController {
             throw new ObjectNotFoundException("Cannot find object $domainClassName with id $domainIdent ")
         }
         if(!domain) throw new ObjectNotFoundException("Request not valid: domainClassName=${params.domainClassName}, domainIdent=${params.domainIdent} and user=${params.user}")
+        domain
     }
 
     static BasePermission findPermissionName(String auth) {

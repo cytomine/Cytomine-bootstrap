@@ -1,6 +1,7 @@
 package be.cytomine.test.http
 
 import be.cytomine.project.Project
+import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.utils.Task
 import grails.converters.JSON
@@ -96,4 +97,26 @@ class ProjectAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/project/${idProject}/user/${idUser}/admin.json"
         return doDELETE(URL,username,password)
     }
+
+    static def listLastOpened(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/lastopened.json"
+        return doGET(URL, username, password)
+    }
+
+    static def doPing(Long idProject,String username, String password) {
+        String url = Infos.CYTOMINEURL + "server/ping.json"
+        return doPOST(url,'{"project": "' + idProject + '"}',username,password)
+    }
+
+    static def listCommandHistory(Long idProject,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$idProject/commandhistory.json"
+        return doGET(URL, username, password)
+    }
+
+    static def listCommandHistory(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/commandhistory.json"
+        return doGET(URL, username, password)
+    }
+
+
 }

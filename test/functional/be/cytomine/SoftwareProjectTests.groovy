@@ -24,7 +24,7 @@ class SoftwareProjectTests  {
          assert json.collection instanceof JSONArray
      }
  
-     void testListSoftwareProjectByProject() {
+     void testListSoftwareByProject() {
          SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
          def result = SoftwareProjectAPI.listByProject(softwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 200 == result.code
@@ -34,6 +34,17 @@ class SoftwareProjectTests  {
          result = SoftwareProjectAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 404 == result.code
      }
+
+    void testListSoftwareProjectByProject() {
+        SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
+        def result = SoftwareProjectAPI.listSoftwareProjectByProject(softwareProject.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        result = SoftwareProjectAPI.listSoftwareProjectByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
  
     void testListSoftwareProjectBySoftware() {
         SoftwareProject softwareProject = BasicInstanceBuilder.getSoftwareProject()
@@ -58,8 +69,6 @@ class SoftwareProjectTests  {
         assert 404 == result.code
     }
 
-
- 
      void testAddSoftwareProjectCorrect() {
          def SoftwareProjectToAdd = BasicInstanceBuilder.getSoftwareProjectNotExist()
          def result = SoftwareProjectAPI.create(SoftwareProjectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -91,7 +100,6 @@ class SoftwareProjectTests  {
         def result = SoftwareProjectAPI.create(jsonSoftwareProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
- 
 
      void testDeleteSoftwareProject() {
          def SoftwareProjectToDelete = BasicInstanceBuilder.getSoftwareProjectNotExist()

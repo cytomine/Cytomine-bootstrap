@@ -53,6 +53,9 @@ class UserPositionTests  {
         assert 200 == result.code
         result = UserPositionAPI.listLastByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+         //same position, user don't move
+        result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
     }
 
 

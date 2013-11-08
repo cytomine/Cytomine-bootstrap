@@ -63,6 +63,7 @@ class AnnotationIndexTests {
         UserJob user2 = BasicInstanceBuilder.getUserJob(USERJOB2,PASSWORD)
         Infos.addUserRight(user1.user.username,project)
         Infos.addUserRight(user2.user.username,project)
+        Infos.printRight(project)
 
         checkAnnotationIndex(project,user1,user2)
     }

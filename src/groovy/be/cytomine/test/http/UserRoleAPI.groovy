@@ -15,6 +15,11 @@ class UserRoleAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def show(Long idRole, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/role/${idRole}.json"
+        return doGET(URL, username, password)
+    }
+
     static def listRole(String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/role.json"
         return doGET(URL, username, password)

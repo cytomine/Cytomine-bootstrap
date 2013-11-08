@@ -112,6 +112,12 @@ class ImageServerAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask-$idTerm"
         return downloadImage(URL,username,password)
     }
+
+    static def lisImageServerByMime(String ext, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageserver?ext=$ext"
+        return doGET(URL,username,password)
+    }
+
 //    "/api/userannotation/$annotation/mask-$term"(controller: "restImageInstance"){
 //        action = [GET:"cropmask"]
 //    }
