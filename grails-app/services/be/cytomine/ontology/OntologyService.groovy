@@ -33,14 +33,6 @@ class OntologyService extends ModelService {
         ontology
     }
 
-    Ontology get(def id) {
-        def ontology = Ontology.get(id)
-        if (ontology) {
-            SecurityACL.check(ontology,READ)
-        }
-        ontology
-    }
-
     /**
      * List ontology with full tree structure (term, relation,...)
      * Security check is done inside method

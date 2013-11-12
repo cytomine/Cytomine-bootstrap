@@ -175,17 +175,4 @@ class Infos {
              println role.authority
         }
     }
-
-    /**
-     * Convert permission object to a permission string
-     * @param permission Permission object
-     * @return Permission string
-     */
-    static String findPermissionName(BasePermission permission) {
-        if (permission.equals(READ)) return "READ"
-        if (permission.equals(ADMINISTRATION)) return "ADMINISTRATION"
-        if (permission.equals(WRITE)) return "WRITE"
-        if (permission.equals(DELETE)) return "DELETE"
-        return "NOT FOUND"
-    }
 }

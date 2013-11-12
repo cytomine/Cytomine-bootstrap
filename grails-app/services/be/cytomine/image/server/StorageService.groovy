@@ -27,14 +27,6 @@ class StorageService extends ModelService {
         list.sort{it.name}
     }
 
-    def get(def id) {
-        def storage = Storage.get((Long) id)
-        if(storage) {
-            SecurityACL.check(storage,READ)
-        }
-        storage
-    }
-
     def read(def id) {
         def storage =  Storage.read((Long) id)
         if(storage) {

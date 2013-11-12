@@ -65,10 +65,6 @@ class UserAnnotationAPI extends DomainAPI {
         return params.join("&")
     }
 
-    static def listByTerm(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$id"
-        return doGET(URL, username, password)
-    }
 
     static def listByProjectAndTerm(Long idProject, Long idTerm, Long idUser,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&users="+idUser

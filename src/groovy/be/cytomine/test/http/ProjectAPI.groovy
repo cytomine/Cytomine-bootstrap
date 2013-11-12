@@ -49,11 +49,6 @@ class ProjectAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByDiscipline(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/discipline/$id/project.json"
-        return doGET(URL, username, password)
-    }
-
     static def listRetrieval(Long id, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/retrieval/$id/project.json"
         return doGET(URL, username, password)
@@ -100,6 +95,11 @@ class ProjectAPI extends DomainAPI {
 
     static def listLastOpened(String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/lastopened.json"
+        return doGET(URL, username, password)
+    }
+
+    static def listLastOpened(int max,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/lastopened.json?max=$max"
         return doGET(URL, username, password)
     }
 

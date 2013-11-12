@@ -8,8 +8,11 @@ import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
+import be.cytomine.test.http.JobAPI
 import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.TaskAPI
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -256,6 +259,21 @@ class ProjectTests  {
         def projectToDelete = BasicInstanceBuilder.getProjectNotExist()
         assert projectToDelete.save(flush: true) != null
 
+        def result = TaskAPI.create(projectToDelete.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def jsonTask = JSON.parse(result.data)
+
+        //delete all job data
+        result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD,new Task().getFromDatabase(jsonTask.task.id))
+        assert 200 == result.code
+
+
+    }
+
+    void testDeleteProjectWithTask() {
+        def projectToDelete = BasicInstanceBuilder.getProjectNotExist()
+        assert projectToDelete.save(flush: true) != null
+
         def result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def showResult = ProjectAPI.show(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -443,6 +461,11 @@ class ProjectTests  {
         result = ProjectAPI.listLastOpened(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        result = ProjectAPI.listLastOpened(20,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
     }

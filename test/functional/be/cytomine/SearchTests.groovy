@@ -55,7 +55,56 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(project1.id, json)
         assert !DomainAPI.containsInJSONList(project2.id, json)
 
+
+        result = SearchAPI.listDomain(null, SearchOperator.OR, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(project1.id, json)
+        assert DomainAPI.containsInJSONList(project2.id, json)
+
     }
+
+    void testListProjectWithSpecialChar () {
+         Project project1 = BasicInstanceBuilder.getProjectNotExist(true)
+         Project project2 = BasicInstanceBuilder.getProjectNotExist(true)
+
+         Property project1Property1 = BasicInstanceBuilder.getProjectPropertyNotExist()
+         project1Property1.value = "Ponêy"
+         project1Property1.domain = project1
+         BasicInstanceBuilder.saveDomain(project1Property1)
+
+         Property project1Property2 = BasicInstanceBuilder.getProjectPropertyNotExist()
+         project1Property2.value = "Chéval"
+         project1Property2.domain = project1
+         BasicInstanceBuilder.saveDomain(project1Property2)
+
+        Property project1Property3 = BasicInstanceBuilder.getProjectPropertyNotExist()
+        project1Property3.value = "Chéval"
+        project1Property3.domain = project2
+        BasicInstanceBuilder.saveDomain(project1Property3)
+
+         def result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.OR, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         def json = JSON.parse(result.data)
+         assert json.collection instanceof JSONArray
+
+         assert DomainAPI.containsInJSONList(project1.id, json)
+         assert DomainAPI.containsInJSONList(project2.id, json)
+
+         result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.AND, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         assert 200 == result.code
+
+         json = JSON.parse(result.data)
+         assert json.collection instanceof JSONArray
+
+         assert DomainAPI.containsInJSONList(project1.id, json)
+         assert !DomainAPI.containsInJSONList(project2.id, json)
+
+     }
 
     //Test LISTANNOTATION
     void testListAnnotation () {
@@ -167,5 +216,19 @@ class SearchTests {
         assert json.collection instanceof JSONArray
         assert DomainAPI.containsInJSONList(imageInstance2.id, json)
 
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+        assert DomainAPI.containsInJSONList(imageInstance2.id, json)
+
+    }
+
+    //Test LISTIMAGE
+    void testListBadRequest () {
+        def result = SearchAPI.listDomain("Poney,Cheval", "BAD", SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 400 == result.code
+        result = SearchAPI.listDomain("Poney,Cheval", "OR", "BAD", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 400 == result.code
     }
 }

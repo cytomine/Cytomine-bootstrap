@@ -94,11 +94,7 @@ class RestJobDataController extends RestController {
         if(!jobData) {
             responseNotFound("JobData", params.id)
         } else {
-            if(!grailsApplication.config.cytomine.jobdata.filesystem) {
-                jobData = saveInDatabase(jobData,bytes)
-            } else {
-                jobData = saveInFileSystem(jobData,bytes)
-            }
+            jobData = jobDataService.save(jobData,bytes)
             responseSuccess(jobData)
         }
     }
@@ -114,12 +110,7 @@ class RestJobDataController extends RestController {
         } else {
             //response.setContentType "image/png"
             response.setHeader "Content-disposition", "inline"
-
-            if(!grailsApplication.config.cytomine.jobdata.filesystem) {
-                response.outputStream << readFromDatabase(jobData)
-            } else {
-                response.outputStream << readFromFileSystem(jobData)
-            }
+            response.outputStream << jobDataService.read(jobData)
             response.outputStream.flush()
         }
     }
@@ -135,81 +126,10 @@ class RestJobDataController extends RestController {
         } else {
             response.setContentType "application/octet-stream"
             response.setHeader "Content-disposition", "attachment; filename=${jobData.filename}"
-
-            if(!grailsApplication.config.cytomine.jobdata.filesystem) {
-                response.outputStream << readFromDatabase(jobData)
-            } else {
-                response.outputStream << readFromFileSystem(jobData)
-            }
+            response.outputStream << jobDataService.read(jobData)
             response.outputStream.flush()
         }
     }
 
-    /**
-     * Save a job data on database
-     * @param jobData Job data description
-     * @param data Data bytes
-     * @return job data
-     */
-    private JobData saveInDatabase(JobData jobData, byte[] data) {
-        jobData.value.data = data
-        jobData.value.save(flush: true)
-        jobData.size = data.length;
-        return jobData
-    }
 
-    /**
-     * Read job data files from database
-     * @param jobData Job data description
-     * @return Job data bytes
-     */
-    private byte[] readFromDatabase(JobData jobData) {
-        return jobData.value.data
-    }
-
-    /**
-     * Save a job data on disk file system
-     * @param jobData Job data description
-     * @param data data bytes
-     */
-    private void saveInFileSystem(JobData jobData, byte[] data) {
-        File dir = new File(grailsApplication.config.cytomine.jobdata.filesystemPath + GrailsUtil.environment + "/"+jobData.job.id +"/" + jobData.key )
-        File f = new File(dir.getAbsolutePath()+ "/"+jobData.filename)
-        jobData.size = data.length;
-        jobData.save(flush:true)
-        try {
-            dir.mkdirs()
-            new FileOutputStream(f).withWriter { w ->
-                w << new BufferedInputStream( new ByteArrayInputStream(data) )
-            }
-        } catch(Exception e) {
-            e.printStackTrace()
-            throw new ServerException("Cannot create file: " + e)
-        }
-    }
-
-    /**
-     * Read job data files from disk file system
-     * @param jobData Job data description
-     * @return Job data bytes
-     */
-    private byte[] readFromFileSystem(JobData jobData)  {
-        File f = new File(grailsApplication.config.cytomine.jobdata.filesystemPath + GrailsUtil.environment + "/"+ jobData.job.id +"/" + jobData.key + "/"+ jobData.filename)
-        try {
-            InputStream inputStream = new FileInputStream(f);
-            int offset = 0;
-            int bytesRead;
-            // Get the byte array
-            byte[] bytes = new byte[(int) f.length()];
-            // Iterate the byte array
-            while (offset < bytes.length && (bytesRead = inputStream.read(bytes, offset, bytes.length - offset)) >= 0) {
-                offset += bytesRead;
-            }
-            // Close after use
-            inputStream.close();
-            return bytes
-        } catch(Exception e) {
-            throw new ServerException("Cannot read file: " + e)
-        }
-    }
 }

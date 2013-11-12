@@ -21,11 +21,6 @@ class RelationTermAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def listByRelation(Long idRelation,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/relation/"+idRelation+"/term.json"
-        return doGET(URL, username, password)
-    }
-
     static def listByTermAll(Long idTerm,String username, String password) {
         String URL = Infos.CYTOMINEURL+"api/relation/term/"+idTerm+".json"
         return doGET(URL, username, password)

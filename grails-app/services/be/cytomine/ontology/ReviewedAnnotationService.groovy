@@ -32,14 +32,6 @@ class ReviewedAnnotationService extends ModelService {
         return ReviewedAnnotation
     }
 
-    ReviewedAnnotation get(def id) {
-        def annotation = ReviewedAnnotation.get(id)
-        if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
-        }
-        annotation
-    }
-
     ReviewedAnnotation read(def id) {
         def annotation = ReviewedAnnotation.read(id)
         if (annotation) {

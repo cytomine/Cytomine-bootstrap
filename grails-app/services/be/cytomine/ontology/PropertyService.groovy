@@ -104,14 +104,6 @@ class PropertyService extends ModelService {
         property
     }
 
-    def get(def id) {
-        def property = Property.get(id)
-        if (property) {
-            SecurityACL.check(property.container(),READ)
-        }
-        property
-    }
-
     def read(CytomineDomain domain, String key) {
         def cytomineDomain = Property.findByDomainIdentAndKey(domain.id,key)
         if (cytomineDomain) {

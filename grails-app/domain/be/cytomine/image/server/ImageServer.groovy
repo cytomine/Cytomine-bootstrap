@@ -19,10 +19,6 @@ class ImageServer extends CytomineDomain {
         available nullable: false
     }
 
-    String toString() {
-        name
-    }
-
     def getBaseUrl() {
         return url + service
     }

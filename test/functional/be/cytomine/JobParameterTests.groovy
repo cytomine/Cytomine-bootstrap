@@ -63,6 +63,14 @@ class JobParameterTests  {
          def result = JobParameterAPI.update(jobparameterToAdd.id, jsonJobParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 400 == result.code
      }
+
+    void testAddJobParameterAlreadyExist() {
+        def jobparameterToAdd = BasicInstanceBuilder.getJobParameterNotExist()
+        def result = JobParameterAPI.create(jobparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        result = JobParameterAPI.create(jobparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 409 == result.code
+    }
  
      void testUpdateJobParameterCorrect() {
          def jobParam = BasicInstanceBuilder.getJobParameter()

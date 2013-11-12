@@ -92,7 +92,11 @@ class SearchService extends ModelService {
 
                 if (a != 0) { request += "UNION " }
 
-                request +=  blocSelectFromWhere + "AND ( (p.value ILIKE '%" + keywords[0] + "%' OR d.data ILIKE '%" + keywords[0] + "%') "
+                request +=  blocSelectFromWhere
+                if(!keywords.isEmpty()) {
+                    request +=  "AND ( (p.value ILIKE '%" + keywords[0] + "%' OR d.data ILIKE '%" + keywords[0] + "%') "
+                }
+
                         //"AND (p.value ILIKE '%" + keywords[0] + "%'"
 
                 //Loop for the keywords
@@ -100,7 +104,9 @@ class SearchService extends ModelService {
                     request += " OR (p.value ILIKE '%" + keywords[i] + "%' OR d.data ILIKE '%" + keywords[i]+ "%') "
                     //request += " OR p.value ILIKE '%" + keywords[i] + "%'"
                 }
-                request += ") "
+                if(!keywords.isEmpty()) {
+                    request += ") "
+                }
             }
             data = select(request)
         } else if (operator.equals(SearchOperator.AND)) {
@@ -120,7 +126,11 @@ class SearchService extends ModelService {
 //                            blocSelectFromWhere +
 //                            "AND p.value ILIKE '%" + keywords[i] + "%' "
 //                }
-                request += "(" + blocSelectFromWhere + "AND ( p.value ILIKE '%" + keywords[0] + "%' OR d.data ILIKE '%" + keywords[0] + "%') "
+                request += "(" + blocSelectFromWhere
+                if(!keywords.isEmpty()) {
+                    request += "AND ( p.value ILIKE '%" + keywords[0] + "%' OR d.data ILIKE '%" + keywords[0] + "%') "
+                }
+
 
                 //Loop for the keywords
                 for (int i = 1; i < keywords.size() ; i++) {

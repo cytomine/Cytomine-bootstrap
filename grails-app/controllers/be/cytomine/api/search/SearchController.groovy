@@ -18,7 +18,7 @@ class SearchController extends RestController {
     def searchService
 
     def listResponse = {
-        List<String> listKeyword
+        List<String> listKeyword = []
 
         def keywords = params.get('keywords')
         String operator = params.get('operator')
@@ -30,9 +30,9 @@ class SearchController extends RestController {
             idsProject = idsProjectStr.split(",")
         }
 
-        if (!keywords) {
-            responseError(new InvalidRequestException("Please specify some keywords"))
-        }
+//        if (!keywords) {
+//            responseError(new InvalidRequestException("Please specify some keywords"))
+//        }
 
         if (operator) {
             operator = operator.toUpperCase()
@@ -54,7 +54,10 @@ class SearchController extends RestController {
             filter = SearchFilter.ALL
         }
 
-        listKeyword = keywords.split(",")
+        if(keywords) {
+            listKeyword = keywords.split(",")
+        }
+
 
         def all = []
         if (filter.equals(SearchFilter.PROJECT) || filter.equals(SearchFilter.ALL)) {

@@ -67,14 +67,6 @@ class ProjectService extends ModelService {
         projects
     }
 
-    def get(def id, def domain) {
-        def project = Project.get(id)
-        if(project) {
-            SecurityACL.check(project,READ)
-        }
-        project
-    }
-
     /**
      * List last project opened by user
      * If the user has less than "max" project opened, add last created project to complete list
@@ -359,11 +351,9 @@ class ProjectService extends ModelService {
 
         if(retrievalDisable && retrievalAllOntology) {
             throw new WrongArgumentException("Retrieval cannot be disable of all Projects are selected")
-        }
-        if(retrievalDisable && !retrievalProjectEmpty) {
+        } else if(retrievalDisable && !retrievalProjectEmpty) {
             throw new WrongArgumentException("Retrieval cannot be disable of some Projects are selected")
-        }
-        if(retrievalAllOntology && !retrievalProjectEmpty) {
+        } else if(retrievalAllOntology && !retrievalProjectEmpty) {
             throw new WrongArgumentException("Retrieval cannot be set for all procects if some projects are selected")
         }
     }
