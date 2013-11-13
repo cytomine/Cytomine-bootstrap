@@ -199,6 +199,18 @@ class GenericAnnotationTests  {
         assert 200 == result.code
     }
 
+    void testDownloadAnnotationDocumentNewImpl() {
+        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
+        def result = AnnotationDomainAPI.downloadDocumentNewImplementation(annotationTerm.userAnnotation.project.id,annotationTerm.userAnnotation.user.id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        result = AnnotationDomainAPI.downloadDocumentNewImplementation(annotationTerm.userAnnotation.project.id,BasicInstanceBuilder.getUser2().id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+    }
+
+
+
+
+
     void testAddAnnotationCorrectForAlgo() {
         def annotationToAdd = BasicInstanceBuilder.getAlgoAnnotation()
         UserJob user = annotationToAdd.user

@@ -57,6 +57,20 @@ class ImageInstanceService extends ModelService {
         return images
     }
 
+    /**
+     * Get all image id from project
+     */
+    public List<Long> getAllImageId(Project project) {
+        SecurityACL.check(project,READ)
+
+        //better perf with sql request
+        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
+        def data = []
+        new Sql(dataSource).eachRow(request) {
+            data << it[0]
+        }
+        return data
+    }
 
     def list(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)

@@ -34,6 +34,7 @@ class RestUserAnnotationController extends RestController {
     def dataSource
     def paramsService
     def annotationListingService
+    def reportService
 
     /**
      * List all annotation with light format
@@ -46,98 +47,11 @@ class RestUserAnnotationController extends RestController {
         responseSuccess([total:userAnnotationService.count(cytomineService.currentUser)])
     }
 
-
     /**
      * Download report with annotation
-     * TODO:: this should be extract in a specific service (and use lot of same code as algo annotation
-     * TODO:: request must be in secure service
      */
     def downloadDocumentByProject = {
-        // Export service provided by Export plugin
-
-        Project project = projectService.read(params.long('id'))
-        if (!project) {
-            responseNotFound("Project", params.long('id'))
-        }
-
-        //users=9331125,16&terms=-1,-2,9331340,9331346&images=9331299
-
-        def users = []
-        if (params.users != null && params.users != "") {
-            params.users.split(",").each { id ->
-                users << Long.parseLong(id)
-            }
-        }
-        def terms = []
-        if (params.terms != null && params.terms != "") {
-            params.terms.split(",").each {  id ->
-                terms << Long.parseLong(id)
-            }
-        }
-        def images = []
-        if (params.images != null && params.images != "") {
-            params.images.split(",").each {  id ->
-                images << Long.parseLong(id)
-            }
-        }
-        def termsName = Term.findAllByIdInList(terms).collect { it.toString() }
-        def usersName = SecUser.findAllByIdInList(users).collect { it.toString() }
-        def imageInstances = ImageInstance.findAllByIdInList(images)
-
-
-        if (params?.format && params.format != "html") {
-            def exporterIdentifier = params.format;
-            if (exporterIdentifier == "xls") exporterIdentifier = "excel"
-            response.contentType = grailsApplication.config.grails.mime.types[params.format]
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
-            String datePrefix = simpleFormat.format(new Date())
-            response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${params.format}")
-
-            def annotations = UserAnnotation.createCriteria().list {
-                eq("project", project)
-                inList("image", imageInstances)
-                inList("user.id", users)
-            }
-
-            def annotationTerms = AnnotationTerm.createCriteria().list {
-                inList("userAnnotation", annotations)
-                inList("term.id", terms)
-                order("term.id", "asc")
-            }
-
-            def exportResult = []
-            annotationTerms.each { annotationTerm ->
-                UserAnnotation annotation = annotationTerm.userAnnotation
-                def centroid = annotation.getCentroid()
-                Term term = annotationTerm.term
-                def data = [:]
-                data.id = annotation.id
-                data.perimeterUnit = annotation.retrievePerimeterUnit()
-                data.areaUnit = annotation.retrieveAreaUnit()
-                data.area = annotation.area
-                data.perimeter = annotation.perimeter
-                if (centroid != null) {
-                    data.XCentroid = (int) Math.floor(centroid.x)
-                    data.YCentroid = (int) Math.floor(centroid.y)
-                } else {
-                    data.XCentroid = "undefined"
-                    data.YCentroid = "undefined"
-                }
-                data.image = annotation.image.id
-                data.filename = annotation.getFilename()
-                data.user = annotation.user.toString()
-                data.term = term.name
-                data.cropURL = UrlApi.getUserAnnotationCropWithAnnotationId(annotation.id)
-                data.cropGOTO = UrlApi.getAnnotationURL(annotation?.image?.project?.id, annotation.image.id, annotation.id)
-                exportResult.add(data)
-            }
-
-            List fields = ["id", "area", "perimeter", "XCentroid", "YCentroid", "image", "filename", "user", "term", "cropURL", "cropGOTO"]
-            Map labels = ["id": "Id", "area": "Area (microns²)", "perimeter": "Perimeter (mm)", "XCentroid": "X", "YCentroid": "Y", "image": "Image Id", "filename": "Image Filename", "user": "User", "term": "Term", "cropURL": "View userannotation picture", "cropGOTO": "View userannotation on image"]
-            String title = "Annotations in " + project.getName() + " created by " + usersName.join(" or ") + " and associated with " + termsName.join(" or ") + " @ " + (new Date()).toLocaleString()
-
-            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
-        }
+        reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"USERANNOTATION")
     }
 
     /**

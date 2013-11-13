@@ -69,6 +69,11 @@ class AnnotationDomainAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def downloadDocumentNewImplementation(Long idProject,Long idUser, Long idTerm, Long idImageInstance, String username, String password) {
+        String URL = Infos.CYTOMINEURL+"api/annotation/download?project=$idProject&users=" +idUser + "&terms=" + idTerm +"&images=" + idImageInstance + "&format=pdf"
+        return doGET(URL, username, password)
+    }
+
     static def create(String jsonAnnotation, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation.json"
         def result = doPOST(URL, jsonAnnotation,username, password)
