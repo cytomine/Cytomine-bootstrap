@@ -38,10 +38,7 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def checkDomain(def domain) {
-        if(!domain.validate()) {
-            log.warn domain.class.name+".errors=" + domain.errors
-            assert false
-        }
+        assert domain.validate()
         domain
     }
 
@@ -51,11 +48,7 @@ class BasicInstanceBuilder {
      */
     static def saveDomain(def domain) {
         checkDomain(domain)
-        if(!domain.save(flush: true)) {
-            log.warn domain.class+".errors=" + domain.errors
-            assert false
-        }
-        assert domain != null
+        domain.save(flush: true, failOnError:true)
         domain
     }
 
@@ -131,13 +124,13 @@ class BasicInstanceBuilder {
     }
 
     static UserJob getUserJob(Project project) {
-        Job job = BasicInstanceBuilder.getJobNotExist()
-        if(project) job.project = project
+        Job job = getJobNotExist()
+        job.project = project
         saveDomain(job)
-        BasicInstanceBuilder.getSoftwareProjectNotExist(job.software,job.project,true)
-        UserJob userJob = BasicInstanceBuilder.getUserJobNotExist()
+        getSoftwareProjectNotExist(job.software,job.project,true)
+        UserJob userJob = getUserJobNotExist()
         userJob.job = job
-        userJob.user = BasicInstanceBuilder.getUser1()
+        userJob.user = getUser1()
         saveDomain(userJob)
     }
 

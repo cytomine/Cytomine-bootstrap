@@ -97,7 +97,7 @@ var UploadFormView = Backbone.View.extend({
                     }
 
                     //we cannot edit "content-type" so we add content-type-full that will erase content-type on server
-                    xhr.setRequestHeader("content-type-full", "");
+                    xhr.setRequestHeader("content-type-full", "null");
 
                     //update url
                     var $form = $("#fileupload");
@@ -727,7 +727,7 @@ var UploadFormView = Backbone.View.extend({
         var idProject = linkProjectSelect.val();
         var idStorage = linkStorageSelect.val();
 
-        $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.origin);
+        $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.protocol + "//" + window.location.host);
 
             if(idProject==null){
                 $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));

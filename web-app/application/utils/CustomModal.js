@@ -96,7 +96,7 @@ var DescriptionModal = {
 //                             text = text.split('download"').join('download');
 
         //add host url for images
-        text = text.split('/api/attachedfile').join(window.location.origin+'/api/attachedfile');
+        text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host+'/api/attachedfile');
 
          var modal = new CustomModal({
              idModal : "descriptionModal"+domainIdent,
@@ -110,7 +110,7 @@ var DescriptionModal = {
 
                  $("#saveDescription"+idDescription).click(function(e) {
                      // remove the host url for images
-                        text = $("#descriptionArea"+domainIdent).val().split(window.location.origin+'/api/attachedfile').join('/api/attachedfile');
+                        text = $("#descriptionArea"+domainIdent).val().split(window.location.protocol + "//" + window.location.host+'/api/attachedfile').join('/api/attachedfile');
                          new DescriptionModel({id:idDescription,domainIdent: domainIdent, domainClassName: domainClassName}).save({
                              domainIdent: domainIdent,
                              domainClassName: domainClassName,
