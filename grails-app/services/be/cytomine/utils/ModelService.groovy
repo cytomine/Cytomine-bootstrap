@@ -36,8 +36,8 @@ abstract class ModelService {
             log.error newObject.retrieveErrors().toString()
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
-        if (!newObject.save(flush: true)) {
-            log.info "error"
+        if (!newObject.save(flush: true, failOnError: true)) {
+            println "error"
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
     }

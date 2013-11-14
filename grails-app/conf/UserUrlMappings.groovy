@@ -75,5 +75,9 @@ class UserUrlMappings {
             action = [GET:"list",POST:"add",DELETE: "delete"]
         }
 
+        "/api/user/$id/password"(controller:"restUser"){
+            action = [PUT:"resetPassword"]
+        }
+
     }
 }

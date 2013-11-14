@@ -99,7 +99,7 @@ class ProjectService extends ModelService {
             String request2 = """
                 SELECT id, created as date
                 FROM project
-                WHERE id NOT IN (${data.collect{it.id}.join(',')})
+                WHERE ${data.isEmpty()? "true": "id NOT IN (${data.collect{it.id}.join(',')})"}
                 ORDER BY date desc
             """
 

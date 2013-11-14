@@ -54,7 +54,6 @@ class ReviewedAnnotationListingTests {
          annotationNotCriteria.project = annotation.project
          annotationNotCriteria.user = BasicInstanceBuilder.getUserNotExist()
          BasicInstanceBuilder.saveDomain(annotationNotCriteria.user)
-         BasicInstanceBuilder.checkDomain(annotationNotCriteria)
          BasicInstanceBuilder.saveDomain(annotationNotCriteria)
 
          def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -105,13 +104,11 @@ class ReviewedAnnotationListingTests {
 
          def anotherTerm = BasicInstanceBuilder.getTermNotExist()
          anotherTerm.ontology = BasicInstanceBuilder.getOntology()
-         BasicInstanceBuilder.checkDomain(anotherTerm)
          BasicInstanceBuilder.saveDomain(anotherTerm)
 
          if(annotationNotCriteria.terms) annotationNotCriteria.terms.clear()
          annotationNotCriteria.addToTerms(anotherTerm)
 
-         BasicInstanceBuilder.checkDomain(annotationNotCriteria)
          BasicInstanceBuilder.saveDomain(annotationNotCriteria)
 
          def result = ReviewedAnnotationAPI.listByProject(annotation.project.id,annotation.user.id,annotation.image.id,annotation.termsId().first(),Infos.GOODLOGIN, Infos.GOODPASSWORD)

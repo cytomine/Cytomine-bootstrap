@@ -539,4 +539,53 @@ class UserTests  {
      }
 
 
+    void testResetPassword() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+
+        //just call a simple service to check
+        assert 200 == UserAPI.signature(user.username,"password").code
+
+        //change password
+        def response = UserAPI.resetPassword(user.id,"newpassword",Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == response.code
+        println response
+        //just call a simple service to check if password  has changed
+        assert 200 == UserAPI.signature(user.username,"newpassword").code
+        assert 401 == UserAPI.signature(user.username,"password").code
+
+    }
+
+    void testResetPasswordWithBadUser() {
+        //change password
+        assert 404 == UserAPI.resetPassword(-99,"newpassword",Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+    }
+
+    void testResetPasswordWithBadPassword() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        assert 404 == UserAPI.resetPassword(user.id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 400 == UserAPI.resetPassword(user.id,"bad",Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+    }
+
+
+    void testResetPasswordWithUnauthUser() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        User anotherUser = BasicInstanceBuilder.getUserNotExist(true)
+
+        //just call a simple service to check
+        assert 200 == UserAPI.signature(user.username,"password").code
+
+        //change password
+        assert 200 == UserAPI.resetPassword(user.id,"newpassword",user.username,"password").code
+
+        //just call a simple service to check if password  has changed
+        assert 200 == UserAPI.signature(user.username,"newpassword").code
+        assert 401 == UserAPI.signature(user.username,"password").code
+
+        //change password with another user credential
+        assert 403 == UserAPI.resetPassword(user.id,"unauthpassword",anotherUser.username,"password").code
+        //just call a simple service to check if password  has changed
+        assert 401 == UserAPI.signature(user.username,"unauthpassword").code
+        assert 200 == UserAPI.signature(user.username,"newpassword").code
+    }
+
 }

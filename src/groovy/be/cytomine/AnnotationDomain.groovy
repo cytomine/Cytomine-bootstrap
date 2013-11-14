@@ -225,6 +225,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
          Integer minX = env.getMinX();
          Integer width = env.getWidth();
          Integer height = env.getHeight();
+         println ""+[topLeftX: minX, topLeftY: maxY, width: width, height: height]
          return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
        } else throw new be.cytomine.Exception.InvalidRequestException("Cannot make a crop for a POINT")
 

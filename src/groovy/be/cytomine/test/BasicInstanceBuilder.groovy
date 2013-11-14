@@ -47,7 +47,6 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def saveDomain(def domain) {
-        checkDomain(domain)
         domain.save(flush: true, failOnError:true)
         domain
     }

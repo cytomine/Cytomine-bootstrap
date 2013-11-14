@@ -289,11 +289,9 @@ class ProjectTests  {
     void testProjectCounterUserAnnotationCounter() {
         //create project
         Project project = BasicInstanceBuilder.getProjectNotExist()
-        BasicInstanceBuilder.checkDomain(project)
         BasicInstanceBuilder.saveDomain(project)
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
         image.project = project
-        BasicInstanceBuilder.checkDomain(image)
         BasicInstanceBuilder.saveDomain(image)
 
         //check if 0 algo annotation
@@ -305,7 +303,6 @@ class ProjectTests  {
         UserAnnotation a1 = BasicInstanceBuilder.getUserAnnotationNotExist()
         a1.image = image
         a1.project = project
-        BasicInstanceBuilder.checkDomain(a1)
         BasicInstanceBuilder.saveDomain(a1)
 
         project.refresh()
@@ -320,7 +317,6 @@ class ProjectTests  {
         UserAnnotation a2 = BasicInstanceBuilder.getUserAnnotationNotExist()
         a2.image = image
         a2.project = project
-        BasicInstanceBuilder.checkDomain(a2)
         BasicInstanceBuilder.saveDomain(a2)
 
         project.refresh()
@@ -378,7 +374,6 @@ class ProjectTests  {
         AlgoAnnotation a1 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a1.image = image
         a1.project = project
-        BasicInstanceBuilder.checkDomain(a1)
         BasicInstanceBuilder.saveDomain(a1)
 
         //check if 1 algo annotation
@@ -393,7 +388,6 @@ class ProjectTests  {
         AlgoAnnotation a2 = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         a2.image = image
         a2.project = project
-        BasicInstanceBuilder.checkDomain(a2)
         BasicInstanceBuilder.saveDomain(a2)
 
         //check if 2 algo annotation

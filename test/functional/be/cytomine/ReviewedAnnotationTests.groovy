@@ -732,7 +732,6 @@ class ReviewedAnnotationTests  {
         UserJob userJob = BasicInstanceBuilder.getUserJob(image.project)
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(userJob.job,userJob,true)
         annotation.image = image
-        BasicInstanceBuilder.checkDomain(annotation)
         BasicInstanceBuilder.saveDomain(annotation)
 
         image.refresh()
@@ -746,7 +745,6 @@ class ReviewedAnnotationTests  {
         review.image = annotation.image
         review.project = annotation.project
         review.putParentAnnotation(annotation)
-        BasicInstanceBuilder.checkDomain(review)
         BasicInstanceBuilder.saveDomain(review)
 
         annotation.refresh()
@@ -782,7 +780,6 @@ class ReviewedAnnotationTests  {
         review.image = annotation.image
         review.project = annotation.project
         review.putParentAnnotation(annotation)
-        BasicInstanceBuilder.checkDomain(review)
         BasicInstanceBuilder.saveDomain(review)
 
         annotation.refresh()

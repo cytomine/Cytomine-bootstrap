@@ -107,7 +107,6 @@ class ProjectDependencyTests  {
         AlgoAnnotation algoAnnotation =  BasicInstanceBuilder.getAlgoAnnotationNotExist()
         algoAnnotation.project = project
         BasicInstanceBuilder.saveDomain(algoAnnotation)
-        BasicInstanceBuilder.checkDomain(algoAnnotation)
         algoAnnotation.project = project
         BasicInstanceBuilder.saveDomain(algoAnnotation)
 
@@ -148,7 +147,6 @@ class ProjectDependencyTests  {
         ra.putParentAnnotation(algoAnnotation)
         ra.terms?.clear()
         ra.addToTerms(term)
-        BasicInstanceBuilder.checkDomain(ra)
         BasicInstanceBuilder.saveDomain(ra)
         ra.project = project
         BasicInstanceBuilder.saveDomain(ra)

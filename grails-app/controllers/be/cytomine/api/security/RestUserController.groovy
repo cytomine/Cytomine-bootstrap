@@ -1,5 +1,6 @@
 package be.cytomine.api.security
 
+import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
@@ -255,6 +256,29 @@ class RestUserController extends RestController {
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
+    }
+
+    def resetPassword = {
+        try {
+        SecUser user = SecUser.get(params.long('id'))
+        String newPassword = params.get('password')
+        log.info "change password for user $user with new password $newPassword"
+        if(user && newPassword) {
+            SecurityACL.checkIsCreator(user,cytomineService.currentUser)
+            user.newPassword = newPassword
+            //force to reset password (newPassword is transient => beforeupdate is not called):
+            user.password = "bad"
+            secUserService.saveDomain(user)
+            response(user)
+        } else if(!user) {
+            responseNotFound("SecUser",params.id)
+        }else if(!newPassword) {
+            responseNotFound("Password",params.password)
+         }
+        }catch(CytomineException e) {
+            responseError(e)
+        }
+
     }
 
     /**

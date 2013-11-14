@@ -171,7 +171,6 @@ class JobTests  {
         //add job data
         JobData data1 = BasicInstanceBuilder.getJobDataNotExist()
         data1.job = job
-        BasicInstanceBuilder.checkDomain(data1)
         BasicInstanceBuilder.saveDomain(data1)
 
 
@@ -208,7 +207,6 @@ class JobTests  {
         reviewed.image = a1.image
         reviewed.parentIdent = a1.id
         reviewed.parentClassName = a1.class.getName()
-        BasicInstanceBuilder.checkDomain(reviewed)
         BasicInstanceBuilder.saveDomain(reviewed)
 
         println "ReviewedAnnotation project=${reviewed.project.id} & parent=${reviewed.parentIdent}"

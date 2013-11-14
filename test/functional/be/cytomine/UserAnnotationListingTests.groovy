@@ -277,7 +277,6 @@ class UserAnnotationListingTests {
         //create annotation
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
         annotationTerm.term = BasicInstanceBuilder.getTerm()
-        BasicInstanceBuilder.checkDomain(annotationTerm)
         BasicInstanceBuilder.saveDomain(annotationTerm)
         UserAnnotation annotation = annotationTerm.userAnnotation
 
@@ -288,7 +287,6 @@ class UserAnnotationListingTests {
         //create suggest with different term
         AlgoAnnotationTerm suggest = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation,userJob)
         suggest.term = BasicInstanceBuilder.getAnotherBasicTerm()
-        BasicInstanceBuilder.checkDomain(suggest)
         BasicInstanceBuilder.saveDomain(suggest)
 
         println "project=${annotation.project.id}"
@@ -307,14 +305,12 @@ class UserAnnotationListingTests {
         AnnotationTerm annotationTerm2 = BasicInstanceBuilder.getAnnotationTerm()
         annotationTerm2.userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(annotationTerm2.container(),true)
         annotationTerm2.term = BasicInstanceBuilder.getTerm()
-        BasicInstanceBuilder.checkDomain(annotationTerm2)
         BasicInstanceBuilder.saveDomain(annotationTerm2)
         UserAnnotation annotation2 = annotationTerm2.userAnnotation
 
         //create suggest with same term
         AlgoAnnotationTerm suggest2 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation2,userJob)
         suggest2.term = BasicInstanceBuilder.getTerm()
-        BasicInstanceBuilder.checkDomain(suggest)
         BasicInstanceBuilder.saveDomain(suggest)
 
         //We are looking for a different term => annotation shouldn't be in result
