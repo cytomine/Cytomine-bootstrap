@@ -35,7 +35,6 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
 
 
         SecUser user = SecUser.findByUsername(username)
-        println "user=$user"
         println "cas=${grailsApplication.config.grails.plugins.springsecurity.cas.active}"
         println "go out="+(user==null && !grailsApplication.config.grails.plugins.springsecurity.cas.active)
         boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
