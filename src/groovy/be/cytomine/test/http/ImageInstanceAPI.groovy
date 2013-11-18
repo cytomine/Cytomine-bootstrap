@@ -78,6 +78,27 @@ class ImageInstanceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def sameImageData(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/sameimagedata.json"
+        return doGET(URL, username, password)
+    }
+
+    static def copyImageData(Long id, def layers,def idTask,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/copyimagedata.json?layers="+layers.collect{it.image.id+"_"+it.user.id}.join(",")  + (idTask? "&task=$idTask" : "")
+        return doPOST(URL,"", username, password)
+    }
+
+
+//    "/api/imageinstance/$id/sameimagedata"(controller :"restImageInstance") {
+//        action = [GET:"retrieveSameImageOtherProject"]
+//    }
+//    "/api/imageinstance/$id/copyimagedata"(controller :"restImageInstance") {
+//        action = [POST:"copyAnnotationFromSameAbstractImage"]
+//    }
+
+
+
+
     static ImageInstance buildBasicImage(String username, String password) {
         //Create project with user 1
         def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), username, password)

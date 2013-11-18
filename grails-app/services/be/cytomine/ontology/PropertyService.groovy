@@ -77,7 +77,7 @@ class PropertyService extends ModelService {
 
     def listAnnotationCenterPosition(SecUser user, ImageInstance image, Geometry boundingbox, String key) {
         SecurityACL.check(image.container(),READ)
-        String request = "SELECT DISTINCT ua.id, ST_CENTROID(ua.location), p.value " +
+        String request = "SELECT DISTINCT ua.id, ST_X(ST_CENTROID(ua.location)) as x,ST_Y(ST_CENTROID(ua.location)) as y, p.value " +
                 "FROM user_annotation ua, property as p " +
                 "WHERE p.domain_ident = ua.id " +
                 "AND p.key = '"+ key + "' " +
@@ -85,7 +85,7 @@ class PropertyService extends ModelService {
                 "AND ua.user_id = '"+ user.id +"' " +
                 (boundingbox ? "AND ST_Intersects(ua.location,ST_GeometryFromText('" + boundingbox.toString() + "',0)) " :"") +
                 "UNION " +
-                "SELECT DISTINCT aa.id, ST_CENTROID(aa.location), p.value " +
+                "SELECT DISTINCT aa.id, ST_X(ST_CENTROID(aa.location)) as x,ST_Y(ST_CENTROID(aa.location)) as y, p.value " +
                 "FROM algo_annotation aa, property as p " +
                 "WHERE p.domain_ident = aa.id " +
                 "AND p.key = '"+ key + "' " +
@@ -180,10 +180,9 @@ class PropertyService extends ModelService {
         new Sql(dataSource).eachRow(request) {
 
             long idAnnotation = it[0]
-            String centre = it[1]
-            String value = it[2]
+            String value = it[3]
 
-            data << [idAnnotation: idAnnotation, centre: centre, value: value]
+            data << [idAnnotation: idAnnotation, x: it[1],y: it[2], value: value]
         }
         data
     }

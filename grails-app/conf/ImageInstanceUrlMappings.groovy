@@ -53,5 +53,15 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/lastopened"(controller :"restImageInstance") {
             action = [GET:"listLastOpenImage"]
         }
+
+        "/api/imageinstance/lastopened"(controller :"restImageInstance") {
+            action = [GET:"listLastOpenImage"]
+        }
+        "/api/imageinstance/$id/sameimagedata"(controller :"restImageInstance") {
+            action = [GET:"retrieveSameImageOtherProject"]
+        }
+        "/api/imageinstance/$id/copyimagedata"(controller :"restImageInstance") {
+            action = [POST:"copyAnnotationFromSameAbstractImage"]
+        }
     }
 }

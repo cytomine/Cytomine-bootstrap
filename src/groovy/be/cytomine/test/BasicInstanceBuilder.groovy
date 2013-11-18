@@ -737,9 +737,8 @@ class BasicInstanceBuilder {
         project
     }
 
-
-    static Project getProjectNotExist(boolean save = false) {
-        Project project = new Project(name: getRandomString(), ontology: saveDomain(getOntologyNotExist()), discipline: getDiscipline()  )
+    static Project getProjectNotExist(Ontology ontology,boolean save = false) {
+        Project project = new Project(name: getRandomString(), ontology: ontology, discipline: getDiscipline()  )
         if(save) {
             saveDomain(project)
             Infos.addUserRight(Infos.GOODLOGIN,project)
@@ -747,6 +746,10 @@ class BasicInstanceBuilder {
             checkDomain(project)
         }
         return project
+    }
+
+    static Project getProjectNotExist(boolean save = false) {
+        getProjectNotExist(saveDomain(getOntologyNotExist()),save)
     }
 
 

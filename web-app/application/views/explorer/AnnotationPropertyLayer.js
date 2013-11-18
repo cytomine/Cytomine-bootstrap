@@ -50,8 +50,8 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
         _.each(nestedCollection, function (result) {
 
             var format = new OpenLayers.Format.WKT();
-            var point = format.read(result.centre);
-            var pointFeature = new OpenLayers.Feature.Vector(point.geometry);
+            var geom = "POINT("+result.x+" " + (result.y+50)+")"
+            var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
             pointFeature.attributes = { value: result.value};
 
             features.push(pointFeature);

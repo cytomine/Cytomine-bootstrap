@@ -245,4 +245,75 @@ var DescriptionModal = {
 
 
 
+var ImportAnnotationModal = {
+
+    initImportAnnotationModal : function(container,idImage,callback) {
+        var width = Math.round($(window).width()*0.75);
+        var height =  Math.round($(window).height()*0.75);
+
+
+         var modal = new CustomModal({
+
+             idModal : "importAnnotationModal"+idImage,
+             button : container.find("a.importannotation"),
+             header :"Import Annotation Layer",
+             body :'<div id="importLayer'+idImage+'">Import Annotation allow you to get annotations (terms, descriptions, properties) from an image from another project. ' +
+                     '<br/>The image must be the same image, in an other project. You can only import annotation from layer (user) with at least 1 annotation and layer that are in the current project.<br/><br/>  <div id="layersSelection'+idImage+'"><div class="alert alert-info"><i class="icon-refresh"/> Loading...</div></div></div>',
+             width : width,
+             height : height,
+             callBack : function() {
+
+                 $.get("/api/imageinstance/"+idImage+"/sameimagedata", function(data) {
+                     $("#layersSelection"+idImage).empty();
+                     if(data.collection.length==0) {
+                         $("#layersSelection"+idImage).append("This image has no other layers in other projects.");
+                     } else {
+                         _.each (data.collection, function (item){
+                             var layer = item.image + "_" + item.user
+                             var templ = '<input type="checkbox" id="'+layer+'"> Import annotation from project ' + item.projectName + ' -> ' + item.lastname + " " + item.firstname + ' (' + item.username + ') <br/>';
+                              $("#layersSelection"+idImage).append(templ);
+                         });
+                     }
+                });
+
+                 $("#importLayersButton"+idImage).click(function(e) {
+
+                     $("#closeImportLayer"+idImage).hide();
+                     $("#importLayersButton"+idImage).hide();
+                     var layers = []
+                     _.each($("#importLayer"+idImage).find("input"), function(item) {
+                        if($(item).is(':checked')) {
+                            layers.push(item.id)
+                        }
+                     });
+                     $("#layersSelection"+idImage).empty();
+                     new TaskModel({project: window.app.status.currentProject}).save({}, {
+                             success: function (task, response) {
+                                 console.log(response.task);
+                                 $("#layersSelection"+idImage).append('<div id="task-' + response.task.id + '"></div>');
+                                 var timer = window.app.view.printTaskEvolution(response.task,  $("#layersSelection"+idImage).find("#task-" + response.task.id), 2000);
+
+
+                                 $.post("/api/imageinstance/"+idImage+"/copyimagedata?task="+response.task.id+"&layers="+layers.join(","), function(data) {
+                                     clearInterval(timer);
+                                     $("#closeImportLayer"+idImage).show();
+                                     $("#closeImportLayer"+idImage).click();
+                                });
+                             },
+                             error: function (model, response) {
+                                 var json = $.parseJSON(response.responseText);
+                                 window.app.view.message("Task", json.errors, "error");
+                             }
+                         }
+                     );
+                 });
+
+             }
+         });
+         modal.addButtons("importLayersButton"+idImage,"Import these layers",true,false);
+         modal.addButtons("closeImportLayer"+idImage,"Close",false,true);
+
+    }
+}
+
 

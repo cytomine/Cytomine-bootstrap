@@ -102,6 +102,24 @@ var ImageReviewAction = Backbone.View.extend({
                     return false;
                 }
         $(document).find("a.description" + self.model.id).unbind('click',openDescription).bind('click',openDescription);
+
+
+        var openImportImage = function () {
+                    console.log("Click:openImportImage");
+                    if(!self.disableEvent) {
+
+                         //api/imageinstance/" + id + "/sameimagedata.json
+
+
+
+                            ImportAnnotationModal.initImportAnnotationModal(el.find(".action"+self.model.id),self.model.id,function() {});
+                            el.find(".action"+self.model.id).find('a.importannotation').click();
+                    } else {
+                        self.disableEvent = false;
+                    }
+                    return false;
+                }
+        $(document).find("a.importannotation" + self.model.id).unbind('click',openImportImage).bind('click',openImportImage);
        // $(document).on('click',"a.description" + self.model.id,openDescription);
     },
     disableEvent : false,

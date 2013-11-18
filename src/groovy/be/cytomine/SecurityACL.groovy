@@ -209,6 +209,18 @@ class SecurityACL {
         }
     }
 
+    static public def checkIsAdminContainer(CytomineDomain domain,SecUser currentUser) {
+            if (domain) {
+                println "Admin=${domain.container().checkPermission(ADMINISTRATION)}"
+                if (!domain.container().checkPermission(ADMINISTRATION)) {
+                    throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
+                }
+            } else {
+                throw new ObjectNotFoundException("ACL error: domain is null! Unable to process project auth checking")
+            }
+
+    }
+
     static public def checkIsSameUserOrAdminContainer(CytomineDomain domain,SecUser user,SecUser currentUser) {
         println "user=${user.username}"
         println "currentUser=${currentUser.username}"

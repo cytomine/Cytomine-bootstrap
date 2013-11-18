@@ -96,7 +96,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
                 if (layer.vectorsLayer.visibility) {
                     var annotationPropertyLayer = new AnnotationPropertyLayer(self.model.get('id'), layer.userID, self.browseImageView, key);
                     annotationPropertyLayer.addToMap();
-                    annotationPropertyLayer.setZIndex(726);
+                    //annotationPropertyLayer.setZIndex(726);
 
                     self.annotationPropertyLayers.push(annotationPropertyLayer);
                 }

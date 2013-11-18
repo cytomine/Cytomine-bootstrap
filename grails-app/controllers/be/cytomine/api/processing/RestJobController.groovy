@@ -147,6 +147,7 @@ class RestJobController extends RestController {
             responseNotFound("Job",params.id)
         } else {
             SecurityACL.checkReadOnly(job.container())
+            SecurityACL.checkIsAdminContainer(job.project,cytomineService.currentUser)
             println "1project=${job.project.id}"
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
@@ -208,33 +209,41 @@ class RestJobController extends RestController {
     def purgeJobNotReviewed = {
         //retrieve project
         Project  project = projectService.read(params.long('id'))
-        if (!project)
-            responseNotFound("Project",params.project)
-        else {
-            //retrieve task
-            Task task = taskService.read(params.long('task'))
-            log.info "Looking for all jobs..."
-            taskService.updateTask(task,1,"Looking for all jobs...")
-            //get all jobs
-            def jobs = Job.findAllByProjectAndDataDeleted(project,false)
+        try {
+            SecurityACL.checkIsAdminContainer(project,cytomineService.currentUser)
 
-            jobs.eachWithIndex { job, i ->
-                //check if job has reviewed annotation
-                boolean isReviewed = jobService.hasReviewedAnnotation(job)
+            SecurityACL.checkIsAdminContainer(project,cytomineService.currentUser)
+               if (!project)
+                   responseNotFound("Project",params.project)
+               else {
+                   //retrieve task
+                   Task task = taskService.read(params.long('task'))
+                   log.info "Looking for all jobs..."
+                   taskService.updateTask(task,1,"Looking for all jobs...")
+                   //get all jobs
+                   def jobs = Job.findAllByProjectAndDataDeleted(project,false)
 
-                //if job has no reviewed annotation deleteAllAlgoAnnotationsTerm / deleteAllAlgoAnnotations / deleteAllJobData
-                if(!isReviewed) {
-                    removeJobData(job)
-                    int pogress = (int)Math.floor((double)i/(double)jobs.size()*100)
-                    taskService.updateTask(task,pogress,"Delete data for job: ${job.software.name} #${job.number}")
-                }
+                   jobs.eachWithIndex { job, i ->
+                       //check if job has reviewed annotation
+                       boolean isReviewed = jobService.hasReviewedAnnotation(job)
 
-            }
-            taskService.finishTask(task)
-            project.refresh()
-            responseSuccess(project)
+                       //if job has no reviewed annotation deleteAllAlgoAnnotationsTerm / deleteAllAlgoAnnotations / deleteAllJobData
+                       if(!isReviewed) {
+                           removeJobData(job)
+                           int pogress = (int)Math.floor((double)i/(double)jobs.size()*100)
+                           taskService.updateTask(task,pogress,"Delete data for job: ${job.software.name} #${job.number}")
+                       }
+
+                   }
+                   taskService.finishTask(task)
+                   project.refresh()
+                   responseSuccess(project)
+               }
+
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
-
     }
 
 
