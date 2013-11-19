@@ -20,17 +20,17 @@ class DisciplineService extends ModelService {
     }
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         Discipline.list()
     }
 
     def read(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         Discipline.read(id)
     }
 
     def get(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         Discipline.get(id)
     }
 

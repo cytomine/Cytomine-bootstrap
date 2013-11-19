@@ -54,33 +54,44 @@ class SecUserService extends ModelService {
     }
 
     def get(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecUser.get(id)
     }
 
     def findByUsername(def username) {
         if(!username) return null
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecUser.findByUsername(username)
     }
 
     SecUser getByPublicKey(String key) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
     }
 
     def read(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecUser.read(id)
     }
 
+    def getAuth(SecUser user) {
+        def data = [:]
+        data['admin'] = user.isAdminAuth()
+        data['user'] = !data['admin'] && user.isUserAuth()
+        data['ghest'] = !data['admin'] && !data['user'] && user.isGhestAuth()
+//        data['admin'] = false
+//        data['user'] = false
+//        data['ghest'] = true
+        return data
+    }
+
     def readCurrentUser() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         cytomineService.getCurrentUser()
     }
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         User.list(sort: "username", order: "asc")
     }
 
@@ -194,7 +205,7 @@ class SecUserService extends ModelService {
      * Get all online user
      */
     List<SecUser> getAllOnlineUsers() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         //get date with -X secondes
         def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {

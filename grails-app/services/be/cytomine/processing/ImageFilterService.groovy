@@ -11,12 +11,12 @@ class ImageFilterService {
     def cytomineService
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         ImageFilter.list()
     }
 
     def read(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         ImageFilter.read(id)
     }
 }

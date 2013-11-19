@@ -37,7 +37,7 @@ class SoftwareService extends ModelService {
     }
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         Software.list()
     }
 
@@ -53,7 +53,7 @@ class SoftwareService extends ModelService {
      */
     def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        SecurityACL.checkGhest(currentUser)
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }

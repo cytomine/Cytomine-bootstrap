@@ -197,6 +197,12 @@ class SecurityACL {
        }
     }
 
+    static public def checkGhest(SecUser user) {
+       if (!user.admin && !user.getAuthorities().collect{it.authority}.contains("ROLE_USER") && !user.getAuthorities().collect{it.authority}.contains("ROLE_GHEST")) {
+           throw new ForbiddenException("You don't have the right to read this resource! You must be user!")
+       }
+    }
+
     static public def checkUser(SecUser user) {
        if (!user.admin && !user.getAuthorities().collect{it.authority}.contains("ROLE_USER")) {
            throw new ForbiddenException("You don't have the right to read this resource! You must be user!")

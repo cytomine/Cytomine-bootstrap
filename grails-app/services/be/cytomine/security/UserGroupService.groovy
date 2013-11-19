@@ -22,12 +22,12 @@ class UserGroupService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         UserGroup.findAllByUser(user)
     }
 
     def get(User user, Group group) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         UserGroup.findByUserAndGroup(user, group)
     }
 

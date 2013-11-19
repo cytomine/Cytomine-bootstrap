@@ -127,7 +127,13 @@ class RestUserController extends RestController {
         }
 
         if (user) {
-            responseSuccess(user)
+            def  maps = JSON.parse(user.encodeAsJSON())
+            def  authMaps = secUserService.getAuth(user)
+            maps.admin = authMaps.get("admin")
+            maps.user = authMaps.get("user")
+            maps.ghest = authMaps.get("ghest")
+           responseSuccess(maps)
+//            responseSuccess(user)
         } else {
             responseNotFound("User", params.id)
         }
@@ -355,7 +361,7 @@ class RestUserController extends RestController {
 
     def CASLdapUserDetailsService
     def addFromLDAP = {
-        log.info  "username = " + params.username
+        log.info  "username = " + params.username  + " role = " + params.role
         CASLdapUserDetailsService.loadUserByUsername(params.username)
         def resp = SecUser.findByUsername(params.username)
         log.info resp

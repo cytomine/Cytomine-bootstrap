@@ -33,6 +33,7 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
       //Get admin user
       User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
+
       //Create new project (user1)
       def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
       assert 200 == result.code
@@ -121,6 +122,35 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
       assert (403 == ProjectAPI.delete(project.id,USERNAME2,PASSWORD2).code)
 
   }
+
+    void testProjectSecurityForGhestUser() {
+
+        //Get user1
+        User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
+        //Get ghest
+         User ghest = BasicInstanceBuilder.getGhest("GHESTONTOLOGY","PASSWORD")
+
+        //Create new project (user1)
+        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+        assert 200 == result.code
+        Project project = result.data
+
+        //Add right to user2
+        def resAddUser = ProjectAPI.addUserProject(project.id,ghest.id,USERNAME1,PASSWORD1)
+        assert 200 == resAddUser.code
+        //log.info "AFTER:"+user2.getAuthorities().toString()
+
+        Infos.printRight(project)
+        //check if user 2 can access/update/delete
+        assert (200 == ProjectAPI.show(project.id,"GHESTONTOLOGY","PASSWORD").code)
+        assert (true ==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list("GHESTONTOLOGY","PASSWORD").data)))
+        assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),"GHESTONTOLOGY","PASSWORD").code)
+        assert (403 == ProjectAPI.delete(project.id,"GHESTONTOLOGY","PASSWORD").code)
+        assert (403 == ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),"GHESTONTOLOGY","PASSWORD").code)
+    }
+
+
+
 
   void testProjectSecurityForAnonymous() {
 

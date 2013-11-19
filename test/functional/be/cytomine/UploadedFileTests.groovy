@@ -4,6 +4,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
 import be.cytomine.project.Discipline
+import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DisciplineAPI
@@ -109,6 +110,30 @@ class UploadedFileTests {
        assert 200 == result.code
 
    }
+
+
+    void testUploadFileWorkflowForGhest() {
+        User ghest = BasicInstanceBuilder.getGhest("GHESTUPLOAD","PASSWORD")
+        def oneAnotherImage = BasicInstanceBuilder.initImage()
+        UploadedFile uploadedFile = new UploadedFile()
+        uploadedFile.originalFilename = "test.tif"
+        uploadedFile.filename = "/data/test.cytomine.be/1/1383567901007/test.tif"
+        uploadedFile.path = "/tmp/imageserver_buffer"
+        uploadedFile.size = 243464757l
+        uploadedFile.ext = "tif"
+        uploadedFile.contentType  = "image/tiff"
+        uploadedFile.storages = new Long[1]
+        uploadedFile.storages[0] = Storage.findByName("lrollus test storage").id
+        uploadedFile.projects = new Long[1]
+        uploadedFile.projects[0] = oneAnotherImage.project.id
+        uploadedFile.user = oneAnotherImage.user
+        uploadedFile.status = UploadedFile.TO_DEPLOY
+        BasicInstanceBuilder.saveDomain(uploadedFile)
+
+        def result = UploadedFileAPI.createImage(uploadedFile.id,"GHESTUPLOAD", "PASSWORD")
+        assert 403 == result.code
+
+    }
 
 
 

@@ -897,12 +897,40 @@ class BasicInstanceBuilder {
         user
     }
 
+    static User getGhest(String username, String password) {
+        def user = SecUser.findByUsername(username)
+        if (!user) {
+            user = new User(username: username,firstname: "Basic",lastname: "User",email: "Basic@User.be",password: password,enabled: true)
+            user.generateKeys()
+            saveDomain(user)
+            try {
+               SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GHEST"),true)
+            } catch(Exception e) {
+                log.warn(e)
+            }
+        }
+        user
+    }
+
     static User getUserNotExist(boolean save = false) {
        User user = new User(username: getRandomString(),firstname: "BasicNotExist",lastname: "UserNotExist",email: "BasicNotExist@User.be",password: "password",enabled: true)
         user.generateKeys()
         if(save) {
             saveDomain(user)
             SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_USER"),true)
+        } else {
+            checkDomain(user)
+        }
+
+        user
+    }
+
+    static User getGhestNotExist(boolean save = false) {
+       User user = new User(username: getRandomString(),firstname: "BasicNotExist",lastname: "UserNotExist",email: "BasicNotExist@User.be",password: "password",enabled: true)
+        user.generateKeys()
+        if(save) {
+            saveDomain(user)
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GHEST"),true)
         } else {
             checkDomain(user)
         }

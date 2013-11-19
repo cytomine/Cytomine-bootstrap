@@ -35,7 +35,7 @@ class TaskService  {
      * @return Task created
      */
     def createNewTask(Project project, SecUser user, boolean printInActivity) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         Task task = new Task(projectIdent: project?.id, userIdent: user.id,printInActivity:printInActivity)
         //task.addToComments("Task started...")
         task = task.saveOnDatabase()

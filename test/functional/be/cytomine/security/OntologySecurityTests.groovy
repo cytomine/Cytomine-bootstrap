@@ -107,6 +107,29 @@ class OntologySecurityTests extends SecurityTestsAbstract {
       assert (403 == OntologyAPI.delete(ontology.id,USERNAME2,PASSWORD2).code)
   }
 
+    //
+    void testOntologySecurityForGhest() {
+
+        //Get user1
+        User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
+        //Get user2
+        User ghest = BasicInstanceBuilder.getGhest("GHESTONTOLOGY","PASSWORD")
+
+        //Create new Ontology (user1)
+        def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
+        assert 200 == result.code
+        Ontology ontology = result.data
+        Infos.printRight(ontology)
+        //check if user 2 cannot access/update/delete
+        assert (403 == OntologyAPI.show(ontology.id,"GHESTONTOLOGY","PASSWORD").code)
+        assert (false==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list("GHESTONTOLOGY","PASSWORD").data)))
+        assert (403 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),"GHESTONTOLOGY","PASSWORD").code)
+        assert (403 == OntologyAPI.delete(ontology.id,"GHESTONTOLOGY","PASSWORD").code)
+        assert (403 == OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),"GHESTONTOLOGY","PASSWORD").code)
+
+    }
+
+
   void testOntologySecurityForSimpleUser() {
 
       //Get user1

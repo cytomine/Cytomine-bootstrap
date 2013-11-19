@@ -219,8 +219,7 @@ class RestReviewedAnnotationController extends RestController {
      */
     def deleteAnnotationReview = {
         try {
-            AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
-            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.findByParentIdent(annotation.id)
+            ReviewedAnnotation reviewedAnnotation = ReviewedAnnotation.findByParentIdent(params.long('id'))
 
             if(!reviewedAnnotation) {
                 throw new WrongArgumentException("This annotation is not accepted, you cannot reject it!")

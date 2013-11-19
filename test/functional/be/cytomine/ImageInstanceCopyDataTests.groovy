@@ -17,7 +17,7 @@ import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-
+import static org.springframework.security.acls.domain.BasePermission.*
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -94,6 +94,15 @@ class ImageInstanceCopyDataTests {
         assert 404 == response.code
     }
 
+    void testGetLayersImageUnauthorized() {
+        def data = initData()
+        def response = ImageInstanceAPI.sameImageData(data.image3.id,data.user3.username,"password")
+        assert 403 == response.code
+
+        response = ImageInstanceAPI.copyImageData(data.image3.id,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],null,data.user3.username,"password")
+        assert 403 == response.code
+    }
+
     void testCopyLayersFull() {
         def data = initData()
 
@@ -164,7 +173,7 @@ class ImageInstanceCopyDataTests {
         def data = [:]
         data.user1 = BasicInstanceBuilder.getUserNotExist(true)
         data.user2 = BasicInstanceBuilder.getUserNotExist(true)
-
+        data.user3 = BasicInstanceBuilder.getUserNotExist(true)
         data.ontology1 = BasicInstanceBuilder.getOntologyNotExist(true)
         data.ontology2 = BasicInstanceBuilder.getOntologyNotExist(true)
 
@@ -178,6 +187,8 @@ class ImageInstanceCopyDataTests {
         Infos.addUserRight(data.user2.username,data.project1)
         Infos.addUserRight(data.user2.username,data.project2)
         Infos.addUserRight(data.user2.username,data.project3)
+
+        Infos.addUserRight(data.user1,data.project3,[READ])
 
         data.image = BasicInstanceBuilder.getAbstractImageNotExist(true)
         BasicInstanceBuilder.getImageInstanceNotExist(data.project1,true)

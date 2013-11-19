@@ -118,7 +118,7 @@ class ProjectService extends ModelService {
     }
 
     def list(SecUser user) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         //faster to get it from database table (getProjectList) than PostFilter
         SecurityACL.getProjectList(user)
     }

@@ -8,12 +8,12 @@ class SecRoleService {
     def cytomineService
 
     def read(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecRole.read(id)
     }
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         SecRole.list()
     }
 }

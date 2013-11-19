@@ -55,7 +55,7 @@ class Property extends CytomineDomain implements Serializable{
      */
     void checkAlreadyExist(){
         Property.withNewSession {
-            Property property = Property.findByDomainIdentAndKey(domainIdent, key)
+            Property property = Property.findByDomainIdentAndKeyAndValue(domainIdent, key, value)
             if (property != null && (property.id!=id))
             {
                 throw new AlreadyExistException("Property " + property.domainIdent

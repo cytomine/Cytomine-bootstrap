@@ -18,6 +18,11 @@ class PropertyAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listKeywords(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/keywords.json"
+        return doGET(URL, username, password)
+    }
+
     //LISTKEYFORANNOTATION
     static def listKeyWithProject(Long idProject, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/annotation/property/key.json?idProject=$idProject"

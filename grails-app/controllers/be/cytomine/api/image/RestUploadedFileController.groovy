@@ -1,5 +1,6 @@
 package be.cytomine.api.image
 
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
@@ -113,6 +114,7 @@ class RestUploadedFileController extends RestController {
     def createImage = {
         long timestamp = new Date().getTime()
         def currentUser = cytomineService.currentUser
+        SecurityACL.checkUser(currentUser)
         UploadedFile uploadedFile = UploadedFile.read(params.long('uploadedFile'))
         Collection<Storage> storages = []
         uploadedFile.getStorages()?.each {

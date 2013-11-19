@@ -76,11 +76,14 @@ class BootStrap {
         //create non admin user for test
 
             bootstrapUtilsService.createUsers([
-                    [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]]])
+                    [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]],
+                    [username : 'ghest', firstname : 'Simply', lastname : 'Ghest', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'ghest', color : "#FF0000", roles : ["ROLE_USER"]]]
+            )
 
         //if database is empty, create admin user
         if (SecUser.count() == 0) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'admin', color : "#FF0000", roles : ["ROLE_ADMIN"]]])
+            bootstrapTestDataService.initData()
         }
 
         if (Environment.getCurrent()  != Environment.TEST) {

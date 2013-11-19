@@ -6,29 +6,29 @@
             <div class="toolbar toolbarPanel" id="toolbar<%= id %>" style="text-align: left;">
                 <div class="btn-group btn-group-vertical toolbar-group" data-toggle="buttons-radio">
                     <!--<a class="btn btn-inverse" id="none<%= id %>" data-toggle="button"><i class="icon-move icon-white"/>Navigate</a>-->
-                    <a class="btn btn-inverse btn-small selectButton" id="select<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-move"/></a>
-                    <a class="btn btn-inverse btn-small" id="point<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-pin"/></a>
-                    <a class="btn btn-inverse btn-small" id="irregular4<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-square"/></a>
-                    <a class="btn btn-inverse btn-small" id="irregular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-irregular-circle"/></a>
-                    <a class="btn btn-inverse btn-small" id="regular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-circle"/></a>
-                    <a class="btn btn-inverse btn-small" id="polygon<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-polygon"/></a>
-                    <a class="btn btn-inverse btn-small magicWandButton" id="magic<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-magic"/> </a>
+                    <a data-toggle="tooltip" title="Select annotation" class="btn btn-inverse btn-small selectButton" id="select<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-move"/></a>
+                    <a data-toggle="tooltip" title="Draw a point" class="btn btn-inverse btn-small" id="point<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-pin"/></a>
+                    <a data-toggle="tooltip" title="Draw a rectangle" class="btn btn-inverse btn-small" id="irregular4<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-square"/></a>
+                    <a data-toggle="tooltip" title="Draw a diamond" class="btn btn-inverse btn-small" id="irregular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-irregular-circle"/></a>
+                    <a data-toggle="tooltip" title="Draw a circle" class="btn btn-inverse btn-small" id="regular30<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-circle"/></a>
+                    <a data-toggle="tooltip" title="Draw a polygon (with points)" class="btn btn-inverse btn-small" id="polygon<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-vector-path-polygon"/></a>
+                    <a data-toggle="tooltip" title="Use maggic wand to create annotation" class="btn btn-inverse btn-small magicWandButton" id="magic<%= id %>" data-toggle="button"><i class="glyphicon-white glyphicon-magic"/> </a>
 
                     <div style="clear: both;"></div>
-                    <a class="btn btn-inverse btn-small freehandButton" id="freehand<%= id %>" data-toggle="button" alt="Freehand"><i class="glyphicon-pen glyphicon-white"/></a>
-                    <a class="btn btn-inverse btn-small joinButton" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/><i class="glyphicon-white glyphicon-pen"/></a>
-                    <a class="btn btn-inverse btn-small cutButton" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/><i class="glyphicon-white glyphicon-pen"/></a>
-                    <a class="btn btn-inverse btn-small" id="fill<%= id %>" data-toggle="button">Fill</a>
-                    <a class="btn btn-inverse btn-small" id="ruler<%= id %>" data-toggle="button"><i class="glyphicon-ruller glyphicon-white"/></a>
+                    <a data-toggle="tooltip" title="Draw a polygon (with freehand)" class="btn btn-inverse btn-small freehandButton" id="freehand<%= id %>" data-toggle="button" alt="Freehand"><i class="glyphicon-pen glyphicon-white"/></a>
+                    <a data-toggle="tooltip" title="Add a new polygon to an existing annotation" class="btn btn-inverse btn-small joinButton" id="freeAdd<%= id %>" data-toggle="button"><i class="icon-plus icon-white"/><i class="glyphicon-white glyphicon-pen"/></a>
+                    <a data-toggle="tooltip" title="Remove a polygon from an existing annotation" class="btn btn-inverse btn-small cutButton" id="freeRem<%= id %>" data-toggle="button"><i class="icon-minus icon-white"/><i class="glyphicon-white glyphicon-pen"/></a>
+                    <a data-toggle="tooltip" title="Fill a polygon with holes" class="btn btn-inverse btn-small" id="fill<%= id %>" data-toggle="button">Fill</a>
+                    <a data-toggle="tooltip" title="Draw a ruller on the screen" class="btn btn-inverse btn-small" id="ruler<%= id %>" data-toggle="button"><i class="glyphicon-ruller glyphicon-white"/></a>
 
                     <div style="clear: both;"></div>
-                    <a class="btn btn-inverse btn-small editButton" id="modify<%= id %>" data-toggle="button">Edit</a>
-                    <a class="btn btn-inverse btn-small" id="rotate<%= id %>" data-toggle="button">Rotate</a>
-                    <a class="btn btn-inverse btn-small" id="resize<%= id %>" data-toggle="button">Resize</a>
-                    <a class="btn btn-inverse btn-small" id="drag<%= id %>" data-toggle="button">Drag</a>
-                    <a class="btn btn-inverse btn-small deleteButton" id="delete<%= id %>" data-toggle="button"><i class="glyphicon-bin glyphicon-white"/></a>
+                    <a data-toggle="tooltip" title="Edit an annotation by moving points" class="btn btn-inverse btn-small editButton" id="modify<%= id %>" data-toggle="button">Edit</a>
+                    <a data-toggle="tooltip" title="Rotate an annotation" class="btn btn-inverse btn-small" id="rotate<%= id %>" data-toggle="button">Rotate</a>
+                    <a data-toggle="tooltip" title="Resize an annotation" class="btn btn-inverse btn-small" id="resize<%= id %>" data-toggle="button">Resize</a>
+                    <a data-toggle="tooltip" title="Move an annotation" class="btn btn-inverse btn-small" id="drag<%= id %>" data-toggle="button">Drag</a>
+                    <a data-toggle="tooltip" title="Delete an annotation" class="btn btn-inverse btn-small deleteButton" id="delete<%= id %>" data-toggle="button"><i class="glyphicon-bin glyphicon-white"/></a>
 
-                    <a class="btn btn-inverse btn-small" id="camera<%= id %>" data-toggle="button"><i class="icon-camera icon-white"/></a>
+                    <a data-toggle="tooltip" title="Take a picture of the screen" class="btn btn-inverse btn-small" id="camera<%= id %>" data-toggle="button"><i class="icon-camera icon-white"/></a>
 
                     <div style="clear: both;"></div>
 

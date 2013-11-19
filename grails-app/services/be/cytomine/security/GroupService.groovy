@@ -21,7 +21,7 @@ class GroupService extends ModelService {
     }
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         return Group.list(sort: "name", order: "asc")
     }
 
@@ -31,17 +31,17 @@ class GroupService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         UserGroup.findByUser(user).collect{it.group}
     }
 
     def read(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         return Group.read(id)
     }
 
     def get(def id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         return Group.get(id)
     }
 
@@ -52,7 +52,7 @@ class GroupService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        SecurityACL.checkGhest(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 

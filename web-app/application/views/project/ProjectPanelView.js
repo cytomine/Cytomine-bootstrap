@@ -118,7 +118,8 @@ var ProjectPanelView = Backbone.View.extend({
         }
 
         self.renderCurrentProjectButton();
-        self.renderShowImageButton(json.numberOfImages);
+        self.renderShowImageButton(json.numberOfImages)
+
     },
     infoProject: function () {
         var self = this;

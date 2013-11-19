@@ -274,6 +274,9 @@ var ImportAnnotationModal = {
                               $("#layersSelection"+idImage).append(templ);
                          });
                      }
+                }).fail(function(json) {
+                     window.app.view.message("Import data", json.responseJSON.errors, "error",5000);
+                    $("#closeImportLayer"+idImage).click();
                 });
 
                  $("#importLayersButton"+idImage).click(function(e) {
@@ -298,7 +301,10 @@ var ImportAnnotationModal = {
                                      clearInterval(timer);
                                      $("#closeImportLayer"+idImage).show();
                                      $("#closeImportLayer"+idImage).click();
-                                });
+                                }).fail(function(json) {
+                                      clearInterval(timer);
+                                     window.app.view.message("Import data", json.errors, "error");
+                                 });
                              },
                              error: function (model, response) {
                                  var json = $.parseJSON(response.responseText);

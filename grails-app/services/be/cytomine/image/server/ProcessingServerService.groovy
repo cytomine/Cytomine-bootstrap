@@ -8,12 +8,12 @@ class ProcessingServerService {
     def cytomineService
 
     def list() {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         ProcessingServer.list()
     }
 
     def read(long id) {
-        SecurityACL.checkUser(cytomineService.currentUser)
+        SecurityACL.checkGhest(cytomineService.currentUser)
         return ProcessingServer.read(id)
     }
 

@@ -7,6 +7,7 @@ import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.PropertyAPI
+import be.cytomine.utils.Keyword
 import be.cytomine.utils.UpdateData
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
@@ -414,5 +415,22 @@ class PropertyTests {
         //Error IdImage
         result = PropertyAPI.listAnnotationCenterPosition(user.id, -99, "0,0,1000,1000","TestCytomine", Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
+    }
+
+    void testListKeywords() {
+        def result = PropertyAPI.listKeywords(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.collection.size()==0
+
+        Keyword key = new Keyword(key: "test")
+        assert key.save(flush:true)
+
+        result = PropertyAPI.listKeywords(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.collection.size()==1
     }
 }

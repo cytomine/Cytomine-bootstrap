@@ -137,6 +137,7 @@ var ApplicationController = Backbone.Router.extend({
 
             var successcallback = function (data) {
                 console.log("Launch app!");
+                console.log(data);
                 self.status.version = data.get('version');
                 self.status.serverURL = data.get('serverURL');
                 if (data.get('authenticated')) {

@@ -29,7 +29,7 @@
         </div>
 
         <div class="span8">
-            <div class="well">
+            <div class="well" style="margin-bottom: 0px;padding-bottom: 5px;">
                 <h4>Add a property</h4><br/>
                 <div class="controls">
                     <form>
@@ -37,6 +37,18 @@
                     <input type="text" title="Value" class="input-xlarge" id="input_value" required />
                     <li style="display : inline;">
                         <button id="addProperty" class="btn">Add Property </button>
+                    </li>
+                    </form>
+                </div>
+            </div>
+            <div class="well" style="margin-bottom: 0px;padding-bottom: 5px;">
+                <h4>Add a keyword</h4><br/>
+                <div class="controls">
+                    <form>
+                    <!--<input type="text" title="Value" class="input-xlarge" id="input_value_keywords" required />-->
+                        <div class="alert alert-info" id="waitForKeywords"><i class="icon-refresh"/> Loading...</div>
+                    <li style="display : inline;">
+                        <button id="addKeywords" class="btn">Add Keyword </button>
                     </li>
                     </form>
                 </div>

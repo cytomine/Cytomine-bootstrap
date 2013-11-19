@@ -33,7 +33,6 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     throws UsernameNotFoundException, DataAccessException {
         println "loadUserByUsername"
 
-
         SecUser user = SecUser.findByUsername(username)
         println "cas=${grailsApplication.config.grails.plugins.springsecurity.cas.active}"
         println "go out="+(user==null && !grailsApplication.config.grails.plugins.springsecurity.cas.active)

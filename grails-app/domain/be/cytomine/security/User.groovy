@@ -112,6 +112,7 @@ class User extends SecUser {
             returnArray['created'] = it.created?.time?.toString()
             returnArray['updated'] = it.updated?.time?.toString()
             returnArray['algo'] = it.algo()
+
             return returnArray
         }
     }

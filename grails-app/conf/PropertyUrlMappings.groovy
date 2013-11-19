@@ -45,5 +45,9 @@ class PropertyUrlMappings
         "/api/imageinstance/property/key"(controller:"restProperty"){
             action = [GET:"listKeyForImageInstance"]
         }
+
+        "/api/keywords"(controller:"keywords"){
+            action = [GET:"list"]
+        }
     }
 }

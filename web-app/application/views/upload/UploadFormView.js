@@ -29,7 +29,13 @@ var UploadFormView = Backbone.View.extend({
             "text!application/templates/upload/UploadForm.tpl.html"
         ],
             function (tpl) {
-                self.doLayout(tpl);
+
+                if(!window.app.status.user.model.get('ghest')) {
+                    self.doLayout(tpl);
+                } else {
+                    window.app.view.message("error","Cannot upload if you are ghest!",5000);
+                }
+
             });
 
         return this;
@@ -724,7 +730,11 @@ var UploadFormView = Backbone.View.extend({
 
         var linkProjectSelect = $("#linkProjectSelect");
         var linkStorageSelect = $("#linkStorageSelect");
-        var idProject = linkProjectSelect.val();
+        var idProject = null;
+        if($("#linkWithProject").is(':checked')) {
+
+            idProject = linkProjectSelect.val();
+        }
         var idStorage = linkStorageSelect.val();
 
         $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.protocol + "//" + window.location.host);
@@ -772,6 +782,7 @@ var UploadFormView = Backbone.View.extend({
 
         linkWithProject.off('change');
         linkWithProject.on('change', function (event) {
+            self.refreshProjectAndStorage()
             if ($(this).is(':checked')) {
                 linkProjectSelect.removeAttr("disabled");
             } else {

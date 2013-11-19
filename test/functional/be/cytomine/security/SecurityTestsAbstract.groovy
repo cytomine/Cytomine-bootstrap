@@ -27,6 +27,8 @@ class SecurityTestsAbstract  {
     static String USERNAMEBAD = "BADUSER"
     static String PASSWORDBAD = "BADPASSWORD"
 
+    static String GHEST1 = "USERNAME1"
+
 
     User getUser1() {
          BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)

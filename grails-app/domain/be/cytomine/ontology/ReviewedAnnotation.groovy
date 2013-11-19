@@ -145,9 +145,13 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
              if (annotationParentId == -1) {
                  annotationParentId = JSONUtils.getJSONAttrLong(json, 'annotation', -1)
              }
-             AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationParentId)
-             domain.parentClassName = annotation.class.getName()
-             domain.parentIdent = annotation.id
+             try {
+                 AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationParentId)
+                 domain.parentClassName = annotation.class.getName()
+                 domain.parentIdent = annotation.id
+             } catch(Exception e) {
+                //parent is deleted...
+              }
 
              domain.status = JSONUtils.getJSONAttrInteger(json, 'status', 0)
 

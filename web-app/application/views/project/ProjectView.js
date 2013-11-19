@@ -84,14 +84,16 @@ var ProjectView = Backbone.View.extend({
     },
     generateAddProjectPanel: function () {
         var self = this;
-        require([
-            "text!application/templates/project/AddProjectPanel.tpl.html"
-        ],
-            function (tpl) {
-                $(self.projectListElem).append(_.template(tpl, {}));
-            });
 
-        return this;
+            require([
+                "text!application/templates/project/AddProjectPanel.tpl.html"
+            ],
+                function (tpl) {
+                    $(self.projectListElem).append(_.template(tpl, {}));
+                });
+
+            return this;
+
     },
     /**
      * Create search project panel
@@ -161,6 +163,13 @@ var ProjectView = Backbone.View.extend({
             $(self.projectListElem).append(panel.el);
 
         });
+        if(window.app.status.user.model.get('ghest')) {
+            $("#newProjectListing").hide();
+            $(".editProject").hide();
+            $(".deleteProject").hide();
+            $(".infoProject").hide();
+            $(".addSlide").hide();
+        }
     },
     /**
      * Show all project from the collection and hide the other
@@ -168,7 +177,6 @@ var ProjectView = Backbone.View.extend({
      */
     showProjects: function (projectsShow) {
         var self = this;
-        console.log("CONTAINS SHOW="+projectsShow.get(16623));
         self.model.each(function (project) {
             //if project is in project result list, show it
             if (projectsShow.get(project.id) != null) {

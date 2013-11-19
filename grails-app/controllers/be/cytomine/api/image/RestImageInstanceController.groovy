@@ -52,6 +52,8 @@ class RestImageInstanceController extends RestController {
     def termService
     def annotationListingService
     def cytomineService
+    def taskService
+    def annotationIndexService
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
@@ -363,24 +365,28 @@ class RestImageInstanceController extends RestController {
 
     }
 
-    def dataSource
+
 
     /**
      * Check if an abstract image is already map with one or more projects
      * If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
      */
     def retrieveSameImageOtherProject = {
-        ImageInstance image = imageInstanceService.read(params.long('id'))
-        if(image) {
-            def layers =  getLayersFromAbstractImage(image.baseImage,image,cytomineService.currentUser)
-            responseSuccess(layers)
-        } else {
-            responseNotFound("Abstract Image",params.id)
+        try {
+            ImageInstance image = imageInstanceService.read(params.long('id'))
+            if(image) {
+                SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+                def layers =  imageInstanceService.getLayersFromAbstractImage(image.baseImage,image, projectService.list(cytomineService.currentUser).collect{it.id},secUserService.listUsers(image.project).collect{it.id})
+                responseSuccess(layers)
+            } else {
+                responseNotFound("Abstract Image",params.id)
+            }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 
-    def taskService
-    def annotationIndexService
 
     /**
      * Copy all annotation (and dedepency: term, description, property,..) to the new image
@@ -388,154 +394,24 @@ class RestImageInstanceController extends RestController {
      * from user/image from another project.
      */
     def copyAnnotationFromSameAbstractImage = {
-        ImageInstance image = imageInstanceService.read(params.long('id'))
-        Task task = taskService.read(params.getLong("task"))
-        log.info "task ${task} is find for id = ${params.getLong("task")}"
-        def layers = !params.layers? "" : params.layers.split(",")
-
-        if(image && layers) {
-
-            taskService.updateTask(task,0,"Start to copy...")
-            double total = 0
-            if(task) {
-                layers.each { couple ->
-                    def idImage = Long.parseLong(couple.split("_")[0])
-                    def idUser = Long.parseLong(couple.split("_")[1])
-                    def number = annotationIndexService.count(ImageInstance.read(idImage),SecUser.read(idUser))
-                    total = total + number
-                }
+        try {
+            ImageInstance image = imageInstanceService.read(params.long('id'))
+            SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
+            def layers = !params.layers? "" : params.layers.split(",")
+            if(image && layers) {
+                responseSuccess(imageInstanceService.copyLayers(image,layers,secUserService.listUsers(image.project).collect{it.id},task))
+            } else {
+                responseNotFound("Abstract Image",params.id)
             }
-            taskService.updateTask(task,0,"Start to copy $total annotations...")
-            double alreadyDone = 0
-            layers.each { couple ->
-                def idImage = Long.parseLong(couple.split("_")[0])
-                def idUser = Long.parseLong(couple.split("_")[1])
-                alreadyDone = copyAnnotationLayer(ImageInstance.read(idImage),SecUser.read(idUser),image,task,total,alreadyDone)
-            }
-            responseSuccess([])
-        } else {
-            responseNotFound("Abstract Image",params.id)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 
 
-    private long copyAnnotationLayer(ImageInstance image, User user, ImageInstance based, Task task, double total, double alreadyDone) {
-        log.info "copyAnnotationLayer=$image | $user "
 
-         def alreadyDoneLocal = alreadyDone
-         UserAnnotation.findAllByImageAndUser(image,user).each {
-             copyAnnotation(it,based)
-             log.info "alreadyDone=$alreadyDone total=$total"
-             taskService.updateTask(task,Math.min(100,((alreadyDoneLocal/total)*100d).intValue()),"Start to copy ${total.intValue()} annotations...")
-             alreadyDoneLocal = alreadyDoneLocal +1
-         }
-        alreadyDoneLocal
-    }
-
-
-    private def copyAnnotation(UserAnnotation based, ImageInstance dest) {
-        log.info "copyAnnotationLayer=${based.id}"
-        def usersProject = secUserService.listUsers(dest.project).collect{it.id}
-
-        //copy annotation
-        UserAnnotation annotation = new UserAnnotation()
-        annotation.created = based.created
-        annotation.geometryCompression = based.geometryCompression
-        annotation.image = dest
-        annotation.location = based.location
-        annotation.project = dest.project
-        annotation.updated =  based.updated
-        annotation.user = based.user
-        annotation.wktLocation = based.wktLocation
-        userAnnotationService.saveDomain(annotation)
-
-        //copy term
-
-        AnnotationTerm.findAllByUserAnnotation(based).each { basedAT ->
-            println "at="+basedAT.term.ontology
-            println "dest=" +dest.project.ontology
-            if(usersProject.contains(basedAT.user.id) && basedAT.term.ontology==dest.project.ontology) {
-                AnnotationTerm at = new AnnotationTerm()
-                at.user = basedAT.user
-                at.term = basedAT.term
-                at.userAnnotation = annotation
-                userAnnotationService.saveDomain(at)
-            }
-        }
-
-        //copy description
-        Description.findAllByDomainIdent(based.id).each {
-            Description description = new Description()
-            description.data = it.data
-            description.domainClassName = it.domainClassName
-            description.domainIdent = annotation.id
-            userAnnotationService.saveDomain(description)
-        }
-
-        //copy properties
-        Property.findAllByDomainIdent(based.id).each {
-            Property property = new Property()
-            property.key = it.key
-            property.value = it.value
-            property.domainClassName = it.domainClassName
-            property.domainIdent = annotation.id
-            userAnnotationService.saveDomain(property)
-        }
-
-    }
-
-
-
-
-    private def getLayersFromAbstractImage(AbstractImage image, ImageInstance exclude, User currentUser) {
-           //get id of last open image
-           def currentUsersProject = projectService.list(currentUser).collect{it.id}
-           def layerFromNewImage = secUserService.listUsers(exclude.project).collect{it.id}
-           def layers = []
-           def adminsMap = [:]
-
-           def req1 = getLayersFromAbtrsactImageSQLRequestStr(true)
-        println "req1=$req1"
-        println ""+[image.id,exclude.id]
-           new Sql(dataSource).eachRow(req1,[image.id,exclude.id]) {
-               println it
-               if(currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
-                   layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
-                   adminsMap.put(it.image+"_"+it.user,true)
-               }
-
-           }
-
-        def req2 = getLayersFromAbtrsactImageSQLRequestStr(false)
-        println "req2=$req2";
-        println ""+[image.id,exclude.id];
-
-            new Sql(dataSource).eachRow(req2,[image.id,exclude.id]) {
-                println it
-                if(!adminsMap.get(it.image+"_"+it.user) && currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
-                    layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
-                }
-
-            }
-        println layers
-            return layers
-
-    }
-
-    private String getLayersFromAbtrsactImageSQLRequestStr(boolean admin) {
-        return """
-            SELECT ii.id as image,su.id as user,p.name as projectName, p.id as project, su.lastname as lastname, su.firstname as firstname, su.username as username, '${admin}' as admin, count_annotation as annotations
-            FROM image_instance ii, project p, ${admin? "admin_project" : "user_project" } up, sec_user su, annotation_index ai
-            WHERE base_image_id = ?
-            AND ii.id <> ?
-            AND ii.project_id = p.id
-            AND up.id = p.id
-            AND up.user_id = su.id
-            AND ai.user_id = su.id
-            AND ai.image_id = ii.id
-            ORDER BY p.name, su.lastname,su.firstname,su.username;
-        """
-
-    }
 
 }

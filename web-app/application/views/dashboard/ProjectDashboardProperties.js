@@ -58,6 +58,12 @@ var ProjectDashboardProperties = Backbone.View.extend({
             self.refresh(self.idDomain, self.nameDomain);
         }
 
+        $.get( "api/keywords.json", function( data ) {
+            $("#waitForKeywords").replaceWith('<input type="text" title="Value" class="input-xlarge" id="input_value_keywords" required />');
+            $("#input_value_keywords").typeahead({source:data.collection,minLength:0});
+        })
+
+
         $("#buttonAnnotationProperty").click(function() {
             window.app.controllers.dashboard.navigate("#tabs-annotationproperties-" + window.app.status.currentProject + "-undefined" ,false);
             self.refresh(self.idDomain, "Annotation");
@@ -81,8 +87,15 @@ var ProjectDashboardProperties = Backbone.View.extend({
         $("#addProperty").click(function(event) {
             console.log("click button add");
             event.preventDefault();
-            self.addPropertyTable();
+            self.addPropertyTable(false);
         });
+
+        $("#addKeywords").click(function(event) {
+            console.log("click button add");
+            event.preventDefault();
+            self.addPropertyTable(true);
+        });
+
         $("#identifiantSelect").click(function() {
             console.log("click select");
             self.idDomain = $("#identifiantSelect").val();
@@ -401,12 +414,24 @@ var ProjectDashboardProperties = Backbone.View.extend({
         $("#input_value").val("");
     },
 
-    addPropertyTable: function() {
+    addPropertyTable: function(isKeyword) {
         var self = this;
 
-        if ($("#input_key").val() != "" && $("#input_value").val() != "") {
+        var key = $("#input_key").val();
+        var value = $("#input_value").val();
+
+        if(isKeyword) {
+
+            key = "$TAGS";
+            value = $("#input_value_keywords").val();
+        }
+
+        console.log(key + value);
+
+
+        if ((value != "" && key != "")) {
             if (self.nameDomain == "Annotation") {
-                new  AnnotationPropertyModel({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}).save({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}, {
+                new  AnnotationPropertyModel({domainIdent : $("#identifiantSelect").val(), key: key, value : value}).save({domainIdent : $("#identifiantSelect").val(), key: key, value : value}, {
                     success: function (model, response) {
                         self.drawOption(model);
                         self.annotationPropertyCollection.add(model);
@@ -419,7 +444,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
                     }
                 });
             } else if (self.nameDomain == "ImageInstance") {
-                new  ImageInstancePropertyModel({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}).save({domainIdent : $("#identifiantSelect").val(), key: $("#input_key").val(), value : $("#input_value").val()}, {
+                new  ImageInstancePropertyModel({domainIdent : $("#identifiantSelect").val(), key: key, value : value}).save({domainIdent : $("#identifiantSelect").val(), key: key, value : value}, {
                     success: function (model, response) {
                         self.drawOption(model);
                         self.imageInstancePropertyCollection.push(model);
@@ -430,7 +455,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
                     }
                 });
             } else if (self.nameDomain == "Project") {
-                new  ProjectPropertyModel({domainIdent : window.app.status.currentProject, key: $("#input_key").val(), value : $("#input_value").val()}).save({domainIdent : window.app.status.currentProject, key: $("#input_key").val(), value : $("#input_value").val()}, {
+                new  ProjectPropertyModel({domainIdent : window.app.status.currentProject, key: key, value : value}).save({domainIdent : window.app.status.currentProject, key: key, value : value}, {
                     success: function (model, response) {
                         self.drawOption(model);
                         self.projectPropertyCollection.push(model);

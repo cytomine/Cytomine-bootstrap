@@ -189,6 +189,11 @@ var ApplicationView = Backbone.View.extend({
                 preference.activated = !preference.activated;
                 localStorage.setObject(key, preference);
             });
+
+            if(window.app.status.user.model.get('ghest'))  {
+                $("#feedback").hide();
+            }
+
             $("#feedback").on("click", function (e) {
                 e.preventDefault();
                 showClassicWidget();

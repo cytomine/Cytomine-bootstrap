@@ -629,6 +629,28 @@ class ReviewedAnnotationTests  {
         assert JSON.parse(result.data).reviewedannotation.location.trim().equals("POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))")
     }
 
+    void testAddReviewDeleteParentAndReject() {
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
+
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+
+        result = UserAnnotationAPI.delete(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+
+    }
+
     void testaddConflictReview() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)

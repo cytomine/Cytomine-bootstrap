@@ -2,6 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
@@ -60,6 +61,7 @@ class RestUserAnnotationController extends RestController {
     def addComment = {
 
         User sender = User.read(springSecurityService.principal.id)
+        SecurityACL.checkUser(sender)
         UserAnnotation annotation = userAnnotationService.read(params.getLong('userannotation'))
         log.info "add comment from " + sender + " and userannotation " + annotation
 

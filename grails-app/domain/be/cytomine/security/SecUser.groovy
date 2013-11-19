@@ -83,6 +83,26 @@ class SecUser extends CytomineDomain implements Serializable {
         }
     }
 
+    boolean isAdminAuth() {
+        return isAdmin()
+    }
+
+    boolean isUserAuth() {
+        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_USER").id)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    boolean isGhestAuth() {
+        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_GHEST").id)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     /**
      * Username of the human user back to this user
      * If User => humanUsername is username
