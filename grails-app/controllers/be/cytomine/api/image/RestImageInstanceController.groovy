@@ -398,10 +398,11 @@ class RestImageInstanceController extends RestController {
             ImageInstance image = imageInstanceService.read(params.long('id'))
             SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
             Task task = taskService.read(params.getLong("task"))
+            Boolean giveMe = params.boolean("giveMe")
             log.info "task ${task} is find for id = ${params.getLong("task")}"
             def layers = !params.layers? "" : params.layers.split(",")
             if(image && layers) {
-                responseSuccess(imageInstanceService.copyLayers(image,layers,secUserService.listUsers(image.project).collect{it.id},task))
+                responseSuccess(imageInstanceService.copyLayers(image,layers,secUserService.listUsers(image.project).collect{it.id},task,cytomineService.currentUser,giveMe))
             } else {
                 responseNotFound("Abstract Image",params.id)
             }

@@ -1,9 +1,6 @@
 package be.cytomine.processing
 
 import be.cytomine.SecurityACL
-import be.cytomine.project.Project
-
-import static org.springframework.security.acls.domain.BasePermission.READ
 
 class ImageFilterService {
 
@@ -11,12 +8,12 @@ class ImageFilterService {
     def cytomineService
 
     def list() {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         ImageFilter.list()
     }
 
     def read(def id) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         ImageFilter.read(id)
     }
 }

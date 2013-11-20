@@ -190,7 +190,7 @@ var ApplicationView = Backbone.View.extend({
                 localStorage.setObject(key, preference);
             });
 
-            if(window.app.status.user.model.get('ghest'))  {
+            if(window.app.status.user.model.get('guest'))  {
                 $("#feedback").hide();
             }
 

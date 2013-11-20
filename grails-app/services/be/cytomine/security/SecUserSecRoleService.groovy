@@ -26,12 +26,12 @@ class SecUserSecRoleService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUserSecRole.findAllBySecUser(user)
     }
 
     def get(User user, SecRole role) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUserSecRole.findBySecUserAndSecRole(user, role)
     }
 

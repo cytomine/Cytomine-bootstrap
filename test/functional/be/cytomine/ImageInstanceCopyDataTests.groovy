@@ -59,6 +59,9 @@ class ImageInstanceCopyDataTests {
         assert json.size()==3
     }
 
+
+
+
     void testGetLayersWithOtherUser() {
            def data = initData()
 
@@ -136,6 +139,37 @@ class ImageInstanceCopyDataTests {
         assert !Description.findByDomainIdent(annotation2.id)
         assert !Property.findByDomainIdent(annotation2.id)
     }
+
+    void testCopyLayersFullGiveMe() {
+        def data = initData()
+
+        //summary
+        //Annotation 1: project 1 (image1) with description  with property and term from user 1
+        //Annotation 2: project 1 (image1) and term  from user 2
+        //Annotation 3: project 2 (image2) term  that must be skipped (not same ontology) from user 2
+
+
+        //Copy image 1 - user1, image 2 - user 1 (not in layers for this project), iamge 2 - user 2
+        def response = ImageInstanceAPI.copyImageData(data.image3.id,true,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],null,data.user1.username,"password")
+        assert 200 == response.code
+
+        //check if there are 2 annotations on image3 (1 from image1-user1 and 1 from image 2 - user 1)
+        assert 2 == UserAnnotation.findAllByImage(data.image3).size()
+
+
+        def annotation1 = UserAnnotation.findByUserAndImage(data.user1,data.image3)
+        def annotation2 = UserAnnotation.findByUserAndImage(data.user1,data.image3)   //not on layer user 2 ==> giveMe = true
+
+        assert annotation1
+        assert annotation1.termsId().contains(data.term1.id)
+        assert Description.findByDomainIdent(annotation1.id)
+        assert Description.findByDomainIdent(annotation1.id).data == Description.findByDomainIdent(data.annotation1.id).data
+        assert Property.findByDomainIdent(annotation1.id)
+        assert Property.findByDomainIdent(annotation1.id).value == Property.findByDomainIdent(annotation1.id).value
+        assert Property.findByDomainIdent(annotation1.id).key == Property.findByDomainIdent(annotation1.id).key
+    }
+
+
 
     void testCopyLayersFullWithTask() {
         def data = initData()

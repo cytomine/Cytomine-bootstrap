@@ -140,11 +140,11 @@ class ImageInstanceService extends ModelService {
 
     }
 
-    private long copyAnnotationLayer(ImageInstance image, User user, ImageInstance based, def usersProject,Task task, double total, double alreadyDone) {
+    private long copyAnnotationLayer(ImageInstance image, User user, ImageInstance based, def usersProject,Task task, double total, double alreadyDone,SecUser currentUser, Boolean giveMe ) {
         log.info "copyAnnotationLayer=$image | $user "
          def alreadyDoneLocal = alreadyDone
          UserAnnotation.findAllByImageAndUser(image,user).each {
-             copyAnnotation(it,based,usersProject)
+             copyAnnotation(it,based,usersProject,currentUser,giveMe)
              log.info "alreadyDone=$alreadyDone total=$total"
              taskService.updateTask(task,Math.min(100,((alreadyDoneLocal/total)*100d).intValue()),"Start to copy ${total.intValue()} annotations...")
              alreadyDoneLocal = alreadyDoneLocal +1
@@ -153,7 +153,7 @@ class ImageInstanceService extends ModelService {
     }
 
 
-    private def copyAnnotation(UserAnnotation based, ImageInstance dest,def usersProject) {
+    private def copyAnnotation(UserAnnotation based, ImageInstance dest,def usersProject,SecUser currentUser,Boolean giveMe) {
         log.info "copyAnnotationLayer=${based.id}"
 
         //copy annotation
@@ -164,7 +164,7 @@ class ImageInstanceService extends ModelService {
         annotation.location = based.location
         annotation.project = dest.project
         annotation.updated =  based.updated
-        annotation.user = based.user
+        annotation.user = (giveMe? currentUser : based.user)
         annotation.wktLocation = based.wktLocation
         userAnnotationService.saveDomain(annotation)
 
@@ -203,7 +203,7 @@ class ImageInstanceService extends ModelService {
 
     }
 
-    public def copyLayers(ImageInstance image,def layers,def usersProject,Task task) {
+    public def copyLayers(ImageInstance image,def layers,def usersProject,Task task, SecUser currentUser,Boolean giveMe) {
         taskService.updateTask(task, 0, "Start to copy...")
         double total = 0
         if (task) {
@@ -219,7 +219,7 @@ class ImageInstanceService extends ModelService {
         layers.each { couple ->
             def idImage = Long.parseLong(couple.split("_")[0])
             def idUser = Long.parseLong(couple.split("_")[1])
-            alreadyDone = copyAnnotationLayer(ImageInstance.read(idImage), SecUser.read(idUser), image, usersProject,task, total, alreadyDone)
+            alreadyDone = copyAnnotationLayer(ImageInstance.read(idImage), SecUser.read(idUser), image, usersProject,task, total, alreadyDone,currentUser,giveMe)
         }
         return []
     }

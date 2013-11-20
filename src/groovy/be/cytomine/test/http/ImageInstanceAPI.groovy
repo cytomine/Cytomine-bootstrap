@@ -84,7 +84,11 @@ class ImageInstanceAPI extends DomainAPI {
     }
 
     static def copyImageData(Long id, def layers,def idTask,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/copyimagedata.json?layers="+layers.collect{it.image.id+"_"+it.user.id}.join(",")  + (idTask? "&task=$idTask" : "")
+        copyImageData(id,false,layers,idTask,username,password)
+    }
+
+    static def copyImageData(Long id, boolean giveMe,def layers,def idTask,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/copyimagedata.json?layers="+layers.collect{it.image.id+"_"+it.user.id}.join(",")  + (idTask? "&task=$idTask" : "")  + (giveMe? "&giveMe=$giveMe" : "")
         return doPOST(URL,"", username, password)
     }
 

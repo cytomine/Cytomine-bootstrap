@@ -30,10 +30,10 @@ var UploadFormView = Backbone.View.extend({
         ],
             function (tpl) {
 
-                if(!window.app.status.user.model.get('ghest')) {
+                if(!window.app.status.user.model.get('guest')) {
                     self.doLayout(tpl);
                 } else {
-                    window.app.view.message("error","Cannot upload if you are ghest!",5000);
+                    window.app.view.message("error","Cannot upload if you are guest!",5000);
                 }
 
             });

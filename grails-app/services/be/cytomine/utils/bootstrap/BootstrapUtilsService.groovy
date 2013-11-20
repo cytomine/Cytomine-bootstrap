@@ -16,7 +16,7 @@ class BootstrapUtilsService {
 
         SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save(flush: true)
         SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
-        SecRole.findByAuthority("ROLE_GHEST") ?: new SecRole(authority: "ROLE_GHEST").save(flush: true)
+        SecRole.findByAuthority("ROLE_GUEST") ?: new SecRole(authority: "ROLE_GUEST").save(flush: true)
 
         usersSamples.each { item ->
             User user = User.findByUsername(item.username)

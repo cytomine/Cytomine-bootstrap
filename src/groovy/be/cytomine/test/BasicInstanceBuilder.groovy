@@ -904,7 +904,7 @@ class BasicInstanceBuilder {
             user.generateKeys()
             saveDomain(user)
             try {
-               SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GHEST"),true)
+               SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GUEST"),true)
             } catch(Exception e) {
                 log.warn(e)
             }
@@ -930,7 +930,7 @@ class BasicInstanceBuilder {
         user.generateKeys()
         if(save) {
             saveDomain(user)
-            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GHEST"),true)
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_GUEST"),true)
         } else {
             checkDomain(user)
         }

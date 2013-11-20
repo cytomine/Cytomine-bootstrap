@@ -131,7 +131,7 @@ class RestUserController extends RestController {
             def  authMaps = secUserService.getAuth(user)
             maps.admin = authMaps.get("admin")
             maps.user = authMaps.get("user")
-            maps.ghest = authMaps.get("ghest")
+            maps.guest = authMaps.get("guest")
            responseSuccess(maps)
 //            responseSuccess(user)
         } else {

@@ -12,7 +12,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
     this.styleMap = new OpenLayers.StyleMap({'default':{
         label : "${value}",
         fontColor: "red",
-        fontSize: "13px",
+        fontSize: "25px",
         fontWeight: "bold"
     }});
 

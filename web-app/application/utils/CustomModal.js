@@ -268,9 +268,10 @@ var ImportAnnotationModal = {
                      if(data.collection.length==0) {
                          $("#layersSelection"+idImage).append("This image has no other layers in other projects.");
                      } else {
+                         $("#layersSelection"+idImage).append('<input type="checkbox" id="giveMeAnnotations"> Copy all annotations on my layer (if not checked, annotation will stay on the same layers) </input><br/><br/><br/> ');
                          _.each (data.collection, function (item){
                              var layer = item.image + "_" + item.user
-                             var templ = '<input type="checkbox" id="'+layer+'"> Import annotation from project ' + item.projectName + ' -> ' + item.lastname + " " + item.firstname + ' (' + item.username + ') <br/>';
+                             var templ = '<input type="checkbox" class="layerSelection" id="'+layer+'"> Import annotation from project ' + item.projectName + ' -> ' + item.lastname + " " + item.firstname + ' (' + item.username + ') <br/>';
                               $("#layersSelection"+idImage).append(templ);
                          });
                      }
@@ -284,11 +285,12 @@ var ImportAnnotationModal = {
                      $("#closeImportLayer"+idImage).hide();
                      $("#importLayersButton"+idImage).hide();
                      var layers = []
-                     _.each($("#importLayer"+idImage).find("input"), function(item) {
+                     _.each($("#importLayer"+idImage).find("input.layerSelection"), function(item) {
                         if($(item).is(':checked')) {
                             layers.push(item.id)
                         }
                      });
+                     var giveMe = $("#giveMeAnnotations").is(':checked');
                      $("#layersSelection"+idImage).empty();
                      new TaskModel({project: window.app.status.currentProject}).save({}, {
                              success: function (task, response) {
@@ -297,7 +299,7 @@ var ImportAnnotationModal = {
                                  var timer = window.app.view.printTaskEvolution(response.task,  $("#layersSelection"+idImage).find("#task-" + response.task.id), 2000);
 
 
-                                 $.post("/api/imageinstance/"+idImage+"/copyimagedata?task="+response.task.id+"&layers="+layers.join(","), function(data) {
+                                 $.post("/api/imageinstance/"+idImage+"/copyimagedata?task="+response.task.id+"&layers="+layers.join(",") + "&giveMe="+giveMe, function(data) {
                                      clearInterval(timer);
                                      $("#closeImportLayer"+idImage).show();
                                      $("#closeImportLayer"+idImage).click();

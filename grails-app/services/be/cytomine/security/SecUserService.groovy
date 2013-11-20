@@ -54,23 +54,23 @@ class SecUserService extends ModelService {
     }
 
     def get(def id) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.get(id)
     }
 
     def findByUsername(def username) {
         if(!username) return null
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.findByUsername(username)
     }
 
     SecUser getByPublicKey(String key) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
     }
 
     def read(def id) {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.read(id)
     }
 
@@ -78,7 +78,7 @@ class SecUserService extends ModelService {
         def data = [:]
         data['admin'] = user.isAdminAuth()
         data['user'] = !data['admin'] && user.isUserAuth()
-        data['ghest'] = !data['admin'] && !data['user'] && user.isGhestAuth()
+        data['guest'] = !data['admin'] && !data['user'] && user.isGuestAuth()
 //        data['admin'] = false
 //        data['user'] = false
 //        data['ghest'] = true
@@ -86,12 +86,12 @@ class SecUserService extends ModelService {
     }
 
     def readCurrentUser() {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         cytomineService.getCurrentUser()
     }
 
     def list() {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         User.list(sort: "username", order: "asc")
     }
 
@@ -205,7 +205,7 @@ class SecUserService extends ModelService {
      * Get all online user
      */
     List<SecUser> getAllOnlineUsers() {
-        SecurityACL.checkGhest(cytomineService.currentUser)
+        SecurityACL.checkGuest(cytomineService.currentUser)
         //get date with -X secondes
         def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {
