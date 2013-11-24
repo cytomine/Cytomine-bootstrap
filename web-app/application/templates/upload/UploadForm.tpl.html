@@ -1,98 +1,87 @@
-<div class="container-fluid">
-    <div style="padding: 10px;" class="well">
-         <h3><i class="icon-upload"></i> Upload</h3>
-        <hr />
-        <div class="alert alert-block">
-            <h4 class="alert-heading">Important notes !</h4>
-            <ul>
-                <li>The maximum file size (per file) for uploads is <strong>100 GB</strong></li>
-                <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, SCN, VMS, MRXS</strong>) are allowed
-                <li><strong>NDPI</strong> should be converted into SVS before sent. Contact us if you need help.</li>
-                <li>VMS and MRXS <strong>must be zipped</strong> (the VMS/MRXS file and their nested files. One zip per image.</li>
-                <li>A Zip file containing multiple image is allowed (except for VMS and MRXS)</li>
-                </li>
-                <!--<li><strong>ZIP</strong> files are also allowed (and can contains multiple images)</li>
-<li><strong>MRXS</strong> and <strong>VMS</strong> files and its nested files must be always contained in one zipped file. The hierarchy of files and directories must be preserved.</li>-->
-                <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with
-                    Google Chrome, Mozilla Firefox and Apple Safari.
-                </li>
-                <li>You are also able to link images with project manually after upload is done.</li>
-            </ul>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-upload"/> Upload</h3>
         </div>
+        <div class="panel-body">
+            <div class="alert alert-warning">
+                <h4 class="alert-heading">Important notes !</h4>
+                <ul>
+                    <li>The maximum file size (per file) for uploads is <strong>100 GB</strong></li>
+                    <li>Only image files (<strong>JP(E)G, GIF, PNG, TIF, TIFF, JP2, SVS, SCN, VMS, MRXS</strong>) are allowed
+                    <li><strong>NDPI</strong> should be converted into SVS before sent. Contact us if you need help.</li>
+                    <li>VMS and MRXS <strong>must be zipped</strong> (the VMS/MRXS file and their nested files. One zip per image.</li>
+                    <li>A Zip file containing multiple image is allowed (except for VMS and MRXS)</li>
+                    </li>
+                    <!--<li><strong>ZIP</strong> files are also allowed (and can contains multiple images)</li>
+    <li><strong>MRXS</strong> and <strong>VMS</strong> files and its nested files must be always contained in one zipped file. The hierarchy of files and directories must be preserved.</li>-->
+                    <li>You can <strong>drag &amp; drop</strong> files from your desktop on the 'Add files...' button with
+                        Google Chrome, Mozilla Firefox and Apple Safari.
+                    </li>
+                    <li>You are also able to link images with project manually after upload is done.</li>
+                </ul>
+            </div>
 
-        <form class="form-horizontal" id="fileupload" action="upload?idProject=@PROJECT@&idStorage=@STORAGE@" method="POST"
-              enctype="multipart/form-data">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label">Storage</label>
-                    <div class="controls">
-                        <select class="span3" id="linkStorageSelect">
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Project</label>
-
-                    <div class="controls">
-                        <label class="checkbox">
-                            <input type="checkbox" id="linkWithProject" value="true">
-                            Link automatically uploaded file with selected project
-                        </label>
-                        <select class="span3" id="linkProjectSelect">
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Files</label>
-
-                    <div class="controls ">
-                        <div class="progressbar fileupload-progressbar fade">
-                            <div style="width:0%;"></div>
+            <form class="form-horizontal" id="fileupload" action="upload?idProject=@PROJECT@&idStorage=@STORAGE@" method="POST"
+                  enctype="multipart/form-data">
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Storage</label>
+                        <div class="col-sm-6">
+                            <select class="form-control input-sm" id="linkStorageSelect">
+                            </select>
                         </div>
-                            <span class="btn btn-success fileinput-button">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Project</label>
+                        <div class="col-sm-6">
+                            <input type="checkbox" id="linkWithProject" />
+                            Link automatically uploaded file with selected project
+                            <select class="form-control input-sm" id="linkProjectSelect"></select>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Files</label>
+                        <div class="col-sm-6">
+                            <div class="progressbar fileupload-progressbar fade">
+                                <div style="width:0%;"></div>
+                            </div>
+                            <span class="btn btn-default btn-success fileinput-button">
                             <span><i class="icon icon-plus icon-white"/> Add files...</span>
                                 <input type="file" name="files[]" multiple>
                             </span>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <div class="controls">
+                    <div class="form-group">
+                        <div class="controls">
+                            <table class="zebra-striped">
+                                <tbody class="files-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group fileupload-buttonbar">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-6">
+                            <button type="submit" class="btn btn-default btn-primary start"><i class="glyphicon glyphicon-plus"/> Start upload</button>
+                            <button type="reset" class="btn btn-default btn-warning cancel">Cancel upload</button>
+                            <button type="button" class="btn btn-default btn-danger delete">Hide selected</button>
+                        </div>
+                    </div>
 
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <table class="zebra-striped">
-                            <tbody class="files-list"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="form-actions fileupload-buttonbar">
-                    <button type="submit" class="btn btn-primary start"><i class="icon icon-plus icon-white"/> Start
-                        upload
-                    </button>
-                    <button type="reset" class="btn btn-warning cancel"><i class="icon-ban-circle icon-white"></i>
-                        Cancel upload
-                    </button>
-                    <button type="button" class="btn btn-danger delete"><i class="icon-trash icon-white"></i> Hide
-                        selected
-                    </button>
-                    <!--<input type="checkbox" class="toggle">-->
-                </div>
-
-            </fieldset>
-        </form>
+                </fieldset>
+            </form>
+        </div>
     </div>
 
-
-    <div style="margin-top: 30px;margin-bottom: 30px;">
-        <div class="well" style="padding: 10px;">
-            <h3><i class="icon-list-alt"></i> Uploaded files</h3>
-            <hr />
-            <p><a id="refreshUploadedFiles" class="btn" href="#"><i class="icon icon-refresh"/> Refresh</a></p>
-
-            <div id="loadingUploadedFiles" class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-hdd"/> Storage</h3>
+        </div>
+        <div class="panel-body">
+            <p><a id="refreshUploadedFiles" class="btn btn-default" href="#"><i class="glyphicon glyphicon-refresh"/> Refresh</a></p>
+            <div id="loadingUploadedFiles" class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+            <table cellpadding="0" cellspacing="0" border="0"
                    class="table table-striped table-bordered table-condensed" id="uploaded_files"
                    style="display: none;">
                 <thead>
@@ -107,7 +96,7 @@
                 <tbody id="loadingUploadedFilesBody">
                 </tbody>
             </table>
+
         </div>
     </div>
 </div>
-

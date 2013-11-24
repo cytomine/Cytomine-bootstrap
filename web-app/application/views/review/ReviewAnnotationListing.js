@@ -248,8 +248,8 @@ var ReviewAnnotationListing = Backbone.View.extend({
 
         $(thumb.el).append('<div class="component text-center"></div>');
         $(thumb.el).css("max-width","200px");
-        $(thumb.el).find(".component").append('<button  data-toggle="modal" data-target="#browseReviewModal" style="display:inline;" data-annotation = "'+annotation.id+'" class="btn openBrowseReview" style="min-width:100%;">Open</button>');
-        $(thumb.el).find(".component").append('<button  style="display:inline;" data-annotation = "'+annotation.id+'" class="btn review" style="min-width:100%;">Accept</button>');
+        $(thumb.el).find(".component").append('<button  data-toggle="modal" data-target="#browseReviewModal" style="display:inline;" data-annotation = "'+annotation.id+'" class="btn btn-default openBrowseReview" style="min-width:100%;">Open</button>');
+        $(thumb.el).find(".component").append('<button  style="display:inline;" data-annotation = "'+annotation.id+'" class="btn btn-default review" style="min-width:100%;">Accept</button>');
         $(thumb.el).find(".component").append('<input data-annotation="'+annotation.id+'" style="display:inline;" type="checkbox" value="takeMe">');
 
         if(after) {

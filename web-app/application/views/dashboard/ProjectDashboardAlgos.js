@@ -27,17 +27,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     doLayout: function (tpl) {
         var self = this;
-        $(this.el).empty();
-        $(this.el).append(_.template(tpl, {}));
-        console.log("SoftwareCollection.fetch");
+        $(this.el).html(_.template(tpl, {}));
 
         //get all software from project and print menu
         new SoftwareCollection({ project: self.model.id}).fetch({
             success: function (collection, response) {
                 console.log("succes!");
                 if (collection.length == 0) {
-                    $(self.el).empty();
-                    $(self.el).append('<div class="alert alert-info" style="width : 50%; margin:auto; margin-top : 30px;">No software available for this project</div>');
+                    $(self.el).html('<div class="alert alert-info" style="width : 50%; margin:auto; margin-top : 30px;">No software available for this project</div>');
                     return;
                 }
                 if (self.idSoftware == undefined) {
@@ -97,7 +94,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     initProjectSoftwareList: function () {
         var self = this;
         self.softwares.each(function (software) {
-            $("#projectSoftwareListUl").append('<li id="consultSoftware-' + software.id + '"><a href="#tabs-algos-' + self.model.id + '-' + software.id + '-">' + software.get('name') + '</a></li>');
+            $("#projectSoftwareListUl").append('<li class="list-group-item" id="consultSoftware-' + software.id + '"><a href="#tabs-algos-' + self.model.id + '-' + software.id + '-">' + software.get('name') + '</a></li>');
             $("#projectSoftwareListUl").children().removeClass("active");
             if (software.id == self.idSoftware) {
                 $("#consultSoftware-" + software.id).addClass("active");

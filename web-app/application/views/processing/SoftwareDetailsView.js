@@ -36,13 +36,10 @@ var SoftwareDetailsView = Backbone.View.extend({
     },
     printSoftwareParams: function () {
         var self = this;
-        $('#softwareParamsTable').find("tbody").empty();
-
-
         var tbody = $('#softwareParamsTable').find("tbody");
-
+        tbody.empty();
         _.each(self.model.get('parameters'), function (param) {
-            var tpl = "<tr><td><%= name %></td><td><%= type %></td><td><%= defaultParamValue %></td><td><input type='checkbox' <%= checked %> disabled /></td><td><%= index %></td></tr>"
+            var tpl = "<tr><td><%= name %></td><td><%= type %></td><td><%= defaultParamValue %></td><td><input type='checkbox' <%= checked %> disabled /></td><td><%= index %></td></tr>";
             var rowHtml = _.template(tpl, {
                 name : param.name,
                 type : param.type,
@@ -58,33 +55,59 @@ var SoftwareDetailsView = Backbone.View.extend({
     printJobsChart: function () {
         var self = this;
         var software = self.model;
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Success');
-        data.addColumn('number', 'Number');
+        $("#softwareInfoChart").html("<svg></svg>");
+        var title = 'Job status for ' + self.model.get('name') + ' (over all projects)';
+        var chartData = [{
+            key : title,
+            bar : true,
+            values : [
+                {
+                    label : 'Not Launch',
+                    value : software.get('numberOfNotLaunch')
+                },
+                {
+                    label : 'In Queue',
+                    value : software.get('numberOfInQueue')
+                },
+                {
+                    label : 'Running',
+                    value : software.get('numberOfRunning')
+                },
+                {
+                    label : 'Success',
+                    value : software.get('numberOfSuccess')
+                },
+                {
+                    label : 'Failed',
+                    value : software.get('numberOfFailed')
+                },
+                {
+                    label : 'Indeterminate',
+                    value : software.get('numberOfIndeterminate')
+                },
+                {
+                    label : 'Wait',
+                    value : software.get('numberOfWait')
+                }
+            ]
+        }];
 
-        data.addRows([
-            ['Not Launch', software.get('numberOfNotLaunch')],
-            ['In Queue', software.get('numberOfInQueue')],
-            ['Running', software.get('numberOfRunning')],
-            ['Success', software.get('numberOfSuccess')],
-            ['Failed', software.get('numberOfFailed')],
-            ['Indeterminate', software.get('numberOfIndeterminate')],
-            ['Wait', software.get('numberOfWait')]
-        ]);
-        var width = $("#softwareInfoChart").width();
-        var options = {
-            title: 'Job status for ' + self.model.get('name') + ' (over all projects)',
-            legend: {position: "right"},
-            width: width, height: 350,
-            vAxis: {title: "Amount"},
-            hAxis: {title: "Job status"},
-            backgroundColor: "whiteSmoke",
-            strictFirstColumnType: false,
-            lineWidth: 1,
-            colors: ["#434141", "#65d7f8", "#005ccc", "#52a652", "#c43c35", "#434343", "#faaa38"]
-        };
+        nv.addGraph(function() {
+            var chart = nv.models.discreteBarChart()
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .color(["#434141", "#65d7f8", "#005ccc", "#52a652", "#c43c35", "#434343", "#faaa38"]);
 
-        var chart = new google.visualization.ColumnChart(document.getElementById('softwareInfoChart'));
-        chart.draw(data, options);
+
+            d3.select("#softwareInfoChart svg")
+                .datum(chartData)
+                .transition().duration(1200)
+                .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+        });
+
     }
 });

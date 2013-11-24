@@ -1,58 +1,62 @@
-<div id="dialog-<%= action %>-ontology-term" title="<%= action %> term" class="modal xbigModal">
-    <div class="modal-header">
-        <h3><%= action %> term</h3>
-    </div>
-    <div class="modal-body">
-        <form id="form-<%= action %>-ontology-term">
-            <div class="row">
-                <div class="span4" style="min-height: 400px;width : 400px;">
-                    <div class="control-group">
-                        <label class="control-label">Parent (Drag & Drop)</label>
+<div id="dialog-<%= action %>-ontology-term" title="<%= action %> term" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><%= action %> term</h3>
+            </div>
+            <div class="modal-body">
+                <form id="form-<%= action %>-ontology-term">
+                    <div class="row">
+                        <div class="col-md-4" style="min-height: 400px;width : 400px;">
+                            <div class="control-group">
+                                <label class="control-label">Parent (Drag & Drop)</label>
 
-                        <div class="controls">
-                            <div id="<%= action %>ontologytermtree"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="span4">
-                    <div id="<%= action %>ontologytermerrorlabel" class="alert alert-error" style="display: none;">
-                        <i class="icon-warning-sign"/>
-
-                        <div id="<%= action %>ontologytermerrormessage"></div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Name</label>
-
-                        <div class="controls">
-                            <input type="text" id="<%= action %>termname" name="name"/>
-                        </div>
-                        <label class="control-label">Color</label>
-
-                        <div class="controls">
-                            <div class="colorpickerAddOrEditTerm">
-                                <div id="colorpicker1AddOrEditTerm"></div>
+                                <div class="controls">
+                                    <div id="<%= action %>ontologytermtree"></div>
+                                </div>
                             </div>
                         </div>
-                        <label class="control-label">Old color</label>
+                        <div class="col-md-4">
+                            <div id="<%= action %>ontologytermerrorlabel" class="alert alert-error" style="display: none;">
+                                <i class="icon-warning-sign"/>
 
-                        <div class="controls">
-                            <input type="text" id="oldcolorAddOrEditTerm" value="<%= oldColor %>"/>
-                        </div>
-                        <label class="control-label">New Color</label>
+                                <div id="<%= action %>ontologytermerrormessage"></div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Name</label>
 
-                        <div class="controls">
-                            <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
+                                <div class="controls">
+                                    <input type="text" id="<%= action %>termname" name="name"/>
+                                </div>
+                                <label class="control-label">Color</label>
+
+                                <div class="controls">
+                                    <div class="colorpickerAddOrEditTerm">
+                                        <div id="colorpicker1AddOrEditTerm"></div>
+                                    </div>
+                                </div>
+                                <label class="control-label">Old color</label>
+
+                                <div class="controls">
+                                    <input type="text" id="oldcolorAddOrEditTerm" value="<%= oldColor %>"/>
+                                </div>
+                                <label class="control-label">New Color</label>
+
+                                <div class="controls">
+                                    <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
+                                </div>
+                            </div>
                         </div>
+
+
+                        <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
                     </div>
-                </div>
-
-
-                <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
+                </form>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="AddOrEditTermButton" class="btn btn-primary">Save</a>
-        <a href="#" id="closeAddOrEditTermDialog" class="btn">Cancel</a>
+            <div class="modal-footer">
+                <a href="#" id="AddOrEditTermButton" class="btn btn-success">Save</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>

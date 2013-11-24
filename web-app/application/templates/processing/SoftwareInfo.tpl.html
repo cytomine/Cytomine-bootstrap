@@ -1,72 +1,80 @@
-<div id="fullSoftwareDashboard" class="container-fluid" style="padding-top : 20px;background-color: #fff;">
-    <div class="row-fluid">
-        <div id="menuAlgoSoftware" class="span2 well">
-            <ul id="projectSoftwareListUl" class="nav nav-list">
-                <li class="nav-header">
-                    Software available
-                </li>
-            </ul>
-            <ul class="nav nav-list">
-                <li class="nav-header">
-                    Actions
-                </li>
-                <li>
-                    <a href="#launchJobModal"  id="softwareLaunchJobButton" data-Toggle="modal"><i class="icon-play-circle"></i> Run job</a>
-                </li>
-                <!--<li>
-                    <a href="#filterJobModal" id="softwareFilterJobButton" data-Toggle="modal"><i class="icon-search"></i> Search job</a>
-                </li>
-                <li>
-                    <a href="#compareJobModal" id="softwareCompareJobButton" data-Toggle="modal"><i class=" icon-th-large"></i> Compare job</a>
-                </li>-->
-            </ul>
+<div id="fullSoftwareDashboard" class="container container-100" style="padding-top : 10px;">
+    <div class="row">
+        <div class="col-md-3">
+            <div id="menuAlgoSoftware" class="panel panel-default">
+                <div class="panel-heading">Software available</div>
+                <ul id="projectSoftwareListUl" class="list-group">
+                </ul>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Actions</div>
+                <div class="panel-body">
+                    <a href="#launchJobModal"  id="softwareLaunchJobButton" data-toggle="modal"><i class="glyphicon glyphicon-play-circle"></i> Run job</a>
+                    <!--<a href="#filterJobModal" id="softwareFilterJobButton" data-Toggle="modal"><i class="icon-search"></i> Search job</a>
+                    <a href="#compareJobModal" id="softwareCompareJobButton" data-Toggle="modal"><i class=" icon-th-large"></i> Compare job</a>-->
+                </div>
+            </div>
         </div>
+        <div class="col-md-9">
 
-        <div  class="span10">
-
-            <div id="panelSoftwareResume" class="well">
-                <h3>Software description</h3>
-                <div id="softwareInfoDLaunch">
+            <div id="panelSoftwareResume" class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Software description</h4>
+                </div>
+                <div class="panel-body" id="softwareInfoDLaunch">
                     <div id="softwareDetails"></div>
                     <div id="softwareInfoDiagram"></div>
                 </div>
             </div>
 
-            <div id="panelJobDetails" style="padding-bottom: 30px;display : none;" class="well">
-                <div class="selectRunDetails"></div>
-                <div class="selectRunParams" style="padding-bottom: 50px;">
-                    <table id="selectRunParamsTable" width="100%" cellpadding="0" cellspacing="0" border="0"
-                           class="table table-hover table-condensed">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                            <th>Type</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+            <div id="panelAlgoSoftware" class="panel panel-default">
+                <div class="panel-heading">Previous/Current Jobs</div>
+                <div class="panel-body" id="jobSelection">
                 </div>
             </div>
 
-            <div id="panelJobResults" style="padding-bottom: 30px;display : none;" class="well">
-                <h3>Selected Job results</h3>
-                <div id="panelJobResultsDiv"></div>
-            </div>
-
-            <div id="panelAlgoSoftware" class="well">
-                <div id="panelJobSelection">
-                    <h3>Previous/Current Jobs </h3>
-                    <div id="jobSelection" style="padding-bottom: 30px;">
+            <div id="panelJobDetails" class="panel panel-default" style="padding-bottom: 30px;display : none;">
+                <div class="panel-heading">
+                    <h4>Job details</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="selectRunDetails"></div>
+                    <h4>Parameters</h4>
+                    <hr />
+                    <div class="selectRunParams" style="padding-bottom: 50px;">
+                        <table id="selectRunParamsTable" width="100%" cellpadding="0" cellspacing="0" border="0"
+                               class="table table-hover table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
+
+
+                    <div id="panelJobResults" style="padding-bottom: 30px;display : none;">
+                        <h4>Selected Job results</h4>
+                        <hr />
+                        <div id="panelJobResultsDiv"></div>
+                    </div>
+
                 </div>
+
             </div>
+
+
+
+
         </div>
 
-        <!-- row-fluid -->
+        <!-- row -->
 
-    </div> <!-- container-fluid -->
+    </div> <!-- container -->
 </div>
 <div id="jobListingDialogParent" style="margin:0px auto;"></div>
 <div id="jobLaunchDialogParent" style="margin:0px auto;"></div>

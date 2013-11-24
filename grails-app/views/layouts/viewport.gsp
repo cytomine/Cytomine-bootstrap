@@ -10,7 +10,7 @@
   \/_____/   \/_____/     \/_/   \/_____/   \/_/  \/_/   \/_/   \/_/ \/_/   \/_____/
 
 -->
-<html class="fuelux">
+<html>
 <head>
 <title>Cytomine</title>
 
@@ -23,32 +23,31 @@
 <link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
 
 <link rel='stylesheet' href='css/bootstrap/jquery-ui-1.8.16.custom.css' type='text/css'/>
-<link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>
+<!--<link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>-->
 <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />
+<!--<link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />-->
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
 
-<!--<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap.css"/>-->
-<link rel="stylesheet" href="css/cosmo/bootstrap.min.css" />
-<link rel="stylesheet" href="lib/bootstrap-2.3.1/css/bootstrap-responsive.min.css"/>
-<link rel="stylesheet" href="css/cosmo/font-awesome.min.css" />
-<link rel="stylesheet" href="css/cosmo/bootswatch.css" />
+<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.flatly.min.css"/>
 
 
-
-
+<!--<link rel="stylesheet" href="css/cosmo/font-awesome.min.css" />
+<link rel="stylesheet" href="css/cosmo/bootswatch.css" />-->
 
 <style type="text/css">
-body {
-    padding-top: 55px;
 
-}
+    body {
+        padding-top: 60px;
+
+    }
+
+
 </style>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
-<link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>
+<!--<link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>-->
 <link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
 <link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 
@@ -58,19 +57,14 @@ body {
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
 <!-- fuel ux -->
-<link href="lib/fuelux/css/fuelux-datagrid.min.css" rel="stylesheet" />
-<link href="lib/fuelux/css/fuelux-responsive.css" rel="stylesheet" />
+<!--<link href="lib/fuelux-master/dist/css/fuelux-datagrid.min.css" rel="stylesheet" />-->
+<!--<link href="lib/fuelux-master/dist/css/fuelux-responsive.css" rel="stylesheet" /> -->
 %{--<link href="lib/fuelux/css/fuelux.min.css" rel="stylesheet" />--}%
 
 
 <link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
 %{--<link rel='stylesheet' href='lib/wysiwyg/website/css/stylesheet.css'/>--}%
 
-
-<!--
-<link rel="stylesheet" href="lib/add-to-homescreen/style/add2home.css" />
-<script type="text/javascript" src="lib/add-to-homescreen/src/add2home.js" charset="utf-8"></script>
--->
 
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -91,7 +85,12 @@ body {
 
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
-
+<link rel="stylesheet" href="lib/nvd3/nv.d3.min.css" />
+<script src="lib/nvd3/lib/d3.v2.min.js"></script>
+<script src="lib/nvd3/nv.d3.min.js"></script>
+<!--<link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="http://cdn.oesmith.co.uk/morris-0.4.3.min.js"></script>-->
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
@@ -99,10 +98,12 @@ body {
 %{--<script type="text/javascript" src="lib/purl.js"></script>--}%
 
 <!-- Twitter bootstrap -->
-%{--<script type="text/javascript" src="lib/bootstrap-2.1.1/js/bootstrap.js"></script>--}%
+<script type="text/javascript" src="lib/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
+
 
 <!-- Fuel ux -->
-<script src="lib/fuelux/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
+<!--<script src="lib/fuelux-master/dist/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
 
@@ -134,7 +135,7 @@ body {
 
 <script src="lib/dynatree/jquery.dynatree.js" type="text/javascript"></script>
 
-<script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>
+<!--<script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>-->
 
 <script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
@@ -161,8 +162,8 @@ body {
 <script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
 
 <!--jqgrid -->
-<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>
+<!--<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>-->
+<!--<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>-->
 
 <!-- Datatables -->
 <script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>
@@ -358,13 +359,6 @@ body {
             }
 
         }, 1000);
-
-
-//        var date = encodeURIComponent("Wed, 25 Sep 2013 09:55:53 +0000")//"Wed,%2025%20Sep%202013%2009:55:53%20%2B0000"
-//        var  forwardURI = encodeURIComponent("/api/user/lrollus/keys.json")
-//        var method = "GET"
-
-
     </script>
 </g:if>
 </head>
@@ -429,11 +423,5 @@ body {
     });
 </script>
 </g:if>
-
-<!-- Google Charts -->
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-<script type="text/javascript">
-    google.load('visualization', '1', {packages: ['corechart','table']});
-</script>
 
 </html>

@@ -1,30 +1,29 @@
-<div id="addontology" title="" class="modal">
-    <div class="modal-header">
-        <h3>Create a new ontology</h3>
-    </div>
-    <div class="modal-body">
-        <form id="login-form-add-ontology">
-            <div id="ontologyerrorlabel" class="alert alert-error" style="display: none;">
-                <i class="icon-warning-sign"/>
-
-                <div id="errormessage"></div>
+<div id="addontology" title="" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create a new ontology</h3>
             </div>
-            <div class="control-group">
-                <label class="control-label">Name</label>
+            <div class="modal-body">
+                <form id="login-form-add-ontology">
+                    <div id="ontologyerrorlabel" class="alert alert-error" style="display: none;">
+                        <i class="icon-warning-sign"/>
 
-                <div class="controls">
-                    <input type="text" size="20" id="ontology-name" value=""/>
-                </div>
-                <label class="control-label">User</label>
+                        <div id="errormessage"></div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Name</label>
 
-                <div class="controls">
-                    <div id="ontologyuser"></div>
-                </div>
+                        <div class="controls">
+                            <input type="text" size="20" id="ontology-name" value=""/>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="saveOntologyButton" class="btn btn-primary">Save</a>
-        <a href="#" id="closeAddOntologyDialog" class="btn">Cancel</a>
+            <div class="modal-footer">
+                <a href="#" id="saveOntologyButton" class="btn btn-success">Save</a>
+                <a href="#" class="btn btn-default"  data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>

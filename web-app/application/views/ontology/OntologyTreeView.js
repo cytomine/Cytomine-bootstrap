@@ -116,7 +116,7 @@ var OntologyTreeView = Backbone.View.extend({
 
         $(this.el).append('Show no term: <input type="checkbox" data-term="0" id="showTerm0" class="termVisible" checked>');
 
-        $(this.el).append('<button class="btn btn-small seeAllTerm">See all</button> <button class="btn btn-small hideAllTerm">Hide all</button>');
+        $(this.el).append('<button class="btn btn-default btn-sm seeAllTerm">See all</button> <button class="btn btn-default btn-sm hideAllTerm">Hide all</button>');
 
         //expand root, simpliest way ? 
         $(this.el).find('.tree').dynatree("getRoot").visit(function (node) {

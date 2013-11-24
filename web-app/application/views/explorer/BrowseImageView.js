@@ -558,9 +558,11 @@ var BrowseImageView = Backbone.View.extend({
         var height = $(window).height() - paddingTop;
         $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("height", height);
         $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("width", "100%");
+        $(".sidebar-map-right").css("max-height", height);
         $(window).resize(function () {
             var height = $(window).height() - paddingTop;
             $("#" + self.divId).find("#map" + self.divPrefixId + self.model.get('id')).css("height", height);
+            $(".sidebar-map-right").css("max-height", height);
         });
 
         var initZoomifyLayer = function (metadata, zoomify_urls, imageFilters) {
@@ -950,23 +952,23 @@ var BrowseImageView = Backbone.View.extend({
 
         var self = this;
         var toolbar = $("#" + self.divId).find('#toolbar' + this.model.get('id'));
-        $("#" + self.divId).find('a[id=none' + this.model.get('id') + ']').click(function () {
+        $("#" + self.divId).find('button[id=none' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("none");
             self.getUserLayer().enableHightlight();
         });
-        toolbar.find('a[id=select' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=select' + this.model.get('id') + ']').click(function () {
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=point' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=point' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("point");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=irregular4' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=irregular4' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if(!self.getUserLayer().irregular) {
@@ -977,7 +979,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=irregular30' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=irregular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if(!self.getUserLayer().irregular) {
@@ -988,8 +990,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=regular30' + this.model.get('id') + ']').click(function () {
-            console.log("toggle");
+        toolbar.find('button[id=regular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if(self.getUserLayer().irregular) {
@@ -1000,35 +1001,35 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().toggleControl("regular");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=polygon' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=polygon' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=freehand' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=freehand' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=freeAdd' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=freeAdd' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = true;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=freeRem' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=freeRem' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = true;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
         });
-        toolbar.find('a[id=magic' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=magic' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
@@ -1036,10 +1037,7 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().magicOnClick = true;
             self.getUserLayer().disableHightlight();
         });
-        if (this.iPad) {
-            toolbar.find('a[id=magic' + this.model.get('id') + ']').hide();
-        }
-        toolbar.find('a[id=modify' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=modify' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
 
@@ -1057,7 +1055,7 @@ var BrowseImageView = Backbone.View.extend({
             }
 
         });
-        toolbar.find('a[id=delete' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=delete' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
 //            self.getUserLayer().controls.select.unselectAll();
@@ -1071,7 +1069,7 @@ var BrowseImageView = Backbone.View.extend({
                 layer.disableHightlight();
             });
         });
-        toolbar.find('a[id=rotate' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=rotate' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
@@ -1084,7 +1082,7 @@ var BrowseImageView = Backbone.View.extend({
                 self.getUserAndReviewLayer().review.disableHightlight();
             }
         });
-        toolbar.find('a[id=fill' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=fill' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             var annotation = self.currentAnnotation;
@@ -1112,7 +1110,7 @@ var BrowseImageView = Backbone.View.extend({
             return false;
 
         });
-        toolbar.find('a[id=resize' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=resize' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
@@ -1126,7 +1124,7 @@ var BrowseImageView = Backbone.View.extend({
             }
 
         });
-        toolbar.find('a[id=drag' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=drag' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
@@ -1139,7 +1137,7 @@ var BrowseImageView = Backbone.View.extend({
                 self.getUserAndReviewLayer().review.disableHightlight();
             }
         });
-        toolbar.find('a[id=ruler' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=ruler' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             self.getUserLayer().controls.select.unselectAll();
@@ -1148,13 +1146,13 @@ var BrowseImageView = Backbone.View.extend({
             self.getUserLayer().disableHightlight();
         });
 
-        toolbar.find('a[id=camera' + this.model.get('id') + ']').click(function () {
+        toolbar.find('button[id=camera' + this.model.get('id') + ']').click(function () {
             //use webservice
             var mapBounds = self.map.getExtent();
-            var x = mapBounds.left;
-            var y = self.model.get('height') - mapBounds.top;
-            var width = mapBounds.right - mapBounds.left;
-            var height = mapBounds.top - mapBounds.bottom;
+            var x = Math.round(mapBounds.left);
+            var y = Math.round(self.model.get('height') - mapBounds.top);
+            var width = Math.round(mapBounds.right - mapBounds.left);
+            var height = Math.round(mapBounds.top - mapBounds.bottom);
             var url = "api/imageinstance/"+self.model.id+"/window_url-"+x+"-"+y+"-"+width+"-"+height;
             $.get(url, function(data) {
                 window_url = data.url;
@@ -1197,8 +1195,6 @@ var BrowseImageView = Backbone.View.extend({
         } else {
 
             self.reviewPanel.addReviewLayerToReview();
-            console.log("##########");
-            console.log(this.divId + " => addLayerToReview");
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
             self.reviewPanel.removeLayerFromReview(window.app.status.user.id);
             self.reviewPanel.addLayerToReview(window.app.status.user.id);

@@ -43,9 +43,9 @@ var AccountDetails = Backbone.View.extend({
                 $("#input_new_password").val("");
                 $("#input_new_password_confirm").val("");
                 $("#input_password").val("");
-                $("#input_password").closest(".control-group").removeClass("success");
-                $("#input_new_password").closest(".control-group").removeClass("success");
-                $("#input_new_password_confirm").closest(".control-group").removeClass("success");
+                $("#input_password").closest(".form-group").removeClass("has-success");
+                $("#input_new_password").closest(".form-group").removeClass("has-success");
+                $("#input_new_password_confirm").closest(".form-group").removeClass("has-success");
             },
             error: function (model, response) {
                 window.app.view.message("Error", response.message, "error");
@@ -65,18 +65,18 @@ var AccountDetails = Backbone.View.extend({
             e.preventDefault();
         });
         $("#input_new_password_confirm").keyup(function () {
-            $("#input_new_password_confirm").closest('.control-group').removeClass("warning");
-            $("#input_new_password_confirm").closest('.control-group').removeClass("success");
-            $("#input_new_password").closest('.control-group').removeClass("warning");
-            $("#input_new_password").closest('.control-group').removeClass("success");
+            $("#input_new_password_confirm").closest('.form-group').removeClass("has-warning");
+            $("#input_new_password_confirm").closest('.form-group').removeClass("has-success");
+            $("#input_new_password").closest('.form-group').removeClass("has-warning");
+            $("#input_new_password").closest('.form-group').removeClass("has-success");
             if ($(this).val() != "") {
                 if (self.validatePassword()) {
-                    $("#input_new_password_confirm").closest('.control-group').addClass("success");
-                    $("#input_new_password").closest('.control-group').addClass("success");
+                    $("#input_new_password_confirm").closest('.form-group').addClass("has-success");
+                    $("#input_new_password").closest('.form-group').addClass("has-success");
                     $("#submit_edit_password").removeAttr("disabled");
                 } else {
-                    $("#input_new_password_confirm").closest('.control-group').addClass("warning");
-                    $("#input_new_password").closest('.control-group').addClass("warning");
+                    $("#input_new_password_confirm").closest('.form-group').addClass("has-warning");
+                    $("#input_new_password").closest('.form-group').addClass("has-warning");
                     $("#submit_edit_password").attr("disabled", "disabled");
                 }
             }
@@ -98,14 +98,14 @@ var AccountDetails = Backbone.View.extend({
                 dataType: 'json',
                 data: data,
                 success: function (data) {
-                    $("#input_password").closest('.control-group').removeClass("warning");
-                    $("#input_password").closest('.control-group').addClass("success");
+                    $("#input_password").closest('.form-group').removeClass("has-warning");
+                    $("#input_password").closest('.form-group').addClass("has-success");
                     $("#input_new_password").removeAttr("disabled");
                 },
                 error: function (data) {
-                    $("#input_password").closest('.control-group').removeClass("success");
+                    $("#input_password").closest('.form-group').removeClass("has-success");
                     if (newPassword != "") {
-                        $("#input_password").closest('.control-group').addClass("warning");
+                        $("#input_password").closest('.form-group').addClass("has-warning");
                     }
                     $("#input_new_password").attr("disabled", "disabled");
                     $("#submit_edit_password").attr("disabled", "disabled");
@@ -141,9 +141,9 @@ var AccountDetails = Backbone.View.extend({
             var field = $(e.target);
             console.log("field val :" + field.val());
             if (field.val() == "") {
-                field.closest(".control-group").addClass("warning");
+                field.closest(".form-group").addClass("has-warning");
             } else {
-                field.closest(".control-group").removeClass("warning");
+                field.closest(".form-group").removeClass("has-warning");
             }
             //update save button
             var canUpdate = ($("#input_firstname").val() != "") && ($("#input_lastname").val() != "") && ($("#input_email").val() != "");

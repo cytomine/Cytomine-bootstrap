@@ -9,8 +9,7 @@ var ExplorerController = Backbone.Router.extend({
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
         "tabs-review-:idProject-:idImage-": "reviewSimple",
         "tabs-reviewmergechannel-:idProject-:idImage-": "reviewChannel",
-        "close": "close",
-        "tabs-leaflet-:idProject-:idImage-" : "leaflet"
+        "close": "close"
     },
 
     initialize: function () {
@@ -33,23 +32,6 @@ var ExplorerController = Backbone.Router.extend({
             }
         });
     },
-    leaflet : function(idProject, idImage) {  //tmp for test
-        var self = this;
-        console.log("activate leaflet");
-        require([
-            "http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"
-        ], function(){
-            console.log("activate leaflet plugins");
-            require([
-                "lib/leaflet/plugins/zoomify-layer-master/zoomify_layer.js",
-                "lib/leaflet/plugins/Leaflet.draw-master/dist/leaflet.draw.js"
-            ], function() {
-                BrowseImageView = LeafletView;
-                self.browse(idProject, idImage);
-            });
-
-        });
-    },
 
     browseSimple: function (idProject, idImage, idAnnotation) {
         this.browse(idProject,idImage,idAnnotation,undefined);
@@ -67,25 +49,18 @@ var ExplorerController = Backbone.Router.extend({
         var self = this;
         //create tabs if not exist
         if (this.tabs == null) {
-            console.log("this.tabs==null");
             this.initTabs();
         }
         var createBrowseImageViewTab = function () {
-            console.log("createBrowseImageViewTab");
             var browseImageViewInitOptions = {};
             if (idAnnotation != "") {
                 browseImageViewInitOptions.goToAnnotation = {value: idAnnotation};
             }
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions,merge);
-            //$('#tabs-image-'+idImage).tab('show');
-            // window.app.view.showComponent(self.tabs.container);
-            console.log("showView");
-
             self.showView();
         };
 
         if (window.app.status.currentProject == undefined || window.app.status.currentProject != idProject) {//direct access -> create dashboard
-            console.log("project check");
             window.app.controllers.dashboard.dashboard(idProject, createBrowseImageViewTab);
             return;
         }

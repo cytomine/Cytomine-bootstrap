@@ -1,11 +1,4 @@
-<div id="jobActivity<%= id %>">
-    <div class="span12">
-          <h4><%= softwareName %></h4>
-          <h5 style="display:inline;">Job#<%= number %>&nbsp;&nbsp;</h5>
-          <div style="display:inline;" id="jobActivityStatus<%= id %>"> </div>
-          <br>
-          <%= created %>&nbsp; Launch by <%= username %>
-          <p><a class="btn" href="#tabs-algos-<%= project %>-<%= software %>-<%= id %>">View details »</a></p>
-          <hr/>
-    </div>
-</div>
+<li class="list-group-item" id="jobActivity<%= id %>">
+    <h5 style="display: inline;"><%= softwareName %> (Job#<%= number %>)</h5> <div style="display: inline;" id="jobActivityStatus<%= id %>"> </div>
+    <p><a class="btn btn-info btn-xs" href="#tabs-algos-<%= project %>-<%= software %>-<%= id %>">More »</a></p>
+</li>

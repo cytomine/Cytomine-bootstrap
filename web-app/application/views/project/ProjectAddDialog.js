@@ -37,19 +37,14 @@ var AddProjectDialog = Backbone.View.extend({
         //Build dialog
         self.addProjectDialog = $("#addproject").modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
         $("#saveProjectButton").click(function (event) {
             event.preventDefault();
             $("#login-form-add-project").submit();
             return false;
         });
-        $("#closeAddProjectDialog").click(function (event) {
-            event.preventDefault();
-            $("#addproject").modal('hide');
-            $("#addproject").remove();
-            return false;
-        });
+
         self.open();
         return this;
     },
@@ -87,7 +82,7 @@ var AddProjectDialog = Backbone.View.extend({
         $("fieldset").find("a.button-back").css("float", "left");
         $("fieldset").find("a").removeClass("button-next");
         $("fieldset").find("a").removeClass("button-back");
-        $("fieldset").find("a").addClass("btn btn-primary");
+        $("fieldset").find("a").addClass("btn btn-default btn-primary");
     },
     createProjectInfo: function (ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
         var self = this;
@@ -229,7 +224,8 @@ var AddProjectDialog = Backbone.View.extend({
     },
     createRetrievalProjectSelect: function () {
         /* Create Users List */
-        $("#retrievalproject").empty();
+        var retrievalProjectEl = $("#retrievalproject");
+        retrievalProjectEl.empty();
 
         var projectName = $("input#project-name").val();
         var idOntology = $("select#projectontology").val();
@@ -240,19 +236,19 @@ var AddProjectDialog = Backbone.View.extend({
                 $("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
             }
         });
-        $("#retrievalproject").append('<option value="-1" selected="selected">' + projectName + '</option>');
+        retrievalProjectEl.append('<option value="-1" selected="selected">' + projectName + '</option>');
 
-        $("#retrievalproject").multiselectNext('destroy');
-        $("#retrievalproject").multiselectNext({
+        retrievalProjectEl.multiselectNext('destroy');
+        retrievalProjectEl.multiselectNext({
             selected: function (event, ui) {
                 //alert($(ui.option).val() + " has been selected");
             }});
 
-        $("div.ui-multiselect").find("ul.available").css("height", "150px");
-        $("div.ui-multiselect").find("ul.selected").css("height", "150px");
-        $("div.ui-multiselect").find("input.search").css("width", "75px");
-
-        $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
+        /*var multiSelectEl = $("div.ui-multiselect");
+        multiSelectEl.find("ul.available").css("height", "150px")
+        multiSelectEl.find("ul.selected").css("height", "150px")
+        multiSelectEl.find("input.search").css("width", "75px")
+        multiSelectEl.find("div.actions").css("background-color", "#DDDDDD"); */
     },
     refresh: function () {
     },
@@ -333,7 +329,7 @@ var AddProjectDialog = Backbone.View.extend({
                                 var id = response.project.id;
                                 self.projectsPanel.refresh();
                                 $("#addproject").modal("hide");
-                                $("#addproject").remove();
+                                /*$("#addproject").remove();*/
                             },
                             error: function (model, response) {
                                 var json = $.parseJSON(response.responseText);

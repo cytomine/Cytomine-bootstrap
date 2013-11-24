@@ -36,7 +36,7 @@ var ConfirmDialogView = Backbone.View.extend({
         $(this.dialogAttr.dialogID).modal({
             keyboard: true,
             show: true,
-            backdrop: (this.dialogAttr.backdrop != undefined) ? this.dialogAttr.backdrop : false
+            backdrop: (this.dialogAttr.backdrop != undefined) ? this.dialogAttr.backdrop : true
         });
 
         $(this.dialogAttr.dialogID).on('hidden', function () {
@@ -56,8 +56,9 @@ var ConfirmDialogView = Backbone.View.extend({
         return this;
     },
     close: function () {
-        $(this.dialogAttr.dialogID).modal('hide');
-        $(this.dialogAttr.dialogID).remove();
+        $(this.dialogAttr.dialogID).modal('hide').remove();
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
     }
 
 

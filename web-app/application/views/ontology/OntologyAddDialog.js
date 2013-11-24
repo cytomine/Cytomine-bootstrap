@@ -39,19 +39,19 @@ var AddOntologyDialog = Backbone.View.extend({
         //Build dialog
         self.addOntologyDialog = $("#addontology").modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
         $('#saveOntologyButton').click(function (event) {
             event.preventDefault();
             $("#login-form-add-ontology").submit();
             return false;
         });
-        $('#closeAddOntologyDialog').click(function (event) {
-            event.preventDefault();
-            $("#addontology").modal("hide");
-            $("#addontology").remove();
-            return false;
-        });
+        /*$('#closeAddOntologyDialog').click(function (event) {
+         event.preventDefault();
+         $("#addontology").modal("hide");
+         $("#addontology").remove();
+         return false;
+         });*/
         self.open();
         return this;
 
@@ -66,6 +66,11 @@ var AddOntologyDialog = Backbone.View.extend({
         $("#errormessage").empty();
         $("#ontologyerrorlabel").hide();
         $("#ontology-name").val("");
+    },
+    close : function () {
+        $('#addontology').modal('hide').remove();
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
     },
     createOntology: function () {
         var self = this;
@@ -87,7 +92,7 @@ var AddOntologyDialog = Backbone.View.extend({
                     window.app.view.message("Ontology", response.message, "success");
                     var id = response.ontology.id;
                     self.ontologiesPanel.refresh(id);
-                    $("#addontology").modal("hide");
+                    self.close();
                 },
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);

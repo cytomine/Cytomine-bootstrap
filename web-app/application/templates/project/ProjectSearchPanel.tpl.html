@@ -1,49 +1,64 @@
-<div style="display: block;padding-right : 10px">
-    <h3>Filters</h3>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Filters</h4>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="projectsearchtextbox" class="col-md-6 control-label">Name</label>
+                <div class="col-md-6">
+                    <input id="projectsearchtextbox" type="text"  class="input-sm form-control typeahead" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="amountNumberOfImages" class="col-md-6 control-label">Images</label>
+                <div class="col-md-6">
+                    <input type="text" id="amountNumberOfImages" class="input-sm  form-control"  disabled/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6">&nbsp;</div>
+                <div class="col-md-6">
+                    <div id="numberofimageSlider" ></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="amountNumberOfAnnotations" class="col-md-6 control-label">Annotations</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control input-sm" id="amountNumberOfAnnotations"  disabled/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6">&nbsp;</div>
+                <div class="col-md-6">
+                    <div id="numberofannotationSlider"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="disciplineChoiceList" class="col-md-6 control-label">Discipline </label>
+                <div class="col-md-6">
+                    <select id="disciplineChoiceList"  class="form-control input-sm searchProjectCriteria">
+                        <option value="-1">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ontologyChoiceList" class="col-md-6 control-label">Ontology</label>
+                <div class="col-md-6">
+                    <select id="ontologyChoiceList" class="form-control input-sm  searchProjectCriteria">
+                        <option value="-1">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6">&nbsp;</div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-info btn-sm showAllProject">Reset filters</button>
+                </div>
+            </div>
 
-    <div style="display: inline-block;padding-right : 10px;">
-        By name
-        <input id="projectsearchtextbox" data-provide="typeahead" style="max-width: 150px;"/>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        | Slides
-        <input type="text" id="amountNumberOfSlides"
-               style="max-width: 80px;display: inline-block;; text-align: center"/>
-
-        <div id="numberofslideSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;"/>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        | Images
-        <input type="text" id="amountNumberOfImages"
-               style="max-width: 80px;display: inline-block;; text-align: center"/>
-
-        <div id="numberofimageSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;"/>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        | Annotations
-        <input type="text" id="amountNumberOfAnnotations"
-               style="max-width: 80px;display: inline-block;; text-align: center"/>
-
-        <div id="numberofannotationSlider" style="margin-left: 10px;display: inline-block;min-width: 75px;"/>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        | By discipline
-        <select id="disciplineChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
-            <option value="-1">All</option>
-        </select>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        | By ontology
-        <select id="ontologyChoiceList" class="searchProjectCriteria" style="max-width: 155px;">
-            <option value="-1">All</option>
-        </select>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        <button type="button" class="btn showAllProject">Reset</button>
-    </div>
-    <div style="display: inline-block;padding-right : 10px;">
-        <button class="btn btn refreshAllProject">Refresh</button>
+            <!--<button class="btn btn-default btn btn-info btn-sm refreshAllProject">Refresh</button>-->
+        </form>
     </div>
 </div>
-
 

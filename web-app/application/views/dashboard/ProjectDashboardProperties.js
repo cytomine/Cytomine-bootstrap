@@ -239,7 +239,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 });
             } else {
                 if(!id) {
-                    window.app.view.message("Project", "Too much annotation! Go to image view and select one annotation to add properties.", "warn",6000);
+                    window.app.view.message("Project", "Too much annotation! Go to image view and select one annotation to add properties.", "warning",6000);
                 }
 
                var options = collection.get(id);
@@ -294,17 +294,17 @@ var ProjectDashboardProperties = Backbone.View.extend({
         var self = this;
 
         if (self.nameDomain == "Annotation") {
-            $("#buttonImageInstanceProperty").attr("class","btn btn-primary");
-            $("#buttonProjectProperty").attr("class","btn btn-primary");
-            $("#buttonAnnotationProperty").attr("class","btn btn-primary active");
+            $("#buttonImageInstanceProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonProjectProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonAnnotationProperty").attr("class","btn btn-default btn-primary active");
         } else if (self.nameDomain == "ImageInstance") {
-            $("#buttonAnnotationProperty").attr("class","btn btn-primary");
-            $("#buttonProjectProperty").attr("class","btn btn-primary");
-            $("#buttonImageInstanceProperty").attr("class","btn btn-primary active");
+            $("#buttonAnnotationProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonProjectProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonImageInstanceProperty").attr("class","btn btn-default btn-primary active");
         } else if (self.nameDomain == "Project") {
-            $("#buttonAnnotationProperty").attr("class","btn btn-primary");
-            $("#buttonImageInstanceProperty").attr("class","btn btn-primary");
-            $("#buttonProjectProperty").attr("class","btn btn-primary active");
+            $("#buttonAnnotationProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonImageInstanceProperty").attr("class","btn btn-default btn-primary");
+            $("#buttonProjectProperty").attr("class","btn btn-default btn-primary active");
         }
     },
 
@@ -525,12 +525,12 @@ var ProjectDashboardProperties = Backbone.View.extend({
                 });
                 console.log("*************");
                 console.log(keyNameArray);
-                $("#input_key").typeahead({source:keyNameArray});
+                $("#input_key").typeahead({local:keyNameArray});
                 console.log("*************");
             });
 
         } else {
-            $("#input_key").typeahead({source:keyNameArray});
+            $("#input_key").typeahead({local:keyNameArray});
         }
 
     }

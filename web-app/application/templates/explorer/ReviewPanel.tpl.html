@@ -1,8 +1,8 @@
-<h3><i class="toggle-content2 icon-plus icon-white icon-small"></i> Review | Layers</h3>
+<h3><i class="toggle-content2 glyphicon glyphicon-plus"></i> Review | Layers</h3>
 <div class="reviewPanelContent2" style="padding: 5px;display: none;min-height: 80px;" id="reviewChoice<%= id %>">
     <ul>
-        <li><span class="badge badge-inverse">Display Review layer</span> <input id="showReviewLayer<%= id %>" type="checkbox" class="printReviewLayerButton" checked/></li>
-        <li><span class="badge badge-inverse">Others layers</span> :
+        <li><span class="label label-inverse">Display Review layer</span> <input id="showReviewLayer<%= id %>" type="checkbox" class="printReviewLayerButton" checked/></li>
+        <li><span class="label label-inverse">Others layers</span> :
             <div style="display: block; padding-left: 10px;" id="reviewSelection<%= id %>">
             </div>
         </li>
@@ -28,11 +28,11 @@
 <h3><i class="toggle-content3 icon-plus icon-white icon-small"></i> Review | Action image</h3>
 <div class="reviewPanelContent3" style="padding: 5px;display: none;">
     <div class="reviewAction btn-group" id="reviewAction<%= id %>">
-        <button class="btn btn-small" id="reviewMultiple<%= id %>">Accept all</button>
-        <button class="btn btn-small" id="unReviewMultiple<%= id %>">Reject all</button>
-        <button class="btn btn-small btn-success" id="reviewValidate<%= id %>">Validate image</button>
-        <button class="btn btn-small btn-danger" style="display:none;" id="reviewUnValidate<%= id %>">Unvalidate image</button>
-        <button class="btn btn-small" style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
+        <button class="btn btn-default btn-sm" id="reviewMultiple<%= id %>">Accept all</button>
+        <button class="btn btn-default btn-sm" id="unReviewMultiple<%= id %>">Reject all</button>
+        <button class="btn btn-default btn-sm btn-success" id="reviewValidate<%= id %>">Validate image</button>
+        <button class="btn btn-default btn-sm btn-danger" style="display:none;" id="reviewUnValidate<%= id %>">Unvalidate image</button>
+        <button class="btn btn-default btn-sm" style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
         <div style="display: none; max-height: 150px; overflow:auto;" id="taskreview<%= id %>"></div>
     </div>
 </div>

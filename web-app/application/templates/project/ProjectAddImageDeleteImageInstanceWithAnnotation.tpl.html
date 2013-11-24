@@ -1,19 +1,23 @@
-<div id="dialogDeleteImageWithAnnotation" title="" class="modal xbigModal hide">
-    <div class="modal-header">
-        <h3>Unlink image</h3>
-    </div>
-    <div class="modal-body">
+<div id="dialogDeleteImageWithAnnotation" title="" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Unlink image</h3>
+            </div>
+            <div class="modal-body">
 
-        Some image that you want to delete contain annotations. <br>
-        Do you really want to delete all of this image from project <%= projectname %>? <br>
-        All of the annotation from this image will be deleted! <br>
+                Some image that you want to delete contain annotations. <br>
+                Do you really want to delete all of this image from project <%= projectname %>? <br>
+                All of the annotation from this image will be deleted! <br>
 
-        <div id="listingimagewithannotation"></div>
-        <br>
+                <div id="listingimagewithannotation"></div>
+                <br>
 
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="confirmDeleteImageWithAnnotation" class="btn btn-primary">Confirm</a>
-        <a href="#" id="closeDeleteImageWithAnnotation" class="btn">Cancel</a>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="confirmDeleteImageWithAnnotation" class="btn btn-primary">Confirm</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>

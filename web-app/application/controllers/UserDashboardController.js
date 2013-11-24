@@ -9,7 +9,7 @@ var UserDashboardController = Backbone.Router.extend({
 
         var projects = null;
         var loadHandler = function () {
-            console.log("controller.loadHandler");
+
             if (projects == null) {
                 return;
             }
@@ -34,10 +34,10 @@ var UserDashboardController = Backbone.Router.extend({
     },
 
     userdashboard: function (callback) {
-        console.log("controller.userdashboard");
+
         var self = this;
         $("#warehouse-button").attr("href", "#userdashboard");
-        $("#userdashboarddiv").show();
+        $("#userdashboard").show();
 
         var userdashboardCallback = function () {
 

@@ -25,17 +25,12 @@ var ProjectUsersDialog = Backbone.View.extend({
         self.printUsers();
 
         //Build dialog
-        console.log("Open element:" + $("#projectUsers" + self.model.id).length);
+
         self.usersProjectDialog = $("#projectUsers" + self.model.id).modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
-        $("#closeUserProjectDialog").click(function (event) {
-            event.preventDefault();
-            $("#projectUsers" + self.model.id).modal('hide');
-            $("#projectUsers" + self.model.id).remove();
-            return false;
-        });
+
         self.open();
         return this;
     },

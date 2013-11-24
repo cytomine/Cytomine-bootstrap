@@ -93,11 +93,11 @@ var ApplicationView = Backbone.View.extend({
         var self = this;
         var preference = localStorage.getObject(item.key);
         if (preference != undefined && preference.visible != undefined && preference.visible == true) {
-            $("#" + item.linkID).html("<i class='icon-eye-close' /> " + item.name);
+            $("#" + item.linkID).html("<i class='glyphicon glyphicon-eye-close' /> " + item.name);
             self.showFloatingPanel(item);
         }
         else {
-            $("#" + item.linkID).html("<i class='icon-eye-open' /> " + item.name);
+            $("#" + item.linkID).html("<i class='glyphicon glyphicon-eye-open' /> " + item.name);
             self.hideFloatingPanel(item);
         }
     },
@@ -168,10 +168,6 @@ var ApplicationView = Backbone.View.extend({
     initUserMenu: function () {
         var self = this;
         //Init user menu
-        require([
-            "text!application/templates/MenuDropDown.tpl.html"
-        ], function (tpl) {
-            $("#menu-right").append(tpl);
             $("#logout").click(function () {
                 window.app.controllers.auth.logout();
                 return false;
@@ -198,9 +194,6 @@ var ApplicationView = Backbone.View.extend({
                 e.preventDefault();
                 showClassicWidget();
             });
-
-        });
-
     },
     printTaskEvolution: function (task, divToFill, timeout) {
         this.printTaskEvolution(task, divToFill, timeout, false);
@@ -369,6 +362,7 @@ var ApplicationView = Backbone.View.extend({
 });
 
 ApplicationView.prototype.message = function (title, message, type,timer) {
+    if (type == "error") type = "danger"; //Bootstrap 3
     if (type == "" || type == undefined) {
         type = 'alert-info';
     }
@@ -380,20 +374,17 @@ ApplicationView.prototype.message = function (title, message, type,timer) {
         message.responseText && (message = message.responseText);
     }
 
-    var tpl = '<div style="width : 400px;" id="alert<%=   timestamp %>" class="alert <%=   type %> fade in" data-alert="alert"><a class="close" data-dismiss="alert">×</a><p><strong><%=   alert %></strong> <%=   message %></p></div>';
+    var tpl = '<div style="width : 400px;" id="alert<%=   timestamp %>" class="alert <%=   type %> alert-dismissable" data-alert="alert"><p><strong><%=   alert %></strong> <%=   message %></p></div>';
     var timestamp = new Date().getTime();
     var left = ($(window).width() / 2 - 200);
-
-    //$("#alerts").empty();
 
     var numberOfOpenedDiv = $("#alerts").find("div.alert").length;
     var maxOtherOpenedAlert = 1;
     var divToClose = numberOfOpenedDiv-maxOtherOpenedAlert;
     if(divToClose>0) {
-        $("#alerts").find("div.alert:lt("+(divToClose)+")").remove()
+        $("#alerts").find("div.alert:lt("+divToClose+")").remove()
     }
-    $("#alerts").css("left", left);
-    $("#alerts").append(_.template(tpl, { alert: title, message: message, timestamp: timestamp, type: type}));
+    $("#alerts").css("left", left).append(_.template(tpl, { alert: title, message: message, timestamp: timestamp, type: type}));
 
     if(!timer) {
         timer = 3000;

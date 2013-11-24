@@ -111,7 +111,7 @@ var SoftwareProjectPanel = Backbone.View.extend({
 
     },
     renderSoftware: function (softwareProject, el) {
-        var tpl = _.template("<li class='software<%= id %>' style='padding-bottom : 3px;'><a class='btn  btn-small btn-danger removeSoftware' data-id='<%= id %>' href='#'><i class='icon-trash icon-white' /> Delete</a> <%= name %></li>", softwareProject.toJSON());
+        var tpl = _.template("<li class='software<%= id %>' style='padding-bottom : 3px;'><a class='btn btn-default  btn-sm btn-danger removeSoftware' data-id='<%= id %>' href='#'><i class='icon-trash icon-white' /> Delete</a> <%= name %></li>", softwareProject.toJSON());
         $(el).append(tpl);
     },
 
@@ -176,7 +176,7 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
         });
     },
     renderImageFilter: function (imageFilter, el) {
-        var tpl = _.template("<li class='imageFilter<%= id %>' style='padding-bottom : 3px;'> <a class='btn  btn-small btn-danger removeImageFilter' data-id='<%= id %>' href='#'><i class=' icon-trash icon-white' /> Delete</a> <%= name %></li>", imageFilter.toJSON());
+        var tpl = _.template("<li class='imageFilter<%= id %>' style='padding-bottom : 3px;'> <a class='btn btn-default  btn-sm btn-danger removeImageFilter' data-id='<%= id %>' href='#'><i class=' icon-trash icon-white' /> Delete</a> <%= name %></li>", imageFilter.toJSON());
         $(el).append(tpl);
     },
     render: function () {

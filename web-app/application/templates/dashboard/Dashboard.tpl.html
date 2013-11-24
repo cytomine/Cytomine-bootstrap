@@ -1,277 +1,257 @@
-<div class="tab-pane" id="tabs-dashboard-<%= id %>" style="overflow : auto;padding : 20px;">
-    <div class="row" style="padding-left : 30px; padding-right: 30px;">
-        <div class="span4">
-            <div id="projectInfoPanel">
-            </div>
+<div class="tab-pane" id="tabs-dashboard-<%= id %>" style="overflow : auto;">
+<div class="row row-nomargin">
+    <div class="col-md-2">&nbsp;</div>
+    <div class="col-md-8">
+        <div id="projectInfoPanel">
         </div>
-        <div class="span5">
-            <h4 class="header_h"><i class="icon-user" style="margin-top: 5px;"></i> Online Users</h4>
+    </div>
+
+    <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-user"></i> Online Users</h4>
 
             <div id="userOnlineItem" style="max-height: 250px;overflow-y: auto;"><br/><br/>
 
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
             </div>
         </div>
-        <div class="span5">
-            <h4 class="header_h"><i class="icon-fire" style="margin-top: 5px;"></i> Activity</h4>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-fire"></i> Activity</h4>
 
             <ul class="nav nav-tabs" id="activityTab">
-              <li class="active"><a href="#lastcommandsitemtab">Last commands</a></li>
-              <li><a href="#lasttasksitemtab">Last tasks</a></li>
+                <li class="active"><a href="#lastcommandsitemtab">Last commands</a></li>
+                <li><a href="#lasttasksitemtab">Last tasks</a></li>
             </ul>
-
             <div class="tab-content">
-              <div class="tab-pane active" id="lastcommandsitemtab" id="home">
-                  <div id="lastcommandsitem" style="max-height: 250px; overflow: auto;">
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                  </div>
-              </div>
-              <div class="tab-pane" id="lasttasksitemtab" id="profile">
-                  <div id="lasttasksitem" style="max-height: 250px; overflow: auto;">
-                      <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                  </div>
-              </div>
-            </div>
-
-
-
-        </div>
-    </div>
-    <div class="row" style="padding : 30px;">
-        <div class="widget-dashboard">
-            <h4 class="header_h">Statistics</h4>
-
-            <div class="tabbable tabs-left">
-                <ul class="nav nav-pills">
-                    <li class="active"><a href="#_projectColumnChart" data-toggle="tab">Annotations vs term</a></li>
-                    <li><a href="#_projectPieChartPanel" data-toggle="tab">Annotations vs term</a></li>
-                    <li><a href="#_userAnnotationsChart" data-toggle="tab">Annotations vs term by user</a></li>
-                    <li><a href="#_userNbAnnotationsChart" data-toggle="tab">Annotations by user</a></li>
-                    <li><a href="#_termSlideAnnotationsChart" data-toggle="tab">Annotated slides by term</a>
-                    </li>
-                    <li><a href="#_userSlideAnnotationsChart" data-toggle="tab">Annotated slides by users</a>
-                    </li>
-                    <li><a href="#_annotationNumberEvolution" data-toggle="tab">Number of user annotation</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade in active" id="_projectColumnChart"
-                         style="background-color: #fff;background-image: none;">
-                        <div id="projectColumnChart">
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
+                <div class="tab-pane active" id="lastcommandsitemtab" id="home">
+                    <div id="lastcommandsitem" style="max-height: 250px; overflow: auto;">
+                        <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
                     </div>
-                    <div class="tab-pane fade" id="_projectPieChartPanel">
-                        <div id="projectPieChart">
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="_userAnnotationsChart">
-                        <div id="userAnnotationsChart">
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="_userNbAnnotationsChart">
-                        <div id="userNbAnnotationsChart" style="height: 350px"><br/><br/>
-
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="_termSlideAnnotationsChart">
-                        <div id="termSlideAnnotationsChart" style="height: 350px"><br/><br/>
-
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="_userSlideAnnotationsChart">
-                        <div id="userSlideAnnotationsChart" style="height: 350px"><br/><br/>
-
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="_annotationNumberEvolution">
-                        <select id="annotationNumberEvolution"></select>
-
-                        <div id="annotationsEvolutionChart" style="height: 350px"><br/><br/>
-
-                            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                        </div>
+                </div>
+                <div class="tab-pane" id="lasttasksitemtab" id="profile">
+                    <div id="lasttasksitem" style="max-height: 250px; overflow: auto;">
+                        <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Annotations vs term</h4>
+            <div  id="_projectPieChartPanel">
+                <div id="projectPieChart"  style="height : 300px;">
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Annotations vs term</h4>
+            <div  id="_projectColumnChart">
+                <div id="projectColumnChart"  style="height : 300px;">
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Annotations by user</h4>
+            <div  id="_userNbAnnotationsChart">
+                <div id="userNbAnnotationsChart" style="height : 300px;">
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Annotated slides by term</h4>
+            <div  id="_termSlideAnnotationsChart" >
+                <div id="termSlideAnnotationsChart"  style="height : 300px;">
+
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Annotated slides by users</h4>
+            <div  id="_userSlideAnnotationsChart">
+                <div id="userSlideAnnotationsChart" style="height: 300px">
+
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+    <div class="row row-nomargin">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8">
+            <h4 class="header_h"><i class="glyphicon glyphicon-stats"></i> Number of user annotation</h4>
+            <div  id="_annotationNumberEvolution">
+                <select id="annotationNumberEvolution"></select>
+                <div id="drawUserAnnotationsChart" style="height: 270px">
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
     </div>
 </div>
 <div class="tab-pane" id="tabs-images-<%= id %>" style="overflow : auto;padding: 5px;">
     <div align="center" style="margin: 5px;">
-        <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>" class="btn btn-inverse"><i class="icon-th-list icon-white"></i></a>
-        <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>" class="btn btn-inverse"><i class="icon-th-large icon-white"></i></a>
+        <a id="imageArray<%= id %>" href="#tabs-imagesarray-<%= id %>" class="btn btn-primary"><i class="glyphicon glyphicon-th-list"></i></a>
+        <a id="imageThumbs<%= id %>" href="#tabs-thumbs-<%= id %>" class="btn btn-primary"><i class="glyphicon glyphicon-th-large"></i></a>
     </div>
     <div id="tabs-projectImageThumb<%= id %>" style="min-height:700px;padding-bottom: 150px;">
         <div id="projectImageThumb<%= id %>" style="display:inline-block;width:100%;">
-            <div class="alert alert-info" style="margin : 10px;"><i class="icon-refresh"/> Loading...</div>
+            <div class="alert alert-info" style="margin : 10px;"><i class="glyphicon glyphicon-refresh"/> Loading...</div>
         </div>
     </div>
     <div id="tabs-projectImageListing<%= id %>" style="min-height:700px;display:inline-block;width:100%;">
-        <!-- start fuel ux array -->
-        <div style="width : 85%;margin : auto;">
-            <table id="MyGrid" class="table table-bordered datagrid">
+        <div style="width : 90%;margin : auto;">
+            <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="imageProjectTable<%= id %>">
                 <thead>
-                <tr>
-                    <th>
-                        <span class="datagrid-header-title">Filter by name</span>
-
-                        <div class="datagrid-header-left">
-                            <div class="input-append search datagrid-search">
-                                <input type="text" class="input-medium" placeholder="Search">
-                                <button class="btn"><i class="icon-search"></i></button>
-                            </div>
-                        </div>
-                    </th>
+                <tr><th data-property="id">ID</th>
+                    <th data-property="thumb">Preview</th>
+                    <th data-property="originalFilename">Name</th>
+                    <th data-property="width">Width</th>
+                    <th data-property="height">Height</th>
+                    <th data-property="magnification">X</th>
+                    <th data-property="resolution">Resolution</th>
+                    <th data-property="numberOfAnnotations">User an.</th>
+                    <th data-property="numberOfJobAnnotations">Algo an.</th>
+                    <th data-property="numberOfReviewedAnnotations">Valid an.</th>
+                    <th data-property="mime">Mime</th>
+                    <th data-property="created" class="sortable">Created</th>
+                    <th data-property="status">Status</th>
+                    <th data-property="action">Action</th>
                 </tr>
                 </thead>
-                <tfoot>
-                <tr>
-                    <th>
-                        <div class="datagrid-footer-left" style="display:none;">
-                            <div class="grid-controls">
-					<span>
-						<span class="grid-start"></span> -
-						<span class="grid-end"></span> of
-						<span class="grid-count"></span>
-					</span>
-                                <div class="select grid-pagesize" data-resize="auto">
-                                    <button data-toggle="dropdown" class="btn dropdown-toggle">
-                                        <span class="dropdown-label"></span>
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li data-value="5"><a href="#">5</a></li>
-                                        <li data-value="10" data-selected="true"><a href="#">10</a></li>
-                                        <li data-value="20"><a href="#">20</a></li>
-                                        <li data-value="50"><a href="#">50</a></li>
-                                        <li data-value="100"><a href="#">100</a></li>
-                                    </ul>
-                                </div>
-                                <span>Per Page</span>
-                            </div>
-                        </div>
-                        <div class="datagrid-footer-right" style="display:none;">
-                            <div class="grid-pager">
-                                <button type="button" class="btn grid-prevpage"><i class="icon-chevron-left"></i></button>
-                                <span>Page</span>
-
-                                <div class="input-append dropdown combobox">
-                                    <input class="span1" type="text">
-                                    <button class="btn" data-toggle="dropdown"><i class="caret"></i></button>
-                                    <ul class="dropdown-menu"></ul>
-                                </div>
-                                <span>of <span class="grid-pages"></span></span>
-                                <button type="button" class="btn grid-nextpage"><i class="icon-chevron-right"></i></button>
-                            </div>
-                        </div>
-                    </th>
-                </tr>
-                </tfoot>
+                <tbody id="imageProjectArray<%= id %>">
+                </tbody>
             </table>
         </div>
-        <!-- end   fuel ux array -->
+
     </div>
 </div>
 
 <div class="tab-pane" id="tabs-annotations-<%= id %>" style="overflow : auto;">
-    <div class="container-fluid" style="padding-top: 10px">
-        <div class="row-fluid">
-            <div class="span4" style="max-width: 350px;">
+    <div class="container" style="padding-top: 10px">
+        <div class="row">
+            <div class="col-md-4">
                 <div class="well sidebar-nav">
                     <div id="annotationsFilters">
                         <h3>Filters</h3>
 
                         <div style="padding-left: 30px;">
                             <input class="allAnnotationsCheckbox" type="radio" name="annotationClass" value="notInReviewed" checked>
-                            <span class="badge badge-success">Search in user/algo annotations</span>
+                            <span class="label label-success">Search in user/algo annotations</span>
                             <br>
                             <input class="onlyReviewedAnnotationsCheckbox" type="radio" name="annotationClass" value="inReviewed">
-                            <span class="badge badge-success">Search in reviewed annotations</span>
+                            <span class="label label-success">Search in reviewed annotations</span>
                         </div>
                         <hr/>
 
                         <div id="treeImageListing" class="tree"></div>
                         <ul style="display : inline;">
                             <li style="display : inline;">
-                                <button id="checkAllImages" class="btn">Check all</button>
+                                <button id="checkAllImages" class="btn btn-info btn-xs">Check all</button>
                             </li>
                             <li style="display : inline;">
-                                <button id="uncheckAllImages" class="btn">Uncheck all</button>
+                                <button id="uncheckAllImages" class="btn btn-info  btn-xs">Uncheck all</button>
                             </li>
                         </ul>
                         <hr/>
                         <div style="padding-left: 30px;">
                             <input class="undefinedAnnotationsCheckbox" type="checkbox">
-                            <span class="badge badge-important">Annotations without terms</span>
+                            <span class="label label-warning">Annotations without terms</span>
                         </div>
                         <div style="padding-left: 30px;">
                             <input class="multipleAnnotationsCheckbox" type="checkbox">
-                            <span class="badge badge-important">Annotations with several terms</span>
+                            <span class="label label-warning">Annotations with several terms</span>
                         </div>
                         <hr/>
                         <div id="treeAnnotationListing" class="tree"></div>
                         <ul style="display : inline;">
                             <li style="display : inline;">
-                                <button id="checkAllTerms" class="btn">Check all</button>
+                                <button id="checkAllTerms" class="btn btn-info btn-xs">Check all</button>
                             </li>
                             <li style="display : inline;">
-                                <button id="uncheckAllTerms" class="btn">Uncheck all</button>
+                                <button id="uncheckAllTerms" class="btn btn-info btn-xs">Uncheck all</button>
                             </li>
                         </ul>
                         <hr/>
                         <div id="treeUserListing" class="tree"></div>
                         <ul style="display : inline;">
                             <li style="display : inline;">
-                                <button id="checkAllUsers" class="btn">Check all</button>
+                                <button id="checkAllUsers" class="btn btn-info btn-xs">Check all</button>
                             </li>
                             <li style="display : inline;">
-                                <button id="uncheckAllUsers" class="btn">Uncheck all</button>
+                                <button id="uncheckAllUsers" class="btn btn-info btn-xs">Uncheck all</button>
                             </li>
                         </ul>
                         <hr/>
                         <div id="treeJobListing" class="tree"></div>
                         <!--<ul style="display : inline;">-->
-                        <!--<li style="display : inline;"><button id="checkAllJobs" class="btn">Check all</button></li>-->
-                        <!--<li style="display : inline;"><button id="uncheckAllJobs" class="btn">Uncheck all</button></li>-->
+                        <!--<li style="display : inline;"><button id="checkAllJobs" class="btn btn-default ">Check all</button></li>-->
+                        <!--<li style="display : inline;"><button id="uncheckAllJobs" class="btn btn-default ">Uncheck all</button></li>-->
                         <!--</ul>-->
                         <hr/>
                         <li style="display : inline;">
-                            <button id="refreshAnnotations" class="btn">Refresh</button>
+                            <button id="refreshAnnotations" class="btn btn-info btn-xs">Refresh</button>
                         </li>
                     </div>
                 </div>
                 <!--/.well -->
             </div>
             <!--/span-->
-            <div class="span8">
-                <div class="row-fluid">
+            <div class="col-md-8">
+                <div class="row">
                     <div class="well" style="padding-top : 15px;">
-                        <span class="badge badge-success">New</span>&nbsp;<h4 style="display: inline-block;">Predefined
-                        Filters</h4><br/>
+                        <h4>Predefined Filters</h4>
                         <select id="annotationFilterSelect">
                         </select>
                         <li style="display : inline;">
-                            <button id="selectAnnotationFilter" class="btn info">Select</button>
+                            <button id="selectAnnotationFilter" class="btn btn-default btn-info btn-xs">Select</button>
                         </li>
                         <li style="display : inline;">
-                            <button id="deleteAnnotationFilter" class="btn error">Delete</button>
+                            <button id="deleteAnnotationFilter" class="btn btn-default btn-danger btn-xs">Delete</button>
                         </li>
                         <li id="liSaveAnnotationFilter" style="display : inline;">
-                            <button id="saveAnnotationFilter" class="btn success"> Save current selection</button>
+                            <button id="saveAnnotationFilter" class="btn btn-default btn-success btn-xs"> Save current selection</button>
                         </li>
                         <li id="liConfirmAnnotationFilter" style="display : none;"><input id="inputAnnotationFilterName"
                                                                                           type="text"
                                                                                           data-placement="below"
                                                                                           rel='tooltip'
                                                                                           title='Please specify a identifier'/>&nbsp;
-                            <button id="confirmAnnotationFilter" class="btn success"> Confirm</button>
+                            <button id="confirmAnnotationFilter" class="btn btn-success btn-xs"> Confirm</button>
                             &nbsp;
-                            <button id="cancelAnnotationFilter" class="btn"> Cancel</button>
+                            <button id="cancelAnnotationFilter" class="btn btn-default btn-xs"> Cancel</button>
                         </li>
                     </div>
                     <div id="listtabannotation" style="display: none;"></div>
@@ -281,13 +261,13 @@
                         <ul>
                             <li style="display : inline;"><a
                                     href="/api/project/<%= id %>/annotation/download?format=csv"
-                                    id="downloadAnnotationsCSV" class="btn">Download CSV</a></li>
+                                    id="downloadAnnotationsCSV" class="btn btn-info btn-xs">Download CSV</a></li>
                             <li style="display : inline;"><a
                                     href="/api/project/<%= id %>/annotation/download?format=xls"
-                                    id="downloadAnnotationsExcel" class="btn">Download Excel</a></li>
+                                    id="downloadAnnotationsExcel" class="btn btn-info btn-xs">Download Excel</a></li>
                             <li style="display : inline;"><a
                                     href="/api/project/<%= id %>/annotation/download?format=pdf"
-                                    id="downloadAnnotationsPDF" class="btn">Download PDF</a></li>
+                                    id="downloadAnnotationsPDF" class="btn btn-info btn-xs">Download PDF</a></li>
                         </ul>
                     </div>
                     <div id="annotationRetrievalMain">
@@ -309,58 +289,79 @@
 </div>
 
 <div class="tab-pane" id="tabs-config-<%= id %>" style="overflow : auto;padding: 20px;">
-    <div class="container-fluid" style="background-color: #ffffff !important;">
-        <div style="margin-top: 20px;" class="well">
-            <h3>Magic Wand Configuration</h3>
-            <form id="mwToleranceForm" class="form-horizontal well">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label" for="input_threshold">Threshold</label>
-                        <div class="controls">
-                            <div class="input-prepend input-append">
-                                <span class="add-on"><i class=" icon-picture"></i></span>
-                                <input type="text" class="input-xlarge" id="input_threshold"/>
-                                <span class="help-inline">Note : Is not used for HISTOLOGY projects</span>
+    <div class="container" style="padding-top: 10px;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Magic Wand Configuration</h4>
+            </div>
+            <div class="panel-body row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <form id="mwToleranceForm" class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label" for="input_threshold">Threshold</label>
+                                <div class="input-prepend input-append">
+                                    <input type="text"  id="input_threshold"/>
+                                    <p class="help-block">Note : Is not used for HISTOLOGY projects.</p>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_tolerance">Tolerance</label>
+                            <div class="form-group">
+                                <label class="control-label" for="input_tolerance">Tolerance</label>
+                                <div class="input-prepend input-append">
+                                    <input type="text"  id="input_tolerance"/>
+                                    <p class="help-block">Note : only used for HISTOLOGY projects.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button id="submit_mwToleranceForm" type="submit" class="btn btn-default  btn-primary">Save changes
+                                </button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top : 20px;">
+            <div class="panel-heading">
+                <h4>Image filters</h4>
+            </div>
+            <div class="panel-body row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <ul class="image-filters">
+                        <li>
+                            <button id="addImageFilterButton" class="btn btn-default btn-sm btn-primary">
+                                <i class="glyphicon glyphicon-plus"/></i> Add&nbsp;&nbsp;&nbsp;
+                            </button>
+                        </li>
+                        <li>
+                            <select id="addImageFilter"></select>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top : 20px;">
+            <div class="panel-heading">
+                <h4>Softwares</h4>
+            </div>
+            <div class="panel-body row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <ul class="softwares">
+                        <li>
+                            <button id="addSoftwareButton" class="btn btn-default btn-sm btn-primary"><i
+                                    class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
+                        </li>
+                        <li>
+                            <select id="addSoftware"></select></li>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-                        <div class="controls">
-                            <div class="input-prepend input-append">
-                                <span class="add-on"><i class=" icon-screenshot"></i>
-                                </span><input type="text" class="input-xlarge" id="input_tolerance"/>
-                                <span class="help-inline">Note : only used for HISTOLOGY projects</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button id="submit_mwToleranceForm" type="submit" class="btn btn-primary">Save changes
-                        </button>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-        <div style="margin-top: 20px;" class="well">
-            <h3>Image filters</h3>
-            <ul class="image-filters">
-                <li>
-                    <button id="addImageFilterButton" class="btn btn-small btn-primary">
-                        <i class="icon-plus icon-white"/></i> Add&nbsp;&nbsp;&nbsp;
-                    </button>
-                    <select id="addImageFilter"></select></li>
-            </ul>
-        </div>
-        <div style="margin-top: 20px;" class="well">
-            <h3>Softwares</h3>
-            <ul class="softwares">
-                <li>
-                    <button id="addSoftwareButton" class="btn btn-small btn-primary"><i
-                            class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
-                    <select id="addSoftware"></select></li>
-            </ul>
-        </div>
     </div>
 </div>
 

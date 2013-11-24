@@ -1,83 +1,72 @@
-<div id="properties-<%= id %>" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
-     xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
-    <div class="container-fluid" style="padding-top: 10px">
-        <div class="span4" style="max-width: 300px;">
-            <div class="well sidebar-nav">
-                <div class="btn-group" data-toggle="buttons-radio">
-                    <button type="button" id="buttonAnnotationProperty" class="btn btn-primary">Annotation</button>
-                    <button type="button" id="buttonImageInstanceProperty" class="btn btn-primary">Image</button>
-                    <button type="button" id="buttonProjectProperty" class="btn btn-primary">Project</button>
-                </div>
-                <br/>
-                <div align="middle">
-                    <br/>
-                    <select id="identifiantSelect">
-                    </select>
-                    <div id="infoDisplaySelect" style="max-height: 250px; overflow: auto;">
-                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                    </div>
-                    <button type="button" id="refreshIdentifiantSelect" class="btn btn-inverse">Refresh List</button>
-                </div>
-                <br/>
-                <div align="middle">
-                    <a id="loadImageOrText" href="">
-                    </a>
-                </div>
-                <hr>
-                <p><em><i class='icon-info-sign' /> Info: To edit a property, double-click the key or the value</em></p>
-            </div>
+<div class="container" id="properties-<%= id %>" style="padding-top: 10px;">
+    <div class="col-md-4 well" style="text-align: center;">
+        <div class="btn-group" data-toggle="buttons-radio">
+            <button type="button" id="buttonAnnotationProperty" class="btn btn-default btn-primary">Annotation</button>
+            <button type="button" id="buttonImageInstanceProperty" class="btn btn-default btn-primary">Image</button>
+            <button type="button" id="buttonProjectProperty" class="btn btn-default btn-primary">Project</button>
         </div>
+        <br />
+        <select id="identifiantSelect">
+        </select>
+        <div id="infoDisplaySelect" style="max-height: 250px; overflow: auto;">
+            <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+        </div>
+        <br />
+        <button type="button" id="refreshIdentifiantSelect" class="btn btn-default">Refresh List</button>
+        <br />
+        <div align="middle">
+            <a id="loadImageOrText" href="">
+            </a>
+        </div>
+    </div>
 
-        <div class="span8">
-            <div class="well" style="margin-bottom: 0px;padding-bottom: 5px;">
-                <h4>Add a property</h4><br/>
-                <div class="controls">
-                    <form>
-                    <input type="text" title="Key" class="input-xlarge" data-provide="typeahead" id="input_key" required />
+    <div class="col-md-8">
+        <div class="well">
+            <h4>Add a property</h4><br/>
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    <label for="input_key">Key</label>
+                    <input type="text" title="Key" class="input-xlarge" class="typeahead" id="input_key" required />
+                </div>
+                <div class="form-group">
+                    <label for="input_value">Value</label>
                     <input type="text" title="Value" class="input-xlarge" id="input_value" required />
-                    <li style="display : inline;">
-                        <button id="addProperty" class="btn">Add Property </button>
-                    </li>
-                    </form>
                 </div>
-            </div>
-            <div class="well" style="margin-bottom: 0px;padding-bottom: 5px;">
-                <h4>Add a keyword</h4><br/>
-                <div class="controls">
-                    <form>
-                    <!--<input type="text" title="Value" class="input-xlarge" id="input_value_keywords" required />-->
-                        <div class="alert alert-info" id="waitForKeywords"><i class="icon-refresh"/> Loading...</div>
-                    <li style="display : inline;">
-                        <button id="addKeywords" class="btn">Add Keyword </button>
-                    </li>
-                    </form>
-                </div>
-            </div>
+                <button id="addProperty" class="btn btn-success">Add Property </button>
+            </form>
         </div>
-
-        <div class="span8">
-            <div class="well" >
-                <h4>Properties</h4><br/>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th width="200">Key</th>
-                            <th width="350">Value</th>
-                            <th width="50">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-hover" id="tableProperty">
-
-                    </tbody>
-                </table>
-                <div id="infoDisplayTable" style="max-height: 250px; overflow: auto;">
-                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+        <div class="well" style="margin-bottom: 0px;padding-bottom: 5px;">
+            <h4>Add a keyword</h4><br/>
+            <form>
+                <div class="from-group">
+                    <!--<input type="text" title="Value" class="input-xlarge" id="input_value_keywords" required />-->
+                    <div class="alert alert-info" id="waitForKeywords"><i class="icon-refresh"/> Loading...</div>
+                    <button id="addKeywords" class="btn btn-info">Add Keyword </button>
                 </div>
-                <br/>
-                <li style="display : inline;">
-                    <button id="deleteProperty" class="btn">Delete Property</button>
-                </li>
+            </form>
+        </div>
+        <div class="well" >
+            <h4>Properties</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th width="200">Key</th>
+                    <th width="350">Value</th>
+                    <th width="50">Delete</th>
+                </tr>
+                </thead>
+                <tbody class="table-hover" id="tableProperty">
+
+                </tbody>
+            </table>
+            <div class="alert alert-warning"><i class='glyphicon glyphicon-info-sign' /> Info: To edit a property, double-click on the key or the value</em></div>
+            <div id="infoDisplayTable" style="max-height: 250px; overflow: auto;">
+                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
             </div>
+            <br/>
+            <li style="display : inline;">
+                <button id="deleteProperty" class="btn btn-danger">Delete Property</button>
+            </li>
         </div>
     </div>
 </div>

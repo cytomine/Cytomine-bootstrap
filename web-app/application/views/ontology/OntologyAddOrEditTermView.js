@@ -95,7 +95,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         //Build dialog
         self.ontologyDialog = $(self.$termDialog).modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
         $("#AddOrEditTermButton").click(function (event) {
             event.preventDefault();
@@ -123,8 +123,8 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var self = this;
         self.$textboxName.bind('keyup mouseup change click', function (e) {
             var node = self.$tree.dynatree("getTree").getNodeByKey(self.model.id);
-            var color = "#119b04"
-            var htmlNode = "<span style='color:<%=   color %>'><%=   title %></span>"
+            var color = "#119b04";
+            var htmlNode = "<span style='color:<%=   color %>'><%=   title %></span>";
             var nodeTpl = _.template(htmlNode, {title: self.$textboxName.val(), color: color});
             if (node != null) {
                 node.setTitle(nodeTpl);
@@ -253,7 +253,6 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     },
     open: function () {
         var self = this;
-        console.log("open");
         self.clearOntologyTermPanel();
     },
     clearOntologyTermPanel: function () {
@@ -269,10 +268,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         var id = self.model.id;
         var name = self.getNewName();
         var idOldParent = self.model.get("parent");
-        console.log("idParent=" + idOldParent);
         var idParent = self.getNewParent();
-        console.log("idNewParent=" + idParent);
-        console.log("self.ontology.id=" + self.ontology.id);
         var isOldParentOntology = (idOldParent == null || self.ontology.id == idOldParent);
         var isParentOntology = (self.ontology.id == idParent);
         var color = self.getNewColor();
@@ -387,6 +383,9 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
     close: function () {
         var self = this;
         this.ontologyPanel.refresh();
-        self.$termDialog.modal("hide");
+        self.$termDialog.modal('hide').remove();
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+
     }
 });

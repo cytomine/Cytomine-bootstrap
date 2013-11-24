@@ -1,20 +1,26 @@
-<h4 class="header_h"><i class="icon-info-sign" style="margin-top: 5px;"></i> Project Info</h4>
-<ul style="margin-left : 0px;">
-    <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
-    <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
-    <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
-    <li>Number of user annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
-    <li>Number of job annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfJobAnnotations %></a></li>
-    <li>Number of reviewed annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfReviewedAnnotations %></a></li>
-    <li>Description : <div class="description"></div></li>
-    <li><a id="seeUsersProjectList-<%= id %>">More Details...</a></li>
+<div class="row">
+    <h4 class="header_h"><i class="glyphicon glyphicon-list-alt" style="margin-top: 5px;"></i> Project Informations</h4>
+    <div class="col-md-6">
+        <ul style="margin-left : 0px;">
+            <li>Name: <a href="#tabs-dashboard-<%= id %>"><%= name %></a></li>
+            <li>Ontology: <a href="#ontology/<%= ontology %>"><%= ontologyName %></a></li>
+            <li>Number of images : <a href="#tabs-images-<%= id %>"><%= numberOfImages %></a></li>
+            <li>Number of user annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfAnnotations %></a></li>
+            <li>Number of job annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfJobAnnotations %></a></li>
+            <li>Number of reviewed annotations : <a href="#tabs-annotations-<%= id %>"><%= numberOfReviewedAnnotations %></a></li>
+            <a class="btn btn-default btn-sm" id="seeUsersProjectList-<%= id %>">See users</a>
 
-    <% if (!isClosed) { %>
-        <button class="btn btn-warning" id="closeProject">Lock project</button>
-    <% } else { %>
-        <button class="btn btn-info" id="uncloseProject">Unlock project</button>
-        <button class="btn btn-info" href="#clearjobdataModal"  data-toggle="modal" id="clearjobdata">Clear job data</button>
-    <% }%>
+            <% if (!isClosed) { %>
+            <button class="btn btn-warning btn-sm" id="closeProject">Lock project</button>
+            <% } else { %>
+            <button class="btn btn-info btn-sm" id="uncloseProject">Unlock project</button>
+            <button class="btn btn-info btn-sm" href="#clearjobdataModal"  data-toggle="modal" id="clearjobdata">Clear job data</button>
+            <% }%>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        Description : <div class="description" style=" word-wrap: break-word;"></div>
+    </div>
+</div>
 
-</ul>
 

@@ -85,16 +85,14 @@ var OntologyView = Backbone.View.extend({
                 console.log("OntologyModel succes " + self.idOntology);
                 require(["text!application/templates/ontology/OntologyTabContent.tpl.html"],
                     function (ontologyTabContentTpl) {
-                        $("#ontologyPanelView").empty();
-                        $("#ontologyPanelView").append(_.template(ontologyTabContentTpl, model.toJSON()));
+
                         //create project search panel
                         var view = new OntologyPanelView({
                             model: model,
                             el: $("#ontologyPanelView"),
                             container: self
-                        });
+                        }).render();
 
-                        view.render();
                         if (self.idTerm != null) {
                             view.selectTerm(self.idTerm)
                         }

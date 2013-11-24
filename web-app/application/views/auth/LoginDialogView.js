@@ -1,9 +1,10 @@
 var LoginDialogView = Backbone.View.extend({
     tagName: "div",
+    dialog : null,
     initialize: function (options) {
     },
     doLayout: function (tpl) {
-        new ConfirmDialogView({
+        this.dialog = new ConfirmDialogView({
             el: '#dialogs',
             template: _.template(tpl, {version: window.app.status.version}),
             dialogAttr: {
@@ -18,7 +19,10 @@ var LoginDialogView = Backbone.View.extend({
         $("#j_password").click(function () {
             $(this).select();
         });
-        $('#login-form').submit(window.app.controllers.auth.doLogin);
+        $('#login-form').submit(function(e) {
+            e.preventDefault();
+            window.app.controllers.auth.doLogin();
+        });
         return this;
     },
     render: function () {
@@ -26,8 +30,9 @@ var LoginDialogView = Backbone.View.extend({
         require(["text!application/templates/auth/LoginDialog.tpl.html"], function (tpl) {
             self.doLayout(tpl);
         });
+        return this;
     },
     close: function () {
-        $('#login-form').close();
+        this.dialog.close();
     }
 });

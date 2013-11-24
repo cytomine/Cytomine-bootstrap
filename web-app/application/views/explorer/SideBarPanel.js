@@ -32,8 +32,8 @@ var SideBarPanel = Backbone.View.extend({
         if (storageKey) {
             localStorage.setObject(storageKey, { visible: true});
         }
-        link.removeClass("icon-plus");
-        link.addClass("icon-minus");
+        link.removeClass("glyphicon-plus");
+        link.addClass("glyphicon-minus");
         elContent.show();
     },
 
@@ -41,8 +41,8 @@ var SideBarPanel = Backbone.View.extend({
         if (storageKey) {
             localStorage.setObject(storageKey, { visible: false});
         }
-        link.addClass("icon-plus");
-        link.removeClass("icon-minus");
+        link.addClass("glyphicon-plus");
+        link.removeClass("glyphicon-minus");
         elContent.hide();
     }
 });

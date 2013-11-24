@@ -1,23 +1,26 @@
-<div id="job-delete-confirm" class="xbigModal modal hide">
-    <div class="modal-header">
-        <h2>Delete job data</h2>
-    </div>
+<div id="job-delete-confirm" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete job data</h2>
+            </div>
 
-    <div class="modal-body">
-        <div class="row" style="min-height: 250px;">
-            <div class="span3" id="jobDataStat-<%= id %>" style="min-width: 600px;">
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...Cytomine is looking for job data (may
-                    take a long time)
+            <div class="modal-body">
+                <div class="row" style="min-height: 250px;">
+                    <div class="col-md-3" id="jobDataStat-<%= id %>" style="min-width: 600px;">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...Cytomine is looking for job data (may
+                            take a long time)
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
+
+            <div class="modal-footer">
+                <a href="#" id="jobDeleteDataCancelButton<%= id %>" class="btn btn-default" data-dismoss="modal">Cancel</a>
+                <a href="#" id="jobDeleteDataButton<%= id %>" class="btn btn-danger" tabindex="4">Delete all data</a>
+            </div>
         </div>
-
     </div>
-
-    <div class="modal-footer">
-        <a href="#" id="jobDeleteDataCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
-        <a href="#" id="jobDeleteDataButton<%= id %>" class="btn btn-primary" tabindex="4">Delete all data</a>
-    </div>
-
 </div>

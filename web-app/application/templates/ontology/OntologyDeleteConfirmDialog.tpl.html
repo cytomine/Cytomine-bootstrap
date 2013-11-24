@@ -1,22 +1,26 @@
-<div id="delete-ontology-confirm" title="" class="modal">
-    <div class="modal-header">
-        <h3>Delete an ontology</h3>
-    </div>
-    <div class="modal-body" id="deleteOntologyDialogContent">
-        <div class="alert">
-            <p>Do you really want to delete ontology <%= ontology %> ? There is no project associated with this
-                ontology</p>
-        </div>
-        <div id="delete-ontology-error-label" class="alert alert-error" style="display: none;">
-            <i class="icon-warning-sign"/>
+<div id="delete-ontology-confirm" title="" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete an ontology</h3>
+            </div>
+            <div class="modal-body" id="deleteOntologyDialogContent">
+                <div class="alert">
+                    <p>Do you really want to delete ontology <%= ontology %> ? There is no project associated with this
+                        ontology</p>
+                </div>
+                <div id="delete-ontology-error-label" class="alert alert-error" style="display: none;">
+                    <i class="icon-warning-sign"/>
 
-            <div id="delete-ontology-error-message"></div>
+                    <div id="delete-ontology-error-message"></div>
+                </div>
+                <form id="delete-ontology-form">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="deleteOntologyButton" class="btn btn-danger">Delete</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
         </div>
-        <form id="delete-ontology-form">
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="deleteOntologyButton" class="btn btn-primary">Confirm</a>
-        <a href="#" id="closeDeleteOntologyDialog" class="btn">Cancel</a>
     </div>
 </div>

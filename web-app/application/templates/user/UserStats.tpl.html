@@ -1,7 +1,47 @@
-    <h1>Cytomine v1.0</h1>
-    <p>Welcome <%= prettyName %></p>
+<div class="main-stats">
+    <div class="row stats-row">
+        <div class="col-md-2 col-sm-2 stat well stat-first">
+            <div class="data">
+                <span class="number"></span>
+                Statistics »
+            </div>
+            <span class="date"></span>
+        </div>
+        <div class="col-md-2 col-sm-2 stat">
+            <div class="data">
+                <span class="number"><%= projectCount %></span>
+                projects
+            </div>
+            <span class="date">Now</span>
+        </div>
+        <div class="col-md-2 col-sm-2 stat">
+            <div class="data">
+                <span class="number"><%= imagesCount %></span>
+                images
+            </div>
+            <span class="date">Now</span>
+        </div>
+        <div class="col-md-2 col-sm-2 stat">
+            <div class="data">
+                <span class="number"><%= annotationCount %></span>
+                annotations
+            </div>
+            <span class="date">Now</span>
+        </div>
+        <div class="col-md-2 col-sm-2 stat">
+            <div class="data">
+                <span class="number"><%= reviewedCount %></span>
+                reviewed
+            </div>
+            <span class="date">Now</span>
+        </div>
+        <div class="col-md-2 col-sm-2 stat last">
+            <div class="data">
+                <span class="number"></span>
+                <a href="#project">Projects »</a>
+            </div>
+            <span class="date"></span>
+        </div>
+    </div>
+</div>
 
-    You have access to <%= projectCount %> projects.
-    You created <%= annotationCount %> annotations and validated <%= reviewedCount %> annotations.
-    <br/><br/>
-    <p><a href="#project" class="btn btn-primary btn-large">View all projects »</a></p>

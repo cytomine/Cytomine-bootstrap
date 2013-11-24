@@ -1,23 +1,25 @@
-<div id="editproject" title="" class="modal xbigModal hide">
-    <div class="modal-header">
-        <!--<a href="#" class="close">&times;</a>-->
-        <h3>Edit a project</h3>
-    </div>
-    <div class="modal-body">
+<div id="editproject" title="" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<a href="#" class="close">&times;</a>-->
+                <h3>Edit a project</h3>
+            </div>
+            <div class="modal-body">
 
-        <form id="login-form-edit-project">
-            <fieldset title="Step 1" style="margin: auto; height: 300px;">
-                <legend>Project information</legend>
-                <div class="control-group">
-                    <label class="control-label" for="project-edit-name">Name</label>
+                <form id="login-form-edit-project">
+                    <fieldset title="Step 1" style="margin: auto; height: 300px;">
+                        <legend>Project information</legend>
+                        <div class="control-group">
+                            <label class="control-label" for="project-edit-name">Name</label>
 
-                    <div class="controls">
-                        <input class="input-xlarge focused" id="project-edit-name" type="text"
-                               placeholder="Your project name">
-                    </div>
-                </div>
-                <br>
-            </fieldset>
+                            <div class="controls">
+                                <input class="input-xlarge focused" id="project-edit-name" type="text"
+                                       placeholder="Your project name">
+                            </div>
+                        </div>
+                        <br>
+                    </fieldset>
 
             <fieldset title="Step 2" style="margin: auto;height: 300px;">
                 <legend>Project config</legend>
@@ -43,61 +45,63 @@
                     </div>
                     <input type="checkbox" id="isReadOnly"> Read-Only project
 
-                    <br><br>
+                            <br><br>
 
-                    <div class="alert alert-info">
-                        If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
-                    </div>
-                    <input type="checkbox" id="blindMode"> Blind Mode
-                </div>
-                <br>
-            </fieldset>
+                            <div class="alert alert-info">
+                                If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
+                            </div>
+                            <input type="checkbox" id="blindMode"> Blind Mode
+                        </div>
+                        <br>
+                    </fieldset>
 
-            <fieldset title="Step 3" style="margin: auto;height: 300px;">
-                <legend>Project users</legend>
-                Project users:
-                <div>
-                    <!--<select multiple="multiple" id="projectuser" style="width:500px;">-->
-                    <!--</select>-->
-                    <div id="projectedituser"></div>
-                </div>
+                    <fieldset title="Step 3" style="margin: auto;height: 300px;">
+                        <legend>Project users</legend>
+                        Project users:
+                        <div>
+                            <!--<select multiple="multiple" id="projectuser" style="width:500px;">-->
+                            <!--</select>-->
+                            <div id="projectedituser"></div>
+                        </div>
+                        <br/>
+                        Project admins:
+                        <div class="alert alert-info">
+                            A project admin can edit/delete annotations from all users in the new project
+                        </div>
+                        <div>
+                            <!--<select multiple="multiple" id="projectuser" style="width:500px;">-->
+                            <!--</select>-->
+                            <div id="projecteditadmin"></div>
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </fieldset>
+
+
+                    <fieldset title="Step 4" style="margin: auto;height: 300px;">
+                        <legend>Retrieval info</legend>
+                        <div id="retrievalGroup">
+                            <input type="radio" id="retrievalProjectAll" name="retrievalProjectGroup" value="all" checked>
+                            Enable retrieval search on all projects (same ontology)<br> <br>
+                            <input type="radio" id="retrievalProjectSome" name="retrievalProjectGroup" value="some"> Enable
+                            retrieval search for selected projects <br>
+                            <select multiple="multiple" id="retrievalproject" style="width:500px;display:none;"></select><br>
+                            <input type="radio" id="retrievalProjectNone" name="retrievalProjectGroup" value="none"> Disable
+                            retrieval search <br>
+                        </div>
+                        <br>
+                    </fieldset>
+
+                    <input type="submit" class="finish" style="display:none;"/>
+                </form>
                 <br/>
-                Project admins:
-                <div class="alert alert-info">
-                    A project admin can edit/delete annotations from all users in the new project
-                </div>
-                <div>
-                    <!--<select multiple="multiple" id="projectuser" style="width:500px;">-->
-                    <!--</select>-->
-                    <div id="projecteditadmin"></div>
-                </div>
-                <br/>
-                <br/>
-                <br/>
-            </fieldset>
-
-
-            <fieldset title="Step 4" style="margin: auto;height: 300px;">
-                <legend>Retrieval info</legend>
-                <div id="retrievalGroup">
-                    <input type="radio" id="retrievalProjectAll" name="retrievalProjectGroup" value="all" checked>
-                    Enable retrieval search on all projects (same ontology)<br> <br>
-                    <input type="radio" id="retrievalProjectSome" name="retrievalProjectGroup" value="some"> Enable
-                    retrieval search for selected projects <br>
-                    <select multiple="multiple" id="retrievalproject" style="width:500px;display:none;"></select><br>
-                    <input type="radio" id="retrievalProjectNone" name="retrievalProjectGroup" value="none"> Disable
-                    retrieval search <br>
-                </div>
-                <br>
-            </fieldset>
-
-            <input type="submit" class="finish" style="display:none;"/>
-        </form>
-        <br/>
-        <div id="progressBarEditProjectContainer"></div>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="editProjectButton" class="btn btn-primary" style="display:none;">Update</a>
-        <a href="#" id="closeEditProjectDialog" class="btn">Cancel</a>
+                <div id="progressBarEditProjectContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="editProjectButton" class="btn btn-primary" style="display:none;">Update</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>

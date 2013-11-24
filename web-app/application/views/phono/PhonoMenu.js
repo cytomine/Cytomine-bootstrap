@@ -139,7 +139,7 @@ var PhonoMenu = Backbone.View.extend({
                     var cytomine_id = cytomine_header["value"];
                     new UserModel({id: cytomine_id}).fetch({
                         success: function (model, response) {
-                            var incomingCallMessage = _.template("<%= user %> is calling you.<br /><a class='btn btn-success' id='answercall-<%=id %>'>Answer</a> <a class='btn btn-warning' id='hangupcall-<%=id %>'>Hangup</a>", { user: model.prettyName(), id: call.id});
+                            var incomingCallMessage = _.template("<%= user %> is calling you.<br /><a class='btn btn-default btn-success' id='answercall-<%=id %>'>Answer</a> <a class='btn btn-default btn-warning' id='hangupcall-<%=id %>'>Hangup</a>", { user: model.prettyName(), id: call.id});
                             var messageBox = self.message("Incoming call", incomingCallMessage, self.hangupTimeout);
                             $("#answercall-" + call.id).on("click", function () {
                                 call.answer();

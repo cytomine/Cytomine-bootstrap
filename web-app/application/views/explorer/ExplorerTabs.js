@@ -71,10 +71,6 @@ var ExplorerTabs = Backbone.View.extend({
             //close review tab for this image if already exist
             $("#closeTabtabs-review-" + idImage).click()
         }
-        console.log("#############################");
-        console.log("Open image:"+idImage);
-        console.log("Merge:"+merge);
-        console.log("#############################");
 
         var tabs = $("#explorer-tab-content");
 
@@ -114,7 +110,6 @@ var ExplorerTabs = Backbone.View.extend({
         }
     },
     addReviewImageView: function (idImage, options,merge) {
-        console.log("addReviewImageView:" + idImage);
         var self = this;
         var tab = this.getImageView("review-" + idImage);
         if (tab != null) {
@@ -128,10 +123,7 @@ var ExplorerTabs = Backbone.View.extend({
             //close image tab for this image if already exist
             $("#closeTabtabs-image-" + idImage).click()
         }
-        console.log("#############################");
-        console.log("Open image:"+idImage);
-        console.log("Merge:"+merge);
-        console.log("#############################");
+
         var tabs = $("#explorer-tab-content");
         var view = new BrowseImageView({
             initCallback: function () {
@@ -142,11 +134,6 @@ var ExplorerTabs = Backbone.View.extend({
             merge : merge
         });
         self.tabs.push({idImage: "review-" + idImage, view: view});
-
-
-
-
-
         var openTab = function(model) {
             view.model = model.image;
             console.log(view.model);
@@ -166,7 +153,6 @@ var ExplorerTabs = Backbone.View.extend({
         }
 
         var imageNew = window.app.popNewImage();
-        console.log("imageNew="+imageNew);
         if(imageNew && imageNew.image && imageNew.image.id==idImage) {
             openTab(imageNew);
         } else {
@@ -195,7 +181,7 @@ var ExplorerTabs = Backbone.View.extend({
      * @param index the identifier of the Tab
      */
     removeTab: function (idImage, prefix) {
-        var self = this;
+
         var browseImageView = null
 
         if (prefix != "review") {
@@ -217,15 +203,6 @@ var ExplorerTabs = Backbone.View.extend({
         $('#tabs-' + prefix + '-' + idImage + "-dropdown").parent().remove();
         //Remove content
         $('#tabs-' + prefix + '-' + window.app.status.currentProject + '-' + idImage + '-').remove();
-
-//        console.log("removeTabx");
-//        console.log(this.tabs.length);
-//        if(this.tabs.length!=0) {
-//            var lastTab = this.tabs[this.tabs.length-1];
-//            console.log("lastTab");
-//            console.log(lastTab);
-//            window.location = "#"+lastTab.view.divId;
-//        }
     },
     /**
      * Show a tab

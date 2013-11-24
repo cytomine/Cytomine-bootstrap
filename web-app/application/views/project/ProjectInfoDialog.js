@@ -80,17 +80,17 @@ var ProjectInfoDialog = Backbone.View.extend({
                     $("#imageInfoBigPanel-" + project.id).find(".row").append("<div class='alert alert-block'>No data to display</div>");
                 }
 
-                $("#imageInfoBigPanel-" + project.id).find("a").click(function() {
+                /*$("#imageInfoBigPanel-" + project.id).find("a").click(function() {
                     $("#infoProject").modal("hide");
                     $("#infoProject").remove();
-                });
+                });*/
 
             }});
 
         //close button
-        $("#closeInfoProject").on("click", function (e) {
+        /*$("#closeInfoProject").on("click", function (e) {
             $("#infoProject").modal("hide");
             $("#infoProject").remove();
-        });
+        });*/
     }
 });

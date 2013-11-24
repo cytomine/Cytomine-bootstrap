@@ -10,24 +10,6 @@ var OntologyPanelView = Backbone.View.extend({
     initialize: function (options) {
         this.container = options.container;
     },
-    render: function () {
-        var self = this;
-        self.$panel = $(".ontology" + self.model.id);
-        self.$tree = self.$panel.find("#treeontology-" + self.model.id);
-        self.$infoOntology = self.$panel.find("#infoontology-" + self.model.id);
-        self.$infoTerm = self.$panel.find("#infoterm-" + self.model.id);
-
-        self.$addTerm = self.$panel.find('#dialog-add-ontology-term');
-        self.$editTerm = self.$panel.find('#dialog-edit-ontology-term');
-        self.$deleteTerm = self.$panel.find('#dialogsTerm');
-
-        self.buildOntologyTree();
-        self.buildInfoOntologyPanel();
-
-        self.initEvents();
-
-        return this;
-    },
     initEvents: function () {
         var self = this;
         console.log("initEvents:" + self.model.id);
@@ -52,15 +34,31 @@ var OntologyPanelView = Backbone.View.extend({
         self.container.refresh(self.model.id);
     },
 
-    clear: function () {
+    render : function () {
         var self = this;
-        self.$panel.empty();
+        $(self.el).empty();
         require([
             "text!application/templates/ontology/OntologyTabContent.tpl.html"
         ],
             function (tpl) {
-                self.$panel.replaceWith(_.template(tpl, { id: self.model.get("id"), name: self.model.get("name")}));
-                return this;
+                $(self.el).html(_.template(tpl, { id: self.model.get("id"), name: self.model.get("name"), projects : "", users : "", creator : ""}));
+
+                self.$panel = $(".ontology" + self.model.id);
+                self.$tree = self.$panel.find("#treeontology-" + self.model.id);
+                self.$infoOntology = self.$panel.find("#infoontology-" + self.model.id);
+                self.$infoTerm = self.$panel.find("#infoterm-" + self.model.id);
+
+                self.$addTerm = self.$panel.find('#dialog-add-ontology-term');
+                self.$editTerm = self.$panel.find('#dialog-edit-ontology-term');
+                self.$deleteTerm = self.$panel.find('#dialogsTerm');
+
+                //defered
+                self.printCreator();
+                self.printUsers();
+                self.printProjects();
+                self.buildOntologyTree();
+
+                self.initEvents();
             });
 
         return this;
@@ -137,72 +135,43 @@ var OntologyPanelView = Backbone.View.extend({
             $('#deleteOntologyButton').click(function (event) {
                 event.preventDefault();
                 new TaskModel({project: self.model.id}).save({}, {
-                         success: function (taskResponse, response) {
-                             var task = taskResponse.get('task');
+                        success: function (taskResponse, response) {
+                            var task = taskResponse.get('task');
 
-                             console.log("task"+task.id);
-                             var timer = window.app.view.printTaskEvolution(task, $("#deleteOntologyDialogContent"), 1000);
+                            console.log("task"+task.id);
+                            var timer = window.app.view.printTaskEvolution(task, $("#deleteOntologyDialogContent"), 1000);
 
 
-                             new OntologyModel({id: self.model.id,task: task.id}).destroy(
-                                 {
-                                     success: function (model, response) {
-                                         window.app.view.message("Project", response.message, "success");
-                                         self.container.refresh(null)
-                                         clearInterval(timer);
-                                         $('#delete-ontology-confirm').modal("hide");
-                                         $('#delete-ontology-confirm').remove();
-
-                                     },
-                                     error: function (model, response) {
-                                         window.app.view.message("Ontology", "Errors!", "error");
-                                         clearInterval(timer);
-                                         var json = $.parseJSON(response.responseText);
-                                         window.app.view.message("Ontology", json.errors[0], "error");
-                                     }
-                                 }
-                             );
-                             return false;
-                         },
-                         error: function (model, response) {
-                             var json = $.parseJSON(response.responseText);
-                             window.app.view.message("Task", json.errors, "error");
-                         }
-                     }
-                 );
+                            new OntologyModel({id: self.model.id,task: task.id}).destroy(
+                                {
+                                    success: function (model, response) {
+                                        window.app.view.message("Project", response.message, "success");
+                                        self.container.refresh(null)
+                                        clearInterval(timer);
+                                        $('#delete-ontology-confirm').modal('hide').remove();
+                                        $('body').removeClass('modal-open');
+                                        $('.modal-backdrop').remove();
+                                    },
+                                    error: function (model, response) {
+                                        window.app.view.message("Ontology", "Errors!", "error");
+                                        clearInterval(timer);
+                                        var json = $.parseJSON(response.responseText);
+                                        window.app.view.message("Ontology", json.errors[0], "error");
+                                    }
+                                }
+                            );
+                            return false;
+                        },
+                        error: function (model, response) {
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Task", json.errors, "error");
+                        }
+                    }
+                );
                 return false;
             });
-
-            $('#closeDeleteOntologyDialog').click(function (event) {
-                event.preventDefault();
-                $('#delete-ontology-confirm').modal('hide');
-                $('#delete-ontology-confirm').modal('remove');
-                return false;
-            });
-
         });
     },
-//    refuseDeleteOntology: function (numberOfProject) {
-//        var self = this;
-//        require(["text!application/templates/ontology/OntologyDeleteRefuseDialog.tpl.html"], function (tpl) {
-//            var dialog = new ConfirmDialogView({
-//                el: '#dialogsDeleteOntologyRefuse',
-//                template: _.template(tpl, {name: self.model.get('name'), numberOfProject: numberOfProject}),
-//                dialogAttr: {
-//                    backdrop: false,
-//                    dialogID: '#delete-ontology-refuse'
-//                }
-//            }).render();
-//            $("#deleteRefuseOntologyButton").click(function () {
-//                $('#delete-ontology-refuse').modal("hide");
-//                $('#delete-ontology-refuse').remove();
-//                return false;
-//            });
-//        });
-//    },
-//    acceptDeleteOntology: function () {
-//
-//    },
     selectTerm: function (idTerm) {
         var self = this;
         self.$tree.dynatree("getTree").activateKey(idTerm);
@@ -214,20 +183,14 @@ var OntologyPanelView = Backbone.View.extend({
                 el: '#dialogsTerm',
                 template: _.template(tpl, {term: term.get('name'), ontology: self.model.get('name')}),
                 dialogAttr: {
-                    backdrop: false,
+                    backdrop: true,
                     dialogID: '#delete-term-confirm'
                 }
             }).render();
-            console.log("closeDeleteTermDialog="+$('#closeDeleteTermDialog').length);
-            $('#closeDeleteTermDialog').click(function (event) {
-                event.preventDefault();
-                $('#delete-term-confirm').modal('hide');
-                $('#delete-term-confirm').remove();
-                return false;
-            });
+
             $('#deleteTermButton').click(function (event) {
                 event.preventDefault();
-                self.removeTerm(term, '#delete-term-confirm');
+                self.removeTerm(term, dialog);
                 return false;
             });
         });
@@ -236,14 +199,13 @@ var OntologyPanelView = Backbone.View.extend({
      * Delete a term which can have relation but no annotation
      * @param term term that must be deleted
      */
-    removeTerm: function (term, dialogIdentifier) {
+    removeTerm: function (term, dialog) {
         var self = this;
         new TermModel({id: term.id}).destroy({
             success: function (model, response) {
                 window.app.view.message("Term", response.message, "success");
                 self.refresh();
-                $(dialogIdentifier).modal('hide');
-                $(dialogIdentifier).remove();
+                dialog.close();
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -252,30 +214,34 @@ var OntologyPanelView = Backbone.View.extend({
                 $("#delete-term-error-message").append(json.errors)
             }});
     },
-    buildInfoOntologyPanel: function () {
+    printCreator: function () {
         var self = this;
-        self.$infoOntology.empty();
-        var buttonId = "seeUserOntology-" + self.model.id;
-        var tpl = _.template("" +
-            "<div id='userontologyinfo-<%= id %>' style='padding:5px;'>" +
-            "<ul><li><b>Ontology</b> : <%= ontologyName %></li>" +
-            "<li><b>Users</b> : <button id='" + buttonId + "' class='btn'>See users list</button></li><li class='projectsLinked'></li></ul></div>", { id: self.model.id, ontologyName: self.model.get('name')});
-        self.$infoOntology.html(tpl);
-
-        $("#" + buttonId).click(function () {
-            console.log("open ontology user " + self.model.id)
-            new ontologyUsersDialog({model: self.model, el: $("#ontology")}).render();
-        });
-
-
-        var projectsLinked = []
-        _.each(self.model.get("projects"), function (project) {
+        new UserCollection({ontology: self.model.id, creator: true}).fetch({
+            success: function (creator, response) {
+                $("#ontologyCreator").empty();
+                creator.each(function (user) {
+                    $("#ontologyCreator").append(user.prettyName());
+                });
+            }});
+    },
+    printUsers: function () {
+        var self = this;
+        new UserCollection({ontology: self.model.id}).fetch({
+            success: function (users, response) {
+                var usernames = []
+                users.each(function (user) {
+                    usernames.push(user.prettyName());
+                });
+                $("#ontologyUsers").html(usernames.join(", "));
+            }});
+    },
+    printProjects : function() {
+        var projectsLinked = [];
+        _.each(this.model.get("projects"), function (project) {
             var tpl = _.template("<a href='#tabs-dashboard-<%=   idProject %>'><%=   projectName %></a>", {idProject: project.id, projectName: project.name});
             projectsLinked.push(tpl);
         });
-        var tpl = _.template("<b>Projects</b> : <%=   projects %>", {projects: projectsLinked.join(", ")});
-        self.$infoOntology.find('.projectsLinked').html(tpl);
-
+        $("#projectsLinked").html(projectsLinked.join(", "));
     },
     buildOntologyTree: function () {
         var self = this;

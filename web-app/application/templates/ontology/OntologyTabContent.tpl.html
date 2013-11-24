@@ -1,24 +1,18 @@
-<div class="well ontology<%= id %>">
-    <div class="row" style="padding-left: 30px;padding-bottom: 10px;">
-        <div class="span" style="margin-right: 5px;margin-left: 30px;"><h3><a id='ontologyTitle<%= id %>'
-                                                                              href='#ontology/<%= id %>'><%= name %></a>
-        </h3></div>
-        <div class="span" style="max-width: 100px;margin-right: 5px;margin-left: 10px;">
+<div class="ontology<%= id %> panel panel-default">
+    <div class="panel-heading"><h4><%= name %></h4></div>
+    <div class="panel-body">
+        <div class="row" style="padding-left: 20px;">
             <div class="btn-group">
-                <button class="btn" href="#">Ontology</button>
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                <button class="btn btn-info btn-sm" href="#">Ontology</button>
+                <a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a class="editOntology" id='buttonEditOntology<%= id %>'><i class="icon-pencil"></i> Edit</a>
-                    </li>
-                    <li><a class="deleteOntology" id='buttonDeleteOntology<%= id %>'><i class="icon-trash"></i>
-                        Delete</a></li>
+                    <li><a class="editOntology" id='buttonEditOntology<%= id %>'><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a class="deleteOntology" id='buttonDeleteOntology<%= id %>'><i class="icon-trash"></i>Delete</a></li>
                 </ul>
             </div>
-        </div>
-        <div class="span" style="max-width: 100px;margin-right: 5px;margin-left: 0px;">
             <div class="btn-group">
-                <button class="btn" href="#">Term</button>
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                <button class="btn btn-info btn-sm" href="#">Term</button>
+                <a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a class="addTerm" id='buttonAddTerm<%= id %>'><i class="icon-plus"></i> Add</a></li>
                     <li><a class="editTerm" id='buttonEditTerm<%= id %>'><i class="icon-pencil"></i> Edit</a></li>
@@ -26,15 +20,23 @@
                 </ul>
             </div>
         </div>
-    </div>
-    <div id="ontology-<%= id %>">
-        <div id="infoontology-<%= id %>" class=""></div>
-        <div class="row">
-            <div id="treeontology-<%= id %>" class="span5"></div>
-            <div id="columchart-<%= id %>"></div>
-            <div id="piechart-<%= id %>"></div>
+        <div id="ontology-<%= id %>">
+            <div id="infoontology-<%= id %>" style="padding-top: 5px;padding-left: 5px;">
+                <div id='userontologyinfo-<%= id %>'>
+                    <ul style='padding-left: 5px;'>
+                        <li><b>Ontology</b> : <%= name %></li>
+                        <li><b>Creator</b> : <span id="ontologyCreator"><%= creator %></span></li>
+                        <li><b>Shared with</b> : <span id="ontologyUsers"><%= users %></span></li>
+                        <li><b>Projects</b> : <span id="projectsLinked"><%= projects %></span></li>
+                    </ul>
+                </div>
+                <div class="row" style="padding-left: 5px;">
+                    <div id="treeontology-<%= id %>" class="col-md-5"></div>
+                    <div id="columchart-<%= id %>"></div>
+                    <div id="piechart-<%= id %>"></div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
 

@@ -132,13 +132,12 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         mapDiv.find("#layerSwitcher" + self.model.get("id")).html(content);
 
         mapDiv.on('change',".followUser", function (e) {
+            var userToFollow = this;
             var followUser = $(this).is(':checked');
             $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
-                $(this).attr('checked', false);
+                if (userToFollow != this)
+                    $(this).attr('checked', false);
             });
-            console.log(followUser);
-            $(this).attr('checked', followUser);
-            console.log(this);
             self.stopFollowing();
             if (!followUser) {
                 return;

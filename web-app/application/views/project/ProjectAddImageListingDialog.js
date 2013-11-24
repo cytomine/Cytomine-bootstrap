@@ -64,10 +64,6 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
             text: false
         });
 
-        $("#infoProjectPanel" + self.model.id).panel({
-            collapseSpeed: 100
-        });
-
         $('#' + self.addImageButton).click(function () {
             self.addImageProjectFromTable();
         });

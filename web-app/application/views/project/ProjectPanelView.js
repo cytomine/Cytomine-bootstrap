@@ -79,7 +79,7 @@ var ProjectPanelView = Backbone.View.extend({
         var idOntology = json.ontology;
         //json.ontology = window.app.models.ontologies.get(idOntology).get('name');
 
-        var maxNumberOfChar = 20;
+        var maxNumberOfChar = 15;
         var title = json.name;
         if (title.length > maxNumberOfChar) {
             title = title.substr(0, maxNumberOfChar) + "...";
@@ -133,31 +133,6 @@ var ProjectPanelView = Backbone.View.extend({
     },
     deleteProject: function () {
         var self = this;
-//        if (self.model.get("numberOfImages") > 0 || self.model.get("numberOfAnnotations") > 0 || self.model.get("numberOfSlides") > 0) {
-//            self.refuseDeleteProject(self.model.get("numberOfImages"));
-//        } else {
-            self.acceptDeleteProject();
-//        }
-    },
-//    refuseDeleteProject: function (numberOfImage) {
-//        var self = this;
-//        require(["text!application/templates/project/ProjectDeleteRefuseDialog.tpl.html"], function (tpl) {
-//            $("#dialogsDeleteProject").replaceWith('');
-//            var dialog = new ConfirmDialogView({
-//                el: '#dialogsDeleteProject',
-//                template: _.template(tpl, {project: self.model.get('name'), numberOfImage: numberOfImage}),
-//                dialogAttr: {
-//                    dialogID: '#delete-project-refuse'
-//                }
-//            }).render();
-//            $("#closeProjectDeleteRefuseDialog").click(function () {
-//                $("#delete-project-refuse").modal('hide');
-//                $("#delete-project-refuse").remove();
-//            });
-//        });
-//    },
-    acceptDeleteProject: function () {
-        var self = this;
         require(["text!application/templates/project/ProjectDeleteConfirmDialog.tpl.html"], function (tpl) {
             // $('#dialogsTerm').empty();
             var dialog = new ConfirmDialogView({
@@ -167,56 +142,55 @@ var ProjectPanelView = Backbone.View.extend({
                     dialogID: '#delete-project-confirm'
                 }
             }).render();
-            $("#closeProjectDeleteCancelDialog").click(function (event) {
-                event.preventDefault();
-                $('#delete-project-confirm').modal("hide");
-                $('#delete-project-confirm').remove();
-                return false;
-            });
-            $('#delete-project-confirm').find("a.close").click(function(event) {
-                event.preventDefault();
-                $('#delete-project-confirm').modal("hide");
-                $('#delete-project-confirm').remove();
-                return false;
-            });
+            /*$("#closeProjectDeleteCancelDialog").click(function (event) {
+             event.preventDefault();
+             $('#delete-project-confirm').modal("hide");
+             $('#delete-project-confirm').remove();
+             return false;
+             });*/
+            /*$('#delete-project-confirm').find("a.close").click(function(event) {
+             event.preventDefault();
+             $('#delete-project-confirm').modal("hide");
+             $('#delete-project-confirm').remove();
+             return false;
+             });*/
 
 
             $("#closeProjectDeleteConfirmDialog").click(function (event) {
                 event.preventDefault();
                 new TaskModel({project: self.model.id}).save({}, {
-                         success: function (taskResponse, response) {
-                             var task = taskResponse.get('task');
+                        success: function (taskResponse, response) {
+                            var task = taskResponse.get('task');
 
-                             console.log("task"+task.id);
-                             var timer = window.app.view.printTaskEvolution(task, $("#deleteProjectDialogContent"), 1000);
+                            console.log("task"+task.id);
+                            var timer = window.app.view.printTaskEvolution(task, $("#deleteProjectDialogContent"), 1000);
 
 
-                             new ProjectModel({id: self.model.id,task: task.id}).destroy(
-                                 {
-                                     success: function (model, response) {
-                                         window.app.view.message("Project", response.message, "success");
-                                         self.clear();
-                                         clearInterval(timer);
-                                         $('#delete-project-confirm').modal("hide");
-                                         $('#delete-project-confirm').remove();
+                            new ProjectModel({id: self.model.id,task: task.id}).destroy(
+                                {
+                                    success: function (model, response) {
+                                        window.app.view.message("Project", response.message, "success");
+                                        self.clear();
+                                        clearInterval(timer);
+                                        dialog.close();
 
-                                     },
-                                     error: function (model, response) {
-                                         window.app.view.message("Project", "Errors!", "error");
-                                         clearInterval(timer);
-                                         var json = $.parseJSON(response.responseText);
-                                         window.app.view.message("Project", json.errors[0], "error");
-                                     }
-                                 }
-                             );
-                             return false;
-                         },
-                         error: function (model, response) {
-                             var json = $.parseJSON(response.responseText);
-                             window.app.view.message("Task", json.errors, "error");
-                         }
-                     }
-                 );
+                                    },
+                                    error: function (model, response) {
+                                        window.app.view.message("Project", "Errors!", "error");
+                                        clearInterval(timer);
+                                        var json = $.parseJSON(response.responseText);
+                                        window.app.view.message("Project", json.errors[0], "error");
+                                    }
+                                }
+                            );
+                            return false;
+                        },
+                        error: function (model, response) {
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Task", json.errors, "error");
+                        }
+                    }
+                );
             });
         });
 

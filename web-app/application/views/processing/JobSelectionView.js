@@ -183,13 +183,13 @@ var JobSelectionView = Backbone.View.extend({
                     cellSee = '<a id="select' + job.id + '">Compare</a>'
                 } else {
                     //else if comparator then print "see details" and click must select job
-                    cellSee = '<a href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">See details<br></a>'
+                    cellSee = '<a class="btn btn-info btn-xs" href="#tabs-algos-' + self.project.id + "-" + self.software.id + "-" + job.id + '" id="' + job.id + '">Details<br></a>'
                 }
                 var cellDelete = "";
                 if (job.get('dataDeleted')) {
                     cellDelete = "All job data are deleted"
                 } else {
-                    cellDelete = '<button class="btn btn-warning" id="' + job.id + '">Delete data</button>';
+                    cellDelete = '<button class="btn btn-danger btn-xs" id="' + job.id + '">Delete data</button>';
                 }
 
 

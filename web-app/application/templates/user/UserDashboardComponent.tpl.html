@@ -1,53 +1,89 @@
-<div id="userdashboard" style="display:none">
-    <div id="userdashboarddiv" class="row-fluid">
-        <div class="span3" id="userdashboard-goto">
-              <div class="well sidebar-nav" style="padding-left: 5px;">
-                <ul class="nav nav-list">
-
-                  <li class="nav-header">Go to project</li>
-                  <!--<li><div id="goToProjectUser" style="height: 31px;"><select></select></div></li>-->
-                    <li><div><input id="goToProjectUser" data-provide="typeahead" style="max-width: 150px;"></div></li>
-
-                    <li class="nav-header">Go to image</li>
-                    <li><div id="selectImageContainer"><div class="alert alert-info"><i class="icon-refresh"/> Loading...</div></div></li>
-
-                    <li class="nav-header" >Last opened images</li>
-                    <li><div id="lastOpenImage"><div class="alert alert-info"><i class="icon-refresh"/> Loading...</div></li>
-                </ul>
-              </div><!--/.well -->
-         </div>
-        <div style="min-width:600px;" class="span6">
-                  <div class="hero-unit" id="userStatsDashboard">
-                      <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                  </div>
-                  <div class="row-fluid" id="userDashboardLastProject">
-                      <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                  </div><!--/row-->
-
-                  <div style="text-align: center;">
-                    <a href="#project" class="btn btn-primary btn-large">View all projects »</a>
-                  </div>
-
-         </div>
-        <div class="span3">
-              <div class="well sidebar-nav">
-                <ul class="nav nav-list" id="userdashboardLastAction">
-                  <li class="nav-header">Last action</li>
-                    <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
-                </ul>
-
-                  <div style="text-align: center;"><a class="btn btn-primary" href='#activity-'>View all activities »</a></div>
-
-              </div><!--/.well -->
-
-
-            <hr/>
-            <!--<div class="well sidebar-nav">-->
-              <!--<ul class="nav nav-list" id="userdashboardLastNews">-->
-                <!--<li class="nav-header">Last news</li>-->
-                  <!--<div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>-->
-              <!--</ul>-->
-            <!--</div>&lt;!&ndash;/.well &ndash;&gt;-->
-        </div><!--/.well -->
+<div id="userdashboard">
+    <div class="row">
+        <div class="main-stats">
+            <div class="row stats-row">
+                <div class="col-md-2 col-sm-2 stat well">
+                    <div class="data">
+                        <span class="number"></span>
+                        Shortcuts »
+                    </div>
+                    <span class="date"></span>
+                </div>
+                <div class="col-md-4 col-sm-4 stat" style="padding-right: 20px;padding-top: 40px;">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <label>Go to project »</label>
+                            <input type="text" id="goToProjectUser" class="typeahead" />
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 col-sm-4 stat" style="padding-right: 20px;padding-top: 40px;">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <label>Go to image »</label>
+                            <input type="text" class="typeahead" id="goToImageUser">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    <div id="userStatsDashboard" class="row">
+        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+    </div>
+    <div class="row">
+        <div class="main-stats">
+            <div class="row stats-row" id="lastOpenImage">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="main-stats">
+            <div class="row stats-row" id="userDashboardLastProject">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="main-stats">
+            <div class="row stats-row" >
+                <div class="col-md-2 col-sm-2 stat  stat-first well" style="min-height: 300px;">
+                    <div class="data">
+                        <span class="number"></span>
+                        Your Activity »
+                    </div>
+                    <span class="date"></span>
+                </div>
+                <div class="col-md-4 col-sm-4 stat class='with-3d-shadow with-transitions" id="chartActivity" style="height: 300px;">
+                    <svg> </svg>
+                </div>
+                <div class="col-md-4 col-sm-4 stat" style="max-height: 300px;overflow-y : auto;text-align: left;padding-left: 10px;">
+                    <ul id="userdashboardLastAction"></ul>
+                </div>
+                <div class="col-md-2 col-sm-2 stat">
+                    <div class="data">
+                        <span class="number"></span>
+                        <a href='#activity-'>View all »</a>
+                    </div>
+                    <span class="date"></span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row">
+        <div class="main-stats">
+            <div class="row stats-row">
+                <div class="col-md-2 col-sm-2 stat">
+                    <div class="data">
+                        <span class="number"></span>
+                        News »
+                    </div>
+                    <span class="date"></span>
+                </div>
+                <div class="col-md-10 col-sm-10 stat" style="max-height: 300px;overflow-y : auto;text-align: left;">
+                    <ul id="userdashboardLastNews"></ul>
+                </div>
+            </div>
+        </div>
+    </div> -->
 </div>

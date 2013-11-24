@@ -1,31 +1,33 @@
-<div id='projectUsers<%= id %>' title="Project Users" class="modal xbigModal hide fade projectUserDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <h3>Users project list for project <%= name %></h3>
-    </div>
-
-    <div class="modal-body">
-        <div id="projectUsersDialog<%= id %>">
-            <h4>Creator</h4>
-
-            <div id="projectCreatorDialog">
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+<div id='projectUsers<%= id %>' title="Project Users" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Users project list for project <%= name %></h3>
             </div>
-            <h4>Admins</h4>
 
-            <div id="projectAdminsDialog">
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            <div class="modal-body">
+                <div id="projectUsersDialog<%= id %>">
+                    <h4>Creator</h4>
+
+                    <div id="projectCreatorDialog">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                    </div>
+                    <h4>Admins</h4>
+
+                    <div id="projectAdminsDialog">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                    </div>
+                    <h4>Users</h4>
+
+                    <div id="projectUsersDialog">
+                        <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+                    </div>
+                </div>
             </div>
-            <h4>Users</h4>
 
-            <div id="projectUsersDialog">
-                <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
+            <div class="modal-footer">
+                <a id="closeUserProjectDialog" class="btn btn-default" data-dismiss="modal">Close</a>
             </div>
         </div>
     </div>
-
-    <div class="modal-footer">
-        <a href="#project" id="closeUserProjectDialog" class="btn">Close</a>
-    </div>
-
 </div>

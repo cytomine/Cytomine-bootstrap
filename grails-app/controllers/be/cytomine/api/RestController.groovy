@@ -173,8 +173,33 @@ class RestController {
 
     protected def responseList(List list) {
 
-        Integer offset = params.offset != null ? params.getInt('offset') : 0
-        Integer max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
+        Boolean datatables = (params.datatables != null)
+        Integer offset
+        Integer max
+        String sortCol
+        String sortColField
+        String sortDir
+        if (datatables) { //dataTables !
+            max = params.getInt('iDisplayLength')
+            offset = params.getInt('iDisplayStart')
+            sortCol = params.get('iSortCol_0')
+            /*sortDir = params.get('sSortDir_0')
+            sortColField = params.get('mDataProp_'+sortCol) //but this come from the marshaller...we have domain instances
+            if (sortColField) {
+                //sort list
+                list.sort ({ a, b ->
+                    a."${sortColField}" <=> b."${sortColField}"
+                }) as Comparator
+                println "sortDir $sortDir"
+                if (sortDir == "desc") {
+                    list = list.reverse()
+                }
+            }*/
+
+        } else {
+            offset = params.offset != null ? params.getInt('offset') : 0
+            max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
+        }
 
         List subList
         if (offset >= list.size()) {
@@ -184,7 +209,12 @@ class RestController {
             subList = list.subList(offset,offset + maxForCollection)
         }
 
-        responseSuccess ([collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)])
+        if (datatables) {
+            responseSuccess ([aaData: subList, sEcho: params.sEcho , iTotalRecords: list.size(), iTotalDisplayRecords : list.size()])
+        } else {
+            responseSuccess ([collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)])
+        }
+
     }
 
     /**

@@ -149,28 +149,15 @@ var ProjectSearchPanel = Backbone.View.extend({
             projectNameArray.push(project.get('name'));
         });
 
-        //autocomplete  old version with jq ui
-//        $(self.searchProjectTextBoxElem).autocomplete({
-//            minLength: 0, //with min=0, if user erase its text, it will show all project withouth name constraint
-//            source: projectNameArray,
-//            select: function (event, ui) {
-//                $(self.searchProjectTextBoxElem).val(ui.item.label)
-//                self.searchProject();
-//
-//            },
-//            search: function (event) {
-//                console.log("search=" + $(self.searchProjectTextBoxElem).val());
-//                self.searchProject();
-//            }
-//        });
-
-
-
-
-        $(self.searchProjectTextBoxElem).typeahead({source:projectNameArray,minLength:0});
+        $(self.searchProjectTextBoxElem).typeahead(
+            {local:projectNameArray,minLength:0}
+        );
 
         $(self.searchProjectTextBoxElem).bind('propertychange keyup input paste click change',function() {
+            self.searchProject();
+        });
 
+        $(self.searchProjectTextBoxElem).bind('typeahead:selected', function(obj, datum, name) {
             self.searchProject();
         });
 

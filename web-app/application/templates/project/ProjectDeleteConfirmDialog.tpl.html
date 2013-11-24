@@ -1,15 +1,19 @@
-<div id="delete-project-confirm" title="" class="modal hide">
-    <div class="modal-header">
-        <a href="#" class="close">&times;</a>
+<div id="delete-project-confirm" title="" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close">&times;</a>
 
-        <h3>Delete a project</h3>
-    </div>
-    <div class="modal-body" id="deleteProjectDialogContent">
-        Do you really want to delete project <%= project %>? <br>
-        All data will be deleted! This operation will not be recoverable with undo button!<br>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="closeProjectDeleteConfirmDialog" class="btn btn-danger">Confirm</a>
-        <a href="#" id="closeProjectDeleteCancelDialog" class="btn btn-primary">Cancel</a>
+                <h3>Delete a project</h3>
+            </div>
+            <div class="modal-body" id="deleteProjectDialogContent">
+                Do you really want to delete project <%= project %>? <br>
+                All data will be deleted! This operation will not be recoverable with undo button!<br>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="closeProjectDeleteConfirmDialog" class="btn btn-danger">Confirm</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>

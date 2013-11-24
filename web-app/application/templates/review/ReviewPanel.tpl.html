@@ -1,10 +1,10 @@
 <div class="row text-center" align="center">
 
 
-    <div class="container-fluid">
-      <div class="row-fluid">
+    <div class="container">
+      <div class="row">
 
-            <div class="span9">
+            <div class="col-md-9">
 
                 <div id="filterReviewListing" class="text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
                     <h2>Review for project <%= projectName %></h2>
@@ -15,25 +15,25 @@
                          <!--<p class="text-info"><%= reviewer %> is the reviewer for this image.</p>-->
                     <!--<% } else {%>-->
                          <!--<p class="text-error">There is no reviewer for this image.</p>-->
-                         <!--<p><a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a></p>-->
+                         <!--<p><a href="#" id="startToReview<%= idImage %>" class="btn btn-default btn-primary btn-lg">Start to review this image</a></p>-->
                     <!--<% }%>-->
 
                     <% if (validate) { %>
                          <span class="label label-success">Image is reviewed and validated</span>
                     <% } else if(!reviewer) { %>
-                        <a href="#" id="startToReview<%= idImage %>" class="btn btn-primary btn-large">Start to review this image</a>
+                        <a href="#" id="startToReview<%= idImage %>" class="btn btn-default btn-primary btn-lg">Start to review this image</a>
                     <% }%>
 
                     <div id="reviewCytoAction">
                     </div>
                 </div>
             </div>
-            <div class="span3">
+            <div class="col-md-3">
                 <div id="statsReviewListing" class="text-left" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
                     <div id="userStatsReviewListing" class="text-left" ></div>
                     <div id="buttonStatsReviewListing" class="text-left" style="margin:20px 20px;float:none;">
-                        <button class="btn previous" style="float:left;"><i class="icon-chevron-left"></i></button>
-                        <button class="btn next" style="float:right;"><i class="icon-chevron-right"></i></button>
+                        <button class="btn btn-default previous" style="float:left;"><i class="icon-chevron-left"></i></button>
+                        <button class="btn btn-default next" style="float:right;"><i class="icon-chevron-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -47,37 +47,37 @@
 
     <% if (reviewer && !validate) { %>
 
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span10">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10">
 
 
 
-            <div id="annotationReviewListing" class="span12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+            <div id="annotationReviewListing" class="col-md-12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
                 <div id="AnnotationNotReviewed">
                     <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>
                 </div>
                 <div id="pagination">
                       <button id="checkAll" class="btn">Check all</button>
                       <button id="unCheckAll" class="btn">Uncheck all</button>
-                      <button id="previous1" class="btn btn-primary"><i class="icon-chevron-left"></i></button>
+                      <button id="previous1" class="btn btn-default btn-primary"><i class="icon-chevron-left"></i></button>
                       <button id="previous5" class="btn"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i></button>
 
                       <span id="pagin"></span>
                       <button id="next5" class="btn"><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></button>
-                      <button id="next1" class="btn btn-primary"><i class="icon-chevron-right"></i></button>
+                      <button id="next1" class="btn btn-default btn-primary"><i class="icon-chevron-right"></i></button>
                       <button id="reviewAll" class="btn">Check & Accept All</button>
                 </div>
             </div>
 
 
-            <div id="termReviewListing" align="center" class="span12 text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;">
+            <div id="termReviewListing" align="center" class="col-md-12 text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;">
                 <div id="termReviewChoice">
                 </div>
             </div>
         </div>
-        <div class="span2">
-            <div id="lastReviewListing" class="span12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
+        <div class="col-md-2">
+            <div id="lastReviewListing" class="col-md-12  text-center" style="border-color:rgb(221, 221, 221);border-width: 1px;border-style: solid;background-color: rgb(243, 243, 243);margin:20px auto;float:none;">
                 <h4>Your last review for this project:</h4>
                 <div id="lastReviewedAnnotation">
                     <div class="alert alert-info"><i class="icon-refresh"/> Loading...</div>

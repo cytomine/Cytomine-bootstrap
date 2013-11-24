@@ -47,7 +47,7 @@ var EditProjectDialog = Backbone.View.extend({
         //Build dialog
         self.editProjectDialog = $("#editproject").modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
         self.open();
         self.fillForm();
@@ -77,7 +77,7 @@ var EditProjectDialog = Backbone.View.extend({
         $('#login-form-edit-project').find("fieldset").find("a.button-back").css("float", "left");
         $('#login-form-edit-project').find("fieldset").find("a").removeClass("button-next");
         $('#login-form-edit-project').find("fieldset").find("a").removeClass("button-back");
-        $('#login-form-edit-project').find("fieldset").find("a").addClass("btn btn-primary");
+        $('#login-form-edit-project').find("fieldset").find("a").addClass("btn btn-default btn-primary");
     },
     createProjectInfo: function () {
         var self = this;
@@ -326,7 +326,7 @@ var EditProjectDialog = Backbone.View.extend({
                                 window.app.view.message("Project", response.message, "success");
                                 var id = response.project.id;
                                 $("#editproject").modal("hide");
-                                $("#editproject").remove();
+                                /*$("#editproject").remove();*/
                             },
                             error: function (model, response) {
                                 var json = $.parseJSON(response.responseText);

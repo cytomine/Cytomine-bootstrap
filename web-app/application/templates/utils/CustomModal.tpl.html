@@ -1,15 +1,20 @@
 <!-- Modal -->
-<div id="<%= id %>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: <%= width %>px;margin-left: -<%= halfWidth %>px;min-height: <%= height %>px;">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel"><%= header %></h3>
-  </div>
-  <div class="modal-body" style="max-height: <%= height %>px;">
-      <%= body %>
-  </div>
-  <div class="modal-footer">
-      <% _.each(buttons, function(button) { %>
-        <button id="<%=button.id%>" class="btn <%= button.primaryClass %>" data-dismiss="<%= button.close %>" aria-hidden="true"><%= button.text %></button>
-      <% }) %>
-  </div>
+<div id="<%= id %>" class="modal <%= wide %> fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3><%= header %></h3>
+            </div>
+            <div class="modal-body">
+                <%= body %>
+            </div>
+            <div class="modal-footer">
+                <% _.each(buttons, function(button) { %>
+                <button id="<%=button.id%>" class="btn <%= button.primaryClass %>" data-dismiss="<%= button.close %>"><%= button.text %></button>
+                <% }) %>
+            </div>
+        </div>
+    </div>
 </div>
+

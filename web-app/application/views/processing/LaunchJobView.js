@@ -194,7 +194,7 @@ var InputTextView = Backbone.View.extend({
     },
     getHtmlElem: function () {
         var self = this;
-        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="<%= value%>" <%= required %>></div></div>', {
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="col-md-3" value="<%= value%>" <%= required %>></div></div>', {
                value : this.getDefaultValue(),
                required: (self.param.required) ? "required" : ""
         });
@@ -240,7 +240,7 @@ var InputNumberView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="<%= value%>" <%= required %>></div></div>', {
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="col-md-3" value="<%= value%>" <%= required %>></div></div>', {
             value : this.getDefaultValue(),
             required: (self.param.required) ? "required" : ""
         });
@@ -308,7 +308,7 @@ var InputDateView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="span3" value="" <%= required %>></div></div>', {
+        return _.template('<div class="control-group success"><div class="controls"><input type="text" class="col-md-3" value="" <%= required %>></div></div>', {
             required: (self.param.required) ? "required" : ""
         });
     },
@@ -361,7 +361,7 @@ var InputBooleanView = Backbone.View.extend({
         });
     },
     getHtmlElem: function () {
-        return _.template('<div><input type="checkbox" class="span3" <%= value %> ></input></div>', {
+        return _.template('<div><input type="checkbox" class="col-md-3" <%= value %> ></input></div>', {
             value : this.getDefaultValue()
         });
     },
@@ -428,7 +428,7 @@ var InputListView = Backbone.View.extend({
             classRequier = 'border-style: dotted;border-width: 2px;'
         }
         var defaultValues = self.getDefaultValue();
-        var valueStr = '<div class="control-group success"><div class="controls"><input type="text" class="span3" value="' + "" + '" style="' + classRequier + '"><i class="icon-plus-sign"></i><select>';
+        var valueStr = '<div class="control-group success"><div class="controls"><input type="text" class="col-md-3" value="' + "" + '" style="' + classRequier + '"><i class="icon-plus-sign"></i><select>';
         _.each(defaultValues, function (value) {
             valueStr = valueStr + '<option value="' + value + '">' + value + '</option>';
         });

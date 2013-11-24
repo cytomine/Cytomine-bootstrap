@@ -1,21 +1,25 @@
-<div id="delete-ontology-refuse" title="" class="modal">
-    <div class="modal-header">
-        <h3>Delete an ontology</h3>
-    </div>
-    <div class="modal-body">
-        <div class="alert">
-            <p>You cannot delete ontology <%= name %> because this ontology is associated with <%= numberOfProject %>
-                projects.</p>
-        </div>
-        <div id="delete-ontology-refuse-error-label" class="alert alert-error" style="display: none;">
-            <i class="icon-warning-sign"/>
+<div id="delete-ontology-refuse" title="" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete an ontology</h3>
+            </div>
+            <div class="modal-body">
+                <div class="alert">
+                    <p>You cannot delete ontology <%= name %> because this ontology is associated with <%= numberOfProject %>
+                        projects.</p>
+                </div>
+                <div id="delete-ontology-refuse-error-label" class="alert alert-error" style="display: none;">
+                    <i class="icon-warning-sign"/>
 
-            <div id="delete-ontology-refuse-error-message"></div>
+                    <div id="delete-ontology-refuse-error-message"></div>
+                </div>
+                <form id="delete-ontology-refuse-form">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#"  class="btn btn-default" data-dismiss="modal">Close</a>
+            </div>
         </div>
-        <form id="delete-ontology-refuse-form">
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="deleteRefuseOntologyButton" class="btn btn-primary">Close</a>
     </div>
 </div>

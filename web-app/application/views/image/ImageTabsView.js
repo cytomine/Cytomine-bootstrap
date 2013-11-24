@@ -1,76 +1,3 @@
-var ImageInstanceDataSource = function (options) {
-    this._formatter = options.formatter;
-    this._columns = options.columns;
-    this._delay = options.delay || 0;
-    this._collection = options.collection;
-    this._container = options.container;
-};
-
-ImageInstanceDataSource.prototype = {
-
-    columns: function () {
-        return this._columns;
-    },
-
-    data: function (options, callback) {
-        var self = this;
-		console.log("options.pageSize"+options.pageSize);
-        options.pageSize = options.pageSize || 10;
-
-        setTimeout(function () {
-            var data = $.extend(true, [], self._data);
-
-            // SEARCHING
-            if (options.search) {
-                self._collection.server_api.search = options.search;
-            } else {
-				delete self._collection.server_api.search;
-			}
-
-            // SORTING
-            if (options.sortProperty) {
-                self._collection.server_api.sortColumn = options.sortProperty;
-                self._collection.server_api.sortDirection = options.sortDirection;
-            }
-
-            // PAGING
-            var startIndex = options.pageIndex * options.pageSize;
-            var endIndex = startIndex + options.pageSize;
-
-			if (self._collection.max != options.pageSize) {
-				self._collection = new ImageInstanceCollection({project: self._collection.project, max:options.pageSize});
-			}
-
-            self._collection.goTo(options.pageIndex,{
-                success: function (collection, response) {
-                    var data = []
-                    collection.each(function(item) {
-                        item.set("originalFilename",item.getVisibleName(window.app.status.currentProjectModel.get('blindMode')));
-                    });
-
-                    data = collection.toJSON();
-                    var count =  collection.fullSize;
-                    var end = (endIndex > count) ? count : endIndex;
-                    var pages = Math.ceil(count / options.pageSize);
-                    var page = options.pageIndex + 1;
-                    var start = startIndex + 1;
-
-                    if (self._formatter) self._formatter(data);
-                    callback({ data: data, start: start, end: end, count: count, pages: pages, page: page });
-
-                    collection.each(function(model) {
-                        var action = new ImageReviewAction({el:("#MyGrid > tbody"),model:model, container : self._container});
-                        action.configureAction();
-                    });
-                }
-            });
-
-
-        }, this._delay)
-    }
-};
-
-
 var ImageTabsView = Backbone.View.extend({
     tagName: "div",
     images: null, //array of images that are printed
@@ -81,124 +8,74 @@ var ImageTabsView = Backbone.View.extend({
         this.container = options.container;
     },
     refresh: function () {
-        $('#MyGrid').datagrid('renderData');
+
     },
     render : function() {
         var self = this;
         require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {
-           self.doLayout(actionMenuTpl)
+            self.doLayout(actionMenuTpl)
         });
         return this;
     },
     doLayout: function (actionMenuTpl) {
         var self = this;
-
-        var dataSource = new ImageInstanceDataSource({
-            container : self,
-            columns: [
-				{
-                    property: 'id',
-                    label: 'ID',
-                    sortable: true
-                },
-                {
-                    property: 'thumb',
-                    label: 'Preview',
-                    sortable: false
-                },
-                {
-                    property: 'originalFilename',
-                    label: 'Name',
-                    sortable: false
-                },
-                {
-                    property: 'width',
-                    label: 'Width',
-                    sortable: false
-                },
-                {
-                    property: 'height',
-                    label: 'Height',
-                    sortable: false
-                },
-                {
-                    property: 'magnification',
-                    label: 'X',
-                    sortable: false
-                },
-                {
-                    property: 'resolution',
-                    label: 'Resolution',
-                    sortable: false
-                },
-                {
-                    property: 'numberOfAnnotations',
-                    label: 'User an.',
-                    sortable: false
-                },
-                {
-                    property: 'numberOfJobAnnotations',
-                    label: 'Algo an.',
-                    sortable: false
-                },
-                {
-                    property: 'numberOfReviewedAnnotations',
-                    label: 'Valid an.',
-                    sortable: false
-                },
-                {
-                    property: 'mime',
-                    label: 'Mime',
-                    sortable: false
-                },
-                {
-                    property: 'created',
-                    label: 'Created',
-                    sortable: true
-                },
-				{
-                    property: 'status',
-                    label: 'Status',
-                    sortable: false
-                },
-                {
-                    property: 'action',
-                    label: 'Action',
-                    sortable: false
-                }
-            ],
-            formatter: function (items) {
-                $.each(items, function (index, item) {
-                    item.thumb = _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>", item);
-                    item.action = _.template(actionMenuTpl, item);
-                    item.created = window.app.convertLongToDate(item.created);
-                    if(item.resolution) {
-                        item.resolution = item.resolution.toFixed(3)+"µm/pixel";
-                    }
-					if (item.reviewed) {
-							item.status = '<span class="label label-success">Reviewed</span>';
-					}
-					else if (item.inReview) {
-							item.status = '<span class="label label-warning">In review</span>';
-					} else {
-						item.status = '<span class="label label-info">None</span>';
-					}
-					
-                });
+        var table = $("#imageProjectTable" + self.idProject);
+        var body = $("#imageProjectArray" + self.idProject);
+        self.imagesdDataTables = table.dataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "bSearch" : false,
+            "sAjaxSource": new ImageInstanceCollection({project: this.idProject}).url(),
+            "fnServerParams": function ( aoData ) {
+                aoData.push( { "name": "datatables", "value": "true" } );
             },
-            collection : new ImageInstanceCollection({project: this.idProject,max:10}),
-            delay: 250
+            "aoColumns": [
+                { "mDataProp": "id", "fnRender" : function (o, id ) {
+                    return id;
+                }},
+                { "mDataProp": "thumb", "fnRender" : function(o, thumb) {
+                    return _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>", o.aData);
+                }, "bSearchable": true},
+                { "mDataProp": "originalFilename", "fnRender" : function (o, originalFilename) {
+                    var imageInstanceModel = new ImageInstanceModel({});
+                    imageInstanceModel.set(o.aData);
+                    return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))
+                }},
+                { "mDataProp": "width" },
+                { "mDataProp": "height" },
+                { "mDataProp": "magnification", "fnRender" : function(o, magnification) {
+                    return magnification + "X";
+                }},
+                { "mDataProp": "resolution", "fnRender" : function(o, resolution) {
+                    return resolution.toFixed(3) + " µm/pixel";
+                }},
+                { "mDataProp": "numberOfAnnotations" },
+                { "mDataProp": "numberOfJobAnnotations" },
+                { "mDataProp": "numberOfReviewedAnnotations" },
+                { "mDataProp": "mime" },
+                { "mDataProp": "created", "fnRender" : function (o, created) {
+                    return window.app.convertLongToDate(created);
+                }} ,
+                { "mDataProp": "inReview", "fnRender" : function (o, inReview) {
+                    if (inReview) {
+                        return '<span class="label label-warning">In review</span>';
+                    } else {
+                        return '<span class="label label-info">None</span>';
+                    }
+                }},
+                { "mDataProp": "updated", "fnRender" : function(o, useless) {
+                    setTimeout(function(){
+                        var imageInstanceModel = new ImageInstanceModel({});
+                        imageInstanceModel.set(o.aData);
+                        var action = new ImageReviewAction({el:body,model:imageInstanceModel, container : self});
+                        action.configureAction();
+                    }, 1000);
+                    return _.template(actionMenuTpl, o.aData);
+
+                }}
+            ]
         });
-
-        $('#MyGrid').datagrid({
-            dataSource: dataSource,
-            dataOptions : { pageIndex: 0, pageSize: 10 },
-            stretchHeight: false
-        });
-
-        $('#MyGrid').datagrid({ dataSource: dataSource, stretchHeight: false})
-
-		$('#projectImageListing' + self.idProject).hide();
-         $('#projectImageTable' + self.idProject).show();
+        $('#projectImageListing' + self.idProject).hide();
+        $('#projectImageTable' + self.idProject).show();
     }
 });

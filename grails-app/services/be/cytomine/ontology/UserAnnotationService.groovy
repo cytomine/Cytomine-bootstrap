@@ -317,7 +317,7 @@ class UserAnnotationService extends ModelService {
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.user.toString(), domain.image?.baseImage?.filename]
+        return [domain.user.toString(), domain.image?.baseImage?.originalFilename]
     }
 
 

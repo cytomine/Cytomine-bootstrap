@@ -1,30 +1,43 @@
-<div id="login-confirm" class="modal hide well" style="text-align: center;">
-    <h3>Sign in to Cytomine</h3>
-    <hr />
-    <div>
-        <form id="login-form" class="form-verticalwell">
-            <div class="control-group">
-                <input id="j_username" name="j_username" type="text" class="input-large" placeholder="Username" required>
+<div id="login-confirm" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Sign in to Cytomine</h4>
             </div>
-            <div class="control-group">
-                <input id="j_password" name="j_password" type="password" class="input-large" placeholder="Password" required>
+            <div class="modal-body">
+                <form id="login-form" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <div class="col-md-7">
+                            <input id="j_username" name="j_username" type="text" class="form-control input-sm" placeholder="Username" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-7">
+                            <input id="j_password" name="j_password" type="password" class="form-control input-sm" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <input id="remember_me" name="remember_me" type="checkbox" checked> Remember me
+                        </div>
+                        <div class="col-md-3" style="text-align: right;">
+                            <button id="submit-login" type="submit" class="btn btn-success btn-sm">Sign in</button>
+                        </div>
+                    </div>
+                    <br/><span class="help-inline">Forgot your <a href="mailto:raphael.maree@ulg.ac.be">username</a> or your <a
+                        href="mailto:raphael.maree@ulg.ac.be">password</a> ?</span>
+                </form>
             </div>
-            <div class="control-group">
-                <button id="submit-login" type="submit" class="btn btn-inverse">Sign in</button>
-                &nbsp;&nbsp;&nbsp;
-                <input id="remember_me" name="remember_me" type="checkbox" checked> Remember me
+            <div class="modal-footer">
+                <a href="http://www.giga.ulg.ac.be"><img src="images/logoGIGA.png"
+                                                         style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
+                <a href="http://www.ulg.ac.be"><img src="images/logoULG.png"
+                                                    style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
+                <a href="http://www.wallonie.be/fr/index.html"><img src="images/coq_wallonievignette.png"
+                                                                    style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
+                <!--<span class="version">Version <%= version %></span>-->
             </div>
-            <br/><span class="help-inline">Forgot your <a href="mailto:raphael.maree@ulg.ac.be">username</a> or your <a
-                href="mailto:raphael.maree@ulg.ac.be">password</a> ?</span>
-        </form>
-    </div>
-    <div style="text-align: center;">
-        <a href="http://www.giga.ulg.ac.be"><img src="images/logoGIGA.png"
-                                                 style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
-        <a href="http://www.ulg.ac.be"><img src="images/logoULG.png"
-                                            style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
-        <a href="http://www.wallonie.be/fr/index.html"><img src="images/coq_wallonievignette.png"
-                                                            style="height : 35px;margin-left: 2px;margin-right: 2px;"/></a>
-        <!--<span class="version">Version <%= version %></span>-->
+        </div>
     </div>
 </div>

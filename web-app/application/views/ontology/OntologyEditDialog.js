@@ -39,19 +39,19 @@ var EditOntologyDialog = Backbone.View.extend({
         //Build dialog
         self.editOntologyDialog = $("#editontology").modal({
             keyboard: true,
-            backdrop: false
+            backdrop: true
         });
         $('#editOntologyButton').click(function (event) {
             event.preventDefault();
             $("#login-form-edit-ontology").submit();
             return false;
         });
-        $('#closeEditOntologyDialog').click(function (event) {
+        /*$('#closeEditOntologyDialog').click(function (event) {
             event.preventDefault();
             $("#editontology").modal("hide");
             $("#editontology").remove();
             return false;
-        });
+        });*/
         self.open();
         self.fillForm();
         return this;
@@ -73,6 +73,11 @@ var EditOntologyDialog = Backbone.View.extend({
         $("#ontologyediterrorlabel").hide();
         $("#ontology-edit-name").val("");
     },
+    close : function () {
+        $('#editontology').modal('hide').remove();
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+    },
     editOntology: function () {
         var self = this;
         $("#ontologyediterrormessage").empty();
@@ -86,7 +91,7 @@ var EditOntologyDialog = Backbone.View.extend({
         ontology.save({name: name}, {
                 success: function (model, response) {
                     window.app.view.message("Ontology", response.message, "success");
-                    $("#editontology").modal("hide");
+                    self.close();
                     self.ontologyPanel.refresh();
                 },
                 error: function (model, response) {

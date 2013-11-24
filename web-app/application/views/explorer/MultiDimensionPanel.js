@@ -108,7 +108,7 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("time","Time",data.t);
 
             if(data.c!=null) {
-                $("#spinnerChannel").parent().append('<button class="btn merge">Merge</button>');
+                $("#spinnerChannel").parent().append('<button class="btn btn-default merge">Merge</button>');
             } else {
                 $("#spinnerChannel").parent().append('<div style="width:67px;height:30px;"></div>');
             }

@@ -86,44 +86,46 @@ var AnnotationRetrievalView = Backbone.View.extend({
     },
     drawPieChartTerm: function (collection) {
         var self = this;
-        $("#retrievalPieChartTerm").empty();
-        // Create and populate the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Term');
-        data.addColumn('number', 'Similarity weighted sum');
-        data.addRows(_.size(collection));
-        var i = 0;
+        var el = "#retrievalPieChartTerm";
+        $(el).html("<svg></svg>");
+        var chartData = [];
         var colors = [];
-
         for (var key in collection) {
             if (collection.hasOwnProperty(key)) {
                 var value = collection[key];
                 var term = self.terms.get(key);
-                //colors.push(term.get('color'));
-                data.setValue(i, 0, term.get('name'));
-                data.setValue(i, 1, value);
-                i++;
+                chartData.push({
+                    label : term.get('name'),
+                    value : value
+                });
+                colors.push(term.get('color'));
             }
         }
 
-        // Create and draw the visualization.
-        new google.visualization.PieChart(document.getElementById('retrievalPieChartTerm')).
-            draw(data, {width: 500, height: 350, title: ""});
+        nv.addGraph(function() {
+            var chart = nv.models.pieChart()
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .showLabels(true)
+                .color(colors);
+
+            d3.select(el + " svg")
+                .datum(chartData)
+                .transition().duration(1200)
+                .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+        });
     },
 
 
     drawPieChartProject: function (collection, projects) {
-        var self = this;
-        $("#retrievalPieChartProject").empty();
-        // Create and populate the data table.
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Project');
-        data.addColumn('number', 'Similarity in project');
-        data.addRows(_.size(collection));
-        var i = 0;
-        var colors = [];
+        var el = "#retrievalPieChartProject";
+        $(el).html("<svg></svg>");
+        var chartData = [];
 
-        console.log(collection);
         for (var key in collection) {
             if (collection.hasOwnProperty(key)) {
                 var value = collection[key];
@@ -131,16 +133,28 @@ var AnnotationRetrievalView = Backbone.View.extend({
                 if (projects.get(key) != undefined) {
                     projectName = projects.get(key).get('name');
                 }
-                //colors.push(term.get('color'));
-                data.setValue(i, 0, projectName);
-                data.setValue(i, 1, value);
-                i++;
+                chartData.push({
+                    label : projectName,
+                    value : value
+                });
             }
         }
-        console.log("creation:" + $("#retrievalPieChartProject").length);
-        // Create and draw the visualization.
-        new google.visualization.PieChart(document.getElementById('retrievalPieChartProject')).
-            draw(data, {width: 500, height: 350, title: ""});
+
+        nv.addGraph(function() {
+            var chart = nv.models.pieChart()
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .showLabels(true);
+
+            d3.select(el + " svg")
+                .datum(chartData)
+                .transition().duration(1200)
+                .call(chart);
+
+            nv.utils.windowResize(chart.update);
+
+            return chart;
+        });
     },
 
     appendThumbs: function (page) {

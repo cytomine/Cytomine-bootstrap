@@ -1,122 +1,123 @@
-<div class="container-fluid" style="margin-bottom: 30px;">
-    <div style="margin-top: 20px;">
-        <div style="padding: 10px;">
-            <form id="edit_profile_form" class="form-horizontal well">
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-user"/> Profile</h3>
+        </div>
+        <div class="panel-body">
+            <form id="edit_profile_form" class="form-horizontal" role="form">
                 <fieldset>
-                    <Legend>Profile</Legend>
-                    <div class="control-group">
-                        <label class="control-label" for="input_username">Username</label>
-
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="input_username" value="<%= username %>"
-                                   disabled>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_username" value="<%= username %>" disabled>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_firstname">Firstname</label>
-
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="input_firstname" value="<%= firstname %>">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Firstname</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_firstname" value="<%= firstname %>">
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_lastname">Lastname</label>
-
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="input_lastname" value="<%= lastname %>">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Lastname</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_lastname" value="<%= lastname %>">
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_email">Email</label>
-
-                        <div class="controls">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
                             <div class="input-prepend input-append">
-                                <!--span class="add-on"><i class="icon-envelope"></i></span>--><input type="text"
-                                                                                                      class="input-xlarge"
-                                                                                                      id="input_email"
-                                                                                                      value="<%= email %>">
+                                <input type="text" class="form-control" id="input_email" value="<%= email %>">
                             </div>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button id="edit_profile_submit" type="submit" class="btn btn-primary">Save changes</button>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button id="edit_profile_submit" type="submit" class="btn btn-default  btn-primary">Save changes</button>
+                        </div>
                     </div>
                 </fieldset>
             </form>
         </div>
     </div>
-    <div style="margin-top: 20px;">
-        <div style="padding: 10px;">
-            <form id="edit_password_form" class="form-horizontal well">
-                <fieldset>
-                    <legend>Password</legend>
-                    <div class="control-group">
-                        <label class="control-label" for="input_password">Actual password</label>
 
-                        <div class="controls">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-lock"/> Password</h3>
+        </div>
+        <div class="panel-body">
+            <form id="edit_password_form" class="form-horizontal">
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Actual password</label>
+                        <div class="col-sm-10">
                             <div class="input-prepend input-append">
                                 <span class="add-on"><i class="icon-lock"></i></span><input type="password"
-                                                                                            class="input-xlarge"
+                                                                                            class="form-control"
                                                                                             id="input_password">
                             </div>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_new_password">New password</label>
-
-                        <div class="controls">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">New password</label>
+                        <div class="col-sm-10">
                             <div class="input-prepend input-append">
                                 <span class="add-on"><i class="icon-lock"></i></span><input type="password"
-                                                                                            class="input-xlarge"
+                                                                                            class="form-control"
                                                                                             id="input_new_password"
                                                                                             disabled>
                             </div>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_new_password_confirm">New password (confirm)</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">New password (confirm)</label>
 
-                        <div class="controls">
+                        <div class="col-sm-10">
                             <div class="input-prepend input-append">
                                 <span class="add-on"><i class="icon-lock"></i></span><input type="password"
-                                                                                            class="input-xlarge"
+                                                                                            class="form-control"
                                                                                             id="input_new_password_confirm"
                                                                                             disabled>
                             </div>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button id="submit_edit_password" type="submit" class="btn btn-primary" disabled>Save changes
-                        </button>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button id="submit_edit_password" type="submit" class="btn btn-default  btn-primary" disabled>Save changes</button>
+                        </div>
                     </div>
                 </fieldset>
             </form>
         </div>
     </div>
-    <div style="margin-top: 20px;">
-        <div style="padding: 10px;">
-            <form id="regenerate_keys_form" class="form-horizontal well">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-wrench"/> API KEYS</h3>
+        </div>
+        <div class="panel-body">
+            <form id="regenerate_keys_form" class="form-horizontal">
                 <fieldset>
-                    <legend>API KEYS</legend>
-                    <div class="control-group">
-                        <label class="control-label" for="input_public_key">Public Key</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Public Key</label>
 
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="input_public_key" value="<%= publicKey %>"
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_public_key" value="<%= publicKey %>"
                                    disabled>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="input_private_key">Private Key</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Private Key</label>
 
-                        <div class="controls">
-                            <input type="text" class="input-xlarge" id="input_private_key" value="<%= privateKey %>"
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_private_key" value="<%= privateKey %>"
                                    disabled>
                         </div>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Regenerate</button>
-                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default  btn-primary">Regenerate</button>
+                        </div></div>
                 </fieldset>
             </form>
         </div>

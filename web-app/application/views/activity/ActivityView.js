@@ -33,106 +33,99 @@ var ActivityView = Backbone.View.extend({
 
     },
     createProjectListView : function() {
-        $("#projectListActivity").empty();
-        var startLetter=null;
+        var projectListActivity = $("#projectListActivity");
+        projectListActivity.empty();
+        projectListActivity.append('<li class="divider"></li>');
+        projectListActivity.append('<li id="projectChoiceActivityALL"><a href="#activity-">ALL PROJECTS</a></li>');
+        projectListActivity.append('<li class="divider"></li>');
 
-        $("#projectListActivity").append('<li class="divider"></li>');
-        $("#projectListActivity").append('<li id="projectChoiceActivityALL"><a href="#activity-">ALL PROJECTS</a></li>');
-        $("#projectListActivity").append('<li class="divider"></li>');
-
+        var startLetter = null;
         window.app.models.projects.each(function(project) {
             var newStartLetter =  project.get('name').substr(0,1);
             if(startLetter!=newStartLetter) {
                 startLetter = newStartLetter;
-                $("#projectListActivity").append('<li class="nav-header">'+startLetter+'</li>');
+                projectListActivity.append('<li class="nav-header">'+startLetter+'</li>');
             }
-            $("#projectListActivity").append('<li id="projectChoiceActivity'+project.id+'"><a href="#activity-'+project.id+'-">'+project.get('name')+'</a></li>');
+            projectListActivity.append(_.template('<li><a href="#activity-<%= id %>-"><%= name %></a></li>', project.toJSON()));
         });
     },
     createProjectHeaderView : function(project) {
-        $("#projectHeaderActivity").empty();
+        var projectListActivity = $("#projectHeaderActivity");
         if(project) {
-            $("#projectHeaderActivity").append("<h1>Activity for "+project.get("name")+" </h1>");
-            $("#projectHeaderActivity").append('<br><p><a href="#tabs-dashboard-'+project.id+'" class="btn btn-primary btn-large">Open this project</a></p>');
-            $("#projectHeaderActivity").append('<br><div class="row-fluid" id="onlineUserActivity"></div>');
+            projectListActivity.html(_.template('<div style="padding-top: 9px;padding-bottom: 7px;"><h4 style="display: inline;">Activity for <%= name %> </h4><a href="#tabs-dashboard-<%= id %>" class="btn btn-default btn-primary btn-xs">Open</a><div class="row" id="onlineUserActivity"></div></div>', project.toJSON()));
         } else {
-            $("#projectHeaderActivity").append("<h1>Activity for All projects</h1>");
-            $("#projectHeaderActivity").append("<h4>For the last month</h4>");
+            projectListActivity.html('<h4>Activity for all projects</h4>');
         }
     },
     createProjectOnlineUserView : function() {
         var self = this;
-        console.log("createProjectOnlineUserView");
-               var refreshData = function () {
-                   require(["text!application/templates/dashboard/OnlineUser.tpl.html"],
-                       function (userOnlineTpl) {
-                           console.log("UserOnlineCollection");
-                           new UserOnlineCollection({project: self.model.id}).fetch({
-                               success: function (collection, response) {
-                                   console.log("collection:"+collection.length);
-                                   $("#onlineUserActivity").empty();
-                                   collection.each(function (user) {
-                                       //if undefined => user is cytomine admin but not in project!
-                                       if (self.users.get(user.id) == undefined) {
-                                           return;
-                                       }
+        var refreshData = function () {
+            require(["text!application/templates/dashboard/OnlineUser.tpl.html"],
+                function (userOnlineTpl) {
+                    new UserOnlineCollection({project: self.model.id}).fetch({
+                        success: function (collection, response) {
+                            $("#onlineUserActivity").empty();
+                            collection.each(function (user) {
+                                //if undefined => user is cytomine admin but not in project!
+                                if (self.users.get(user.id) == undefined) {
+                                    return;
+                                }
 
-                                       var positions = "";
-                                       _.each(user.get('position'), function (position) {
-                                           var position = _.template(userOnlineTpl, {project: self.model.id, filename: window.app.minString(position.filename, 15, 10), image: position.image});
-                                           positions += position;
-                                       });
+                                var positions = "";
+                                _.each(user.get('position'), function (position) {
+                                    positions += _.template(userOnlineTpl, {project: self.model.id, filename: window.app.minString(position.filename, 15, 10), image: position.image});
+                                });
 
-                                       //
-                                       //var onlineUser = _.template("<br><div id='onlineUser-<%= id %>'><%= user %><ul><%= positions %></ul></div>", {
-                                       var onlineUser = _.template("<div class='span4'><h3><%= user %></h3><ul><%= positions %></ul></div>", {
-                                           id: user.id,
-                                           user: self.users.get(user.id).prettyName(),
-                                           positions: positions
-                                       });
-                                       $("#onlineUserActivity").append(onlineUser);
-                                   });
-                               }
-                           });
-                       }
-                   )
-               };
-               refreshData();
-               var interval = setInterval(refreshData, 5000);
-               $(window).bind('hashchange', function () {
-                   clearInterval(interval);
-               });
+                                //
+                                //var onlineUser = _.template("<br><div id='onlineUser-<%= id %>'><%= user %><ul><%= positions %></ul></div>", {
+                                var onlineUser = _.template('<div class="col-md-4"><h3><%= user %></h3><ul><%= positions %></ul></div>', {
+                                    id: user.id,
+                                    user: self.users.get(user.id).prettyName(),
+                                    positions: positions
+                                });
+                                $("#onlineUserActivity").append(onlineUser);
+                            });
+                        }
+                    });
+                }
+            )
+        };
+        refreshData();
+        var interval = setInterval(refreshData, 5000);
+        $(window).bind('hashchange', function () {
+            clearInterval(interval);
+        });
     },
 
     createLastJobPanel : function() {
         var self = this;
 
         require(["text!application/templates/activity/LastJobActivity.tpl.html"],
-           function (LastJobActivityTpl) {
+            function (LastJobActivityTpl) {
 
-                   new JobCollection({project: self.idProject, max: 20}).fetch({
-                       success: function (collection, response) {
-                           self.jobs = collection;
-                           $("#jobPanelActivity").empty();
+                new JobCollection({project: self.idProject, max: 20}).fetch({
+                    success: function (collection, response) {
+                        self.jobs = collection;
+                        $("#jobPanelActivity").empty();
 
 
-                           self.jobs.each(function(job) {
-                               var json = job.toJSON();
-                               json.created = window.app.convertLongToDate(job.get('created'));
+                        self.jobs.each(function(job) {
+                            var json = job.toJSON();
+                            json.created = window.app.convertLongToDate(job.get('created'));
 
-                               var algoView = new ProjectDashboardAlgos({model:{id:-1}});
-                                var item = algoView.getStatusElement(job,200);
+                            var algoView = new ProjectDashboardAlgos({model:{id:-1}});
+                            var item = algoView.getStatusElement(job,200);
 
-                               $("#jobPanelActivity").append(_.template(LastJobActivityTpl,json));
-                               $("#jobActivityStatus"+job.id).append(item);
-                           })
-                       }
-                   });
-         });
+                            $("#jobPanelActivity").append(_.template(LastJobActivityTpl,json));
+                            $("#jobActivityStatus"+job.id).append(item);
+                        })
+                    }
+                });
+            });
     },
 
     refresh : function (project, idUser) {
-        console.log("refresh: "+project + " " + idUser);
+
         var self = this;
         self.model = project;
 
@@ -178,7 +171,7 @@ var ActivityView = Backbone.View.extend({
             self.idUser = idUser;
             self.idProject = idProj;
 
-                self.createLastJobPanel();
+            self.createLastJobPanel();
         };
 
         nbCollectionToFetch++;
@@ -186,11 +179,11 @@ var ActivityView = Backbone.View.extend({
         if(project!=null && self.idProject!=project.id) {
             nbCollectionToFetch++;
             new UserJobCollection({project: self.model.id}).fetch({
-               success: function (collection, response) {
-                   self.userJobs = collection;
-                   collectionFetched(nbCollectionToFetch);
-               }
-           });
+                success: function (collection, response) {
+                    self.userJobs = collection;
+                    collectionFetched(nbCollectionToFetch);
+                }
+            });
         }
         var userColl = new UserCollection({project: self.model? self.model.id: null});
 
@@ -209,7 +202,7 @@ var ActivityView = Backbone.View.extend({
         selectElem.show();
         selectElem.append('<option value="-1" id="-1">All users/jobs</option>');
 
-            //fill select with all possible layers
+        //fill select with all possible layers
         self.users.each(function (user) {
             selectElem.append('<option value="' + user.id + '" id="' + user.id + '">' + user.layerName() + '</option>');
         });
@@ -227,7 +220,7 @@ var ActivityView = Backbone.View.extend({
                 window.location = "#activity-"+self.idProject+"-"+selectElem.val()+"-";
             }
 
-       });
+        });
     },
     createCommandPanel : function() {
         var self = this;
@@ -283,14 +276,14 @@ var ActivityView = Backbone.View.extend({
                 }
 
                 var projectName ="";
-                 if(self.model==null) {
-                     projectName = "- "+ window.app.models.projects.get(command.get('project')).get('name');
-                 }
+                if(self.model==null) {
+                    projectName = "- "+ window.app.models.projects.get(command.get('project')).get('name');
+                }
                 var commandHTML = _.template("<li><%=date%> <%=project%>: <%= prefix %> <%= message %></li>", { date: date, prefix: command.get("prefix"),message: command.get("message"),project:projectName});
 
                 $(self.el).append(commandHTML);
             });
-            $(self.el).append("<button id='getMoreActivity' class='btn btn-primary'>Get more...</button>");
+            $(self.el).append("<button id='getMoreActivity' class='btn btn-default btn-primary'>Get more...</button>");
 
             $("#getMoreActivity").click(function() {
                 self.page++;

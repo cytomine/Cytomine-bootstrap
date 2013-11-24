@@ -1,20 +1,23 @@
 var AuthController = Backbone.Router.extend({
+    loginDialog : null,
+    logoutDialog : null,
 
     routes: {
     },
 
     login: function () {
-        var loginView = new LoginDialogView({}).render();
+       this.loginDialog = new LoginDialogView({});
+       this.loginDialog.render();
     },
     logout: function () {
-        var logoutView = new LogoutDialogView({}).render();
+        this.logoutDialog = new LogoutDialogView({});
+        this.logoutDialog.render();
     },
 
     doLogin: function () {
         var app = new ApplicationView(); //in order to use message function
         var data = $("#login-form").serialize(); //should be in LoginDIalogView
-
-        var location = window.location;
+        var self = this;
         $.ajax({
             url: 'j_spring_security_check',
             type: 'post',
@@ -30,10 +33,8 @@ var AuthController = Backbone.Router.extend({
                             model: model,
                             filenameVisible : true
                         }
-                        $("#login-confirm").remove();
+                        self.loginDialog.close();
                         window.app.startup();
-//                        window.location = location;
-//                        window.location.reload(true);
                     }
                 });
 

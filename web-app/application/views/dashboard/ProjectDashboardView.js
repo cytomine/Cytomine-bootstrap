@@ -85,8 +85,6 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
     refreshReview: function (image,user,term) {
-        console.log("DashBoardView.refreshReview user"+user);
-        console.log("New.Image="+image);
         if (this.projectDashboardReview == null || this.projectDashboardReview.image!=image) {
 
             this.projectDashboardReview = new DashboardReviewPanel({ model: this.model});
@@ -103,7 +101,6 @@ var ProjectDashboardView = Backbone.View.extend({
         this.projectDashboardImages.refreshImagesTable();
     },
     refreshAnnotations: function (terms, users) {
-        console.log("ProjectDashboardView.refreshAnnotations=" + users);
         var self = this;
 
         if (this.projectDashboardAnnotations == null) {
@@ -152,19 +149,7 @@ var ProjectDashboardView = Backbone.View.extend({
         var self = this;
         console.log("a");
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
-            console.log("b");
-            //Description
-//            var maxLengthDescription = 30;
-//            var shortDescription;
-//            if (self.model.get('description') == undefined || self.model.get('description').length == 0) {
-//                shortDescription = "Click here to add description "
-//            } else {
-//                shortDescription = (self.model.get('description').length > maxLengthDescription) ? self.model.get('description').substring(0,maxLengthDescription) : self.model.get('description');
-//            }
-//            self.model.set({ "shortDescription" : shortDescription});
-
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
-
 
             var updateProjectClosed = function(close) {
                 self.model.set({isClosed: close});
@@ -195,11 +180,8 @@ var ProjectDashboardView = Backbone.View.extend({
 
 
             $("#projectInfoPanel").find(".description");
-            console.log("d");
-            //initDescriptionView(domainIdent, domainClassName, container, maxPreviewCharNumber);
-            console.log("test");
-            console.log(DescriptionModal);
-            DescriptionModal.initDescriptionView(self.model.id, self.model.get('class'), $("#projectInfoPanel").find(".description"), 150,
+
+            DescriptionModal.initDescriptionView(self.model.id, self.model.get('class'), $("#projectInfoPanel").find(".description"), 800,
                     function() {
                         var text = $("#projectInfoPanel").find(".description").html();
                         $("#projectInfoPanel").find(".description").empty().append(text.replace(new RegExp("<h.>", "g"),'<br>').replace(new RegExp("</h.>", "g"),'<br>'));
@@ -270,7 +252,7 @@ var ProjectDashboardView = Backbone.View.extend({
                       idModal : "clearjobdataModal",
                       button : $("#clearjobdata"),
                       header :"Clear unused data",
-                      body :'<div class="span3" id="jobDataClear'+self.model.id+'" style="min-width: 600px;">This will drop all data from job that are not reviewed. Are you sure? </div>',
+                      body :'<div class="col-md-3" id="jobDataClear'+self.model.id+'" style="min-width: 600px;">This will drop all data from job that are not reviewed. Are you sure? </div>',
                       width : 700,
                       height : 200
           });
@@ -503,14 +485,12 @@ var ProjectDashboardView = Backbone.View.extend({
         return action
     },
     showImagesThumbs: function () {
-        console.log("#showImagesThumbs");
         $("#tabs-projectImageThumb" + this.model.id).show();
         $("#tabs-projectImageListing" + this.model.id).hide();
         $('#imageThumbs' + this.model.id).attr("disabled", "disabled");
         $('#imageArray' + this.model.id).removeAttr("disabled");
     },
     showImagesTable: function () {
-        console.log("#showImagesTable");
         $("#tabs-projectImageThumb" + this.model.id).hide();
         $("#tabs-projectImageListing" + this.model.id).show();
         $('#imageThumbs' + this.model.id).removeAttr("disabled");

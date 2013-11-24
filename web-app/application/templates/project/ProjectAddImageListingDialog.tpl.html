@@ -1,4 +1,4 @@
-<div class="hero-unit" style="padding-top: 20px;padding-bottom: 20px;">
+<div class="jumbotron" style="padding-top: 20px;padding-bottom: 20px;">
     <h3>Search Image Panel for project <%= name %> (<%= ontologyName %>)</h3>
     Filename: <input id="filenamesearchtextboxup<%= id %>-<%= tab %>" type="text"/>
     Between : <input id="datestartsearchup<%= id %>-<%= tab %>" style="display:inline;"/>
@@ -8,20 +8,20 @@
     </button>
 </div>
 <div class="row">
-    <div id="imagesProjectContainer" class="span6">
+    <div id="imagesProjectContainer" class="col-md-6">
         <table id="listmanageproject<%= id %>"></table>
         <div id="pagemanageproject<%= id %>"></div>
     </div>
-    <div id="imageTableSeparator" class="span1">
-        <button class="btn addImageProject" id="addimageprojectbutton<%= id %>" type="button"><i
+    <div id="imageTableSeparator" class="col-md-1">
+        <button class="btn btn-default addImageProject" id="addimageprojectbutton<%= id %>" type="button"><i
                 class="icon-chevron-left"></i></button>
         <br>
-        <button class="btn delImageProject" id="delimageprojectbutton<%= id %>" type="button"><i
+        <button class="btn btn-default delImageProject" id="delimageprojectbutton<%= id %>" type="button"><i
                 class="icon-chevron-right"></i></button>
         <br>
     </div>
 
-    <div id="allImagesContainer" class="span9">
+    <div id="allImagesContainer" class="col-md-9">
         <table id="listmanageall<%= id %>"></table>
         <div id="pagemanageall<%= id %>"></div>
     </div>

@@ -1,10 +1,10 @@
-<div id="share-confirm" class="xbigModal modal hide">
+<div id="share-confirm" class="modal hide">
     <div class="modal-header">
         <h2>Comment/Share an annotation</h2>
     </div>
     <div class="modal-body">
         <div class="row" style="min-height: 250px;">
-            <div class="span8">
+            <div class="col-md-8">
                 <form>
                     <fieldset>
                         <div class="control-group">
@@ -39,20 +39,20 @@
                     </fieldset>
                 </form>
             </div>
-            <div class="span8">
+            <div class="col-md-8">
                 <h2>Comments</h2>
                 <ul id="comments<%= id %>">
 
                 </ul>
             </div>
-            <div class="span8">
+            <div class="col-md-8">
                 <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
             </div>
         </div>
 
     </div>
     <div class="modal-footer">
-        <a href="#" id="shareCancelButton<%= id %>" class="btn" tabindex="4">Cancel</a>
-        <a href="#" id="shareButton<%= id %>" class="btn btn-primary" tabindex="4">Share</a>
+        <a href="#" id="shareCancelButton<%= id %>" class="btn btn-default " tabindex="4">Cancel</a>
+        <a href="#" id="shareButton<%= id %>" class="btn btn-default  btn-primary" tabindex="4">Share</a>
     </div>
 </div>

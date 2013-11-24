@@ -1,38 +1,20 @@
-<div id="ontologyListing" class="container-fluid" style="padding-top : 20px;">
-    <div class="row-fluid">
-        <div id="menuOntology" class="span2 well">
-            <ul class="nav nav-list">
-                <li class="nav-header">
-                    Actions
-                </li>
-                <li>
-                    <a id="ontologyAddButton"><i class="icon-play-circle"></i> Add</a>
-                </li>
-                <li>
-                    <a id="ontologyRefreshButton"><i class="icon-play-circle"></i> Refresh</a>
-                </li>
-            </ul>
-            <ul id="menuOntologyUl" class="nav nav-list">
-                <li class="nav-header">
-                    Ontologies
-                </li>
-            </ul>
-
-        </div>
-
-        <div class="span10">
-
-            <div id="ontologyPanelView">
-
+<div id="ontologyListing" class="container" style="padding-top: 10px;">
+    <div class="row">
+        <div id="menuOntology" class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 style="display: inline;">Ontologies</h4> <a class="btn btn-info btn-sm" id="ontologyAddButton"><i class="glyphicon glyphicon-plus"></i> Add</a> <a  class="btn btn-default btn-sm" id="ontologyRefreshButton"> <i class="glyphicon glyphicon-refresh"></i> Refresh</a>
+                </div>
+                <div class="panel-body">
+                    <ul id="menuOntologyUl" style="padding-left: 10px;">
+                    </ul>
+                </div>
             </div>
-            <!--/row-->
         </div>
-        <!-- span10 -->
-
+        <div class="col-md-8" id="ontologyPanelView">
+        </div>
     </div>
-    <!-- row-fluid -->
-
-</div> <!-- container-fluid -->
+</div> <!-- container -->
 
 <div id="dialogsTerm"></div>
 <div id="dialogsDeleteOntologyAccept"></div>

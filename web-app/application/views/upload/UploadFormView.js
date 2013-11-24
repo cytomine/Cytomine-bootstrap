@@ -681,9 +681,9 @@ var UploadFormView = Backbone.View.extend({
         var uploadedFileCollectionUrl = new UploadedFileCollection({ dataTables: true}).url();
         uploadTable.hide();
         loadingDiv.show();
-        this.injectFnReloadAjax();
+        //this.injectFnReloadAjax();
         self.uploadDataTables = uploadTable.dataTable({
-            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sDom": "<'row'<'col-md-5'l><'col-md-5'f>r>t<'row'<'col-md-5'i><'col-md-5'p>>",
             "sPaginationType": "bootstrap",
             "oLanguage": {
                 "sLengthMenu": "_MENU_ records per page"

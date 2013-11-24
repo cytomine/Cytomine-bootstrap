@@ -51,10 +51,11 @@ var ontologyUsersDialog = Backbone.View.extend({
         var self = this;
         new UserCollection({ontology: self.model.id}).fetch({
             success: function (users, response) {
-                $("#ontologyUsers").empty();
+                var usernames = []
                 users.each(function (user) {
-                    $("#ontologyUsers").append(user.prettyName() + " | ");
+                    usernames.push(user.prettyName());
                 });
+                $("#ontologyUsers").html(usernames.join(", "));
             }});
     },
     open: function () {
