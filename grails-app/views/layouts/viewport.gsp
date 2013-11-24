@@ -85,25 +85,16 @@
 
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
-<link rel="stylesheet" href="lib/nvd3/nv.d3.min.css" />
+<link rel="stylesheet" href="lib/nvd3/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
 <script src="lib/nvd3/lib/d3.v2.min.js"></script>
 <script src="lib/nvd3/nv.d3.min.js"></script>
-<!--<link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="http://cdn.oesmith.co.uk/morris-0.4.3.min.js"></script>-->
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
-%{--<script type="text/javascript" src="lib/purl.js"></script>--}%
-
 <!-- Twitter bootstrap -->
 <script type="text/javascript" src="lib/bootstrap-3.0.2/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
-
-
-<!-- Fuel ux -->
-<!--<script src="lib/fuelux-master/dist/loader.min.js" type="text/javascript"></script> <!-- bootstrap is loaded by fuel ux -->
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
 
