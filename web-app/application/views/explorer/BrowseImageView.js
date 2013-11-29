@@ -216,10 +216,15 @@ var BrowseImageView = Backbone.View.extend({
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
+                    self.layerSwitcherPanel.showLayer(annotation.get("user"));
                     var layer = _.find(self.layers, function (layer) {
-                        return layer.userID == annotation.get("user")
+                        return layer.userID == annotation.get("user");
                     });
+                    console.log(self.layers) ;
+                    console.log("GO TO LAYER") ;
+                    console.log(layer) ;
                     if (layer) {
+
                         layer.showFeature(annotation.get("id"));
                         self.goToAnnotation(layer, annotation);
                         self.setLayerVisibility(layer, true);
@@ -229,22 +234,23 @@ var BrowseImageView = Backbone.View.extend({
                                 layer.selectFeature(feature);
                             }
                         }, 1000);//select feature once layer is readed. Should be triggered by event...
-                    } else {
-                        new UserModel({id: annotation.get('user')}).fetch({
-                            success: function (userAlgo, response) {
-                                console.log(userAlgo);
-                                var layer = new AnnotationLayer(userAlgo,userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map, this.review);
-                                layer.isOwner = false;
-                                layer.loadAnnotations(self);
-                                layer.registerEvents(self.map);
-                                layer.showFeature(annotation.get("id"));
-                                self.goToAnnotation(layer, annotation);
-                                self.layerSwitcherPanel.initLayerSelection();
-                                self.setLayerVisibility(layer, true);
-                            }
-                        });
-
                     }
+//                    } else {
+//                        new UserModel({id: annotation.get('user')}).fetch({
+//                            success: function (userAlgo, response) {
+//                                console.log(userAlgo);
+//                                var layer = new AnnotationLayer(userAlgo,userAlgo.get('username'), self.model.get('id'), annotation.get('user'), "", self.ontologyPanel.ontologyTreeView, self, self.map, this.review);
+//                                layer.isOwner = false;
+//                                layer.loadAnnotations(self);
+//                                layer.registerEvents(self.map);
+//                                layer.showFeature(annotation.get("id"));
+//                                self.goToAnnotation(layer, annotation);
+//                                self.layerSwitcherPanel.initLayerSelection();
+//                                self.setLayerVisibility(layer, true);
+//                            }
+//                        });
+//
+//                    }
                 }
             });
         }
@@ -1241,15 +1247,40 @@ var BrowseImageView = Backbone.View.extend({
 //            layerAnnotation.isOwner = false;
 //            layerAnnotation.loadAnnotations(self);
 //            self.layerSwitcherPanel.initLayerSelection();
-            var projectUsers = window.app.models.projectUser.select(function (user) {
-                return window.app.models.userLayer.get(user.id) != undefined;
-            });
-            _.each(projectUsers, function (user) {
-                self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
-            });
-            console.log("### self.layerSwitcherPanel.allVectorLayers="+self.layerSwitcherPanel.allVectorLayers.length);
 
-            self.layerSwitcherPanel.initLayerSelection();
+                new UserLayerCollection({project: window.app.status.currentProject, image: self.model.id}).fetch({
+                   success: function (collection, response) {
+                       window.app.models.userLayer = collection;
+
+
+                       var projectUsers = window.app.models.projectUser.select(function (user) {
+                           return window.app.models.userLayer.get(user.id) != undefined;
+                       });
+                       _.each(projectUsers, function (user) {
+                           self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
+                       });
+
+                       var projectUsersJob = window.app.models.projectUserJob.select(function (user) {
+                           return window.app.models.userLayer.get(user.id) != undefined;
+                       });
+                       _.each(projectUsersJob, function (user) {
+                           self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
+                       });
+
+
+                       console.log("### self.layerSwitcherPanel.allVectorLayers="+self.layerSwitcherPanel.allVectorLayers.length);
+
+                       self.layerSwitcherPanel.initLayerSelection();
+                       console.log("GO TO LAYER 2 ") ;
+                       console.log(self.layers) ;
+
+                   }
+               });
+
+
+
+
+
 
         } else {
             self.reviewPanel.addReviewLayerToReview();

@@ -160,19 +160,51 @@ class SecUserService extends ModelService {
         return data
     }
 
+
+    private def getUserJobImage(ImageInstance image) {
+                    //better perf with sql request
+                String request = "SELECT u.id as id, u.username as username, s.name as softwareName, j.created as created \n" +
+                        "FROM annotation_index ai, sec_user u, job j, software s\n" +
+                        "WHERE ai.image_id = ${image.id}\n" +
+                        "AND ai.user_id = u.id\n" +
+                        "AND u.job_id = j.id\n" +
+                        "AND j.software_id = s.id\n" +
+                        "ORDER BY j.created"
+                println request
+                def data = []
+                new Sql(dataSource).eachRow(request) {
+                    def item = [:]
+                    item.id = it.id
+                    item.username = it.username
+                    item.softwareName = it.softwareName
+                    item.created = it.created
+                    item.algo = true
+                    data << item
+                }
+        data
+    }
+
+
     /**
      * List all layers from a project
      * Each user has its own layer
      * If project has private layer, just get current user layer
      */
-    def listLayers(Project project) {
+    def listLayers(Project project, ImageInstance image = null) {
         SecurityACL.check(project,READ)
-
-        Collection<SecUser> users = listUsers(project)
-        Collection<SecUser> admins = listAdmins(project)
-
-
         SecUser currentUser = cytomineService.getCurrentUser()
+        def users = []
+        def humans = listUsers(project)
+        users.addAll(humans)
+
+        if(image) {
+            def jobs = getUserJobImage(image)
+            users.addAll(jobs)
+        }
+        def  admins = listAdmins(project)
+
+
+
 
         if(project.checkPermission(ADMINISTRATION)) {
             return users

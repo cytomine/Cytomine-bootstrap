@@ -229,7 +229,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
          return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
        } else if (location.getNumPoints() == 1) {
            Envelope env = location.getEnvelopeInternal();
-           Integer maxY = env.getMaxY()-50;
+           Integer maxY = env.getMaxY()+50;
            Integer minX = env.getMinX()-50;
            Integer width = 100;
            Integer height = 100;

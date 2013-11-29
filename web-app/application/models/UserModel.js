@@ -121,13 +121,16 @@ var UserCollection = PaginatedCollection.extend({
 
 var UserLayerCollection = PaginatedCollection.extend({
     url: function () {
-        if (this.project != undefined) {
+        if (this.project != undefined && this.image != undefined) {
+            return "api/project/" + this.project + "/userlayer.json?image="+this.image;
+        } else if (this.project != undefined) {
             return "api/project/" + this.project + "/userlayer.json";
         }
     },
     initialize: function (options) {
         this.initPaginator(options);
         this.project = options.project;
+        this.image = options.image;
     }
 });
 

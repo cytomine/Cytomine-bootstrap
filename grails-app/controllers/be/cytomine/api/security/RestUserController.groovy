@@ -3,6 +3,7 @@ package be.cytomine.api.security
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -93,8 +94,9 @@ class RestUserController extends RestController {
      */
     def showLayerByProject = {
         Project project = projectService.read(params.long('id'))
+        ImageInstance image = imageInstanceService.read(params.long('image'))
         if (project) {
-            responseSuccess(secUserService.listLayers(project))
+            responseSuccess(secUserService.listLayers(project,image))
         } else {
             responseNotFound("User", "Project", params.id)
         }
