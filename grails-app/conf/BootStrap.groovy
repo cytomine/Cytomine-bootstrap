@@ -77,7 +77,7 @@ class BootStrap {
 
             bootstrapUtilsService.createUsers([
                     [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]],
-                    [username : 'ghest', firstname : 'Simply', lastname : 'Ghest', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'ghest', color : "#FF0000", roles : ["ROLE_USER"]]]
+                    [username : 'ghest', firstname : 'Simply', lastname : 'Ghest', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'ghest', color : "#FF0000", roles : ["ROLE_GUEST"]]]
             )
 
         //if database is empty, create admin user

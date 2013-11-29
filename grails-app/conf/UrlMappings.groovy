@@ -4,14 +4,19 @@ import org.springframework.security.acls.model.NotFoundException
 
 class UrlMappings {
 
-    static mappings = {     //?(.$format)?
-        "/$controller/$action?/$id?(.$format)?"{
+    static mappings = {     //?.$format
+        "/$controller/$action?/$id?.$format?"{
             constraints {
                 // apply constraints here
             }
         }
-        "/admin/manage/$action?"(controller: "adminManage")
-        "/adminManage/$action?"(controller: "errors", action: "error500")
+        "/$controller/$action?.$format?"{
+            constraints {
+                // apply constraints here
+            }
+        }
+        "/admin/manage/$action?.$format"(controller: "adminManage")
+        "/adminManage/$action?.$format"(controller: "errors", action: "error500")
 
         /* Home */
         "/"(view:"/index")
@@ -20,42 +25,42 @@ class UrlMappings {
 //        "/500" (view:'/error')
         //        "/403" (view:'/forbidden')
         "403"(controller: "errors", action: "error403")
-        //"404"(controller: "errors", action: "error404")
+        //"404.$format"(controller: "errors", action: "error404")
         "500"(controller: "errors", action: "error500")
         "500"(controller: "errors", action: "error403", exception: AccessDeniedException)
         "500"(controller: "errors", action: "error403", exception: NotFoundException)
         "500"(controller: "errors", action: "error403", exception: ForbiddenException)
- //       "500"(controller: "errors", action: "error404", exception: ObjectNotFoundException)
+ //       "500.$format"(controller: "errors", action: "error404", exception: ObjectNotFoundException)
 
-        "/processing/detect/$image/$x/$y"(controller:"processing") {
+        "/processing/detect/$image/$x/$y.$format"(controller:"processing") {
             action = [GET : "detect"]
         }
-        "/processing/show/$image/$x/$y"(controller:"processing") {
+        "/processing/show/$image/$x/$y.$format"(controller:"processing") {
             action = [GET : "show"]
         }
-        "/api/import/imageproperties"(controller: "import") {
+        "/api/import/imageproperties.$format"(controller: "import") {
             action = [GET:"imageproperties"]
         }
-        "/api/export/exportimages"(controller: "export") {
+        "/api/export/exportimages.$format"(controller: "export") {
             action = [GET:"exportimages"]
         }
 
-        "/api/project/$id/commandhistory"(controller: "restProject") {
+        "/api/project/$id/commandhistory.$format"(controller: "restProject") {
             action = [GET:"listCommandHistory"]
         }
-        "/api/commandhistory"(controller: "restProject") {
+        "/api/commandhistory.$format"(controller: "restProject") {
             action = [GET:"listCommandHistory"]
         }
 
-        "/api/search"(controller: "search") {
+        "/api/search.$format"(controller: "search") {
             action = [GET:"listResponse"]
         }
 
-        "/api/news"(controller:"news") {
+        "/api/news.$format"(controller:"news") {
             action = [GET:"listNews"]
         }
 
-        "/loginWithoutLDAP/login" (controller: "login") {
+        "/loginWithoutLDAP/login.$format" (controller: "login") {
             action = [GET:"loginWithoutLDAP"]
         }
     }

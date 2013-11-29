@@ -8,10 +8,10 @@ class UploadedFileUrlMappings {
 
     static mappings = {
 
-        "/api/uploadedfile"(controller:"restUploadedFile"){
+        "/api/uploadedfile.$format"(controller:"restUploadedFile"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/uploadedfile/$id"(controller:"restUploadedFile"){
+        "/api/uploadedfile/$id.$format"(controller:"restUploadedFile"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 

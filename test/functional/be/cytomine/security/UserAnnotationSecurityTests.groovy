@@ -7,6 +7,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationDomainAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
+import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import be.cytomine.test.http.UserAnnotationAPI
@@ -275,7 +276,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         json.review = false
         json.remove = false
         json.layers = [user2.id,user1.id]
-        result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+        result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
 
         annotation.refresh()
@@ -320,7 +321,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
         json.review = false
         json.remove = false
         json.layers = [user2.id,user1.id]
-        result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
+        result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),SecurityTestsAbstract.USERNAME2, SecurityTestsAbstract.PASSWORD2)
         assert 400 == result.code
          annotation.refresh()
         assert new WKTReader().read(basedLocation).equals(annotation.location)
@@ -373,7 +374,7 @@ class UserAnnotationSecurityTests extends SecurityTestsAbstract {
        json.review = false
        json.remove = false
        json.layers = [user2.id,user1.id]
-       result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
+       result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
        assert 400 == result.code
    }
 

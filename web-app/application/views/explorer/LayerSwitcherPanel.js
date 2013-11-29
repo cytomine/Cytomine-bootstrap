@@ -18,6 +18,9 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         this.followInterval = null;
         this.userFollowed = null;
         this.vectorLayers = [];
+
+        this.allVectorLayers = [];
+        this.loadedVectorLayers = [];
     },
     /**
      * Grab the layout and call ask for render
@@ -42,6 +45,8 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
     },
     addVectorLayer: function (layer, model, userID) {
+        console.log("### addVectorLayer");
+        console.log(model);
         var self = this;
         this.vectorLayers.push({ id: userID, vectorsLayer: layer.vectorsLayer});
         var layerID = "layerSwitch-" + model.get("id") + "-" + userID + "-" + new Date().getTime(); //index of the layer in this.layers array
@@ -50,20 +55,26 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             color = "#5BB75B";
         }
 
-        var button = '<button class="btn btn-small btn-inverse removeImageLayers" id="removeImageLayers'+userID+'" data-user="'+userID+'" style="height:18px;"><i class="icon-minus icon-white"></i></button>'
+        var button = '<button class="btn btn-small btn-inverse removeImageLayers" id="removeImageLayers' + userID + '" data-user="' + userID + '" style="height:18px;"><i class="icon-minus icon-white"></i></button>'
 
 
         var layerOptionTpl;
         if (layer.isOwner) {
-            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color :<%=   color %>;'> <%=   name %> <span class='numberOfAnnotation'></span></span>"+button+"</li>", {id: layerID, name: layer.vectorsLayer.name, color: color,userID:userID});
-        } else if(userID != "REVIEW" && layer.user.get('algo')==true) {
+            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox'  value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' disabled/><span style='color :<%=   color %>;'> <%=   name %> <span class='numberOfAnnotation'></span></span>" + button + "</li>", {id: layerID, name: layer.vectorsLayer.name, color: color, userID: userID});
+        } else if (userID != "REVIEW" && layer.user.get('algo') == true) {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>' data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %> <span class='numberOfAnnotation'></span></span></a>"+button+" <a href='#tabs-useralgo-<%= userID %>'>See job details...</a></li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
-        }else {
+            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>' data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %> <span class='numberOfAnnotation'></span></span></a>" + button + " <a href='#tabs-useralgo-<%= userID %>'>See job details...</a></li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
+        } else {
             /*layerOptionTpl = _.template("<li><input id='<%= id %>' type='checkbox' value='<%=   name %>' /> <span style='color : #ffffff;'><%=   name %></span> <a class='followUser' data-user-id='<%= userID %>' href='#'>Follow</a></li>", {userID : userID, id : layerID, name : layer.vectorsLayer.name, color : color});*/
-            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>' data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %> <span class='numberOfAnnotation'></span></span></a>"+button+" </li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
+            layerOptionTpl = _.template("<li style='display:none;' id='entry<%= userID %>' data-id='<%= userID %>'><input id='<%= id %>' class='showUser' type='checkbox' value='<%= name %>' />&nbsp;&nbsp;<input type='checkbox' class='followUser' data-user-id='<%= userID %>' disabled/>&nbsp;<span style='color : <%=   color %>;'><%= name %> <span class='numberOfAnnotation'></span></span></a>" + button + " </li>", {userID: userID, id: layerID, name: layer.vectorsLayer.name, color: color});
         }
         $("#" + this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
+
+        console.log("#" + this.browseImageView.divId);
+        console.log("#layerSwitcher" + model.get("id"));
+        console.log("ul.annotationLayers");
+        console.log(layerOptionTpl);
+
 
         $("#" + layerID).click(function () {
             var checked = $(this).is(':checked');
@@ -131,7 +142,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var mapDiv = $("#" + this.browseImageView.divId);
         mapDiv.find("#layerSwitcher" + self.model.get("id")).html(content);
 
-        mapDiv.on('change',".followUser", function (e) {
+        mapDiv.on('change', ".followUser", function (e) {
             var userToFollow = this;
             var followUser = $(this).is(':checked');
             $("#" + self.browseImageView.divId).find("#layerSwitcher" + self.model.get("id")).find('.followUser:checked').each(function () {
@@ -177,84 +188,156 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         $("#" + this.browseImageView.divId).find("#opacitySelectionSlider").slider({
             min: 0,
             max: 100,
-            value:50,
+            value: 50,
             change: function (event, ui) {
-                 console.log( ui);
+                console.log(ui);
                 self.browseImageView.setOpacity(ui.value);
             }
         });
 
     },
-    initLayerSelection : function() {
+    initLayerSelection: function () {
         var self = this;
-        console.log("initLayerSelection");
-        var select = $("#selectLayerSwitcher"+self.model.id);
+        var select = $("#selectLayerSwitcher" + self.model.id);
         select.empty();
-        _.each(self.vectorLayers,function(layer) {
-            select.append('<option value="'+layer.id+'">'+layer.vectorsLayer.name+'</option>');
+
+        //add all available layer on select
+        _.each(self.allVectorLayers, function (layer) {
+            select.append('<option value="' + layer.id + '">' + layer.user.layerName() + '</option>');
         });
 
-         var panel = $("#layerSwitcher" + self.model.get("id"));
-        console.log(panel.length);
-        console.log(panel.find("#addImageLayers"+self.model.get("id")).length);
-        panel.find("#addImageLayers"+self.model.get("id")).unbind();
-         panel.find("#addImageLayers"+self.model.get("id")).click(function(){
-             var item = panel.find("#entry"+select.val())
-             item.show();
-             var option = select.find("option[value="+select.val()+"]");
-             option.hide();
-             if(!self.disableEvent) item.find(".showUser").click();
-             select.val(select.find("option:visible").val());
-         });
+        var panel = $("#layerSwitcher" + self.model.get("id"));
 
-        panel.find(".removeImageLayers").unbind();
-        panel.find(".removeImageLayers").click(function() {
+
+        //if click on add layer
+        panel.find("#addImageLayers" + self.model.get("id")).unbind();
+        panel.find("#addImageLayers" + self.model.get("id")).click(function () {
+
+            var option = select.find("option[value=" + select.val() + "]");
+            option.hide();
+            if (!self.disableEvent) {
+                console.log("### show user click");
+
+
+                var layer = _.find(self.allVectorLayers, function (user) {
+                    return user.id == select.val();
+                });
+                var alreadyExist = _.find(self.loadedVectorLayers, function (user) {
+                    return user.id == select.val();
+                });
+
+
+                if (!alreadyExist) {
+                    //if not yet added, create layer
+                    var user = layer.user
+                    var layerAnnotation = new AnnotationLayer(user, user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+                    layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+                    layerAnnotation.loadAnnotations(self.browseImageView);
+                    self.loadedVectorLayers.push({ id: user.id, user: user});
+                    self.registerRemoveLayerButton(user.get('id'));
+                    var item = panel.find("#entry" + select.val());
+                    item.show();
+                    self.registerRemoveLayerButton();
+                } else {
+                    var item = panel.find("#entry" + select.val());
+                    item.show();
+                }
+
+                //force click on show layer to set layer visible = true
+                if (!item.find(".showUser").is(":checked")) {
+                    item.find(".showUser").click();
+                }
+            }
+            select.val(select.find("option:visible").val());
+        });
+
+
+//         if(self.allVectorLayers.length<20) {
+//             //if not too much layer, show them all, otherwise, user must select
+//             _.each(self.allVectorLayers,function(layer) {
+//                 self.showLayer(layer.id);
+//             });
+//             panel.find("#layerComp"+self.model.get("id")).hide();
+//             panel.find(".removeImageLayers").hide();
+//         } else {
+            self.showLayer(window.app.status.user.id);
+            panel.find("#layerComp" + self.model.get("id")).show();
+            panel.find(".removeImageLayers").show();
+//        }
+
+        self.showLayer(window.app.status.user.id);
+    },
+    registerRemoveLayerButton: function (idLayer) {
+        var self = this;
+        self.disableEvent = true;
+//        var panel = $("#layerSwitcher" + self.model.get("id"));
+//        panel.find(".removeImageLayers").unbind();
+//
+//       _.each(self.loadedVectorLayers, function(layer) {
+        var panel = $("#layerSwitcher" + self.model.get("id"));
+        var select = $("#selectLayerSwitcher" + self.model.id);
+        panel.find("#removeImageLayers" + idLayer).click(function () {
+            console.log("click");
             var button = $(this);
+            console.log(button);
             var user = button.data("user");
-            var option = select.find("option[value="+user+"]");
-            var item = panel.find("#entry"+user);
+            console.log("user=" + user);
+            var option = select.find("option[value=" + user + "]");
+            console.log(select);
+            var item = panel.find("#entry" + user);
+            console.log(option);
+            console.log(item);
             option.show();
             //item.find(".showUser").attr("checked",false);
-            if(!self.disableEvent) item.find(".showUser").click();
+            if (!self.disableEvent) {
+                if (item.find(".showUser").is(":checked")) {
+                    item.find(".showUser").click();
+                }
+            }
             item.hide();
         });
-
-        self.disableEvent = true;
-        if(self.vectorLayers.length<20) {
-            _.each(self.vectorLayers,function(layer) {
-                self.showLayer(layer.id);
-            });
-            panel.find("#layerComp"+self.model.get("id")).hide();
-            panel.find(".removeImageLayers").hide();
-        } else {
-//            self.showLayer(window.app.status.user.id);
-            panel.find("#layerComp"+self.model.get("id")).show();
-            panel.find(".removeImageLayers").show();
-        }
+//       });
         self.disableEvent = false;
-        self.showLayer(window.app.status.user.id);
-
-
-//        var idCurrentUser = window.app.status.user.id;
-//        var item = panel.find("#entry"+idCurrentUser)
-//        item.show();
-//        var option = select.find("option[value="+idCurrentUser+"]");
-//        option.hide();
-//        item.find(".showUser").click();
-//        select.val(select.find("option:visible").val());
-
     },
-    showLayer :function(id) {
+//    registerRemoveLayerButton:function() {
+//        var self = this;
+//        self.disableEvent = true;
+//        var panel = $("#layerSwitcher" + self.model.get("id"));
+//        panel.find(".removeImageLayers").unbind();
+//
+//       _.each(self.loadedVectorLayers, function(layer) {
+//
+//           panel.bind("#removeImageLayers"+layer.id).click(function() {
+//               console.log("click");
+//               var button = $(this);
+//               console.log(button);
+//               var user = button.data("user");
+//               console.log("user="+user);
+//               var option = select.find("option[value="+user+"]");
+//               console.log(select);
+//               var item = panel.find("#entry"+user);
+//               console.log(option);
+//               console.log(item);
+//               option.show();
+//               //item.find(".showUser").attr("checked",false);
+//               if(!self.disableEvent) item.find(".showUser").click();
+//               item.hide();
+//           });
+//       });
+//        self.disableEvent = false;
+//    },
+    showLayer: function (id) {
         var self = this;
-        var select = $("#selectLayerSwitcher"+self.model.id);
+        console.log("### showLayer " + id);
+        var select = $("#selectLayerSwitcher" + self.model.id);
         select.val(id);
         var panel = $("#layerSwitcher" + self.model.get("id"));
-        panel.find("#addImageLayers"+self.model.get("id")).click();
+        panel.find("#addImageLayers" + self.model.get("id")).click();
     },
-    hideLayer :function(id) {
+    hideLayer: function (id) {
         var self = this;
         var panel = $("#layerSwitcher" + self.model.get("id"));
-        panel.find("#removeImageLayers"+id).click();
+        panel.find("#removeImageLayers" + id).click();
     }
 
 });

@@ -2,16 +2,16 @@ class SoftwareProjectUrlMappings {
 
     static mappings = {
         /* Software */
-        "/api/softwareproject"(controller:"restSoftwareProject"){
+        "/api/softwareproject.$format"(controller:"restSoftwareProject"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/softwareproject/$id"(controller:"restSoftwareProject"){
+        "/api/softwareproject/$id.$format"(controller:"restSoftwareProject"){
             action = [GET:"show", DELETE:"delete"]
         }
-        "/api/project/$id/softwareproject"(controller:"restSoftwareProject"){
+        "/api/project/$id/softwareproject.$format"(controller:"restSoftwareProject"){
             action = [GET: "listByProject"]
         }
-        "/api/project/$idProject/software/$idSoftware/stats"(controller:"restSoftware"){
+        "/api/project/$idProject/software/$idSoftware/stats.$format"(controller:"restSoftware"){
             action = [GET: "softwareInfoForProject"]
         }
 

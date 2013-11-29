@@ -69,7 +69,7 @@ class ImageGroupTests {
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
-        jsonImage = updateImage.encodeAsJSON()
+        jsonImage = updateImage.toString()
         def result = ImageGroupAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
@@ -114,7 +114,7 @@ class ImageGroupTests {
         ImageGroup imageToEdit = BasicInstanceBuilder.getImageGroup()
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
-        def result = ImageGroupAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 

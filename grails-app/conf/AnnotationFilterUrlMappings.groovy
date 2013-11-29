@@ -7,14 +7,14 @@
 class AnnotationFilterUrlMappings {
     static mappings = {
         /* User */
-        "/api/annotationfilter"(controller:"restAnnotationFilter"){
+        "/api/annotationfilter.$format"(controller:"restAnnotationFilter"){
             action = [GET:"listByProject", POST:"add"]
         }
-        "/api/annotationfilter/$id"(controller:"restAnnotationFilter"){
+        "/api/annotationfilter/$id.$format"(controller:"restAnnotationFilter"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
 
-        "/api/ontology/$idOntology/annotationfilter"(controller: "restAnnotationFilter"){
+        "/api/ontology/$idOntology/annotationfilter.$format"(controller: "restAnnotationFilter"){
             action = [GET:"listByOntology"]
         }
     }

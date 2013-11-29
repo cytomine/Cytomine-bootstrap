@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 
 import javax.activation.MimetypesFileTypeMap
@@ -154,7 +155,7 @@ class RestUploadedFileController extends RestController {
 //             abstractImage.save(flush : true,failOnError: true)
 
              storages.each { storage ->
-                 storageAbstractImageService.add(JSON.parse([storage : storage.id, abstractimage : abstractImage.id].encodeAsJSON()))
+                 storageAbstractImageService.add(JSON.parse(JSONUtils.toJSONString([storage : storage.id, abstractimage : abstractImage.id])))
              }
 
 

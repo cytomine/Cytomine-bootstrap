@@ -48,7 +48,7 @@ class UserRoleTests  {
 
 
   void testAddUseRoleCorrect() {
-      def idUser = BasicInstanceBuilder.user1.id
+      def idUser = BasicInstanceBuilder.saveDomain(BasicInstanceBuilder.getUserNotExist(false)).id
       def idRole = SecRole.findByAuthority("ROLE_USER").id
       def json = "{user : $idUser, role: $idRole}"
 
@@ -56,10 +56,20 @@ class UserRoleTests  {
       assert 200 == result.code
   }
 
+    void testAddUseRoleAlreadyExist() {
+        def idUser = BasicInstanceBuilder.saveDomain(BasicInstanceBuilder.getUserNotExist(false)).id
+        def idRole = SecRole.findByAuthority("ROLE_USER").id
+        def json = "{user : $idUser, role: $idRole}"
+
+        def result = UserRoleAPI.create(idUser,idRole,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        result = UserRoleAPI.create(idUser,idRole,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 409 == result.code
+    }
+
   void testDeleteUserRole() {
       def user = BasicInstanceBuilder.getUserNotExist(true)
       def role = SecRole.findByAuthority("ROLE_USER")
-      def userole = SecUserSecRole.create(user,role,true)
 
       def idUser = user.id
       def idRole = role.id

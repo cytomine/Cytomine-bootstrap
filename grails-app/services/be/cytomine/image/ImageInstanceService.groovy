@@ -83,18 +83,26 @@ class ImageInstanceService extends ModelService {
         return data
     }
 
-    def listLastOpened(User user) {
+    def listLastOpened(User user, Long offset = null, Long max = null) {
         //get id of last open image
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("SELECT image_id, base_image_id as abstImage,original_filename,image_instance.project_id as project,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
-                "FROM user_position, image_instance,abstract_image\n" +
-                "WHERE user_position.user_id = ? \n" +
-                "AND user_position.image_id = image_instance.id \n" +
-                "AND abstract_image.id = image_instance.base_image_id \n" +
-                "GROUP BY image_id,abstImage,original_filename,project \n" +
-                "ORDER BY maxDate desc;",[user.id]) {
-            data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(it.abstImage),originalFilename:it.original_filename,project:it.project]
+
+        String offsetString = ""
+        if(offset!=null) {
+            offsetString = offsetString + " OFFSET " + offset
+        }
+        if(max!=null) {
+            offsetString = offsetString + " LIMIT " + max
+        }
+
+        new Sql(dataSource).eachRow("SELECT image_id,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
+                "FROM user_position\n" +
+                "WHERE user_position.user_id = ? \n" + //no join with image instance / abstract img / project...too heavy
+                "GROUP BY image_id \n" +
+                "ORDER BY maxDate desc " + offsetString,[user.id]) {
+            ImageInstance image = ImageInstance.read(it.image_id)
+            data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
         }
         return data
     }

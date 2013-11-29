@@ -22,7 +22,7 @@ class UserAnnotationAPI extends DomainAPI {
     }
 
     static def countByUser(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/user/$id/userannotation/count"
+        String URL = Infos.CYTOMINEURL + "/api/user/$id/userannotation/count.json"
         return doGET(URL, username, password)
     }
 

@@ -34,7 +34,6 @@ var ProjectPanelView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-        console.log("render");
         require([
             "text!application/templates/project/ProjectDetail.tpl.html"
         ],

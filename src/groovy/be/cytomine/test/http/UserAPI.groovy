@@ -67,12 +67,12 @@ class UserAPI extends DomainAPI {
     }
 
     static def listOnline(Long id,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/project/$id/online/user"
+        String URL = Infos.CYTOMINEURL + "/api/project/$id/online/user.json"
         return doGET(URL, username, password)
     }
 
     static def listUserJob(Long id,Boolean tree, Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/project/$id/userjob?tree="+(tree?"true":false)+(idImage?"&image=$idImage":"")
+        String URL = Infos.CYTOMINEURL + "/api/project/$id/userjob.json?tree="+(tree?"true":false)+(idImage?"&image=$idImage":"")
         return doGET(URL, username, password)
     }
 
@@ -103,7 +103,7 @@ class UserAPI extends DomainAPI {
     }
 
     static def listLayers(Long idProject,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/project/$idProject/userlayer"
+        String URL = Infos.CYTOMINEURL + "/api/project/$idProject/userlayer.json"
         return doGET(URL, username, password)
     }
 

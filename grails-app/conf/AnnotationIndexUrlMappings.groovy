@@ -8,7 +8,7 @@ class AnnotationIndexUrlMappings {
 
     static mappings = {
 
-        "/api/imageinstance/$id/annotationindex"(controller:"restAnnotationIndex"){
+        "/api/imageinstance/$id/annotationindex.$format"(controller:"restAnnotationIndex"){
             action = [GET:"listByImage"]
         }
 

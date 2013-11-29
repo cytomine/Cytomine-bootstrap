@@ -16,6 +16,7 @@ import be.cytomine.security.UserJob
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.UserAnnotationListing
+import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
@@ -189,7 +190,9 @@ class UserAnnotationService extends ModelService {
             log.info "userAnnotation=" + annotationID + " json.term=" + json.term
             //Add annotation-term if term
             if (annotationID) {
-                def term = json.term;
+                def term = JSONUtils.getJSONList(json.term);
+                println "term=$term"
+                println "class=${term.class}"
                 if (term) {
                     term.each { idTerm ->
                         annotationTermService.addAnnotationTerm(annotationID, idTerm, null, currentUser.id, currentUser, transaction)

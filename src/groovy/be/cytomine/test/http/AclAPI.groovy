@@ -16,18 +16,18 @@ class AclAPI extends DomainAPI {
 //    }
 
     static def list(String domainClassName, Long domainIdent, Long user, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${(user? user : "")}"
+        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${(user? user : "")}.json"
         return doGET(URL, username, password)
     }
 
     static def create(String domainClassName, Long domainIdent, Long user, String auth, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/$user?" + (auth? "auth=$auth" : "")
+        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${user}.json?" + (auth? "auth=$auth" : "")
         def result = doPOST(URL,"",username,password)
         return result
     }
 
     static def delete(String domainClassName, Long domainIdent, Long user, String auth, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/$user?" + (auth? "auth=$auth" : "")
+        String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${user}.json?" + (auth? "auth=$auth" : "")
         return doDELETE(URL,username,password)
     }
 }

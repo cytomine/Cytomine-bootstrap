@@ -207,7 +207,7 @@ var ApplicationView = Backbone.View.extend({
                         divToFill.empty();
                         divToFill.append('' +
                             '<div class="progress progress-striped active">' +
-                            '   <div class="bar" style="width: ' + taskInfo.get('progress') + '%;"></div>' +
+                            '   <div class="bar" style="background-color:#2C3E50;height:50px;width: ' + taskInfo.get('progress') + '%;"></div>' +
                             '</div>');
                         divToFill.append(taskInfo.get('comments').reverse().join('<br>'));
                     },

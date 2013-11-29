@@ -53,6 +53,8 @@ class RestJobDataController extends RestController {
      * We must call then "upload" action to upload the file
      */
     def add = {
+        println "Job Data Controller"
+        println params
         add(jobDataService, request.JSON)
     }
 

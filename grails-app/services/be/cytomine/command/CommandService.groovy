@@ -59,7 +59,7 @@ class CommandService {
             }
             c.save(failOnError: true)
             CommandHistory ch = new CommandHistory(command: c, prefixAction: "", project: c.project,user: c.user, message: c.actionMessage)
-            ch.save();
+            ch.save(failOnError: true);
             if (c.saveOnUndoRedoStack) {
                 def item = new UndoStackItem(command: c, user: c.user, transaction: c.transaction)
                 item.save(flush: true,failOnError: true)

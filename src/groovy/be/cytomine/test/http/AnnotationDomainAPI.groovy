@@ -70,7 +70,7 @@ class AnnotationDomainAPI extends DomainAPI {
     }
 
     static def downloadDocumentNewImplementation(Long idProject,Long idUser, Long idTerm, Long idImageInstance, String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/annotation/download?project=$idProject&users=" +idUser + "&terms=" + idTerm +"&images=" + idImageInstance + "&format=pdf"
+        String URL = Infos.CYTOMINEURL+"api/annotation/method/download?project=$idProject&users=" +idUser + "&terms=" + idTerm +"&images=" + idImageInstance + "&format=pdf"
         return doGET(URL, username, password)
     }
 
@@ -108,12 +108,12 @@ class AnnotationDomainAPI extends DomainAPI {
     }
 
     static def listIncluded(String geometry, Long idImage, Long idUser,List<Long> terms,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotation/included?geometry=${geometry.replace(" ","%20")}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
+        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotation/included.json?geometry=${geometry.replace(" ","%20")}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
         return doGET(URL, username, password)
     }
 
     static def listIncluded(AnnotationDomain annotation, Long idImage, Long idUser,List<Long> terms,String username, String password) {
-        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotation/included?annotation=${annotation.id}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
+        String URL = Infos.CYTOMINEURL+"api/imageinstance/$idImage/annotation/included.json?annotation=${annotation.id}" + (terms? "&terms=${terms.join(',')}" : "") + "&user=${idUser}"
         return doGET(URL, username, password)
     }
 

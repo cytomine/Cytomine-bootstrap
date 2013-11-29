@@ -1,5 +1,7 @@
 package be.cytomine.command
 
+import be.cytomine.project.Project
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 
 class ResponseService {
@@ -37,7 +39,7 @@ class ResponseService {
         params.put('message', message)
         params.put('callback', paramsCallback)
         params.put('printMessage', printMessage)
-        params.put(objectName.toLowerCase(), JSON.parse((String)object.encodeAsJSON()))
+        params.put(objectName.toLowerCase(), JSON.parse(JSONUtils.toJSONString(object)))     //Project.getDataFromDomain(object)
 
         return [data: params, status: 200, object:object]
     }

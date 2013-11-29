@@ -8,74 +8,74 @@ class UserUrlMappings {
 
     static mappings = {
         /* User */
-        "/api/signature"(controller:"restUser"){
+        "/api/signature.$format"(controller:"restUser"){
             action = [GET:"signature"]
         }
-        "/api/user"(controller:"restUser"){
+        "/api/user.$format"(controller:"restUser"){
             action = [GET:"list",POST:"add"]
         }
-        "/api/user/$id"(controller:"restUser"){
+        "/api/user/$id.$format"(controller:"restUser"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/user/$id/keys"(controller:"restUser"){
+        "/api/user/$id/keys.$format"(controller:"restUser"){
             action = [GET:"keys"]
         }
-        "/api/userkey/$publicKey/keys"(controller:"restUser"){
+        "/api/userkey/$publicKey/keys.$format"(controller:"restUser"){
             action = [GET:"keys"]
         }
-        "/api/user/current"(controller:"restUser"){
+        "/api/user/current.$format"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }
-        "/api/user/$id/friends"(controller:"restUser"){
+        "/api/user/$id/friends.$format"(controller:"restUser"){
             action = [GET:"listFriends"]
         }
-        "/api/userJob"(controller:"restUserJob"){
+        "/api/userJob.$format"(controller:"restUserJob"){
             action = [POST:"createUserJob"]
         }
-        "/api/userJob/$id"(controller:"restUserJob"){
+        "/api/userJob/$id.$format"(controller:"restUserJob"){
             action = [GET:"showUserJob"]
         }
-        "/api/project/$id/user"(controller: "restUser"){
+        "/api/project/$id/user.$format"(controller: "restUser"){
             action = [GET:"showByProject",POST:"addUser"]
         }
-        "/api/project/$id/admin"(controller: "restUser"){
+        "/api/project/$id/admin.$format"(controller: "restUser"){
             action = [GET:"showAdminByProject"]
         }
-        "/api/project/$id/creator"(controller: "restUser"){
+        "/api/project/$id/creator.$format"(controller: "restUser"){
             action = [GET:"showCreatorByProject"]
         }
-        "/api/project/$id/user/$idUser"(controller: "restUser"){
+        "/api/project/$id/user/$idUser.$format"(controller: "restUser"){
             action = [DELETE:"deleteUserFromProject",POST:"addUserToProject"]
         }
-        "/api/project/$id/user/$idUser/admin"(controller: "restUser"){
+        "/api/project/$id/user/$idUser/admin.$format"(controller: "restUser"){
             action = [DELETE:"deleteUserAdminFromProject",POST:"addUserAdminToProject"]
         }
-        "/api/project/$id/userjob"(controller: "restUserJob"){
+        "/api/project/$id/userjob.$format"(controller: "restUserJob"){
             action = [GET:"listUserJobByProject"]
         }
-        "/api/ontology/$id/user"(controller: "restUser"){
+        "/api/ontology/$id/user.$format"(controller: "restUser"){
             action = [GET:"showUserByOntology"]
         }
-        "/api/ontology/$id/creator"(controller: "restUser"){
+        "/api/ontology/$id/creator.$format"(controller: "restUser"){
             action = [GET:"showCreatorByOntology"]
         }
-        "/api/project/$id/userlayer"(controller: "restUser"){
+        "/api/project/$id/userlayer.$format"(controller: "restUser"){
             action = [GET:"showLayerByProject"]
         }
 
-        "/api/project/$id/online/user"(controller: "restUser"){
+        "/api/project/$id/online/user.$format"(controller: "restUser"){
             action = [GET:"listOnlineFriendsWithPosition"]
         }
-        "/api/ldap/user"(controller:"restUser"){
+        "/api/ldap/user.$format"(controller:"restUser"){
             action = [POST:"addFromLDAP"]
         }
 
 
-        "/api/domain/$domainClassName/$domainIdent/user/$user"(controller:"restACL"){
+        "/api/domain/$domainClassName/$domainIdent/user/$user.$format"(controller:"restACL"){
             action = [GET:"list",POST:"add",DELETE: "delete"]
         }
 
-        "/api/user/$id/password"(controller:"restUser"){
+        "/api/user/$id/password.$format"(controller:"restUser"){
             action = [PUT:"resetPassword"]
         }
 

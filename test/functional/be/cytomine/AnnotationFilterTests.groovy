@@ -81,7 +81,7 @@ class AnnotationFilterTests  {
       def jsonUpdate = JSON.parse(jsonAnnotationFilter)
       jsonUpdate.name = annotationfilterWithOldName.name
       jsonUpdate.id = -99
-      jsonAnnotationFilter = jsonUpdate.encodeAsJSON()
+      jsonAnnotationFilter = jsonUpdate.toString()
       def result = AnnotationFilterAPI.update(-99, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
@@ -92,7 +92,7 @@ class AnnotationFilterTests  {
         def jsonAnnotationFilter = annotationfilterToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonAnnotationFilter)
         jsonUpdate.name = null
-        jsonAnnotationFilter = jsonUpdate.encodeAsJSON()
+        jsonAnnotationFilter = jsonUpdate.toString()
         def result = AnnotationFilterAPI.update(annotationfilterToAdd.id, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }

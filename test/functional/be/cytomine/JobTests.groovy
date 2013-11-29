@@ -83,7 +83,7 @@ class JobTests  {
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
         jsonUpdate.software = -99
-        jsonJob = jsonUpdate.encodeAsJSON()
+        jsonJob = jsonUpdate.toString()
         def result = JobAPI.update(jobToAdd.id, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
@@ -104,7 +104,7 @@ class JobTests  {
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
         jsonUpdate.id = -99
-        jsonJob = jsonUpdate.encodeAsJSON()
+        jsonJob = jsonUpdate.toString()
         def result = JobAPI.update(-99, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
@@ -115,7 +115,7 @@ class JobTests  {
         def jsonJob = jobToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJob)
         jsonUpdate.software = -99
-        jsonJob = jsonUpdate.encodeAsJSON()
+        jsonJob = jsonUpdate.toString()
         def result = JobAPI.update(jobToAdd.id, jsonJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }

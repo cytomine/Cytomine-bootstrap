@@ -104,7 +104,7 @@ class SoftwareTests  {
        def jsonUpdate = JSON.parse(jsonSoftware)
        jsonUpdate.name = softwareWithOldName.name
        jsonUpdate.id = -99
-       jsonSoftware = jsonUpdate.encodeAsJSON()
+       jsonSoftware = jsonUpdate.toString()
        def result = SoftwareAPI.update(-99, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 404 == result.code
    }
@@ -117,7 +117,7 @@ class SoftwareTests  {
        def jsonSoftware = softwareToEdit.encodeAsJSON()
        def jsonUpdate = JSON.parse(jsonSoftware)
        jsonUpdate.name = softwareWithOldName.name
-       jsonSoftware = jsonUpdate.encodeAsJSON()
+       jsonSoftware = jsonUpdate.toString()
        def result = SoftwareAPI.update(softwareToEdit.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 409 == result.code
    }
@@ -128,7 +128,7 @@ class SoftwareTests  {
          def jsonSoftware = softwareToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonSoftware)
          jsonUpdate.name = null
-         jsonSoftware = jsonUpdate.encodeAsJSON()
+         jsonSoftware = jsonUpdate.toString()
          def result = SoftwareAPI.update(softwareToAdd.id, jsonSoftware, Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 400 == result.code
      }

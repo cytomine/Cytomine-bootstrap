@@ -13,6 +13,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 
 import javax.imageio.ImageIO
@@ -86,7 +87,8 @@ class RestUserAnnotationController extends RestController {
         }
 
         //do receivers email list
-        List<User> receivers = request.JSON.users.collect { userID ->
+        List<User> receivers = JSONUtils.getJSONList(request.JSON.users).collect { userID ->
+            println "userID=$userID"
             User.read(userID)
         }
         String[] receiversEmail = new String[receivers.size()]

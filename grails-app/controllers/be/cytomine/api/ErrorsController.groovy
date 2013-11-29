@@ -6,6 +6,7 @@ import grails.plugins.springsecurity.Secured
 class ErrorsController extends RestController {
 
     def error403 = {
+        println "ErrorsController.error403"
         response.status = 403
         render(contentType: 'text/json') {
             errors(message: "You are not allowed to do this!")

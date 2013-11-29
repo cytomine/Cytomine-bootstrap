@@ -254,7 +254,7 @@ class UserTests  {
         def jsonUpdate = JSON.parse(jsonUser)
         jsonUpdate.username = "-99"
         jsonUpdate.id = -99
-        jsonUser = jsonUpdate.encodeAsJSON()
+        jsonUser = jsonUpdate.toString()
         def result = UserAPI.update(-99, jsonUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
@@ -267,7 +267,7 @@ class UserTests  {
         def jsonUser = userToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonUser)
         jsonUpdate.username = userWithOldName.username
-        jsonUser = jsonUpdate.encodeAsJSON()
+        jsonUser = jsonUpdate.toString()
         def result = UserAPI.update(userToEdit.id, jsonUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }

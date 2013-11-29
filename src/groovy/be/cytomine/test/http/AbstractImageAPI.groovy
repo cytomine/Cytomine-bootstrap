@@ -55,6 +55,7 @@ class AbstractImageAPI extends DomainAPI {
     }
 
     static def create(String jsonAbstractImage, String username, String password) {
+        println "jsonAbstractImage=$jsonAbstractImage"
         String URL = Infos.CYTOMINEURL + "api/image.json"
         def result = doPOST(URL, jsonAbstractImage,username, password)
         if(JSON.parse(jsonAbstractImage) instanceof JSONArray) return result

@@ -38,7 +38,7 @@ class TermAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def create(String jsonTerm, String username, String password) {
+    static def create(def jsonTerm, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/term.json"
         def result = doPOST(URL,jsonTerm,username,password)
         def json = JSON.parse(result.data)
@@ -49,6 +49,8 @@ class TermAPI extends DomainAPI {
 
     static def update(def id, def jsonTerm, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/term/" + id + ".json"
+        println "jsonTerm=$jsonTerm"
+        println jsonTerm.class
         return doPUT(URL,jsonTerm,username,password)
     }
 

@@ -442,8 +442,10 @@ AnnotationLayer.prototype = {
     loadAnnotations: function (browseImageView) {
 
         var self = this;
-
+        console.log("AnnotationLayer.loadAnnotations");
+        console.log("1");
         browseImageView.addVectorLayer(this, this.userID);
+        console.log("2");
         browseImageView.layerLoadedCallback(self);
     },
     addFeature: function (feature) {

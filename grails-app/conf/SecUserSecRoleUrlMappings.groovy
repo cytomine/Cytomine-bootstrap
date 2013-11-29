@@ -8,11 +8,11 @@ class SecUserSecRoleUrlMappings {
 
     static mappings = {
         /* SecUserSecRole */
-        "/api/user/$user/role"(controller: "restSecUserSecRole") {
+        "/api/user/$user/role.$format"(controller: "restSecUserSecRole") {
             action = [GET:"list", POST:"add"]
         }
 
-        "/api/user/$user/role/$role"(controller: "restSecUserSecRole") {
+        "/api/user/$user/role/$role.$format"(controller: "restSecUserSecRole") {
             action = [GET:"show", DELETE:"delete"]
         }
     }

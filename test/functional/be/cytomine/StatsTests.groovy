@@ -89,17 +89,17 @@ class StatsTests  {
 
     void testRetrievalEvolutionAlgo() {
         Job job = BasicInstanceBuilder.createJobWithAlgoAnnotationTerm()
-        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution?job=${job.id}"
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution.json?job=${job.id}"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution?job=-99"
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolution.json?job=-99"
                 doGET(URL,404)
     }
 
     void testRetrievalEvolutionAlgoForTerm() {
         Job job = BasicInstanceBuilder.createJobWithAlgoAnnotationTerm()
-        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm?job=${job.id}&term=${Term.findByOntology(job.project.ontology).id}"
+        String URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm.json?job=${job.id}&term=${Term.findByOntology(job.project.ontology).id}"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm?job=-99&term=${Term.findByOntology(job.project.ontology).id}"
+        URL = Infos.CYTOMINEURL + "/api/stats/retrieval-evolution/evolutionByTerm.json?job=-99&term=${Term.findByOntology(job.project.ontology).id}"
          doGET(URL,404)
     }
 
@@ -107,52 +107,52 @@ class StatsTests  {
 
     void testStatTerm() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/term"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/term.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/term"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/term.json"
          doGET(URL,404)
     }
 
     void testStatUser() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/user"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/user.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/user"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/user.json"
          doGET(URL,404)
     }
 
 
     void testStatsTermslide() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/termslide"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/termslide.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/termslide"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/termslide.json"
          doGET(URL,404)
     }
 
     void testStatsUserAnnotation() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userannotations"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userannotations.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userannotations"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userannotations.json"
         doGET(URL,404)
     }
 
     void testStatsUserSlide() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userslide"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/userslide.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userslide"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/userslide.json"
         doGET(URL,404)
     }
 
     void testStatsEvolution() {
         Project project = BasicInstanceBuilder.getProject()
-        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution"
+        String URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution.json"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution?term=${project.ontology.leafTerms().first()}"
+        URL = Infos.CYTOMINEURL + "/api/project/${project.id}/stats/annotationevolution.json?term=${project.ontology.leafTerms().first()}"
         doGET(URL,200)
-        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/annotationevolution"
+        URL = Infos.CYTOMINEURL + "/api/project/-99/stats/annotationevolution.json"
         doGET(URL,404)
     }
 

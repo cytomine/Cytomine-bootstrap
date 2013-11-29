@@ -12,7 +12,7 @@ import grails.converters.JSON
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-
+grails.databinding.convertEmptyStringsToNull = false
 JSON.use('default')
 grails.config.locations = ["file:${userHome}/.grails/cytomineconfig.properties"]
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
@@ -247,7 +247,8 @@ log4j = {
 
 
     //debug "org.hibernate.SQL"
-    /*debug 'be.cytomine'
+//    debug 'be.cytomine'
+    /*
    debug 'grails.app'
    debug 'grails.app.services'
    debug 'grails.app.controllers

@@ -11,30 +11,30 @@ class AnnotationUrlMappings {
 //        /**
 //         * Annotation search
 //         */
-//        "/api/annotation/search"(controller:"restAnnotationDomain"){
+//        "/api/annotation/search.$format"(controller:"restAnnotationDomain"){
 //            action = []
 //        }
 
         /**
          * Annotation generic
          */
-        "/api/annotation/union"(controller:"restAnnotationDomain"){
+        "/api/annotation/method/union.$format"(controller:"restAnnotationDomain"){
             action = [PUT:"union", GET:"union"]
         }
-        "/api/annotation"(controller:"restAnnotationDomain"){
+        "/api/annotation.$format"(controller:"restAnnotationDomain"){
             action = [GET: "search",POST:"add"]
         }
-        "/api/annotation/download"(controller:"restAnnotationDomain"){
+        "/api/annotation/method/download"(controller:"restAnnotationDomain"){
             action = [GET: "downloadSearched"]
         }
-        "/api/annotation/$id"(controller:"restAnnotationDomain"){
+        "/api/annotation/$id.$format"(controller:"restAnnotationDomain"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/annotation/$id/simplify"(controller:"restAnnotationDomain"){
+        "/api/annotation/$id/simplify.$format"(controller:"restAnnotationDomain"){
             action = [PUT:"simplify",GET:"simplify"]
         }
 
-        "/api/simplify"(controller:"restAnnotationDomain"){
+        "/api/simplify.$format"(controller:"restAnnotationDomain"){
             action = [PUT:"retrieveSimplify",POST:"retrieveSimplify"]
         }
 
@@ -43,10 +43,10 @@ class AnnotationUrlMappings {
         /**
          * User Annotation
          */
-        "/api/userannotation"(controller:"restUserAnnotation"){
+        "/api/userannotation.$format"(controller:"restUserAnnotation"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/userannotation/$id"(controller:"restUserAnnotation"){
+        "/api/userannotation/$id.$format"(controller:"restUserAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
@@ -55,10 +55,10 @@ class AnnotationUrlMappings {
         /**
          * Comment annotation
          */
-        "/api/annotation/$userannotation/comment"(controller:"restUserAnnotation"){
+        "/api/annotation/$userannotation/comment.$format"(controller:"restUserAnnotation"){
             action = [POST: "addComment", GET:"listComments"]
         }
-        "/api/annotation/$userannotation/comment/$id"(controller:"restUserAnnotation"){
+        "/api/annotation/$userannotation/comment/$id.$format"(controller:"restUserAnnotation"){
             action = [GET:"showComment"]
         }
 
@@ -66,23 +66,23 @@ class AnnotationUrlMappings {
         /**
          * Retrieval annotation suggestion
          */
-        "/api/retrieval/missing/userannotation"(controller: "restRetrieval"){
+        "/api/retrieval/missing/userannotation.$format"(controller: "restRetrieval"){
             action = [GET:"missingAnnotation"]
         }
-        "/api/annotation/$idannotation/retrieval"(controller:"restRetrieval"){
+        "/api/annotation/$idannotation/retrieval.$format"(controller:"restRetrieval"){
             action = [GET:"listSimilarAnnotationAndBestTerm"]
         }
 
         /**
          * Algo Annotation
          */
-        "/api/algoannotation/union"(controller:"restAlgoAnnotation"){
+        "/api/algoannotation/method/union.$format"(controller:"restAlgoAnnotation"){
             action = [PUT:"union", GET:"union"]
         }
-        "/api/algoannotation"(controller:"restAlgoAnnotation"){
+        "/api/algoannotation.$format"(controller:"restAlgoAnnotation"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/algoannotation/$id"(controller:"restAlgoAnnotation"){
+        "/api/algoannotation/$id.$format"(controller:"restAlgoAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
@@ -91,7 +91,7 @@ class AnnotationUrlMappings {
         /**
          * Annotation correction
          */
-        "/api/annotationcorrection"(controller:"restAnnotationDomain"){
+        "/api/annotationcorrection.$format"(controller:"restAnnotationDomain"){
             action = [POST:"addCorrection"]
         }
 
@@ -107,7 +107,7 @@ class AnnotationUrlMappings {
         "/api/project/$id/annotation/download"(controller: "restAnnotationDomain"){
               action = [GET:"downloadDocumentByProject"]
           }
-        "/api/imageinstance/$idImage/annotation/included"(controller:"restAnnotationDomain"){
+        "/api/imageinstance/$idImage/annotation/included.$format"(controller:"restAnnotationDomain"){
                 action = [GET: "listIncludedAnnotation"]
          }
         "/api/imageinstance/$idImage/annotation/included/download"(controller: "restAnnotationDomain"){
@@ -115,10 +115,10 @@ class AnnotationUrlMappings {
         }
 
 
-        "/api/user/$id/userannotation/count"(controller:"restUserAnnotation"){
+        "/api/user/$id/userannotation/count.$format"(controller:"restUserAnnotation"){
             action = [GET: "countByUser"]
         }
-        "/api/user/$id/reviewedannotation/count"(controller:"restReviewedAnnotation"){
+        "/api/user/$id/reviewedannotation/count.$format"(controller:"restReviewedAnnotation"){
             action = [GET: "countByUser"]
         }
 

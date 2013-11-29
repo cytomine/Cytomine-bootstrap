@@ -8,23 +8,23 @@ class ImageSequenceUrlMappings {
 
     static mappings = {
         /* Image Instance */
-        "/api/imagesequence"(controller: "restImageSequence"){
+        "/api/imagesequence.$format"(controller: "restImageSequence"){
             action = [POST:"add"]
         }
-        "/api/imagesequence/$id"(controller: "restImageSequence"){
+        "/api/imagesequence/$id.$format"(controller: "restImageSequence"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/imagegroup/$id/imagesequence"(controller: "restImageSequence"){
+        "/api/imagegroup/$id/imagesequence.$format"(controller: "restImageSequence"){
             action = [GET:"listByImageGroup"]
         }
-        "/api/imageinstance/$id/imagesequence"(controller: "restImageSequence"){
+        "/api/imageinstance/$id/imagesequence.$format"(controller: "restImageSequence"){
             action = [GET:"getByImageInstance"]
         }
-        "/api/imageinstance/$id/imagesequence/possibilities"(controller: "restImageSequence"){
+        "/api/imageinstance/$id/imagesequence/possibilities.$format"(controller: "restImageSequence"){
             action = [GET:"getSequenceInfo"]
         }
 
-        "/api/imagegroup/$id/$channel/$zstack/$slice/$time/imagesequence"(controller: "restImageSequence"){
+        "/api/imagegroup/$id/$channel/$zstack/$slice/$time/imagesequence.$format"(controller: "restImageSequence"){
             action = [GET:"getByImageGroupAndIndex"]
         }
 

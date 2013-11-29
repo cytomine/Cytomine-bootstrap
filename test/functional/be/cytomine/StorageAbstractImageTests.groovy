@@ -5,6 +5,7 @@ import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.StorageAPI
 import be.cytomine.test.http.StorageAbstractImageAPI
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 
 /**
@@ -19,7 +20,7 @@ class StorageAbstractImageTests {
     void testAddStorageAbstractImage() {
         def storage = BasicInstanceBuilder.getStorage()
         def abstractImage = BasicInstanceBuilder.getAbstractImage()
-        String json = [ abstractimage : abstractImage.id, storage : storage.id].encodeAsJSON()
+        String json = JSONUtils.toJSONString([ abstractimage : abstractImage.id, storage : storage.id])
 
         def result =  StorageAbstractImageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code

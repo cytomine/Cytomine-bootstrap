@@ -62,7 +62,6 @@ class TaskService  {
      */
     def updateTask(Task task, int progress, String comment) {
             if(!task) {
-                //log.info "task is null, ignore task"
                 return
             }
             SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)

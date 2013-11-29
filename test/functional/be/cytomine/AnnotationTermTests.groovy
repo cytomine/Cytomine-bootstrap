@@ -141,7 +141,7 @@ class AnnotationTermTests  {
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.userannotation = -99
-    jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
+    jsonAnnotationTerm = jsonUpdate.toString()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 400 == result.code
   }
@@ -151,7 +151,7 @@ class AnnotationTermTests  {
     String jsonAnnotationTerm = annotationTermAdd.encodeAsJSON()
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.term = -99
-    jsonAnnotationTerm = jsonUpdate.encodeAsJSON()
+    jsonAnnotationTerm = jsonUpdate.toString()
     def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
     assert 400 == result.code
   }

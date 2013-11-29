@@ -7,16 +7,16 @@
 class OntologyUrlMappings {
 
     static mappings = {
-        "/api/ontology"(controller:"restOntology"){
+        "/api/ontology.$format"(controller:"restOntology"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/ontology/light"(controller:"restOntology"){
-            action = [GET: "listLight"]
-        }
-        "/api/ontology/$id"(controller:"restOntology"){
+//        "/api/ontology/light.$format"(controller:"restOntology"){
+//            action = [GET: "listLight"]
+//        }
+        "/api/ontology/$id.$format"(controller:"restOntology"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/ontology/$id/tree"(controller:"restOntology"){
+        "/api/ontology/$id/tree.$format"(controller:"restOntology"){
             action = [GET:"tree"]
         }
     }

@@ -38,6 +38,7 @@ class CommandHistory extends CytomineDomain {
 
     static constraints = {
         project(nullable: true)
+        prefixAction(nullable:false)
     }
 
     static mapping = {

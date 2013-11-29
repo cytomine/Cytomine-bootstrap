@@ -83,7 +83,7 @@ class JobDataTests  {
         def jsonJobData = jobdataToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonJobData)
         jsonUpdate.key = null
-        jsonJobData = jsonUpdate.encodeAsJSON()
+        jsonJobData = jsonUpdate.toString()
         def result = JobDataAPI.update(jobdataToAdd.id, jsonJobData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }

@@ -71,7 +71,11 @@ class RestImageInstanceController extends RestController {
     }
 
     def listLastOpenImage = {
-        responseSuccess(imageInstanceService.listLastOpened(cytomineService.currentUser))
+        def offset = params.long('offset')
+        def max =params.long('max')
+        params.offset = 0
+        params.max = 0
+        responseSuccess(imageInstanceService.listLastOpened(cytomineService.currentUser,offset,max))
     }
 
     def listByProject = {
@@ -142,6 +146,7 @@ class RestImageInstanceController extends RestController {
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
+        println "DEBUG:"+params
         int x = Integer.parseInt(params.x)
         int y = abstractImage.getHeight() - Integer.parseInt(params.y)
         int w = Integer.parseInt(params.w)

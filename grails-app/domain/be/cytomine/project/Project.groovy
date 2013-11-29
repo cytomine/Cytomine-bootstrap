@@ -173,6 +173,34 @@ class Project extends CytomineDomain implements Serializable {
         return domain;
     }
 
+    static def getDataFromDomain(def project) {
+
+        def returnArray = [:]
+        returnArray['class'] = project.class
+        returnArray['id'] = project.id
+        returnArray['name'] = project.name
+        returnArray['ontology'] = project.ontology?.id
+        returnArray['ontologyName'] = project.ontology?.name
+        returnArray['discipline'] = project.discipline?.id
+        returnArray['blindMode'] = (project.blindMode != null &&  project.blindMode)
+        returnArray['disciplineName'] = project.discipline?.name
+        returnArray['numberOfSlides'] = project.countSamples()
+        returnArray['numberOfImages'] = project.countImageInstance()
+        returnArray['numberOfAnnotations'] = project.countAnnotations()
+        returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()
+        returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id }
+        returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
+        returnArray['retrievalDisable'] = project.retrievalDisable
+        returnArray['retrievalAllOntology'] = project.retrievalAllOntology
+        returnArray['isClosed'] = project.isClosed
+        returnArray['isReadOnly'] = project.isReadOnly
+        returnArray['hideUsersLayers'] = project.hideUsersLayers
+        returnArray['hideAdminsLayers'] = project.hideAdminsLayers
+        returnArray['created'] = project.created?.time?.toString()
+        returnArray['updated'] = project.updated?.time?.toString()
+        return returnArray
+    }
+
     /**
      * Define fields available for JSON response
      * This Method is called during application start
@@ -180,30 +208,7 @@ class Project extends CytomineDomain implements Serializable {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Project.class)
         JSON.registerObjectMarshaller(Project) { project ->
-            def returnArray = [:]
-            returnArray['class'] = project.class
-            returnArray['id'] = project.id
-            returnArray['name'] = project.name
-            returnArray['ontology'] = project.ontology?.id
-            returnArray['ontologyName'] = project.ontology?.name
-            returnArray['discipline'] = project.discipline?.id
-            returnArray['blindMode'] = (project.blindMode != null &&  project.blindMode)
-            returnArray['disciplineName'] = project.discipline?.name
-            returnArray['numberOfSlides'] = project.countSamples()
-            returnArray['numberOfImages'] = project.countImageInstance()
-            returnArray['numberOfAnnotations'] = project.countAnnotations()
-			returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()
-            returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id }
-            returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
-            returnArray['retrievalDisable'] = project.retrievalDisable
-            returnArray['retrievalAllOntology'] = project.retrievalAllOntology
-            returnArray['isClosed'] = project.isClosed
-            returnArray['isReadOnly'] = project.isReadOnly
-            returnArray['hideUsersLayers'] = project.hideUsersLayers
-            returnArray['hideAdminsLayers'] = project.hideAdminsLayers
-            returnArray['created'] = project.created?.time?.toString()
-            returnArray['updated'] = project.updated?.time?.toString()
-            return returnArray
+            return getDataFromDomain(project)
         }
     }
 

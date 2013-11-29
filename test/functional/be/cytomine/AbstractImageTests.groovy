@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.Storage
 import be.cytomine.test.BasicInstanceBuilder
@@ -117,6 +118,7 @@ class AbstractImageTests {
   void testAddImageCorrect() {
       def imageToAdd = BasicInstanceBuilder.getAbstractImageNotExist()
       String json = imageToAdd.encodeAsJSON()
+      println "encodeAsJSON="+json
       def result = AbstractImageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
       int id = result.data.id

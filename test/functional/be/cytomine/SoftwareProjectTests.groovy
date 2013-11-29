@@ -85,7 +85,7 @@ class SoftwareProjectTests  {
          def jsonSoftwareProject = SoftwareProjectToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonSoftwareProject)
          jsonUpdate.software = -99
-         jsonSoftwareProject = jsonUpdate.encodeAsJSON()
+         jsonSoftwareProject = jsonUpdate.toString()
          def result = SoftwareProjectAPI.create(jsonSoftwareProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 400 == result.code
      }
@@ -96,7 +96,7 @@ class SoftwareProjectTests  {
         def jsonSoftwareProject = SoftwareProjectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonSoftwareProject)
         jsonUpdate.project = -99
-        jsonSoftwareProject = jsonUpdate.encodeAsJSON()
+        jsonSoftwareProject = jsonUpdate.toString()
         def result = SoftwareProjectAPI.create(jsonSoftwareProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }

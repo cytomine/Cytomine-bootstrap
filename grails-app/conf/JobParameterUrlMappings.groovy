@@ -1,13 +1,13 @@
 class JobParameterUrlMappings {
 
     static mappings = {
-        "/api/jobparameter"(controller:"restJobParameter"){
+        "/api/jobparameter.$format"(controller:"restJobParameter"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/jobparameter/$id"(controller:"restJobParameter"){
+        "/api/jobparameter/$id.$format"(controller:"restJobParameter"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/job/$id/parameter"(controller:"restJobParameter"){
+        "/api/job/$id/parameter.$format"(controller:"restJobParameter"){
             action = [GET: "listByJob"]
         }
     }

@@ -14,6 +14,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.AlgoAnnotationAPI
 import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -487,7 +488,7 @@ class GenericAnnotationTests  {
         json.review = reviewMode
         json.remove = false
         json.layers = [annotation.user.id]
-        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         annotation.refresh()
@@ -512,7 +513,7 @@ class GenericAnnotationTests  {
         json.review = reviewMode
         json.remove = false
         json.layers = [annotation.user.id]
-        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -535,7 +536,7 @@ class GenericAnnotationTests  {
         json.review = reviewMode
         json.remove = true
         json.layers = [annotation.user.id]
-        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
         annotation.refresh()

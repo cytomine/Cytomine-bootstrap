@@ -7,10 +7,10 @@
 class RoleUrlMappings {
 
     static mappings = {
-        "/api/role"(controller:"restSecRole") {
+        "/api/role.$format"(controller:"restSecRole") {
             action = [GET:"list"]
         }
-        "/api/role/$id"(controller:"restSecRole") {
+        "/api/role/$id.$format"(controller:"restSecRole") {
             action = [GET:"show"]
         }
     }

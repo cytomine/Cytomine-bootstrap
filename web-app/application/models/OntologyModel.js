@@ -32,7 +32,7 @@ var OntologyCollection = PaginatedCollection.extend({
         if (this.light == undefined) {
             return "api/ontology.json";
         } else {
-            return "api/ontology/light.json";
+            return "api/ontology.json?light=true";
         }
     },
     initialize: function (options) {

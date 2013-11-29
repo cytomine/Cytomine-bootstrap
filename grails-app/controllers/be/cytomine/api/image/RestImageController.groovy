@@ -162,8 +162,12 @@ class RestImageController extends RestController {
                     responseBufferedImage(createCropWithDraw(annotation,cropURL));
                 }
             }
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+        } catch (CytomineException e) {
+                    log.error("add error:" + e.msg)
+                    log.error(e)
+                    response([success: false, errors: e.msg], e.code)
+         }catch (Exception e) {
+            log.error("GetThumbx:" + e)
         }
     }
 
@@ -228,8 +232,12 @@ class RestImageController extends RestController {
                 }
                 responseBufferedImage(image);
             }
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+        } catch (CytomineException e) {
+                    log.error("add error:" + e.msg)
+                    log.error(e)
+                    response([success: false, errors: e.msg], e.code)
+         }catch (Exception e) {
+            log.error("GetThumbx:" + e)
         }
     }
 
@@ -258,8 +266,12 @@ class RestImageController extends RestController {
                 image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+        } catch (CytomineException e) {
+                    log.error("add error:" + e.msg)
+                    log.error(e)
+                    response([success: false, errors: e.msg], e.code)
+         }catch (Exception e) {
+            log.error("GetThumbx:" + e)
         }
     }
 
@@ -284,8 +296,12 @@ class RestImageController extends RestController {
                 image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+        } catch (CytomineException e) {
+                    log.error("add error:" + e.msg)
+                    log.error(e)
+                    response([success: false, errors: e.msg], e.code)
+         }catch (Exception e) {
+            log.error("GetThumbx:" + e)
         }
     }
 
@@ -310,8 +326,12 @@ class RestImageController extends RestController {
                 image = createCropWithDraw(annotation,image)
                 responseBufferedImage(image);
             }
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+        } catch (CytomineException e) {
+                    log.error("add error:" + e.msg)
+                    log.error(e)
+                    response([success: false, errors: e.msg], e.code)
+         }catch (Exception e) {
+            log.error("GetThumbx:" + e)
         }
     }
 

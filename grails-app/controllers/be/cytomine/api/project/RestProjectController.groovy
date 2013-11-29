@@ -221,6 +221,7 @@ class RestProjectController extends RestController {
      * Add a new project to cytomine
      */
     def add = {
+        log.info "Add project = $request.JSON"
         try {
             Task task = taskService.read(params.getLong("task"))
             log.info "task ${task} is find for id = ${params.getLong("task")}"

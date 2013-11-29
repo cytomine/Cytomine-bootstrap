@@ -271,7 +271,6 @@ class RestAnnotationDomainController extends RestController {
         al.userForTermAlgo = params.getLong('userForTermAlgo')
 
         al.kmeansValue = params.getLong('kmeansValue')
-        println "a=${al.kmeansValue}"
 
         def users = params.get('users')
         if(users) {
@@ -312,7 +311,6 @@ class RestAnnotationDomainController extends RestController {
         if(params.get('bbox')) {
             al.bbox = GeometryUtils.createBoundingBox(params.get('bbox')).toText()
         }
-        println "kmeans=${al.kmeans}"
         annotationListingService.listGeneric(al)
     }
 
@@ -466,6 +464,7 @@ class RestAnnotationDomainController extends RestController {
      * Redirect to the controller depending on the user type
      */
     def add = {
+        println params
         SecUser user = cytomineService.currentUser
         if (user.algo()) {
             forward(controller: "restAlgoAnnotation", action: "add")

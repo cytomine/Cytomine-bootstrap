@@ -227,7 +227,7 @@ class RestController {
         response(data)
     }
 
-    protected def responseError(CytomineException e) {
+    public def responseError(CytomineException e) {
         response([success: false, errors: e.msg], e.code)
     }
 

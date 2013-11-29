@@ -149,7 +149,7 @@ var ImportAnnotationModal = {
              height : height,
              callBack : function() {
 
-                 $.get("/api/imageinstance/"+idImage+"/sameimagedata", function(data) {
+                 $.get("/api/imageinstance/"+idImage+"/sameimagedata.json", function(data) {
                      $("#layersSelection"+idImage).empty();
                      if(data.collection.length==0) {
                          $("#layersSelection"+idImage).append("This image has no other layers in other projects.");
@@ -185,7 +185,7 @@ var ImportAnnotationModal = {
                                  var timer = window.app.view.printTaskEvolution(response.task,  $("#layersSelection"+idImage).find("#task-" + response.task.id), 2000);
 
 
-                                 $.post("/api/imageinstance/"+idImage+"/copyimagedata?task="+response.task.id+"&layers="+layers.join(",") + "&giveMe="+giveMe, function(data) {
+                                 $.post("/api/imageinstance/"+idImage+"/copyimagedata.json?task="+response.task.id+"&layers="+layers.join(",") + "&giveMe="+giveMe, function(data) {
                                      clearInterval(timer);
                                      $("#closeImportLayer"+idImage).show();
                                      $("#closeImportLayer"+idImage).click();

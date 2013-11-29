@@ -8,13 +8,13 @@ class ImageGroupUrlMappings {
 
     static mappings = {
         /* Image Instance */
-        "/api/imagegroup"(controller: "restImageGroup"){
+        "/api/imagegroup.$format"(controller: "restImageGroup"){
             action = [POST:"add"]
         }
-        "/api/imagegroup/$id"(controller: "restImageGroup"){
+        "/api/imagegroup/$id.$format"(controller: "restImageGroup"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/project/$id/imagegroup"(controller: "restImageGroup"){
+        "/api/project/$id/imagegroup.$format"(controller: "restImageGroup"){
             action = [GET:"listByProject"]
         }
     }

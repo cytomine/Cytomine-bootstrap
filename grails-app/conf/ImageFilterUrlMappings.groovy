@@ -8,27 +8,27 @@ class ImageFilterUrlMappings {
 
     static mappings = {
         /* Image Filters */
-        "/api/imagefilter"(controller: "restImageFilter"){
+        "/api/imagefilter.$format"(controller: "restImageFilter"){
             action = [GET:"list"]
         }
-        "/api/imagefilter/$id"(controller: "restImageFilter"){
+        "/api/imagefilter/$id.$format"(controller: "restImageFilter"){
             action = [GET:"show"]
         }
 
-        "/api/project/imagefilter"(controller: "restImageFilter"){
+        "/api/project/imagefilter.$format"(controller: "restImageFilter"){
             action = [GET:"list"]
         }
-        "/api/project/imagefilter/$id"(controller: "restImageFilter"){
+        "/api/project/imagefilter/$id.$format"(controller: "restImageFilter"){
             action = [GET:"show"]
         }
 
-        "/api/project/$project/imagefilterproject"(controller: "restImageFilterProject"){
+        "/api/project/$project/imagefilterproject.$format"(controller: "restImageFilterProject"){
             action = [GET:"listByProject"]
         }
-        "/api/imagefilterproject" (controller: "restImageFilterProject"){
+        "/api/imagefilterproject.$format" (controller: "restImageFilterProject"){
             action = [GET:"list", POST : "add"]
         }
-        "/api/imagefilterproject/$id"(controller: "restImageFilterProject"){
+        "/api/imagefilterproject/$id.$format"(controller: "restImageFilterProject"){
             action = [DELETE : "delete"]
         }
     }

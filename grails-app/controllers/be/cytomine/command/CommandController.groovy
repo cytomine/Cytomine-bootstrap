@@ -89,7 +89,7 @@ class CommandController extends RestController {
                 transaction: firstUndoStack.transaction
         ).save(flush: true)
         //save to history stack
-        new CommandHistory(command: firstUndoStack.getCommand(), prefixAction: "UNDO", project: firstUndoStack.getCommand().project, user: firstUndoStack.user, message: firstUndoStack.command.actionMessage).save()
+        new CommandHistory(command: firstUndoStack.getCommand(), prefixAction: "UNDO", project: firstUndoStack.getCommand().project, user: firstUndoStack.user, message: firstUndoStack.command.actionMessage).save(failOnError: true)
         //delete from undo stack
         firstUndoStack.delete(flush: true)
     }
@@ -159,7 +159,7 @@ class CommandController extends RestController {
                 transaction: lastRedoStack.transaction,
         ).save(flush: true)
         //add to history stack
-        new CommandHistory(command: lastRedoStack.getCommand(), prefixAction: "REDO", project: lastRedoStack.getCommand().project,user: lastRedoStack.user,message: lastRedoStack.command.actionMessage).save();
+        new CommandHistory(command: lastRedoStack.getCommand(), prefixAction: "REDO", project: lastRedoStack.getCommand().project,user: lastRedoStack.user,message: lastRedoStack.command.actionMessage).save(failOnError: true);
         //delete the redo item
         lastRedoStack.delete(flush: true)
     }

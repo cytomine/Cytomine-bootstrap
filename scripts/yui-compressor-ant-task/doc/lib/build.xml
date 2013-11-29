@@ -74,7 +74,6 @@
 <fileset dir="${src.dir}" includes="lib/json2.js"/>
 <fileset dir="${src.dir}" includes="lib/strftime-min.js"/>
 <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"/>
-<fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"/>
 <fileset dir="${src.dir}" includes="lib/farbtastic/farbtastic.js"/>
 <fileset dir="${src.dir}" includes="lib/magicsuggest/magicsuggest-1.2.7-min.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
@@ -84,8 +83,6 @@
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
 <fileset dir="${src.dir}" includes="lib/stepy/js/jquery.stepy.min.js"/>
 <fileset dir="${src.dir}" includes="lib/jqhotkeys/jquery.hotkeys.js"/>
-<fileset dir="${src.dir}" includes="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js"/>
-<fileset dir="${src.dir}" includes="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js"/>
 <fileset dir="${src.dir}" includes="lib/DataTables-1.9.0/media/js/jquery.dataTables.js"/>
 </concat>
     </target>

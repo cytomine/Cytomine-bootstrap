@@ -1,6 +1,7 @@
 package be.cytomine
 
 import be.cytomine.security.SecUser
+import grails.converters.JSON
 import groovy.sql.Sql
 import org.springframework.security.acls.model.Permission
 
@@ -142,6 +143,26 @@ abstract class CytomineDomain  implements Comparable{
     boolean canUpdateContent() {
         //by default, we allow a non-admin user to update domain content
         return true
+    }
+
+    String encodeAsJSON() {
+        return (this as JSON).toString()
+    }
+
+    def get(String id) {
+        if(id) {
+            return get(Long.parseLong(id))
+        } else {
+            return null
+        }
+    }
+
+    def read(String id) {
+        if(id) {
+            return read(Long.parseLong(id))
+        } else {
+            return null
+        }
     }
 
 }

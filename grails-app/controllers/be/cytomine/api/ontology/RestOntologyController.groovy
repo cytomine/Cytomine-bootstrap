@@ -21,15 +21,11 @@ class RestOntologyController extends RestController {
      * For each ontology, print the terms tree
      */
     def list = {
-        responseSuccess(ontologyService.list())
-    }
-
-    /**
-     * List all ontology visible for the current user
-     * List only id and name
-     */
-    def listLight = {
-        responseSuccess(ontologyService.listLight())
+        if(params.boolean("light")) {
+            responseSuccess(ontologyService.listLight())
+        } else {
+            responseSuccess(ontologyService.list())
+        }
     }
 
     def show = {

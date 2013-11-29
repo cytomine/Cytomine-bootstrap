@@ -71,6 +71,8 @@ class RestJobController extends RestController {
      */
     def add = {
         try {
+            println "Job Controller"
+            println params
             def result = jobService.add(request.JSON)
             long idJob = result?.data?.job?.id
             jobService.createUserJob(User.read(springSecurityService.principal.id), Job.read(idJob))

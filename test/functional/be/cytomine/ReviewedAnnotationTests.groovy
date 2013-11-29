@@ -61,7 +61,7 @@ class ReviewedAnnotationTests  {
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.term = BasicInstanceBuilder.getTerm().id
         println "json.encodeAsJSON()="+json.encodeAsJSON()
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
@@ -96,7 +96,7 @@ class ReviewedAnnotationTests  {
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.project = null
 
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
@@ -105,7 +105,7 @@ class ReviewedAnnotationTests  {
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.image = null
 
-        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 

@@ -94,12 +94,12 @@ class ProjectAPI extends DomainAPI {
     }
 
     static def listLastOpened(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/lastopened.json"
+        String URL = Infos.CYTOMINEURL + "api/project/method/lastopened.json"
         return doGET(URL, username, password)
     }
 
     static def listLastOpened(int max,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/project/lastopened.json?max=$max"
+        String URL = Infos.CYTOMINEURL + "api/project/method/lastopened.json?max=$max"
         return doGET(URL, username, password)
     }
 

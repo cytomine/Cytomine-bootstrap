@@ -109,9 +109,6 @@ class JSONUtils {
 
     static public List getJSONAttrListLong(def json, String attr) {
         if (json[attr] != null && !json[attr].toString().equals("null")) {
-            println "1:"+json[attr]
-            println "2:"+json[attr].collect{it}
-            println "3:"+json[attr].collect{Long.parseLong(it+"")}
             return json[attr].collect{Long.parseLong(it+"")}
         } else {
             return null
@@ -140,7 +137,11 @@ class JSONUtils {
             if(column.equals('id')) {
                 domainRead = domain.read(Long.parseLong(json[attr].toString()))
             } else {
-                domainRead = domain.findWhere("$column": convertValue(json[attr].toString(), columnType))
+                println json[attr].toString()
+                def value = convertValue(json[attr].toString(), columnType)
+                println "value=$value ${value.class.name}"
+                println "column=$column"
+                domainRead = domain.findWhere(("$column".toString()): value)
             }
             if (!domainRead) {
                 throw new WrongArgumentException("$attr was not found with id:${json[attr]}")
@@ -171,11 +172,19 @@ class JSONUtils {
 
 
     static public def convertValue(String value, String type) {
-        if (type.equals("String")) {
-            return value
+        println "convertValue=$value $type"
+        if(value.equals("null")) {
+            return null
+        }else if (type.equals("String")) {
+            return value.toString()
         } else if (type.equals("Long")) {
             return Long.parseLong(value);
         }
         throw new ServerException("Type $type not supported! See cytominedomain class")
+    }
+
+
+    static public String toJSONString(def data) {
+        return (data as JSON).toString(false)
     }
 }

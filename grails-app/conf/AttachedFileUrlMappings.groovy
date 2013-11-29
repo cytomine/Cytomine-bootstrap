@@ -8,19 +8,19 @@ class AttachedFileUrlMappings {
 
     static mappings = {
 
-        "/api/attachedfile"(controller: "restAttachedFile") {
+        "/api/attachedfile.$format"(controller: "restAttachedFile") {
             action = [GET:"list", POST:"upload",PUT:"upload"]
         }
 
-        "/api/domain/$domainClassName/$domainIdent/attachedfile"(controller: "restAttachedFile") {
+        "/api/domain/$domainClassName/$domainIdent/attachedfile.$format"(controller: "restAttachedFile") {
             action = [GET:"listByDomain"]
         }
 
-        "/api/attachedfile/$id"(controller: "restAttachedFile") {
+        "/api/attachedfile/$id.$format"(controller: "restAttachedFile") {
             action = [GET:"show"]
         }
 
-        "/api/attachedfile/$id/download"(controller: "restAttachedFile") {
+        "/api/attachedfile/$id/download.$format"(controller: "restAttachedFile") {
             action = [GET:"download"]
         }
     }

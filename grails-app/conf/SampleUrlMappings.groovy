@@ -8,10 +8,10 @@ class SampleUrlMappings {
 
     static mappings = {
         /* Sample */
-        "/api/sample"(controller: "restSample"){
+        "/api/sample.$format"(controller: "restSample"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/sample/$id"(controller: "restSample"){
+        "/api/sample/$id.$format"(controller: "restSample"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
     }

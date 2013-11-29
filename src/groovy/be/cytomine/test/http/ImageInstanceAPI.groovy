@@ -45,7 +45,7 @@ class ImageInstanceAPI extends DomainAPI {
     }
 
     static def listLastOpened(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/lastopened.json"
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/method/lastopened.json"
         return doGET(URL, username, password)
     }
 

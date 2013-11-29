@@ -68,7 +68,7 @@ class SoftwareParameterTests  {
           def jsonSoftwareParameter = softwareparameterToEdit.encodeAsJSON()
           def jsonUpdate = JSON.parse(jsonSoftwareParameter)
           jsonUpdate.id = -99
-          jsonSoftwareParameter = jsonUpdate.encodeAsJSON()
+          jsonSoftwareParameter = jsonUpdate.toString()
           def result = SoftwareParameterAPI.update(-99, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 404 == result.code
       }
@@ -79,7 +79,7 @@ class SoftwareParameterTests  {
           def jsonSoftwareParameter = softwareparameterToEdit.encodeAsJSON()
           def jsonUpdate = JSON.parse(jsonSoftwareParameter)
           jsonUpdate.software = -99
-          jsonSoftwareParameter = jsonUpdate.encodeAsJSON()
+          jsonSoftwareParameter = jsonUpdate.toString()
           def result = SoftwareParameterAPI.update(softwareparameterToAdd.id, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 400 == result.code
       }

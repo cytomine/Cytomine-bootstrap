@@ -73,6 +73,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
      * @throws CytomineException Error during properties copy (wrong argument,...)
      */
     static AbstractImage insertDataIntoDomain(def json,def domain = new AbstractImage()) throws CytomineException {
+        println "insertDataIntoDomain="+json
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
         domain.path = JSONUtils.getJSONAttrStr(json,'path')

@@ -7,16 +7,16 @@
 class UserPositionUrlMappings {
 
     static mappings = {
-        "/api/imageinstance/$id/position" (controller : "restUserPosition") {
+        "/api/imageinstance/$id/position.$format" (controller : "restUserPosition") {
              action = [POST:"add"]
          }
-         "/api/imageinstance/$id/position/$user" (controller : "restUserPosition") {
+         "/api/imageinstance/$id/position/$user.$format" (controller : "restUserPosition") {
              action = [GET:"lastPositionByUser"]
          }
-         "/api/imageinstance/$id/online"(controller: "restUserPosition"){
+         "/api/imageinstance/$id/online.$format"(controller: "restUserPosition"){
              action = [GET:"listOnlineUsersByImage"]
          }
-         "/api/project/$id/online"(controller:"restUserPosition") {
+         "/api/project/$id/online.$format"(controller:"restUserPosition") {
              action = [GET : "listLastUserPositionsByProject"]
          }
 

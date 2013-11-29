@@ -7,10 +7,10 @@
 class DisciplineUrlMappings {
 
     static mappings = {
-        "/api/discipline"(controller:"restDiscipline"){
+        "/api/discipline.$format"(controller:"restDiscipline"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/discipline/$id"(controller:"restDiscipline"){
+        "/api/discipline/$id.$format"(controller:"restDiscipline"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
     }

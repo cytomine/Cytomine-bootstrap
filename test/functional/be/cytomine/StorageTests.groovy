@@ -96,7 +96,7 @@ public class StorageTests {
         def jsonUpdate = JSON.parse(jsonStorage)
         jsonUpdate.name = storageWithOldName.name
         jsonUpdate.id = -99
-        jsonStorage = jsonUpdate.encodeAsJSON()
+        jsonStorage = jsonUpdate.toString()
         def result = StorageAPI.update(-99, jsonStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }

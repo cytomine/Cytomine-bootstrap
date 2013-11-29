@@ -21,13 +21,13 @@ var JobModel = Backbone.Model.extend({
         this.max = options.max;
     },
     executeUrl : function() {
-        return "/api/job/" + this.id + "/execute";
+        return "/api/job/" + this.id + "/execute.json";
     },
     previewUrl : function() {
-        return "/api/job/" + this.id + "/preview";
+        return "/api/job/" + this.id + "/preview.json";
     },
     previewRoiUrl : function() {
-        return "/api/job/" + this.id + "/preview_roi";
+        return "/api/job/" + this.id + "/preview_roi.json";
     },
     //to do : put theses methods into JOB MARSHALLER
     isNotLaunch: function () {

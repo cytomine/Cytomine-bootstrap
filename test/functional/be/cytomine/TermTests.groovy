@@ -5,6 +5,7 @@ import be.cytomine.ontology.Term
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.TermAPI
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -102,13 +103,20 @@ class TermTests  {
         def terms = []
         terms << JSON.parse(termToAdd1.encodeAsJSON())
         terms << JSON.parse(termToAdd2.encodeAsJSON())
-        def result = TermAPI.create(terms.encodeAsJSON() , Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.create(JSONUtils.toJSONString(terms) , Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }    
 
     void testAddTermAlreadyExist() {
        def termToAdd = BasicInstanceBuilder.getTerm()
-       def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        println "termToAdd="+termToAdd
+        println "termToAdd.o="+termToAdd.ontology
+        def data = (termToAdd as JSON).toString()
+        println data
+        println data.class
+       def result = TermAPI.create((termToAdd as JSON).toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+
        assert 409 == result.code
    }
  
@@ -145,10 +153,10 @@ class TermTests  {
        def jsonUpdate = JSON.parse(jsonTerm)
        jsonUpdate.name = termWithOldName.name
        jsonUpdate.id = -99
-       jsonTerm = jsonUpdate.encodeAsJSON()
+       jsonTerm = jsonUpdate.toString()
        def result = TermAPI.update(-99, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 404 == result.code
-   }
+    }
  
    void testUpdateTermWithNameAlreadyExist() {
        Term termWithOldName = BasicInstanceBuilder.getTerm()
@@ -159,7 +167,7 @@ class TermTests  {
        def jsonTerm = termToEdit.encodeAsJSON()
        def jsonUpdate = JSON.parse(jsonTerm)
        jsonUpdate.name = termWithOldName.name
-       jsonTerm = jsonUpdate.encodeAsJSON()
+       jsonTerm = jsonUpdate.toString()
        def result = TermAPI.update(termToEdit.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
        assert 409 == result.code
    }
@@ -170,7 +178,7 @@ class TermTests  {
          def jsonTerm = termToEdit.encodeAsJSON()
          def jsonUpdate = JSON.parse(jsonTerm)
          jsonUpdate.name = null
-         jsonTerm = jsonUpdate.encodeAsJSON()
+         jsonTerm = jsonUpdate.toString()
          def result = TermAPI.update(termToAdd.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
          assert 400 == result.code
      }

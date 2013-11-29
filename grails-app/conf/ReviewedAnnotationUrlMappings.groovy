@@ -10,35 +10,35 @@ class ReviewedAnnotationUrlMappings {
         /**
          * Reviewed annotation
          */
-        "/api/reviewedannotation"(controller: "restReviewedAnnotation"){
+        "/api/reviewedannotation.$format"(controller: "restReviewedAnnotation"){
             action = [GET: "list",POST:"add"]
          }
-        "/api/reviewedannotation/$id"(controller:"restReviewedAnnotation"){
+        "/api/reviewedannotation/$id.$format"(controller:"restReviewedAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
-        "/api/user/$iduser/reviewedannotation"(controller: "restReviewedAnnotation"){
+        "/api/user/$iduser/reviewedannotation.$format"(controller: "restReviewedAnnotation"){
             action = [POST:"add"]
          }
 
-        "/api/annotation/$id/review"(controller: "restReviewedAnnotation"){
+        "/api/annotation/$id/review.$format"(controller: "restReviewedAnnotation"){
             action = [POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }
 
-//        "/api/annotation/$id/review/fill"(controller: "restReviewedAnnotation"){
+//        "/api/annotation/$id/review/fill.$format"(controller: "restReviewedAnnotation"){
 //            action = [PUT:"fillAnnotationReview"]
 //         }
 
-        "/api/imageinstance/$id/review"(controller: "restReviewedAnnotation"){
+        "/api/imageinstance/$id/review.$format"(controller: "restReviewedAnnotation"){
             action = [POST:"startImageInstanceReview",PUT:"startImageInstanceReview",DELETE: "stopImageInstanceReview"]
          }
 
-        "/api/imageinstance/$image/annotation/review"(controller: "restReviewedAnnotation"){
+        "/api/imageinstance/$image/annotation/review.$format"(controller: "restReviewedAnnotation"){
             action = [POST:"reviewLayer",PUT:"reviewLayer",DELETE: "unReviewLayer"]
          }
 
 
-        "/api/imageinstance/$image/reviewedannotation/stats"(controller: "restReviewedAnnotation"){
+        "/api/imageinstance/$image/reviewedannotation/stats.$format"(controller: "restReviewedAnnotation"){
             action = [GET:"stats"]
          }
 

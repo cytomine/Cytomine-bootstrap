@@ -48,7 +48,7 @@ var UserDashboardView = Backbone.View.extend({
         var self = this;
         var elem = $(self.el).find("#userDashboardLastProject");
         console.log("initLastOpenProject");
-        $.get("/api/project/lastopened?max=5", function(data) {
+        $.get("/api/project/method/lastopened.json?max=5", function(data) {
             var collection = data.collection;
             elem.empty();
             elem.append('<div class="col-md-2 col-sm-2 stat well stat-first"><div class="data"><span class="number"></span>Last opened&nbsp;&nbsp;<br />Projects »</div><span class="date"></span></div>');
@@ -88,11 +88,11 @@ var UserDashboardView = Backbone.View.extend({
 
         }
 
-        $.get("/api/user/"+window.app.status.user.id+"/userannotation/count", function(data) {
+        $.get("/api/user/"+window.app.status.user.id+"/userannotation/count.json", function(data) {
             self.nbreAnnotation = data.total;
             allGetLoaded();
         });
-        $.get("/api/user/"+window.app.status.user.id+"/reviewedannotation/count", function(data) {
+        $.get("/api/user/"+window.app.status.user.id+"/reviewedannotation/count.json", function(data) {
             self.nbreReviewedAnnotation = data.total;
             allGetLoaded();
         });
@@ -102,7 +102,7 @@ var UserDashboardView = Backbone.View.extend({
     initLastAction : function() {
         var self = this;
         var elem =  $(self.el).find("#userdashboardLastAction");
-        $.get("api/commandhistory?user="+window.app.status.user.id+"&max=100&offset=0", function(data) {
+        $.get("api/commandhistory.json?user="+window.app.status.user.id+"&max=100&offset=0", function(data) {
             var collection = data;
             var chartData = [
                 {
@@ -194,7 +194,7 @@ var UserDashboardView = Backbone.View.extend({
         var elem =  $(self.el).find("#userdashboardLastNews");
 
 
-        $.get("api/news?max=10", function(data) {
+        $.get("api/news.json?max=10", function(data) {
             elem.find(".alert-info").replaceWith("");
             var collection = data.collection;
             _.each(collection,function(item) {
@@ -260,7 +260,7 @@ var UserDashboardView = Backbone.View.extend({
     initLastOpenedImage : function(tpl) {
         var self = this;
         var elem = $(self.el).find("#lastOpenImage");
-        $.get("/api/imageinstance/lastopened?max=5", function(data) {
+        $.get("/api/imageinstance/method/lastopened.json?max=5", function(data) {
             elem.empty();
             elem.append('<div class="col-md-2 col-sm-2 stat well stat-first"><div class="data"><span class="number"></span>Last opened&nbsp;&nbsp;<br />Images »</div><span class="date"></span></div>');
             _.each (data.   collection, function (item){

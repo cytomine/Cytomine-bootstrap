@@ -9,19 +9,19 @@ class StorageUrlMappings {
 
     static mappings = {
         /* Storage */
-        "/api/storage"(controller: "restStorage"){
+        "/api/storage.$format"(controller: "restStorage"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/storage/$id"(controller: "restStorage"){
+        "/api/storage/$id.$format"(controller: "restStorage"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/storage/create/$user"(controller : "restStorage") {
+        "/api/storage/create/$user.$format"(controller : "restStorage") {
             action = [POST:"create"]
         }
 
 
 
-        "/api/imageserver"(controller : "restStorage") {
+        "/api/imageserver.$format"(controller : "restStorage") {
             action = [GET:"listByMime"]
         }
     }

@@ -3,6 +3,7 @@ import be.cytomine.web.CytomineMultipartHttpServletRequest
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper
 
+
 // Place your Spring DSL code here
 beans = {
     'apiAuthentificationFilter'(cytomine.web.APIAuthentificationFilters) {
@@ -61,5 +62,6 @@ beans = {
         ldapUserDetailsService=ref('ldapUserDetailsService')
         grailsApplication = ref('grailsApplication')
     }
+
 
 }

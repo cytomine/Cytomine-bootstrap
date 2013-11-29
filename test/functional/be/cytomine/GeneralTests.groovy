@@ -4,6 +4,7 @@ import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
 import be.cytomine.command.RedoStackItem
 import be.cytomine.command.UndoStackItem
+import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
@@ -11,6 +12,7 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.News
 import be.cytomine.utils.database.ArchiveCommandService
 import grails.converters.JSON
@@ -206,7 +208,7 @@ class GeneralTests  {
          Command.list().each {
              UndoStackItem.findAllByCommand(it).each {it.delete()}
              RedoStackItem.findAllByCommand(it).each {it.delete()}
-             it.delete()
+             it.delete(flush: true)
          }
 
          def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
@@ -257,6 +259,24 @@ class GeneralTests  {
          assert ids.contains(content1[1].split(";")[0])
          assert ids.contains(content1[2].split(";")[0])
      }
+
+    void testCharEncoding() {
+        String name = "A PROJECT ./ SPECIAL CHAR"
+        Project project = BasicInstanceBuilder.getProjectNotExist(false)
+        project.name = name
+
+        assert JSON.parse(project.encodeAsJSON()).name == name
+
+        String URL = Infos.CYTOMINEURL + "api/project.json"
+        def result = ProjectAPI.doPOST(URL,project.encodeAsJSON(),Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert JSON.parse(result.data).project.name == name
+
+        result = ProjectAPI.show(JSON.parse(result.data).project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert JSON.parse(result.data).name == name
+
+    }
 
 
 

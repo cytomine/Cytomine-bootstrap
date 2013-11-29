@@ -166,8 +166,8 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
     String toString() {return "Annotation " + id}
 
     def getFilename() {
-        return this.image?.baseImage?.getFilename()
-    }
+          return this.image?.baseImage?.getFilename()
+      }
 
     def retrieveAreaUnit() {
         GisUtils.retrieveUnit(areaUnit)
@@ -217,24 +217,24 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         return response
     }
 
-    def getBoundaries() {
-        //get num points
-        if (location.getNumPoints()>3) {
-            Envelope env = location.getEnvelopeInternal();
-            Integer maxY = env.getMaxY();
-            Integer minX = env.getMinX();
-            Integer width = env.getWidth();
-            Integer height = env.getHeight();
-            return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
-        } else if (location.getNumPoints() == 1) {
-            Envelope env = location.getEnvelopeInternal();
-            Integer maxY = env.getMaxY()-5;
-            Integer minX = env.getMinX()-5;
-            Integer width = 10;
-            Integer height = 10;
-            return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
-        }
-
+   def getBoundaries() {
+       //get num points
+       if (location.getNumPoints()>3) {
+         Envelope env = location.getEnvelopeInternal();
+         Integer maxY = env.getMaxY();
+         Integer minX = env.getMinX();
+         Integer width = env.getWidth();
+         Integer height = env.getHeight();
+         println ""+[topLeftX: minX, topLeftY: maxY, width: width, height: height]
+         return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
+       } else if (location.getNumPoints() == 1) {
+           Envelope env = location.getEnvelopeInternal();
+           Integer maxY = env.getMaxY()-50;
+           Integer minX = env.getMinX()-50;
+           Integer width = 100;
+           Integer height = 100;
+           return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
+       }
     }
 
     def toCropURL() {

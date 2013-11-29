@@ -20,9 +20,9 @@ var ImageModel = Backbone.Model.extend({
 var ImageReviewModel = Backbone.Model.extend({
     url: function () {
         if (this.cancel != undefined) {
-            return "/api/imageinstance/" + this.id + "/review?cancel=" + this.cancel;
+            return "/api/imageinstance/" + this.id + "/review.json?cancel=" + this.cancel;
         } else {
-            return "/api/imageinstance/" + this.id + "/review";
+            return "/api/imageinstance/" + this.id + "/review.json";
         }
     },
     initialize: function (options) {
@@ -144,9 +144,9 @@ var ImageInstanceCollection = PaginatedCollection.extend({
 var UserPositionModel = Backbone.Model.extend({
     url: function () {
         if (this.user == undefined) {
-            return 'api/imageinstance/' + this.image + '/position';
+            return 'api/imageinstance/' + this.image + '/position.json';
         } else {
-            return 'api/imageinstance/' + this.image + '/position/' + this.user;
+            return 'api/imageinstance/' + this.image + '/position/' + this.user + ".json";
         }
     },
     initialize: function (options) {
@@ -157,7 +157,7 @@ var UserPositionModel = Backbone.Model.extend({
 
 var UserOnlineModel = Backbone.Model.extend({
     url: function () {
-        return 'api/imageinstance/' + this.image + '/online';
+        return 'api/imageinstance/' + this.image + '/online.json';
     },
     initialize: function (options) {
         this.image = options.image;

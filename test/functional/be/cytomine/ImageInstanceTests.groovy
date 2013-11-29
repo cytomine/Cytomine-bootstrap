@@ -121,8 +121,8 @@ class ImageInstanceTests  {
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.baseImage = -99
-        jsonImage = updateImage.encodeAsJSON()
-        def result = ImageInstanceAPI.create(jsonImage.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        jsonImage = updateImage.toString()
+        def result = ImageInstanceAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -131,7 +131,7 @@ class ImageInstanceTests  {
         String jsonImage = imageToAdd.encodeAsJSON()
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
-        jsonImage = updateImage.encodeAsJSON()
+        jsonImage = updateImage.toString()
         def result = ImageInstanceAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
@@ -171,7 +171,7 @@ class ImageInstanceTests  {
         ImageInstance imageToEdit = BasicInstanceBuilder.getImageInstance()
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
@@ -180,7 +180,7 @@ class ImageInstanceTests  {
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.user = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -189,7 +189,7 @@ class ImageInstanceTests  {
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.baseImage = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
 
     }

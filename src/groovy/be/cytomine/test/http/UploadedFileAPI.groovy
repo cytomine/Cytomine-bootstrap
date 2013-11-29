@@ -40,7 +40,7 @@ class UploadedFileAPI extends DomainAPI {
     }
 
     static def createImage(def uploadedFile,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/uploadedfile/$uploadedFile/image"
+        String URL = Infos.CYTOMINEURL + "/api/uploadedfile/$uploadedFile/image.jpg"
         return doPOST(URL, "",username, password)
     }
 

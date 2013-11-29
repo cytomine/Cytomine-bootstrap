@@ -8,15 +8,15 @@ class TaskUrlMappings {
 
     static mappings = {
         /* Task */
-        "/api/task"(controller:"restTask"){
+        "/api/task.$format"(controller:"restTask"){
             action = [POST:"add"]
         }
 
-        "/api/task/$id"(controller:"restTask"){
+        "/api/task/$id.$format"(controller:"restTask"){
             action = [GET:"show"]
         }
 
-        "/api/project/$idProject/task/comment"(controller:"restTask"){
+        "/api/project/$idProject/task/comment.$format"(controller:"restTask"){
             action = [GET:"listCommentByProject"]
         }
     }

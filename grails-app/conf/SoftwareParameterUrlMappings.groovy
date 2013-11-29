@@ -2,13 +2,13 @@ class SoftwareParameterUrlMappings {
 
     static mappings = {
         /* Software */
-        "/api/softwareparameter"(controller:"restSoftwareParameter"){
+        "/api/softwareparameter.$format"(controller:"restSoftwareParameter"){
             action = [GET: "list",POST:"add"]
         }
-        "/api/softwareparameter/$id"(controller:"restSoftwareParameter"){
+        "/api/softwareparameter/$id.$format"(controller:"restSoftwareParameter"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/software/$id/parameter"(controller:"restSoftwareParameter"){
+        "/api/software/$id/parameter.$format"(controller:"restSoftwareParameter"){
             action = [GET: "listBySoftware"]
         }
     }

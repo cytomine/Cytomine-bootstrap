@@ -105,7 +105,7 @@ class OntologyTests  {
         def jsonUpdate = JSON.parse(jsonOntology)
         jsonUpdate.name = ontologyWithOldName.name
         jsonUpdate.id = -99
-        jsonOntology = jsonUpdate.encodeAsJSON()
+        jsonOntology = jsonUpdate.toString()
         def result = OntologyAPI.update(-99, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
@@ -118,7 +118,7 @@ class OntologyTests  {
         def jsonOntology = ontologyToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonOntology)
         jsonUpdate.name = ontologyWithOldName.name
-        jsonOntology = jsonUpdate.encodeAsJSON()
+        jsonOntology = jsonUpdate.toString()
         def result = OntologyAPI.update(ontologyToEdit.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
@@ -129,7 +129,7 @@ class OntologyTests  {
           def jsonOntology = ontologyToEdit.encodeAsJSON()
           def jsonUpdate = JSON.parse(jsonOntology)
           jsonUpdate.name = null
-          jsonOntology = jsonUpdate.encodeAsJSON()
+          jsonOntology = jsonUpdate.toString()
           def result = OntologyAPI.update(ontologyToAdd.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
           assert 400 == result.code
       }

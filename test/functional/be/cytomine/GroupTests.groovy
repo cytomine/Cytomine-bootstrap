@@ -69,7 +69,7 @@ class GroupTests  {
       def jsonUpdate = JSON.parse(jsonGroup)
       jsonUpdate.name = groupWithOldName.name
       jsonUpdate.id = -99
-      jsonGroup = jsonUpdate.encodeAsJSON()
+      jsonGroup = jsonUpdate.toString()
       def result = GroupAPI.update(-99, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
@@ -82,7 +82,7 @@ class GroupTests  {
       def jsonGroup = groupToEdit.encodeAsJSON()
       def jsonUpdate = JSON.parse(jsonGroup)
       jsonUpdate.name = groupWithOldName.name
-      jsonGroup = jsonUpdate.encodeAsJSON()
+      jsonGroup = jsonUpdate.toString()
       def result = GroupAPI.update(groupToEdit.id, jsonGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }

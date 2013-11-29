@@ -6,7 +6,6 @@ var AnnotationThumbView = Backbone.View.extend({
 
     initialize: function (options) {
         this.term = options.term;
-        console.log(options);
         if(options.reviewMode!=undefined) {
             this.reviewMode = options.reviewMode;
         }
@@ -30,7 +29,7 @@ var AnnotationThumbView = Backbone.View.extend({
             }
 
             var colorStyle = undefined;
-            console.log("*****" + self.reviewMode);
+
             if(self.reviewMode) {
                 if(annotation.get('reviewed')) {
                     colorStyle = "#3fb618";

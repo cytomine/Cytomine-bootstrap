@@ -8,13 +8,13 @@ class GroupUrlMappings {
 
     static mappings = {
         /* Group */
-        "/api/group"(controller: "restGroup"){
+        "/api/group.$format"(controller: "restGroup"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/group/$id"(controller: "restGroup"){
+        "/api/group/$id.$format"(controller: "restGroup"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/image/$idabstractimage/group"(controller:"restGroup"){
+        "/api/image/$idabstractimage/group.$format"(controller:"restGroup"){
             action = [GET: "listGroupByAbstractImage"]
         }
 

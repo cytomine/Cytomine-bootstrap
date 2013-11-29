@@ -1,6 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -77,5 +78,12 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         if (secUser) builder.append(secUser.id)
         if (secRole) builder.append(secRole.id)
         builder.toHashCode()
+    }
+
+    void checkAlreadyExist() {
+        SecUserSecRole.withNewSession {
+            SecUserSecRole roleAlready = SecUserSecRole.findBySecUserAndSecRole(secUser,secRole)
+            if(roleAlready && (roleAlready.id!=id))  throw new AlreadyExistException("Role ${secRole} already exist set for user ${secUser}!")
+        }
     }
 }

@@ -98,7 +98,7 @@ class SampleTests  {
       def jsonUpdate = JSON.parse(jsonSample)
       jsonUpdate.name = sampleWithOldName.name
       jsonUpdate.id = -99
-      jsonSample = jsonUpdate.encodeAsJSON()
+      jsonSample = jsonUpdate.toString()
       def result = SampleAPI.update(-99, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
@@ -111,7 +111,7 @@ class SampleTests  {
       def jsonSample = sampleToEdit.encodeAsJSON()
       def jsonUpdate = JSON.parse(jsonSample)
       jsonUpdate.name = sampleWithOldName.name
-      jsonSample = jsonUpdate.encodeAsJSON()
+      jsonSample = jsonUpdate.toString()
       def result = SampleAPI.update(sampleToEdit.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }
@@ -122,7 +122,7 @@ class SampleTests  {
         def jsonSample = sampleToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonSample)
         jsonUpdate.name = null
-        jsonSample = jsonUpdate.encodeAsJSON()
+        jsonSample = jsonUpdate.toString()
         def result = SampleAPI.update(sampleToAdd.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }

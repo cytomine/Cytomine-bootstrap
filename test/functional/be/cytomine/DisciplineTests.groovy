@@ -98,7 +98,7 @@ class DisciplineTests  {
       def jsonUpdate = JSON.parse(jsonDiscipline)
       jsonUpdate.name = disciplineWithOldName.name
       jsonUpdate.id = -99
-      jsonDiscipline = jsonUpdate.encodeAsJSON()
+      jsonDiscipline = jsonUpdate.toString()
       def result = DisciplineAPI.update(-99, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 404 == result.code
   }
@@ -111,7 +111,7 @@ class DisciplineTests  {
       def jsonDiscipline = disciplineToEdit.encodeAsJSON()
       def jsonUpdate = JSON.parse(jsonDiscipline)
       jsonUpdate.name = disciplineWithOldName.name
-      jsonDiscipline = jsonUpdate.encodeAsJSON()
+      jsonDiscipline = jsonUpdate.toString()
       def result = DisciplineAPI.update(disciplineToEdit.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 409 == result.code
   }
@@ -122,7 +122,7 @@ class DisciplineTests  {
         def jsonDiscipline = disciplineToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonDiscipline)
         jsonUpdate.name = null
-        jsonDiscipline = jsonUpdate.encodeAsJSON()
+        jsonDiscipline = jsonUpdate.toString()
         def result = DisciplineAPI.update(disciplineToAdd.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }

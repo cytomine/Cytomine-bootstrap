@@ -341,18 +341,62 @@ var BrowseImageView = Backbone.View.extend({
      * Callback used by AnnotationLayer at the end of theirs initializations
      * @param layer
      */
+//    layerLoadedCallback: function (layer) {
+//        var self = this;
+//        this.layersLoaded++;
+//
+//        if (self.review == false && this.layersLoaded == (window.app.models.userLayer.length + 1)) { //+1 for review layer in browse mode
+//
+//            //Init Controls on Layers
+//            var vectorLayers = _.map(this.layers, function (layer) {
+//                return layer.vectorsLayer;
+//            });
+//            var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
+//            _.each(this.layers, function (layer) {
+//                layer.initControls(self, selectFeature);
+//                layer.registerEvents(self.map);
+//                if (layer.isOwner) {
+//                    self.userLayer = layer;
+//                    layer.vectorsLayer.setVisibility(true);
+//                    layer.toggleIrregular();
+//                    //Simulate click on None toolbar
+//                    var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
+//                    toolbar.find('input[id=none' + self.model.get('id') + ']').click();
+//                } else {
+//                    //layer.toggleIrregular();
+//                    layer.controls.select.activate();
+//                    layer.vectorsLayer.setVisibility(false);
+//                }
+//            });
+//
+//            if (_.isFunction(self.initCallback)) {
+//                self.initCallback.call();
+//            }
+//
+//            self.initAutoAnnoteTools();
+//
+//        }  else {
+////            if (_.isFunction(self.initCallback)) {
+////                self.initCallback.call();
+////            }
+//        }
+//    },
+
     layerLoadedCallback: function (layer) {
         var self = this;
-        this.layersLoaded++;
-
-        if (self.review == false && this.layersLoaded == (window.app.models.userLayer.length + 1)) { //+1 for review layer in browse mode
-
+        console.log("BrowseImageView.layerLoadedCallback");
+        if (self.review == false) { //+1 for review layer in browse mode
+            console.log("BrowseImageView.not reviewed");
+            console.log(this.layers);
+            console.log(this.layers[0].name);
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
                 return layer.vectorsLayer;
             });
+            console.log(vectorLayers);
             var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
             _.each(this.layers, function (layer) {
+                console.log("ADD EVENTS");
                 layer.initControls(self, selectFeature);
                 layer.registerEvents(self.map);
                 if (layer.isOwner) {
@@ -360,14 +404,16 @@ var BrowseImageView = Backbone.View.extend({
                     layer.vectorsLayer.setVisibility(true);
                     layer.toggleIrregular();
                     //Simulate click on None toolbar
-                    var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
-                    toolbar.find('input[id=none' + self.model.get('id') + ']').click();
                 } else {
                     //layer.toggleIrregular();
                     layer.controls.select.activate();
                     layer.vectorsLayer.setVisibility(false);
                 }
             });
+            var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
+            toolbar.find('#select' + self.model.get('id')).click();
+
+            console.log($("#" + self.divId).find('#toolbar' + self.model.get('id')).find('#select' + self.model.get('id')));
 
             if (_.isFunction(self.initCallback)) {
                 self.initCallback.call();
@@ -436,17 +482,20 @@ var BrowseImageView = Backbone.View.extend({
      */
     reviewLayer: null,
     addVectorLayer: function (layer, userID) {
-
+        console.log("BrowseImageView.addVectorLayer layer="+layer);
+        console.log("BrowseImageView.addVectorLayer userID="+userID);
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
 
         if (userID == 0) {
             this.reviewLayer = layer;
         }
-
+        console.log("this.layer ADD layer");
+        console.log(layer.name);
         this.layers.push(layer);
 
         if (!this.review) {
+            console.log("browseImageView.addVectorLayer model="+this.model);
             this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
         } else {
             this.reviewPanel.addVectorLayer(layer, this.model, userID);
@@ -1178,27 +1227,35 @@ var BrowseImageView = Backbone.View.extend({
     initVectorLayers: function (ontologyTreeView) {
         var self = this;
         if (!self.review) {
-            var project = window.app.status.currentProjectModel;
+//            var project = window.app.status.currentProjectModel;
+//            var projectUsers = window.app.models.projectUser.select(function (user) {
+//                return window.app.models.userLayer.get(user.id) != undefined;
+//            });
+//            _.each(projectUsers, function (user) {
+//                var layerAnnotation = new AnnotationLayer(user,user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map, self.review);
+//                layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+//                layerAnnotation.loadAnnotations(self);
+//            });
+//            //init review layer in explore mode
+//            var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
+//            layerAnnotation.isOwner = false;
+//            layerAnnotation.loadAnnotations(self);
+//            self.layerSwitcherPanel.initLayerSelection();
             var projectUsers = window.app.models.projectUser.select(function (user) {
                 return window.app.models.userLayer.get(user.id) != undefined;
             });
             _.each(projectUsers, function (user) {
-                var layerAnnotation = new AnnotationLayer(user,user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), ontologyTreeView, self, self.map, self.review);
-                layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-                layerAnnotation.loadAnnotations(self);
+                self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
             });
-            //init review layer in explore mode
-            var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
-            layerAnnotation.isOwner = false;
-            layerAnnotation.loadAnnotations(self);
-            self.layerSwitcherPanel.initLayerSelection();
-        } else {
+            console.log("### self.layerSwitcherPanel.allVectorLayers="+self.layerSwitcherPanel.allVectorLayers.length);
 
+            self.layerSwitcherPanel.initLayerSelection();
+
+        } else {
             self.reviewPanel.addReviewLayerToReview();
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
             self.reviewPanel.removeLayerFromReview(window.app.status.user.id);
             self.reviewPanel.addLayerToReview(window.app.status.user.id);
-
         }
 
     },

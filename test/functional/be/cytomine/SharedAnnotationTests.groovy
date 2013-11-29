@@ -42,7 +42,7 @@ class SharedAnnotationTests  {
         json.subject = "subject for test mail"
         json.message = "message for test mail"
         json.users = [User.findByUsername('rmaree').id]
-        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 }

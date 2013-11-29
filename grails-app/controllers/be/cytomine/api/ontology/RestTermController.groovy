@@ -4,11 +4,16 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
+import be.cytomine.security.User
 import grails.converters.JSON
-
+import com.imon.apidocs.annotations.Api
+import com.imon.apidocs.annotations.ApiOperation
 /**
  * Controller for term request (word in ontology)
  */
+
+//@Produces({"application/json"})
+@Api(module="companyModule", description="Deals with company resource", href = "https://sites.google.com/home")
 class RestTermController extends RestController {
 
     def termService
@@ -16,6 +21,8 @@ class RestTermController extends RestController {
     /**
      * List all term available
      */
+//    @GET
+//    @ApiOperation(value = "List all term available")
     def list = {
         responseSuccess(termService.list())
     }
@@ -23,14 +30,66 @@ class RestTermController extends RestController {
     /**
      * Get a single term
      */
-    def show = {
+//    @GET
+//    @Path("/{id}")
+//    @ApiOperation(value = "Retrieve a specific term")
+//    def show = {
+//        Term term = termService.read(params.long('id'))
+//        if (term) {
+//            responseSuccess(term)
+//        } else {
+//            responseNotFound("Term", params.id)
+//        }
+//    }
+
+//    @GET
+//    @Path("/{id}")
+//    @ApiOperation(value = "Logs out current logged in user session")
+//    public def retrieve(@ApiParam(value = "List of user object", required = true) String id) {
+//        println "show:" + params
+//        return null
+//    }
+//    @GET
+//    @Path("/{id}")
+//    @ApiOperation(value = "Logs out current logged in user session")
+//    public def retrieve() {
+//        println "show:" + params
+//        return null
+//    }
+
+//    @POST
+//    @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
+//    public Response createUser(
+//            @ApiParam(value = "Created user object", required = true) User user) {
+//
+//        return Response.ok().entity("").build();
+//    }
+      def show() {
         Term term = termService.read(params.long('id'))
         if (term) {
             responseSuccess(term)
         } else {
             responseNotFound("Term", params.id)
         }
-    }
+      }
+
+//    @POST
+//    @Path("/createWithList")
+//    @ApiOperation(value = "Creates list of users with given input array")
+//    public Response createUsersWithListInput(@ApiParam(value = "List of user object", required = true) java.util.List<User> users) {
+//        for (User user : users) {
+//            userData.addUser(user);
+//        }
+//        return Response.ok().entity("").build();
+//    }
+
+//
+//    @GET
+//    @Path("/logout")
+//    @ApiOperation(value = "Logs out current logged in user session")
+//    public Response logoutUser() {
+//        return Response.ok().entity("").build();
+//    }
 
     /**
      * Get all term in the ontology

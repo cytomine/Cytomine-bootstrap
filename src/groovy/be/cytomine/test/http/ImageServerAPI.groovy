@@ -79,7 +79,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def imageServers(Long idImage, Long idImageInstance, Boolean merge, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/$idImage/imageservers?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true":"" )
+        String URL = Infos.CYTOMINEURL + "api/image/$idImage/imageservers.json?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true":"" )
         return doGET(URL,username,password)
     }
 
@@ -94,27 +94,27 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def maskUserAnnotation(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask-$idTerm"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask-${idTerm}.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def maskUserAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask-$idTerm"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask-${idTerm}.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def maskAlgoAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask-$idTerm"
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask-${idTerm}.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def maskReviewedAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask-$idTerm"
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask-${idTerm}.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def lisImageServerByMime(String ext, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageserver?ext=$ext"
+        String URL = Infos.CYTOMINEURL + "api/imageserver.jpg?ext=$ext"
         return doGET(URL,username,password)
     }
 

@@ -8,10 +8,10 @@ class RelationUrlMappings {
 
     static mappings = {
         /* Relation (term)*/
-        "/api/relation"(controller: "restRelation"){
+        "/api/relation.$format"(controller: "restRelation"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/relation/$id"(controller: "restRelation"){
+        "/api/relation/$id.$format"(controller: "restRelation"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
     }

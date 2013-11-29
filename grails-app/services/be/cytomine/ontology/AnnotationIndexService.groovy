@@ -26,8 +26,6 @@ class AnnotationIndexService {
      * If user is null, return the number of reviewed annotation for this image
      */
     def count(ImageInstance image, SecUser user) {
-        println "count"
-        println "image"
         String request
         if (user) {
             request = "SELECT count_annotation  \n" +

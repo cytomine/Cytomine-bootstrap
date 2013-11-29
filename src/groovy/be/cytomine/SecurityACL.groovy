@@ -122,7 +122,7 @@ class SecurityACL {
         else {
             return Storage.executeQuery(
                     "select distinct storage "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Storage as storage "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid,  Storage as storage "+
                     "where aclObjectId.objectId = storage.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
@@ -135,7 +135,7 @@ class SecurityACL {
         else {
             return Ontology.executeQuery(
                     "select distinct ontology "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Ontology as ontology "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Ontology as ontology "+
                     "where aclObjectId.objectId = ontology.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
@@ -150,7 +150,7 @@ class SecurityACL {
         else {
             return Project.executeQuery(
                     "select distinct project "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Project as project "+
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
@@ -165,7 +165,7 @@ class SecurityACL {
         else {
             return Project.executeQuery(
                     "select distinct project "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Project as project "+
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     (ontology? "and project.ontology.id = ${ontology.id} " : " ") +
@@ -181,7 +181,7 @@ class SecurityACL {
         else {
             return Project.executeQuery(
                     "select distinct project "+
-                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser, Project as project, SoftwareProject as softwareProject "+
+                    "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Project as project, SoftwareProject as softwareProject "+
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     (software? " and project.id = softwareProject.project.id and softwareProject.software.id = ${software.id} " : " ") +

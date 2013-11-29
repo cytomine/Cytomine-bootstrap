@@ -10,6 +10,7 @@ import be.cytomine.test.http.AlgoAnnotationAPI
 import be.cytomine.test.http.UserAnnotationAPI
 
 import be.cytomine.test.http.DomainAPI
+import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -86,7 +87,7 @@ class UserAnnotationTests  {
         def annotations = []
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
-        def result = UserAnnotationAPI.create(annotations.encodeAsJSON() , Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(JSONUtils.toJSONString(annotations), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
@@ -94,7 +95,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
-        def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
 
@@ -106,7 +107,7 @@ class UserAnnotationTests  {
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
         annotationWithTerm.term = [idTerm1, idTerm2]
 
-        def result = UserAnnotationAPI.create(annotationWithTerm.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
@@ -135,7 +136,7 @@ class UserAnnotationTests  {
         Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
         updateAnnotation.term = [idTerm1, idTerm2]
 
-        def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -143,7 +144,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
-        def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -151,7 +152,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
-        def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -159,7 +160,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
-        def result = UserAnnotationAPI.create(updateAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 
@@ -196,7 +197,7 @@ class UserAnnotationTests  {
         UserAnnotation annotationToEdit = UserAnnotation.get(annotationToAdd.id)
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
         jsonAnnotation.id = "-99"
-        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
 
@@ -204,7 +205,7 @@ class UserAnnotationTests  {
         UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
-        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
 

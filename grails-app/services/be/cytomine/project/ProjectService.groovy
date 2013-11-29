@@ -173,6 +173,7 @@ class ProjectService extends ModelService {
     def add(def json,Task task = null) {
         taskService.updateTask(task,5,"Start creating project ${json.name}")
         SecUser currentUser = cytomineService.getCurrentUser()
+
         SecurityACL.checkUser(currentUser)
         taskService.updateTask(task,10,"Check retrieval consistency")
         checkRetrievalConsistency(json)

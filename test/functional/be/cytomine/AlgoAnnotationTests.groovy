@@ -12,6 +12,7 @@ import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.AlgoAnnotationAPI
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -78,7 +79,7 @@ class AlgoAnnotationTests  {
         def annotations = []
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
-        def result = AlgoAnnotationAPI.create(annotations.encodeAsJSON() , user1.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(JSONUtils.toJSONString(annotations), user1.username, 'PasswordUserJob')
         assert 200 == result.code
     }
 
@@ -88,7 +89,7 @@ class AlgoAnnotationTests  {
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 200 == result.code
     }
 
@@ -103,7 +104,7 @@ class AlgoAnnotationTests  {
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
         annotationWithTerm.term = [idTerm1, idTerm2]
 
-        def result = AlgoAnnotationAPI.create(annotationWithTerm.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(JSONUtils.toJSONString(annotationWithTerm), user.username, 'PasswordUserJob')
         assert 200 == result.code
         int idAnnotation = result.data.id
 
@@ -130,7 +131,7 @@ class AlgoAnnotationTests  {
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
 
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 200 == result.code
     }
 
@@ -145,7 +146,7 @@ class AlgoAnnotationTests  {
         Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
         updateAnnotation.term = [idTerm1, idTerm2]
 
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 400 == result.code
     }
 
@@ -155,7 +156,7 @@ class AlgoAnnotationTests  {
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 400 == result.code
     }
 
@@ -165,7 +166,7 @@ class AlgoAnnotationTests  {
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 400 == result.code
     }
 
@@ -175,7 +176,7 @@ class AlgoAnnotationTests  {
 
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
-        def result = AlgoAnnotationAPI.create(updateAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.create(updateAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 400 == result.code
     }
 
@@ -215,7 +216,7 @@ class AlgoAnnotationTests  {
         AlgoAnnotation annotationToEdit = AlgoAnnotation.get(annotationToAdd.id)
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
         jsonAnnotation.id = "-99"
-        def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), user.username,'PasswordUserJob')
+        def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), user.username,'PasswordUserJob')
         assert 404 == result.code
     }
 
@@ -225,7 +226,7 @@ class AlgoAnnotationTests  {
 
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
-        def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.encodeAsJSON(), user.username, 'PasswordUserJob')
+        def result = AlgoAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), user.username, 'PasswordUserJob')
         assert 400 == result.code
     }
 

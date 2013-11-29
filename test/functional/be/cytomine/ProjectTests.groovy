@@ -48,6 +48,7 @@ class ProjectTests  {
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
+        assert json.name == project.name
     }
 
     void testListProjectByUser() {
@@ -153,7 +154,7 @@ class ProjectTests  {
         def projectToAdd = BasicInstanceBuilder.getProject()
         String jsonProject = projectToAdd.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
-        def result = ProjectAPI.create(jsonUpdate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
 
@@ -236,7 +237,7 @@ class ProjectTests  {
         def jsonProject = projectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
         jsonUpdate.name = projectWithOldName.name
-        jsonProject = jsonUpdate.encodeAsJSON()
+        jsonProject = jsonUpdate.toString()
         def result = ProjectAPI.update(projectToEdit.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 409 == result.code
     }
@@ -250,7 +251,7 @@ class ProjectTests  {
         def jsonUpdate = JSON.parse(jsonProject)
         jsonUpdate.name = projectWithOldName.name
         jsonUpdate.id = -99
-        jsonProject = jsonUpdate.encodeAsJSON()
+        jsonProject = jsonUpdate.toString()
         def result = ProjectAPI.update(-99, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
     }
