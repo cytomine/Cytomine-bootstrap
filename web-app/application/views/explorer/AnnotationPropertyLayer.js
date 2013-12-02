@@ -11,13 +11,14 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.styleMap = new OpenLayers.StyleMap({'default':{
         label : "${value}",
-        fontColor: "red",
-        fontSize: "25px",
+        fontColor: "blue",
+        fontSize: "48pt",
         fontWeight: "bold"
     }});
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : self.styleMap,
+        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","24px")}, //="48pt"
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],

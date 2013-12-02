@@ -79,11 +79,15 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     this.reviewLayer = (name == "REVIEW") || (name == "Review layer");
     this.reviewMode = reviewMode;
     var rules = [new OpenLayers.Rule({
-        symbolizer: {strokeColor: "#00FF00", strokeWidth: 2},
+        symbolizer: {strokeColor: "#0000ff", strokeWidth: 2},
         // symbolizer: {}, // instead if you want to keep default colors
         elseFilter: true
     })];
-
+    var selectedRules = [new OpenLayers.Rule({
+        symbolizer: {strokeColor: "#00ff00", strokeWidth: 2,graphicZIndex:10000000},
+        // symbolizer: {}, // instead if you want to keep default colors
+        elseFilter: true
+    })];
 
     var style = $.extend(true, {}, OpenLayers.Feature.Vector.style['default']); // get a copy of the default style
     style.label = "${getLabel}";
@@ -115,7 +119,8 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
                         if(opacity==undefined) return '#000000';
                         if(opacity<0.33) return "#B94A48"
                         if(opacity<0.66) return "#C09853"
-                        return "#468847"
+                        //return "#468847"
+                        return "#ff0000"
                     }
                 }
             })
@@ -135,7 +140,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
         graphicZIndex : 14
     });
 
-    selectStyle.addRules(rules);
+    selectStyle.addRules(selectedRules);
 
 
 
@@ -157,7 +162,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     } else if (!reviewMode) {
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
-        styleMap.styles["select"].addRules(rules);
+        styleMap.styles["select"].addRules(selectedRules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizer(true));
     } else {
         //a layer in review mode but not a review layer: paint it red
@@ -212,8 +217,9 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
 
 AnnotationLayer.prototype = {
     defaultStrokeColor: "#000000",
-    selectedStrokeColor: "#00FF00",
+    selectedStrokeColor: "#0000ff",
     getSymbolizer: function (selected) {
+
         var strokeColor = this.defaultStrokeColor;
         if (selected) {
             strokeColor = this.selectedStrokeColor;
@@ -223,23 +229,27 @@ AnnotationLayer.prototype = {
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
             'fillColor': "#EEEEEE",
             'strokeWidth': 3,
-            'pointRadius': this.pointRadius
+            'pointRadius': this.pointRadius,
+            "strokeColor": strokeColor
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#CCCCCC",
             'strokeWidth': 3,
-            'pointRadius': this.pointRadius
+            'pointRadius': this.pointRadius,
+            "strokeColor": strokeColor
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#FF0000",
             'strokeWidth': 5,
-            'pointRadius': this.pointRadius
+            'pointRadius': this.pointRadius,
+            "strokeColor": strokeColor
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
                 'fillColor': term.get('color'),
                 'strokeWidth': 3,
-                'pointRadius': self.pointRadius
+                'pointRadius': self.pointRadius,
+                "strokeColor": strokeColor
             }
         });
         return symbolizers_lookup

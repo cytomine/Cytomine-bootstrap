@@ -42,14 +42,15 @@ grails.project.dependency.resolution = {
     dependencies {
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
         test "org.codehaus.geb:geb-spock:0.7.2"
-
+        //runtime "postgresql:postgresql:9.0-801.jdbc4"
+                         //   postgresql-9.0-801.jdbc4.jar
 
         runtime 'postgresql:postgresql:9.1-901.jdbc4'
-        runtime ('org.hibernatespatial:hibernate-spatial-postgis:1.1.1') {
-            exclude 'org.hibernate:hibernate-core:3.6.0.Final'
-        }
-        runtime 'com.vividsolutions:jts:1.13'
-        runtime 'org.postgis:postgis-jdbc:1.5.2'
+//        runtime ('org.hibernatespatial:hibernate-spatial-postgis:1.1.1') {
+//            exclude 'org.hibernate:hibernate-core:3.6.0.Final'
+//        }
+//        runtime 'com.vividsolutions:jts:1.13'
+//        runtime 'org.postgis:postgis-jdbc:1.5.2'
 
 
     }
