@@ -20,50 +20,18 @@ class RestTermController extends RestController {
 
     /**
      * List all term available
+     * @return All term available for the current user
      */
-//    @GET
-//    @ApiOperation(value = "List all term available")
     def list = {
         responseSuccess(termService.list())
     }
 
     /**
-     * Get a single term
+     * Get a specific term
+     *
+     * @param  id The term id
+     * @return A Term
      */
-//    @GET
-//    @Path("/{id}")
-//    @ApiOperation(value = "Retrieve a specific term")
-//    def show = {
-//        Term term = termService.read(params.long('id'))
-//        if (term) {
-//            responseSuccess(term)
-//        } else {
-//            responseNotFound("Term", params.id)
-//        }
-//    }
-
-//    @GET
-//    @Path("/{id}")
-//    @ApiOperation(value = "Logs out current logged in user session")
-//    public def retrieve(@ApiParam(value = "List of user object", required = true) String id) {
-//        println "show:" + params
-//        return null
-//    }
-//    @GET
-//    @Path("/{id}")
-//    @ApiOperation(value = "Logs out current logged in user session")
-//    public def retrieve() {
-//        println "show:" + params
-//        return null
-//    }
-
-//    @POST
-//    @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.")
-//    public Response createUser(
-//            @ApiParam(value = "Created user object", required = true) User user) {
-//
-//        return Response.ok().entity("").build();
-//    }
       def show() {
         Term term = termService.read(params.long('id'))
         if (term) {
@@ -73,26 +41,10 @@ class RestTermController extends RestController {
         }
       }
 
-//    @POST
-//    @Path("/createWithList")
-//    @ApiOperation(value = "Creates list of users with given input array")
-//    public Response createUsersWithListInput(@ApiParam(value = "List of user object", required = true) java.util.List<User> users) {
-//        for (User user : users) {
-//            userData.addUser(user);
-//        }
-//        return Response.ok().entity("").build();
-//    }
-
-//
-//    @GET
-//    @Path("/logout")
-//    @ApiOperation(value = "Logs out current logged in user session")
-//    public Response logoutUser() {
-//        return Response.ok().entity("").build();
-//    }
-
     /**
-     * Get all term in the ontology
+     * Get terms from an ontology
+     * @param idontology Ontology filter
+     * @return List of term
      */
     def listByOntology = {
         Ontology ontology = Ontology.read(params.idontology)
@@ -104,7 +56,9 @@ class RestTermController extends RestController {
     }
 
     /**
-     * Get all term for the project ontology
+     * Get all project terms
+     * @param idProject Project filter
+     * @return List of term
      */
     def listAllByProject = {
         Project project = Project.read(params.idProject)
@@ -118,6 +72,8 @@ class RestTermController extends RestController {
 
     /**
      * Get the stats info for a term
+     * @Param id Term id
+     * @return For each project with this Term, get a the term count
      */
     def statProject = {
         Term term = Term.read(params.id)
@@ -128,6 +84,8 @@ class RestTermController extends RestController {
     /**
      * Add a new term
      * Use next add relation-term to add relation with another term
+     * @param data JSON with Term data
+     * @return Response map with .code = http response code and .data.term = new created Term
      */
     def add = {
         add(termService, request.JSON)
@@ -135,6 +93,9 @@ class RestTermController extends RestController {
 
     /**
      * Update a term
+     * @param id Term id
+     * @param data JSON with the new Term data
+     * @return Response map with .code = http response code and .data.newTerm = new created Term and  .data.oldTerm = old term value
      */
     def update = {
         update(termService, request.JSON)
@@ -142,6 +103,8 @@ class RestTermController extends RestController {
 
     /**
      * Delete a term
+     * @param id Term id
+     * @return Response map with .code = http response code and .data.term = deleted term value
      */
     def delete = {
         delete(termService, JSON.parse("{id : $params.id}"),null)

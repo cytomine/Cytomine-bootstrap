@@ -161,7 +161,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
      * @param cytomineUrl Cytomine base URL
      * @return Full CROP Url
      */
-    abstract def getCropUrl(String cytomineUrl)
+    abstract def getCropUrl()
 
     String toString() {return "Annotation " + id}
 

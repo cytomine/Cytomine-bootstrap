@@ -63,5 +63,11 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/copyimagedata.$format"(controller :"restImageInstance") {
             action = [POST:"copyAnnotationFromSameAbstractImage"]
         }
+
+        "/api/imageinstance/$id/copymetadata.$format"(controller :"restImageInstance") {
+            action = [POST:"copyMetadata"]
+        }
+
+
     }
 }

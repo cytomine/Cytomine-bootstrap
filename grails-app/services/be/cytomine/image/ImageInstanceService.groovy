@@ -233,13 +233,13 @@ class ImageInstanceService extends ModelService {
     }
 
 
-    private def getLayersFromAbstractImage(AbstractImage image, ImageInstance exclude, def currentUsersProject,def layerFromNewImage ) {
+    private def getLayersFromAbstractImage(AbstractImage image, ImageInstance exclude, def currentUsersProject,def layerFromNewImage, Project project = null) {
            //get id of last open image
 
            def layers = []
            def adminsMap = [:]
 
-           def req1 = getLayersFromAbtrsactImageSQLRequestStr(true)
+           def req1 = getLayersFromAbtrsactImageSQLRequestStr(true,project)
         println "req1=$req1"
         println ""+[image.id,exclude.id]
            new Sql(dataSource).eachRow(req1,[image.id,exclude.id]) {
@@ -251,7 +251,7 @@ class ImageInstanceService extends ModelService {
 
            }
 
-        def req2 = getLayersFromAbtrsactImageSQLRequestStr(false)
+        def req2 = getLayersFromAbtrsactImageSQLRequestStr(false,project)
         println "req2=$req2";
         println ""+[image.id,exclude.id];
 
@@ -267,7 +267,7 @@ class ImageInstanceService extends ModelService {
 
     }
 
-    private String getLayersFromAbtrsactImageSQLRequestStr(boolean admin) {
+    private String getLayersFromAbtrsactImageSQLRequestStr(boolean admin,Project project = null) {
         return """
             SELECT ii.id as image,su.id as user,p.name as projectName, p.id as project, su.lastname as lastname, su.firstname as firstname, su.username as username, '${admin}' as admin, count_annotation as annotations
             FROM image_instance ii, project p, ${admin? "admin_project" : "user_project" } up, sec_user su, annotation_index ai
@@ -278,6 +278,7 @@ class ImageInstanceService extends ModelService {
             AND up.user_id = su.id
             AND ai.user_id = su.id
             AND ai.image_id = ii.id
+            ${project? "AND p.id = " + project.id  : ""}
             ORDER BY p.name, su.lastname,su.firstname,su.username;
         """
 

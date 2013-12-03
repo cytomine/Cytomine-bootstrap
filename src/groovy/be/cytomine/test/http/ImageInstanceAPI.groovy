@@ -78,8 +78,8 @@ class ImageInstanceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def sameImageData(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/sameimagedata.json"
+    static def sameImageData(Long id, String username, String password, Long idProject = null) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/sameimagedata.json" + (idProject? "?project=$idProject" : "")
         return doGET(URL, username, password)
     }
 
@@ -92,6 +92,10 @@ class ImageInstanceAPI extends DomainAPI {
         return doPOST(URL,"", username, password)
     }
 
+    static def copyMetaData(Long id,Long based, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/" + id + "/copymetadata.json?based=$based"
+        return doPOST(URL,"", username, password)
+    }
 
 //    "/api/imageinstance/$id/sameimagedata"(controller :"restImageInstance") {
 //        action = [GET:"retrieveSameImageOtherProject"]

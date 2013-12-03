@@ -60,6 +60,36 @@ class ImageInstanceCopyDataTests {
     }
 
 
+    void testGetLayersProjectSelection() {
+        def data = initData()
+
+        //get layers for images 3
+        def response = ImageInstanceAPI.sameImageData(data.image3.id,data.user2.username,"password",data.image2.project.id)
+        assert 200 == response.code
+        def json = JSON.parse(response.data)
+
+        json = json.collection
+
+        //check if NOT image1 - user 1 (not project 2)
+        assert !checkIfExist(json,data.image1.id,data.user1.id)
+
+        //check if NOT image1 - user 2  (not project 2)
+        assert !checkIfExist(json,data.image1.id,data.user2.id)
+
+        //check if NOT image2 - user 1 (user 1 not in project 2)
+        assert !checkIfExist(json,data.image2.id,data.user1.id)
+
+        //check if image2 - user 1
+        assert checkIfExist(json,data.image2.id,data.user2.id)
+
+        //check if NOT image3 - user 1 (exlude current image)
+        assert !checkIfExist(json,data.image3.id,data.user1.id)
+
+        //check if NOT image3 - user 2 (exlude current image)
+        assert !checkIfExist(json,data.image3.id,data.user2.id)
+    }
+
+
 
 
     void testGetLayersWithOtherUser() {
@@ -189,6 +219,28 @@ class ImageInstanceCopyDataTests {
 
         //check if there are 2 annotations on image3 (1 from image1-user1 and 1 from image 2 - user 1)
         assert 2 == UserAnnotation.findAllByImage(data.image3).size()
+    }
+
+
+    void testCopyMetadata() {
+        Project project =  BasicInstanceBuilder.getProjectNotExist(true)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        Description description =  BasicInstanceBuilder.getDescriptionNotExist(image,true)
+        Property property = BasicInstanceBuilder.getImageInstancePropertyNotExist(image,true)
+        Property property2 = BasicInstanceBuilder.getImageInstancePropertyNotExist(image,true)
+
+        Project project2 =  BasicInstanceBuilder.getProjectNotExist(true)
+        ImageInstance image2 = BasicInstanceBuilder.getImageInstanceNotExist(project2,true)
+
+        assert Description.countByDomainIdent(image2.id)==0
+        assert Property.countByDomainIdent(image2.id)==0
+
+        def response = ImageInstanceAPI.copyMetaData(image2.id,image.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == response.code
+
+
+        assert Description.countByDomainIdent(image2.id)==1
+        assert Property.countByDomainIdent(image2.id)==2
     }
 
 

@@ -105,22 +105,31 @@ var ImageReviewAction = Backbone.View.extend({
 
 
         var openImportImage = function () {
-                    console.log("Click:openImportImage");
-                    if(!self.disableEvent) {
-
-                         //api/imageinstance/" + id + "/sameimagedata.json
-
-
-
-                            ImportAnnotationModal.initImportAnnotationModal(el.find(".action"+self.model.id),self.model.id,function() {});
-                            el.find(".action"+self.model.id).find('a.importannotation').click();
-                    } else {
-                        self.disableEvent = false;
-                    }
-                    return false;
+                console.log("Click:openImportImage");
+                if(!self.disableEvent) {
+                        ImportAnnotationModal.initImportAnnotationModal(el.find(".action"+self.model.id),self.model.id,function() {});
+                        el.find(".action"+self.model.id).find('a.importannotation').click();
+                } else {
+                    self.disableEvent = false;
                 }
+                return false;
+         }
         $(document).find("a.importannotation" + self.model.id).unbind('click',openImportImage).bind('click',openImportImage);
        // $(document).on('click',"a.description" + self.model.id,openDescription);
+
+        var openCopyImage = function () {
+                console.log("Click:openCopyImage");
+                if(!self.disableEvent) {
+                    copyImageModal.initCopyImageModal(el.find(".action"+self.model.id),self.model.id,self.model.get('project'),self.model.get('baseImage'),function() {});
+                        el.find(".action"+self.model.id).find('a.copyimage').click();
+                } else {
+                    self.disableEvent = false;
+                }
+                return false;
+            }
+        $(document).find("a.copyimage" + self.model.id).unbind('click',openCopyImage).bind('click',openCopyImage);
+
+
     },
     disableEvent : false,
     startReviewing: function () {

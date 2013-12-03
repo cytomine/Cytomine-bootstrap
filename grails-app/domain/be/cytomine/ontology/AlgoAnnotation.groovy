@@ -72,8 +72,8 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
         terms().collect {it.id}
     }
 
-    def getCropUrl(String cytomineUrl) {
-        UrlApi.getAlgoAnnotationCropWithAnnotationId(cytomineUrl, id)
+    def getCropUrl() {
+        UrlApi.getAlgoAnnotationCropWithAnnotationId(id)
     }
 
     /**

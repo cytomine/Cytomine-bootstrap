@@ -35,8 +35,6 @@ import java.awt.image.BufferedImage
  * User: lrollus
  * Date: 18/05/11
  * Controller that handle request for project images.
- * TODO:: doc/test/coverage this controller!
- * TODOSTEVBEN: clean unused method + doc method
  */
 class RestImageInstanceController extends RestController {
 
@@ -370,6 +368,41 @@ class RestImageInstanceController extends RestController {
 
     }
 
+    def descriptionService
+    def propertyService
+
+    def copyMetadata = {
+        try {
+            ImageInstance based = imageInstanceService.read(params.long('based'))
+            ImageInstance image = imageInstanceService.read(params.long('id'))
+            if(image && based) {
+                SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+
+                Description.findAllByDomainIdent(based.id).each { description ->
+                    def json = JSON.parse(description.encodeAsJSON())
+                    json.domainIdent = image.id
+                     descriptionService.add(json)
+                }
+
+                Property.findAllByDomainIdent(based.id).each { property ->
+                    def json = JSON.parse(property.encodeAsJSON())
+                    json.domainIdent = image.id
+                    propertyService.add(json)
+                }
+
+                responseSuccess([])
+            } else if(based) {
+                responseNotFound("ImageInstance",params.based)
+            }else if(image) {
+                responseNotFound("ImageInstance",params.id)
+            }
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+
+    }
+
 
 
     /**
@@ -379,9 +412,10 @@ class RestImageInstanceController extends RestController {
     def retrieveSameImageOtherProject = {
         try {
             ImageInstance image = imageInstanceService.read(params.long('id'))
+            Project project = projectService.read(params.long('project'))
             if(image) {
                 SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
-                def layers =  imageInstanceService.getLayersFromAbstractImage(image.baseImage,image, projectService.list(cytomineService.currentUser).collect{it.id},secUserService.listUsers(image.project).collect{it.id})
+                def layers =  imageInstanceService.getLayersFromAbstractImage(image.baseImage,image, projectService.list(cytomineService.currentUser).collect{it.id},secUserService.listUsers(image.project).collect{it.id},project)
                 responseSuccess(layers)
             } else {
                 responseNotFound("Abstract Image",params.id)
