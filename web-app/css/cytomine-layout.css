@@ -2,7 +2,7 @@ html, body {
 }
 
 .container-100 {
-    max-width: 100% !important;
+    width: 100% !important;
     padding-left: 25px;
     padding-right: 25px;
 }
@@ -133,7 +133,7 @@ div .sidebar-map-right {
     width : 350px;
     overflow : auto;
     right: 0px;
-    top: 103px;
+    top: 91px;
 }
 
 .sidebar-content ul {
@@ -316,7 +316,14 @@ label.ui-corner-all {
 
 .modal.modal-wide .modal-dialog {
     width: 60%;
+    max-width: 60%;
 }
+
+.modal.modal-xwide .modal-dialog {
+    width: 98%;
+    max-width: 98%;
+}
+
 .modal-wide .modal-body {
     overflow-y: auto;
 }

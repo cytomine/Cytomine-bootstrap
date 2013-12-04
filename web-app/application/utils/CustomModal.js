@@ -6,6 +6,7 @@ var CustomModal = Backbone.View.extend({
         this.header = options.header;
         this.body = options.body;
         this.wide = options.wide || false;
+        this.xwide = options.xwide || false;
         this.callBack = options.callBack;
         this.registerModal();
 
@@ -28,14 +29,15 @@ var CustomModal = Backbone.View.extend({
                         var modal = $("#modals");
                         modal.empty();
 
-                        var htmlModal = _.template(tplModal, {
-                            id: self.idModal,
-                            header: self.header,
-                            body: self.body,
-                            wide: (self.wide ? "modal-wide" : ""),
-                            buttons: self.buttons
-                        });
-                        modal.append(htmlModal);
+                    var htmlModal = _.template(tplModal,{
+                        id : self.idModal,
+                        header : self.header,
+                        body : self.body,
+                        wide : (self.wide ? "modal-wide" : ""),
+                        xwide : (self.xwide ? "modal-xwide" : ""),
+                        buttons : self.buttons
+                    });
+                    modal.append(htmlModal);
 
                         _.each(self.buttons, function (b) {
                             $("#" + b.id).click(function () {

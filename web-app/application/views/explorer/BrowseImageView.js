@@ -731,8 +731,9 @@ var BrowseImageView = Backbone.View.extend({
                 {tileOptions: {crossOriginKeyword: 'anonymous'}}
             );
 
-            baseLayer.transitionEffect = 'resize';
+            //baseLayer.transitionEffect = 'resize';
             baseLayer.getImageSize = function () {
+
                 if (arguments.length > 0) {
                     bounds = this.adjustBounds(arguments[0]);
                     var z = this.map.getZoom();

@@ -51,18 +51,18 @@ var ShareAnnotationView = Backbone.View.extend({
         });
 
 
-        var usersId = []
-         window.app.models.projectUser.each(function(user) {
+        var usersId = [];
+        window.app.models.projectUser.each(function(user) {
             usersId.push({id:user.id,label:user.prettyName()});
         });
 
         self.userMaggicSuggest = selectUser.magicSuggest({
-                     data: usersId,
-                     displayField: 'label',
-                     value: [],
-                     width: 300,
-                     maxSelection:null
-                 });
+            data: usersId,
+            displayField: 'label',
+            value: [],
+            width: 300,
+            maxSelection:null
+        });
         $("#selectUserShare" + self.model.id).hide();
 
 
@@ -101,7 +101,6 @@ var ShareAnnotationView = Backbone.View.extend({
             shareButton.html("Sending...");
 
             var users = getSelectedUsers();
-            console.log(users);
             var userName = (_.size(users) == 1) ? window.app.models.projectUser.get(users[0]).prettyName() : "user";
             var comment = $("#annotationComment" + self.model.id).val();
             var shareAnnotationURL = _.template("<%= serverURL %>/#share-annotation/<%= id %>", {

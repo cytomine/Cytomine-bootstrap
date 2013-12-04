@@ -63,7 +63,7 @@ var AnnotationsPanel = Backbone.View.extend({
                 i++;
             });
             var annotationPanel = $("#annotationsPanel" + self.model.id);
-            annotationPanel.find(".tabsAnnotation").tabs({
+            /*annotationPanel.find(".tabsAnnotation").tabs({
                 add: function (event, ui) {
 
                 },
@@ -73,7 +73,7 @@ var AnnotationsPanel = Backbone.View.extend({
                     });
                     obj.refresh.call();
                 }
-            });
+            });*/
             annotationPanel.find(".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *")
                 .removeClass("ui-corner-all ui-corner-top")
                 .addClass("ui-corner-bottom");

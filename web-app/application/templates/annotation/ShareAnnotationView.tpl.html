@@ -1,58 +1,62 @@
-<div id="share-confirm" class="modal hide">
-    <div class="modal-header">
-        <h2>Comment/Share an annotation</h2>
-    </div>
-    <div class="modal-body">
-        <div class="row" style="min-height: 250px;">
-            <div class="col-md-8">
-                <form>
-                    <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" id="optionsCheckboxes">Share with</label>
+<div id="share-confirm" class="modal modal-wide fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-                            <div class="controls">
-                                <label class="radio">
-                                    <input type="radio" name="shareWithOption" value="everyone" checked>
-                                    Everyone
-                                </label>
-                                <label class="radio">
-                                    <input type="radio" name="shareWithOption" value="somebody">
-                                    Some users
-                                </label>
-                                <label>
-                                    <div id="selectUserShare<%= id %>" name="selectUserShare<%= id %>"></div>
-                                </label>
-
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label for="annotationComment<%= id %>">Your comment</label>
-
-                            <div class="input">
-                                <ul class="inputs-list">
-                                    <textarea class="xlarge" id="annotationComment<%= id %>"
-                                              name="annotationComment<%= id %>" rows="8"></textarea>
-                                </ul>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
+            <div class="modal-header">
+                <h2>Comment/Share an annotation</h2>
             </div>
-            <div class="col-md-8">
-                <h2>Comments</h2>
-                <ul id="comments<%= id %>">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <form>
+                            <fieldset>
+                                <div class="control-group">
+                                    <label class="control-label" id="optionsCheckboxes">Share with</label>
 
-                </ul>
+                                    <div class="controls">
+                                        <label class="radio">
+                                            <input type="radio" name="shareWithOption" value="everyone" checked>
+                                            Everyone
+                                        </label>
+                                        <label class="radio">
+                                            <input type="radio" name="shareWithOption" value="somebody">
+                                            Some users
+                                        </label>
+                                        <label>
+                                            <div id="selectUserShare<%= id %>" name="selectUserShare<%= id %>"></div>
+                                        </label>
+
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="annotationComment<%= id %>">Your comment</label>
+
+                                    <div class="input">
+                                        <ul class="inputs-list">
+                                            <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="8" col="8"></textarea>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <h2>Comments</h2>
+                        <ul id="comments<%= id %>">
+
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
+                    </div>
+                </div>
+
             </div>
-            <div class="col-md-8">
-                <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
+            <div class="modal-footer">
+                <a href="#" id="shareCancelButton<%= id %>" class="btn btn-default" data-dismoss="modal">Cancel</a>
+                <a href="#" id="shareButton<%= id %>" class="btn btn-success" >Share</a>
             </div>
         </div>
-
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="shareCancelButton<%= id %>" class="btn btn-default " tabindex="4">Cancel</a>
-        <a href="#" id="shareButton<%= id %>" class="btn btn-default  btn-primary" tabindex="4">Share</a>
     </div>
 </div>

@@ -401,6 +401,7 @@ rabbitmq {
     }
     queues = {
         cytomineQueue()
+        helloWorldQueue()
         jobQueue()
         //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
     }

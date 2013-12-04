@@ -22,49 +22,30 @@
 <link rel="apple-touch-icon" sizes="72x72" href="images/logoGIGA.gif" />
 <link rel="apple-touch-icon" sizes="114x114" href="images/logoGIGA.gif" />
 
-<link rel='stylesheet' href='css/bootstrap/jquery-ui-1.8.16.custom.css' type='text/css'/>
-<!--<link rel='stylesheet' href='lib/ui.panel/ui.panel.css' type='text/css'/>-->
 <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
-<!--<link rel="stylesheet" type="text/css" media="screen" href="lib/jqgrid/css/ui.jqgrid.css" />-->
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
 
-<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.flatly.min.css"/>
-
-
-<!--<link rel="stylesheet" href="css/cosmo/font-awesome.min.css" />
-<link rel="stylesheet" href="css/cosmo/bootswatch.css" />-->
+<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.min.css"/>
 
 <style type="text/css">
-
     body {
-        padding-top: 60px;
-
+        padding-top: 50px;
     }
-
-
 </style>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
-<!--<link rel='stylesheet' href='css/glyphicon.css' type='text/css'/>-->
-<link rel='stylesheet' href='lib/fileupload/jquery.fileupload-ui.css' type='text/css'/>
+<link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
 <link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 
 
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src ="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<!-- fuel ux -->
-<!--<link href="lib/fuelux-master/dist/css/fuelux-datagrid.min.css" rel="stylesheet" />-->
-<!--<link href="lib/fuelux-master/dist/css/fuelux-responsive.css" rel="stylesheet" /> -->
-%{--<link href="lib/fuelux/css/fuelux.min.css" rel="stylesheet" />--}%
 
 
 <link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
-%{--<link rel='stylesheet' href='lib/wysiwyg/website/css/stylesheet.css'/>--}%
-
 
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -74,11 +55,9 @@
 
 
 <!-- fileupload -->
-%{--<script type="text/javascript" src="lib/fileupload-7.4.1/js/vendor/jquery.ui.widget.js"></script>--}%
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.xdr-transport.js"></script>
-
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/cors/jquery.postmessage-transport.js"></script>
 
 

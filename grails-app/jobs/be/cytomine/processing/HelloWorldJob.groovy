@@ -4,8 +4,14 @@ import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
-class AutoLungJob  {
-
+/**
+ * Created with IntelliJ IDEA.
+ * User: stevben
+ * Date: 24/11/13
+ * Time: 23:20
+ * To change this template use File | Settings | File Templates.
+ */
+class HelloWorldJob {
     def sessionRequired = true
     def concurrent = true
 
@@ -16,7 +22,7 @@ class AutoLungJob  {
     }
 
     def execute(context) {
-        println "Start AutoLungJob"
+        println "Start HellWorld"
 
         Boolean preview = (Boolean) context.mergedJobDataMap.get('preview')
         Job job = (Job) context.mergedJobDataMap.get('job')
@@ -35,6 +41,6 @@ class AutoLungJob  {
         // execute job
         log.info "execute $job with $jobParameters"
 
-        rabbitSend('cytomineQueue', (jobParameters as JSON).toString())
+        rabbitSend('helloWorldQueue', (jobParameters as JSON).toString())
     }
 }
