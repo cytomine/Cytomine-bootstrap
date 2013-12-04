@@ -26,8 +26,8 @@
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
+<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.css"/>
 
-<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.min.css"/>
 
 <style type="text/css">
     body {
@@ -41,14 +41,14 @@
 
 
 <!-- JQuery & JQuery UI -->
-<script type="text/javascript" src ="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-
+<script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
 <link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
 
 <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="lib/html5.js"></script>
 <![endif]-->
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
 <script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>

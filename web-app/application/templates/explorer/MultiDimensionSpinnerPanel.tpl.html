@@ -1,14 +1,8 @@
-<div class="col-md-2" style="width: 70px">
-    <%= dimText %> (<%= possibility %>):
-    <div id="spinner<%= dim %>" class="spinner" >
-        	<input type="text" class="input-mini spinner-input" style="width: 25px">
-        	<div class="spinner-buttons	btn-group btn-group-vertical" style="margin-bottom:10px;">
-        		<button class="btn btn-default spinner-up"  style="width:15px;height: 15px;padding: 0px 0px 0px 0px;">
-        			<i class="icon-chevron-up"></i>
-        		</button>
-        		<button class="btn btn-default spinner-down" style="width:15px;height: 15px;padding: 0px 0px 0px 0px;">
-        			<i class="icon-chevron-down"></i>
-        		</button>
-        	</div>
+<div class="row">
+    <div class="col-md-3">
+        <%= dimText %> (<%= possibility %>):
+    </div>
+    <div class="col-xs-2">
+        <input type="text" id="spinner<%= dim %>" class="form-control" >
     </div>
 </div>

@@ -51,6 +51,13 @@ ul,
     z-index: 1100;
 }
 
+
+.btn-black {
+    color: #fff;
+    background-color: #000;
+    border-color: #333333;
+}
+
 .thumb{
     background:#EEE;
     border:#CCC solid 1px;
@@ -98,9 +105,32 @@ div.olControlOverviewMapElement {
 
 div .sidebar-map {
     z-index: 800;
-    background-color: #000;
-    padding: 0px;
-    width: 300px;
+    background-color: rgb(38, 38, 38);
+    padding-left: 0px;
+    color : rgba(255, 255, 255, 0.701961);
+    list-style-position: outside;
+    list-style-type: none;
+}
+
+div .sidebar-map-head {
+    background-color: rgb(68, 68, 68);
+    padding-left: 5px;
+    border-bottom-color: rgb(94, 94, 94);
+    border-bottom-style: solid;
+    border-bottom-width: 0px;
+    border-top-color: rgb(94, 94, 94);
+    border-top-style: solid;
+    border-top-width: 1px;
+    padding-top: 5px;
+    color: rgb(255,255,255);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+div .sidebar-map-content {
+    padding-left: 10px;
+    padding-top: 10px;
 }
 
 div .sidebar-toolbar {
@@ -124,23 +154,23 @@ div .toolbar-group > .btn {
 div .sidebar-map-left {
     position : absolute;
     left: 10px;
-    bottom: 95px;
+    bottom: 40px;
+    width: 300px;
 }
 
 div .sidebar-map-right {
     position : absolute;
-    padding: 5px;
-    width : 350px;
+    width : 380px;
     overflow : auto;
     right: 0px;
     top: 91px;
 }
 
-.sidebar-content ul {
+/*.sidebar-content ul {
     margin-left: 10px;
-}
+} */
 
-div .sidebar-content h3 {
+/*div .sidebar-content h3 {
     color:#fff;
     margin:0;
     padding:0px 10px 0px 10px;
@@ -159,7 +189,7 @@ div .sidebar-content {
 
 div .popupPanel a {
     color: #26b4e3;
-}
+} */
 
 
 div .annotationsPanel {

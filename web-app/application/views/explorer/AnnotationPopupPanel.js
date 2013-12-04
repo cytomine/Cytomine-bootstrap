@@ -187,7 +187,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
                 //Print suggested Term
                 self.printSuggestedTerm(model, window.app.status.currentTermsCollection.get(bestTerm1), window.app.status.currentTermsCollection.get(bestTerm2), bestTerm1Value, bestTerm2Value, window.app.status.currentTermsCollection, collection.get('annotation'));
             }, error: function (bad, response) {
-                $("#loadSimilarAnnotation" + model.id).replaceWith("Error: cannot reach retrieval");
+                $("#loadSimilarAnnotation" + model.id).html("Error: cannot reach retrieval");
             }});
     },
     printSuggestedTerm: function (annotation, bestTerm1, bestTerm2, bestTerm1Value, bestTerm2Value, terms, similarAnnotation) {
@@ -202,6 +202,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
         }
 
         $("#suggTerm" + annotation.id).empty();
+        $("#suggTerm" + annotation.id).append("<b>Suggested term</b> : ");
         $("#suggTerm" + annotation.id).append(suggestedTerm);
         $("#suggTerm" + annotation.id).append(suggestedTerm2);
         if (bestTerm1 != undefined) {

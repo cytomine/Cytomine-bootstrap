@@ -8,8 +8,13 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.Task
+
 import grails.converters.JSON
 import groovy.sql.Sql
+import net.nosegrind.restrpc.Api
+import net.nosegrind.restrpc.ErrorCode
+import net.nosegrind.restrpc.Params
+import net.nosegrind.restrpc.RestMethod
 
 /**
  * Controller for project domain
@@ -193,7 +198,7 @@ class RestProjectController extends RestController {
     /**
      * Get a project
      */
-    def show = {
+    def show () {
         Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(project)

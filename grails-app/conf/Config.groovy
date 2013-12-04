@@ -47,6 +47,12 @@ grails.converters.json.default.deep = false
 //grails.converters.json.date = "javascript"
 //grails.converters.xml.date = "javascript"
 
+grails.doc.title="Cytomine"
+grails.doc.subtitle="Documentation"
+grails.doc.authors="Marée Raphaël, Loïc Rollus, Benjamin Stévens"
+grails.doc.license="Commercial"
+grails.doc.copyright="University of liège"
+grails.doc.footer="www.cytomine.be"
 
 
 // enable Sitemesh preprocessing of GSP pages
@@ -430,3 +436,18 @@ grails {
     }
 }
 remove this line */
+
+// Added by the Restrpc plugin:
+restrpc.apiName = 'api'
+restrpc.apiVersion = '1.0'
+
+
+restrpc.defaultData.ID = '26'
+restrpc.defaultData.String = 'Hello World'
+restrpc.defaultData.Boolean = 'true'
+restrpc.defaultData.Float = '1.00'
+restrpc.defaultData.BigDecimal = '123567828794.87'
+restrpc.defaultData.Integer = '18'
+restrpc.defaultData.Long = '18926'
+restrpc.defaultData.Email = 'example@yoursite.com'
+restrpc.defaultData.Url = 'http://www.yoursite.com'

@@ -85,7 +85,6 @@ grails.project.dependency.resolution = {
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
         //runtime ':fields:1.3'
-
         runtime ':twitter-bootstrap:2.0.4'
         runtime ":rabbitmq:1.0.0"
         runtime ":quartz:1.0-RC9"

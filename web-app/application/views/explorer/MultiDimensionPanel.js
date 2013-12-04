@@ -37,10 +37,6 @@ var MultiDimensionPanel = SideBarPanel.extend({
         var json = self.model.toJSON();
         json.originalFilename = self.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
 
-
-        console.log("create spinner");
-
-
         $.get("/api/imageinstance/"+json.id+"/imagesequence/possibilities.json", function(data) {
 
             console.log("GET data:"+data);
@@ -76,10 +72,9 @@ var MultiDimensionPanel = SideBarPanel.extend({
                     max = _.max(possibilities, function(value){ return value; });
                     possibilityText = max;
                 }
-                console.log("multidimensionPanel");
+
                 $('#multidimensionPanel' + self.model.get('id')).find(".spinnerChoice").append(_.template(tplspinner,{dim:text,dimText:text,possibility:possibilityText}));
 
-                console.log("spinner:"+'#spinner'+text);
                 el.find('#spinner'+text).spinner({hold:true,value:value,min:min,max:max,disabled:(min==max && max==0)});
 
 //                console.log("changed");

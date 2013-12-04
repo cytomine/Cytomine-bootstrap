@@ -1,9 +1,13 @@
-<h3><i class="toggle-content1 glyphicon glyphicon-plus"></i> Image Layers</h3>
-<div class="layerSwitcherContent1" style="display: block; padding-right: 10px;display: none;">
-    <ul class="baseLayers"></ul>
+<div class="sidebar-map-head">
+    <label>Image Layers <i class="toggle-content1 glyphicon glyphicon-plus"></i></label>
 </div>
-<h3><i class="toggle-content2 glyphicon glyphicon-plus"></i> Annotations Layers</h3>
-<div id="layerSwitcher<%= id %>" class="layerSwitcherContent2" style="display: block; padding-right: 10px;display: none;">
+<div class="layerSwitcherContent1 sidebar-map-content" style="display: block; padding-right: 10px;display: none;">
+    <ul class="baseLayers" style="padding-left: 0px;"></ul>
+</div>
+<div class="sidebar-map-head">
+    <label>Annotations Layers <i class="toggle-content2 glyphicon glyphicon-plus"></i></label>
+</div>
+<div id="layerSwitcher<%= id %>" class="sidebar-map-content layerSwitcherContent2" style="display: block; padding-right: 10px;display: none;">
     <div id="layerComp<%= id %>" style="margin:5px;">
         <select id="selectLayerSwitcher<%= id %>" class="span2" style="margin-right: 5px;margin-top: 10px;"/>
 

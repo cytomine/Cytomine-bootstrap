@@ -1,39 +1,43 @@
-<h3><i class="toggle-content-info glyphicon glyphicon-plus btn-small"></i> Current selection</h3>
-<div class="popupPanel annotation-info-panel">
+<div class="sidebar-map-head">
+    <label>Current selection <i class="toggle-content-info glyphicon glyphicon-plus"></i></label>
+</div>
+<div class="annotation-info-panel sidebar-map-content">
     <ul style="padding-left: 0px;">
-        <li style="color:#FFFFFF;"><b>Area </b> : <%= area %> <%= areaUnit %></li>
-        <li style="color:#FFFFFF;"><b>Perimeter</b> : <%= perimeter %> <%= perimeterUnit %></li>
+        <li><b>Area </b> : <%= area %> <%= areaUnit %></li>
+        <li><b>Perimeter</b> : <%= perimeter %> <%= perimeterUnit %></li>
         <% if (terms) { %>
-        <li style="color:#FFFFFF;"><b>Term(s)</b> : <%= terms %></li>
+        <li><b>Term(s)</b> : <%= terms %></li>
         <% } %>
-        <li style="color:#FFFFFF;"><b>User</b> : <%= username %></li>
+        <li><b>User</b> : <%= username %></li>
         <li id="messageAnnotationCreator"></li>
-        <li style="color:#FFFFFF;"><a href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a></li>
+        <li><a class="btn btn-info btn-xs" href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a></li>
     </ul>
 </div>
-<h3><i class="toggle-content-preview glyphicon glyphicon-plus btn-sm"></i> Annotation Preview</h3>
-<div class="annotation-preview-panel" style="padding-left: 10px;">
-    <img src="<%= smallCropURL %>" style="max-width: 256px;max-height: 256px;"/>
+<div class="sidebar-map-head">
+    <label>Annotation preview <i class="toggle-content-preview glyphicon glyphicon-plus btn-xs"></i></label>
 </div>
-<h3><i class="toggle-content-suggested glyphicon glyphicon-plus btn-sm"></i>Similarities</h3>
-<div class="popupPanel-suggest annotation-suggested-panel">
+<div class="annotation-preview-panel" style="text-align: center;">
+    <img src="<%= smallCropURL %>" style="max-width: 298px;max-height: 298px;"/>
+</div>
+<div class="sidebar-map-head">
+    <label>Similarities <i class="toggle-content-suggested glyphicon glyphicon-plus btn-sm"></i> </label>
+</div>
+<div class="popupPanel-suggest annotation-suggested-panel  sidebar-map-content">
+    <div id="suggTerm<%= id %>"></div>
+    <div id="loadSimilarAnnotation<%= id %>">Computing similar annotations...</div>
+</div>
+<div class="sidebar-map-head">
+    <label>Properties <i class="toggle-content-property glyphicon glyphicon-plus btn-xs"></i> </label>
+</div>
+<div class="annotation-property-panel  sidebar-map-content">
     <ul style="padding-left: 0px;">
-        <li style="color:#FFFFFF;"><b>Suggested term</b> :
-            <div id="suggTerm<%= id %>"></div>
-        </li>
-        <li style="color:#FFFFFF;"><label id="loadSimilarAnnotation<%= id %>" style="display:inline;color : #fff">Computing
-            similar annotations...</label></li>
+        <li><a href="#tabs-annotationproperties-<%= project %>-<%= id %>">Add a property</a></li>
     </ul>
 </div>
-<h3><i class="toggle-content-property glyphicon glyphicon-plus btn-sm"></i> Properties</h3>
-<div class="popupPanel annotation-property-panel">
-    <ul style="padding-left: 0px;">
-        <li style="color:#FFFFFF;"><a href="#tabs-annotationproperties-<%= project %>-<%= id %>">Add a property</a></li>
-    </ul>
+<div class="sidebar-map-head">
+    <label>Description <i class="toggle-content-description glyphicon glyphicon-plus btn-xs"></i> </label>
 </div>
-<h3><i class="toggle-content-description glyphicon glyphicon-plus btn-small"></i> Description</h3>
-<div class="popupPanel annotation-description-panel">
-
+<div class="annotation-description-panel  sidebar-map-content">
     <ul style="padding-left: 0px;">
         <li><div class="textcontent<%= id %>"><div class="alert alert-info"><i class="icon-refresh"/> Loading...</div></div> </li>
     </ul>
