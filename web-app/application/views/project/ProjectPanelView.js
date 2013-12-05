@@ -122,7 +122,7 @@ var ProjectPanelView = Backbone.View.extend({
     },
     infoProject: function () {
         var self = this;
-        new ProjectInfoDialog({el: self.el, model: self.model}).render();
+        new ProjectInfoDialog({el: "#dialogs", model: self.model}).render();
     },
     editProject: function () {
 

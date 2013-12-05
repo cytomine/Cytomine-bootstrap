@@ -42,7 +42,7 @@ var BrowseImageView = Backbone.View.extend({
         if (options.addToTab != undefined) {
             this.addToTab = options.addToTab;
         }
-        this.merge = options.merge,
+        this.merge = options.merge;
         _.bindAll(this, "initVectorLayers");
     },
 
@@ -641,7 +641,7 @@ var BrowseImageView = Backbone.View.extend({
             for (var z = metadata.nbZoom - 1; z >= 0; z--) {
                 serverResolutions.push(Math.pow(2, z));
             }
-            var resolutions = _.union(serverResolutions, self.digitalResolutions)
+            var resolutions = _.union(serverResolutions, self.digitalResolutions);            
             var options = {
                 theme : null,
                 maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
@@ -804,6 +804,48 @@ var BrowseImageView = Backbone.View.extend({
             if (!self.review) {
                 self.initWatchOnlineUsersInterval();
             }
+
+
+            var scaleline = new OpenLayers.Control.ScaleLine({
+                update: function() {
+                    var resolution = self.model.get("resolution");
+                    var maxMagnification = self.model.get("magnification") * Math.pow(2, self.nbDigitialZoom);
+                    var deltaZoom = self.map.getNumZoomLevels() - self.map.getZoom() - 1;
+
+                    var magnification = maxMagnification;
+                    if (deltaZoom != 0) {
+                        magnification = maxMagnification / (Math.pow(2, deltaZoom));
+                    }
+                    magnification = Math.round(magnification * 100) / 100;
+                    var zoom = self.model.get("depth") - self.map.zoom;
+                    resolution = resolution * Math.pow(2, zoom);
+                    var topPx = 100;
+                    var length = 100;
+                    if (resolution != undefined && resolution != null) {
+                        length *= resolution;
+                        length = Math.round(length * 1000) / 1000;
+                        if (length > 1000) {
+                            length /= 1000;
+                            length = length.toPrecision(4);
+                            length += " mm";
+                        } else {
+                            length = length.toPrecision(4)
+                            length += " µm";
+                        }
+                    } else {
+                        length += " pixels";
+                    }
+                    if (this.eTop.style.visibility == "visible"){
+                        this.eTop.style.width = Math.round(topPx) + "px";
+                        this.eTop.innerHTML = length;
+                    }
+                    if (this.eBottom.style.visibility == "visible"){
+                        this.eTop.style.width = Math.round(topPx) + "px";
+                        this.eBottom.innerHTML = "Magnitude : " + magnification + " X";
+                    }
+                }
+            });
+            self.map.addControl(scaleline);
 
         }
 
@@ -1205,11 +1247,13 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=camera' + this.model.get('id') + ']').click(function () {
             //use webservice
             var mapBounds = self.map.getExtent();
+            var ol_left = Math.max(0, mapBounds.left);
+            var ol_top = Math.max(0, mapBounds.top);
             var x = Math.round(mapBounds.left);
-            var y = Math.round(self.model.get('height') - mapBounds.top);
-            var width = Math.round(mapBounds.right - mapBounds.left);
+            var y = Math.round(self.model.get('height') - ol_top);
+            var width = Math.round(mapBounds.right - ol_left);
             var height = Math.round(mapBounds.top - mapBounds.bottom);
-            var url = "api/imageinstance/"+self.model.id+"/window_url-"+x+"-"+y+"-"+width+"-"+height;
+            var url = "api/imageinstance/"+self.model.id+"/window_url-"+x+"-"+y+"-"+width+"-"+height + ".jpg";
             $.get(url, function(data) {
                 window_url = data.url;
                 var imageFilter= self.map.baseLayer.imageFilter;

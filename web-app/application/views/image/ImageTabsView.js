@@ -64,12 +64,12 @@ var ImageTabsView = Backbone.View.extend({
                     }
                 }},
                 { "mDataProp": "updated", "fnRender" : function(o, useless) {
-                    setTimeout(function(){
-                        var imageInstanceModel = new ImageInstanceModel({});
-                        imageInstanceModel.set(o.aData);
-                        var action = new ImageReviewAction({el:body,model:imageInstanceModel, container : self});
-                        action.configureAction();
-                    }, 1000);
+                    new ImageInstanceModel({ id : o.aData.id}).fetch({
+                        success : function (model, response) {
+                            var action = new ImageReviewAction({el:body,model:model, container : self});
+                            action.configureAction();
+                        }
+                    });
                     return _.template(actionMenuTpl, o.aData);
 
                 }}

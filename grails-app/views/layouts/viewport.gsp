@@ -53,7 +53,6 @@
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
 <script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
 
-
 <!-- fileupload -->
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="lib/fileupload-8.8.3/js/jquery.fileupload.js"></script>

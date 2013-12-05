@@ -35,11 +35,10 @@ var ImagePropertiesView = Backbone.View.extend({
             new ImagePropertyCollection({image: self.model.get("baseImage")}).fetch({
                 success: function (collection, response) {
                     var target = $("#image-properties-content");
-                    $("#image-properties-content").empty();
+                    target.empty();
                     collection.sort();
                     collection.each(function (model) {
-                        var html = _.template(tpl, {key: model.get("key"), value: model.get("value")});
-                        target.append(html);
+                        target.append(_.template(tpl, {key: model.get("key"), value: model.get("value")}));
                     });
                 }
             });
