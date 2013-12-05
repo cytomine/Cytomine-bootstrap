@@ -4,6 +4,7 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -338,6 +339,7 @@ class StatsController extends RestController {
     def annotationListingService
 
     def statsPrediction = {
+
         params.put("term1",83009160)
         params.put("term2",83009161)
         params.put("image",83009171)
@@ -349,25 +351,34 @@ class StatsController extends RestController {
         SecUser predictor = secUserService.read(params.long('user'))
         SecUser reviewer = image.reviewUser
 
-        //Pour l'instant on ne cherche pas celle en dehors du poumon
-        //get parent/getANnotationIdent, ne pas tenir compte des exception
-        //gérer pour algo
+        //gérer/tester pour algo
         //RM: évlauer
         //Prédiction peuvent se toucher?
 
 
 
-
+        //get all reviewed annotation for the predicted term
         def allReviewed = retrieveAllReviewed(image,predicted)
+
+        //get all predicted user or algo annotation for the predicted term by the predicteor
         def allPredicted = retrieveAllPredicted(image,predicted,predictor)
 
+        //get all annotation not predicted by reviewed
         def notPredictedReviewed = retrieveNotPredictedReviewed(allReviewed)
+
+        //get all annotation predicted by not reviewed
         def predictedNotReviewed = retrievePredictedNotReviewed(allReviewed,allPredicted)
 
+        //get all annotation reviewed and modifier / or not modified
         def splitReviewed =  splitReviewedModifiedAndNotModified(allReviewed,predictor)
         def reviewedNotModified = splitReviewed.reviewedNotModified
         def reviewedModified = splitReviewed.reviewedModified
 
+        //get all annotation reviewed "content" (like a hung)
+        def contentReviewed = retrieveAllReviewed(image,content)
+
+
+        assert contentReviewed.size()==1
         assert allReviewed.size() == 6
         assert allPredicted.size() == 6
         assert predictedNotReviewed.size() == 2
@@ -375,49 +386,46 @@ class StatsController extends RestController {
         assert reviewedNotModified.size() == 2
         assert reviewedModified.size() == 2
 
+        //convert annotation to geometry type + filter to keep only annotation inside content annotation (tumor inside hung)
 
-        //x = Surface de toutes les geometry résultantes de l'intersection des deux couches / surface des geometry de la review?
-
-
+        def contentReviewedGeometry = contentReviewed.collect{new WKTReader().read(it['location'])}
         def reviewedGeometries = allReviewed.collect{new WKTReader().read(it['location'])}
+        reviewedGeometries =  reviewedGeometries.findAll { rev ->
+            boolean isInContent = false
+            contentReviewedGeometry.each { cont ->
+                isInContent = isInContent ? isInContent : cont.difference(rev)
+            }
+            return isInContent
+        }
         def predictedGeometries = allPredicted.collect{new WKTReader().read(it['location'])}
-        def instersectGeometries = []
+        predictedGeometries =  predictedGeometries.findAll { rev ->
+            boolean isInContent = false
+            contentReviewedGeometry.each { cont ->
+                isInContent = isInContent ? isInContent : cont.difference(rev)
+            }
+            return isInContent
+        }
 
+        assert reviewedGeometries.size() == 6
+        assert predictedGeometries.size() == 6
+
+        //x = x c'est le pourcentage de tumeur de la couche review bien prédite comme tumeur dans la couche algo;
+        def instersectGeometries = []
         reviewedGeometries.each { revgeom ->
             predictedGeometries.each { predictgeom ->
                 instersectGeometries << revgeom.intersection(predictgeom)
             }
         }
-
         instersectGeometries = instersectGeometries.findAll {!it.isEmpty()}
-
         assert instersectGeometries.size()==4
 
-        def intersectArea = computeGeometriesArea(instersectGeometries)
+        def x = computeGeometriesArea(instersectGeometries)/computeGeometriesArea(reviewedGeometries)
 
-        def reviewedArea = computeGeometriesArea(reviewedGeometries)
-
-
-        def x = intersectArea/reviewedArea
-
-        println "x=$x"
-
+        //y = c'est le pourcentage de tumeur de la couche review mal classée comme pastumeur dans la couche algo;
         def differenceGeometries = []
-//        reviewedGeometries.each{ revgeom  ->
-//        println "revgeom=$revgeom"
-//            predictedGeometries.each {predictgeom ->
-//
-//                println "predictgeom=$predictgeom"
-//                def diff = revgeom.difference(predictgeom)
-//                println "diff1=${diff}"
-////                diff = diff.difference(predictgeom)
-//                println "diff2=${diff}"
-//                differenceGeometries << diff
-//            }
-//        }
 
         reviewedGeometries.each{ revgeom  ->
-        println "revgeom=$revgeom"
+            //for each reveiwed, get the intersection with a predicted (=good prediction) and make difference between the reviewed and good prediction (= bad prediction)
             boolean intersect = false
             predictedGeometries.each { predictgeom->
 
@@ -426,59 +434,86 @@ class StatsController extends RestController {
                 if(!goodPrediction.isEmpty()) {
                     intersect = true
                     def badPrediction = revgeom.difference(goodPrediction)
-                    revgeom = revgeom.difference(goodPrediction)
+                    revgeom = revgeom.difference(goodPrediction) //if predicted annotation intersect themselve
                     differenceGeometries << badPrediction
                 }
-
-
             }
-            println "intersect=$intersect"
             if(!intersect) {
                 //if no intersect with predicted, the reviewed geometry will ne be in collection
                 differenceGeometries << revgeom
             }
         }
-
-
         differenceGeometries = differenceGeometries.findAll {!it.isEmpty()}
         differenceGeometries = differenceGeometries.unique()
-
-        println "differenceGeometries="+differenceGeometries
 
         differenceGeometries.each {
             println it
         }
 
-//        assert differenceGeometries.size() == 3
-
-        def diffArea = computeGeometriesArea(differenceGeometries)
-
-        println "diffArea=$diffArea"
-        println "reviewedArea=$reviewedArea"
-
-        def y = diffArea/reviewedArea
+        def y = computeGeometriesArea(differenceGeometries)/computeGeometriesArea(reviewedGeometries)
 
 
-        def big = new WKTReader().read("POLYGON ((16168 35136, 16064 40448, 22016 40512, 22056 35136, 16168 35136))")
-        def small = new WKTReader().read("POLYGON ((16168 35136, 16168 38048, 22056 38048, 22056 35136, 16168 35136))")
+       //w = c'est le pourcentage de pastumeur de la couche review mal classée comme tumeur dans la couche algo;
+
+        def differenceGeometriesW = []
+
+        predictedGeometries.each{ predictgeom  ->
+            boolean intersect = false
+            reviewedGeometries.each {revgeom ->
+                def goodPrediction = predictgeom.intersection(revgeom)
+                if(!goodPrediction.isEmpty()) {
+                    intersect = true
+                    def badPrediction = predictgeom.difference(goodPrediction)
+                    predictgeom = revgeom.difference(goodPrediction)
+                    differenceGeometriesW << badPrediction
+                }
+            }
+            if(!intersect) {
+                //if no intersect with predicted, the reviewed geometry will ne be in collection
+                differenceGeometriesW << predictgeom
+            }
+        }
+
+        differenceGeometriesW = differenceGeometriesW.findAll {!it.isEmpty()}
+        differenceGeometriesW = differenceGeometriesW.unique()
 
 
-        println big
-        println small
+        //compute the content annotation without the reviewed annotation (= not tumor)
+        def contentWithoutReviewedPrediction = []
+        contentReviewedGeometry.each { contentRev ->
+            reviewedGeometries.each { wellPredicted ->
+                contentRev = contentRev.difference(wellPredicted)
+            }
+            contentWithoutReviewedPrediction << contentRev
+        }
 
-        println big.difference(small)
-        println big.difference(small).area
+        def w = computeGeometriesArea(differenceGeometriesW)/computeGeometriesArea(contentWithoutReviewedPrediction)
 
+
+      //z = c'est le pourcentage de pastumeur de la couche review bien classée come pastumeur dans la couche algo
+        def contentWithoutReviewedPredictionAndPredicted  = []
+        //compute the content without the reviewed and without the predicted (not tumor well predicted)
+        contentWithoutReviewedPrediction.each { contentRev ->
+              predictedGeometries.each { predict ->
+                  contentRev = contentRev.difference(predict)
+              }
+            contentWithoutReviewedPredictionAndPredicted << contentRev
+        }
+
+        contentWithoutReviewedPredictionAndPredicted.each {
+            println it
+        }
+
+        def z = computeGeometriesArea(contentWithoutReviewedPredictionAndPredicted)/computeGeometriesArea(contentWithoutReviewedPrediction)
+
+
+
+        println "x=$x"
         println "y=$y"
-
-
         assert 1==x+y
-         //y c'est le pourcentage de tumeur de la couche review mal classée comme > pastumeur dans la couche algo;
-
-
-
-
-
+        println "w=$w"
+        println "z=$z"
+        assert 1==z+w
 
 
 //       Pourcentage d'"overlap" (= surface de l'intersection des deux couches)
@@ -572,9 +607,9 @@ class StatsController extends RestController {
 
     private def retrieveAllReviewed(ImageInstance image,Term term) {
         AnnotationListing al = new ReviewedAnnotationListing(
-                columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                columnToPrint: ['basic','meta',"wkt",'term'],
                 image : image.id,
-                term : term.id,
+                term : term.id
         )
         annotationListingService.executeRequest(al)
 
@@ -585,7 +620,7 @@ class StatsController extends RestController {
         AnnotationListing al
         if(user.algo()) {
             al = new AlgoAnnotationListing(
-                            columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                            columnToPrint: ['basic','meta','term',"wkt"],
                             image : image.id,
                             term : term.id,
                             user: user.id
@@ -593,7 +628,7 @@ class StatsController extends RestController {
 
         } else {
             al = new UserAnnotationListing(
-                            columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                            columnToPrint: ['basic','meta','term',"wkt"],
                             image : image.id,
                             term : term.id,
                             user: user.id

@@ -102,7 +102,10 @@ class ScriptService extends ModelService {
         reviewedAnnotation6.putParentAnnotation(annotationNew6)
         saveAndReturnDomain(reviewedAnnotation6)
 
-
+        ReviewedAnnotation reviewedAnnotationPoumon = new ReviewedAnnotation(status:0,reviewUser:lrollus,project:project,image:image,user: stevben,location:new WKTReader().read("POLYGON ((6167.999999999996 26256, 6167.999999999996 41488, 43736 41488, 43736.00000000001 26256, 6167.999999999996 26256))"))
+        reviewedAnnotationPoumon.addToTerms(poumon)
+        reviewedAnnotationPoumon.putParentAnnotation(annotationPoumon)
+        saveAndReturnDomain(reviewedAnnotationPoumon)
         //start reviewed image
 
 
