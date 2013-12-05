@@ -203,7 +203,12 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
         //add all available layer on select
         _.each(self.allVectorLayers, function (layer) {
-            select.append('<option value="' + layer.id + '">' + layer.user.layerName() + '</option>');
+            if(layer.user==null) {
+                select.append('<option value="' + layer.id + '">Review Layer</option>');
+            } else {
+                select.append('<option value="' + layer.id + '">' + layer.user.layerName() + '</option>');
+            }
+
         });
 
         var panel = $("#layerSwitcher" + self.model.get("id"));
@@ -212,6 +217,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         //if click on add layer
         panel.find("#addImageLayers" + self.model.get("id")).unbind();
         panel.find("#addImageLayers" + self.model.get("id")).click(function () {
+
 
             var option = select.find("option[value=" + select.val() + "]");
             option.hide();
@@ -229,26 +235,63 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
                 if (!alreadyExist) {
                     //if not yet added, create layer
+
                     var user = layer.user
-                    var layerAnnotation = new AnnotationLayer(user, user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
-                    layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+
+                    var layerAnnotation
+
+                    if(user!=null) {
+                        console.log("### create layer: "+user.prettyName());
+                        layerAnnotation = new AnnotationLayer(user, user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+                        layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+                        self.loadedVectorLayers.push({ id: user.id, user: user});
+
+                    } else {
+                        console.log("### create layer: Review layer");
+                        layerAnnotation = new AnnotationLayer(null, "Review layer", self.model.get('id'), "REVIEW", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+                        layerAnnotation.isOwner = false;
+                        self.loadedVectorLayers.push({ id: "REVIEW", user: user});
+                    }
+
                     layerAnnotation.loadAnnotations(self.browseImageView);
-                    self.loadedVectorLayers.push({ id: user.id, user: user});
-                    self.registerRemoveLayerButton(user.get('id'));
+
+
+
                     var item = panel.find("#entry" + select.val());
                     item.show();
+
+                    if(user!=null) {
+                        self.registerRemoveLayerButton(user.get('id'));
+                    } else {
+                        self.registerRemoveLayerButton("REVIEW");
+                    }
+
                     self.registerRemoveLayerButton();
                 } else {
                     var item = panel.find("#entry" + select.val());
                     item.show();
                 }
-
+                console.log("item="+select.val());
                 //force click on show layer to set layer visible = true
                 if (!item.find(".showUser").is(":checked")) {
                     item.find(".showUser").click();
                 }
             }
             select.val(select.find("option:visible").val());
+
+            var item = panel.find("#entry" + window.app.status.user.id);
+            if (item) {
+                //a bug print annotation from the current user even if not selected...
+//                _.each(self.browseImageView.layers,function(layer) {
+//                    console.log(layer);
+//                    console.log(self.loadedVectorLayers);
+//                    if(layer.userID==window.app.status.user.id) {
+//                        layer.vectorsLayer.setVisibility(item.find(".showUser").is(":checked"));
+//                    }
+//
+//                });
+            }
+
         });
 
 
@@ -260,7 +303,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 //             panel.find("#layerComp"+self.model.get("id")).hide();
 //             panel.find(".removeImageLayers").hide();
 //         } else {
-            self.showLayer(window.app.status.user.id);
+//            self.showLayer(window.app.status.user.id);
             panel.find("#layerComp" + self.model.get("id")).show();
             panel.find(".removeImageLayers").show();
 //        }

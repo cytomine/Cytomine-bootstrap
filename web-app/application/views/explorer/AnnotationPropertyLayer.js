@@ -11,14 +11,14 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.styleMap = new OpenLayers.StyleMap({'default':{
         label : "${value}",
-        fontColor: "blue",
+        fontColor: "green",
         fontSize: "48pt",
         fontWeight: "bold"
     }});
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : self.styleMap,
-        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","24px")}, //="48pt"
+        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","36px")}, //="48pt"
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],
@@ -51,7 +51,7 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
         _.each(nestedCollection, function (result) {
 
             var format = new OpenLayers.Format.WKT();
-            var geom = "POINT("+result.x+" " + (result.y+50)+")"
+            var geom = "POINT("+result.x+" " + (result.y+100)+")"
             var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
             pointFeature.attributes = { value: result.value};
 

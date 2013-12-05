@@ -60,7 +60,7 @@ class UrlMappings {
             action = [GET:"listNews"]
         }
 
-        "/loginWithoutLDAP/login.$format" (controller: "login") {
+        "/loginWithoutLDAP/login" (controller: "login") {
             action = [GET:"loginWithoutLDAP"]
         }
     }

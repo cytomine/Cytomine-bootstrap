@@ -1,10 +1,21 @@
 package be.cytomine.api.stats
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.api.RestController
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
+import be.cytomine.sql.AlgoAnnotationListing
+import be.cytomine.sql.AnnotationListing
+import be.cytomine.sql.ReviewedAnnotationListing
+import be.cytomine.sql.UserAnnotationListing
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryCollection
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.io.WKTReader
 
 class StatsController extends RestController {
 
@@ -321,5 +332,274 @@ class StatsController extends RestController {
             current = cal.getTime();
         }
         responseSuccess(data)
+    }
+
+    def imageInstanceService
+    def annotationListingService
+
+    def statsPrediction = {
+        params.put("term1",83009160)
+        params.put("term2",83009161)
+        params.put("image",83009171)
+        params.put("user",18)
+
+        Term predicted = termService.read(params.long('term1'))
+        Term content = termService.read(params.long('term2'))
+        ImageInstance image = imageInstanceService.read(params.long('image'))
+        SecUser predictor = secUserService.read(params.long('user'))
+        SecUser reviewer = image.reviewUser
+
+        //Pour l'instant on ne cherche pas celle en dehors du poumon
+        //get parent/getANnotationIdent, ne pas tenir compte des exception
+        //gérer pour algo
+        //RM: évlauer
+        //Prédiction peuvent se toucher?
+
+
+
+
+        def allReviewed = retrieveAllReviewed(image,predicted)
+        def allPredicted = retrieveAllPredicted(image,predicted,predictor)
+
+        def notPredictedReviewed = retrieveNotPredictedReviewed(allReviewed)
+        def predictedNotReviewed = retrievePredictedNotReviewed(allReviewed,allPredicted)
+
+        def splitReviewed =  splitReviewedModifiedAndNotModified(allReviewed,predictor)
+        def reviewedNotModified = splitReviewed.reviewedNotModified
+        def reviewedModified = splitReviewed.reviewedModified
+
+        assert allReviewed.size() == 6
+        assert allPredicted.size() == 6
+        assert predictedNotReviewed.size() == 2
+        assert notPredictedReviewed.size() == 2
+        assert reviewedNotModified.size() == 2
+        assert reviewedModified.size() == 2
+
+
+        //x = Surface de toutes les geometry résultantes de l'intersection des deux couches / surface des geometry de la review?
+
+
+        def reviewedGeometries = allReviewed.collect{new WKTReader().read(it['location'])}
+        def predictedGeometries = allPredicted.collect{new WKTReader().read(it['location'])}
+        def instersectGeometries = []
+
+        reviewedGeometries.each { revgeom ->
+            predictedGeometries.each { predictgeom ->
+                instersectGeometries << revgeom.intersection(predictgeom)
+            }
+        }
+
+        instersectGeometries = instersectGeometries.findAll {!it.isEmpty()}
+
+        assert instersectGeometries.size()==4
+
+        def intersectArea = computeGeometriesArea(instersectGeometries)
+
+        def reviewedArea = computeGeometriesArea(reviewedGeometries)
+
+
+        def x = intersectArea/reviewedArea
+
+        println "x=$x"
+
+        def differenceGeometries = []
+//        reviewedGeometries.each{ revgeom  ->
+//        println "revgeom=$revgeom"
+//            predictedGeometries.each {predictgeom ->
+//
+//                println "predictgeom=$predictgeom"
+//                def diff = revgeom.difference(predictgeom)
+//                println "diff1=${diff}"
+////                diff = diff.difference(predictgeom)
+//                println "diff2=${diff}"
+//                differenceGeometries << diff
+//            }
+//        }
+
+        reviewedGeometries.each{ revgeom  ->
+        println "revgeom=$revgeom"
+            boolean intersect = false
+            predictedGeometries.each { predictgeom->
+
+                def goodPrediction = revgeom.intersection(predictgeom)
+
+                if(!goodPrediction.isEmpty()) {
+                    intersect = true
+                    def badPrediction = revgeom.difference(goodPrediction)
+                    revgeom = revgeom.difference(goodPrediction)
+                    differenceGeometries << badPrediction
+                }
+
+
+            }
+            println "intersect=$intersect"
+            if(!intersect) {
+                //if no intersect with predicted, the reviewed geometry will ne be in collection
+                differenceGeometries << revgeom
+            }
+        }
+
+
+        differenceGeometries = differenceGeometries.findAll {!it.isEmpty()}
+        differenceGeometries = differenceGeometries.unique()
+
+        println "differenceGeometries="+differenceGeometries
+
+        differenceGeometries.each {
+            println it
+        }
+
+//        assert differenceGeometries.size() == 3
+
+        def diffArea = computeGeometriesArea(differenceGeometries)
+
+        println "diffArea=$diffArea"
+        println "reviewedArea=$reviewedArea"
+
+        def y = diffArea/reviewedArea
+
+
+        def big = new WKTReader().read("POLYGON ((16168 35136, 16064 40448, 22016 40512, 22056 35136, 16168 35136))")
+        def small = new WKTReader().read("POLYGON ((16168 35136, 16168 38048, 22056 38048, 22056 35136, 16168 35136))")
+
+
+        println big
+        println small
+
+        println big.difference(small)
+        println big.difference(small).area
+
+        println "y=$y"
+
+
+        assert 1==x+y
+         //y c'est le pourcentage de tumeur de la couche review mal classée comme > pastumeur dans la couche algo;
+
+
+
+
+
+
+
+//       Pourcentage d'"overlap" (= surface de l'intersection des deux couches)
+//       Pourcentage de "surplus" (= surface de ce qui était détecté par l'algo mais non retenu après review)
+//       Pourcentage de "manquement" (= surface qui n'était pas détectée par l'algo mais ajoutée par la review)
+
+
+
+
+    }
+
+    static Geometry combineIntoOneGeometry( Collection<Geometry> geometryCollection ){
+        Geometry all = null;
+        for( Iterator<Geometry> i = geometryCollection.iterator(); i.hasNext(); ){
+        Geometry geometry = i.next();
+        if( geometry == null ) continue;
+        if( all == null ){
+            all = geometry;
+        }
+        else {
+            all = all.union( geometry );
+        }
+    }
+    return all;
+    }
+
+    private def computeGeometriesArea(def geometries) {
+        def intersectArea = 0
+        geometries.each {
+
+            intersectArea = intersectArea + it.area
+        }
+        intersectArea = combineIntoOneGeometry(geometries).area
+//        GeometryCollection unionCollection = new GeometryCollection(geometries.toArray(new Geometry[geometries.size()]), new GeometryFactory());
+//        intersectArea = unionCollection.area
+        println "area=$intersectArea"
+        return intersectArea
+    }
+
+    private def splitReviewedModifiedAndNotModified(def allReviewed, def predictor) {
+        //Nbre d'annotations acceptées et non modifiées
+        def reviewedNotModified = []
+        //Nbre d'annotations acceptées et modifiées
+        def reviewedModified = []
+        allReviewed.each { reviewed ->
+            def parent
+            try {
+                parent = AnnotationDomain.getAnnotationDomain(reviewed.parentIdent)
+            }catch(Exception e) {}
+            log.info "${reviewed['id']} parent?.user=${parent?.user} vs ${predictor.id}"
+            log.info "user ${parent?.user.id}"
+            if( parent && parent.user.id == predictor.id && parent.location.equals(new WKTReader().read(reviewed['location']))) {
+                reviewedNotModified << reviewed
+            } else if (parent && parent.user.id == predictor.id) {
+                reviewedModified << reviewed
+            }
+        }
+        return  [reviewedNotModified:reviewedNotModified,reviewedModified:reviewedModified]
+    }
+
+
+    private def retrievePredictedNotReviewed(def allReviewed, def allPredicted) {
+        def reviewedParentsIds = allReviewed.collect{it['parentIdent']}
+
+//       Nbre d'annotations non reviewé
+        def predictedNotReviewed = []
+        allPredicted.each {
+            if(!reviewedParentsIds.contains(it['id'])) {
+                predictedNotReviewed <<  it
+            }
+
+        }
+        predictedNotReviewed
+    }
+
+
+    private def retrieveNotPredictedReviewed(def allReviewed) {
+        def notPredictedReviewed = []
+//       Nbre d'annotations ajoutées (non présentes dans la couche algo)
+        allReviewed.each { reviewed ->
+            println reviewed
+            log.info "${reviewed['user']} == ${reviewed['reviewUser']}"
+            if(reviewed['user']==reviewed['reviewUser']) {
+                notPredictedReviewed <<  reviewed
+            }
+        }
+        notPredictedReviewed
+
+    }
+
+
+    private def retrieveAllReviewed(ImageInstance image,Term term) {
+        AnnotationListing al = new ReviewedAnnotationListing(
+                columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                image : image.id,
+                term : term.id,
+        )
+        annotationListingService.executeRequest(al)
+
+    }
+
+    private def retrieveAllPredicted(ImageInstance image,Term term, SecUser user) {
+        def allPredicted
+        AnnotationListing al
+        if(user.algo()) {
+            al = new AlgoAnnotationListing(
+                            columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                            image : image.id,
+                            term : term.id,
+                            user: user.id
+             )
+
+        } else {
+            al = new UserAnnotationListing(
+                            columnToPrint: ['basic','meta','gis','image','term',"wkt"],
+                            image : image.id,
+                            term : term.id,
+                            user: user.id
+             )
+        }
+        allPredicted = annotationListingService.executeRequest(al)
+        return allPredicted
     }
 }

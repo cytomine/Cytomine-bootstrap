@@ -407,13 +407,13 @@ var BrowseImageView = Backbone.View.extend({
                 layer.registerEvents(self.map);
                 if (layer.isOwner) {
                     self.userLayer = layer;
-                    layer.vectorsLayer.setVisibility(true);
+//                    layer.vectorsLayer.setVisibility(true);
                     layer.toggleIrregular();
                     //Simulate click on None toolbar
                 } else {
                     //layer.toggleIrregular();
                     layer.controls.select.activate();
-                    layer.vectorsLayer.setVisibility(false);
+//                    layer.vectorsLayer.setVisibility(false);
                 }
             });
             var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
@@ -1261,6 +1261,8 @@ var BrowseImageView = Backbone.View.extend({
                            self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
                        });
 
+                       self.layerSwitcherPanel.allVectorLayers.push({ id: "REVIEW", user: null})
+
                        var projectUsersJob = window.app.models.projectUserJob.select(function (user) {
                            return window.app.models.userLayer.get(user.id) != undefined;
                        });
@@ -1269,6 +1271,13 @@ var BrowseImageView = Backbone.View.extend({
                        });
 
 
+
+
+
+
+//             var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
+//             layerAnnotation.isOwner = false;
+//             layerAnnotation.loadAnnotations(self);
                        console.log("### self.layerSwitcherPanel.allVectorLayers="+self.layerSwitcherPanel.allVectorLayers.length);
 
                        self.layerSwitcherPanel.initLayerSelection();

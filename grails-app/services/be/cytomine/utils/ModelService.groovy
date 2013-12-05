@@ -42,6 +42,20 @@ abstract class ModelService {
         }
     }
 
+    def saveAndReturnDomain(def newObject) {
+        newObject.checkAlreadyExist()
+        if (!newObject.validate()) {
+            log.error newObject.errors
+            log.error newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: true, failOnError: true)) {
+            println "error"
+            throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+        newObject
+    }
+
     /**
      * Delete a domain from database
      */

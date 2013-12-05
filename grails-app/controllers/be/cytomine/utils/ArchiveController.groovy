@@ -10,10 +10,15 @@ class ArchiveController extends RestController {
     def springSecurityService
     def archiveCommandService
     def simplifyGeometryService
+    def scriptService
 
 
     def archive() {
         archiveCommandService.archiveOldCommand()
         responseSuccess([])
+    }
+
+    def script() {
+        scriptService.statsProject()
     }
 }

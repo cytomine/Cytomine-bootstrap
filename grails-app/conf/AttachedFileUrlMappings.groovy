@@ -20,7 +20,7 @@ class AttachedFileUrlMappings {
             action = [GET:"show"]
         }
 
-        "/api/attachedfile/$id/download.$format"(controller: "restAttachedFile") {
+        "/api/attachedfile/$id/download"(controller: "restAttachedFile") {
             action = [GET:"download"]
         }
     }

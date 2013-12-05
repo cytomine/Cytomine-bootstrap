@@ -600,6 +600,7 @@ class ReviewedAnnotationListing extends AnnotationListing {
                     created : 'extract(epoch from a.created)*1000',
                     updated : 'extract(epoch from a.updated)*1000',
                     user : 'a.user_id',
+                    reviewUser : 'a.review_user_id',
                     countComments : 'a.count_comments',
                     geometryCompression : 'a.geometry_compression',
                     cropURL : '#cropURL',

@@ -84,7 +84,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
         elseFilter: true
     })];
     var selectedRules = [new OpenLayers.Rule({
-        symbolizer: {strokeColor: "#00ff00", strokeWidth: 2,graphicZIndex:10000000},
+        symbolizer: {strokeColor: "#00ff00", strokeWidth: 2}, //graphicZIndex:10000000
         // symbolizer: {}, // instead if you want to keep default colors
         elseFilter: true
     })];
@@ -92,10 +92,10 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     var style = $.extend(true, {}, OpenLayers.Feature.Vector.style['default']); // get a copy of the default style
     style.label = "${getLabel}";
     style.fillOpacity = "${getOpacity}";
-    style.strokeWidth = 3 ;
+    style.strokeWidth = 1 ;
     style.fillColor = '#EEEEEE';
     style.strokeColor= '${getStrokeColor}';
-    style.strokeWidth= 3;
+    style.strokeWidth= 1;
     style.pointRadius= this.pointRadius;
     style.graphicZIndex = 999;
 

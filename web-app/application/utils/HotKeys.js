@@ -3,6 +3,13 @@ var HotKeys = {
         console.log("initHotKeys");
         var self = this;
 
+        $(document).bind('keydown.b',function (evt){
+                    console.log("press b");
+                    if(self.checkMode("review") || self.checkMode("image")) {
+                        self.doClick("div"+window.location.hash.toString(),".selectButton");
+                    }
+                }
+        );
         $(document).bind('keydown.a',function (evt){
                     console.log("press a");
                     if(self.checkMode("review")) {

@@ -73,14 +73,29 @@ var DescriptionModal = {
         //add host url for images
         text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host + '/api/attachedfile');
 
+        var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
+        if(!editable) {
+            text = text.replace("STOP_PREVIEW","");
+        }
+
         var modal = new CustomModal({
             idModal: "descriptionModal" + domainIdent,
             button: container.find("a.description"),
             header: "Description",
-            body: '<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
+            body: 'Add the keyword STOP_PREVIEW where you want to delimit the preview text.<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
             wide: true,
             callBack: function () {
                 $("#descriptionArea" + domainIdent).wysihtml5({});
+                var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
+                console.log("edidatble="+editable)
+                setTimeout(
+                  function() {
+                      $("iframe").contents().find("body").attr('contenteditable',editable);
+                      if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
+                         $("#saveDescription" + idDescription).hide();
+                      }
+                  }, 1000);
+
 
                 $("#saveDescription" + idDescription).click(function (e) {
                     // remove the host url for images
@@ -90,18 +105,24 @@ var DescriptionModal = {
                         domainClassName: domainClassName,
                         data: text
                     }, {success: function (termModel, response) {
+
                         callback();
                     }, error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
-                        window.app.view.message("Correct term", "error:" + json.errors, "");
+                        window.app.view.message("Auth error", "error:" + json.errors, "");
                     }});
 
                 });
 
             }
         });
+
         modal.addButtons("saveDescription" + idDescription, "Save", true, true);
         modal.addButtons("closeDescription" + idDescription, "Close", false, true);
+
+
+
+
 
     },
     initDescriptionView: function (domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet, callbackUpdate) {
@@ -110,11 +131,11 @@ var DescriptionModal = {
                 {success: function (description, response) {
                     container.empty();
                     var text = description.get('data');
-                    var textButton = "Edit";
+                    var textButton = "See full text and edit";
+                    text = text.split('STOP_PREVIEW')[0];
                     text = text.split('\\"').join('"');
                     if (text.replace(/<[^>]*>/g, "").length > maxPreviewCharNumber) {
                         text = text.substr(0, maxPreviewCharNumber) + "...";
-                        textButton = "See full text and edit"
                     }
                     container.append(text);
                     container.append(' <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal">' + textButton + '</a>');
@@ -245,23 +266,30 @@ var copyImageModal = {
                         });
 
                         modal.find(".copytoproject").click(function () {
-
+                             $("#layersSelection" + idImage).append('<br><div class="alert alert-info"><i class="icon-refresh"/> Loading...Please wait...</div>');
+                            $("#closeImportLayer" + idImage).hide();
                             new ImageInstanceModel({}).save({project: modal.find("#projectSelection" + idImage).find("select").val(), user: null, baseImage: idBaseImage}, {
                                 success: function (image, response) {
-                                    window.app.view.message("Image", response.message, "success");
+
 
 
                                     var newImageId = image.get('imageinstance').id
 
                                     $.post("/api/imageinstance/" + newImageId + "/copymetadata.json?based=" + idImage,function (data) {
 
-
                                         $.get("/api/imageinstance/" + newImageId + "/sameimagedata.json?project=" + idProject,function (data) {
                                             $("#layersSelection" + idImage).empty();
+                                            $("#layersSelection" + idImage).append('<br><div class="alert alert-info">The image is now in the selected project. You can now import layer data (annotations):</div>');
+
+
+                                            $("#closeImportLayer" + idImage).show();
                                             if (data.collection.length == 0) {
                                                 $("#layersSelection" + idImage).append("This image has no other layers with annotations and commons layers with the selected project in the current project.");
                                             } else {
                                                 $("#importLayersButton" + idImage).show();
+
+
+
                                                 $("#layersSelection" + idImage).append('<input type="checkbox" id="giveMeAnnotations"> Copy all annotations on my layer (if not checked, annotation will stay on the same layers) </input><br/><br/><br/> ');
                                                 _.each(data.collection, function (item) {
                                                     var layer = item.image + "_" + item.user

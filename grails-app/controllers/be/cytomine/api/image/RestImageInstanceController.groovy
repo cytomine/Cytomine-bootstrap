@@ -391,9 +391,9 @@ class RestImageInstanceController extends RestController {
                 }
 
                 responseSuccess([])
-            } else if(based) {
+            } else if(!based) {
                 responseNotFound("ImageInstance",params.based)
-            }else if(image) {
+            }else if(!image) {
                 responseNotFound("ImageInstance",params.id)
             }
         } catch (CytomineException e) {
