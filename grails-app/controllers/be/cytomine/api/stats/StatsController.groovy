@@ -340,10 +340,23 @@ class StatsController extends RestController {
 
     def statsPrediction = {
 
-        params.put("term1",83009160)
-        params.put("term2",83009161)
-        params.put("image",83009171)
-        params.put("user",18)
+//        params.put("term1",83009160)
+//        params.put("term2",83009161)
+//        params.put("image",83009171)
+//        params.put("user",18)
+
+
+        params.put("term1",20202)
+        params.put("term2",5735)
+        params.put("image",7889358)
+        params.put("user",8468429)
+
+//        params.put("term1",83009160)
+//        params.put("term2",83009161)
+//        params.put("image",83009551)
+//        params.put("user",14)
+                //
+
 
         Term predicted = termService.read(params.long('term1'))
         Term content = termService.read(params.long('term2'))
@@ -378,13 +391,13 @@ class StatsController extends RestController {
         def contentReviewed = retrieveAllReviewed(image,content)
 
 
-        assert contentReviewed.size()==1
-        assert allReviewed.size() == 6
-        assert allPredicted.size() == 6
-        assert predictedNotReviewed.size() == 2
-        assert notPredictedReviewed.size() == 2
-        assert reviewedNotModified.size() == 2
-        assert reviewedModified.size() == 2
+//        assert contentReviewed.size()==1
+//        assert allReviewed.size() == 6
+//        assert allPredicted.size() == 6
+//        assert predictedNotReviewed.size() == 2
+//        assert notPredictedReviewed.size() == 2
+//        assert reviewedNotModified.size() == 2
+//        assert reviewedModified.size() == 2
 
         //convert annotation to geometry type + filter to keep only annotation inside content annotation (tumor inside hung)
 
@@ -406,8 +419,11 @@ class StatsController extends RestController {
             return isInContent
         }
 
-        assert reviewedGeometries.size() == 6
-        assert predictedGeometries.size() == 6
+        def reviewedGeometries2 = reviewedGeometries.collect{it.clone()}
+        def predictedGeometries2 = predictedGeometries.collect{it.clone()}
+
+//        assert reviewedGeometries.size() == 6
+//        assert predictedGeometries.size() == 6
 
         //x = x c'est le pourcentage de tumeur de la couche review bien prédite comme tumeur dans la couche algo;
         def instersectGeometries = []
@@ -417,7 +433,7 @@ class StatsController extends RestController {
             }
         }
         instersectGeometries = instersectGeometries.findAll {!it.isEmpty()}
-        assert instersectGeometries.size()==4
+//        assert instersectGeometries.size()==4
 
         def x = computeGeometriesArea(instersectGeometries)/computeGeometriesArea(reviewedGeometries)
 
@@ -427,29 +443,40 @@ class StatsController extends RestController {
         reviewedGeometries.each{ revgeom  ->
             //for each reveiwed, get the intersection with a predicted (=good prediction) and make difference between the reviewed and good prediction (= bad prediction)
             boolean intersect = false
+            def  badPrediction = revgeom.clone()
             predictedGeometries.each { predictgeom->
 
                 def goodPrediction = revgeom.intersection(predictgeom)
 
                 if(!goodPrediction.isEmpty()) {
                     intersect = true
-                    def badPrediction = revgeom.difference(goodPrediction)
-                    revgeom = revgeom.difference(goodPrediction) //if predicted annotation intersect themselve
-                    differenceGeometries << badPrediction
+
+                    try {badPrediction = badPrediction.difference(goodPrediction)} catch(Exception e) {println e}
+//                    if(badPrediction && badPrediction.area>0) {
+//                        revgeom = revgeom.difference(goodPrediction) //if predicted annotation intersect themselve
+//
+//                        if(badPrediction.toString().startsWith("MULTIPOLYGON (((24032 9317, 24200 9317,")) {
+//                            println "found bad prediction"
+//                        }
+//                    }
                 }
             }
-            if(!intersect) {
-                //if no intersect with predicted, the reviewed geometry will ne be in collection
-                differenceGeometries << revgeom
-            }
+            differenceGeometries << badPrediction
+//            if(!intersect) {
+//                //if no intersect with predicted, the reviewed geometry will ne be in collection
+//                differenceGeometries << revgeom
+//            }
         }
         differenceGeometries = differenceGeometries.findAll {!it.isEmpty()}
         differenceGeometries = differenceGeometries.unique()
 
+        println "Y"
         differenceGeometries.each {
-            println it
+            println  it
         }
-
+        differenceGeometries.each {
+            println  it.area
+        }
         def y = computeGeometriesArea(differenceGeometries)/computeGeometriesArea(reviewedGeometries)
 
 
@@ -457,31 +484,43 @@ class StatsController extends RestController {
 
         def differenceGeometriesW = []
 
-        predictedGeometries.each{ predictgeom  ->
+        predictedGeometries2.each{ predictgeom  ->
             boolean intersect = false
-            reviewedGeometries.each {revgeom ->
+            def badPrediction = predictgeom.clone()
+            println "predictgeom=$predictgeom"
+            reviewedGeometries2.each {revgeom ->
                 def goodPrediction = predictgeom.intersection(revgeom)
+                println "goodPrediction=$goodPrediction"
                 if(!goodPrediction.isEmpty()) {
                     intersect = true
-                    def badPrediction = predictgeom.difference(goodPrediction)
-                    predictgeom = revgeom.difference(goodPrediction)
-                    differenceGeometriesW << badPrediction
+                    println "badPrediction=$badPrediction"
+                    badPrediction = badPrediction.difference(goodPrediction)
+//                    try {predictgeom = revgeom.difference(goodPrediction)} catch(Exception e) {println e}
+
+
                 }
             }
-            if(!intersect) {
-                //if no intersect with predicted, the reviewed geometry will ne be in collection
-                differenceGeometriesW << predictgeom
-            }
+            println "badPrediction=$badPrediction"
+            differenceGeometriesW << badPrediction
+//            if(!intersect) {
+//                //if no intersect with predicted, the reviewed geometry will ne be in collection
+//                differenceGeometriesW << predictgeom
+//            }
         }
 
         differenceGeometriesW = differenceGeometriesW.findAll {!it.isEmpty()}
         differenceGeometriesW = differenceGeometriesW.unique()
 
+        println "W"
+        differenceGeometriesW.each {
+            println it
+        }
+
 
         //compute the content annotation without the reviewed annotation (= not tumor)
         def contentWithoutReviewedPrediction = []
         contentReviewedGeometry.each { contentRev ->
-            reviewedGeometries.each { wellPredicted ->
+            reviewedGeometries2.each { wellPredicted ->
                 contentRev = contentRev.difference(wellPredicted)
             }
             contentWithoutReviewedPrediction << contentRev
@@ -494,14 +533,10 @@ class StatsController extends RestController {
         def contentWithoutReviewedPredictionAndPredicted  = []
         //compute the content without the reviewed and without the predicted (not tumor well predicted)
         contentWithoutReviewedPrediction.each { contentRev ->
-              predictedGeometries.each { predict ->
+              predictedGeometries2.each { predict ->
                   contentRev = contentRev.difference(predict)
               }
             contentWithoutReviewedPredictionAndPredicted << contentRev
-        }
-
-        contentWithoutReviewedPredictionAndPredicted.each {
-            println it
         }
 
         def z = computeGeometriesArea(contentWithoutReviewedPredictionAndPredicted)/computeGeometriesArea(contentWithoutReviewedPrediction)
@@ -510,10 +545,13 @@ class StatsController extends RestController {
 
         println "x=$x"
         println "y=$y"
-        assert 1==x+y
+//        assert 1==x+y
         println "w=$w"
         println "z=$z"
-        assert 1==z+w
+
+        println "x+y="+(x+y)
+        println "w+z="+(w+z)
+//        assert 1==z+w
 
 
 //       Pourcentage d'"overlap" (= surface de l'intersection des deux couches)
@@ -546,10 +584,9 @@ class StatsController extends RestController {
 
             intersectArea = intersectArea + it.area
         }
-        intersectArea = combineIntoOneGeometry(geometries).area
+        //intersectArea = combineIntoOneGeometry(geometries).area
 //        GeometryCollection unionCollection = new GeometryCollection(geometries.toArray(new Geometry[geometries.size()]), new GeometryFactory());
 //        intersectArea = unionCollection.area
-        println "area=$intersectArea"
         return intersectArea
     }
 
@@ -589,12 +626,11 @@ class StatsController extends RestController {
         predictedNotReviewed
     }
 
-
+   //TODO: error, in database user/review_user are the same ... why?
     private def retrieveNotPredictedReviewed(def allReviewed) {
         def notPredictedReviewed = []
 //       Nbre d'annotations ajoutées (non présentes dans la couche algo)
         allReviewed.each { reviewed ->
-            println reviewed
             log.info "${reviewed['user']} == ${reviewed['reviewUser']}"
             if(reviewed['user']==reviewed['reviewUser']) {
                 notPredictedReviewed <<  reviewed

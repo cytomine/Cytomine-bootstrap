@@ -22,7 +22,7 @@ class ReviewedAnnotationUrlMappings {
          }
 
         "/api/annotation/$id/review.$format"(controller: "restReviewedAnnotation"){
-            action = [POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
+            action = [GET: "addAnnotationReview",POST:"addAnnotationReview",PUT:"addAnnotationReview",DELETE:"deleteAnnotationReview"]
          }
 
 //        "/api/annotation/$id/review/fill.$format"(controller: "restReviewedAnnotation"){

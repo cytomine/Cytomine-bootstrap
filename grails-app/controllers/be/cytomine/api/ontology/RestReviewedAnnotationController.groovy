@@ -389,7 +389,7 @@ class RestReviewedAnnotationController extends RestController {
         review.parentIdent = annotation.id
         review.parentClassName = annotation.class.name
         review.status = 1
-        review.user = cytomineService.currentUser
+        review.user = annotation.user
         review.location = annotation.location
         review.image = annotation.image
         review.project = annotation.project
