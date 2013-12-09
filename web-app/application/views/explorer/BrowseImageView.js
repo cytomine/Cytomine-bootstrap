@@ -1,4 +1,5 @@
-var BrowseImageView = Backbone.View.extend({
+var BrowseImageView;
+BrowseImageView = Backbone.View.extend({
     tagName: "div",
     tileSize: 256,
     review: false,
@@ -36,7 +37,7 @@ var BrowseImageView = Backbone.View.extend({
         if (options.review != undefined) {
             this.review = options.review;
         }
-        this.divPrefixId = "tabs-"+this.getMode();
+        this.divPrefixId = "tabs-" + this.getMode();
         this.addToTab = true;
         if (options.addToTab != undefined) {
             this.addToTab = options.addToTab;
@@ -53,7 +54,7 @@ var BrowseImageView = Backbone.View.extend({
     doLayout: function (tpl) {
         var self = this;
 
-        this.divId = "tabs-"+self.getMode()+"-" + window.app.status.currentProject + "-" + this.model.id + "-";
+        this.divId = "tabs-" + self.getMode() + "-" + window.app.status.currentProject + "-" + this.model.id + "-";
 
         var templateData = this.model.toJSON();
 
@@ -73,7 +74,7 @@ var BrowseImageView = Backbone.View.extend({
                 "</a>" +
                 "</li>";
 
-        if(this.addToTab) {
+        if (this.addToTab) {
             var tabs = $('#explorer-tab');
             tabs.append(_.template(tabTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), originalFilename: this.model.get('originalFilename'), shortOriginalFilename: shortOriginalFilename}));
             var dropdownTpl = '<li class="dropdown"><a href="#" id="' + self.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + self.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
@@ -90,14 +91,31 @@ var BrowseImageView = Backbone.View.extend({
 
         this.initToolbar();
 
-        $("#hide-sidebar-map-right").on("click", function() {
-            $(".sidebar-map-right-big").hide();
-            $(".sidebar-map-right-mini").show();
+        var sidebarRightMini = $(".sidebar-map-right-mini");
+        var sidebarRightBig = $(".sidebar-map-right-big");
+        var speed = 500;
+        $("#hide-sidebar-map-right").on("click", function () {
+            sidebarRightBig.animate({
+                right: -300
+            }, speed, function () {
+                sidebarRightBig.hide();
+                sidebarRightMini.show().animate({
+                    right: 0
+                }, speed);
+            });
+
         });
 
-        $("#show-sidebar-map-right").on("click", function() {
-            $(".sidebar-map-right-mini").hide();
-            $(".sidebar-map-right-big").show();
+        $("#show-sidebar-map-right").on("click", function () {
+            sidebarRightMini.animate({
+                right: -120
+            }, speed, function () {
+                sidebarRightMini.hide();
+                sidebarRightBig.show().animate({
+                    right: 0
+                }, speed);
+            });
+
 
         });
 
@@ -143,7 +161,7 @@ var BrowseImageView = Backbone.View.extend({
             this.reviewPanel.deleteTermChoice(idTerm, this.currentAnnotation.id);
         }
     },
-    getMode : function() {
+    getMode: function () {
         if (!this.review) {
             return "image"
         }
@@ -180,9 +198,9 @@ var BrowseImageView = Backbone.View.extend({
                 //process PIX
                 /*Processing.Threshold.process({canvas :imgd, threshold : 165});
 
-                Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
+                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
                  Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});
-                  */
+                 */
                 ctx.putImageData(imgd, 0, 0);
                 evt.tile.imgDiv.removeAttribute("crossorigin");
                 evt.tile.imgDiv.src = ctx.canvas.toDataURL();
@@ -197,14 +215,13 @@ var BrowseImageView = Backbone.View.extend({
 
     show: function (options) {
         var self = this;
-
-        if(this.position) {
+        if (this.position) {
             console.log("moveTo");
             self.map.moveTo(new OpenLayers.LonLat(self.position.x, self.position.y), Math.max(0, self.position.zoom));
         }
 
 
-        if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
+        if (options.goToAnnotation != undefined && options.goToAnnotation.value != undefined) {
 
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
@@ -261,7 +278,7 @@ var BrowseImageView = Backbone.View.extend({
         // manually check (or uncheck) the checkbox in the menu:
         $("#" + this.divId).find("#layerSwitcher" + this.model.get("id")).find("ul.annotationLayers").find(":checkbox").each(function () {
             if (layer.name != $(this).attr("value")) {
-                return ;
+                return;
             }
             if (visibility) {
 //                if (!$(this).is(':checked')) {
@@ -276,19 +293,16 @@ var BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    changeTermLayerVisibility : function() {
+    changeTermLayerVisibility: function () {
 
         //retrieve all layers
 
         //for each layer
 
-            //update url with new terms
-
-
+        //update url with new terms
 
 
     },
-
 
 
     switchControl: function (controlName) {
@@ -416,8 +430,7 @@ var BrowseImageView = Backbone.View.extend({
 
             self.initAutoAnnoteTools();
 
-        }  else {
-//            if (_.isFunction(self.initCallback)) {
+        } else { //            if (_.isFunction(self.initCallback)) {
 //                self.initCallback.call();
 //            }
         }
@@ -429,7 +442,7 @@ var BrowseImageView = Backbone.View.extend({
         return this.userLayer;
     },
     getUserLayerCanEdit: function () {
-        if(this.isCurrentUserProjectAdmin()) {
+        if (this.isCurrentUserProjectAdmin()) {
             //project admin? can all user layer
             return this.layers;
         } else {
@@ -438,8 +451,8 @@ var BrowseImageView = Backbone.View.extend({
         }
 
     },
-    isCurrentUserProjectAdmin : function()  {
-        return window.app.models.projectAdmin.get(window.app.status.user.id)!=undefined;
+    isCurrentUserProjectAdmin: function () {
+        return window.app.models.projectAdmin.get(window.app.status.user.id) != undefined;
     },
     getUserAndReviewLayer: function () {
         return {user: this.userLayer, review: this.reviewPanel.reviewLayer};
@@ -477,8 +490,8 @@ var BrowseImageView = Backbone.View.extend({
      */
     reviewLayer: null,
     addVectorLayer: function (layer, userID) {
-        console.log("BrowseImageView.addVectorLayer layer="+layer);
-        console.log("BrowseImageView.addVectorLayer userID="+userID);
+        console.log("BrowseImageView.addVectorLayer layer=" + layer);
+        console.log("BrowseImageView.addVectorLayer userID=" + userID);
         layer.vectorsLayer.setVisibility(false);
         this.map.addLayer(layer.vectorsLayer);
 
@@ -490,7 +503,7 @@ var BrowseImageView = Backbone.View.extend({
         this.layers.push(layer);
 
         if (!this.review) {
-            console.log("browseImageView.addVectorLayer model="+this.model);
+            console.log("browseImageView.addVectorLayer model=" + this.model);
             this.layerSwitcherPanel.addVectorLayer(layer, this.model, userID);
         } else {
             this.reviewPanel.addVectorLayer(layer, this.model, userID);
@@ -525,24 +538,24 @@ var BrowseImageView = Backbone.View.extend({
             userJobLayers: self.userJobForImage
         }).render();
     },
-    createNumberOfAnnotationPerUser : function() {
+    createNumberOfAnnotationPerUser: function () {
 
         var self = this;
-        var refreshData = function() {
-            $.get("/api/imageinstance/"+self.model.id+"/annotationindex.json", function(data) {
+        var refreshData = function () {
+            $.get("/api/imageinstance/" + self.model.id + "/annotationindex.json", function (data) {
                 var totalReviewed = 0;
-                _.each (data.collection, function (item){
+                _.each(data.collection, function (item) {
                     //
-                    var span = $("li#entry"+item.user).find("span.numberOfAnnotation")
-                    if(span.length>0) {
+                    var span = $("li#entry" + item.user).find("span.numberOfAnnotation")
+                    if (span.length > 0) {
                         span.empty();
-                        span.append("("+item.countAnnotation+")");
+                        span.append("(" + item.countAnnotation + ")");
                     }
                     totalReviewed = totalReviewed + item.countReviewedAnnotation;
                 });
                 var span = $("li#entryREVIEW").find("span.numberOfAnnotation");
                 span.empty();
-                span.append("("+totalReviewed+")");
+                span.append("(" + totalReviewed + ")");
             });
         }
         refreshData();
@@ -551,10 +564,7 @@ var BrowseImageView = Backbone.View.extend({
             clearInterval(interval);
         });
 
-    } ,
-
-    createAnnotationPropertiesPanel : function() {
-        //annotationProperties
+    }, createAnnotationPropertiesPanel: function () { //annotationProperties
         var self = this;
 
         this.annotationProperties = new AnnotationPropertyPanel({
@@ -630,10 +640,9 @@ var BrowseImageView = Backbone.View.extend({
             for (var z = metadata.nbZoom - 1; z >= 0; z--) {
                 serverResolutions.push(Math.pow(2, z));
             }
-            var resolutions = _.union(serverResolutions, self.digitalResolutions);            
+            var resolutions = _.union(serverResolutions, self.digitalResolutions);
             var options = {
-                theme : null,
-                maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
+                theme: null, maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
                 resolutions: resolutions,
                 serverResolutions: serverResolutions,
                 units: 'pixels',
@@ -706,8 +715,8 @@ var BrowseImageView = Backbone.View.extend({
 
             self.map = new OpenLayers.Map("map" + self.divPrefixId + self.model.get('id'), options);
             self.map.events.register('mousemove', self.map, function (e) {
-                var point = self.map.getLonLatFromPixel( this.events.getMousePosition(e) )
-                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: point.lon, y: self.model.get('height')-point.lat});
+                var point = self.map.getLonLatFromPixel(this.events.getMousePosition(e))
+                var coordinates = _.template(" x : <%= x %>, y : <%= y %>", {x: point.lon, y: self.model.get('height') - point.lat});
                 $('#mousePositionContent' + self.model.id).html(coordinates);
             });
             self.initOntology();
@@ -723,35 +732,35 @@ var BrowseImageView = Backbone.View.extend({
             //baseLayer.transitionEffect = 'none';
             /*baseLayer.getImageSize = function () {
 
-                if (arguments.length > 0) {
-                    bounds = this.adjustBounds(arguments[0]);
-                    var z = this.map.getZoom();
-                    var res = this.map.getResolution();
-                    var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
-                    var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
-                    //check if tiles exist on server at this zoom level, if not return
-                    if (this.tierImageSize[z] == undefined) {
-                        return null;
-                    }
-                    var w = this.standardTileSize;
-                    var h = this.standardTileSize;
-                    if (x == this.tierSizeInTiles[z].w - 1) {
-                        w = this.tierImageSize[z].w % this.standardTileSize;
-                        if (w == 0) {
-                            w = this.standardTileSize;
-                        }
-                    }
-                    if (y == this.tierSizeInTiles[z].h - 1) {
-                        h = this.tierImageSize[z].h % this.standardTileSize;
-                        if (h == 0) {
-                            h = this.standardTileSize;
-                        }
-                    }
-                    return (new OpenLayers.Size(w, h));
-                } else {
-                    return this.tileSize;
-                }
-            }; */
+             if (arguments.length > 0) {
+             bounds = this.adjustBounds(arguments[0]);
+             var z = this.map.getZoom();
+             var res = this.map.getResolution();
+             var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+             var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
+             //check if tiles exist on server at this zoom level, if not return
+             if (this.tierImageSize[z] == undefined) {
+             return null;
+             }
+             var w = this.standardTileSize;
+             var h = this.standardTileSize;
+             if (x == this.tierSizeInTiles[z].w - 1) {
+             w = this.tierImageSize[z].w % this.standardTileSize;
+             if (w == 0) {
+             w = this.standardTileSize;
+             }
+             }
+             if (y == this.tierSizeInTiles[z].h - 1) {
+             h = this.tierImageSize[z].h % this.standardTileSize;
+             if (h == 0) {
+             h = this.standardTileSize;
+             }
+             }
+             return (new OpenLayers.Size(w, h));
+             } else {
+             return this.tileSize;
+             }
+             }; */
             imageFilters.each(function (imageFilter) {
                 var url = _.map(zoomify_urls, function (url) {
                     console.log(imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url);
@@ -796,7 +805,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
             var scaleline = new OpenLayers.Control.ScaleLine({
-                update: function() {
+                update: function () {
                     var resolution = self.model.get("resolution");
                     var maxMagnification = self.model.get("magnification") * Math.pow(2, self.nbDigitialZoom);
                     var deltaZoom = self.map.getNumZoomLevels() - self.map.getZoom() - 1;
@@ -824,11 +833,11 @@ var BrowseImageView = Backbone.View.extend({
                     } else {
                         length += " pixels";
                     }
-                    if (this.eTop.style.visibility == "visible"){
+                    if (this.eTop.style.visibility == "visible") {
                         this.eTop.style.width = Math.round(topPx) + "px";
                         this.eTop.innerHTML = length;
                     }
-                    if (this.eBottom.style.visibility == "visible"){
+                    if (this.eBottom.style.visibility == "visible") {
                         this.eTop.style.width = Math.round(topPx) + "px";
                         this.eBottom.innerHTML = "Magnitude : " + magnification + " X";
                     }
@@ -849,7 +858,7 @@ var BrowseImageView = Backbone.View.extend({
         var metadata = {width: self.model.get("width"), height: self.model.get("height"), nbZoom: nbZoom, overviewWidth: 200, overviewHeight: Math.round((200 / self.model.get("width") * self.model.get("height")))};
 
 
-        new ImageServerUrlsModel({id: self.model.get('baseImage'), merge:self.merge,imageinstance:self.model.id}).fetch({
+        new ImageServerUrlsModel({id: self.model.get('baseImage'), merge: self.merge, imageinstance: self.model.id}).fetch({
             success: function (model, response) {
                 new ProjectImageFilterCollection({ project: self.model.get("project")}).fetch({
                     success: function (imageFilters, response) {
@@ -1058,7 +1067,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=irregular4' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.getUserLayer().irregular) {
+            if (!self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
             self.getUserLayer().controls.select.unselectAll();
@@ -1069,7 +1078,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=irregular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(!self.getUserLayer().irregular) {
+            if (!self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
             self.getUserLayer().controls.select.unselectAll();
@@ -1080,7 +1089,7 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=regular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-            if(self.getUserLayer().irregular) {
+            if (self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
             self.getUserLayer().controls.select.unselectAll();
@@ -1129,7 +1138,7 @@ var BrowseImageView = Backbone.View.extend({
             self.freeHandUpdateRem = false;
 
             if (!self.review) {
-                _.each(self.getUserLayerCanEdit(),function(layer) {
+                _.each(self.getUserLayerCanEdit(), function (layer) {
                     layer.toggleEdit();
                     layer.disableHightlight();
                 });
@@ -1145,11 +1154,10 @@ var BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=delete' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
-//            self.getUserLayer().controls.select.unselectAll();
-//            self.getUserLayer().toggleControl("select");
+//            self.getUserLayer().controls.select.unselectAll(); //            self.getUserLayer().toggleControl("select");
 //            self.getUserLayer().deleteOnSelect = true;
 //            self.getUserLayer().disableHightlight();
-            _.each(self.getUserLayerCanEdit(),function(layer) {
+            _.each(self.getUserLayerCanEdit(), function (layer) {
                 layer.controls.select.unselectAll();
                 layer.toggleControl("select");
                 layer.deleteOnSelect = true;
@@ -1242,10 +1250,10 @@ var BrowseImageView = Backbone.View.extend({
             var y = Math.round(self.model.get('height') - ol_top);
             var width = Math.round(mapBounds.right - ol_left);
             var height = Math.round(mapBounds.top - mapBounds.bottom);
-            var url = "api/imageinstance/"+self.model.id+"/window_url-"+x+"-"+y+"-"+width+"-"+height + ".jpg";
-            $.get(url, function(data) {
+            var url = "api/imageinstance/" + self.model.id + "/window_url-" + x + "-" + y + "-" + width + "-" + height + ".jpg";
+            $.get(url, function (data) {
                 window_url = data.url;
-                var imageFilter= self.map.baseLayer.imageFilter;
+                var imageFilter = self.map.baseLayer.imageFilter;
                 if (imageFilter) {
                     window_url = imageFilter.get('processingServer') + imageFilter.get("baseUrl") + window_url;
                 }
@@ -1278,51 +1286,53 @@ var BrowseImageView = Backbone.View.extend({
 //            });
 //            //init review layer in explore mode
 //            var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
-//            layerAnnotation.isOwner = false;
+
+            //            layerAnnotation.isOwner = false;
 //            layerAnnotation.loadAnnotations(self);
-//            self.layerSwitcherPanel.initLayerSelection();
+            //            self.layerSwitcherPanel.initLayerSelection();
 
-                new UserLayerCollection({project: window.app.status.currentProject, image: self.model.id}).fetch({
-                   success: function (collection, response) {
-                       window.app.models.userLayer = collection;
+            new UserLayerCollection({project: window.app.status
 
 
-                       var projectUsers = window.app.models.projectUser.select(function (user) {
-                           return window.app.models.userLayer.get(user.id) != undefined;
-                       });
-                       _.each(projectUsers, function (user) {
-                           self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
-                       });
-
-                       self.layerSwitcherPanel.allVectorLayers.push({ id: "REVIEW", user: null})
-
-                       var projectUsersJob = window.app.models.projectUserJob.select(function (user) {
-                           return window.app.models.userLayer.get(user.id) != undefined;
-                       });
-                       _.each(projectUsersJob, function (user) {
-                           self.layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
-                       });
+                .currentProject, image: self.model.id}).fetch({
+                    success: function (collection, response) {
+                        window.app.models.userLayer = collection;
 
 
+                        var projectUsers = window.app.models.projectUser.
+                            select(function (user) {
+                                return window.app.
+                                    models.
+
+                                    userLayer.get(user.id) != undefined;
+                            });
+                        _.each(projectUsers, function (user) {
+                            self.layerSwitcherPanel.
+                                allVectorLayers.push({ id: user.id, user: user});
+                        });
+
+                        self.layerSwitcherPanel.allVectorLayers.push({ id: "REVIEW", user: null})
+
+                        var projectUsersJob =
+                            window.app.models.projectUserJob.select(function (user) {
+                                return window.app.models.userLayer.get(user.id) != undefined;
+                            });
+                        _.each(projectUsersJob, function (user) {
+                            self.
+                                layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
+                        });//             var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
 
 
-
-
-//             var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
-//             layerAnnotation.isOwner = false;
+                        //             layerAnnotation.isOwner = false;
 //             layerAnnotation.loadAnnotations(self);
-                       console.log("### self.layerSwitcherPanel.allVectorLayers="+self.layerSwitcherPanel.allVectorLayers.length);
+                        console.log("### self.layerSwitcherPanel.allVectorLayers=" + self.layerSwitcherPanel.allVectorLayers.length);
 
-                       self.layerSwitcherPanel.initLayerSelection();
-                       console.log("GO TO LAYER 2 ") ;
-                       console.log(self.layers) ;
+                        self.layerSwitcherPanel.initLayerSelection();
+                        console.log("GO TO LAYER 2 ");
+                        console.log(self.layers);
 
-                   }
-               });
-
-
-
-
+                    }
+                });
 
 
         } else {
@@ -1412,30 +1422,30 @@ var BrowseImageView = Backbone.View.extend({
             }});
 
     },
-    getVisibleLayer : function() {
+    getVisibleLayer: function () {
         var self = this;
         var ids = [];
         console.log(self.layers);
-        _.each(self.layers,function(layer) {
-            if(layer.vectorsLayer.visibility) {
+        _.each(self.layers, function (layer) {
+            if (layer.vectorsLayer.visibility) {
                 ids.push(layer.userID)
             }
         });
         return ids;
     },
-    refreshLayers : function() {
+    refreshLayers: function () {
         var self = this;
-        _.each(self.layers,function(layer) {
+        _.each(self.layers, function (layer) {
             layer.vectorsLayer.refresh();
         });
         self.refreshReviewLayer();
     },
-    opacity : 0.5,
-    setOpacity: function(opacity) {
-        this.opacity = opacity/100
+    opacity: 0.5,
+    setOpacity: function (opacity) {
+        this.opacity = opacity / 100
         this.refreshLayers();
     },
-    getOpacity: function() {
+    getOpacity: function () {
         //call every time an annotation is draw, use var instead of spinner.val() each time
         return this.opacity
     }

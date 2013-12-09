@@ -62,22 +62,6 @@ var AnnotationsPanel = Backbone.View.extend({
                 });
                 i++;
             });
-            var annotationPanel = $("#annotationsPanel" + self.model.id);
-            /*annotationPanel.find(".tabsAnnotation").tabs({
-                add: function (event, ui) {
-
-                },
-                select: function (event, ui) {
-                    var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object) {
-                        return (object.index == ui.index);
-                    });
-                    obj.refresh.call();
-                }
-            });*/
-            annotationPanel.find(".tabs-bottom .ui-tabs-nav, .tabs-bottom .ui-tabs-nav > *")
-                .removeClass("ui-corner-all ui-corner-top")
-                .addClass("ui-corner-bottom");
-
         });
     },
     refreshAnnotationTabs: function (idTerm) {
@@ -112,64 +96,48 @@ var AnnotationsPanel = Backbone.View.extend({
     doLayout: function (tpl) {
         var self = this;
         var el = $("#" + self.browseImageView.divId).find('#annotationsPanel' + self.model.get('id'));
-        var width = parseInt($(window).width());
+
         el.html(_.template(tpl, {id: self.model.get('id')}));
         new ProjectModel({id: window.app.status.currentProject}).fetch({
             success: function (model, response) {
                 self.createTabs(model.get("ontology"));
             }
         });
-        var minSize = "25px";
-        el.css("padding", "0px");
-        el.css("margin", "0px");
-        el.css("width", minSize);
-        el.css("height", minSize);
-        el.css("padding", "4px");
-        el.css("bottom", "0px");
-        el.find("div.panel_button").click(function (event) {
-            event.preventDefault();
-            width = parseInt($(window).width());
-            el.find("div.panel_button").toggle();
-            el.css("bottom", "0px");
-            el.animate({
-                height: "302px"
-            }, "fast").animate({
-                    width: width
-                }, "fast").find("div.panel_content").fadeIn();
 
-            //Refresh selected tab
-            var tabSelected = el.find(".tabsAnnotation").tabs('option', 'selected');
-            var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object) {
-                return (object.index == tabSelected);
+        var speed = 500;
+        var annotationsPanelBig = $(".annotations-panel-big");
+        var annotationsPanelMini = $(".annotations-panel-mini");
+        $(".show-annotations-panel-big").on("click", function() {
+            annotationsPanelMini.animate({
+                bottom : -20
+            }, speed, function () {
+                annotationsPanelMini.hide();
+                annotationsPanelBig.show().animate({
+                    bottom : 0
+                })
             });
-            obj.refresh.call();
-            return false;
+        });
+        $(".hide-annotations-panel-big").on("click", function() {
+            annotationsPanelBig.animate({
+                bottom : -300
+            }, speed, function () {
+                annotationsPanelBig.show();
+                annotationsPanelMini.show().animate({
+                    bottom : 0
+                })
+            });
         });
 
-
-        el.find("div#hide_button").click(function (event) {
-            event.preventDefault();
-            el.animate({
-                height: minSize
-            }, "fast")
-                .animate({
-                    width: minSize
-                }, "fast");
-
-            setTimeout(function () {
-                el.find("div.panel_content").hide();
-                el.css("bottom", "0px");
-            }, 1000);
-
-            return false;
-
+        $("div .tabsAnnotation").on('shown.bs.tab','a[data-toggle="tab"]', function (e) {
+            e.preventDefault();
+            //Refresh selected tab
+            var idTerm = $(this).attr("data-term");
+            var obj = _.detect(self.refreshAnnotationsTabsFunc, function (object) {
+                return (object.idTerm == idTerm);
+            });
+            if (obj) obj.refresh.call();
         });
-        el.find("div.previous_button").click(function () {
-            alert("prev" + self.currentAnnotation);
-        });
-        el.find("div.next_button").click(function () {
-            alert("next" + self.currentAnnotation);
-        });
+
         return this;
     }
 });

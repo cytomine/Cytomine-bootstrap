@@ -269,7 +269,7 @@ var ExplorerTabs = Backbone.View.extend({
         tabs.find("a[href='#tabs-reviewdash-"+window.app.status.currentProject+"']").parent().hide();
 
 
-        $(document).on('click','a[data-toggle="tab"]', function (e) {
+        tabs.on('click','a[data-toggle="tab"]', function (e) {
             var hash = this.href.split("#")[1];
             $("#" + hash).attr('style', 'width:100%;min-height:500px;overflow:auto;');
             if (self.triggerRoute) {

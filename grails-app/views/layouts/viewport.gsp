@@ -26,12 +26,12 @@
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
-<link rel="stylesheet" href="lib/bootstrap-3.0.3/css/bootstrap.yeti.min.css"/>
+<link rel="stylesheet" href="lib/bootstrap-3.0.3/css/bootstrap.min.css"/>
 
 
 <style type="text/css">
     body {
-        padding-top: 46px;
+        padding-top: 50px;
     }
 </style>
 

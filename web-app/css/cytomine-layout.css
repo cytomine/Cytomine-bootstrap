@@ -161,21 +161,21 @@ div .sidebar-map-head {
 }
 
 div .sidebar-map-right-mini {
-    width : 75px !important;
-    max-width: 75px !important
+    width : 120px !important;
+    max-width: 120px !important;
+    right : -120px;
 }
+
+div .sidebar-map-right-big {
+    right : 0px;
+}
+
 
 div .sidebar-map-content {
     padding-left: 10px;
     padding-top: 10px;
 }
 
-div .sidebar-toolbar {
-    /*z-index: 800;
-    position : absolute;
-    right: 5px;
-    top: 106px;*/
-}
 
 div .toolbar-group > .btn {
     padding: 0px;
@@ -196,7 +196,7 @@ div .sidebar-map-left {
 }
 
 div .sidebar-map-top {
-    top : 88px;
+    top : 91px;
     left : 60px;
     position : absolute;
 }
@@ -206,8 +206,7 @@ div .sidebar-map-top {
         position : absolute;
         width : 300px;
         overflow : auto;
-        right: 0px;
-        top: 89px;
+        top: 91px;
     }
 }
 
@@ -216,47 +215,28 @@ div .sidebar-map-top {
         position : absolute;
         width : 300px;
         overflow : auto;
-        right: 0px;
-        top: 115px;
+        top: 117px;
     }
 }
-/*.sidebar-content ul {
-    margin-left: 10px;
-} */
 
-/*div .sidebar-content h3 {
-    color:#fff;
-    margin:0;
-    padding:0px 10px 0px 10px;
-    font-size: 12px;
-    line-height: 23px;
-    text-transform: uppercase;
+div .annotations-panel-big {
+    position: absolute;
+    left : 0px;
+    bottom : -300px;
+    z-index: 1004;
+    max-height: 300px;
+    height: 200px;
+    width: 100%;
+    overflow-y: auto;
 }
 
-div .sidebar-content {
-    font-size:13px;
-    display:block;
-    color:#fff;
-    padding:0px;
-    border-bottom: 1px solid #000000;
+div .annotations-panel-mini {
+    position: absolute;
+    width: 100%;
+    z-index: 1004;
+    left : 0px;
+    bottom : 0px;
 }
-
-div .popupPanel a {
-    color: #26b4e3;
-} */
-
-
-div .annotationsPanel {
-    position : absolute;
-    z-index : 1004;
-    background-color: #fff;
-    color : #000;
-    padding: 0px;
-    margin: 0px;
-    border : 1px solid #000;
-    overflow : auto;
-}
-
 
 
 .tree > ul.dynatree-container
