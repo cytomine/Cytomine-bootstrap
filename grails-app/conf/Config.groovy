@@ -49,7 +49,7 @@ grails.converters.json.default.deep = false
 
 grails.doc.title="Cytomine"
 grails.doc.subtitle="Documentation"
-grails.doc.authors="Marée Raphaël, Loïc Rollus, Benjamin Stévens"
+grails.doc.authors="Vincent Botta, Marée Raphaël, Loïc Rollus, Benjamin Stévens"
 grails.doc.license="Commercial"
 grails.doc.copyright="University of liège"
 grails.doc.footer="www.cytomine.be"
@@ -409,6 +409,7 @@ rabbitmq {
         cytomineQueue()
         helloWorldQueue()
         jobQueue()
+        detectSampleQueue()
         //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
     }
 }

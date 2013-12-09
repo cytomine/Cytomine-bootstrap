@@ -47,9 +47,9 @@ label {
     text-align: left;
 }
 
-img.olTileImage {
+/*img.olTileImage {
     max-width: none !important;
-}
+} */
 
 .header_h {
     padding-bottom: 10px;
@@ -160,6 +160,11 @@ div .sidebar-map-head {
     font-size: 12px;
 }
 
+div .sidebar-map-right-mini {
+    width : 75px !important;
+    max-width: 75px !important
+}
+
 div .sidebar-map-content {
     padding-left: 10px;
     padding-top: 10px;
@@ -190,14 +195,31 @@ div .sidebar-map-left {
     width: 300px;
 }
 
-div .sidebar-map-right {
+div .sidebar-map-top {
+    top : 88px;
+    left : 60px;
     position : absolute;
-    width : 380px;
-    overflow : auto;
-    right: 0px;
-    top: 91px;
 }
 
+@media (min-width: 1201px) {
+    div .sidebar-map-right {
+        position : absolute;
+        width : 300px;
+        overflow : auto;
+        right: 0px;
+        top: 89px;
+    }
+}
+
+@media (max-width: 1200px) {
+    div .sidebar-map-right {
+        position : absolute;
+        width : 300px;
+        overflow : auto;
+        right: 0px;
+        top: 115px;
+    }
+}
 /*.sidebar-content ul {
     margin-left: 10px;
 } */
@@ -346,7 +368,7 @@ div.olControlOverviewMapElement img {
 .projectInfoPanel {
     padding: 0px;
     margin: 0 15px 15px 0px;
-    min-width: 275px;
+    min-width: 300px;
     font-size: 12px;
 }
 .thumb-wrapProject{

@@ -2,54 +2,54 @@
     <div class="map" id="map<%= type %><%= id %>"></div>
 
 
-    <div class="sidebar-map sidebar-map-left" style="display: none;">
+    <div class="sidebar-map sidebar-map-left">
         <div class="sidebar-content" id="annotationDetailPanel<%= id %>"></div>
     </div>
-    <div class="sidebar-map sidebar-map-right" style="display: none;">
-        <div class="row">
-            <div class="col-md-3" style="padding : 0px;">
-                <div class="sidebar-content">
-                    <div class="sidebar-toolbar">
-                        <div class="controlPanels" id="controlsPanels<%= id %>">
-                            <div class="toolbar toolbarPanel" id="toolbar<%= id %>" style="text-align: left;">
-                                <div class="btn-group-vertical toolbar-group">
-                                    <button data-toggle="tooltip" title="Select annotation" type="button" class="btn btn-info selectButton" id="select<%= id %>" ><i class="glyphicon glyphicon-move"/>Select</button>
-                                    <button data-toggle="tooltip" title="Draw a point" type="button"  class="btn btn-info" id="point<%= id %>" ><i class="glyphicon glyphicon-map-marker"/>Point</button>
-                                    <button data-toggle="tooltip" title="Draw a rectangle" type="button"  class="btn btn-info" id="irregular4<%= id %>" ><i class="glyphicon glyphicon-vector-path-square"/>Rectangle</button>
-                                    <button data-toggle="tooltip" title="Draw a diamond" type="button"  class="btn btn-info" id="irregular30<%= id %>" ><i class="glyphicon glyphicon-irregular-circle"/>Ellipse</button>
-                                    <button data-toggle="tooltip" title="Draw a circle" type="button" class="btn btn-info" id="regular30<%= id %>" ><i class="glyphicon glyphicon-vector-path-circle"/>Cercle</button>
-                                    <button data-toggle="tooltip" title="Draw a polygon (with points)" type="button" class="btn btn-info" id="polygon<%= id %>" ><i class="glyphicon glyphicon-vector-path-polygon"/>Polygon</button>
-                                    <button data-toggle="tooltip" title="Use maggic wand to create annotation" type="button" class="btn btn-info magicWandButton" id="magic<%= id %>" ><i class="glyphicon glyphicon-magic"/>MagicWand</button>
-                                    <button data-toggle="tooltip" title="Draw a polygon (with freehand)" type="button" class="btn btn-info freehandButton" id="freehand<%= id %>"  alt="Freehand"><i class="glyphicon glyphicon-pencil"/>FreeHand</button>
-                                    <button data-toggle="tooltip" title="Add a new polygon to an existing annotation" type="button" class="btn btn-info joinButton" id="freeAdd<%= id %>" ><i class="glyphicon glyphicon-plus"/><i class="glyphicon glyphicon-pencil"/></button>
-                                    <button data-toggle="tooltip" title="Remove a polygon from an existing annotation" type="button" class="btn btn-info cutButton" id="freeRem<%= id %>" ><i class="glyphicon glyphicon-minus"/><i class="glyphicon glyphicon-pencil"/></button>
-                                    <button data-toggle="tooltip" title="Fill a polygon with holes" type="button" class="btn btn-info" id="fill<%= id %>" >Fill</button>
-                                    <button data-toggle="tooltip" title="Draw a ruller on the screen" type="button" class="btn btn-info" id="ruler<%= id %>" ><i class="glyphicon glyphicon-ruller"/>Ruler</button>
-                                    <button data-toggle="tooltip" title="Edit an annotation by moving points" type="button" class="btn btn-info editButton" id="modify<%= id %>" >Edit</button>
-                                    <button data-toggle="tooltip" title="Rotate an annotation" type="button" class="btn btn-info" id="rotate<%= id %>" >Rotate</button>
-                                    <button data-toggle="tooltip" title="Resize an annotation" type="button" class="btn btn-info" id="resize<%= id %>" >Resize</button>
-                                    <button data-toggle="tooltip" title="Move an annotation" type="button" class="btn btn-info" id="drag<%= id %>" >Drag</button>
-                                    <button data-toggle="tooltip" title="Delete an annotation" type="button" class="btn btn-info deleteButton" id="delete<%= id %>" ><i class="glyphicon glyphicon-trash"/></button>
-                                    <button data-toggle="tooltip" title="Take a picture of the screen" type="button" class="btn btn-info" id="camera<%= id %>" ><i class="glyphicon glyphicon-screenshot"/></button>
-                                </div>
-                            </div>
-                        </div>
+    <div class="sidebar-map sidebar-map-top">
+        <div class="sidebar-toolbar">
+            <div class="controlPanels" id="controlsPanels<%= id %>">
+                <div class="toolbar toolbarPanel" id="toolbar<%= id %>" style="text-align: left;">
+                    <div class="btn-group">
+                        <button data-toggle="tooltip" title="Select annotation" class="btn btn-default btn-xs  selectButton" id="select<%= id %>" ><i class="glyphicon glyphicon-move"/>Select</button>
+                        <button data-toggle="tooltip" title="Draw a point"  class="btn btn-default btn-xs" id="point<%= id %>" ><i class="glyphicon glyphicon-map-marker"/>Point</button>
+                        <button data-toggle="tooltip" title="Draw a rectangle"  class="btn btn-default btn-xs" id="irregular4<%= id %>" ><i class="glyphicon glyphicon-vector-path-square"/>Rectangle</button>
+                        <button data-toggle="tooltip" title="Draw a diamond"  class="btn btn-default btn-xs" id="irregular30<%= id %>" ><i class="glyphicon glyphicon-irregular-circle"/>Ellipse</button>
+                        <button data-toggle="tooltip" title="Draw a circle" class="btn btn-default btn-xs" id="regular30<%= id %>" ><i class="glyphicon glyphicon-vector-path-circle"/>Cercle</button>
+                        <button data-toggle="tooltip" title="Draw a polygon (with points)" class="btn btn-default btn-xs" id="polygon<%= id %>" ><i class="glyphicon glyphicon-vector-path-polygon"/>Polygon</button>
+                        <button data-toggle="tooltip" title="Use magic wand to create annotation" class="btn btn-default btn-xs magicWandButton" id="magic<%= id %>" ><i class="glyphicon glyphicon-magic"/>MagicWand</button>
+                        <button data-toggle="tooltip" title="Draw a polygon (with freehand)"  class="btn btn-default btn-xs freehandButton" id="freehand<%= id %>"  alt="Freehand"><i class="glyphicon glyphicon-pencil"/></button>
+                        <button data-toggle="tooltip" title="Add a new polygon to an existing annotation"class="btn btn-default btn-xs joinButton" id="freeAdd<%= id %>" ><i class="glyphicon glyphicon-plus"/><i class="glyphicon glyphicon-pencil"/></button>
+                        <button data-toggle="tooltip" title="Remove a polygon from an existing annotation"  class="btn btn-default btn-xs cutButton" id="freeRem<%= id %>" ><i class="glyphicon glyphicon-minus"/><i class="glyphicon glyphicon-pencil"/></button>
+                        <button data-toggle="tooltip" title="Fill a polygon with holes"  class="btn btn-default btn-xs" id="fill<%= id %>" >Fill</button>
+                        <button data-toggle="tooltip" title="Draw a ruller on the screen"  class="btn btn-default btn-xs" id="ruler<%= id %>" ><i class="glyphicon glyphicon-ruller"/>Ruler</button>
+                        <button data-toggle="tooltip" title="Edit an annotation by moving points"  class="btn btn-default btn-xs editButton" id="modify<%= id %>" >Edit</button>
+                        <button data-toggle="tooltip" title="Rotate an annotation"  class="btn btn-default btn-xs" id="rotate<%= id %>" >Rotate</button>
+                        <button data-toggle="tooltip" title="Resize an annotation" t class="btn btn-default btn-xs" id="resize<%= id %>" >Resize</button>
+                        <button data-toggle="tooltip" title="Move an annotation"  class="btn btn-default btn-xs" id="drag<%= id %>" >Drag</button>
+                        <button data-toggle="tooltip" title="Delete an annotation" class="btn btn-default btn-xs deleteButton" id="delete<%= id %>" ><i class="glyphicon glyphicon-trash"/></button>
+                        <button data-toggle="tooltip" title="Take a picture of the screen" class="btn btn-default btn-xs" id="camera<%= id %>" ><i class="glyphicon glyphicon-screenshot"/></button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-9"  style="padding : 0px;">
-                <div id="overviewMap<%= id %>"></div>
-                <div id="informationsPanel<%= id %>"></div>
-                <div id="layerSwitcher<%= id %>"></div>
-                <div id="ontologyTree<%= id %>" style="padding: 0px;"></div>
-                <div id="reviewPanel<%= id %>"></div>
-                <div id="multidimensionPanel<%= id %>"></div>
-                <div id="annotationPropertyPanel<%= id %>"></div>
-            </div>
         </div>
-
-
     </div>
-    <div class="annotationsPanel" id="annotationsPanel<%= id %>"></div>
+    <div class="sidebar-map sidebar-map-right sidebar-map-right-big">
+        <div class="row" style="margin: 0px;">
+            <div id="hide-sidebar-map-right" class="sidebar-map-head"><i class="glyphicon glyphicon-collapse-up"></i> Hide tools</div>
+            <div id="overviewMap<%= id %>"></div>
+            <div id="informationsPanel<%= id %>"></div>
+            <div id="layerSwitcher<%= id %>"></div>
+            <div id="ontologyTree<%= id %>" style="padding: 0px;"></div>
+            <div id="reviewPanel<%= id %>"></div>
+            <div id="multidimensionPanel<%= id %>"></div>
+            <div id="annotationPropertyPanel<%= id %>"></div>
+        </div>
+    </div>
+    <div class="sidebar-map sidebar-map-right sidebar-map-right-mini" style="display: none;">
+        <div class="row" style="margin: 0px;">
+            <div id="show-sidebar-map-right" class="sidebar-map-head"><i class="glyphicon glyphicon-collapse-down"></i> Show tools</div>
+        </div>
+    </div>
+    <div class="annotationsPanel sidebar-map" id="annotationsPanel<%= id %>"></div>
 
 </div>

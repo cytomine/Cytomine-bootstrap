@@ -13,8 +13,6 @@ var BrowseImageView = Backbone.View.extend({
      */
     initialize: function (options) {
 
-        console.log("initialize");
-        console.log(options);
         this.iPad = ( navigator.userAgent.match(/iPad/i) != null );
         this.initCallback = options.initCallback;
         this.layers = [];
@@ -33,6 +31,7 @@ var BrowseImageView = Backbone.View.extend({
         for (var i = 0; i < this.nbDigitialZoom; i++) {
             this.digitalResolutions.push(1 / Math.pow(2, i + 1));
         }
+
         this.currentAnnotation = null;
         if (options.review != undefined) {
             this.review = options.review;
@@ -44,6 +43,7 @@ var BrowseImageView = Backbone.View.extend({
         }
         this.merge = options.merge;
         _.bindAll(this, "initVectorLayers");
+
     },
 
     /**
@@ -52,7 +52,6 @@ var BrowseImageView = Backbone.View.extend({
      */
     doLayout: function (tpl) {
         var self = this;
-        console.log("BrowseImageView:doLayout");
 
         this.divId = "tabs-"+self.getMode()+"-" + window.app.status.currentProject + "-" + this.model.id + "-";
 
@@ -74,8 +73,6 @@ var BrowseImageView = Backbone.View.extend({
                 "</a>" +
                 "</li>";
 
-        var dataName = 'data-name=<%= idImage %>';
-
         if(this.addToTab) {
             var tabs = $('#explorer-tab');
             tabs.append(_.template(tabTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), originalFilename: this.model.get('originalFilename'), shortOriginalFilename: shortOriginalFilename}));
@@ -93,24 +90,28 @@ var BrowseImageView = Backbone.View.extend({
 
         this.initToolbar();
 
+        $("#hide-sidebar-map-right").on("click", function() {
+            $(".sidebar-map-right-big").hide();
+            $(".sidebar-map-right-mini").show();
+        });
+
+        $("#show-sidebar-map-right").on("click", function() {
+            $(".sidebar-map-right-mini").hide();
+            $(".sidebar-map-right-big").show();
+
+        });
+
         if (this.review) {
-            console.log("this.review=" + this.review);
             new UserJobCollection({project: window.app.status.currentProject, image: self.model.id}).fetch({
                 success: function (collection, response) {
                     self.userJobForImage = collection;
                     self.initMap();
                     self.initAnnotationsTabs();
-                    if (self.iPad) {
-                        self.initMobile();
-                    }
                 }
             });
         } else {
             this.initMap();
             this.initAnnotationsTabs();
-            if (this.iPad) {
-                this.initMobile();
-            }
         }
         return this;
     },
@@ -126,10 +127,7 @@ var BrowseImageView = Backbone.View.extend({
         var tabs = $("#explorer-tab-content");
         tabs.find("a#" + self.divPrefixId + "-" + self.model.id).css("background-color", color);
     },
-    initMobile: function () {
 
-
-    },
     isCurrentAnnotationUser: function () {
 
         return window.app.models.projectUser.get(this.currentAnnotation.get('user')) != undefined
@@ -158,7 +156,6 @@ var BrowseImageView = Backbone.View.extend({
      */
     render: function () {
         var self = this;
-        //var template = (this.iPad) ? "text!application/templates/explorer/BrowseImageMobile.tpl.html" : "text!application/templates/explorer/BrowseImage.tpl.html";
         require(["text!application/templates/explorer/BrowseImage.tpl.html"
         ], function (tpl) {
             self.doLayout(tpl);
@@ -181,11 +178,11 @@ var BrowseImageView = Backbone.View.extend({
             if (ctx) {
                 var imgd = ctx.getImageData(0, 0, evt.tile.size.w, evt.tile.size.h);
                 //process PIX
-                Processing.Threshold.process({canvas :imgd, threshold : 165});
+                /*Processing.Threshold.process({canvas :imgd, threshold : 165});
 
-                /*Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
-                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});*/
-
+                Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
+                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});
+                  */
                 ctx.putImageData(imgd, 0, 0);
                 evt.tile.imgDiv.removeAttribute("crossorigin");
                 evt.tile.imgDiv.src = ctx.canvas.toDataURL();
@@ -201,10 +198,6 @@ var BrowseImageView = Backbone.View.extend({
     show: function (options) {
         var self = this;
 
-        console.log("show!");
-        console.log(options.goToAnnotation);
-
-        console.log(this.position);
         if(this.position) {
             console.log("moveTo");
             self.map.moveTo(new OpenLayers.LonLat(self.position.x, self.position.y), Math.max(0, self.position.zoom));
@@ -212,7 +205,7 @@ var BrowseImageView = Backbone.View.extend({
 
 
         if (options.goToAnnotation != undefined && options.goToAnnotation.value!=undefined) {
-            console.log("GO TO ANNOTATION") ;
+
 
             new AnnotationModel({id: options.goToAnnotation.value}).fetch({
                 success: function (annotation, response) {
@@ -220,9 +213,6 @@ var BrowseImageView = Backbone.View.extend({
                     var layer = _.find(self.layers, function (layer) {
                         return layer.userID == annotation.get("user");
                     });
-                    console.log(self.layers) ;
-                    console.log("GO TO LAYER") ;
-                    console.log(layer) ;
                     if (layer) {
 
                         layer.showFeature(annotation.get("id"));
@@ -334,7 +324,6 @@ var BrowseImageView = Backbone.View.extend({
             zoom--;
         }
         zoom = Math.max(0, zoom - 1);
-        //zoom = Math.max(0, zoom-1);
         self.map.moveTo(new OpenLayers.LonLat(geom.getCentroid().x, geom.getCentroid().y), Math.max(0, zoom));
     },
     getFeature: function (idAnnotation) {
@@ -727,12 +716,12 @@ var BrowseImageView = Backbone.View.extend({
             var baseLayer = new OpenLayers.Layer.Zoomify(
                 "Original",
                 zoomify_urls,
-                new OpenLayers.Size(metadata.width, metadata.height),
-                {tileOptions: {crossOriginKeyword: 'anonymous'}}
+                new OpenLayers.Size(metadata.width, metadata.height)
             );
+            baseLayer.tileOptions = {crossOriginKeyword: 'anonymous'};
 
-            //baseLayer.transitionEffect = 'resize';
-            baseLayer.getImageSize = function () {
+            //baseLayer.transitionEffect = 'none';
+            /*baseLayer.getImageSize = function () {
 
                 if (arguments.length > 0) {
                     bounds = this.adjustBounds(arguments[0]);
@@ -762,7 +751,7 @@ var BrowseImageView = Backbone.View.extend({
                 } else {
                     return this.tileSize;
                 }
-            };
+            }; */
             imageFilters.each(function (imageFilter) {
                 var url = _.map(zoomify_urls, function (url) {
                     console.log(imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url);

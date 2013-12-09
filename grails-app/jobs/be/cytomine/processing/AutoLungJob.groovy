@@ -35,6 +35,6 @@ class AutoLungJob  {
         // execute job
         log.info "execute $job with $jobParameters"
 
-        rabbitSend('cytomineQueue', (jobParameters as JSON).toString())
+        rabbitSend('detectSampleQueue', (jobParameters as JSON).toString())
     }
 }

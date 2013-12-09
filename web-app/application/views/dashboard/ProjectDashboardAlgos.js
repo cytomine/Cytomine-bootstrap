@@ -156,9 +156,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             button : $("#softwareLaunchJobButton"),
             header :"Launch new job",
             body :"<div id='jobComparatorDialogParent'></div>",
-            width : Math.round($(window).width() - 200),
-//            height : Math.round($(window).height() - 150),
-            height: 600,
+            wide : true,
             callBack: function() {launchView.render();}
         });
         modalLaunch.addButtons("closeNewJob","Close",false,true);
@@ -171,8 +169,7 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             button : $("#softwareCompareJobButton"),
             header :"Compare jobs",
             body :"<div id='jobComparatorDialogParent'></div>",
-            width : Math.round($(window).width() - 200),
-            height : Math.round($(window).height() - 200),
+            wide : true,
             callBack: function() {
                 self.jobsLight.fetch({
                             success: function (collection, response) {
@@ -456,13 +453,27 @@ var ProjectDashboardAlgos = Backbone.View.extend({
     },
     initJobResult: function (job) {
         $("#panelJobResultsDiv").empty();
-        new JobResultView({
-            model: job,
-            project: this.model,
-            el: $("#panelJobResultsDiv"),
-            jobs: this.jobsLight,
-            software: this.software
-        }).render();
+        var self = this;
+        var createJobResultView = function() {
+            new JobResultView({
+                model: job,
+                project: self.model,
+                el: $("#panelJobResultsDiv"),
+                jobs: self.jobsLight,
+                software: self.software,
+                terms : window.app.status.currentTermsCollection
+            }).render();
+        }
+        if (window.app.status.currentTermsCollection == undefined) {
+            new TermCollection({idProject: self.model.id}).fetch({
+                success: function (terms, response) {
+                    window.app.status.currentTermsCollection = terms;
+                    createJobResultView();
+                }
+            });
+        } else {
+            createJobResultView();
+        }
     }
 
 });

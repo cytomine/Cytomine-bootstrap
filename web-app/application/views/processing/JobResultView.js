@@ -3,11 +3,13 @@ var JobResultView = Backbone.View.extend({
     project: null,
     jobs: null,
     parent: null,
+    terms : null,
 
     initialize: function (options) {
         this.software = options.software;
         this.project = options.project;
         this.jobs = options.jobs;
+        this.terms = options.terms;
     },
     render: function () {
         var self = this;
@@ -38,6 +40,7 @@ var JobResultView = Backbone.View.extend({
             project: self.project,
             el: self.el,
             jobs: self.jobs,
+            terms : self.terms,
             software: self.software
         }).render();
     },
@@ -48,6 +51,7 @@ var JobResultView = Backbone.View.extend({
             project: self.project,
             el: self.el,
             jobs: self.jobs,
+            terms : self.terms,
             software: self.software
         }).render();
     },
@@ -58,6 +62,7 @@ var JobResultView = Backbone.View.extend({
             project: self.project,
             el: self.el,
             jobs: self.jobs,
+            terms : self.terms,
             software: self.software
         }).render();
     },
@@ -68,6 +73,7 @@ var JobResultView = Backbone.View.extend({
             project: self.project,
             el: self.el,
             jobs: self.jobs,
+            terms : self.terms,
             software: self.software
         }).render();
     }

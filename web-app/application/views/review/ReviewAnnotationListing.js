@@ -205,6 +205,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
         var thumb = new AnnotationThumbView({
             model: annotation,
             className: "thumb-wrap",
+            terms : window.app.status.currentTermsCollection,
             term: "all",
             reviewMode : true,
             size : 200

@@ -13,10 +13,6 @@ var ApplicationView = Backbone.View.extend({
     components: {},
     intervals: [], //references to followInterval, positionInterval...
     isMobile: ( navigator.userAgent.match(/iPad/i) != null ),
-    panelsConfiguration: [
-        {key:"sidebar-map-left", linkID:"toggle-sidebar-map-left", name:"Left panels", className:["sidebar-map-left", "olControlZoomPanel"], value:{ visible:true}},
-        {key: "sidebar-map-right", linkID: "toggle-sidebar-map-right", name: "Panels", className: ["sidebar-map-right"], value: { visible: true}}
-    ],
     events: {
 
     },
@@ -38,69 +34,7 @@ var ApplicationView = Backbone.View.extend({
     redo: function () {
         window.app.controllers.command.redo();
     },
-    hideFloatingPanels: function () {
-        var self = this;
-        _.each(this.panelsConfiguration, function (item) {
-            self.hideFloatingPanel(item);
-        });
-    },
-    hideFloatingPanel: function (item) {
-        if (_.isArray(item.className)) {
-            _.each(item.className, function (_className) {
-                $("." + _className).hide();
-            });
-        } else {
-            $("." + item.className).hide();
-        }
-    },
-    showFloatingPanels: function () {
-        var self = this;
-        _.each(this.panelsConfiguration, function (item) {
-            self.showFloatingPanel(item);
-        });
-    },
-    showFloatingPanel: function (item) {
-        if (_.isArray(item.className)) {
-            _.each(item.className, function (_className) {
-                $("." + _className).show()
-            });
-        } else {
-            $("." + item.className).show();
-        }
-    },
-    toggleVisibility: function (item) {
-        var self = this;
-        var preference = localStorage.getObject(item.key);
-        preference.visible = !preference.visible;
-        if (preference.visible && this.isMobile) { //hide others panel
 
-            _.each(self.panelsConfiguration, function (panel) {
-                if (panel.key == item.key) {
-                    return;
-                }
-                var visible = false;
-                preferencePanel = localStorage.getObject(panel.key);
-                preferencePanel.visible = visible;
-                localStorage.setObject(panel.key, preferencePanel);
-                self.updateMenuItem(panel);
-            });
-        }
-        localStorage.setObject(item.key, preference);
-        this.updateMenuItem(item);
-
-    },
-    updateMenuItem: function (item) {
-        var self = this;
-        var preference = localStorage.getObject(item.key);
-        if (preference != undefined && preference.visible != undefined && preference.visible == true) {
-            $("#" + item.linkID).html("<i class='glyphicon glyphicon-eye-close' /> " + item.name);
-            self.showFloatingPanel(item);
-        }
-        else {
-            $("#" + item.linkID).html("<i class='glyphicon glyphicon-eye-open' /> " + item.name);
-            self.hideFloatingPanel(item);
-        }
-    },
     /**
      * ApplicationView constructor. Call the initialization of its components
      * @param options
@@ -137,18 +71,18 @@ var ApplicationView = Backbone.View.extend({
         require([
             "text!application/templates/BaseLayout.tpl.html","text!application/templates/HotkeysDialog.tpl.html"
         ],
-        function (tpl,tplHotkeys) {
-            self.doLayout(tpl, renderCallback);
-            var modal = new CustomModal({
-                idModal : "hotkeysModal",
-                button : $("#hotkeysModalButton"),
-                header :"HotKeys",
-                body :tplHotkeys,
-                width : 900,
-                height : 800
+            function (tpl,tplHotkeys) {
+                self.doLayout(tpl, renderCallback);
+                var modal = new CustomModal({
+                    idModal : "hotkeysModal",
+                    button : $("#hotkeysModalButton"),
+                    header :"HotKeys",
+                    body :tplHotkeys,
+                    width : 900,
+                    height : 800
+                });
+                modal.addButtons("closeHotKeys","Close",true,true);
             });
-            modal.addButtons("closeHotKeys","Close",true,true);
-        });
         return this;
     },
     initPreferences: function () {
@@ -168,32 +102,20 @@ var ApplicationView = Backbone.View.extend({
     initUserMenu: function () {
         var self = this;
         //Init user menu
-            $("#logout").click(function () {
-                window.app.controllers.auth.logout();
-                return false;
-            });
-            $("#loggedUser").html(window.app.status.user.model.prettyName());
-            _.each(self.panelsConfiguration, function (item) {
-                self.updateMenuItem(item);
-                $("#" + item.linkID).on('click', function () {
-                    self.toggleVisibility(item);
-                });
-            });
-            $("#toggle-floating-panel").on("click", function () {
-                var key = "toggle-floating-panel";
-                var preference = localStorage.getObject(key);
-                preference.activated = !preference.activated;
-                localStorage.setObject(key, preference);
-            });
+        $("#logout").click(function () {
+            window.app.controllers.auth.logout();
+            return false;
+        });
+        $("#loggedUser").html(window.app.status.user.model.prettyName());
 
-            if(window.app.status.user.model.get('guest'))  {
-                $("#feedback").hide();
-            }
+        if(window.app.status.user.model.get('guest'))  {
+            $("#feedback").hide();
+        }
 
-            $("#feedback").on("click", function (e) {
-                e.preventDefault();
-                showClassicWidget();
-            });
+        $("#feedback").on("click", function (e) {
+            e.preventDefault();
+            showClassicWidget();
+        });
     },
     printTaskEvolution: function (task, divToFill, timeout) {
         this.printTaskEvolution(task, divToFill, timeout, false);

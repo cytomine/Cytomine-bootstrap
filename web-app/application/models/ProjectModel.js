@@ -10,7 +10,6 @@ var ProjectModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/project';
         var format = '.json';
-        console.log(this);
         if (this.task != null && this.task != undefined) {
             format = format+"?task="+this.task
         }
@@ -24,9 +23,8 @@ var ProjectModel = Backbone.Model.extend({
         this.task = options.task;
     },
     isReadOnly : function(admins) {
-        var isAdmin = admins.get(window.app.status.user.id)!=undefined;
+        var isAdmin = admins.get(window.app.status.user.id) != undefined;
         var isRO = this.get('isReadOnly');
-        console.log("isAdmin="+isAdmin + " isRO="+isRO);
         return !isAdmin && isRO;
     }
 });

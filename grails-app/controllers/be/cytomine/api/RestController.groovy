@@ -44,11 +44,6 @@ class RestController {
         }
     }
 
-
-//    public Object update(def service, def json) {
-//        update(service,json,null)
-//    }
-
     /**
      * Call update function for this service with the json
      * @param service Service for this domain

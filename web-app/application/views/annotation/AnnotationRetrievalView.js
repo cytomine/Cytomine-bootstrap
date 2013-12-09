@@ -10,7 +10,6 @@ var AnnotationRetrievalView = Backbone.View.extend({
         this.terms = options.terms;
         this.bestTerms = options.bestTerms;
         this.bestTermsValue = options.bestTermsValue;
-        window.app.status.currentTermsCollection = options.terms;
         if (this.page == undefined) {
             this.page = 0;
         }
@@ -170,6 +169,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
         console.log(self.baseAnnotation);
         var thumb = new AnnotationThumbView({
             model: self.baseAnnotation,
+            terms : window.app.status.currentTermsCollection,
             className: "thumb-wrap",
             id: "annotationthumb" + self.baseAnnotation.get('id')
         }).render();
@@ -187,6 +187,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
                 annotation.set("reviewed",false);
                 var thumb = new AnnotationThumbView({
                     model: annotation,
+                    terms : window.app.status.currentTermsCollection,
                     className: "thumb-wrap",
                     id: "annotationthumb" + annotation.id
                 }).render();
@@ -207,6 +208,7 @@ var AnnotationRetrievalView = Backbone.View.extend({
         var self = this;
         var thumb = new AnnotationThumbView({
             model: annotation,
+            terms : window.app.status.currentTermsCollection,
             className: "thumb-wrap",
             id: "thumb" + annotation.get('id')
         }).render();

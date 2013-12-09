@@ -6,6 +6,7 @@ var AnnotationThumbView = Backbone.View.extend({
 
     initialize: function (options) {
         this.term = options.term;
+        this.terms = options.terms;
         if(options.reviewMode!=undefined) {
             this.reviewMode = options.reviewMode;
         }
@@ -36,7 +37,7 @@ var AnnotationThumbView = Backbone.View.extend({
                 } else if(annotation.get('term').length>1) {
                     colorStyle = "#000000";
                 } else if(annotation.get('term').length==1) {
-                    colorStyle = window.app.status.currentTermsCollection.get(annotation.get('term')).get('color');
+                    colorStyle = self.terms.get(annotation.get('term')).get('color');
                 } else {
                     colorStyle =  "#cccccc";
                 }
@@ -89,7 +90,7 @@ var AnnotationThumbView = Backbone.View.extend({
             //See if algo suggest something and agrees
             var userByTerm = []
             _.each(annotation.get("userByTerm"), function (it) {
-                var termName = window.app.status.currentTermsCollection.get(it.term).get('name');
+                var termName = self.terms.get(it.term).get('name');
                 var userName = [];
                 _.each(it.user, function (userID) {
                     userName.push(window.app.view.getUserNameById(userID));
@@ -104,8 +105,8 @@ var AnnotationThumbView = Backbone.View.extend({
             var expectedTermName = undefined;
 
             if (annotation.get("idTerm") != annotation.get("idExpectedTerm")) {
-                termName = window.app.status.currentTermsCollection.get(annotation.get("idTerm")).get('name');
-                expectedTermName = window.app.status.currentTermsCollection.get(annotation.get("idExpectedTerm")).get('name')
+                termName = self.terms.get(annotation.get("idTerm")).get('name');
+                expectedTermName = self.terms.get(annotation.get("idExpectedTerm")).get('name')
             }
 
             var popoverContent = _.template(popoverTpl, {

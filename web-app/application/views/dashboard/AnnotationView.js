@@ -15,7 +15,6 @@ var AnnotationView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-        console.log("render");
         self.model.goTo(this.page,{
             success: function (collection, response) {
                 $(self.el).empty();
@@ -46,10 +45,7 @@ var AnnotationView = Backbone.View.extend({
                 } else {
                     termRef = self.term;
                 }
-
-                console.log("termRef="+termRef);
                 var pagination = _.template(paginationTpl, { term: termRef});
-                console.log(pagination);
                 $(self.el).append(pagination);
                 var $pagination = $(self.el).find("#pagination-term-"+termRef).find("ul");
 
@@ -102,6 +98,7 @@ var AnnotationView = Backbone.View.extend({
             var thumb = new AnnotationThumbView({
                 model: annotation,
                 className: "thumb-wrap",
+                terms : window.app.status.currentTermsCollection,
                 term: self.term
             }).render();
             $(self.el).append(thumb.el);
@@ -117,6 +114,7 @@ var AnnotationView = Backbone.View.extend({
         var self = this;
         var thumb = new AnnotationThumbView({
             model: annotation,
+            terms : window.app.status.currentTermsCollection,
             className: "thumb-wrap",
             id: "thumb" + annotation.get('id')
         }).render();

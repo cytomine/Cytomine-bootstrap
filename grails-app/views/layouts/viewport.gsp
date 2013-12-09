@@ -26,12 +26,12 @@
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
 <link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
-<link rel="stylesheet" href="lib/bootstrap-3.0.2/css/bootstrap.css"/>
+<link rel="stylesheet" href="lib/bootstrap-3.0.3/css/bootstrap.yeti.min.css"/>
 
 
 <style type="text/css">
     body {
-        padding-top: 50px;
+        padding-top: 46px;
     }
 </style>
 
@@ -71,7 +71,7 @@
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
 <!-- Twitter bootstrap -->
-<script type="text/javascript" src="lib/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/bootstrap-3.0.3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">

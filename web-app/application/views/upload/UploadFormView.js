@@ -97,9 +97,9 @@ var UploadFormView = Backbone.View.extend({
 
                     //add headers for auth
                     for (var prop in self.headers) {
-                       if(self.headers.hasOwnProperty(prop)){
-                           xhr.setRequestHeader(prop,self.headers[prop]);
-                       }
+                        if(self.headers.hasOwnProperty(prop)){
+                            xhr.setRequestHeader(prop,self.headers[prop]);
+                        }
                     }
 
                     //we cannot edit "content-type" so we add content-type-full that will erase content-type on server
@@ -109,7 +109,7 @@ var UploadFormView = Backbone.View.extend({
                     var $form = $("#fileupload");
                     req.url = req.url + "?" +  $form.prop('action').split("?")[1]
 
-               },
+                },
                 //            alert(" SUBMIT TO "+"http://localhost:9090/"+$form.prop('action'));
                 // The add callback is invoked as soon as files are added to the fileupload
                 // widget (via file input selection, drag & drop or add API call).
@@ -739,12 +739,12 @@ var UploadFormView = Backbone.View.extend({
 
         $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.protocol + "//" + window.location.host);
 
-            if(idProject==null){
-                $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));
-            } else {
-                $form.prop('action', $form.prop('action').replace("@PROJECT@", idProject));
-            }
-            $form.prop('action', $form.prop('action').replace("@STORAGE@", idStorage));
+        if(idProject==null){
+            $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));
+        } else {
+            $form.prop('action', $form.prop('action').replace("@PROJECT@", idProject));
+        }
+        $form.prop('action', $form.prop('action').replace("@STORAGE@", idStorage));
 
 
 
@@ -801,8 +801,13 @@ var UploadFormView = Backbone.View.extend({
         });
         new StorageCollection().fetch({
             success: function (collection, response) {
-                var optionTpl = "<option value='<%= id %>'><%= name %></option>";
+                var optionTpl = "<option value='<%= id %>' <%= selected %>><%= name %></option>";
                 collection.each(function (storage) {
+                    var selected = "";
+                    if  (storage.get("user") == window.app.status.user.id) {
+                        selected = "selected";
+                    }
+                    storage.set({ "selected" : selected});
                     var selectOption = _.template(optionTpl, storage.toJSON());
                     linkStorageSelect.append(selectOption);
                 });
@@ -811,10 +816,10 @@ var UploadFormView = Backbone.View.extend({
         });
 
         linkStorageSelect.change(function() {
-          self.refreshProjectAndStorage();
+            self.refreshProjectAndStorage();
         });
         linkProjectSelect.change(function() {
-          self.refreshProjectAndStorage();
+            self.refreshProjectAndStorage();
         });
 
         // Render uploaded file

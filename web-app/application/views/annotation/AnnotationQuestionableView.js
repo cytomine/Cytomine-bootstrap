@@ -17,12 +17,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-        console.log("AnnotationQuestionableView: main elem " + $(self.el).length);
-        $("#questionableThumb").replaceWith("");
-        console.log($("#annotationQuestionable").length);
-        console.log($(self.el).length);
-        $(self.el).append('<div id="questionableThumb"></div>');
-        console.log($(self.el).html());
+        $(self.el).html('<div id="questionableThumb"></div>');
         self.createThumbView(self.page);
         return this;
 
@@ -52,6 +47,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
                 annotationModel.set(annotation.toJSON());
                 var thumb = new AnnotationThumbView({
                     model: annotationModel,
+                    terms : window.app.status.currentTermsCollection,
                     className: "thumb-wrap",
                     id: "annotationthumb" + annotationModel.id
                 }).render();
@@ -71,6 +67,7 @@ var AnnotationQuestionableView = Backbone.View.extend({
         var self = this;
         var thumb = new AnnotationThumbView({
             model: annotation,
+            terms : window.app.status.currentTermsCollection,
             className: "thumb-wrap",
             id: "thumb" + annotation.get('id')
         }).render();

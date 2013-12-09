@@ -282,7 +282,6 @@ var JobComparatorView = Backbone.View.extend({
     },
     addResultView: function (elemParent, job) {
         var self = this;
-
         if (window.app.status.currentTermsCollection == undefined) {
             new TermCollection({idProject: self.project.id}).fetch({
                 success: function (terms, response) {

@@ -33,6 +33,7 @@ var ReviewLastReviewListing = Backbone.View.extend({
                     var thumb = new AnnotationThumbView({
                         model: rev,
                         className: "thumb-wrap",
+                        terms : window.app.status.currentTermsCollection,
                         term: "all",
                         reviewMode : true
                     }).render();

@@ -61,7 +61,7 @@ var ProjectDashboardView = Backbone.View.extend({
 
     },
     refreshAlgos: function (idSoftware, idJob) {
-        console.log("this.projectDashboardAlgos="+this.projectDashboardAlgos);
+
         if (this.projectDashboardAlgos == null || this.projectDashboardAlgos == undefined) {
             this.projectDashboardAlgos = new ProjectDashboardAlgos({
                 model: this.model,
@@ -147,7 +147,7 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     fetchProjectInfo: function () {
         var self = this;
-        console.log("a");
+
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
             $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
 
