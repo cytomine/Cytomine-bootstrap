@@ -397,8 +397,8 @@ BrowseImageView = Backbone.View.extend({
    //                    layer.vectorsLayer.setVisibility(true);
                        layer.toggleIrregular();
                        //Simulate click on None toolbar
-            var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
-            toolbar.find('#select' + self.model.get('id')).click();
+                    var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
+                    toolbar.find('#select' + self.model.get('id')).click();
                    } else {
                        //layer.toggleIrregular();
                        console.log("activate");

@@ -830,12 +830,16 @@ AnnotationLayer.prototype = {
                 }
             } else {
                 control.deactivate();
-
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];
-                        console.log(this.userID);
-                        control.unselectFeature(feature);
+                        try{
+                              control.unselectFeature(feature);
+                        }
+                        catch(err) {
+                          //Handle errors here
+                            console.log(err);
+                          }
                     }
 
                 }

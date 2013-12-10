@@ -127,6 +127,12 @@ class IndexService {
 
             createIndex(statement, "user_position", "user_id");
             createIndex(statement, "user_position", "updated");
+            createIndex(statement, "user_position", "image_id");
+            createIndex(statement, "user_position", "latitude");
+            createIndex(statement, "user_position", "longitude");
+            createIndex(statement, "user_position", "date_part('epoch'::text, created)");
+            createIndex(statement, "user_position", "date_part('epoch'::text, updated)");
+
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }
