@@ -209,7 +209,9 @@ var ExplorerTabs = Backbone.View.extend({
      * @param idImage the identifier of the Tab
      */
     showTab: function (idImage, prefix) {
-        console.log("showTab2");
+        window.app.status.currentImage = {};
+        window.app.status.currentImage.idImage = idImage;
+        window.app.status.currentImage.prefix = prefix;
         var tabs = $('#explorer-tab');
         window.app.controllers.browse.tabs.triggerRoute = false;
         $('#tabs-' + prefix + '-' + idImage).click();

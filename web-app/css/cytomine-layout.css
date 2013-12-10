@@ -235,6 +235,11 @@ div .tabsAnnotation {
     overflow-y: auto;
 }
 
+.btn.active, .btn:active {
+    background-color: #000000;
+    color: #ffffff;
+}
+
 div .annotations-panel-mini {
     position: absolute;
     width: 100%;

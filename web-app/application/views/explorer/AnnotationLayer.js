@@ -446,6 +446,7 @@ AnnotationLayer.prototype = {
             'select': selectFeature
         }
         this.controls.freehand.freehand = true;
+        this.controls.freehand.freehandToggle = "altKey";
 
         map.initTools(this.controls);
 

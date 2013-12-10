@@ -1,113 +1,106 @@
 var HotKeys = {
+    context : function() {
+        var idImage = window.app.status.currentImage.idImage;
+        var idProject = window.app.status.currentProject;
+        return "div#tabs-"+window.app.status.currentImage.prefix+"-"+idProject+"-"+idImage+"-";
+    },
+
     initHotKeys : function() {
-        console.log("initHotKeys");
         var self = this;
 
         $(document).bind('keydown.b',function (evt){
-                    console.log("press b");
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".selectButton");
+                        self.doClick(self.context(),".selectButton");
                     }
                 }
         );
         $(document).bind('keydown.a',function (evt){
-                    console.log("press a");
                     if(self.checkMode("review")) {
-                        self.doClick("div"+window.location.hash.toString(),".acceptButton");
+                        self.doClick(self.context(),".acceptButton");
                     }
                 }
         );
         $(document).bind('keydown.r',function (evt){
                     if(self.checkMode("review")) {
-                        self.doClick("div"+window.location.hash.toString(),".rejectButton");
+                        self.doClick(self.context(),".rejectButton");
                     }
                 }
         );
         $(document).bind('keydown.n',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".nextImage");
+                        self.doClick(self.context(),".nextImage");
                     }
                 }
         );
         $(document).bind('keydown.p',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".previousImage");
+                        self.doClick(self.context(),".previousImage");
                     }
                 }
         );
 
         $(document).bind('keydown.s',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".selectButton");
+                        self.doClick(self.context(),".selectButton");
                     }
                 }
         );
         $(document).bind('keydown.f',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".freehandButton");
+                        self.doClick(self.context(),".freehandButton");
                     }
                 }
         );
         $(document).bind('keydown.w',function (evt){
+
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".magicWandButton");
+                        self.doClick(self.context(),".magicWandButton");
+
                     }
                 }
         );
         $(document).bind('keydown.e',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".editButton");
+                        self.doClick(self.context(),".editButton");
                     }
                 }
         );
         $(document).bind('keydown.c',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".cutButton");
+                        self.doClick(self.context(),".cutButton");
                     }
                 }
         );
         $(document).bind('keydown.j',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".joinButton");
+                        self.doClick(self.context(),".joinButton");
                     }
                 }
         );
         $(document).bind('keydown.d',function (evt){
                     if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick("div"+window.location.hash.toString(),".deleteButton");
+                        self.doClick(self.context(),".deleteButton");
                     }
                 }
         );
         $(document).bind('keydown.t',function (evt){
                     if(self.checkMode("review")) {
-                        self.doClick("div"+window.location.hash.toString(),".printReviewLayerButton");
+                        self.doClick(self.context(),".printReviewLayerButton");
                     }
                 }
         );
 
     },
     checkMode : function(mode) {
-        var loc = window.location.hash.toString();
-        if(loc.indexOf("#tabs-review")!=-1) {
-            return "review"==mode;
-        }
-        if(loc.indexOf("#tabs-image")!=-1) {
-            return "image"==mode;
-        }
 
-        return "error";
+        console.log("prefix="+window.app.status.currentImage.prefix);
+        return window.app.status.currentImage!= null && window.app.status.currentImage.prefix == mode;
+
 
     },
     doClick : function(context,button) {
         var elem = $(context).find(button);
         var disabled = elem.attr("disabled");
-        console.log("***************");
-        console.log(context);
-        console.log(button);
-        console.log($(context).length);
-        console.log(elem.length);
-        console.log(disabled);
-
         if(disabled=="disabled") {
             //button is locked
         } else {
