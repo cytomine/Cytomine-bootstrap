@@ -93,30 +93,18 @@ BrowseImageView = Backbone.View.extend({
 
         var sidebarRightMini = $(".sidebar-map-right-mini");
         var sidebarRightBig = $(".sidebar-map-right-big");
-        var speed = 500;
         $("#hide-sidebar-map-right").on("click", function () {
-            sidebarRightBig.animate({
-                right: -300
-            }, speed, function () {
-                sidebarRightBig.hide();
-                sidebarRightMini.show().animate({
-                    right: 0
-                }, speed);
-            });
-
+            sidebarRightBig.css("right", -300);
+            sidebarRightBig.hide();
+            sidebarRightMini.css("right", 0);
+            sidebarRightMini.show();
         });
 
         $("#show-sidebar-map-right").on("click", function () {
-            sidebarRightMini.animate({
-                right: -120
-            }, speed, function () {
-                sidebarRightMini.hide();
-                sidebarRightBig.show().animate({
-                    right: 0
-                }, speed);
-            });
-
-
+            sidebarRightMini.css("right", -120);
+            sidebarRightMini.hide();
+            sidebarRightBig.css("right", 0);
+            sidebarRightBig.show();
         });
 
         if (this.review) {

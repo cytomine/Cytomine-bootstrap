@@ -104,28 +104,19 @@ var AnnotationsPanel = Backbone.View.extend({
             }
         });
 
-        var speed = 500;
         var annotationsPanelBig = $(".annotations-panel-big");
         var annotationsPanelMini = $(".annotations-panel-mini");
         $(".show-annotations-panel-big").on("click", function() {
-            annotationsPanelMini.animate({
-                bottom : -20
-            }, speed, function () {
-                annotationsPanelMini.hide();
-                annotationsPanelBig.show().animate({
-                    bottom : 0
-                })
-            });
+            annotationsPanelMini.css("bottom", -20);
+            annotationsPanelMini.hide();
+            annotationsPanelBig.css("bottom", 0);
+            annotationsPanelBig.show();
         });
         $(".hide-annotations-panel-big").on("click", function() {
-            annotationsPanelBig.animate({
-                bottom : -300
-            }, speed, function () {
-                annotationsPanelBig.show();
-                annotationsPanelMini.show().animate({
-                    bottom : 0
-                })
-            });
+            annotationsPanelBig.css("bottom", -300);
+            annotationsPanelBig.show();
+            annotationsPanelMini.css("bottom", 0);
+            annotationsPanelMini.show();
         });
 
         $("div .tabsAnnotation").on('shown.bs.tab','a[data-toggle="tab"]', function (e) {
