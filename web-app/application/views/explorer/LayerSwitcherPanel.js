@@ -246,6 +246,13 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                         self.loadedVectorLayers.push({ id: user.id, user: user});
 
+//                        if(layerAnnotation.isOwner) {
+//                            layerAnnotation.toggleIrregular();
+//                        } else {
+//                            layerAnnotation.controls.select.activate();
+//                        }
+
+
                     } else {
                         console.log("### create layer: Review layer");
                         layerAnnotation = new AnnotationLayer(null, "Review layer", self.model.get('id'), "REVIEW", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);

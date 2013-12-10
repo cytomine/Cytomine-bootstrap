@@ -359,7 +359,7 @@ AnnotationLayer.prototype = {
 
             },
             'featureunselected': function (evt) {
-
+                console.log("featureunselected") ;
                 if (self.measureOnSelect) {
                     self.vectorsLayer.removeFeatures(evt.feature);
                 }
@@ -371,6 +371,7 @@ AnnotationLayer.prototype = {
                 self.ontologyTreeView.clearAnnotation();
                 self.browseImageView.showAnnotationInReviewPanel(null);
                 self.clearPopup(map, evt);
+                console.log("drawFeature:"+evt.feature) ;
                 self.vectorsLayer.drawFeature(evt.feature);
             },
             'featureadded': function (evt) {
@@ -599,8 +600,31 @@ AnnotationLayer.prototype = {
 
         var alias = this;
         var self = this;
+
+
+
+
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
+
+        console.log(feature)
+        if(self.browseImageView.arrow) {
+            var point = feature.geometry
+            console.log(point);
+            var size = 300;
+            var arrow = "POLYGON ((";
+            arrow = arrow + point.x + " " + point.y + ", "
+            arrow = arrow + (point.x - size/2) + " " + (point.y- size/2) +","
+            arrow = arrow + (point.x - size/4) + " " + (point.y- size/2) +","
+            arrow = arrow + (point.x - size/4) + " " + (point.y- size*2) +","
+            arrow = arrow + (point.x + size/4) + " " + (point.y- size*2) +","
+            arrow = arrow + (point.x + size/4) + " " + (point.y- size/2) +","
+            arrow = arrow + (point.x + size/2) + " " + (point.y- size/2) +","
+            arrow = arrow + point.x + " " + point.y + "))"
+            geomwkt = arrow;
+        }
+
+
 
         var terms = alias.ontologyTreeView.getTermsChecked();
         var annotation = new AnnotationModel({
@@ -615,7 +639,6 @@ AnnotationLayer.prototype = {
             self.vectorsLayer.removeFeatures([feature]);
             return;
         }
-
 
         annotation.save({}, {
             success: function (annotation, response) {
@@ -810,6 +833,7 @@ AnnotationLayer.prototype = {
                 if (control == this.controls.modify) {
                     for (var i in this.vectorsLayer.selectedFeatures) {
                         var feature = this.vectorsLayer.selectedFeatures[i];
+                        console.log(this.userID);
                         control.unselectFeature(feature);
                     }
 

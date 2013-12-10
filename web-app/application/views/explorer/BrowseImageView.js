@@ -384,23 +384,33 @@ BrowseImageView = Backbone.View.extend({
             var vectorLayers = _.map(this.layers, function (layer) {
                 return layer.vectorsLayer;
             });
+            console.log(vectorLayers);
             var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
             _.each(this.layers, function (layer) {
-                layer.initControls(self, selectFeature);
-                layer.registerEvents(self.map);
-                if (layer.isOwner) {
-                    self.userLayer = layer;
-//                    layer.vectorsLayer.setVisibility(true);
-                    layer.toggleIrregular();
-                    //Simulate click on None toolbar
-                } else {
-                    //layer.toggleIrregular();
-                    layer.controls.select.activate();
-//                    layer.vectorsLayer.setVisibility(false);
-                }
-            });
+                if(!layer.eventAlreadyLoaded) {
+                    console.log("ADD EVENTS layer"+layer.userID);
+                   layer.initControls(self, selectFeature);
+                   layer.registerEvents(self.map);
+                    console.log("ADD EVENTS layer"+layer.isOwner);
+                   if (layer.isOwner) {
+                       self.userLayer = layer;
+   //                    layer.vectorsLayer.setVisibility(true);
+                       layer.toggleIrregular();
+                       //Simulate click on None toolbar
             var toolbar = $("#" + self.divId).find('#toolbar' + self.model.get('id'));
             toolbar.find('#select' + self.model.get('id')).click();
+                   } else {
+                       //layer.toggleIrregular();
+                       console.log("activate");
+                       layer.controls.select.activate();
+                       console.log("!activate");
+   //                    layer.vectorsLayer.setVisibility(false);
+                   }
+                    layer.eventAlreadyLoaded=true;
+                }
+
+            });
+
 
             console.log($("#" + self.divId).find('#toolbar' + self.model.get('id')).find('#select' + self.model.get('id')));
 
@@ -1022,6 +1032,7 @@ BrowseImageView = Backbone.View.extend({
     },
     freeHandUpdateAdd: false,
     freeHandUpdateRem: false,
+    arrow: false,
     /**
      * Init the toolbar
      */
@@ -1041,13 +1052,24 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=point' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("point");
             self.getUserLayer().disableHightlight();
         });
+        toolbar.find('button[id=arrow' + this.model.get('id') + ']').click(function () {
+            self.freeHandUpdateAdd = false;
+            self.freeHandUpdateRem = false;
+            self.arrow = true;
+            self.getUserLayer().controls.select.unselectAll();
+            self.getUserLayer().toggleControl("point");
+            self.getUserLayer().disableHightlight();
+        });
+
         toolbar.find('button[id=irregular4' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             if (!self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
@@ -1059,6 +1081,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=irregular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             if (!self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
@@ -1070,6 +1093,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=regular30' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             if (self.getUserLayer().irregular) {
                 self.getUserLayer().toggleIrregular();
             }
@@ -1081,6 +1105,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=polygon' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("polygon");
             self.getUserLayer().disableHightlight();
@@ -1088,6 +1113,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=freehand' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
@@ -1095,6 +1121,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=freeAdd' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = true;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
@@ -1102,6 +1129,7 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=freeRem' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = true;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("freehand");
             self.getUserLayer().disableHightlight();
@@ -1109,14 +1137,17 @@ BrowseImageView = Backbone.View.extend({
         toolbar.find('button[id=magic' + this.model.get('id') + ']').click(function () {
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
             self.getUserLayer().controls.select.unselectAll();
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().magicOnClick = true;
             self.getUserLayer().disableHightlight();
         });
         toolbar.find('button[id=modify' + this.model.get('id') + ']').click(function () {
+            toolbar.find('button[id=select' + self.model.get('id') + ']').click();
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
+            self.arrow = false;
 
             if (!self.review) {
                 _.each(self.getUserLayerCanEdit(), function (layer) {
@@ -1146,6 +1177,7 @@ BrowseImageView = Backbone.View.extend({
             });
         });
         toolbar.find('button[id=rotate' + this.model.get('id') + ']').click(function () {
+            toolbar.find('button[id=select' + self.model.get('id') + ']').click();
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
@@ -1187,6 +1219,7 @@ BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('button[id=resize' + this.model.get('id') + ']').click(function () {
+            toolbar.find('button[id=select' + self.model.get('id') + ']').click();
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
@@ -1201,6 +1234,7 @@ BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('button[id=drag' + this.model.get('id') + ']').click(function () {
+            toolbar.find('button[id=select' + self.model.get('id') + ']').click();
             self.freeHandUpdateAdd = false;
             self.freeHandUpdateRem = false;
             if (!self.review) {
