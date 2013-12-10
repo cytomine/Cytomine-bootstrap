@@ -225,6 +225,10 @@ div .annotations-panel-big {
     left : 0px;
     bottom : -300px;
     z-index: 1010;
+
+}
+
+div .tabsAnnotation {
     max-height: 300px;
     height: 200px;
     width: 100%;
