@@ -215,7 +215,6 @@ BrowseImageView = Backbone.View.extend({
     show: function (options) {
         var self = this;
         if (this.position) {
-            console.log("moveTo");
             self.map.moveTo(new OpenLayers.LonLat(self.position.x, self.position.y), Math.max(0, self.position.zoom));
         }
 
@@ -392,19 +391,13 @@ BrowseImageView = Backbone.View.extend({
 
     layerLoadedCallback: function (layer) {
         var self = this;
-        console.log("BrowseImageView.layerLoadedCallback");
         if (self.review == false) { //+1 for review layer in browse mode
-            console.log("BrowseImageView.not reviewed");
-            console.log(this.layers);
-            console.log(this.layers[0].name);
             //Init Controls on Layers
             var vectorLayers = _.map(this.layers, function (layer) {
                 return layer.vectorsLayer;
             });
-            console.log(vectorLayers);
             var selectFeature = new OpenLayers.Control.SelectFeature(vectorLayers);
             _.each(this.layers, function (layer) {
-                console.log("ADD EVENTS");
                 layer.initControls(self, selectFeature);
                 layer.registerEvents(self.map);
                 if (layer.isOwner) {
@@ -730,7 +723,7 @@ BrowseImageView = Backbone.View.extend({
 
             //baseLayer.transitionEffect = 'resize';
             baseLayer.getImageSize = function (bounds) {
-                console.log("bounds " + bounds);
+
                 if (arguments.length > 0) {
                     bounds = this.adjustBounds(arguments[0]);
                     var z = this.map.getZoom();
@@ -755,7 +748,7 @@ BrowseImageView = Backbone.View.extend({
                             h = this.standardTileSize;
                         }
                     }
-                    console.log("getImageSize" + new OpenLayers.Size(w, h));
+
                     return (new OpenLayers.Size(w, h));
                 } else {
                     return this.tileSize;

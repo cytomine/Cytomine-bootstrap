@@ -78,21 +78,19 @@ var MultiDimensionPanel = SideBarPanel.extend({
                 }));
 
                 var spinnerEl = el.find('#spinner'+text);
-
                 spinnerEl.attr("value", value);
                 spinnerEl.spinner({
                     min:min,
                     max:max,
-                    disabled:(min==max && max==0),
-                    spin : function () {
-
-                        spinnerEl.focusout().blur();
-                    },
-                    change: function( event, ui ) {
-
-                        self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"),null);
-                    }
+                    disabled:(min==max && max==0)
                 });
+
+                if (min==max && max==0) { //hide it
+                    spinnerEl.parent().parent().hide();
+                }
+
+
+
             };
 
             loadSpinner("channel","Channel",data.c);
@@ -100,14 +98,21 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
-            if(data.c!=null) {
-                $("#spinnerChannel").parent().parent().append('<button class="btn btn-default merge">Merge</button>');
+            console.log("data");
+            console.log(data);
+            if(data.c!=0) {
+                $("#spinnerChannel").parent().parent().append('<button class="btn btn-default btn-xs merge">Merge</button>');
             }
 
 
             $("#spinnerChannel").parent().find(".merge").click(function() {
                 self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
             });
+
+            el.find(".goToImage").on("click", function() {
+                self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"),null);
+            });
+
 
         });
 
