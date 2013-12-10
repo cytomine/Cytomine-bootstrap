@@ -1,26 +1,21 @@
 <div class="sidebar-map-head">
     <label>Review | Layers <i class="toggle-content2 glyphicon glyphicon-plus"></i></label>
 </div>
-<div class="reviewPanelContent2 sidebar-map-content" style="padding: 5px;display: none;min-height: 80px;" id="reviewChoice<%= id %>">
-    <ul>
-        <li><span class="label label-inverse">Display Review layer</span> <input id="showReviewLayer<%= id %>" type="checkbox" class="printReviewLayerButton" checked/></li>
-        <li><span class="label label-inverse">Others layers</span> :
+<div class="reviewPanelContent2 sidebar-map-content" id="reviewChoice<%= id %>">
+    <ul style="padding-left: 0px;">
+        <li><span class="label label-default">Display Review layer</span> : <input id="showReviewLayer<%= id %>" type="checkbox" class="printReviewLayerButton" checked/></li>
+        <li><span class="label label-default">Others layers</span> :
             <div style="display: block; padding-left: 10px;" id="reviewSelection<%= id %>">
             </div>
         </li>
         <li>
             <div class="controls controls-row">
-                <!--<select class="span2" style="margin-right: 5px;margin-top: 2px;"/>-->
-                <!--<button class="btn btn-small btn-inverse" id="addReviewLayers<%= id %>"><i-->
-                        <!--class="icon-plus icon-white"></i> Add-->
-                <!--</button>-->
                 <div id="addReviewLayerSelect"></div>
-                <br/>
             </div>
         </li>
     </ul>
-    <span style="margin-left: 10px;">Opacity:</span>
-    <div id="opacitySelectionSliderReview" style="margin-left: 10px;display: inline-block;min-width: 150px;"/>
+    <span class="label label-default">Opacity </span>
+    <div id="opacitySelectionSliderReview"></div>
 </div>
 
 <!--<h3><i class="toggle-content1 sidebar-map-content icon-plus icon-white icon-small"></i> </h3>-->
@@ -31,16 +26,16 @@
     <div style="display: block; margin:auto;" id="currentReviewAnnotation<%= id %>"></div>
 </div>
 <div class="sidebar-map-head">
-    <label>Review | Action image< <i class="toggle-content3 glyphicon glyphicon-plus"></i></label>
+    <label>Review | Action image <i class="toggle-content3 glyphicon glyphicon-plus"></i></label>
 </div>
 <!--<h3><i class="toggle-content3 sidebar-map-content icon-plus icon-white icon-small"></i> Review | Action image</h3>-->
 <div class="reviewPanelContent3" style="padding: 5px;display: none;">
     <div class="reviewAction btn-group" id="reviewAction<%= id %>">
-        <button class="btn btn-default btn-sm" id="reviewMultiple<%= id %>">Accept all</button>
-        <button class="btn btn-default btn-sm" id="unReviewMultiple<%= id %>">Reject all</button>
-        <button class="btn btn-default btn-sm btn-success" id="reviewValidate<%= id %>">Validate image</button>
-        <button class="btn btn-default btn-sm btn-danger" style="display:none;" id="reviewUnValidate<%= id %>">Unvalidate image</button>
-        <button class="btn btn-default btn-sm" style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
+        <button class="btn btn-default btn-xs" id="reviewMultiple<%= id %>">Accept all</button>
+        <button class="btn btn-default btn-xs" id="unReviewMultiple<%= id %>">Reject all</button>
+        <button class="btn btn-xs btn-success" id="reviewValidate<%= id %>">Validate image</button>
+        <button class="btn btn-xs btn-danger" style="display:none;" id="reviewUnValidate<%= id %>">Unvalidate image</button>
+        <button class="btn btn-default btn-xs" style="display:none;" id="reviewGotoNext<%= id %>">Go to next image</button>
         <div style="display: none; max-height: 150px; overflow:auto;" id="taskreview<%= id %>"></div>
     </div>
 </div>

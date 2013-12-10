@@ -172,9 +172,7 @@ div .sidebar-map-right-big {
 
 
 div .sidebar-map-content {
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
+    padding: 10px;
 }
 
 
@@ -253,7 +251,7 @@ div .annotations-panel-mini {
 {
 
 
-    font-size: 10pt; /* font size should not be too big */
+    /*font-size: 10pt; /* font size should not be too big */
     white-space: nowrap;
     padding: 0px;
     margin-top: 5px;
