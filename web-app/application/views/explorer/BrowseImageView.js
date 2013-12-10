@@ -186,7 +186,6 @@ BrowseImageView = Backbone.View.extend({
      */
     registerEventTile: function (layer) {
 
-        var self = this;
         layer.events.register("loadstart", layer, function () {
         });
 
@@ -196,9 +195,9 @@ BrowseImageView = Backbone.View.extend({
             if (ctx) {
                 var imgd = ctx.getImageData(0, 0, evt.tile.size.w, evt.tile.size.h);
                 //process PIX
-                /*Processing.Threshold.process({canvas :imgd, threshold : 165});
+                //Processing.Threshold.process({canvas :imgd, threshold : 165});
 
-                 Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
+                /*Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.GREEN});
                  Processing.ColorChannel.process({canvas :imgd, channel : Processing.ColorChannel.BLUE});
                  */
                 ctx.putImageData(imgd, 0, 0);
@@ -729,38 +728,39 @@ BrowseImageView = Backbone.View.extend({
             );
             baseLayer.tileOptions = {crossOriginKeyword: 'anonymous'};
 
-            //baseLayer.transitionEffect = 'none';
-            /*baseLayer.getImageSize = function () {
-
-             if (arguments.length > 0) {
-             bounds = this.adjustBounds(arguments[0]);
-             var z = this.map.getZoom();
-             var res = this.map.getResolution();
-             var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
-             var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
-             //check if tiles exist on server at this zoom level, if not return
-             if (this.tierImageSize[z] == undefined) {
-             return null;
-             }
-             var w = this.standardTileSize;
-             var h = this.standardTileSize;
-             if (x == this.tierSizeInTiles[z].w - 1) {
-             w = this.tierImageSize[z].w % this.standardTileSize;
-             if (w == 0) {
-             w = this.standardTileSize;
-             }
-             }
-             if (y == this.tierSizeInTiles[z].h - 1) {
-             h = this.tierImageSize[z].h % this.standardTileSize;
-             if (h == 0) {
-             h = this.standardTileSize;
-             }
-             }
-             return (new OpenLayers.Size(w, h));
-             } else {
-             return this.tileSize;
-             }
-             }; */
+            //baseLayer.transitionEffect = 'resize';
+            baseLayer.getImageSize = function (bounds) {
+                console.log("bounds " + bounds);
+                if (arguments.length > 0) {
+                    bounds = this.adjustBounds(arguments[0]);
+                    var z = this.map.getZoom();
+                    var res = this.map.getResolution();
+                    var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+                    var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
+                    //check if tiles exist on server at this zoom level, if not return
+                    if (this.tierImageSize[z] == undefined) {
+                        return null;
+                    }
+                    var w = this.standardTileSize;
+                    var h = this.standardTileSize;
+                    if (x == this.tierSizeInTiles[z].w - 1) {
+                        w = this.tierImageSize[z].w % this.standardTileSize;
+                        if (w == 0) {
+                            w = this.standardTileSize;
+                        }
+                    }
+                    if (y == this.tierSizeInTiles[z].h - 1) {
+                        h = this.tierImageSize[z].h % this.standardTileSize;
+                        if (h == 0) {
+                            h = this.standardTileSize;
+                        }
+                    }
+                    console.log("getImageSize" + new OpenLayers.Size(w, h));
+                    return (new OpenLayers.Size(w, h));
+                } else {
+                    return this.tileSize;
+                }
+            };
             imageFilters.each(function (imageFilter) {
                 var url = _.map(zoomify_urls, function (url) {
                     console.log(imageFilter.get('processingServer') + imageFilter.get("baseUrl") + url);
@@ -771,7 +771,7 @@ BrowseImageView = Backbone.View.extend({
                     url,
                     new OpenLayers.Size(metadata.width, metadata.height));
                 layer.imageFilter = imageFilter;
-                /*layer.transitionEffect = 'resize';*/
+                //layer.transitionEffect = 'resize';
 
                 self.addBaseLayer(layer);
                 self.registerEventTile(layer);

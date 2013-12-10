@@ -55,7 +55,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             color = "#5BB75B";
         }
 
-        var button = '<button class="btn btn-small btn-inverse removeImageLayers" id="removeImageLayers' + userID + '" data-user="' + userID + '" style="height:18px;"><i class="icon-minus icon-white"></i></button>'
+        var button = '<button class="btn btn-xs btn-default removeImageLayers" id="removeImageLayers' + userID + '" data-user="' + userID + '" style="height:18px;"> <i class="glyphicon glyphicon-trash"></i></button>'
 
 
         var layerOptionTpl;

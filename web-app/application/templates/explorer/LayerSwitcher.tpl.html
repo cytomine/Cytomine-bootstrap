@@ -7,23 +7,22 @@
 <div class="sidebar-map-head">
     <label>Annotations Layers <i class="toggle-content2 glyphicon glyphicon-plus"></i></label>
 </div>
-<div id="layerSwitcher<%= id %>" class="sidebar-map-content layerSwitcherContent2" style="display: block; padding-right: 10px;display: none;">
-    <div id="layerComp<%= id %>" style="margin:5px;">
+<div id="layerSwitcher<%= id %>" class="sidebar-map-content layerSwitcherContent2">
+    <div id="layerComp<%= id %>" >
         <select id="selectLayerSwitcher<%= id %>" class="span2" style="margin-right: 5px;margin-top: 10px;"/>
 
-        <button class="btn btn-small btn-inverse" id="addImageLayers<%= id %>" style="height:30px;margin-right: 5px;margin-top: 10px;">
+        <button class="btn btn-xs btn-default" id="addImageLayers<%= id %>">
             <i class="icon-plus icon-white"></i> Add
         </button>
-        <br/>
-        <br/>
     </div>
 
-    <ul class="annotationLayers">
+    <ul class="annotationLayers" style="padding-left: 0px;">
 
-        <li><i id="selectLayersIcon<%= id %>" class="icon icon-eye-open icon-white"></i>
-            <i class="icon icon-lock icon-white"></i>
+        <li><i id="selectLayersIcon<%= id %>" class="glyphicon glyphicon-eye-open"></i>
+            <i class="glyphicon glyphicon-lock"></i>
         </li>
     </ul>
-    <span style="margin-left: 10px;">Opacity:</span>
-    <div id="opacitySelectionSlider" style="margin-left: 10px;display: inline-block;min-width: 150px;"/>
+    <span class="label label-default">Opacity </span>
+    <div id="opacitySelectionSlider" />
+    <br />
 </div>

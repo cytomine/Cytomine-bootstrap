@@ -61,11 +61,9 @@ var MultiDimensionPanel = SideBarPanel.extend({
 
 
             var loadSpinner = function(type, text, value) {
-                console.log("loadSpinner:"+type);
                 var min=0;
                 var max=0;
                 var possibilities = data[type];
-                console.log("possibilities:"+possibilities);
                 var possibilityText = "none";
                 if(possibilities!=null) {
                     min = _.min(possibilities, function(value){ return value; });
@@ -73,27 +71,27 @@ var MultiDimensionPanel = SideBarPanel.extend({
                     possibilityText = max;
                 }
 
-                $('#multidimensionPanel' + self.model.get('id')).find(".spinnerChoice").append(_.template(tplspinner,{dim:text,dimText:text,possibility:possibilityText}));
+                $('#multidimensionPanel' + self.model.get('id')).find(".spinnerChoice").append(_.template(tplspinner,{
+                    dim : text,
+                    dimText : text,
+                    possibility : possibilityText
+                }));
 
-                el.find('#spinner'+text).spinner({hold:true,value:value,min:min,max:max,disabled:(min==max && max==0)});
+                var spinnerEl = el.find('#spinner'+text);
 
-//                console.log("changed");
-//                el.find('#spinner'+text).on("changed",function() {
-//                    el.find(".goToImage").empty();
-//                    el.find(".goToImage").text("Go to layer c:" + self.getValue("Channel") +" z:" + self.getValue("Zstack") +" s:" + self.getValue("Slice") +" t:" + self.getValue("Time"));
-//                });
+                spinnerEl.attr("value", value);
+                spinnerEl.spinner({
+                    min:min,
+                    max:max,
+                    disabled:(min==max && max==0),
+                    spin : function () {
 
+                        spinnerEl.focusout().blur();
+                    },
+                    change: function( event, ui ) {
 
-                el.find('#spinner'+text).on("changed",function() {
-                    el.find(".goToImage").text("Go to layer c:" + self.getValue("Channel") +" z:" + self.getValue("Zstack") +" s:" + self.getValue("Slice") +" t:" + self.getValue("Time"));
-                });
-
-                //if button up/down are used, go to image automat.
-                el.find('#spinner'+text).find("button.spinner-up").click(function() {
-                   $(".goToImage").click();
-                });
-                el.find('#spinner'+text).find("button.spinner-down").click(function() {
-                   $(".goToImage").click();
+                        self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"),null);
+                    }
                 });
             };
 
@@ -103,27 +101,13 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("time","Time",data.t);
 
             if(data.c!=null) {
-                $("#spinnerChannel").parent().append('<button class="btn btn-default merge">Merge</button>');
-            } else {
-                $("#spinnerChannel").parent().append('<div style="width:67px;height:30px;"></div>');
+                $("#spinnerChannel").parent().parent().append('<button class="btn btn-default merge">Merge</button>');
             }
-
-            $("#spinnerZstack").parent().append('<div style="width:67px;height:30px;"></div>');
-            $("#spinnerSlice").parent().append('<div style="width:67px;height:30px;"></div>');
-            $("#spinnerTime").parent().append('<div style="width:67px;height:30px;"></div>');
 
 
             $("#spinnerChannel").parent().find(".merge").click(function() {
                 self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
             });
-
-
-
-            el.find(".goToImage").click(function() {
-                self.goToDimension(data.imageGroup,self.getValue("Channel"),self.getValue("Zstack"),self.getValue("Slice"),self.getValue("Time"),null);
-
-            });
-
 
         });
 
