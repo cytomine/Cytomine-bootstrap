@@ -26,7 +26,7 @@ class AttachedFileAPI extends DomainAPI {
     }
 
     static def download(Long id,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/attachedfile/${id}/download.json"
+        String URL = Infos.CYTOMINEURL + "api/attachedfile/${id}/download"
         return doGET(URL, username, password)
     }
 

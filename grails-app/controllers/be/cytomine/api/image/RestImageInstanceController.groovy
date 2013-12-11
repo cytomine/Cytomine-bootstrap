@@ -235,8 +235,9 @@ class RestImageInstanceController extends RestController {
 
             ArrayList<Geometry> geometries
             if (review) {
-                ReviewedAnnotationListing ral = new ReviewedAnnotationListing(project: image.getProject().id, terms: termsIDS, users: userIDS, images:imageIDS, bbox:roiGeometry, columnToPrint:['basic','meta','wkt','term']  )
+                ReviewedAnnotationListing ral = new ReviewedAnnotationListing(project: image.getProject().id, terms: termsIDS, reviewUsers: userIDS, images:imageIDS, bbox:roiGeometry, columnToPrint:['basic','meta','wkt','term']  )
                 def result = annotationListingService.listGeneric(ral)
+                log.info "annotations=${result.size()}"
                 geometries = result.collect {
                     new WKTReader().read(it["location"])
                 }

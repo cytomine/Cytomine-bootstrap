@@ -18,7 +18,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : self.styleMap,
-        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","36px")}, //="48pt"
+        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","30px")}, //="48pt"
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],
@@ -45,19 +45,48 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
     read: function (collection) {
         var nestedCollection = collection.collection;
-        var features = [];
+
         var self = this;
 
+        var featuresMap = {}
+
         _.each(nestedCollection, function (result) {
-
-            var format = new OpenLayers.Format.WKT();
-            var geom = "POINT("+result.x+" " + (result.y+100)+")"
-            var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
-            pointFeature.attributes = { value: result.value};
-
-            features.push(pointFeature);
+            var samePointValue = featuresMap[result.x + "_" + result.y]
+            if(samePointValue) {
+                featuresMap[result.x + "_" + result.y] = samePointValue + " ; " + result.value
+            } else {
+                featuresMap[result.x + "_" + result.y] = result.value
+            }
         });
+        console.log("featuresMap");
+        console.log(featuresMap);
+
+        var features = [];
+
+              for (var prop in featuresMap) {
+                 // important check that this is objects own property
+                 // not from prototype prop inherited
+                 if(featuresMap.hasOwnProperty(prop)){
+                     var x = prop.split("_")[0];
+                     var y = prop.split("_")[1];
+                     var value = featuresMap[prop];
+                     var format = new OpenLayers.Format.WKT();
+                     var geom = "POINT("+x+" " + (y+100)+")"
+                     var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
+                     pointFeature.attributes = { value: value};
+                     features.push(pointFeature);
+                 }
+              }
+        console.log("features");
+        console.log(features);
+
+
+
         return features;
+
+
+
+
     }
 });
 

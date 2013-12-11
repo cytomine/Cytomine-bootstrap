@@ -43,6 +43,7 @@ abstract class AnnotationListing {
     def users = null //for user that draw annotation
     def usersForTerm = null //for user that add a term to annotation
     def usersForTermAlgo = null
+    def reviewUsers
     def terms = null
     def images = null
 
@@ -159,6 +160,7 @@ abstract class AnnotationListing {
         String whereRequest =
                 getProjectConst() +
                 getUsersConst() +
+                getReviewUsersConst() +
                 getImagesConst() +
                 getImageConst() +
                 getTermConst() +
@@ -214,6 +216,13 @@ abstract class AnnotationListing {
      def getUsersConst() {
          return (users? "AND a.user_id IN (${users.join(",")})\n" : "")
      }
+
+    def getReviewUsersConst() {
+        return (reviewUsers? "AND a.review_user_id IN (${reviewUsers.join(",")})\n" : "")
+    }
+
+
+
 
      def getUsersForTermConst() {
          if(usersForTerm) {

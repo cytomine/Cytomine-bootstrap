@@ -98,14 +98,12 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
-            console.log("data");
-            console.log(data);
             if(data.c!=0) {
-                $("#spinnerChannel").parent().parent().append('<button class="btn btn-default btn-xs merge">Merge</button>');
+                el.find("#spinnerChannel").parent().parent().append('<button class="btn btn-default btn-xs merge">Merge</button>');
             }
 
 
-            $("#spinnerChannel").parent().find(".merge").click(function() {
+            el.find(".merge").click(function() {
                 self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
             });
 

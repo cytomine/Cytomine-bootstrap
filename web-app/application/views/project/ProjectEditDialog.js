@@ -326,6 +326,10 @@ var EditProjectDialog = Backbone.View.extend({
                                 window.app.view.message("Project", response.message, "success");
                                 var id = response.project.id;
                                 $("#editproject").modal("hide");
+                                window.app.controllers.dashboard.destroyView()
+                                window.app.controllers.browse.closeAll();
+                                window.app.status.currentProject = undefined;
+                                window.app.view.clearIntervals();
                                 /*$("#editproject").remove();*/
                             },
                             error: function (model, response) {

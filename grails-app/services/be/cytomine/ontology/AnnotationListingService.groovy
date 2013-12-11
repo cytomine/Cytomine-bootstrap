@@ -60,7 +60,7 @@ class AnnotationListingService extends ModelService {
           def realColumn = []
          def request = al.getAnnotationsRequest()
           boolean termAsked = false
-
+           println  request
           new Sql(dataSource).eachRow(request) {
               /**
                * If an annotation has n multiple term, it will be on "n" lines.

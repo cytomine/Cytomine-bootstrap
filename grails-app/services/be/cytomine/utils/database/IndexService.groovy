@@ -130,8 +130,8 @@ class IndexService {
             createIndex(statement, "user_position", "image_id");
             createIndex(statement, "user_position", "latitude");
             createIndex(statement, "user_position", "longitude");
-            createIndex(statement, "user_position", "date_part('epoch'::text, created)");
-            createIndex(statement, "user_position", "date_part('epoch'::text, updated)");
+            createIndex(statement, "user_position", "date_part('epoch'::text, created)","btree", "user_position_epochcreated");
+            createIndex(statement, "user_position", "date_part('epoch'::text, updated)","btree", "user_position_epochupdated");
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
@@ -145,7 +145,7 @@ class IndexService {
      * @param col Column for index
      */
     def createIndex(def statement, String table, String col) {
-        createIndex(statement,table,col,"btree");
+        createIndex(statement,table,col,"btree",null);
     }
 
     /**
@@ -155,9 +155,8 @@ class IndexService {
      * @param col Column for index
      * @param type Index structure type (BTREE, HASH, GIST,...)
      */
-    def createIndex(def statement, String table, String col, String type) {
-        String name = table + "_" + col + "_index"
-
+    def createIndex(def statement, String table, String col, String type, String overidedname = null) {
+        String name = overidedname? overidedname : table + "_" + col + "_index"
 
         boolean alreadyExist = false
 

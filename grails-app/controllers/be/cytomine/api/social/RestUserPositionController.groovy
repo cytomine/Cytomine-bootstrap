@@ -29,8 +29,8 @@ class RestUserPositionController extends RestController {
         DateTime tenSecondsAgo = new DateTime().minusSeconds(10)
         def json = request.JSON
 
-        def data = [user.id, json.image, json.lon, json.lat, tenSecondsAgo.millis / 1000, tenSecondsAgo.millis / 1000]
-        def reqcreate = "UPDATE user_position SET updated = '" + new Date() + "' WHERE user_id = ? AND image_id = ? AND longitude = ? AND latitude = ? AND (extract(epoch from created) > ? OR extract(epoch from updated)> ?)"
+        def data = [user.id, json.image, json.lon, json.lat,json.zoom, tenSecondsAgo.millis / 1000, tenSecondsAgo.millis / 1000]
+        def reqcreate = "UPDATE user_position SET updated = '" + new Date() + "' WHERE user_id = ? AND image_id = ? AND longitude = ? AND latitude = ? AND zoom = ? AND (extract(epoch from created) > ? OR extract(epoch from updated)> ?)"
         // println reqcreate
 
         synchronized (this.getClass()) { //may be not synchronized for perf reasons (but table content will not be consistent)
