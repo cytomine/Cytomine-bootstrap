@@ -37,6 +37,8 @@ var CustomModal = Backbone.View.extend({
                         xwide : (self.xwide ? "modal-xwide" : ""),
                         buttons : self.buttons
                     });
+                        console.log("Append modal to:"+modal.length);
+
                     modal.append(htmlModal);
 
                         _.each(self.buttons, function (b) {

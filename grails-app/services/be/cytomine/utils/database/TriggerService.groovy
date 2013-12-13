@@ -39,6 +39,9 @@ class TriggerService {
             statement.execute(getUserAnnotationTriggerBeforeDelete())
             statement.execute(getUserAnnotationTriggerAfterDelete())
 
+            statement.execute(getUserAnnotationTriggerAfterUpdate())
+
+
             statement.execute(getAlgoAnnotationTriggerBeforeInsert())
             statement.execute(getAlgoAnnotationTriggerAfterInsert())
             statement.execute(getAlgoAnnotationTriggerBeforeDelete())
@@ -121,6 +124,37 @@ class TriggerService {
         String dropTrigger = "DROP TRIGGER IF EXISTS afterInsertUserAnnotationTrigger on user_annotation;"
 
         String createTrigger = "CREATE TRIGGER afterInsertUserAnnotationTrigger AFTER INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE afterInsertUserAnnotation(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+    String getUserAnnotationTriggerAfterUpdate() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION afterUpdateUserAnnotation() RETURNS TRIGGER AS \$incUserAnnAfter\$
+        DECLARE
+            alreadyExist INTEGER;
+        BEGIN
+                IF(NEW.user_id<>OLD.user_id) THEN
+                    SELECT count(*) INTO alreadyExist FROM annotation_index WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+                    IF (alreadyExist=0) THEN
+                        INSERT INTO annotation_index(user_id, image_id, count_annotation, count_reviewed_annotation, version, id) VALUES(NEW.user_id,NEW.image_id,0,0,0,nextval('hibernate_sequence'));
+                    END IF;
+                    UPDATE annotation_index SET count_annotation = count_annotation+1, version = version+1 WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+
+                    UPDATE annotation_index SET count_annotation = count_annotation-1, version = version+1 WHERE user_id = OLD.user_id AND image_id = OLD.image_id;
+
+                END IF;
+            RETURN NEW;
+        END ;
+        \$incUserAnnAfter\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS afterUpdateUserAnnotationTrigger on user_annotation;"
+
+        String createTrigger = "CREATE TRIGGER afterUpdateUserAnnotationTrigger AFTER UPDATE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE afterUpdateUserAnnotation(); "
 
         log.info createFunction
         log.info dropTrigger

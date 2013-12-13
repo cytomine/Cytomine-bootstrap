@@ -85,6 +85,9 @@ var ProjectPanelView = Backbone.View.extend({
         }
         json.title = title;
 
+        if (json.name.length > 50) {
+            json.name = json.name.substr(0, 50) + "...";
+        }
 
         if (json.disciplineName == undefined) {
             json.disciplineName = "Undefined";

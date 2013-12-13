@@ -103,7 +103,55 @@ class AnnotationIndexTests {
     }
 
 
+    def testIndexUserAnnotationUpdate() {
+       //create image
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        User user1 = BasicInstanceBuilder.getUser(USER1,PASSWORD)
+        User user2 = BasicInstanceBuilder.getUser(USER2,PASSWORD)
+        Infos.addUserRight(user1.username,project)
+        Infos.addUserRight(user2.username,project)
 
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+
+        //list index, check if 0
+        def result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data).collection
+        assert json.size()==0
+        assert getCountAnnotationValue(json,user1.id, false)==0
+        assert getCountAnnotationValue(json,user1.id, true)==0
+        assert getCountAnnotationValue(json,user2.id, false)==0
+        assert getCountAnnotationValue(json,user2.id, true)==0
+
+        //add annotation by user 1
+        def annotationToAdd = BasicInstanceBuilder.getUserAnnotationNotExist(project,image)
+        result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), user1.username, PASSWORD)
+        assert 200 == result.code
+        int idAnnotation = result.data.id
+
+        //list index, check if 1 for user and 0 for other
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data).collection
+        assert json.size()==1
+        assert getCountAnnotationValue(json,user1.id, false)==1
+        assert getCountAnnotationValue(json,user1.id, true)==0
+        assert getCountAnnotationValue(json,user2.id, false)==0
+        assert getCountAnnotationValue(json,user2.id, true)==0
+
+        def annotation = UserAnnotation.read(idAnnotation)
+        annotation.user = user2
+        BasicInstanceBuilder.saveDomain(annotation)
+
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        json = JSON.parse(result.data).collection
+        assert getCountAnnotationValue(json,user1.id, false)==0
+        assert getCountAnnotationValue(json,user1.id, true)==0
+        assert getCountAnnotationValue(json,user2.id, false)==1
+        assert getCountAnnotationValue(json,user2.id, true)==0
+
+    }
 
 
 

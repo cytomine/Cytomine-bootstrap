@@ -47,7 +47,10 @@ var ImageTabsView = Backbone.View.extend({
                     return magnification + "X";
                 }},
                 { "mDataProp": "resolution", "fnRender" : function(o, resolution) {
+                    console.log(resolution);
+                    try {
                     return resolution.toFixed(3) + " µm/pixel";
+                    }catch(e) {return "";}
                 }},
                 { "mDataProp": "numberOfAnnotations" },
                 { "mDataProp": "numberOfJobAnnotations" },

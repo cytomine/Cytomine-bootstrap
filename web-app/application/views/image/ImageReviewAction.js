@@ -83,7 +83,7 @@ var ImageReviewAction = Backbone.View.extend({
         });
 
         var openDescription = function () {
-                    console.log("Click");
+                    console.log("Clicko");
                     if(!self.disableEvent) {
                         new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
                                {success: function (description, response) {
@@ -101,7 +101,7 @@ var ImageReviewAction = Backbone.View.extend({
                     }
                     return false;
                 }
-        $(document).find("a.description" + self.model.id).unbind('click',openDescription).bind('click',openDescription);
+        $(self.el).find("a.description" + self.model.id).unbind('click',openDescription).bind('click',openDescription);
 
 
         var openImportImage = function () {
@@ -114,7 +114,7 @@ var ImageReviewAction = Backbone.View.extend({
                 }
                 return false;
          }
-        $(document).find("a.importannotation" + self.model.id).unbind('click',openImportImage).bind('click',openImportImage);
+        $(self.el).find("a.importannotation" + self.model.id).unbind('click',openImportImage).bind('click',openImportImage);
        // $(document).on('click',"a.description" + self.model.id,openDescription);
 
         var openCopyImage = function () {
@@ -127,7 +127,7 @@ var ImageReviewAction = Backbone.View.extend({
                 }
                 return false;
             }
-        $(document).find("a.copyimage" + self.model.id).unbind('click',openCopyImage).bind('click',openCopyImage);
+        $(self.el).find("a.copyimage" + self.model.id).unbind('click',openCopyImage).bind('click',openCopyImage);
 
 
     },
