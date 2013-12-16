@@ -6,14 +6,12 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
-import com.imon.apidocs.annotations.Api
-import com.imon.apidocs.annotations.ApiOperation
+
 /**
  * Controller for term request (word in ontology)
  */
 
-//@Produces({"application/json"})
-@Api(module="companyModule", description="Deals with company resource", href = "https://sites.google.com/home")
+
 class RestTermController extends RestController {
 
     def termService

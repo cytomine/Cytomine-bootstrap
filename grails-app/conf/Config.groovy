@@ -438,17 +438,3 @@ grails {
 }
 remove this line */
 
-// Added by the Restrpc plugin:
-restrpc.apiName = 'api'
-restrpc.apiVersion = '1.0'
-
-
-restrpc.defaultData.ID = '26'
-restrpc.defaultData.String = 'Hello World'
-restrpc.defaultData.Boolean = 'true'
-restrpc.defaultData.Float = '1.00'
-restrpc.defaultData.BigDecimal = '123567828794.87'
-restrpc.defaultData.Integer = '18'
-restrpc.defaultData.Long = '18926'
-restrpc.defaultData.Email = 'example@yoursite.com'
-restrpc.defaultData.Url = 'http://www.yoursite.com'

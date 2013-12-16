@@ -6,16 +6,20 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A project is the main cytomine domain
  * It structure user data
  */
+@ApiObject(name = "project")
 class Project extends CytomineDomain implements Serializable {
 
     /**
      * Project name
      */
+    @ApiObjectField(description = "The name of the project")
     String name
 
     /**
@@ -138,13 +142,13 @@ class Project extends CytomineDomain implements Serializable {
 
 
 
-//        int nbreAnnotation = JSONUtils.getJSONAttrLong(json, 'countAnnotations', -1)
+//        int nbreAnnotation = jsondoc.JSONUtils.getJSONAttrLong(json, 'countAnnotations', -1)
 //        domain.countAnnotations = (nbreAnnotation!=-1? nbreAnnotation : domain.countAnnotations)
 //
-//        int nbreImage = JSONUtils.getJSONAttrLong(json, 'countImages', -1)
-//        domain.countImages = JSONUtils.getJSONAttrLong(json, 'countImages', 0)
+//        int nbreImage = jsondoc.JSONUtils.getJSONAttrLong(json, 'countImages', -1)
+//        domain.countImages = jsondoc.JSONUtils.getJSONAttrLong(json, 'countImages', 0)
 //
-//        domain.countJobAnnotations = JSONUtils.getJSONAttrLong(json, 'countJobAnnotations', 0)
+//        domain.countJobAnnotations = jsondoc.JSONUtils.getJSONAttrLong(json, 'countJobAnnotations', 0)
 
         domain.retrievalDisable = JSONUtils.getJSONAttrBoolean(json, 'retrievalDisable', false)
         domain.retrievalAllOntology = JSONUtils.getJSONAttrBoolean(json, 'retrievalAllOntology', true)

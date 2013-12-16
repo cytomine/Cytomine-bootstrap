@@ -123,12 +123,13 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServersStorage() {
         try {
-            def mimeImageServer = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}
+            def imageServers = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}.findAll{it.available}
+            println "imageServers = $imageServers"
             def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
-            if (mimeImageServer.isEmpty() || storageAbstractImage.isEmpty()) return []
+            if (imageServers.isEmpty() || storageAbstractImage.isEmpty()) return []
             else {
                 return ImageServerStorage.createCriteria().list {
-                    inList("imageServer",  mimeImageServer)
+                    inList("imageServer",  imageServers)
                     inList("storage", storageAbstractImage )
                 }
             }
@@ -173,6 +174,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
         def imageServerStorages = getImageServersStorage()
+        println("imageServerStorages=$imageServerStorages")
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
             return null
         }
@@ -181,6 +183,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         if (!resolver) return null
         def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
+        println("storage=$storage")
         String basePath = storage.getBasePath()
         String path = getPath()
         int widthImg =  this.getWidth()

@@ -471,7 +471,6 @@ class RestImageController extends RestController {
             def urls = []
 
             (0..5).each {
-                println "test"
                 urls << servers.get(myRandomizer.nextInt(servers.size())).url + url
             }
 
