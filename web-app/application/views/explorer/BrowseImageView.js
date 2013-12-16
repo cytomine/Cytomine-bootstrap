@@ -436,7 +436,7 @@ BrowseImageView = Backbone.View.extend({
             //project admin? can all user layer
             return this.layers;
         } else {
-            //not project admin? only its layer!
+            //not project admin? only its layer!+
             return [this.userLayer];
         }
 

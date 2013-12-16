@@ -76,14 +76,13 @@ var ImageReviewAction = Backbone.View.extend({
             return false;
         });
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
-        $(document).on('click',"a.moreinfo" + self.model.id,function () {
+        $(self.el).on('click',"a.moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
             new ImagePropertiesView({model: self.model}).render();
             return false;
         });
 
         var openDescription = function () {
-                    console.log("Clicko");
                     if(!self.disableEvent) {
                         new DescriptionModel({domainIdent: self.model.id, domainClassName: self.model.get('class')}).fetch(
                                {success: function (description, response) {
@@ -105,7 +104,6 @@ var ImageReviewAction = Backbone.View.extend({
 
 
         var openImportImage = function () {
-                console.log("Click:openImportImage");
                 if(!self.disableEvent) {
                         ImportAnnotationModal.initImportAnnotationModal(el.find(".action"+self.model.id),self.model.id,function() {});
                         el.find(".action"+self.model.id).find('a.importannotation').click();
@@ -118,7 +116,6 @@ var ImageReviewAction = Backbone.View.extend({
        // $(document).on('click',"a.description" + self.model.id,openDescription);
 
         var openCopyImage = function () {
-                console.log("Click:openCopyImage");
                 if(!self.disableEvent) {
                     copyImageModal.initCopyImageModal(el.find(".action"+self.model.id),self.model.id,self.model.get('project'),self.model.get('baseImage'),function() {});
                         el.find(".action"+self.model.id).find('a.copyimage').click();

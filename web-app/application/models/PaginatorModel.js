@@ -1,5 +1,6 @@
 var PaginatedCollection = Backbone.Paginator.requestPager.extend({
     fullSize : -1,
+    maxVar : Number.MAX_VALUE,
     getNumberOfPages : function() {
        return this.totalPages;
     },
@@ -11,6 +12,7 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
         if(!options)  return;
         if(options.max) {
             this.paginator_ui.perPage = options.max;
+            this.maxVar = options.max;
             options.max=undefined;
         } else {
             this.paginator_ui.perPage = 0;
@@ -65,13 +67,13 @@ var PaginatedCollection = Backbone.Paginator.requestPager.extend({
 
           // number of items to return per request/page
           'max': function() {
-              return this.perPage!=Number.MAX_VALUE ? this.perPage : 0
+              return this.maxVar!=Number.MAX_VALUE ? this.maxVar : 0
           },
 
           // how many results the request should skip ahead to
           // customize as needed. For the Netflix API, skipping ahead based on
           // page * number of results per page was necessary.
-          'offset': function() { return this.currentPage * this.perPage }
+          'offset': function() { return this.currentPage * this.maxVar }
 
           // field to sort by
           //'orderby': 'name'
