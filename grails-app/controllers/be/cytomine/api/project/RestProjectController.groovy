@@ -10,17 +10,6 @@ import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import groovy.sql.Sql
-import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiError
-import org.jsondoc.core.annotation.ApiErrors
-import org.jsondoc.core.annotation.ApiHeader
-import org.jsondoc.core.annotation.ApiHeaders
-import org.jsondoc.core.annotation.ApiMethod
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
-import org.jsondoc.core.pojo.ApiParamType
-import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType
 
 
@@ -30,7 +19,6 @@ import org.springframework.http.MediaType
  * A project has some images and a set of annotation
  * Users can access to project with Spring security Acl plugin
  */
-@Api(name = "project services", description = "Methods for managing projects")
 class RestProjectController extends RestController {
 
     def springSecurityService
@@ -47,17 +35,7 @@ class RestProjectController extends RestController {
     /**
      * List all project available for the current user
      */
-
-    @ApiMethod(
-            path="/project.json",
-            verb=ApiVerb.GET,
-            description="Get project listing, according to your access",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    ])
-    @ApiResponseObject List<Project> list() {
+    List<Project> list() {
         SecUser user = cytomineService.currentUser
         if(user.isAdmin()) {
             //if user is admin, we print all available project
@@ -218,20 +196,7 @@ class RestProjectController extends RestController {
     /**
      * Get a project
      */
-    @ApiMethod(
-            path="/project/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get a project",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
-    ])
-    @ApiResponseObject Project show () {
+    Project show () {
         Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(project)

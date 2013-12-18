@@ -78,11 +78,28 @@ var ImageServerUrlsModel = Backbone.Model.extend({
         if(this.imageinstance) {
             url = url+ "&imageinstance="+this.imageinstance;
         }
+        if(this.merge && this.channels) {
+           //window.app.mergeChannel [[1,#ff0000],[2,#00ff00],..]
+            var chanIds = []
+            _.each(this.channels,function(channel) {
+                chanIds.push(channel[0]);
+            });
+            var colorIds = []
+            _.each(this.channels,function(channel) {
+                colorIds.push(channel[1].replace("#",""));
+            });
+            url = url+ "&channels="+chanIds.join(",")+"&colors="+colorIds.join(",")
+
+        }
+
+
+
         return url;
     },
     initialize: function (options) {
         this.merge = options.merge;
         this.imageinstance = options.imageinstance;
+        this.channels = options.channels;
     }
 });
 

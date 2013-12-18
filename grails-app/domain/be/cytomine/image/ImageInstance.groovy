@@ -53,6 +53,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         id generator: "assigned"
         baseImage fetch: 'join'
         sort "id"
+        tablePerHierarchy true
     }
 
     /**
@@ -96,39 +97,47 @@ class ImageInstance extends CytomineDomain implements Serializable {
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
-        JSON.registerObjectMarshaller(ImageInstance) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['baseImage'] = it.baseImage?.id
-            returnArray['project'] = it.project?.id
-            returnArray['user'] = it.user?.id
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            returnArray['filename'] = it.baseImage.filename
-            returnArray['originalFilename'] = it.baseImage.originalFilename
-            returnArray['sample'] = it.baseImage.sample?.id
-            returnArray['path'] = it.baseImage.path
-            returnArray['mime'] = it.baseImage.mime?.extension
-            returnArray['width'] = it.baseImage.width
-            returnArray['height'] = it.baseImage.height
-            returnArray['resolution'] = it.baseImage.resolution
-            returnArray['magnification'] = it.baseImage.magnification
-            returnArray['depth'] = it.baseImage.getZoomLevels()?.max
-            try {returnArray['preview'] = it.baseImage ? it.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
-            try {returnArray['thumb'] = it.baseImage ? it.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
-            try {returnArray['numberOfAnnotations'] = it.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
-            try {returnArray['numberOfJobAnnotations'] = it.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
-            try {returnArray['numberOfReviewedAnnotations'] = it.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
-            returnArray['reviewStart'] = it.reviewStart ? it.reviewStart.time.toString() : null
-            returnArray['reviewStop'] = it.reviewStop ? it.reviewStop.time.toString() : null
-            returnArray['reviewUser'] = it.reviewUser?.id
-            returnArray['reviewed'] = it.isReviewed()
-            returnArray['inReview'] = it.isInReviewMode()
-
-            return returnArray
+        JSON.registerObjectMarshaller(ImageInstance) { image ->
+            return getDataFromDomain(image)
         }
     }
+    
+    static def getDataFromDomain(def image) {
+
+        def returnArray = [:]
+        returnArray['class'] = image.class
+        returnArray['id'] = image.id
+        returnArray['baseImage'] = image.baseImage?.id
+        returnArray['project'] = image.project?.id
+        returnArray['user'] = image.user?.id
+        returnArray['created'] = image.created?.time?.toString()
+        returnArray['updated'] = image.updated?.time?.toString()
+        returnArray['filename'] = image.baseImage.filename
+        returnArray['originalFilename'] = image.baseImage.originalFilename
+        returnArray['sample'] = image.baseImage.sample?.id
+        returnArray['path'] = image.baseImage.path
+        returnArray['mime'] = image.baseImage.mime?.extension
+        returnArray['width'] = image.baseImage.width
+        returnArray['height'] = image.baseImage.height
+        returnArray['resolution'] = image.baseImage.resolution
+        returnArray['magnification'] = image.baseImage.magnification
+        returnArray['depth'] = image.baseImage.getZoomLevels()?.max
+        try {returnArray['preview'] = image.baseImage ? image.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
+        try {returnArray['thumb'] = image.baseImage ? image.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
+        try {returnArray['numberOfAnnotations'] = image.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
+        try {returnArray['numberOfJobAnnotations'] = image.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
+        try {returnArray['numberOfReviewedAnnotations'] = image.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
+        returnArray['reviewStart'] = image.reviewStart ? image.reviewStart.time.toString() : null
+        returnArray['reviewStop'] = image.reviewStop ? image.reviewStop.time.toString() : null
+        returnArray['reviewUser'] = image.reviewUser?.id
+        returnArray['reviewed'] = image.isReviewed()
+        returnArray['inReview'] = image.isInReviewMode()
+
+        return returnArray
+    }    
+    
+    
+    
 
     /**
      * Flag to control if image is beeing review, and not yet validated

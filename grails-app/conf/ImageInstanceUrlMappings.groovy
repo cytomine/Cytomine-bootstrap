@@ -68,6 +68,11 @@ class ImageInstanceUrlMappings {
             action = [POST:"copyMetadata"]
         }
 
-
+        "/api/imageinstance/$idImage/nested.$format"(controller: "restNestedImageInstance"){
+            action = [POST:"add",GET : "listByImageInstance"]
+        }
+        "/api/imageinstance/$idImage/nested/$id.$format"(controller: "restNestedImageInstance"){
+            action = [GET:"show", PUT:"update", DELETE:"delete"]
+        }
     }
 }

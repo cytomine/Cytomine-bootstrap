@@ -127,8 +127,8 @@
 
 
 
-<!--<link href="lib/colorpicker/css/colorpicker.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="lib/colorpicker/js/colorpicker.js"></script>-->
+<link href="lib/colorpicker-2/css/colorpicker.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/colorpicker-2/js/bootstrap-colorpicker.js"></script>
 
 <!--jqgrid -->
 <script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>

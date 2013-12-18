@@ -450,20 +450,51 @@ class RestImageController extends RestController {
             def servers = ProcessingServer.list()
             Random myRandomizer = new Random();
 
-            def  params = []
-            images.each { seq ->
-                def imageinstance = seq.image
-                def position = -1
-                if(merge=="channel") position = seq.channel
-                if(merge=="zstack") position = seq.zStack
-                if(merge=="slice") position = seq.slice
-                if(merge=="time") position = seq.time
-                def urls = abstractImageService.imageServers(imageinstance.baseImage.id).imageServersURLs
 
-                def param = "url$position="+ URLEncoder.encode(urls.first(),"UTF-8") +"&color$position="+ URLEncoder.encode(getColor(position),"UTF-8")
-                params << param
+            def ids = params.get('channels').split(",").collect{Integer.parseInt(it)}
+            def colors = params.get('colors').split(",").collect{it}
+            println "ids=$ids"
+            println "colors=$colors"
+            def params = []
+
+            ids.eachWithIndex {pos,index ->
+                images.each { seq ->
+                    def position = -1
+                    if(merge=="channel") position = seq.channel
+                    if(merge=="zstack") position = seq.zStack
+                    if(merge=="slice") position = seq.slice
+                    if(merge=="time") position = seq.time
+
+                    if(position==pos) {
+                        def urls = abstractImageService.imageServers(seq.image.baseImage.id).imageServersURLs
+                        if(ids.contains(position)) {
+                            def param = "url$index="+ URLEncoder.encode(urls.first(),"UTF-8") +"&color$index="+ URLEncoder.encode(colors.get(index),"UTF-8")
+                            params << param
+                        }
+                    }
+
+                }
 
             }
+
+
+
+
+//            def  params = []
+//            images.each { seq ->
+//                def imageinstance = seq.image
+//                def position = -1
+//                if(merge=="channel") position = seq.channel
+//                if(merge=="zstack") position = seq.zStack
+//                if(merge=="slice") position = seq.slice
+//                if(merge=="time") position = seq.time
+//                def urls = abstractImageService.imageServers(imageinstance.baseImage.id).imageServersURLs
+//
+//                if(ids.contains(position)) {
+//                    def param = "url$position="+ URLEncoder.encode(urls.first(),"UTF-8") +"&color$position="+ URLEncoder.encode(getColor(position),"UTF-8")
+//                    params << param
+//                }
+//            }
 
             String url = "vision/merge?" + params.join("&") +"&zoomify="
             log.info "url=$url"

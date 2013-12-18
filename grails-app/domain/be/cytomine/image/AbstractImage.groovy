@@ -124,7 +124,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
     def getImageServersStorage() {
         try {
             def imageServers = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}.findAll{it.available}
-            println "imageServers = $imageServers"
             def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
             if (imageServers.isEmpty() || storageAbstractImage.isEmpty()) return []
             else {

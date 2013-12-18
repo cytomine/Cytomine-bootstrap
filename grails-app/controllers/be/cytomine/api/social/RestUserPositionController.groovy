@@ -37,12 +37,12 @@ class RestUserPositionController extends RestController {
             def sql = new Sql(dataSource)
             //execute update, if 1 row is affected, the user was still this postion on the image
             int affectedRow = sql.executeUpdate(reqcreate, data)
-
+            def image = imageInstanceService.read(json.image)
             if (affectedRow == 0) {
                 Date now = new Date()
                 def reqinsert = "INSERT INTO user_position" +
                         "(id,version,user_id,longitude,latitude,zoom,image_id,updated,project_id,created) VALUES " +
-                        "(nextval('hibernate_sequence'),0," + user.id + "," + json.lon + "," + json.lat + "," + json.zoom + "," + json.image + ",'" + now + "',(SELECT project_id FROM image_instance WHERE id = " + json.image + "),'" + now + "')"
+                        "(nextval('hibernate_sequence'),0," + user.id + "," + json.lon + "," + json.lat + "," + json.zoom + "," + image.id + ",'" + now + "',"+image.project.id+",'" + now + "')"
                 sql.execute(reqinsert)
             }
         }

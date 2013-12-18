@@ -91,6 +91,27 @@ var MultiDimensionPanel = SideBarPanel.extend({
 
 
 
+
+
+                if(type=="channel") {
+
+                    var colors = ["#0000FF","#00FF00","#5B3B11","#FF0000","#FFD700","#00FFFF","#778899","#9400D3"]
+                    var buttonContainer = el.find("#spinnerChannel").parent().parent();
+                    if(max>0) {
+                        var indice = 0;
+                        for(var i=min;i<max+1;i++) {
+                            indice = indice <  colors.length? indice : 0
+                            var color = colors[indice]
+
+                            buttonContainer.append('<br/><input class="mergeChannel" data-channel="'+i+'" type="checkbox" id="mergeChannel'+i+'"+> Channel' + i + " ");
+                            buttonContainer.append('<input type="text" style="width:100px;" class="span1" id="mergeChannelColor'+i+'" value="'+color+'" id="cp1" >')
+                            var colorPicker = buttonContainer.find('#mergeChannelColor'+i).colorpicker();
+                            indice++;
+                        }
+                        buttonContainer.append('<br/><button class="btn btn-default btn-xs merge">Merge</button>');
+                    }
+                }
+
             };
 
             loadSpinner("channel","Channel",data.c);
@@ -98,12 +119,22 @@ var MultiDimensionPanel = SideBarPanel.extend({
             loadSpinner("slice","Slice",data.s);
             loadSpinner("time","Time",data.t);
 
-            if(data.c!=0) {
-                el.find("#spinnerChannel").parent().parent().append('<button class="btn btn-default btn-xs merge">Merge</button>');
-            }
+
 
 
             el.find(".merge").click(function() {
+                var colors = []
+                var inputs = $(".mergeChannel");
+                _.each(inputs,function(input) {
+                    if($(input).is(":checked")) {
+                        var id = $(input).data("channel");
+
+                        colors.push([id,$("#mergeChannelColor"+id).val()]);
+                    }
+                });
+                console.log("colors");
+                //window.app.mergeChannel = colors;
+                window.sessionStorage.setItem('mergeChannel', JSON.stringify(colors) );
                 self.goToOtherImage(self.browseImageView.model,self.browseImageView.model,"channel");
             });
 
@@ -145,8 +176,9 @@ var MultiDimensionPanel = SideBarPanel.extend({
         var y = self.browseImageView.map.center.lat;
 
         if(self.browseImageView.divPrefixId=='tabs-image' || currentImage.get('reviewUser')!=null) {
+            console.log("goToOtherImage") ;
             window.app.controllers.browse.tabs.goToImage(nextImage.id,currentImage.get('project'),currentImage.id, self.browseImageView.getMode(),nextImage,x,y,zoom,merge);
-        } else {
+        }  else {
             new ImageReviewModel({id: idImage}).save({}, {
                 success: function (model, response) {
                     window.app.view.message("Image", response.message, "success");

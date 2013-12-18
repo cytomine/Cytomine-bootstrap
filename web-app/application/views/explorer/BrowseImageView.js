@@ -847,9 +847,12 @@ BrowseImageView = Backbone.View.extend({
             t_height = Math.floor(t_height / 2);
         }
         var metadata = {width: self.model.get("width"), height: self.model.get("height"), nbZoom: nbZoom, overviewWidth: 200, overviewHeight: Math.round((200 / self.model.get("width") * self.model.get("height")))};
+        console.log("ImageServerUrlsModel") ;
+        console.log(window.app.mergeChannel) ;
 
+        var channels = eval(window.sessionStorage.getItem('mergeChannel'));
 
-        new ImageServerUrlsModel({id: self.model.get('baseImage'), merge: self.merge, imageinstance: self.model.id}).fetch({
+        new ImageServerUrlsModel({id: self.model.get('baseImage'), merge: self.merge, imageinstance: self.model.id, channels:channels}).fetch({
             success: function (model, response) {
                 new ProjectImageFilterCollection({ project: self.model.get("project")}).fetch({
                     success: function (imageFilters, response) {

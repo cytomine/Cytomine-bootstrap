@@ -53,6 +53,7 @@ class ImageInstanceService extends ModelService {
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
             eq("project", project)
+            isNull("parent")
             order("i.created", "desc")
             fetchMode 'baseImage', FetchMode.JOIN
         }
@@ -66,7 +67,7 @@ class ImageInstanceService extends ModelService {
         SecurityACL.check(project,READ)
 
         //better perf with sql request
-        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id
+        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id  + " AND parent_id IS NULL"
         def data = []
         new Sql(dataSource).eachRow(request) {
             data << it[0]
@@ -77,6 +78,8 @@ class ImageInstanceService extends ModelService {
     def list(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
+
+        //user_image already filter nested image
         new Sql(dataSource).eachRow("select * from user_image where user_image_id = ? order by original_filename",[user.id]) {
             data << [id:it.id, filename:it.filename, originalFilename: it.original_filename, projectName:it.project_name,  project:it.project_id]
         }
@@ -140,6 +143,7 @@ class ImageInstanceService extends ModelService {
         return ImageInstance.createCriteria().list() {
             createAlias("baseImage", abstractImageAlias)
             eq("project", project)
+            isNull("parent")
             fetchMode 'baseImage', FetchMode.JOIN
             ilike(abstractImageAlias + ".originalFilename", _search)
             order(_sortColumn, sortDirection)
@@ -273,6 +277,7 @@ class ImageInstanceService extends ModelService {
             FROM image_instance ii, project p, ${admin? "admin_project" : "user_project" } up, sec_user su, annotation_index ai
             WHERE base_image_id = ?
             AND ii.id <> ?
+            AND ii.parent_id IS NULL
             AND ii.project_id = p.id
             AND up.id = p.id
             AND up.user_id = su.id

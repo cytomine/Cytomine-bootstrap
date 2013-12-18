@@ -6,7 +6,7 @@ grails.project.war.file = "target/${appName}.war"
 //grails.project.dependency.resolver="ivy"
 grails.project.dependency.resolver = "maven"
 grails.project.fork = [ test: false, run: false, war: false, console: false ]
-grails.plugin.location."grails-jsondoc" = "/Users/stevben/Cytomine/github/grails-jsondoc"
+//grails.plugin.location."grails-jsondoc" = "/home/lrollus/Cytomine/grails-plugin/grails-jsondoc"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -53,7 +53,7 @@ grails.project.dependency.resolution = {
 //        runtime 'com.vividsolutions:jts:1.13'
 //        runtime 'org.postgis:postgis-jdbc:1.5.2'
 
-         //runtime 'org.jsondoc:jsondoc-core:1.0.2-SNAPSHOT'
+
     }
     plugins {
         // Uncomment these (or add new ones) to enable additional resources capabilities
@@ -105,7 +105,7 @@ grails.project.dependency.resolution = {
 //        compile (':jaxrs:0.8') {
 //            excludes 'spring-core', 'spring-beans', 'spring-context', 'spring-web', 'spring-aop'
 //        }
-
+//        runtime ':jsondoc-core:1.0.2-SNAPSHOT'
 //
 //        test ':selenium-rc:1.0.2'
 //        test ':functional-test:2.0.RC1'

@@ -38,7 +38,11 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def checkDomain(def domain) {
-        assert domain.validate()
+        boolean validate = domain.validate()
+        if(!validate) {
+            println domain.errors
+        }
+        assert validate
         domain
     }
 
@@ -208,6 +212,23 @@ class BasicInstanceBuilder {
                 //slide: BasicInstanceBuilder.getSlide(),
                 user: getUser1())
         save ? BasicInstanceBuilder.saveDomain(image) : BasicInstanceBuilder.checkDomain(image)
+    }
+
+
+    static NestedImageInstance getNestedImageInstance() {
+        saveDomain(getNestedImageInstanceNotExist())
+    }
+
+    static NestedImageInstance getNestedImageInstanceNotExist(ImageInstance imageInstance = BasicInstanceBuilder.getImageInstance(), boolean save = false) {
+        NestedImageInstance nestedImage = new NestedImageInstance(
+                baseImage: getAbstractImageNotExist(true),
+                parent: imageInstance,
+                x: 10,
+                y:20,
+                project: imageInstance.project,
+                //slide: BasicInstanceBuilder.getSlide(),
+                user: imageInstance.user)
+        save ? BasicInstanceBuilder.saveDomain(nestedImage) : BasicInstanceBuilder.checkDomain(nestedImage)
     }
 
 

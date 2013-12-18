@@ -79,6 +79,7 @@ class TableService {
                     "FROM project,  image_instance, abstract_image, acl_object_identity, sec_user, acl_sid, acl_entry \n" +
                     "WHERE project.id = acl_object_identity.object_id_identity\n" +
                     "AND image_instance.project_id = project.id \n" +
+                    "AND image_instance.parent_id IS NULL \n" + //don't get nested images
                     "AND abstract_image.id = image_instance.base_image_id\n" +
                     "AND acl_sid.sid = sec_user.username\n" +
                     "AND acl_entry.sid = acl_sid.id\n" +

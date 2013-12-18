@@ -73,7 +73,7 @@ var ExplorerTabs = Backbone.View.extend({
         }
 
         var tabs = $("#explorer-tab-content");
-
+        console.log("BrowseImageView");
         var view = new BrowseImageView({
             initCallback: function () {
                 view.show(options)
@@ -232,8 +232,14 @@ var ExplorerTabs = Backbone.View.extend({
         if(merge) {
             mode = mode +"mergechannel"
         }
+        console.log("goTo"+"#tabs-" + mode + "-"+idProject+"-"+idImageToOpen+"-") ;
+        var urldest = "#tabs-" + mode + "-"+idProject+"-"+idImageToOpen+"-"
 
-        window.location = "#tabs-" + mode + "-"+idProject+"-"+idImageToOpen+"-";
+        if(window.location.hash==urldest) {
+            window.location.reload();
+        } else {
+            window.location = urldest
+        }
     },
 
     /**
