@@ -47,7 +47,13 @@
                window.location = "/";
            },
            error: function (data) {
-              alert("Error: bad login or bad password!");
+             console.log(data);
+             if(data.status==403) {
+               alert("Error: bad login or bad password!");
+             } else if(data.status==200) {
+               window.location = "/";
+             }
+
            }
        });
   }
