@@ -6,6 +6,7 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.NestedImageInstance
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.Storage
@@ -610,4 +611,9 @@ class SecUserService extends ModelService {
          }
     }
 
+    def deleteDependentNestedImageInstance(SecUser user, Transaction transaction,Task task=null) {
+        NestedImageInstance.findAllByUser(user).each {
+            it.delete(flush: true)
+        }
+    }
 }

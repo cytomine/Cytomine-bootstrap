@@ -38,7 +38,6 @@ class DomainAPI {
         boolean find = false
         list.each { item ->
             Long idItem = item.id
-            println "idItem=$idItem id=$id equals=${(idItem+"").equals(id+"")}"
             if ((idItem+"").equals(id+"")) {find = true}
         }
         return find

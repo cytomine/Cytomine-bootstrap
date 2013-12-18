@@ -79,7 +79,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def imageServers(Long idImage, Long idImageInstance, Boolean merge, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/$idImage/imageservers.json?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true":"" )
+        String URL = Infos.CYTOMINEURL + "api/image/$idImage/imageservers.json?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true&channels=1,3&colors=ff0000,00ff00":"" )
         return doGET(URL,username,password)
     }
 

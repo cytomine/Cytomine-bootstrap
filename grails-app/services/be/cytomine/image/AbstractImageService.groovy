@@ -316,4 +316,10 @@ class AbstractImageService extends ModelService {
             it.delete(flush: true)
         }
     }
+
+    def deleteDependentNestedImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
+        NestedImageInstance.findAllByBaseImage(ai).each {
+            it.delete(flush: true)
+        }
+    }
 }

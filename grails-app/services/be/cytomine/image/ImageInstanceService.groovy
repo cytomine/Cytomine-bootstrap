@@ -385,4 +385,10 @@ class ImageInstanceService extends ModelService {
         }
 
     }
+
+    def deleteDependentNestedImageInstance(ImageInstance image, Transaction transaction,Task task=null) {
+        NestedImageInstance.findAllByParent(image).each {
+            it.delete(flush: true)
+        }
+    }
 }

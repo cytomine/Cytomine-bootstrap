@@ -3,7 +3,9 @@ package be.cytomine.project
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.NestedImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
@@ -501,5 +503,11 @@ class ProjectService extends ModelService {
             propertyService.delete(it,transaction,null,false)
         }
 
+    }
+
+    def deleteDependentNestedImageInstance(Project project, Transaction transaction,Task task=null) {
+        NestedImageInstance.findAllByProject(project).each {
+            it.delete(flush: true)
+        }
     }
 }

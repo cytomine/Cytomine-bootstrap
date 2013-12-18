@@ -6,20 +6,16 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A project is the main cytomine domain
  * It structure user data
  */
-@ApiObject(name = "project")
 class Project extends CytomineDomain implements Serializable {
 
     /**
      * Project name
      */
-    @ApiObjectField(description = "The name of the project")
     String name
 
     /**
