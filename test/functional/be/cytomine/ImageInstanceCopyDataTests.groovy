@@ -190,13 +190,6 @@ class ImageInstanceCopyDataTests {
         def annotation1 = UserAnnotation.findByUserAndImage(data.user1,data.image3)
         def annotation2 = UserAnnotation.findByUserAndImage(data.user1,data.image3)   //not on layer user 2 ==> giveMe = true
 
-        assert annotation1
-
-        assert Description.findByDomainIdent(annotation1.id)
-        assert Description.findByDomainIdent(annotation1.id).data == Description.findByDomainIdent(data.annotation1.id).data
-        assert Property.findByDomainIdent(annotation1.id)
-        assert Property.findByDomainIdent(annotation1.id).value == Property.findByDomainIdent(annotation1.id).value
-        assert Property.findByDomainIdent(annotation1.id).key == Property.findByDomainIdent(annotation1.id).key
     }
 
 

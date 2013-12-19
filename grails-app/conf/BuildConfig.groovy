@@ -39,12 +39,18 @@ grails.project.dependency.resolution = {
         mavenRepo 'https://noams.artifactoryonline.com/noams/grails-jaxrs-plugin-snapshots'
         mavenRepo 'http://maven.restlet.org'
         mavenRepo "http://www.hibernatespatial.org/repository"
+        mavenRepo "http://www.terracotta.org/download/reflector/releases"
+
     }
     dependencies {
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
         test "org.codehaus.geb:geb-spock:0.7.2"
         //runtime "postgresql:postgresql:9.0-801.jdbc4"
                          //   postgresql-9.0-801.jdbc4.jar
+
+        //for cluster
+//        runtime 'net.sf.ehcache:ehcache-core:2.6.6'
+//        runtime 'net.sf.ehcache:ehcache-terracotta:2.6.6'
 
         runtime 'postgresql:postgresql:9.1-901.jdbc4'
 //        runtime ('org.hibernatespatial:hibernate-spatial-postgis:1.1.1') {
