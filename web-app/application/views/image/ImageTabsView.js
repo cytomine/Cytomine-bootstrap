@@ -60,7 +60,9 @@ var ImageTabsView = Backbone.View.extend({
                     return window.app.convertLongToDate(created);
                 }} ,
                 { "mDataProp": "inReview", "fnRender" : function (o, inReview) {
-                    if (inReview) {
+                    if (o.aData.reviewed) {
+                        return '<span class="label label-success">Reviewed</span>';
+                    } else if (inReview) {
                         return '<span class="label label-warning">In review</span>';
                     } else {
                         return '<span class="label label-info">None</span>';

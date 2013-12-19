@@ -301,7 +301,6 @@ class RestController {
      * @param url Image url
      */
     protected def responseImage(String url) {
-        log.info "responseImage=$url"
         withFormat {
             png {
                 if (request.method == 'HEAD') {

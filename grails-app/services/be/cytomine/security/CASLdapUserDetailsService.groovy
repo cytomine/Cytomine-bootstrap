@@ -48,11 +48,16 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
 
             User.withTransaction {
 
+
                 //Can't get firstname with inetOrgPerson, but we've got the fullname and the lastname
                 String firstname = inetOrgPerson.getCn()[0].replace(inetOrgPerson.getSn(), "")
                 //remove whitespace at the beginning
                 while (firstname.startsWith(" ")) {
                     firstname = firstname.substring(1)
+                }
+
+                if(firstname==null || firstname.trim()==""){
+                    firstname="#none"
                 }
 
                 // Create new user and save to the database

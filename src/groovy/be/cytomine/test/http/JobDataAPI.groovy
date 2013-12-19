@@ -51,7 +51,7 @@ class JobDataAPI extends DomainAPI {
     }
 
     static def download(def id,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/download.json"
+        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/download"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         byte[] data = client.getData()
@@ -61,7 +61,7 @@ class JobDataAPI extends DomainAPI {
     }
 
     static def view(def id,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/view.json"
+        String URL = Infos.CYTOMINEURL + "api/jobdata/" + id + "/view"
         HttpClient client = new HttpClient()
         client.connect(URL, username, password)
         byte[] data = client.getData()

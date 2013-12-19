@@ -17,11 +17,11 @@ class JobDataUrlMappings {
             action = [PUT:"upload", POST: "upload"]
         }
 
-        "/api/jobdata/$id/download.$format"(controller:"restJobData"){
+        "/api/jobdata/$id/download"(controller:"restJobData"){
             action = [GET: "download"]
         }
 
-        "/api/jobdata/$id/view.$format"(controller:"restJobData"){
+        "/api/jobdata/$id/view"(controller:"restJobData"){
             action = [GET: "view"]
         }
     }

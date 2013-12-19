@@ -136,9 +136,18 @@ var UserDashboardView = Backbone.View.extend({
 
                 elem.append(action);
             });
+            console.log("charts");
+            console.log(chartData[0].values);
 
-            var minValue = chartData[0].values[0].value;
-            var maxValue = chartData[0].values[0].value;
+            var minValue=0;
+            var maxValue=0;
+
+            if(chartData[0].values.length>0) {
+                minValue = chartData[0].values[0].value;
+                maxValue = chartData[0].values[0].value;
+            }
+
+
             _.each(chartData[0].values, function (d) {
                 minValue = Math.min(minValue, d.value);
                 maxValue = Math.max(maxValue, d.value);

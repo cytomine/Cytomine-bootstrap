@@ -1,5 +1,6 @@
 package be.cytomine.image
 
+import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -104,9 +105,13 @@ class ImageInstanceService extends ModelService {
                 "WHERE user_position.user_id = ? \n" + //no join with image instance / abstract img / project...too heavy
                 "GROUP BY image_id \n" +
                 "ORDER BY maxDate desc " + offsetString,[user.id]) {
-            ImageInstance image = ImageInstance.read(it.image_id)
-            data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
-        }
+            try {
+                ImageInstance image = read(it.image_id)
+                 data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
+            } catch(CytomineException e) {
+               //if user has data in user_position but has no access to picture,  ImageInstance.read will throw a forbiddenException
+            }
+         }
         return data
     }
 
