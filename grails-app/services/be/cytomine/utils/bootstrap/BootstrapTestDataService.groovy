@@ -1,5 +1,6 @@
 package be.cytomine.utils.bootstrap
 
+import be.cytomine.security.SecUser
 import groovy.sql.Sql
 
 /**
@@ -55,6 +56,12 @@ class BootstrapTestDataService {
 
         bootstrapUtilsService.createUsers(usersSamples)
         bootstrapUtilsService.createRelation()
+
+        //set public/private keys for special image server user
+        SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
+        imageServerUser.setPrivateKey("70f35a45-c317-405a-8056-353db3d2bf56")
+        imageServerUser.setPublicKey("4a5c7004-b6f8-4705-a118-c15d5c90dcdb")
+        imageServerUser.save(flush : true)
 
     }
 
