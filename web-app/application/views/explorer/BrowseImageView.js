@@ -787,7 +787,7 @@ BrowseImageView = Backbone.View.extend({
             self.map.zoomTo(idealZoom);
 
 
-            //broadcast position every 5 seconds even if user id idle
+            //broadcast position every 5 seconds even if user is idle
             self.initBroadcastingInterval();
             //check users online of this image
             if (!self.review) {

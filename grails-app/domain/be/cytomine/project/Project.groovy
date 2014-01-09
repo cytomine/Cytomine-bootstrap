@@ -6,29 +6,47 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
+
 
 /**
  * A project is the main cytomine domain
  * It structure user data
  */
+@ApiObject(name = "project")
 class Project extends CytomineDomain implements Serializable {
 
     /**
      * Project name
      */
+    @ApiObjectField(description = "The name of the project")
     String name
 
     /**
      * Project ontology link
      */
+    @ApiObjectField(
+            description = "The ontology identifier of the project",
+            allowedType = "integer",
+            apiFieldName = "ontology",
+            apiValueAccessor = "ontologyID")
     Ontology ontology
 
     /**
      * Project discipline link
      */
+    @ApiObjectField(
+            description = "The discipline identifier of the project",
+            allowedType = "integer",
+            apiFieldName = "discipline",
+            apiValueAccessor = "disciplineID")
     Discipline discipline
 
 
+    @ApiObjectField(
+            description = "Blind mode (if true, image filename are hidden)",
+            allowedType = "boolean")
     boolean blindMode = false
 
     /**
@@ -39,7 +57,7 @@ class Project extends CytomineDomain implements Serializable {
     /**
      * Number of projects algo annotations
      */
-	long countJobAnnotations
+    long countJobAnnotations
 
     /**
      * Number of projects images
@@ -55,23 +73,42 @@ class Project extends CytomineDomain implements Serializable {
      * Flag if retrieval is disable
      * If true, don't suggest similar annotations
      */
+    @ApiObjectField(
+            description = "If true, don't suggest similar annotations",
+            allowedType = "boolean")
     boolean retrievalDisable = false
 
     /**
      * Flag for retrieval search on all ontologies
      * If true, search similar annotations on all project that share the same ontology
      */
+    @ApiObjectField(
+            description = "If true, search similar annotations on all project that share the same ontology",
+            allowedType = "boolean")
     boolean retrievalAllOntology = true
 
+    @ApiObjectField(
+            description = "If true, project is closed",
+            allowedType = "boolean")
     boolean isClosed = false
 
+    @ApiObjectField(
+            description = "If true, project is in read only mode",
+            allowedType = "boolean")
     boolean isReadOnly = false
     /**
      * Flag if project has private layer
      * A project user only see its layer
      */
 
+    @ApiObjectField(
+            description = "If true, an user ( which is not an administrator of the project) see only its own annotations layer",
+            allowedType = "boolean")
     boolean hideUsersLayers = false
+
+    @ApiObjectField(
+            description = "If true, a user (including the administrators) see only its own annotations layer",
+            allowedType = "boolean")
     boolean hideAdminsLayers = false
 
 
@@ -113,9 +150,19 @@ class Project extends CytomineDomain implements Serializable {
         countAnnotations
     }
 
-	def countJobAnnotations() {
+    def countJobAnnotations() {
         countJobAnnotations
     }
+
+    private static Integer ontologyID(project) {
+        return project.getOntology()?.id
+    }
+
+    private static Integer disciplineID(project) {
+        return project.getDiscipline()?.id
+    }
+
+
 
     def countSamples() {
         //TODO::implement
@@ -127,10 +174,9 @@ class Project extends CytomineDomain implements Serializable {
      * @param domain Domain that must be filled
      * @param json JSON containing data
      * @return Domain with json data filled
-     */           
+     */
     static Project insertDataIntoDomain(def json,def domain = new Project()) {
-        println  json
-        println  json.isClosed
+
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name',true)
         domain.ontology = JSONUtils.getJSONAttrDomain(json, "ontology", new Ontology(), true)
@@ -173,44 +219,42 @@ class Project extends CytomineDomain implements Serializable {
         return domain;
     }
 
-    static def getDataFromDomain(def project) {
-
-        def returnArray = [:]
-        returnArray['class'] = project.class
-        returnArray['id'] = project.id
-        returnArray['name'] = project.name
-        returnArray['ontology'] = project.ontology?.id
-        returnArray['ontologyName'] = project.ontology?.name
-        returnArray['discipline'] = project.discipline?.id
-        returnArray['blindMode'] = (project.blindMode != null &&  project.blindMode)
-        returnArray['disciplineName'] = project.discipline?.name
-        returnArray['numberOfSlides'] = project.countSamples()
-        returnArray['numberOfImages'] = project.countImageInstance()
-        returnArray['numberOfAnnotations'] = project.countAnnotations()
-        returnArray['numberOfJobAnnotations'] = project.countJobAnnotations()
-        returnArray['retrievalProjects'] = project.retrievalProjects.collect { it.id }
-        returnArray['numberOfReviewedAnnotations'] = project.countReviewedAnnotations
-        returnArray['retrievalDisable'] = project.retrievalDisable
-        returnArray['retrievalAllOntology'] = project.retrievalAllOntology
-        returnArray['isClosed'] = project.isClosed
-        returnArray['isReadOnly'] = project.isReadOnly
-        returnArray['hideUsersLayers'] = project.hideUsersLayers
-        returnArray['hideAdminsLayers'] = project.hideAdminsLayers
-        returnArray['created'] = project.created?.time?.toString()
-        returnArray['updated'] = project.updated?.time?.toString()
-        return returnArray
-    }
 
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Project.class)
-        JSON.registerObjectMarshaller(Project) { project ->
-            return getDataFromDomain(project)
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        println "<<< mapping from Project <<< " + getMappingFromAnnotation(Project)
+        JSON.registerObjectMarshaller(Project) { domain ->
+            return getDataFromDomain(domain, getMappingFromAnnotation(Project))
         }
     }
+
+    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
+
+        /* base fields + api fields */
+        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+
+        /* supplementary fields : which are NOT used in insertDataIntoDomain !
+        * Typically, these fields are shortcuts or supplementary information
+        * from other domains
+        * ::to do : hide these fields if not GUI ?
+        * */
+
+        json['ontologyName'] = domain.ontology?.name
+        json['disciplineName'] = domain.discipline?.name
+        json['numberOfSlides'] = domain.countSamples()
+        json['numberOfImages'] = domain.countImageInstance()
+        json['numberOfAnnotations'] = domain.countAnnotations()
+        json['numberOfJobAnnotations'] = domain.countJobAnnotations()
+        json['retrievalProjects'] = domain.retrievalProjects.collect { it.id }
+        json['numberOfReviewedAnnotations'] = domain.countReviewedAnnotations
+
+        return json
+    }
+
 
     public boolean equals(Object o) {
         if (!o) {

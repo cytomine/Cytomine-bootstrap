@@ -21,12 +21,6 @@ import org.apache.commons.io.FileUtils
 import org.codehaus.groovy.grails.web.json.JSONArray
 import be.cytomine.ontology.UserAnnotation
 
-import java.nio.file.DirectoryNotEmptyException
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.NoSuchFileException
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.text.SimpleDateFormat
 
 /**

@@ -10,6 +10,17 @@ import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import groovy.sql.Sql
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiBodyObject
+import org.jsondoc.core.annotation.ApiBodyObjects
+import org.jsondoc.core.annotation.ApiError
+import org.jsondoc.core.annotation.ApiErrors
+import org.jsondoc.core.annotation.ApiMethod
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
+import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType
 
 
@@ -19,6 +30,7 @@ import org.springframework.http.MediaType
  * A project has some images and a set of annotation
  * Users can access to project with Spring security Acl plugin
  */
+@Api(name = "project services", description = "Methods for managing projects")
 class RestProjectController extends RestController {
 
     def springSecurityService
@@ -35,7 +47,17 @@ class RestProjectController extends RestController {
     /**
      * List all project available for the current user
      */
-    List<Project> list() {
+    @ApiMethod(
+            path="/project.json",
+            verb=ApiVerb.GET,
+            description="Get project listing, according to your access",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiResponseObject(objectIdentifier = "project", multiple = "true")
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    ])
+    def list() {
         SecUser user = cytomineService.currentUser
         if(user.isAdmin()) {
             //if user is admin, we print all available project
@@ -47,6 +69,147 @@ class RestProjectController extends RestController {
 
         }
     }
+
+
+
+
+    /**
+     * Get a project
+     */
+    @ApiMethod(
+            path="/project/{id}.json",
+            verb=ApiVerb.GET,
+            description="Get a project",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def show () {
+        Project project = projectService.read(params.long('id'))
+        if (project) {
+            responseSuccess(project)
+        } else {
+            responseNotFound("Project", params.id)
+        }
+    }
+
+
+    /**
+     * Add a new project to cytomine
+     */
+    @ApiMethod(
+            path="/project.json",
+            verb=ApiVerb.POST,
+            description="Add a new project",
+            produces=[MediaType.APPLICATION_JSON_VALUE],
+            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiBodyObject(name="project")
+    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="400", description="Bad Request"),
+    @ApiError(code="401", description="Forbidden")
+    ])
+    def add() {
+        log.info "Add project = $request.JSON"
+        try {
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
+            def result = projectService.add(request.JSON,task)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    /**
+     * Update a project
+     */
+    @ApiMethod(
+            path="/project/{id}.json",
+            verb=ApiVerb.PUT,
+            description="Update a project",
+            produces=[MediaType.APPLICATION_JSON_VALUE],
+            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiBodyObject(name="project")
+    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="400", description="Bad Request"),
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def update () {
+        try {
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
+            def domain = projectService.retrieve(request.JSON)
+            def result = projectService.update(domain,request.JSON,task)
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+
+    /**
+     * Delete a project
+     */
+    @ApiMethod(
+            path="/project/{id}.json",
+            verb=ApiVerb.DELETE,
+            description="Delete a project",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def delete () {
+        try {
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
+            def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
+            log.info "project = ${domain}"
+            def result = projectService.delete(domain,transactionService.start(),task)
+            //delete container in retrieval
+            try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+    }
+
+    /**
+     * Get last action done on a specific project
+     * ex: "user x add a new annotation on image y",...
+     */
+    def lastAction = {
+        Project project = projectService.read(params.long('id'))
+        int max = Integer.parseInt(params.max);
+
+        if (project) {
+            responseSuccess(projectService.lastAction(project, max))
+        } else {
+            responseNotFound("Project", params.id)
+        }
+    }
+
 
     def listLastOpened = {
         SecUser user = cytomineService.currentUser
@@ -191,85 +354,5 @@ class RestProjectController extends RestController {
     }
 
 
-
-
-    /**
-     * Get a project
-     */
-    Project show () {
-        Project project = projectService.read(params.long('id'))
-        if (project) {
-            responseSuccess(project)
-        } else {
-            responseNotFound("Project", params.id)
-        }
-    }
-
-    /**
-     * Get last action done on a specific project
-     * ex: "user x add a new annotation on image y",...
-     */
-    def lastAction = {
-        Project project = projectService.read(params.long('id'))
-        int max = Integer.parseInt(params.max);
-
-        if (project) {
-            responseSuccess(projectService.lastAction(project, max))
-        } else {
-            responseNotFound("Project", params.id)
-        }
-    }
-
-    /**
-     * Add a new project to cytomine
-     */
-    def add = {
-        log.info "Add project = $request.JSON"
-        try {
-            Task task = taskService.read(params.getLong("task"))
-            log.info "task ${task} is find for id = ${params.getLong("task")}"
-            def result = projectService.add(request.JSON,task)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
-    }
-
-    /**
-     * Update a project
-     */
-    def update = {
-        try {
-            Task task = taskService.read(params.getLong("task"))
-            log.info "task ${task} is find for id = ${params.getLong("task")}"
-            def domain = projectService.retrieve(request.JSON)
-            def result = projectService.update(domain,request.JSON,task)
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
-    }
-
-
-    /**
-     * Delete a project
-     */
-    def delete = {
-        try {
-            Task task = taskService.read(params.getLong("task"))
-            log.info "task ${task} is find for id = ${params.getLong("task")}"
-            def domain = projectService.retrieve(JSON.parse("{id : $params.id}"))
-            log.info "project = ${domain}"
-            def result = projectService.delete(domain,transactionService.start(),task)
-            //delete container in retrieval
-            try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
-            responseResult(result)
-        } catch (CytomineException e) {
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }
-    }
 }
 

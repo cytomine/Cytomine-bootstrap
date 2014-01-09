@@ -3,21 +3,42 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * Cytomine user.
  * Its the parent class for "user" (human) and "user job" (algo).
  */
+@ApiObject(name = "user")
 class SecUser extends CytomineDomain implements Serializable {
 
+    @ApiObjectField(description = "The username of the user")
     String username
+
     String password
     String newPassword = null
     String publicKey
     String privateKey
+
+    @ApiObjectField(
+            description = "If true, account is enabled",
+            allowedType = "boolean")
     boolean enabled
+    @ApiObjectField(
+            description = "If true, account is expired",
+            allowedType = "boolean")
+
     boolean accountExpired
+
+    @ApiObjectField(
+            description = "If true, account is locked",
+            allowedType = "boolean")
     boolean accountLocked
+
+    @ApiObjectField(
+            description = "If true, password is expired",
+            allowedType = "boolean")
     boolean passwordExpired
 
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
@@ -76,11 +97,7 @@ class SecUser extends CytomineDomain implements Serializable {
      * Rem: a project admin is not a cytomine admin
      */
     boolean isAdmin() {
-        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id)) {
-            return true
-        } else {
-            return false
-        }
+        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id) != null)
     }
 
     boolean isAdminAuth() {
@@ -88,19 +105,11 @@ class SecUser extends CytomineDomain implements Serializable {
     }
 
     boolean isUserAuth() {
-        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_USER").id)) {
-            return true
-        } else {
-            return false
-        }
+        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_USER").id) != null)
     }
 
     boolean isGuestAuth() {
-        if(SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_GUEST").id)) {
-            return true
-        } else {
-            return false
-        }
+        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_GUEST").id) != null)
     }
 
     /**
@@ -136,9 +145,8 @@ class SecUser extends CytomineDomain implements Serializable {
     protected void encodePassword() {
         println "encodePassword for user="+username
         if(password.size()<4) throw new WrongArgumentException("Your password must have at least 5 characters!")
-        if (password == "") password = "random_password"
+        if (password == "") password = ".+7dWl_=]@8%,<&"
         password = springSecurityService.encodePassword(password)
-        println password
     }
 
     /**

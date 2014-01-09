@@ -279,7 +279,7 @@ var ExplorerTabs = Backbone.View.extend({
 
         tabs.on('click','a[data-toggle="tab"]', function (e) {
             var hash = this.href.split("#")[1];
-            $("#" + hash).attr('style', 'width:100%;min-height:500px;overflow:auto;');
+            $("#" + hash).attr('style', 'overflow:none;');
             if (self.triggerRoute) {
                 window.app.controllers.browse.navigate("#" + hash, self.triggerRoute);
             }

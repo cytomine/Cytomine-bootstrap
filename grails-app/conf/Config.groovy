@@ -35,7 +35,7 @@ grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         multipartForm: 'multipart/form-data'
 ]
 cytomine.maxRequestSize = 10485760
-
+storage_path="/tmp/cytomine" //default path for image locations
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 

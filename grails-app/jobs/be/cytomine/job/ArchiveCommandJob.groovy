@@ -1,5 +1,7 @@
 package be.cytomine.job
 
+import jsondoc.APIUtils
+
 
 class ArchiveCommandJob {
 
@@ -8,13 +10,13 @@ class ArchiveCommandJob {
 
     static triggers = {
         String cronexpr = "0 0 2 * * ?"
-        cron name: 'myArciveCommandJobTrigger', cronExpression: cronexpr //"s m h D M W Y"
+        cron name: 'myArchiveCommandJobTrigger', cronExpression: cronexpr //"s m h D M W Y"
       }
 
      def execute(){
          //ask indexed annotation
          //retrievalService.indexMissingAnnotation()
-         archiveCommandService.archiveOldCommand()
+         APIUtils.buildApiRegistry(ctx, application)
      }
 
 

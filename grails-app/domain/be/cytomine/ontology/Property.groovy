@@ -5,14 +5,21 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
 
+@ApiObject(name = "property", description = "Allow to attach any property to a domain", show = true)
 class Property extends CytomineDomain implements Serializable{
 
-
+    @ApiObjectField(description = "The domain class")
     String domainClassName
+    @ApiObjectField(description = "The domain identifier (id)")
     Long domainIdent
 
+    @ApiObjectField(description = "The property key")
     String key
+    @ApiObjectField(description = "The property value")
     String value
 
     static constraints = {
@@ -68,20 +75,14 @@ class Property extends CytomineDomain implements Serializable{
      * Define fields available for JSON response
      * This Method is called during application start
      */
-    static void registerMarshaller(){
-        JSON.registerObjectMarshaller(Property){
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['domainIdent'] = it.domainIdent
-            returnArray['domainClassName'] = it.domainClassName
-            returnArray['key'] = it.key
-            returnArray['value'] = it.value
-            returnArray['created'] = it.created?.time
-            returnArray['updated'] = it.updated?.time
-            return returnArray
+    static void registerMarshaller() {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        println "<<< mapping from Relation <<< " + getMappingFromAnnotation(Property)
+        JSON.registerObjectMarshaller(Property) { domain ->
+            return getDataFromDomain(domain, getMappingFromAnnotation(Property))
         }
     }
+
 
     /**
      * Insert JSON data into domain in param

@@ -21,14 +21,14 @@ class GenerateMissingStoragesJob {
     def concurrent = false
 
     static triggers = {
-        simple name: 'generateMissingStoragesJob', startDelay: 1000, repeatInterval: 60000
+        simple name: 'generateMissingStoragesJob', startDelay: 60000, repeatInterval: 60000
     }
 
     def execute() {
-        SpringSecurityUtils.reauthenticate "lrollus", null
+        SpringSecurityUtils.reauthenticate "admin", null
         for (user in User.findAll()) {
             if (!Storage.findByUser(user)) {
-                println "generate missing storage fro $user"
+                println "generate missing storage for $user"
                 storageService.initUserStorage(user)
             }
         }

@@ -261,7 +261,7 @@ var ApplicationController = Backbone.Router.extend({
     },
     retrieveChildren: function (parent) {
         var self = this;
-        if (parent['children'].length == 0) {
+        if (parent['children'] == null || parent['children'].length == 0) {
             return [];
         }
         var children = [];

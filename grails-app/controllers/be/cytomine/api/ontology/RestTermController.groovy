@@ -6,12 +6,23 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import grails.converters.JSON
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiBodyObject
+import org.jsondoc.core.annotation.ApiError
+import org.jsondoc.core.annotation.ApiErrors
+import org.jsondoc.core.annotation.ApiMethod
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
+import org.jsondoc.core.pojo.ApiVerb
+import org.springframework.http.MediaType
 
 /**
  * Controller for term request (word in ontology)
  */
 
-
+@Api(name = "term services", description = "Methods for managing terms")
 class RestTermController extends RestController {
 
     def termService
@@ -20,7 +31,17 @@ class RestTermController extends RestController {
      * List all term available
      * @return All term available for the current user
      */
-    def list = {
+    @ApiMethod(
+            path="/term.json",
+            verb=ApiVerb.GET,
+            description="Get terms listing, according to your access",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiResponseObject(objectIdentifier = "term", multiple = "true")
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    ])
+    def list () {
         responseSuccess(termService.list())
     }
 
@@ -30,14 +51,100 @@ class RestTermController extends RestController {
      * @param  id The term id
      * @return A Term
      */
-      def show() {
+    @ApiMethod(
+            path="/term/{id}.json",
+            verb=ApiVerb.GET,
+            description="Get a term",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def show() {
         Term term = termService.read(params.long('id'))
         if (term) {
             responseSuccess(term)
         } else {
             responseNotFound("Term", params.id)
         }
-      }
+    }
+
+    /**
+     * Add a new term
+     * Use next add relation-term to add relation with another term
+     * @param data JSON with Term data
+     * @return Response map with .code = http response code and .data.term = new created Term
+     */
+    @ApiMethod(
+            path="/term.json",
+            verb=ApiVerb.POST,
+            description="Add a new term",
+            produces=[MediaType.APPLICATION_JSON_VALUE],
+            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiBodyObject(name="term")
+    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="400", description="Bad Request"),
+    @ApiError(code="401", description="Forbidden")
+    ])
+    def add () {
+        add(termService, request.JSON)
+    }
+
+    /**
+     * Update a term
+     * @param id Term id
+     * @param data JSON with the new Term data
+     * @return Response map with .code = http response code and .data.newTerm = new created Term and  .data.oldTerm = old term value
+     */
+    @ApiMethod(
+            path="/term/{id}.json",
+            verb=ApiVerb.PUT,
+            description="Update an term",
+            produces=[MediaType.APPLICATION_JSON_VALUE],
+            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiBodyObject(name="term")
+    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
+    @ApiErrors(apierrors=[
+    @ApiError(code="400", description="Bad Request"),
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def update () {
+        update(termService, request.JSON)
+    }
+
+    /**
+     * Delete a term
+     * @param id Term id
+     * @return Response map with .code = http response code and .data.term = deleted term value
+     */
+    @ApiMethod(
+            path="/term/{id}.json",
+            verb=ApiVerb.DELETE,
+            description="Delete an term",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiParams(params=[
+    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    ])
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    @ApiError(code="404", description="Not found")
+    ])
+    def delete () {
+        delete(termService, JSON.parse("{id : $params.id}"),null)
+    }
 
     /**
      * Get terms from an ontology
@@ -77,35 +184,6 @@ class RestTermController extends RestController {
         Term term = Term.read(params.id)
         if (term) responseSuccess(termService.statProject(term))
         else responseNotFound("Project", params.id)
-    }
-
-    /**
-     * Add a new term
-     * Use next add relation-term to add relation with another term
-     * @param data JSON with Term data
-     * @return Response map with .code = http response code and .data.term = new created Term
-     */
-    def add = {
-        add(termService, request.JSON)
-    }
-
-    /**
-     * Update a term
-     * @param id Term id
-     * @param data JSON with the new Term data
-     * @return Response map with .code = http response code and .data.newTerm = new created Term and  .data.oldTerm = old term value
-     */
-    def update = {
-        update(termService, request.JSON)
-    }
-
-    /**
-     * Delete a term
-     * @param id Term id
-     * @return Response map with .code = http response code and .data.term = deleted term value
-     */
-    def delete = {
-        delete(termService, JSON.parse("{id : $params.id}"),null)
     }
 
 }

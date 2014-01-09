@@ -9,7 +9,15 @@ import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiError
+import org.jsondoc.core.annotation.ApiErrors
+import org.jsondoc.core.annotation.ApiMethod
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiVerb
+import org.springframework.http.MediaType
 
+@Api(name = "property services", description = "Methods for managing properties")
 class RestPropertyController extends RestController {
 
     def propertyService
@@ -21,7 +29,17 @@ class RestPropertyController extends RestController {
     /**
      * List all annotationProperty visible for the current user
      */
-    def list = {
+    @ApiMethod(
+            path="/property.json",
+            verb=ApiVerb.GET,
+            description="Get properties listing, according to your access",
+            produces=[MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ApiResponseObject(objectIdentifier = "property", multiple = "true")
+    @ApiErrors(apierrors=[
+    @ApiError(code="401", description="Forbidden"),
+    ])
+    def list () {
         responseSuccess(propertyService.list())
     }
 
@@ -37,6 +55,7 @@ class RestPropertyController extends RestController {
             responseNotFound("Project",params.idProject)
         }
     }
+
     def listByAnnotation = {
         try {
             def annotationId = params.long('idAnnotation')
@@ -51,6 +70,7 @@ class RestPropertyController extends RestController {
             response([success: false, errors: e.msg], e.code)
         }
     }
+
     def listByImageInstance = {
         def imageInstanceId = params.long('idImageInstance')
         ImageInstance imageInstance = imageInstanceService.read(imageInstanceId)
@@ -74,6 +94,7 @@ class RestPropertyController extends RestController {
             responseNotFound("Property","Image/Project", params.idImage+"/"+params.idProject)
         }
     }
+
     def listKeyForImageInstance = {
         Project project = projectService.read(params.long('idProject'))
 
@@ -122,6 +143,7 @@ class RestPropertyController extends RestController {
             responseNotFound("Property", params.id)
         }
     }
+
     def showAnnotation = {
         def annotationId = params.long('idAnnotation')
         AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(annotationId)
@@ -139,6 +161,7 @@ class RestPropertyController extends RestController {
             responseNotFound("Property", params.id)
         }
     }
+
     def showImageInstance = {
         def imageInstanceId = params.long('idImageInstance')
         ImageInstance imageInstance = imageInstanceService.read(imageInstanceId)

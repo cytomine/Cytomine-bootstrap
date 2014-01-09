@@ -15,6 +15,7 @@ class UrlMappings {
                 // apply constraints here
             }
         }
+        "/jsondoc" (controller : "jsondoc")
         "/admin/manage/$action?.$format"(controller: "adminManage")
         "/adminManage/$action?.$format"(controller: "errors", action: "error500")
 

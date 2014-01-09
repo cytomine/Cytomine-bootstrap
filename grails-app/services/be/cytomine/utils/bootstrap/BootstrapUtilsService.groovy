@@ -1,5 +1,8 @@
 package be.cytomine.utils.bootstrap
 
+import be.cytomine.image.Mime
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.*
@@ -118,6 +121,55 @@ class BootstrapUtilsService {
                 }
 
             }
+        }
+    }
+
+    public def createImageServers(def imageServersSamples) {
+        imageServersSamples.each {
+            ImageServer imageServer = new ImageServer(
+                    className: it.className,
+                    name: it.name,
+                    service : it.service,
+                    url : it.url,
+                    available : it.available
+            )
+
+            if (imageServer.validate()) {
+                imageServer.save()
+            } else {
+                imageServer.errors?.each {
+                    println it
+                }
+            }
+
+        }
+
+    }
+
+    public def createMimes(def mimeSamples) {
+        mimeSamples.each {
+            Mime mime = new Mime(extension : it.extension, mimeType: it.mimeType)
+            if (mime.validate()) {
+                mime.save()
+            } else {
+                mime.errors?.each {
+                    println it
+                }
+            }
+        }
+    }
+
+    public def createMimeImageServers() {
+        List<ImageServer> imageServers = ImageServer.list()
+        Mime.list().each { mime ->
+            imageServers.each { imageServer ->
+                MimeImageServer mimeImageServer = new MimeImageServer(
+                        mime : mime,
+                        imageServer: imageServer
+                ).save()
+
+            }
+
         }
     }
 }

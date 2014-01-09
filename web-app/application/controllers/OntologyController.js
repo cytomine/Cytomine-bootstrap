@@ -22,7 +22,6 @@ var OntologyController = Backbone.Router.extend({
         this.ontology(idOntology, idTerm, false);
     },
     ontology: function (idOntology, idTerm, refresh) {
-        console.log("ontology-" + idOntology + "-" + idTerm + "-" + refresh);
         var self = this;
         if (!self.view || refresh) {
             console.log("empty view");

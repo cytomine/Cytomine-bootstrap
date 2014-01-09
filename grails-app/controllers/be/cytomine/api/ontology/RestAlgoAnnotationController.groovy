@@ -91,10 +91,10 @@ class  RestAlgoAnnotationController extends RestController {
             }
         }
         if (json.isNull('project')) {
-            throw new WrongArgumentException("Annotation must have a valide project:" + json.project)
+            throw new WrongArgumentException("Annotation must have a valid project:" + json.project)
         }
         if (json.isNull('location')) {
-            throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
+            throw new WrongArgumentException("Annotation must have a valid geometry:" + json.location)
         }
         def minPoint = params.getLong('minPoint')
         def maxPoint = params.getLong('maxPoint')

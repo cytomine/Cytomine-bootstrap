@@ -55,19 +55,14 @@ var OntologyView = Backbone.View.extend({
         self.selectOntology();
     },
     selectOntology: function () {
-        console.log("selectOntology:" + this.idOntology);
         var self = this;
-        if ($("#menuOntologyUl").children().length == 1) {
-            return;
-        }
+
         //if param => select
         if (self.idOntology == null) {
             console.log($("#menuOntologyUl").children()[1]);
-            var firstOntologyNode = $("#menuOntologyUl").children()[1];
+            var firstOntologyNode = $("#menuOntologyUl").children();
             self.idOntology = $(firstOntologyNode).attr("data-id")
-
         }
-        console.log("self.idOntology=" + self.idOntology);
         $("#menuOntologyUl").children().removeClass("active");
         $("#consultOntology-" + self.idOntology).addClass("active");
         self.printOntology();

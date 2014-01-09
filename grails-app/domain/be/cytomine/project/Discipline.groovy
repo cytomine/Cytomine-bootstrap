@@ -5,12 +5,16 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A discipline is a thematic for a project
  */
+@ApiObject(name = "discipline")
 class Discipline extends CytomineDomain implements Serializable{
 
+    @ApiObjectField(description = "The name of the discipline")
     String name
 
     static constraints = {
@@ -19,21 +23,6 @@ class Discipline extends CytomineDomain implements Serializable{
     static mapping = {
         id(generator: 'assigned', unique: true)
         sort "id"
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Discipline.class)
-        JSON.registerObjectMarshaller(Discipline) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            return returnArray
-        }
     }
 
     /**
@@ -47,6 +36,18 @@ class Discipline extends CytomineDomain implements Serializable{
                    throw new AlreadyExistException("Discipline "+name + " already exist!")
                 }
             }
+        }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static void registerMarshaller() {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        println "<<< mapping from Discipline <<< " + getMappingFromAnnotation(Discipline)
+        JSON.registerObjectMarshaller(Discipline) { domain ->
+            return getDataFromDomain(domain, getMappingFromAnnotation(Discipline))
         }
     }
 

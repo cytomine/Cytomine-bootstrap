@@ -276,22 +276,29 @@ var OntologyPanelView = Backbone.View.extend({
     },
     colorizeOntologyTree: function () {
         var self = this;
-        $("#treeontology-" + self.model.id).dynatree("getRoot").visit(function (node) {
-            if (node.children != null) {
-                return;
-            } //title is ok
-            var title = node.data.title
-            var color = node.data.color
-            var htmlNode = "<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>' onClick='window.location.href = this.href;'><%=   title %> <span style='background-color:<%= color %>'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a>";
-            var nodeTpl = _.template(htmlNode, {idOntology: self.model.id, idTerm: node.data.id, title: title, color: color});
-            node.setTitle(nodeTpl);
-        });
+        var tree = $("#treeontology-" + self.model.id).dynatree("getRoot");
+        if (_.isFunction(tree.visit)) {
+            tree.visit(function (node) {
+                if (node.children != null) {
+                    return;
+                } //title is ok
+                var title = node.data.title
+                var color = node.data.color
+                var htmlNode = "<a href='#ontology/<%=   idOntology %>/<%=   idTerm %>' onClick='window.location.href = this.href;'><%=   title %> <span style='background-color:<%= color %>'>&nbsp;&nbsp;&nbsp;&nbsp;</span></a>";
+                var nodeTpl = _.template(htmlNode, {idOntology: self.model.id, idTerm: node.data.id, title: title, color: color});
+                node.setTitle(nodeTpl);
+            });
+        }
+
     },
     expandOntologyTree: function () {
         var self = this;
         //expand all nodes
-        $("#treeontology-" + self.model.id).dynatree("getRoot").visit(function (node) {
-            node.expand(true);
-        });
+        var tree = $("#treeontology-" + self.model.id).dynatree("getRoot");
+        if (_.isFunction(tree.visit)) {
+            tree.visit(function (node) {
+                node.expand(true);
+            });
+        }
     }
 });

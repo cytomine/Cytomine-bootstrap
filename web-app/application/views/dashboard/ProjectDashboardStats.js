@@ -135,10 +135,11 @@ var ProjectDashboardStats = Backbone.View.extend({
         nv.addGraph(function() {
             var chart = nv.models.discreteBarChart()
                 .x(function(d) { return d.label })
-                .y(function(d) { return d.value });
+                .y(function(d) { return d.value })
+                .showValues(true);
 
 
-
+            chart.margin({bottom: 125});
             chart.xAxis.rotateLabels(-45);
 
             d3.select(el + " svg")

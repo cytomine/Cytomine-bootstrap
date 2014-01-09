@@ -3,7 +3,12 @@ package be.cytomine
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import groovy.sql.Sql
+import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObjectField
+import org.jsondoc.core.pojo.ApiObjectFieldDoc
 import org.springframework.security.acls.model.Permission
+
+import java.lang.reflect.Field
 
 import static org.springframework.security.acls.domain.BasePermission.*
 
@@ -91,6 +96,67 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
+    protected static def getAPIBaseFields(def domain) {
+        def apiFields = [:]
+        apiFields['class'] = domain.class
+        apiFields['id'] = domain.id
+        apiFields['created'] = domain.created?.time?.toString()
+        apiFields['updated'] = domain.updated?.time?.toString()
+        apiFields
+    }
+
+    protected static def getAPIDomainFields(def domain, LinkedHashMap<String, Object> mapFields = null) {
+        def apiFields = [:]
+
+        mapFields?.each {
+            String originalFieldName = it.key
+            String apiFieldName = it.value["apiFieldName"]
+            String accessor = it.value["apiValueAccessor"]
+            println "accessor=$accessor"
+            if (accessor != "") {
+                println "ask accessor $accessor <<<<<<================================================ "
+                apiFields["$apiFieldName"] =  domain.class."$accessor"(domain)
+            } else {
+                println "get field $originalFieldName <<<<<<================================================ "
+                apiFields["$apiFieldName"] =  domain."$originalFieldName"
+            }
+        }
+
+        apiFields
+    }
+
+    protected static LinkedHashMap<String, Object> getMappingFromAnnotation(Class clazz) {
+        def mapping = [:]
+
+        Field[] fields = clazz.getDeclaredFields()
+        // look for fields annotated in super classes
+        def cl = clazz
+        while (cl.superclass) {
+            cl = cl.superclass
+            fields += cl.getDeclaredFields()
+        }
+
+        for (Field field : fields) {
+            if (field.getAnnotation(ApiObjectField.class) != null) {
+                ApiObjectField apiObjectField = field.getAnnotation(ApiObjectField.class)
+                String apiFieldName = field.getName()
+                if (!apiObjectField.apiFieldName().equals(""))
+                    apiFieldName = apiObjectField.apiFieldName()
+                String apiValueAccessor = apiObjectField.apiValueAccessor()
+                /*if (apiValueAccessor.equals("")) {
+                    apiValueAccessor = "get" + apiFieldName.capitalize()
+                }*/
+                mapping.put(field.getName(), [apiFieldName : apiFieldName, apiValueAccessor : apiValueAccessor])
+            }
+        }
+        return mapping
+    }
+
+
+    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
+       return getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+
+    }
 
     boolean hasPermission(Permission permission) {
         try {

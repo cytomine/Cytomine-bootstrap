@@ -5,6 +5,7 @@ import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.READ
@@ -87,7 +88,7 @@ class StorageService extends ModelService {
 
 
     def initUserStorage(SecUser user) {  //:to do => use command instead of domains
-
+        SpringSecurityUtils.reauthenticate "admin", null
         String storage_base_path = grailsApplication.config.storage_path
         String remotePath = [storage_base_path, user.id.toString()].join(File.separator)
 
@@ -95,7 +96,7 @@ class StorageService extends ModelService {
         Storage storage = new Storage(
                 name: "$user.username storage",
                 basePath: remotePath,
-                ip: "10.3.1.136",
+                ip: "localhost",
                 username: "storage",
                 password: "bioinfo;3u54",
                 keyFile: null,
@@ -106,13 +107,6 @@ class StorageService extends ModelService {
         if (storage.validate()) {
             storage.save()
             permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
-            /*fileSystemService.makeRemoteDirectory(
-                    storage.getIp(),
-                    storage.getPort(),
-                    storage.getUsername(),
-                    storage.getPassword(),
-                    storage.getKeyFile(),
-                    storage.getBasePath())*/
 
             for (imageServer in ImageServer.findAll()) {
                 ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)

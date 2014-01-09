@@ -6,7 +6,20 @@ grails.project.war.file = "target/${appName}.war"
 //grails.project.dependency.resolver="ivy"
 grails.project.dependency.resolver = "maven"
 grails.project.fork = [ test: false, run: false, war: false, console: false ]
-//grails.plugin.location."grails-jsondoc" = "/home/lrollus/Cytomine/grails-plugin/grails-jsondoc"
+/*grails.project.fork = [
+        // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
+        //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+
+        // configure settings for the test-app JVM, uses the daemon by default
+        test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+        // configure settings for the run-app JVM
+        run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+        // configure settings for the run-war JVM
+        war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+        // configure settings for the Console UI JVM
+        console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
+] */
+//grails.plugin.location."grails-jsondoc" = "/Users/stevben/Cytomine/github/grails-jsondoc"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -83,7 +96,6 @@ grails.project.dependency.resolution = {
 //        compile ':hibernate:3.6.10.3'
         runtime ':hibernate:3.6.10.4'
 
-
         runtime ':spring-security-core:1.2.7.3'
         runtime ':spring-security-acl:1.1.1'
         runtime ':spring-security-appinfo:1.0'
@@ -111,7 +123,6 @@ grails.project.dependency.resolution = {
 //        compile (':jaxrs:0.8') {
 //            excludes 'spring-core', 'spring-beans', 'spring-context', 'spring-web', 'spring-aop'
 //        }
-//        runtime ':jsondoc-core:1.0.2-SNAPSHOT'
 //
 //        test ':selenium-rc:1.0.2'
 //        test ':functional-test:2.0.RC1'
