@@ -33,8 +33,6 @@ public class ApiMethodDocLight {
         def objVerb = retrieveVerb(verb)
         String newPath = path.trim()
 
-        println "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        println annotation.path()
         if(!annotation.path().equals(UNDEFINED)) {
             //path has been overrided
             newPath = annotation.path()

@@ -28,8 +28,6 @@ class RestController {
     }
     def currentDomainName() {
         def domain = currentDomain()
-        println "=+++===========>"+domain
-        println "=+++===========>"+Project.simpleName
         if(domain) {
             Introspector.decapitalize(domain.simpleName)
 

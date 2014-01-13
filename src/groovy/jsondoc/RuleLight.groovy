@@ -23,7 +23,6 @@ class RulesLight {
     public RuleLight getRule(String controllerName, String actioName) {
         String key = (controllerName+"."+actioName).toUpperCase()
         key = key.replace("CONTROLLER","")
-        println key
         rules.get(key)
     }
 

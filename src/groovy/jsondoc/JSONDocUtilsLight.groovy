@@ -102,7 +102,6 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     apiMethodDoc.setResponse(ApiResponseObjectDoc.buildFromAnnotation(method.getAnnotation(ApiResponseObject.class), method));
                 } else {
                     String currentDomain = controller.newInstance().currentDomainName()
-                    println "currentDomain=$currentDomain"
                     apiMethodDoc.setResponse(new ApiResponseObjectDoc(currentDomain, "", "", "Unknow", ""))
                 }
 

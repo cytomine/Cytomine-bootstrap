@@ -25,13 +25,6 @@ public class ApiObjectFieldDocLight extends ApiObjectFieldDoc {
     @Override
     public static ApiObjectFieldDoc buildFromAnnotation(ApiObjectField annotation, Field field) {
 
-        println "*************" + field.getName() + "*************"
-        println annotation.apiFieldName()
-        println annotation.description()
-        println annotation.allowedType()
-        println isGrailsDomain(field.type.name)
-        println "*************************************************"
-
         ApiObjectFieldDoc apiPojoFieldDoc = new ApiObjectFieldDoc();
         if (annotation.apiFieldName().equals("")) { apiPojoFieldDoc.setName(field.getName());}
         else { apiPojoFieldDoc.setName(annotation.apiFieldName());}
