@@ -123,7 +123,8 @@ abstract class CytomineDomain  implements Comparable{
                 apiFields["$apiFieldName"] =  domain.class."$accessor"(domain)
             } else {
                 println "get field $originalFieldName <<<<<<================================================ "
-                if(isGrailsDomain(it.key.class.name)) {
+                if(isGrailsDomain(field.type.name)) {
+                    println "domain grails"
                     apiFields["$apiFieldName"] =  domain."$originalFieldName".id
                 } else {
                     apiFields["$apiFieldName"] =  domain."$originalFieldName"

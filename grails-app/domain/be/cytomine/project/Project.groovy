@@ -130,15 +130,6 @@ class Project extends CytomineDomain implements Serializable {
         countJobAnnotations
     }
 
-    private static Integer ontologyID(project) {
-        return project.getOntology()?.id
-    }
-
-    private static Integer disciplineID(project) {
-        return project.getDiscipline()?.id
-    }
-
-
 
     def countSamples() {
         //TODO::implement
