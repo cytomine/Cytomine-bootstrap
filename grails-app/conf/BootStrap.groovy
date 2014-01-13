@@ -81,16 +81,22 @@ class BootStrap {
             bootstrapTestDataService.initData()
         }
 
+        if(!SecUser.findByUsername("admin")) {
+            bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
+        }
+
+
+
         //jsondoc init
         JSONUtils.registerMarshallers()
-        use (TimerMethods) {
-            def timer = new Timer()
-            def task = timer.runEvery(1000, 10000) {
-                println "Task executed at ${new Date()}."
-                APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
-            }
-            println "Current date is ${new Date()}."
-        }
+//        use (TimerMethods) {
+//            def timer = new Timer()
+//            def task = timer.runEvery(1000, 10000) {
+//                //println "Task executed at ${new Date()}."
+//                APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
+//            }
+//            println "Current date is ${new Date()}."
+//        }
 
 
     }

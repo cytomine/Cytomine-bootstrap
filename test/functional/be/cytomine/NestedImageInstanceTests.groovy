@@ -74,6 +74,7 @@ class NestedImageInstanceTests {
 
     void testAddNestedImageInstanceCorrect() {
         def nested = BasicInstanceBuilder.getNestedImageInstanceNotExist()
+        println nested.encodeAsJSON()
         def result = NestedImageInstanceAPI.create(nested.parent.id,nested.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         NestedImageInstance image = result.data
@@ -123,6 +124,7 @@ class NestedImageInstanceTests {
         def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
+
 
 
     void testaddNestedImageInstanceWithUnexistingProject() {

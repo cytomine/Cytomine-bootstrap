@@ -1,6 +1,7 @@
 package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.project.Project
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.Task
 import grails.converters.JSON
@@ -9,6 +10,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import java.beans.Introspector
 
 class RestController {
 
@@ -20,6 +22,21 @@ class RestController {
     static final int NOT_FOUND_CODE = 404
 
     def transactionService
+
+    def currentDomain() {
+        return null
+    }
+    def currentDomainName() {
+        def domain = currentDomain()
+        println "=+++===========>"+domain
+        println "=+++===========>"+Project.simpleName
+        if(domain) {
+            Introspector.decapitalize(domain.simpleName)
+
+        } else {
+            "undefined"
+        }
+    }
 
     /**
      * Call add function for this service with the json

@@ -132,7 +132,6 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['reviewUser'] = image.reviewUser?.id
         returnArray['reviewed'] = image.isReviewed()
         returnArray['inReview'] = image.isInReviewMode()
-
         return returnArray
     }    
     

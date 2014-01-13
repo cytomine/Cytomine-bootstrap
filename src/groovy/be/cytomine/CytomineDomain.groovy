@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.security.SecUser
 import grails.converters.JSON
+import grails.util.Holders
 import groovy.sql.Sql
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObjectField
@@ -105,24 +106,42 @@ abstract class CytomineDomain  implements Comparable{
         apiFields
     }
 
-    protected static def getAPIDomainFields(def domain, LinkedHashMap<String, Object> mapFields = null) {
+    protected static def getAPIDomainFields(def domain, LinkedHashMap<Field, Object> mapFields = null) {
         def apiFields = [:]
-
+        println "###################"
+        println mapFields
         mapFields?.each {
-            String originalFieldName = it.key
+            def field = it.key
+            String originalFieldName = field.name
             String apiFieldName = it.value["apiFieldName"]
             String accessor = it.value["apiValueAccessor"]
+
             println "accessor=$accessor"
             if (accessor != "") {
+
                 println "ask accessor $accessor <<<<<<================================================ "
                 apiFields["$apiFieldName"] =  domain.class."$accessor"(domain)
             } else {
                 println "get field $originalFieldName <<<<<<================================================ "
-                apiFields["$apiFieldName"] =  domain."$originalFieldName"
+                if(isGrailsDomain(it.key.class.name)) {
+                    apiFields["$apiFieldName"] =  domain."$originalFieldName".id
+                } else {
+                    apiFields["$apiFieldName"] =  domain."$originalFieldName"
+                }
+
+
             }
         }
 
         apiFields
+    }
+
+
+    public static boolean isGrailsDomain(String fullName) {
+        def domain = Holders.getGrailsApplication().getDomainClasses().find {
+            it.fullName.equals(fullName)
+        }
+        return domain != null
     }
 
     protected static LinkedHashMap<String, Object> getMappingFromAnnotation(Class clazz) {
@@ -146,7 +165,7 @@ abstract class CytomineDomain  implements Comparable{
                 /*if (apiValueAccessor.equals("")) {
                     apiValueAccessor = "get" + apiFieldName.capitalize()
                 }*/
-                mapping.put(field.getName(), [apiFieldName : apiFieldName, apiValueAccessor : apiValueAccessor])
+                mapping.put(field, [apiFieldName : apiFieldName, apiValueAccessor : apiValueAccessor])
             }
         }
         return mapping

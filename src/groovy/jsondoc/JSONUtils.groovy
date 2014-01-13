@@ -87,6 +87,28 @@ class JSONUtils {
         }
 
 
+        JSON.registerObjectMarshaller(ApiMethodDocLight) {
+            def returnArray = [:]
+            returnArray['jsondocId'] = it.jsondocId
+            returnArray['path'] = it.path
+            returnArray['description'] = it.description
+            if (it.verb == ApiVerb.GET)
+                returnArray['verb'] = "GET"
+            if (it.verb == ApiVerb.PUT)
+                returnArray['verb'] = "PUT"
+            if (it.verb == ApiVerb.POST)
+                returnArray['verb'] = "POST"
+            if (it.verb == ApiVerb.DELETE)
+                returnArray['verb'] = "DELETE"
+            returnArray['produces'] = it.produces
+            returnArray['consumes'] = it.consumes
+            returnArray['headers'] = it.headers
+            returnArray['urlparameters'] = it.pathparameters
+            returnArray['bodyobject'] = it.bodyobject
+            returnArray['response'] = it.response
+            returnArray['apierrors'] = it.apierrors
+            return returnArray
+        }
 
         JSON.registerObjectMarshaller(ApiMethodDoc) {
             def returnArray = [:]

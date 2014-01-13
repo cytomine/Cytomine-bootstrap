@@ -84,17 +84,15 @@ grails.project.dependency.resolution = {
 
 //        build ":tomcat:7.0.42"
 
-//        build ":tomcat:7.0.42"
-//        compile ':hibernate:3.6.10.2'
+        build ":tomcat:7.0.42"
+        compile ':hibernate:3.6.10.2'
 
 //               build ":tomcat:$grailsVersion" //
 //        runtime ":hibernate:$grailsVersion" //
 //        runtime ":hibernate:3.6.10.1"
 
-        build ':tomcat:7.0.42'
-//        build ":jetty:2.0.3"
-//        compile ':hibernate:3.6.10.3'
-        runtime ':hibernate:3.6.10.4'
+//        build ':tomcat:7.0.47'
+//        runtime ':hibernate:3.6.10.6'
 
         runtime ':spring-security-core:1.2.7.3'
         runtime ':spring-security-acl:1.1.1'
@@ -126,6 +124,10 @@ grails.project.dependency.resolution = {
 //
 //        test ':selenium-rc:1.0.2'
 //        test ':functional-test:2.0.RC1'
+
+
+
+
 
         test(":spock:0.7") {
           exclude "spock-grails-support"

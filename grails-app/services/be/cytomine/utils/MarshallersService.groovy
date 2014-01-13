@@ -1,5 +1,6 @@
 package be.cytomine.utils
 
+import be.cytomine.image.NestedImageInstance
 import grails.converters.JSON
 
 /**
@@ -30,5 +31,7 @@ class MarshallersService {
             }
 
         }
+        //if ImageInstance.registerMarshaller is call after NestedImageInstance..registerMarshaller, it override it
+        NestedImageInstance.registerMarshaller()
     }
 }

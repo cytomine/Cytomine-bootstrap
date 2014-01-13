@@ -59,7 +59,9 @@ class NestedImageInstance extends ImageInstance implements Serializable {
     static NestedImageInstance insertDataIntoDomain(def json, def domain = new NestedImageInstance()) {
 
         domain = (NestedImageInstance)ImageInstance.insertDataIntoDomain(json,domain)
-        domain.parent = JSONUtils.getJSONAttrDomain(json, "parent", new ImageInstance(), false)
+        println json.parent
+        domain.parent = JSONUtils.getJSONAttrDomain(json, "parent", new ImageInstance(), true)
+        println domain.parent
         domain.x =  JSONUtils.getJSONAttrInteger(json,"x",0)
         domain.y =  JSONUtils.getJSONAttrInteger(json,"y",0)
         return domain;

@@ -26,27 +26,17 @@ class Project extends CytomineDomain implements Serializable {
     /**
      * Project ontology link
      */
-    @ApiObjectField(
-            description = "The ontology identifier of the project",
-            allowedType = "integer",
-            apiFieldName = "ontology",
-            apiValueAccessor = "ontologyID")
+    @ApiObjectField(description = "The ontology identifier of the project")
     Ontology ontology
 
     /**
      * Project discipline link
      */
-    @ApiObjectField(
-            description = "The discipline identifier of the project",
-            allowedType = "integer",
-            apiFieldName = "discipline",
-            apiValueAccessor = "disciplineID")
+    @ApiObjectField(description = "The discipline identifier of the project")
     Discipline discipline
 
 
-    @ApiObjectField(
-            description = "Blind mode (if true, image filename are hidden)",
-            allowedType = "boolean")
+    @ApiObjectField(description = "Blind mode (if true, image filename are hidden)")
     boolean blindMode = false
 
     /**
@@ -73,48 +63,34 @@ class Project extends CytomineDomain implements Serializable {
      * Flag if retrieval is disable
      * If true, don't suggest similar annotations
      */
-    @ApiObjectField(
-            description = "If true, don't suggest similar annotations",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, don't suggest similar annotations")
     boolean retrievalDisable = false
 
     /**
      * Flag for retrieval search on all ontologies
      * If true, search similar annotations on all project that share the same ontology
      */
-    @ApiObjectField(
-            description = "If true, search similar annotations on all project that share the same ontology",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, search similar annotations on all project that share the same ontology")
     boolean retrievalAllOntology = true
 
-    @ApiObjectField(
-            description = "If true, project is closed",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, project is closed")
     boolean isClosed = false
 
-    @ApiObjectField(
-            description = "If true, project is in read only mode",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, project is in read only mode")
     boolean isReadOnly = false
+
     /**
      * Flag if project has private layer
      * A project user only see its layer
      */
-
-    @ApiObjectField(
-            description = "If true, an user ( which is not an administrator of the project) see only its own annotations layer",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, an user ( which is not an administrator of the project) see only its own annotations layer")
     boolean hideUsersLayers = false
 
-    @ApiObjectField(
-            description = "If true, a user (including the administrators) see only its own annotations layer",
-            allowedType = "boolean")
+    @ApiObjectField(description = "If true, a user (including the administrators) see only its own annotations layer")
     boolean hideAdminsLayers = false
-
 
     static belongsTo = [ontology: Ontology]
     static hasMany = [retrievalProjects : Project]
-
 
     static constraints = {
         name(maxSize: 150, unique: true, blank: false)

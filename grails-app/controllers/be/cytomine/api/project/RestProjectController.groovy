@@ -10,6 +10,7 @@ import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import groovy.sql.Sql
+import jsondoc.ApiMethodLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiBodyObjects
@@ -42,21 +43,14 @@ class RestProjectController extends RestController {
     def taskService
     def secUserService
 
-
+    def currentDomain() {
+        Project
+    }
 
     /**
      * List all project available for the current user
      */
-    @ApiMethod(
-            path="/project.json",
-            verb=ApiVerb.GET,
-            description="Get project listing, according to your access",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiResponseObject(objectIdentifier = "project", multiple = "true")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    ])
+    @ApiMethodLight(description="Get project listing, according to your access")
     def list() {
         SecUser user = cytomineService.currentUser
         if(user.isAdmin()) {
@@ -70,25 +64,12 @@ class RestProjectController extends RestController {
         }
     }
 
-
-
-
     /**
      * Get a project
      */
-    @ApiMethod(
-            path="/project/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get a project",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Get a project")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH)
     ])
     def show () {
         Project project = projectService.read(params.long('id'))
@@ -99,22 +80,14 @@ class RestProjectController extends RestController {
         }
     }
 
-
     /**
      * Add a new project to cytomine
      */
-    @ApiMethod(
-            path="/project.json",
-            verb=ApiVerb.POST,
-            description="Add a new project",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    @ApiMethodLight(
+        description="Add a new project"
     )
-    @ApiBodyObject(name="project")
-    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
     @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden")
+        @ApiError(code="409", description="Project with same name already exist")
     ])
     def add() {
         log.info "Add project = $request.JSON"
@@ -132,22 +105,11 @@ class RestProjectController extends RestController {
     /**
      * Update a project
      */
-    @ApiMethod(
-            path="/project/{id}.json",
-            verb=ApiVerb.PUT,
-            description="Update a project",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
+    @ApiMethodLight(
+            description="Update a project"
     )
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiBodyObject(name="project")
-    @ApiResponseObject(objectIdentifier = "project", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def update () {
         try {
@@ -166,18 +128,11 @@ class RestProjectController extends RestController {
     /**
      * Delete a project
      */
-    @ApiMethod(
-            path="/project/{id}.json",
-            verb=ApiVerb.DELETE,
-            description="Delete a project",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
+    @ApiMethodLight(
+            description="Delete a project"
     )
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def delete () {
         try {
@@ -302,8 +257,6 @@ class RestProjectController extends RestController {
     }
 
     private def findCommandHistory(List<Project> projects,SecUser user, Integer max, Integer offset, Boolean fullData) {
-
-
 
         String request;
 
