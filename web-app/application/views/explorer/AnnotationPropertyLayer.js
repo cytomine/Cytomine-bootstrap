@@ -35,7 +35,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.setZIndex = function(index) {
         this.vectorLayer.setZIndex( index );
-    }
+    };
 
     this.removeFromMap = function() {
         this.map.removeLayer(this.vectorLayer);
@@ -51,7 +51,7 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
         var featuresMap = {}
 
         _.each(nestedCollection, function (result) {
-            var samePointValue = featuresMap[result.x + "_" + result.y]
+            var samePointValue = featuresMap[result.x + "_" + result.y];
             if(samePointValue) {
                 featuresMap[result.x + "_" + result.y] = samePointValue + " ; " + result.value
             } else {
@@ -71,7 +71,7 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
                      var y = prop.split("_")[1];
                      var value = featuresMap[prop];
                      var format = new OpenLayers.Format.WKT();
-                     var geom = "POINT("+x+" " + (y+100)+")"
+                     var geom = "POINT("+x+" " + (y+100)+")";
                      var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
                      pointFeature.attributes = { value: value};
                      features.push(pointFeature);

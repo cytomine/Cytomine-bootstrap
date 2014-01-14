@@ -22,39 +22,15 @@ import org.jsondoc.core.util.JSONDocUtils;
  */
 public class ApiObjectFieldDocLight extends ApiObjectFieldDoc {
 
-    @Override
-    public static ApiObjectFieldDoc buildFromAnnotation(ApiObjectField annotation, Field field) {
+    Boolean useForCreation
 
-        ApiObjectFieldDoc apiPojoFieldDoc = new ApiObjectFieldDoc();
-        if (annotation.apiFieldName().equals("")) { apiPojoFieldDoc.setName(field.getName());}
-        else { apiPojoFieldDoc.setName(annotation.apiFieldName());}
-        apiPojoFieldDoc.setDescription(annotation.description());
-        String[] typeChecks = getFieldObject(field);
-        if (annotation.allowedType().equals("")) {
-            if(isGrailsDomain(field.type.name)) {
-                apiPojoFieldDoc.setType("long");
-            } else {
-                apiPojoFieldDoc.setType(typeChecks[0]);
-            }
+    //only user if userForCreation = true
+    Boolean mandatory
 
-        }
-        else { apiPojoFieldDoc.setType(annotation.allowedType());}
-        apiPojoFieldDoc.setMultiple(String.valueOf(JSONDocUtils.isMultiple(field.getType())));
-        apiPojoFieldDoc.setFormat(annotation.format());
-        apiPojoFieldDoc.setAllowedvalues(annotation.allowedvalues());
-        apiPojoFieldDoc.setMapKeyObject(typeChecks[1]);
-        apiPojoFieldDoc.setMapValueObject(typeChecks[2]);
-        apiPojoFieldDoc.setMap(typeChecks[3]);
-        return apiPojoFieldDoc;
-    }
+    //only if diff from java standart (bool true, string non empty, number !=0,...)
+    String defaultValue
 
+    Boolean presentInResponse
 
-    public static boolean isGrailsDomain(String fullName) {
-
-        def domain = Holders.getGrailsApplication().getDomainClasses().find {
-            it.fullName.equals(fullName)
-        }
-        return domain != null
-    }
 
 }

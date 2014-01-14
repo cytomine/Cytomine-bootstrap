@@ -4,6 +4,8 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import grails.util.Holders
 import groovy.sql.Sql
+import jsondoc.ApiObjectFieldLight
+import jsondoc.ApiObjectFieldsLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObjectField
 import org.jsondoc.core.pojo.ApiObjectFieldDoc
@@ -24,9 +26,20 @@ abstract class CytomineDomain  implements Comparable{
     def sequenceService
 
     static def grailsApplication
+
+    @ApiObjectFieldLight(description = "The domain id", useForCreation = false)
     Long id
+
+    @ApiObjectFieldLight(description = "The date of the domain creation", useForCreation = false)
     Date created
+
+    @ApiObjectFieldLight(description = "The date of the domain modification", useForCreation = false)
     Date updated
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "class", description = "The full class name of the domain",allowedType = "string",useForCreation = false)
+    ])
+    static transients = []
 
     static mapping = {
         tablePerHierarchy false
@@ -173,9 +186,18 @@ abstract class CytomineDomain  implements Comparable{
     }
 
 
-    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
-       return getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+//    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
+//       return getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+//
+//    }
 
+    static def getDataFromDomain(def domain) {
+        def returnArray = [:]
+        returnArray['class'] = domain?.class
+        returnArray['id'] = domain?.id
+        returnArray['created'] = domain?.created?.time?.toString()
+        returnArray['updated'] = domain?.updated?.time?.toString()
+        return returnArray
     }
 
     boolean hasPermission(Permission permission) {

@@ -65,7 +65,7 @@ class JSONUtils {
 
 
 
-        JSON.registerObjectMarshaller(ApiObjectFieldDoc) {
+        JSON.registerObjectMarshaller(ApiObjectFieldDocLight) {
             def returnArray = [:]
             returnArray['jsondocId'] = it.jsondocId
             returnArray['name'] = it.name
@@ -75,6 +75,10 @@ class JSONUtils {
             returnArray["description"] = it.description
             returnArray["format"] = it.format
             returnArray["allowedvalues"] = it.allowedvalues
+            returnArray["mandatory"] = it.mandatory
+            returnArray["useForCreation"] = it.useForCreation
+            returnArray["defaultValue"] = it.defaultValue
+            returnArray["presentInResponse"] = it.presentInResponse
             return returnArray
         }
 

@@ -145,4 +145,12 @@ public class JSONDocUtilsLight extends JSONDocUtils {
         }
         return apiMethodDocs;
     }
+
+
+    public static boolean isMultiple(String className) {
+        if(className.toLowerCase().equals("list") || className.toLowerCase().equals("map")) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -18,7 +18,7 @@ class APIUtils {
 
 
         Set<Class<?>> objectClasses = new LinkedList<Class<?>>()
-        grailsApplication.domainClasses.findAll {it.clazz.isAnnotationPresent(ApiObject) }.each { domainArtefact ->
+        grailsApplication.domainClasses.findAll {it.clazz.isAnnotationPresent(ApiObject) && it.shortName.equals("Project") }.each { domainArtefact ->
             def domainClass = domainArtefact.getClazz()
             //println "$domainArtefact, $domainClass"
             objectClasses.add(domainClass)

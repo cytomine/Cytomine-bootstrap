@@ -431,17 +431,27 @@
 			<tr><td><code>{{name}}</code></td><td>{{description}}</td></tr>
 			<tr><td></td><td>Type: {{type}}</td></tr>
 			<tr><td></td><td>Multiple: {{multiple}}</td></tr>
-			{{#if map}}
-				{{#if this.mapKeyObject}}
+			{{#if useForCreation}}
 				<tr>
 					<td></td>
-					<td>Map key: {{this.mapKeyObject}}</td>
+					<td><span class="label label-info">Use for creation</span></td>
 				</tr>
+				{{#if mandatory}}
 				<tr>
 					<td></td>
-					<td>Map value: {{this.mapValueObject}}</td>
+					<td><span class="label label-warning">Mandatory</span></td>
 				</tr>
 				{{/if}}
+
+				{{#if presentInResponse}}
+                {{else}}
+                    <tr>
+                        <td></td>
+                        <td><span class="label label-inverse">Not in response!</span></td>
+                    </tr>
+				{{/if}}
+
+
 			{{/if}}
 		{{/each}}
 	{{/if}}

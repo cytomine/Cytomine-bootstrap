@@ -89,14 +89,14 @@ class BootStrap {
 
         //jsondoc init
         JSONUtils.registerMarshallers()
-        use (TimerMethods) {
-            def timer = new Timer()
-            def task = timer.runEvery(1000, 10000) {
-                //println "Task executed at ${new Date()}."
-                APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
-            }
-            println "Current date is ${new Date()}."
-        }
+//        use (TimerMethods) {
+//            def timer = new Timer()
+//            def task = timer.runEvery(1000, 10000) {
+//                //println "Task executed at ${new Date()}."
+//                APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
+//            }
+//            println "Current date is ${new Date()}."
+//        }
 
 
     }
