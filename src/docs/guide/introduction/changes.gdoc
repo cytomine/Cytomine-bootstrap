@@ -1,0 +1,97 @@
+h3. 2013122 Version
+
+Nested images support
+
+*SQL Changes*
+{code}
+alter table image_instance add column class varchar(255);
+update image_instance set class = 'be.cytomine.image.ImageInstance' where parent_id is null;
+{code}
+
+h3. 20131216 Version
+
+*SQL Changes*
+
+{code}
+
+UPDATE reviewed_annotation as ra
+SET user_id = (select user_id from user_annotation ua where ra.parent_ident = ua.id)
+WHERE parent_ident IN (select id from user_annotation);
+
+UPDATE reviewed_annotation as ra
+SET user_id = (select user_id from algo_annotation ua where ra.parent_ident = ua.id)
+WHERE parent_ident IN (select id from algo_annotation);
+{code}
+
+*API Changes*
+
+{table}
+*Before* | *After*
+/api/algoannotation/union.$format | /api/algoannotation/method/union.$format
+/api/annotation/union.$format | /api/annotation/method/union.$format
+/api/imageinstance/lastopened.$format | /api/imageinstance/method/lastopened.$format
+/api/project/lastopened.$format | /api/project/method/lastopened.$format
+/api/ontology/light.$format | /api/ontology.$format?light=true
+{table}
+
+*GUI Changes*
+
+Bootstrap 3
+
+*Misc*
+{code}
+sudo cp /var/lib/tomcat7/webapps/ROOT/WEB-INF/lib/postgresql-9.1-901.jdbc4.jar /var/lib/tomcat7/common/
+{code}
+
+
+h3. 20131113 Version
+
+Le compilation des fichiers JS est effectuée maintenant lors de la création du jar.
+Pour déployer, il n'est donc plus nécessaire d'exécuter un run-app avant le war.
+
+h3. 20131105 Version
+
+Un nouveau flag "readonly" fait son apparition. Il permet de verrouiller le projet et d'empêcher qu'un simple user (non admin du projet) modifie les données du projet (sauf ses annotations). Indispensable pour l'enseignement avec les étudiants.
+PrivateLayer n'existe plus et est remplacé par "HideUsersLayers" et "HideAdminsLayers". Si privateLayer était à false, les deux nouveaux flags seront à false, sinon ils seront à true.
+
+*SQL Changes*
+
+Before first run-app
+{code}
+ALTER table project ADD column hide_admins_layers bool;
+ALTER table project ADD column hide_users_layers bool;
+ALTER table project ADD column is_read_only bool;
+UPDATE project SET hide_users_layers = true,hide_admins_layers = true where private_layer = true;
+UPDATE project SET hide_users_layers = false,hide_admins_layers = false where private_layer = false;
+UPDATE project SET is_read_only = false;
+
+ALTER table project ALTER column is_read_only SET NOT NULL;
+ALTER table project ALTER column hide_admins_layers SET NOT NULL;
+ALTER table project ALTER column hide_admins_layers SET NOT NULL;
+DROP view user_project;
+DROP view creator_project;
+DROP view admin_project;
+ALTER table project DROP column private_layer;
+{code}
+
+
+h3.  20131029
+
+L'authentification CAS/LDAP et "classique" sont plus facilement réglables sans recompilation. Il suffit d'ajouter un flag dans le fichier de configuration de Cytomine:
+grails.plugins.springsecurity.cas.active=true
+Si le flag est présent et est à true, l'authentification se fera sur le LDAP de l'ULg. La prochaine étape sera d'extraire les données relatives à la connexion (pour se fixer facilement sur de multiples LDAP sans recompilation).
+
+Si il y a plus de 15 couches à afficher, une selectbox est initialisé avec les layers. L'utilisateur peut les ajouter/supprimer. But: permettre le support de plusieurs dizaines/centaines de personnes dans un projet.
+
+h4. 20131026
+
+Start track changes
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+This project is the core of the Cytomine platform. It has the responsablity to :
+* Expose resources through a WEB API, RESTFul if possible
+* Handle users & security
+* Trigger jobs (e.g. image processing request)
+* Offer a WEB GUI to to end users
+
+!../../../web-app/doc/cytomine_architecture.png!

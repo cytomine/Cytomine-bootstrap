@@ -265,11 +265,17 @@ class AbstractImageService extends ModelService {
         if (zoom != null) {
             int desiredWidth = boundaries.width / Math.pow(2, zoom)
             int desiredHeight = boundaries.height / Math.pow(2, zoom)
+            println "desiredWidth=$desiredWidth"
+            println "desiredHeight=$desiredHeight"
             /* find the nearest acceptable zoom */
             while (desiredWidth < MIN_REQUESTED_CROP_SIZE && desiredHeight < MIN_REQUESTED_CROP_SIZE) {
                 zoom--
                 desiredWidth = boundaries.width / Math.pow(2, zoom)
                 desiredHeight = boundaries.height / Math.pow(2, zoom)
+                println "###"
+                println "->desiredWidth=$desiredWidth"
+                println "->desiredHeight=$desiredHeight"
+                println "###"
             }
             return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
         } else {

@@ -120,7 +120,20 @@
                         </div></div>
                 </fieldset>
             </form>
+
+
+
         </div>
     </div>
-
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="glyphicon glyphicon-transfer"/> PYTHON Connection example</h3>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-success">
+                import cytomine<br />
+                conn = cytomine.Cytomine('<%= host %>','<%= publicKey %>','<%= privateKey %>','/api','/tmp',verbose= True)
+            </div>
+        </div>
+    </div>
 </div>

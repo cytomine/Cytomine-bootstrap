@@ -249,9 +249,11 @@ class RestImageController extends RestController {
     def cropUserAnnotation = {
         try {
             def annotation = UserAnnotation.read(params.id)
-
+            println "wtf..."
             if(!params.getBoolean('draw')) {
                 def cropURL = getCropAnnotationURL(annotation,params)
+                println "zoom="+params.zoom
+                println "cropURL=$cropURL"
                 responseImage(cropURL)
             } else {
                 def value = params.max_size
@@ -375,7 +377,8 @@ class RestImageController extends RestController {
         if (params.zoom != null) {
             zoom = Integer.parseInt(params.zoom)
         }
-
+        println "finalZoom $zoom"
+        println "maxSize $maxSize"
         if (annotation == null) {
             responseNotFound("Crop", "Annotation", params.id)
         } else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max)) {

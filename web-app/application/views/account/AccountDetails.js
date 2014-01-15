@@ -59,6 +59,7 @@ var AccountDetails = Backbone.View.extend({
     },
     doLayout: function (tpl) {
         var self = this;
+        this.model.set({ host : window.location.host });
         $(this.el).html(_.template(tpl, this.model.toJSON()));
         $("#edit_profile_form").submit(function (e) {
             self.editProfile();
