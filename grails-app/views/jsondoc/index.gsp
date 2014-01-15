@@ -441,6 +441,11 @@
 					<td></td>
 					<td><span class="label label-warning">Mandatory</span></td>
 				</tr>
+				{{else}}
+                    <tr>
+                        <td></td>
+                        <td><span class="label label-warning">Default: {{defaultValue}}</span></td>
+                    </tr>
 				{{/if}}
 
 				{{#if presentInResponse}}
@@ -450,6 +455,7 @@
                         <td><span class="label label-inverse">Not in response!</span></td>
                     </tr>
 				{{/if}}
+
 
 
 			{{/if}}

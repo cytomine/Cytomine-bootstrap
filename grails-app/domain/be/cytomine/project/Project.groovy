@@ -38,7 +38,7 @@ class Project extends CytomineDomain implements Serializable {
     Discipline discipline
 
 
-    @ApiObjectFieldLight(description = "Blind mode (if true, image filename are hidden)")
+    @ApiObjectFieldLight(description = "Blind mode (if true, image filename are hidden)",mandatory = false)
     boolean blindMode = false
 
     /**
@@ -79,16 +79,16 @@ class Project extends CytomineDomain implements Serializable {
     @ApiObjectFieldLight(description = "If true, search similar annotations on all project that share the same ontology",defaultValue = "true")
     boolean retrievalAllOntology = true
 
-    @ApiObjectFieldLight(description = "If true, project is closed")
+    @ApiObjectFieldLight(description = "If true, project is closed",mandatory = false)
     boolean isClosed = false
 
-    @ApiObjectFieldLight(description = "If true, project is in read only mode")
+    @ApiObjectFieldLight(description = "If true, project is in read only mode",mandatory = false)
     boolean isReadOnly = false
 
-    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see others users layers")
+    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see others users layers",mandatory = false)
     boolean hideUsersLayers = false
 
-    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see admins layers")
+    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see admins layers", mandatory = false)
     boolean hideAdminsLayers = false
 
     @ApiObjectFieldsLight(params=[

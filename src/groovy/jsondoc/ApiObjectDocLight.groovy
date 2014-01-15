@@ -149,11 +149,29 @@ public class ApiObjectDocLight {
 
         annotationData["useForCreation"] = annotation.useForCreation()
         annotationData["mandatory"] = annotation.useForCreation()? annotation.mandatory() : false
-        annotationData["defaultValue"] = annotation.useForCreation()? annotation.defaultValue() : ""
-        annotationData["presentInResponse"] = annotation.presentInResponse()
-        println annotationData['name'] + "=> " + annotationData
 
+        annotationData["presentInResponse"] = annotation.presentInResponse()
+
+        if(annotationData["useForCreation"] && !annotationData["mandatory"]) {
+            annotationData["defaultValue"] = findDefaultValue(annotationData['type'].toString(),annotation.defaultValue())
+
+        }
+
+
+        println annotationData['name'] + "=> " + annotationData
         map.put(annotationData['name'],annotationData)
+    }
+
+    static String findDefaultValue(String type, String defaultValue) {
+        if(!defaultValue.equals("")) {
+            return defaultValue
+        } else {
+            if(type.equals("long") || type.equals("int")) return "0 or null if domain"
+            if(type.equals("list")) return "[]"
+            if(type.equals("boolean")) return "false"
+
+        }
+        return "Undefined"
     }
 
 
