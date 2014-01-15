@@ -1,3 +1,18 @@
+h3. 20140115 Version
+
+*API Changes*
+
+Annotation crop service refactoring
+
+{table}
+*Before* | *After*
+"/api/annotation/$id/$zoom/crop.$format" | "/api/annotation/$id/crop.$format?$zoom=$zoom"
+"/api/userannotation/$id/$zoom/crop.$format" | "/api/userannotation/$id/crop.$format?zoom=$zoom"
+"/api/algoannotation/$id/$zoom/crop.$format" | "/api/algoannotation/$id/crop.$format?zoom=$zoom"
+"/api/reviewedannotation/$id/$zoom/crop.$format" | "/api/reviewedannotation/$id/crop.$format?zoom=$zoom"
+"/api/annotation/$id/cropMin.$format" | "/api/annotation/$id/crop.$format?maxSize=256"
+{table}
+
 h3. 2013122 Version
 
 Nested images support

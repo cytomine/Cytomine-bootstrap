@@ -37,19 +37,9 @@ class AnnotationUrlMappings {
         "/api/simplify.$format"(controller:"restAnnotationDomain"){
             action = [PUT:"retrieveSimplify",POST:"retrieveSimplify"]
         }
-        //a supprimer
-        "/api/annotation/$id/$zoom/crop.$format"(controller: "restAnnotationDomain"){
-            action = [GET:"cropAnnotation"]
-        }
         "/api/annotation/$id/crop.$format"(controller: "restAnnotationDomain"){
             action = [GET:"cropAnnotation"]
         }
-        //a supprimer
-        "/api/annotation/$id/cropMin.$format"(controller: "restAnnotationDomain"){
-            action = [GET:"cropAnnotationMin"]
-        }
-
-
 
         /**
          * User Annotation
@@ -68,10 +58,6 @@ class AnnotationUrlMappings {
         }
         "/api/userannotation/$annotation/mask-$term.$format"(controller: "restUserAnnotation"){
             action = [GET:"cropmask"]
-        }
-        //a supprimer
-        "/api/userannotation/$id/$zoom/crop.$format"(controller: "restUserAnnotation"){
-            action = [GET:"cropUserAnnotation"]
         }
         "/api/userannotation/$id/crop.$format"(controller: "restUserAnnotation"){
             action = [GET:"cropUserAnnotation"]
@@ -118,10 +104,6 @@ class AnnotationUrlMappings {
         "/api/algoannotation/$annotation/alphamask-$term.$format"(controller: "restAlgoAnnotation"){
             action = [GET:"alphamaskAlgoAnnotation"]
         }
-        //a supprimer
-        "/api/algoannotation/$id/$zoom/crop.$format"(controller: "restAlgoAnnotation"){
-            action = [GET:"cropAlgoAnnotation"]
-        }
         "/api/algoannotation/$id/crop.$format"(controller: "restAlgoAnnotation"){
             action = [GET:"cropAlgoAnnotation"]
         }
@@ -145,10 +127,6 @@ class AnnotationUrlMappings {
         }
         "/api/reviewedannotation/$annotation/alphamask-$term.$format"(controller: "restReviewedAnnotation"){
             action = [GET:"alphamaskReviewedAnnotation"]
-        }
-        //a supprimer
-        "/api/reviewedannotation/$id/$zoom/crop.$format"(controller: "restReviewedAnnotation"){
-            action = [GET:"cropReviewedAnnotation"]
         }
         "/api/reviewedannotation/$id/crop.$format"(controller: "restReviewedAnnotation"){
             action = [GET:"cropReviewedAnnotation"]

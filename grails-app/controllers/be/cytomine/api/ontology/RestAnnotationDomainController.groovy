@@ -96,40 +96,6 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-
-    /**
-     * Get annotation crop (image area that frame annotation)
-     * Force the size for crop annotation
-     * This work for all kinds of annotations
-     */
-    def cropAnnotationMin = {
-        try {
-            params.max_size = "256"
-            def annotation = AnnotationDomain.getAnnotationDomain(params.id)
-            if(!params.getBoolean('draw')) {
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                responseImage(cropURL)
-            } else {
-                def value = params.max_size
-                params.max_size=null
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                def image = imageProcessingService.createCropWithDraw(annotation,cropURL)
-                if(value) {
-                    println  Integer.parseInt(value)
-                    image = imageProcessingService.scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
-                }
-                responseBufferedImage(image);
-            }
-        } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }catch (Exception e) {
-            log.error("GetThumbx:" + e)
-        }
-    }
-
-
     private doSearch(def params) {
         AnnotationListing al
         def result = []
