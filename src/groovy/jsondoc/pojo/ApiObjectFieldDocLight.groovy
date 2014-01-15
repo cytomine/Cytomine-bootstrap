@@ -1,4 +1,4 @@
-package jsondoc
+package jsondoc.pojo
 
 import grails.util.Holders
 import org.jsondoc.core.pojo.ApiMethodDoc

@@ -1,4 +1,4 @@
-package jsondoc
+package jsondoc.utils
 
 /**
  * Created by lrollus on 1/10/14.

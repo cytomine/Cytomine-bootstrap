@@ -1,4 +1,4 @@
-package jsondoc
+package jsondoc.annotation
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

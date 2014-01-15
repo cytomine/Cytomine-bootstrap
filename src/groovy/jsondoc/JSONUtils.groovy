@@ -1,14 +1,14 @@
 package jsondoc
 
 import grails.converters.JSON
-import org.jsondoc.core.annotation.ApiBodyObject
+import jsondoc.pojo.ApiMethodDocLight
+import jsondoc.pojo.ApiObjectFieldDocLight
 import org.jsondoc.core.pojo.ApiBodyObjectDoc
 import org.jsondoc.core.pojo.ApiDoc
 import org.jsondoc.core.pojo.ApiErrorDoc
 import org.jsondoc.core.pojo.ApiHeaderDoc
 import org.jsondoc.core.pojo.ApiMethodDoc
 import org.jsondoc.core.pojo.ApiObjectDoc
-import org.jsondoc.core.pojo.ApiObjectFieldDoc
 import org.jsondoc.core.pojo.ApiParamDoc
 import org.jsondoc.core.pojo.ApiResponseObjectDoc
 import org.jsondoc.core.pojo.ApiVerb
@@ -91,29 +91,6 @@ class JSONUtils {
         }
 
 
-        JSON.registerObjectMarshaller(ApiMethodDocLight) {
-            def returnArray = [:]
-            returnArray['jsondocId'] = it.jsondocId
-            returnArray['path'] = it.path
-            returnArray['description'] = it.description
-            if (it.verb == ApiVerb.GET)
-                returnArray['verb'] = "GET"
-            if (it.verb == ApiVerb.PUT)
-                returnArray['verb'] = "PUT"
-            if (it.verb == ApiVerb.POST)
-                returnArray['verb'] = "POST"
-            if (it.verb == ApiVerb.DELETE)
-                returnArray['verb'] = "DELETE"
-            returnArray['produces'] = it.produces
-            returnArray['consumes'] = it.consumes
-            returnArray['headers'] = it.headers
-            returnArray['urlparameters'] = it.pathparameters
-            returnArray['bodyobject'] = it.bodyobject
-            returnArray['response'] = it.response
-            returnArray['apierrors'] = it.apierrors
-            return returnArray
-        }
-
         JSON.registerObjectMarshaller(ApiMethodDoc) {
             def returnArray = [:]
             returnArray['jsondocId'] = it.jsondocId
@@ -131,6 +108,7 @@ class JSONUtils {
             returnArray['consumes'] = it.consumes
             returnArray['headers'] = it.headers
             returnArray['urlparameters'] = it.pathparameters
+            returnArray['queryparameters'] = it.queryparameters
             returnArray['bodyobject'] = it.bodyobject
             returnArray['response'] = it.response
             returnArray['apierrors'] = it.apierrors

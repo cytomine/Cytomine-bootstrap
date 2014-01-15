@@ -4,6 +4,7 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
@@ -14,7 +15,7 @@ import org.jsondoc.core.annotation.ApiObjectField
 @ApiObject(name = "discipline")
 class Discipline extends CytomineDomain implements Serializable{
 
-    @ApiObjectField(description = "The name of the discipline")
+    @ApiObjectFieldLight(description = "The name of the discipline")
     String name
 
     static constraints = {
@@ -45,9 +46,8 @@ class Discipline extends CytomineDomain implements Serializable{
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Discipline <<< " + getMappingFromAnnotation(Discipline)
         JSON.registerObjectMarshaller(Discipline) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(Discipline))
+            return getDataFromDomain(domain)
         }
     }
 
@@ -61,6 +61,17 @@ class Discipline extends CytomineDomain implements Serializable{
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json, 'name')
         return domain;
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        return returnArray
     }
 
 }

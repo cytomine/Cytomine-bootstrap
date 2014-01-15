@@ -1,8 +1,8 @@
 package jsondoc
 
+import jsondoc.utils.JSONDocUtilsLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.util.JSONDocUtils
 
 /**
  * Created by stevben on 16/12/13.

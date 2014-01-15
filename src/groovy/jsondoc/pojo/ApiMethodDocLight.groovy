@@ -1,22 +1,10 @@
-package jsondoc
+package jsondoc.pojo
 
-import org.jsondoc.core.pojo.ApiBodyObjectDoc
-import org.jsondoc.core.pojo.ApiErrorDoc
-import org.jsondoc.core.pojo.ApiHeaderDoc
+import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.pojo.ApiMethodDoc
-import org.jsondoc.core.pojo.ApiParamDoc
-import org.jsondoc.core.pojo.ApiResponseObjectDoc
 import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import org.jsondoc.core.annotation.ApiMethod
-
-import java.util.regex.Pattern;
 /**
  * ApiMethodDocLight must be used instead of ApiMethodDoc to use a light rest api doc
  * @author Loïc Rollus

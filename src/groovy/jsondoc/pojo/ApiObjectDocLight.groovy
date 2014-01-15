@@ -1,15 +1,13 @@
-package jsondoc
+package jsondoc.pojo
 
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import grails.util.Holders
+import jsondoc.utils.JSONDocUtilsLight
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
-import org.jsondoc.core.pojo.ApiMethodDoc
 import org.jsondoc.core.pojo.*
-import org.jsondoc.core.pojo.ApiVerb
-import org.jsondoc.core.util.JSONDocUtils
-import org.springframework.http.MediaType
 
 import java.lang.reflect.Field
 
@@ -20,25 +18,6 @@ import java.lang.reflect.Field
  */
 public class ApiObjectDocLight {
 
-//    @SuppressWarnings("rawtypes")
-//    public static ApiObjectDoc buildFromAnnotation(ApiObject annotation, Class clazz) {
-//        List<ApiObjectFieldDoc> fieldDocs = new ArrayList<ApiObjectFieldDoc>();
-//        for (Field field : clazz.getDeclaredFields()) {
-//            if (field.getAnnotation(ApiObjectField.class) != null) {
-//                fieldDocs.add(ApiObjectFieldDocLight.buildFromAnnotation(field.getAnnotation(ApiObjectField.class), field));
-//            }
-//        }
-//
-//        Class<?> c = clazz.getSuperclass();
-//        if (c != null) {
-//            if (c.isAnnotationPresent(ApiObject.class)) {
-//                ApiObjectDoc objDoc = ApiObjectDoc.buildFromAnnotation(c.getAnnotation(ApiObject.class), c);
-//                fieldDocs.addAll(objDoc.getFields());
-//            }
-//        }
-//
-//        return new ApiObjectDoc(annotation.name(), annotation.description(), fieldDocs);
-//    }
 
     @SuppressWarnings("rawtypes")
     public static ApiObjectDoc buildFromAnnotation(ApiObject annotation, Class clazz) {
@@ -104,9 +83,6 @@ public class ApiObjectDocLight {
         return apiPojoFieldDoc;
     }
 
-
-
-//
     //take clas and fill the map with field metadata (from annotation)
     static void fillAnnotationMap(def domainClass, def annotationsMap) {
         domainClass.declaredFields.each { field ->

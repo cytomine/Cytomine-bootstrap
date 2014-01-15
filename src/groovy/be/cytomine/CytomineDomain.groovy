@@ -4,16 +4,12 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import grails.util.Holders
 import groovy.sql.Sql
-import jsondoc.ApiObjectFieldLight
-import jsondoc.ApiObjectFieldsLight
-import org.apache.log4j.Logger
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.jsondoc.core.annotation.ApiObjectField
-import org.jsondoc.core.pojo.ApiObjectFieldDoc
 import org.springframework.security.acls.model.Permission
 
 import java.lang.reflect.Field
-
-import static org.springframework.security.acls.domain.BasePermission.*
 
 /**
  * CytomineDomain is the parent class for all domain.

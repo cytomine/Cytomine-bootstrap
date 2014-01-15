@@ -1,16 +1,8 @@
 package jsondoc
 
-import be.cytomine.project.Project
 import grails.converters.JSON
-import grails.util.Holders
-import org.codehaus.groovy.grails.commons.UrlMappingsArtefactHandler
-import org.codehaus.groovy.grails.web.mapping.ResponseCodeMappingData
-import org.codehaus.groovy.grails.web.mapping.ResponseCodeUrlMapping
-import org.codehaus.groovy.grails.web.mapping.UrlMapping
-import org.jsondoc.core.annotation.ApiHeaders
-import org.jsondoc.core.pojo.ApiHeaderDoc
-
-import java.lang.reflect.Field
+import jsondoc.utils.BuildPathMap
+import jsondoc.utils.RulesLight
 
 class JsondocController {
 

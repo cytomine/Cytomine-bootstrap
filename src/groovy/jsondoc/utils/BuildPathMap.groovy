@@ -1,12 +1,8 @@
-package jsondoc
+package jsondoc.utils
 
 import grails.util.Holders
 import org.codehaus.groovy.grails.commons.UrlMappingsArtefactHandler
-import org.codehaus.groovy.grails.web.mapping.DefaultUrlMappingParser
-import org.codehaus.groovy.grails.web.mapping.ResponseCodeMappingData
-import org.codehaus.groovy.grails.web.mapping.ResponseCodeUrlMapping
 import org.codehaus.groovy.grails.web.mapping.UrlMapping
-import org.codehaus.groovy.grails.web.mapping.UrlMappingParser
 import org.codehaus.groovy.grails.web.mapping.reporting.AnsiConsoleUrlMappingsRenderer
 
 import java.util.regex.Pattern

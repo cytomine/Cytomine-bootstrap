@@ -1,4 +1,4 @@
-package jsondoc
+package jsondoc.annotation
 
 import org.springframework.http.MediaType
 
@@ -50,4 +50,7 @@ public @interface ApiMethodLight {
      * @return
      */
     public String[] consumes() default [];
+
+    //is it a listing action? => put max/offset
+    public boolean listing() default false;
 }

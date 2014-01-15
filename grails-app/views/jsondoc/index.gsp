@@ -253,6 +253,40 @@
 							{{/if}}
 						{{/each}}
 					{{/if}}
+					{{#if queryparameters}}
+						<tr>
+							<th colspan=2>QUERY parameters</th>
+						</tr>
+						{{#each queryparameters}}
+							<tr>
+								<td><code>{{this.name}}</code></td>
+								<td>Required: {{this.required}}</td>
+
+							</tr>
+							<tr>
+								<td></td>
+								<td>Type: {{this.type}}</td>
+							</tr>
+							{{#if this.description}}
+							<tr>
+								<td></td>
+								<td>Description: {{this.description}}</td>
+							</tr>
+							{{/if}}
+							{{#if this.allowedvalues}}
+							<tr>
+								<td></td>
+								<td>Allowed values: {{this.allowedvalues}}</td>
+							</tr>
+							{{/if}}
+							{{#if this.format}}
+							<tr>
+								<td></td>
+								<td>Format: {{this.format}}</td>
+							</tr>
+							{{/if}}
+						{{/each}}
+					{{/if}}
 					{{#if bodyobject}}
 						<tr>
 							<th colspan=2>Body object</th>

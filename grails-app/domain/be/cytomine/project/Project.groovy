@@ -5,12 +5,10 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.ontology.Ontology
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
-import jsondoc.ApiObjectFieldLight
-import jsondoc.ApiObjectFieldsLight
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
-
 
 /**
  * A project is the main cytomine domain
@@ -197,40 +195,18 @@ class Project extends CytomineDomain implements Serializable {
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Project <<< " + getMappingFromAnnotation(Project)
         JSON.registerObjectMarshaller(Project) { domain ->
             return getDataFromDomain(domain)
         }
     }
 
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
     static def getDataFromDomain(def domain) {
-//
-//        /* base fields + api fields */
-//        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
-//
-//        /* supplementary fields : which are NOT used in insertDataIntoDomain !
-//        * Typically, these fields are shortcuts or supplementary information
-//        * from other domains
-//        * ::to do : hide these fields if not GUI ?
-//        * */
-//
-//        json['ontologyName'] = domain.ontology?.name
-//        json['disciplineName'] = domain.discipline?.name
-//        json['numberOfSlides'] = domain.countSamples()
-//        json['numberOfImages'] = domain.countImageInstance()
-//        json['numberOfAnnotations'] = domain.countAnnotations()
-//        json['numberOfJobAnnotations'] = domain.countJobAnnotations()
-//        json['retrievalProjects'] = domain.retrievalProjects.collect { it.id }
-//        json['numberOfReviewedAnnotations'] = domain.countReviewedAnnotations
-//
-//        return json
-
         def returnArray = CytomineDomain.getDataFromDomain(domain)
-//        returnArray['class'] = domain?.class
-//        returnArray['id'] = domain?.id
-//        returnArray['created'] = domain?.created?.time?.toString()
-//        returnArray['updated'] = domain?.updated?.time?.toString(
-
         returnArray['name'] = domain?.name
         returnArray['ontology'] = domain?.ontology?.id
         returnArray['ontologyName'] = domain?.ontology?.name
@@ -251,7 +227,6 @@ class Project extends CytomineDomain implements Serializable {
         returnArray['hideAdminsLayers'] = domain?.hideAdminsLayers
         returnArray['missingfield'] = null
         return returnArray
-        
     }
 
 
@@ -265,7 +240,6 @@ class Project extends CytomineDomain implements Serializable {
                 return false
             }
         }
-
     }
 
     /**

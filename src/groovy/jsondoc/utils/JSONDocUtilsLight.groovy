@@ -1,18 +1,13 @@
-package jsondoc
+package jsondoc.utils
 
-import jsondoc.ApiMethodDocLight;
+import jsondoc.annotation.ApiMethodLight
+import jsondoc.pojo.ApiMethodDocLight
+import jsondoc.pojo.ApiObjectDocLight
 import org.jsondoc.core.util.JSONDocUtils
 
 
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.servlet.ServletContext;
+import java.lang.reflect.Method
 
 import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiBodyObjectDoc;
@@ -23,11 +18,8 @@ import org.jsondoc.core.pojo.ApiMethodDoc;
 import org.jsondoc.core.pojo.ApiObjectDoc;
 import org.jsondoc.core.pojo.ApiParamDoc;
 import org.jsondoc.core.pojo.ApiParamType;
-import org.jsondoc.core.pojo.ApiResponseObjectDoc;
-import org.jsondoc.core.pojo.JSONDoc;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
+import org.jsondoc.core.pojo.ApiResponseObjectDoc
+import org.reflections.Reflections
 
 public class JSONDocUtilsLight extends JSONDocUtils {
     public static final String UNDEFINED = "undefined";
@@ -87,8 +79,17 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                 }
 
                 if(method.isAnnotationPresent(ApiParams.class)) {
-                    apiMethodDoc.setPathparameters(ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.PATH));
-                    apiMethodDoc.setQueryparameters(ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.QUERY));
+
+                    def urlParams = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.PATH)
+                    apiMethodDoc.setPathparameters(urlParams.minus(null));
+
+                    def queryParameters = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.QUERY)
+                    if(method.getAnnotation(ApiMethodLight.class).listing()) {
+                        queryParameters.add(new ApiParamDoc("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
+                        queryParameters.add(new ApiParamDoc("offset", "Pagination: Page number (default 0 = first page)", "int", "false", new String[0], ""))
+                    }
+                    println "queryParameters=$queryParameters"
+                    apiMethodDoc.setQueryparameters(queryParameters.minus(null));
                 }
 
                 if(method.isAnnotationPresent(ApiBodyObject.class)) {
