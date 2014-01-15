@@ -70,7 +70,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAnnotationMinCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/annotation/$idAnnotation/cropMin.jpg"
+        return "${serverUrl()}/api/annotation/$idAnnotation/crop.jpg?max_size=256"
     }
 
     /**

@@ -57,7 +57,6 @@ class IIPResolver extends Resolver{
     }
 
     public String getMetaDataURL(String baseUrl, String imagePath) {
-        //http://localhost/fcgi-bin/iipsrv.fcgi?FIF=/home/maree/CYTOMINE/WholeSlides/Aperio/o.tif&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("obj" + ARGS_EQUAL +  "IIP,1.0")
@@ -67,16 +66,23 @@ class IIPResolver extends Resolver{
         return toURL(baseUrl)
     }
 
-    public String getCropURL(String baseUrl, String imagePath, Integer topLeftX, Integer topLeftY, Integer width, Integer height, Integer baseImageWidth, Integer baseImageHeight, Integer desiredWidth, Integer desiredHeight) {
+    public String getCropURL(String baseUrl, String imagePath, def boundaries) {
         /*
-    #Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
-    #X is the right inset value (positive) from 0 on the x axis at the max image resolution.
-    #H is the height of the image provided as response.
-    #W is the width of the image provided as response.
-    X : 1/(34207/15000) = 0.4399859205
-    Y : 1/(34092/15100) = 0.4414301166
-    W : 1/(34092/400) = 0.01173295788
-    H : 1/(34207/600) = 0.01754026954*/
+            Y is the down inset value (positive) from 0 on the y axis at the max image resolution.
+            X is the right inset value (positive) from 0 on the x axis at the max image resolution.
+            H is the height of the image provided as response.
+            W is the width of the image provided as response.
+            X : 1/(34207/15000) = 0.4399859205
+            Y : 1/(34092/15100) = 0.4414301166
+            W : 1/(34092/400) = 0.01173295788
+            H : 1/(34207/600) = 0.01754026954
+        */
+        int topLeftX = boundaries.topLeftX
+        int topLeftY = boundaries.topLeftY
+        int width = boundaries.width
+        int height = boundaries.height
+        int baseImageWidth = boundaries.baseImageWidth
+        int baseImageHeight = boundaries.baseImageHeight
         def x = (topLeftX == 0) ? 0 : 1/(baseImageWidth / topLeftX)
         def y = ((baseImageHeight - topLeftY) == 0) ? 0 : 1/(baseImageHeight / (baseImageHeight - topLeftY))
         def w = (width == 0) ? 0 : 1/(baseImageWidth / width)
@@ -84,14 +90,16 @@ class IIPResolver extends Resolver{
         args.clear()
         args.add("FIF" + ARGS_EQUAL +  imagePath)
         args.add("RGN" + ARGS_EQUAL +  x + "," + y + "," + w + "," + h)
-        //disabled because we have strange results with HEI & WID
-        /*if (height > desiredHeight) {
-            int hei = Math.round(baseImageHeight / Math.ceil(height / desiredHeight))
-            args.add("HEI" + ARGS_EQUAL + hei)
-        } else if (width > desiredWidth) {
-            int wid = Math.round(baseImageWidth / Math.ceil(width / desiredWidth))
-            args.add("WID" + ARGS_EQUAL + wid)
-        }*/
+        if (boundaries.scale) {
+            int scale = boundaries.scale
+            if (height > boundaries.scale) {
+                int hei = Math.round(baseImageHeight / Math.ceil(height / scale))
+                args.add("HEI" + ARGS_EQUAL + hei)
+            } else if (width > boundaries.scale) {
+                int wid = Math.round(baseImageWidth / Math.ceil(width / scale))
+                args.add("WID" + ARGS_EQUAL + wid)
+            }
+        }
         args.add("CVT" + ARGS_EQUAL + "jpeg")
         return toURL(baseUrl)
     }

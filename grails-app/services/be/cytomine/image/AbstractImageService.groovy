@@ -1,6 +1,6 @@
 package be.cytomine.image
 
-import be.cytomine.AnnotationDomain
+
 import be.cytomine.Exception.CytomineException
 import be.cytomine.command.*
 import be.cytomine.image.server.ImageProperty

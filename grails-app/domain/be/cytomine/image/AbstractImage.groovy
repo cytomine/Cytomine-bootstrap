@@ -145,17 +145,31 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     def getPreviewURL() {
-        if (this.width != null && this.height != null)
-            return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 512, 512)
-        else
+        if (this.width != null && this.height != null)   {
+            def boundaries = [:]
+            boundaries.topLeftX = 0
+            boundaries.topLeftY = this.height
+            boundaries.width = this.width
+            boundaries.height = this.height
+            boundaries.scale = 512
+            return getCropURL(boundaries)
+        } else {
             return null
+        }
     }
 
     def getThumbURL() {
-        if (this.width != null && this.height != null)
-            return getCropURLWithMaxWithOrHeight(0, this.height, this.width, this.height, 256, 256)
-        else
+        if (this.width != null && this.height != null)   {
+            def boundaries = [:]
+            boundaries.topLeftX = 0
+            boundaries.topLeftY = this.height
+            boundaries.width = this.width
+            boundaries.height = this.height
+            boundaries.scale = 256
+            return getCropURL(boundaries)
+        } else {
             return null
+        }
     }
 
     def getMetadataURL() {
@@ -171,7 +185,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         return url
     }
 
-    def getCropURLWithMaxWithOrHeight(int topLeftX, int topLeftY, int width, int height, int desiredWidth, int desiredHeight) {
+    def getCropURL(def boundaries) {
         def imageServerStorages = getImageServersStorage()
 
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
@@ -185,19 +199,10 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
         String basePath = storage.getBasePath()
         String path = getPath()
-        int widthImg =  this.getWidth()
-        int heightImg = this.getHeight()
-        resolver.getCropURL(baseUrl, [basePath, path].join(File.separator), topLeftX, topLeftY, width, height, widthImg, heightImg, desiredWidth, desiredHeight)
-    }
 
-    def getCropURL(int topLeftX, int topLeftY, int width, int height) {
-        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, 5000, (int) (5000 / (width / height)))
-    }
-
-    def getCropURL(int topLeftX, int topLeftY, int width, int height, int zoom) {
-        int desiredWidth = Math.round(width / Math.pow(2, zoom))
-        int desiredHeight= Math.round(height / Math.pow(2, zoom))
-        getCropURLWithMaxWithOrHeight(topLeftX, topLeftY, width, height, desiredWidth, desiredHeight)
+        boundaries.baseImageWidth =this.getWidth()
+        boundaries.baseImageHeight =this.getHeight()
+        resolver.getCropURL(baseUrl, [basePath, path].join(File.separator), boundaries)
     }
 
     def getZoomLevels() {

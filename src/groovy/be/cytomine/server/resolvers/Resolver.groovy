@@ -28,6 +28,6 @@ abstract class Resolver {
     public abstract String getMetaDataURL(String baseUrl, String imagePath)
     public abstract String getPropertiesURL(String baseUrl, String imagePath)
     public abstract String getPreviewUrl(String baseUrl, String imagePath)
-    public abstract String getCropURL(String baseUrl, String imagePath, Integer topLeftX, Integer topLeftY, Integer width, Integer height, Integer baseImageWidth, Integer baseImageHeight, Integer desiredWidth, Integer desiredHeight)
+    public abstract String getCropURL(String baseUrl, String imagePath, def boundaries)
     public abstract Object getZoomLevels  (String baseUrl, String imagePath, int width, int height)
 }

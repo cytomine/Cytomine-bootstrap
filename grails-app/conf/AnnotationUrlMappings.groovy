@@ -38,7 +38,7 @@ class AnnotationUrlMappings {
             action = [PUT:"retrieveSimplify",POST:"retrieveSimplify"]
         }
         "/api/annotation/$id/crop.$format"(controller: "restAnnotationDomain"){
-            action = [GET:"cropAnnotation"]
+            action = [GET:"crop"]
         }
 
         /**
@@ -50,20 +50,72 @@ class AnnotationUrlMappings {
         "/api/userannotation/$id.$format"(controller:"restUserAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
-        "/api/userannotation/$annotation/alphamask-$term.$format"(controller: "restUserAnnotation"){
-            action = [GET:"alphamaskUserAnnotation"]
-        }
         "/api/user/$id/userannotation/count.$format"(controller:"restUserAnnotation"){
             action = [GET: "countByUser"]
         }
-        "/api/userannotation/$annotation/mask-$term.$format"(controller: "restUserAnnotation"){
-            action = [GET:"cropmask"]
-        }
         "/api/userannotation/$id/crop.$format"(controller: "restUserAnnotation"){
-            action = [GET:"cropUserAnnotation"]
+            action = [GET:"crop"]
+        }
+        "/api/userannotation/$id/mask.$format"(controller: "restUserAnnotation"){
+            action = [GET:"cropMask"]
+        }
+        "/api/userannotation/$id/alphamask.$format"(controller: "restUserAnnotation"){
+            action = [GET:"cropAlphaMask"]
         }
 
 
+
+        /**
+         * Review annotation
+         */
+        "/api/user/$id/reviewedannotation/count.$format"(controller:"restReviewedAnnotation"){
+            action = [GET: "countByUser"]
+        }
+        "/api/reviewedannotation/$id/crop.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"crop"]
+        }
+        "/api/reviewedannotation/$id/mask.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"cropMask"]
+        }
+        "/api/reviewedannotation/$id/alphamask.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"cropAlphaMask"]
+        }
+
+        /**
+         * Algo Annotation
+         */
+        "/api/algoannotation/method/union.$format"(controller:"restAlgoAnnotation"){
+            action = [PUT:"union", GET:"union"]
+        }
+        "/api/algoannotation.$format"(controller:"restAlgoAnnotation"){
+            action = [GET: "list",POST:"add"]
+        }
+        "/api/algoannotation/$id.$format"(controller:"restAlgoAnnotation"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
+        }
+
+        "/api/algoannotation/$id/crop.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"crop"]
+        }
+        "/api/algoannotation/$id/alphamask.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"cropMask"]
+        }
+        "/api/algoannotation/$id/mask.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"cropAlphaMask"]
+        }
+
+
+
+
+
+
+
+        /**
+         * Annotation correction
+         */
+        "/api/annotationcorrection.$format"(controller:"restAnnotationDomain"){
+            action = [POST:"addCorrection"]
+        }
 
 
         /**
@@ -88,49 +140,6 @@ class AnnotationUrlMappings {
         }
 
 
-        /**
-         * Algo Annotation
-         */
-        "/api/algoannotation/method/union.$format"(controller:"restAlgoAnnotation"){
-            action = [PUT:"union", GET:"union"]
-        }
-        "/api/algoannotation.$format"(controller:"restAlgoAnnotation"){
-            action = [GET: "list",POST:"add"]
-        }
-        "/api/algoannotation/$id.$format"(controller:"restAlgoAnnotation"){
-            action = [GET:"show",PUT:"update", DELETE:"delete"]
-        }
-
-        "/api/algoannotation/$annotation/alphamask-$term.$format"(controller: "restAlgoAnnotation"){
-            action = [GET:"alphamaskAlgoAnnotation"]
-        }
-        "/api/algoannotation/$id/crop.$format"(controller: "restAlgoAnnotation"){
-            action = [GET:"cropAlgoAnnotation"]
-        }
-
-
-
-        /**
-         * Annotation correction
-         */
-        "/api/annotationcorrection.$format"(controller:"restAnnotationDomain"){
-            action = [POST:"addCorrection"]
-        }
-
-
-
-        /**
-         * Review annotation
-         */
-        "/api/user/$id/reviewedannotation/count.$format"(controller:"restReviewedAnnotation"){
-            action = [GET: "countByUser"]
-        }
-        "/api/reviewedannotation/$annotation/alphamask-$term.$format"(controller: "restReviewedAnnotation"){
-            action = [GET:"alphamaskReviewedAnnotation"]
-        }
-        "/api/reviewedannotation/$id/crop.$format"(controller: "restReviewedAnnotation"){
-            action = [GET:"cropReviewedAnnotation"]
-        }
 
         /**
          * Reporting

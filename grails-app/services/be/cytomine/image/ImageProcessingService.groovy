@@ -32,34 +32,31 @@ class ImageProcessingService {
     /**
      * Get annotation crop from this image
      */
-    def crop(AnnotationDomain annotation, Integer zoom) {
-        def boundaries = annotation.getBoundaries()
-        if (zoom != null) {
-            int desiredWidth = boundaries.width / Math.pow(2, zoom)
-            int desiredHeight = boundaries.height / Math.pow(2, zoom)
-            println "desiredWidth=$desiredWidth"
-            println "desiredHeight=$desiredHeight"
-            /* find the nearest acceptable zoom */
-            while (desiredWidth < MIN_REQUESTED_CROP_SIZE && desiredHeight < MIN_REQUESTED_CROP_SIZE) {
-                zoom--
-                desiredWidth = boundaries.width / Math.pow(2, zoom)
-                desiredHeight = boundaries.height / Math.pow(2, zoom)
-                println "###"
-                println "->desiredWidth=$desiredWidth"
-                println "->desiredHeight=$desiredHeight"
-                println "###"
-            }
-            return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
-        } else {
-            return annotation.toCropURL()
-        }
+    def cropURL(AnnotationDomain annotation) {
+        return annotation.toCropURL()
     }
 
-    /**
-     * Get annotation crop from this image
-     */
-    def cropWithMaxSize(AnnotationDomain annotation, int maxSize) {
-        return annotation.toCropURLWithMaxSize(maxSize)
+    def crop(AnnotationDomain annotation, params) {
+        BufferedImage image = ImageIO.read(new URL(annotation.toCropURL()))
+        if(params.zoom) {
+            int zoom = params.int("zoom")
+            def zoomLevels = annotation.getImage().getBaseImage().getZoomLevels()
+            if (zoom < zoomLevels.min || zoom > zoomLevels.max) {
+                throw new ObjectNotFoundException("Crop at zoom $zoom does not exist for annotation $params.annotation !")
+            }
+            def boundaries = annotation.getBoundaries()
+
+            int newWidth = boundaries.width / Math.pow(2, zoom)
+            int newHeight = boundaries.height / Math.pow(2, zoom)
+            image = scaleImage(image, newWidth, newHeight)
+        }
+        else if(params.max_size && (image.width > params.int("max_size") || image.height > params.int("max_size"))) {
+            image = scaleImage(image, (int) params.int("max_size"), (int) params.int("max_size"))
+        }
+        if (params.getBoolean('draw')) {
+            image = createCropWithDraw(annotation,image)
+        }
+        return image
     }
 
     /**
@@ -97,10 +94,10 @@ class ImageProcessingService {
         return combined
     }
 
-    public BufferedImage getMaskImage(AnnotationDomain annotation, Term term, Integer zoom, Boolean withAlpha) {
+    public BufferedImage getMaskImage(AnnotationDomain annotation, params, Boolean withAlpha) {
         //TODO:: document this method
 
-        BufferedImage crop = getImageFromURL(crop(annotation, zoom))
+        BufferedImage crop = crop(annotation, params)
         BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
         AbstractImage abstractImage = annotation.getImage().getBaseImage()
 
@@ -218,31 +215,11 @@ class ImageProcessingService {
      * @return Crop Annotation URL
      */
     public def getCropAnnotationURL(AnnotationDomain annotation, def params) {
-        Integer zoom = 0
-        println "params=$params"
-        Integer maxSize = -1
-        if (params.max_size != null) {
-            maxSize =  Integer.parseInt(params.max_size)
-        }
-        if (params.zoom != null) {
-            zoom = Integer.parseInt(params.zoom)
-        }
-        println "finalZoom $zoom"
-        println "maxSize $maxSize"
         if (annotation == null) {
             throw new ObjectNotFoundException("Annotation $params.annotation does not exist!")
-        } else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max)) {
-            throw new ObjectNotFoundException("Crop at zoom $zoom does not exist for annotation $params.annotation !")
-        } else {
+        } else  {
             try {
-                String cropURL
-                println "maxSize=$maxSize"
-                if (maxSize != -1) {
-                    cropURL = cropWithMaxSize(annotation, maxSize)
-                } else {
-                    cropURL = crop(annotation, zoom)
-                }
-
+                String cropURL = cropURL(annotation)
                 if (cropURL == null) {
                     //no crop available, add lambda image
                     cropURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"

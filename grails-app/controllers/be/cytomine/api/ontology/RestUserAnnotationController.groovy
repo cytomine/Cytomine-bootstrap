@@ -1,6 +1,7 @@
 package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
@@ -162,6 +163,7 @@ class RestUserAnnotationController extends RestController {
         else responseNotFound("Annotation", params.id)
     }
 
+
     /**
      * Add annotation created by user
      */
@@ -169,83 +171,42 @@ class RestUserAnnotationController extends RestController {
         add(userAnnotationService, request.JSON)
     }
 
-    def alphamaskUserAnnotation = {
-        try {
-            def annotation = UserAnnotation.read(params.annotation)
-            def cropURL = alphamask(annotation,params)
-            if(cropURL!=null) responseBufferedImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
-    def cropmask = {
-        //TODO:: document this method
-        UserAnnotation annotation = UserAnnotation.read(params.annotation)
-        if (!annotation) {
-            responseNotFound("Annotation", params.annotation)
-        }
-        Term term = Term.read(params.term)
-        if (!term) {
-            responseNotFound("Term", params.term)
-        }
-        if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with userAnnotation", annotation : annotation.id, term : term.id])
-        }
-        Integer zoom = null
-        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        log.info "zoom====$zoom"
-        if (annotation == null)
-            responseNotFound("Crop", "Annotation", params.annotation)
-        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
-            responseNotFound("Crop", "Zoom", zoom)
-        else {
-            try {
-                responseBufferedImage(getMaskImage(annotation, term, zoom, false))
-            } catch (Exception e) {
-                log.error("GetThumb:" + e);
-            }
-        }
-
-    }
-
-
-
 
     /**
      * Get annotation user crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
-    def cropUserAnnotation = {
-        try {
-            def annotation = UserAnnotation.read(params.id)
-            println "wtf..."
-            if(!params.getBoolean('draw')) {
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                println "zoom="+params.zoom
-                println "cropURL=$cropURL"
-                responseImage(cropURL)
-            } else {
-                def value = params.max_size
-                params.max_size=null
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                println "Read image..."
-                BufferedImage image = ImageIO.read(new URL(cropURL));
-                println "Image read..."
-                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
-                    image = imageProcessingService.scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
-                }
-                image = imageProcessingService.createCropWithDraw(annotation,image)
-                responseBufferedImage(image);
-            }
-        } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }catch (Exception e) {
-            log.error("GetThumbx:" + e)
+    def crop() {
+        UserAnnotation annotation = UserAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("Annotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.crop(annotation, params))
         }
+
     }
+
+    def cropMask () {
+        UserAnnotation annotation = UserAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("UserAnnotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, false))
+        }
+
+    }
+
+    def cropAlphaMask () {
+        UserAnnotation annotation = UserAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("UserAnnotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, true))
+        }
+
+    }
+
+
 
     @Override
     public Object addOne(def service, def json) {

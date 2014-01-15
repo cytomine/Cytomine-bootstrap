@@ -140,40 +140,34 @@ class  RestAlgoAnnotationController extends RestController {
      * Get annotation algo crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
-    def cropAlgoAnnotation = {
-        try {
-            def annotation = AlgoAnnotation.read(params.id)
-            if(!params.getBoolean('draw')) {
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                responseImage(cropURL)
-            } else {
-                def value = params.max_size
-                params.max_size=null
-                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-                BufferedImage image = ImageIO.read(new URL(cropURL));
-                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
-                    image = imageProcessingService.scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
-                }
-                image = imageProcessingService.createCropWithDraw(annotation,image)
-                responseBufferedImage(image);
-            }
-        } catch (CytomineException e) {
-            log.error("add error:" + e.msg)
-            log.error(e)
-            response([success: false, errors: e.msg], e.code)
-        }catch (Exception e) {
-            log.error("GetThumbx:" + e)
+    def crop() {
+        AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("AlgoAnnotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.crop(annotation, params))
         }
+
     }
 
-    def alphamaskAlgoAnnotation = {
-        try {
-            def annotation = AlgoAnnotation.read(params.annotation)
-            def cropURL = imageProcessingService.alphamask(annotation,params)
-            responseBufferedImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
+    def cropMask () {
+        AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("AlgoAnnotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, false))
         }
+
+    }
+
+    def cropAlphaMask () {
+        AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
+        if (!annotation) {
+            responseNotFound("AlgoAnnotation", params.id)
+        } else {
+            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, true))
+        }
+
     }
 
     /**

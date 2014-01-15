@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 
+import javax.imageio.ImageIO
 import java.awt.*
 import java.awt.image.BufferedImage
 
@@ -125,42 +126,38 @@ class RestImageInstanceController extends RestController {
     def windowUrl = {
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
-        int x = Integer.parseInt(params.x)
-        int y = abstractImage.getHeight() - Integer.parseInt(params.y)
-        int w = Integer.parseInt(params.w)
-        int h = Integer.parseInt(params.h)
-        responseSuccess([url : abstractImage.getCropURL(x, y, w, h)])
+        def boundaries = [:]
+        boundaries.topLeftX = params.int("x")
+        boundaries.topLeftY = abstractImage.getHeight() - params.int("y")
+        boundaries.width = params.int("w")
+        boundaries.height = params.int("h")
+        responseSuccess([url : abstractImage.getCropURL(boundaries)])
     }
 
     def window = {
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
-        println "DEBUG:"+params
-        int x = Integer.parseInt(params.x)
-        int y = abstractImage.getHeight() - Integer.parseInt(params.y)
-        int w = Integer.parseInt(params.w)
-        int h = Integer.parseInt(params.h)
 
-        int maxZoom = abstractImage.getZoomLevels().max
-        int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(Integer.parseInt(params.zoom), maxZoom), 0) : 0
-        int resizeWidth = w / Math.pow(2, zoom)
-        int resizeHeight = h / Math.pow(2, zoom)
-        if (resizeWidth * resizeHeight > MAX_SIZE_WINDOW_REQUEST) {
+        def boundaries = [:]
+        boundaries.topLeftX = params.int("x")
+        boundaries.topLeftY = abstractImage.getHeight() - params.int("y")
+        boundaries.width = params.int("w")
+        boundaries.height = params.int("h")
+
+        if (boundaries.width  * boundaries.height > MAX_SIZE_WINDOW_REQUEST) {
             responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
         }
         try {
-            String url = abstractImage.getCropURL(x, y, w, h)
-            BufferedImage bufferedImage = getImageFromURL(url)
-            //Resize image here, scaling with IIP return "strange" results. Mail was send to the creator of the project
-            if (resizeWidth != w || resizeHeight != h ) {
-                BufferedImage resizedImage = new BufferedImage(resizeWidth, resizeHeight, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = resizedImage.createGraphics();
-                g.drawImage(bufferedImage, 0, 0, resizeWidth, resizeHeight, null);
-                g.dispose();
-                bufferedImage = resizedImage
+            String url = abstractImage.getCropURL(boundaries)
+            BufferedImage bufferedImage = ImageIO.read(new URL(url))
+            if (params.zoom) {
+                int maxZoom = abstractImage.getZoomLevels().max
+                int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(params.int("zoom"), maxZoom), 0) : 0
+                int resizeWidth = boundaries.width / Math.pow(2, zoom)
+                int resizeHeight = boundaries.height / Math.pow(2, zoom)
+                bufferedImage = imageProcessingService.scaleImage(bufferedImage, resizeWidth, resizeHeight)
             }
-
             responseBufferedImage(bufferedImage)
         } catch (Exception e) {
             log.error("GetThumb:" + e);
@@ -173,13 +170,14 @@ class RestImageInstanceController extends RestController {
         println params
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
-        annotation.image = ImageInstance.read(params.id)
-        responseImage(abstractImageService.crop(annotation, null))
+        annotation.image = ImageInstance.read(params.long("id"))
+        responseBufferedImage(imageProcessingService.crop(annotation, params))
     }
 
     def mask = {
         println "mask"
         //TODO:: document this method
+        //TODO:: make alphamask
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
 

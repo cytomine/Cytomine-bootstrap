@@ -75,24 +75,17 @@ class RestAnnotationDomainController extends RestController {
      * Get annotation crop (image area that frame annotation)
      * This work for all kinds of annotations
      */
-    def cropAnnotation = {
+    def crop () {
         try {
-            println "params=$params"
-            def annotation = AnnotationDomain.getAnnotationDomain(params.id)
-            def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
-            if(cropURL!=null) {
-                if(!params.getBoolean('draw')) {
-                    responseImage(cropURL)
-                } else {
-                    responseBufferedImage(imageProcessingService.createCropWithDraw(annotation,cropURL));
-                }
-            }
+            def annotation = AnnotationDomain.getAnnotationDomain(params.long("id"))
+            def image = imageProcessingService.crop(annotation, params)
+            responseBufferedImage(image)
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)
             response([success: false, errors: e.msg], e.code)
         }catch (Exception e) {
-            log.error("GetThumbx:" + e)
+            log.error("GetThumb:" + e)
         }
     }
 
