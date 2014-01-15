@@ -1,22 +1,16 @@
 package be.cytomine.api.image
 
-import be.cytomine.AnnotationDomain
+
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.api.UrlApi
+
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Property
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.Description
 import be.cytomine.utils.GeometryUtils
@@ -24,8 +18,6 @@ import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-import groovy.sql.Sql
-import org.springframework.security.access.AccessDeniedException
 
 import java.awt.*
 import java.awt.image.BufferedImage
@@ -259,115 +251,9 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    private BufferedImage getMaskImage(AnnotationDomain annotation, Term term, Integer zoom, Boolean withAlpha) {
-        //TODO:: document this method
 
-        BufferedImage crop = getImageFromURL(abstractImageService.crop(annotation, zoom))
-        BufferedImage mask = new BufferedImage(crop.getWidth(),crop.getHeight(),BufferedImage.TYPE_INT_ARGB);
-        AbstractImage abstractImage = annotation.getImage().getBaseImage()
 
-        Geometry geometry = annotation.getLocation()
 
-        def boundaries = annotation.getBoundaries()
-        double x_ratio = crop.getWidth() / boundaries.width
-        double y_ratio = crop.getHeight() / boundaries.height
-
-        mask = segmentationService.colorizeWindow(abstractImage, mask, [geometry], boundaries.topLeftX, abstractImage.getHeight() - boundaries.topLeftY, x_ratio, y_ratio)
-
-        if (withAlpha)
-            return imageProcessingService.applyMaskToAlpha(crop, mask)
-        else
-            return mask
-    }
-
-    def alphamaskUserAnnotation = {
-        try {
-            def annotation = UserAnnotation.read(params.annotation)
-            def cropURL = alphamask(annotation,params)
-            if(cropURL!=null) responseBufferedImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
-    def alphamaskAlgoAnnotation = {
-        try {
-            def annotation = AlgoAnnotation.read(params.annotation)
-            def cropURL = alphamask(annotation,params)
-            responseBufferedImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
-    def alphamaskReviewedAnnotation = {
-        try {
-            def annotation = ReviewedAnnotation.read(params.annotation)
-            def cropURL = alphamask(annotation,params)
-            responseBufferedImage(cropURL)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
-    }
-
-    private def alphamask(AnnotationDomain annotation, def params) {
-        //TODO:: document this method
-        if (!annotation) {
-            responseNotFound("Annotation", params.annotation)
-        }
-        Term term = Term.read(params.term)
-        if (!term) {
-            responseNotFound("Term", params.term)
-        }
-        if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with annotation", annotation : annotation.id, term : term.id])
-        }
-        Integer zoom = null
-        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-
-        def zoomMinMax = annotation.getImage().getBaseImage().getZoomLevels()
-        if ((params.zoom != null) && (zoom > zoomMinMax.max)) {
-            zoom = zoomMinMax.max
-        } else if ((params.zoom != null) && (zoom < zoomMinMax.min)) {
-            zoom = zoomMinMax.min
-        }
-        try {
-            return getMaskImage(annotation, term, zoom, true)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e);
-        }
-        return null;
-    }
-
-    def cropmask = {
-        //TODO:: document this method
-        UserAnnotation annotation = UserAnnotation.read(params.annotation)
-        if (!annotation) {
-            responseNotFound("Annotation", params.annotation)
-        }
-        Term term = Term.read(params.term)
-        if (!term) {
-            responseNotFound("Term", params.term)
-        }
-        if (!annotation.termsId().contains(term.id)) {
-            response([ error : "Term not associated with userAnnotation", annotation : annotation.id, term : term.id])
-        }
-        Integer zoom = null
-        if (params.zoom != null) zoom = Integer.parseInt(params.zoom)
-        log.info "zoom====$zoom"
-        if (annotation == null)
-            responseNotFound("Crop", "Annotation", params.annotation)
-        else if ((params.zoom != null) && (zoom < annotation.getImage().getBaseImage().getZoomLevels().min || zoom > annotation.getImage().getBaseImage().getZoomLevels().max))
-            responseNotFound("Crop", "Zoom", zoom)
-        else {
-            try {
-                responseBufferedImage(getMaskImage(annotation, term, zoom, false))
-            } catch (Exception e) {
-                log.error("GetThumb:" + e);
-            }
-        }
-
-    }
 
     def descriptionService
     def propertyService

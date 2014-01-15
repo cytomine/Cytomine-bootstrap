@@ -49,35 +49,6 @@ class ImageUrlMappings {
             action = [GET:"listByProject"]
         }
 
-        "/api/annotation/$id/$zoom/crop.$format"(controller: "restImage"){
-            action = [GET:"cropAnnotation"]
-        }
-        "/api/annotation/$id/crop.$format"(controller: "restImage"){
-            action = [GET:"cropAnnotation"]
-        }
-        "/api/annotation/$id/cropMin.$format"(controller: "restImage"){
-            action = [GET:"cropAnnotationMin"]
-        }
-        "/api/userannotation/$id/$zoom/crop.$format"(controller: "restImage"){
-            action = [GET:"cropUserAnnotation"]
-        }
-        "/api/userannotation/$id/crop.$format"(controller: "restImage"){
-            action = [GET:"cropUserAnnotation"]
-        }
-        "/api/algoannotation/$id/$zoom/crop.$format"(controller: "restImage"){
-            action = [GET:"cropAlgoAnnotation"]
-        }
-        "/api/algoannotation/$id/crop.$format"(controller: "restImage"){
-            action = [GET:"cropAlgoAnnotation"]
-        }
-
-        "/api/reviewedannotation/$id/$zoom/crop.$format"(controller: "restImage"){
-            action = [GET:"cropReviewedAnnotation"]
-        }
-        "/api/reviewedannotation/$id/crop.$format"(controller: "restImage"){
-            action = [GET:"cropReviewedAnnotation"]
-        }
-
         "/api/image/$idabstractimage/group/$idgroup.$format"(controller:"restAbstractImageGroup"){
             action = [GET:"show",DELETE:"delete",POST:"add"]
         }

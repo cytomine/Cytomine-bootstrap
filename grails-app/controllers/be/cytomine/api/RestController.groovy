@@ -347,21 +347,6 @@ class RestController {
 
     }
 
-    /**
-     * Read a picture from url
-     * @param url Picture url
-     * @return Picture as an object
-     */
-    protected BufferedImage getImageFromURL(String url) {
-        def out = new ByteArrayOutputStream()
-        try {
-            out << new URL(url).openStream()
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
-        InputStream inputStream = new ByteArrayInputStream(out.toByteArray())
-        return ImageIO.read(inputStream)
-    }
 
     /**
      * Response an image as a HTTP response

@@ -18,8 +18,6 @@ class AbstractImageService extends ModelService {
 
     static transactional = false
 
-    static final int MIN_REQUESTED_CROP_SIZE = 8
-
     def commandService
     def cytomineService
     def imagePropertiesService
@@ -247,39 +245,6 @@ class AbstractImageService extends ModelService {
             return previewURL
         } catch (Exception e) {
             log.error("GetThumb:" + e)
-        }
-    }
-
-    /**
-     * Get annotation crop from this image
-     */
-    def cropWithMaxSize(AnnotationDomain annotation, int maxSize) {
-        return annotation.toCropURLWithMaxSize(maxSize)
-    }
-
-    /**
-     * Get annotation crop from this image
-     */
-    def crop(AnnotationDomain annotation, Integer zoom) {
-        def boundaries = annotation.getBoundaries()
-        if (zoom != null) {
-            int desiredWidth = boundaries.width / Math.pow(2, zoom)
-            int desiredHeight = boundaries.height / Math.pow(2, zoom)
-            println "desiredWidth=$desiredWidth"
-            println "desiredHeight=$desiredHeight"
-            /* find the nearest acceptable zoom */
-            while (desiredWidth < MIN_REQUESTED_CROP_SIZE && desiredHeight < MIN_REQUESTED_CROP_SIZE) {
-                zoom--
-                desiredWidth = boundaries.width / Math.pow(2, zoom)
-                desiredHeight = boundaries.height / Math.pow(2, zoom)
-                println "###"
-                println "->desiredWidth=$desiredWidth"
-                println "->desiredHeight=$desiredHeight"
-                println "###"
-            }
-            return cropWithMaxSize(annotation, Math.max(desiredHeight, desiredWidth))
-        } else {
-            return annotation.toCropURL()
         }
     }
 

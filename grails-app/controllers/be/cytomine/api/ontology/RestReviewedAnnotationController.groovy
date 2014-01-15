@@ -17,6 +17,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.Task
 import grails.converters.JSON
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 
 /**
@@ -37,7 +39,7 @@ class RestReviewedAnnotationController extends RestController {
     def taskService
     def exportService
     def reportService
-
+    def imageProcessingService
 
     /**
      * List all reviewed annotation available for the user
@@ -76,6 +78,16 @@ class RestReviewedAnnotationController extends RestController {
         }
         else {
             responseNotFound("ReviewedAnnotation", params.id)
+        }
+    }
+
+    def alphamaskReviewedAnnotation = {
+        try {
+            def annotation = ReviewedAnnotation.read(params.annotation)
+            def cropURL = imageProcessingService.alphamask(annotation,params)
+            responseBufferedImage(cropURL)
+        } catch (Exception e) {
+            log.error("GetThumb:" + e)
         }
     }
 
@@ -433,5 +445,38 @@ class RestReviewedAnnotationController extends RestController {
     def downloadDocumentByProject = {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"REVIEWEDANNOTATION")
     }
+
+
+
+    /**
+     * Get annotation review crop (image area that frame annotation)
+     * (Use this service if you know the annotation type)
+     */
+    def cropReviewedAnnotation = {
+        try {
+            def annotation = ReviewedAnnotation.read(params.id)
+            if(!params.getBoolean('draw')) {
+                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
+                responseImage(cropURL)
+            } else {
+                def value = params.max_size
+                params.max_size=null
+                def cropURL = imageProcessingService.getCropAnnotationURL(annotation,params)
+                BufferedImage image = ImageIO.read(new URL(cropURL));
+                if(value && image.width>Integer.parseInt(value) && image.height>Integer.parseInt(value)) {
+                    image = imageProcessingService.scaleImage(image,Integer.parseInt(value),Integer.parseInt(value))
+                }
+                image = imageProcessingService.createCropWithDraw(annotation,image)
+                responseBufferedImage(image);
+            }
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }catch (Exception e) {
+            log.error("GetThumbx:" + e)
+        }
+    }
+
 
 }

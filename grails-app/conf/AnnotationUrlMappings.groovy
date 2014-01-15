@@ -37,6 +37,17 @@ class AnnotationUrlMappings {
         "/api/simplify.$format"(controller:"restAnnotationDomain"){
             action = [PUT:"retrieveSimplify",POST:"retrieveSimplify"]
         }
+        //a supprimer
+        "/api/annotation/$id/$zoom/crop.$format"(controller: "restAnnotationDomain"){
+            action = [GET:"cropAnnotation"]
+        }
+        "/api/annotation/$id/crop.$format"(controller: "restAnnotationDomain"){
+            action = [GET:"cropAnnotation"]
+        }
+        //a supprimer
+        "/api/annotation/$id/cropMin.$format"(controller: "restAnnotationDomain"){
+            action = [GET:"cropAnnotationMin"]
+        }
 
 
 
@@ -49,6 +60,23 @@ class AnnotationUrlMappings {
         "/api/userannotation/$id.$format"(controller:"restUserAnnotation"){
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
+        "/api/userannotation/$annotation/alphamask-$term.$format"(controller: "restUserAnnotation"){
+            action = [GET:"alphamaskUserAnnotation"]
+        }
+        "/api/user/$id/userannotation/count.$format"(controller:"restUserAnnotation"){
+            action = [GET: "countByUser"]
+        }
+        "/api/userannotation/$annotation/mask-$term.$format"(controller: "restUserAnnotation"){
+            action = [GET:"cropmask"]
+        }
+        //a supprimer
+        "/api/userannotation/$id/$zoom/crop.$format"(controller: "restUserAnnotation"){
+            action = [GET:"cropUserAnnotation"]
+        }
+        "/api/userannotation/$id/crop.$format"(controller: "restUserAnnotation"){
+            action = [GET:"cropUserAnnotation"]
+        }
+
 
 
 
@@ -73,6 +101,7 @@ class AnnotationUrlMappings {
             action = [GET:"listSimilarAnnotationAndBestTerm"]
         }
 
+
         /**
          * Algo Annotation
          */
@@ -86,6 +115,17 @@ class AnnotationUrlMappings {
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
+        "/api/algoannotation/$annotation/alphamask-$term.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"alphamaskAlgoAnnotation"]
+        }
+        //a supprimer
+        "/api/algoannotation/$id/$zoom/crop.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"cropAlgoAnnotation"]
+        }
+        "/api/algoannotation/$id/crop.$format"(controller: "restAlgoAnnotation"){
+            action = [GET:"cropAlgoAnnotation"]
+        }
+
 
 
         /**
@@ -93,6 +133,25 @@ class AnnotationUrlMappings {
          */
         "/api/annotationcorrection.$format"(controller:"restAnnotationDomain"){
             action = [POST:"addCorrection"]
+        }
+
+
+
+        /**
+         * Review annotation
+         */
+        "/api/user/$id/reviewedannotation/count.$format"(controller:"restReviewedAnnotation"){
+            action = [GET: "countByUser"]
+        }
+        "/api/reviewedannotation/$annotation/alphamask-$term.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"alphamaskReviewedAnnotation"]
+        }
+        //a supprimer
+        "/api/reviewedannotation/$id/$zoom/crop.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"cropReviewedAnnotation"]
+        }
+        "/api/reviewedannotation/$id/crop.$format"(controller: "restReviewedAnnotation"){
+            action = [GET:"cropReviewedAnnotation"]
         }
 
         /**
@@ -105,22 +164,17 @@ class AnnotationUrlMappings {
             action = [GET:"downloadDocumentByProject"]
         }
         "/api/project/$id/annotation/download"(controller: "restAnnotationDomain"){
-              action = [GET:"downloadDocumentByProject"]
-          }
+            action = [GET:"downloadDocumentByProject"]
+        }
         "/api/imageinstance/$idImage/annotation/included.$format"(controller:"restAnnotationDomain"){
-                action = [GET: "listIncludedAnnotation"]
-         }
+            action = [GET: "listIncludedAnnotation"]
+        }
         "/api/imageinstance/$idImage/annotation/included/download"(controller: "restAnnotationDomain"){
             action = [GET:"downloadIncludedAnnotation"]
         }
 
 
-        "/api/user/$id/userannotation/count.$format"(controller:"restUserAnnotation"){
-            action = [GET: "countByUser"]
-        }
-        "/api/user/$id/reviewedannotation/count.$format"(controller:"restReviewedAnnotation"){
-            action = [GET: "countByUser"]
-        }
+
 
     }
 }

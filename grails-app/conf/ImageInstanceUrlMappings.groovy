@@ -32,18 +32,7 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/mask.$format"(controller: "restImageInstance"){
             action = [GET:"mask", POST : "putMask"]
         }
-        "/api/userannotation/$annotation/mask-$term.$format"(controller: "restImageInstance"){
-            action = [GET:"cropmask"]
-        }
-        "/api/userannotation/$annotation/alphamask-$term.$format"(controller: "restImageInstance"){
-            action = [GET:"alphamaskUserAnnotation"]
-        }
-        "/api/algoannotation/$annotation/alphamask-$term.$format"(controller: "restImageInstance"){
-            action = [GET:"alphamaskAlgoAnnotation"]
-        }
-        "/api/reviewedannotation/$annotation/alphamask-$term.$format"(controller: "restImageInstance"){
-            action = [GET:"alphamaskReviewedAnnotation"]
-        }
+
         "/api/project/$id/imageinstance.$format"(controller: "restImageInstance"){
             action = [GET:"listByProject"]
         }
@@ -69,7 +58,7 @@ class ImageInstanceUrlMappings {
         }
 
         "/api/imageinstance/$idImage/nested.$format"(controller: "restNestedImageInstance"){
-            action = [POST:"add",GET : "listByImageInstance"]
+            action = [POST:"add", GET : "listByImageInstance"]
         }
         "/api/imageinstance/$idImage/nested/$id.$format"(controller: "restNestedImageInstance"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
