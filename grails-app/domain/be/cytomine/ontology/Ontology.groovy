@@ -15,7 +15,7 @@ import org.jsondoc.core.annotation.ApiObjectField
  * An ontology is a list of term
  * Each term may be link to other term with a special relation (parent, synonym,...)
  */
-@ApiObject(name = "ontology")
+//@ApiObject(name = "ontology")
 class Ontology extends CytomineDomain implements Serializable {
 
     @ApiObjectField(description = "The name of the ontology")

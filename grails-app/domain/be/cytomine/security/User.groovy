@@ -9,7 +9,7 @@ import org.jsondoc.core.annotation.ApiObjectField
 /**
  * A cytomine human user
  */
-@ApiObject(name = "user")
+//@ApiObject(name = "user")
 class User extends SecUser {
 
     transient springSecurityService

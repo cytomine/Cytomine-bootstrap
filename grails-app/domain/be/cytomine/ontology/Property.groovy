@@ -9,7 +9,7 @@ import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
 
-@ApiObject(name = "property", description = "Allow to attach any property to a domain", show = true)
+//@ApiObject(name = "property", description = "Allow to attach any property to a domain", show = true)
 class Property extends CytomineDomain implements Serializable{
 
     @ApiObjectField(description = "The domain class")

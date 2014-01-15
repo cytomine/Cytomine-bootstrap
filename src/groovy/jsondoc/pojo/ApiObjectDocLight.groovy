@@ -10,6 +10,7 @@ import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.pojo.*
 
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 /**
  * ApiMethodDocLight must be used instead of ApiMethodDoc to use a light rest api doc
@@ -27,7 +28,7 @@ public class ApiObjectDocLight {
         Map<String,Map<String,String>> annotationsMap = new HashMap<String,Map<String,String>>()
 
         def domain = Holders.getGrailsApplication().getDomainClasses().find {
-            it.shortName.equals("Project")
+            it.shortName.equals(clazz.simpleName)
         }
         println "domain=$domain"
 
@@ -35,8 +36,12 @@ public class ApiObjectDocLight {
         fillAnnotationMap(domain.clazz,annotationsMap)
         fillAnnotationMap(domain.clazz.superclass,annotationsMap)
 
-        //build map with json
-        def jsonMap = Project.getDataFromDomain(null)
+        //build map with json by calling getDataFromDomain
+        Method m = clazz.getDeclaredMethod("getDataFromDomain", Object);
+        def arrayWithNull = new String[1]
+        arrayWithNull[0] = null
+        Object o = m.invoke(null,arrayWithNull );
+        def jsonMap = o
 
         jsonMap.each {
             def metadata = annotationsMap.get(it.key)

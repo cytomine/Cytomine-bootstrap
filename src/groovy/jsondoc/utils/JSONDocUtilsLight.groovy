@@ -78,19 +78,26 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     apiMethodDoc.setHeaders(ApiHeaderDoc.buildFromAnnotation(method.getAnnotation(ApiHeaders.class)));
                 }
 
+                def queryParameters = []
                 if(method.isAnnotationPresent(ApiParams.class)) {
 
                     def urlParams = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.PATH)
                     apiMethodDoc.setPathparameters(urlParams.minus(null));
 
-                    def queryParameters = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.QUERY)
-                    if(method.getAnnotation(ApiMethodLight.class).listing()) {
-                        queryParameters.add(new ApiParamDoc("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
-                        queryParameters.add(new ApiParamDoc("offset", "Pagination: Page number (default 0 = first page)", "int", "false", new String[0], ""))
-                    }
-                    println "queryParameters=$queryParameters"
-                    apiMethodDoc.setQueryparameters(queryParameters.minus(null));
+                    queryParameters = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.QUERY)
                 }
+
+                if(method.getAnnotation(ApiMethodLight.class).listing()) {
+                    queryParameters.add(new ApiParamDoc("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
+                    queryParameters.add(new ApiParamDoc("offset", "Pagination: Offset of first record (default 0 = first record)", "int", "false", new String[0], ""))
+                }
+                println "queryParameters=$queryParameters"
+
+                apiMethodDoc.setQueryparameters(queryParameters.minus(null));
+
+
+
+
 
                 if(method.isAnnotationPresent(ApiBodyObject.class)) {
                     apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObject.class)));

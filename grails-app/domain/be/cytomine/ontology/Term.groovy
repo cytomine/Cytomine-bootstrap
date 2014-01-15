@@ -14,7 +14,7 @@ import org.jsondoc.core.annotation.ApiObjectField
  * A term is a class that can be link to an annotation
  * A term is a part of ontology (list/tree of terms)
  */
-@ApiObject(name = "term", description = "Term description", show = true)
+//@ApiObject(name = "term", description = "Term description", show = true)
 class Term extends CytomineDomain implements Serializable, Comparable {
 
     @ApiObjectField(description = "The name of the term")

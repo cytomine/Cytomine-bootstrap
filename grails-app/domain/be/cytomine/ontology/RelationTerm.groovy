@@ -11,7 +11,7 @@ import org.jsondoc.core.annotation.ApiObjectField
 /**
  * Relation between a term 1 and a term 2
  */
-@ApiObject(name = "relationTerm", description = "Relation Term description", show = true)
+//@ApiObject(name = "relationTerm", description = "Relation Term description", show = true)
 class RelationTerm extends CytomineDomain implements Serializable {
 
     static names = [PARENT: "parent", SYNONYM: "synonyme"]

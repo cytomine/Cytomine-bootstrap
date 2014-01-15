@@ -10,7 +10,7 @@ import org.jsondoc.core.annotation.ApiObjectField
  * Cytomine user.
  * Its the parent class for "user" (human) and "user job" (algo).
  */
-@ApiObject(name = "user")
+//@ApiObject(name = "user")
 class SecUser extends CytomineDomain implements Serializable {
 
     @ApiObjectField(description = "The username of the user")

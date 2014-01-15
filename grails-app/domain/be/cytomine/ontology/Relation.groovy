@@ -9,7 +9,7 @@ import org.jsondoc.core.annotation.ApiObjectField
 /**
  * A relation between terms (e.g. term1 PARENT term2)
  */
-@ApiObject(name = "relation", description = "Type of relation between two terms", show = true)
+//@ApiObject(name = "relation", description = "Type of relation between two terms", show = true)
 class Relation extends CytomineDomain implements Serializable {
 
     @ApiObjectField(description = "The name of the relation")
