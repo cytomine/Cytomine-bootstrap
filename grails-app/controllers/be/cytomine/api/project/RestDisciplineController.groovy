@@ -17,11 +17,6 @@ import org.jsondoc.core.pojo.ApiParamType
 class RestDisciplineController extends RestController {
 
     def disciplineService
-
-    def currentDomain() {
-        Discipline
-    }
-
     /**
      * List all discipline
      */

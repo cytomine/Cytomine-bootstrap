@@ -5,7 +5,9 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,9 +16,13 @@ import org.apache.log4j.Logger
  * Time: 8:33
  * A group of image with diff dimension
  */
+@ApiObject(name = "imageGroup")
 class ImageGroup extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The name of the project")
     String name
+
+    @ApiObjectFieldLight(description = "The image group project")
     Project project
 
     static constraints = {
@@ -68,15 +74,20 @@ class ImageGroup extends CytomineDomain implements Serializable {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageGroup.class)
         JSON.registerObjectMarshaller(ImageGroup) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['project'] = it.project?.id
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            return returnArray
+            getDataFromDomain(it)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        returnArray['project'] = domain?.project?.id
+        return returnArray
     }
 
     /**

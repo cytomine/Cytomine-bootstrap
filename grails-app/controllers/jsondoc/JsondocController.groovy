@@ -3,6 +3,7 @@ package jsondoc
 import grails.converters.JSON
 import jsondoc.utils.BuildPathMap
 import jsondoc.utils.RulesLight
+import org.reflections.Reflections
 
 class JsondocController {
 
@@ -24,6 +25,18 @@ class JsondocController {
         APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
     }
 
+    def listdocClass() {
+        Reflections reflections = new Reflections("be.cytomine.api.doc");
+
+        reflections.get
+
+        Set<Class<? extends Object>> allClasses =
+                reflections.getSubTypesOf(Object.class);
+        println "allClasses=$allClasses"
+        allClasses.each {
+            println it
+        }
+    }
 
 //    def build2() {
 //

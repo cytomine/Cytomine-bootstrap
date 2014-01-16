@@ -22,10 +22,15 @@ public class ApiObjectDocLight {
 
     @SuppressWarnings("rawtypes")
     public static ApiObjectDoc buildFromAnnotation(ApiObject annotation, Class clazz) {
+        buildFromAnnotation(annotation.name(),annotation.description(),clazz)
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static ApiObjectDoc buildFromAnnotation(String name, String description, Class clazz) {
         List<ApiObjectFieldDoc> fieldDocs = new ArrayList<ApiObjectFieldDoc>();
 
         //map that store: key=json field name and value = [type: field class, description: field desc,...]
-        Map<String,Map<String,String>> annotationsMap = new HashMap<String,Map<String,String>>()
+        Map<String,Map<String,String>> annotationsMap = new TreeMap<String,Map<String,String>>()
 
         def domain = Holders.getGrailsApplication().getDomainClasses().find {
             it.shortName.equals(clazz.simpleName)
@@ -33,36 +38,41 @@ public class ApiObjectDocLight {
         println "domain=$domain"
 
         //build map field (with super class too)
-        fillAnnotationMap(domain.clazz,annotationsMap)
-        fillAnnotationMap(domain.clazz.superclass,annotationsMap)
+        if(domain) {
+            fillAnnotationMap(domain.clazz,annotationsMap)
+            fillAnnotationMap(domain.clazz.superclass,annotationsMap)
+            //build map with json by calling getDataFromDomain
+            Method m = clazz.getDeclaredMethod("getDataFromDomain", Object);
+            def arrayWithNull = new String[1]
+            arrayWithNull[0] = null
+            Object o = m.invoke(null,arrayWithNull );
+            def jsonMap = o
 
-        //build map with json by calling getDataFromDomain
-        Method m = clazz.getDeclaredMethod("getDataFromDomain", Object);
-        def arrayWithNull = new String[1]
-        arrayWithNull[0] = null
-        Object o = m.invoke(null,arrayWithNull );
-        def jsonMap = o
+            jsonMap.each {
+                def metadata = annotationsMap.get(it.key)
+                def type = "Undefined"
+                def desc = "Undefined"
+                def useForCreation = false
+                def mandatory = false
+                def defaultValue = "Undefined"
+                def presentInResponse = true
 
-        jsonMap.each {
-            def metadata = annotationsMap.get(it.key)
-            def type = "Undefined"
-            def description = "Undefined"
-            def useForCreation = false
-            def mandatory = false
-            def defaultValue = "Undefined"
-            def presentInResponse = true
-
-            if(metadata) {
-                type = metadata.type
-                description = metadata.description
-                useForCreation = metadata.useForCreation
-                mandatory = metadata.mandatory
-                defaultValue = metadata.defaultValue
-                presentInResponse = metadata.presentInResponse
+                if(metadata) {
+                    type = metadata.type
+                    desc = metadata.description
+                    useForCreation = metadata.useForCreation
+                    mandatory = metadata.mandatory
+                    defaultValue = metadata.defaultValue
+                    presentInResponse = metadata.presentInResponse
+                }
+                println "Field " + it.key + " => " + type + " " + desc
+                fieldDocs.add(buildFieldDocs(it.key.toString(),desc,type,useForCreation,mandatory,defaultValue,presentInResponse));
+                annotationsMap.remove(it.key)
             }
-            println "Field " + it.key + " => " + type + " " + description
-            fieldDocs.add(buildFieldDocs(it.key.toString(),description,type,useForCreation,mandatory,defaultValue,presentInResponse));
-            annotationsMap.remove(it.key)
+
+        } else {
+            //custom response doc, don't use json
+            fillAnnotationMap(clazz,annotationsMap)
         }
 
         //not in json but defined in project domain
@@ -72,7 +82,7 @@ public class ApiObjectDocLight {
         }
 
 
-        return new ApiObjectDoc(annotation.name(), annotation.description(), fieldDocs);
+        return new ApiObjectDoc(name, description, fieldDocs);
     }
 
     static ApiObjectFieldDocLight buildFieldDocs(String name, String description, String type, Boolean useForCreation, Boolean mandatory, String defaultValue, Boolean presentInResponse) {

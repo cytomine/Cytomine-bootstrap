@@ -1,6 +1,9 @@
 package jsondoc.utils
 
+import be.cytomine.api.doc.CustomResponseDoc
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import jsondoc.pojo.ApiMethodDocLight
 import jsondoc.pojo.ApiObjectDocLight
 import org.jsondoc.core.util.JSONDocUtils
@@ -52,6 +55,21 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                 pojoDocs.add(pojoDoc);
             }
         }
+
+
+        //if response is not "standard" (with json) simply use CustomResponseDoc class
+        CustomResponseDoc customResponseDoc = new  CustomResponseDoc()
+
+        customResponseDoc.class.declaredFields.each { field ->
+            if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
+                def annotation = field.getAnnotation(ApiObjectFieldLight.class)
+                ApiObjectDoc pojoDoc = ApiObjectDocLight.buildFromAnnotation("["+field.name+"]", annotation.description(),customResponseDoc.class);
+                pojoDocs.add(pojoDoc);
+            }
+        }
+
+
+
         return pojoDocs;
     }
 

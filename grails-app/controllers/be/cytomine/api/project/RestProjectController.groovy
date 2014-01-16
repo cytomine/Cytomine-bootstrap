@@ -32,10 +32,6 @@ class RestProjectController extends RestController {
     def secUserService
     def dataSource
 
-    def currentDomain() {
-        Project
-    }
-
     /**
      * List all project available for the current user
      */
@@ -57,7 +53,7 @@ class RestProjectController extends RestController {
      */
     @ApiMethodLight(description="Get a project")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH)
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
     ])
     def show () {
         Project project = projectService.read(params.long('id'))
@@ -72,9 +68,6 @@ class RestProjectController extends RestController {
      * Add a new project to cytomine
      */
     @ApiMethodLight(description="Add a new project")
-    @ApiErrors(apierrors=[
-        @ApiError(code="409", description="Project with same name already exist")
-    ])
     def add() {
         log.info "Add project = $request.JSON"
         try {

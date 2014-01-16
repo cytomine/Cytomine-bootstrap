@@ -29,9 +29,10 @@ class RestController {
         def domain = currentDomain()
         if(domain) {
             Introspector.decapitalize(domain.simpleName)
-
         } else {
-            "undefined"
+            String domaineName = this.controllerName.replace("rest","")
+            domaineName = domaineName.replace("Controller","")
+            Introspector.decapitalize(domaineName)
         }
     }
 
