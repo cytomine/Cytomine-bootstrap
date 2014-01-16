@@ -93,23 +93,23 @@ class ImageServerAPI extends DomainAPI {
         return downloadImage(URL,username,password)
     }
 
-    static def maskUserAnnotation(Long idAnnotation, Long idTerm, String username, String password) {
+    static def maskUserAnnotation(Long idAnnotation,  String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask.jpg"
         return downloadImage(URL,username,password)
     }
 
-    static def maskUserAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask.jpg"
+    static def maskUserAnnotationAlpha(Long idAnnotation, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask.png"
         return downloadImage(URL,username,password)
     }
 
-    static def maskAlgoAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask-${idTerm}.jpg"
+    static def maskAlgoAnnotationAlpha(Long idAnnotation,  String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask.png"
         return downloadImage(URL,username,password)
     }
 
-    static def maskReviewedAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask.jpg"
+    static def maskReviewedAnnotationAlpha(Long idAnnotation, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask.png"
         return downloadImage(URL,username,password)
     }
 
