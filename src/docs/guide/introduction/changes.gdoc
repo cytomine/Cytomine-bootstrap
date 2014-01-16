@@ -10,7 +10,7 @@ Annotation crop service refactoring
 "/api/userannotation/$id/$zoom/crop.$format" | "/api/userannotation/$id/crop.$format?zoom=$zoom" |
 "/api/algoannotation/$id/$zoom/crop.$format" | "/api/algoannotation/$id/crop.$format?zoom=$zoom" |
 "/api/reviewedannotation/$id/$zoom/crop.$format" | "/api/reviewedannotation/$id/crop.$format?zoom=$zoom" |
-"/api/annotation/$id/cropMin.$format" | "/api/annotation/$id/crop.$format?maxSize=256" |
+"/api/annotation/$id/cropMin.$format" | "/api/annotation/$id/crop.$format?max_size=256" |
 "/api/userannotation/$id/crop-$term.$format" | "/api/userannotation/$id/crop.$format" | Term params deleted
 "/api/userannotation/$annotation/mask-$term.$format" | "/api/userannotation/$id/mask.$format" | Term params deleted
 "/api/reviewedannotation/$annotation/alphamask-$term.$format" | "/api/reviewedannotation/$id/alphamask.$format" | Term params deleted

@@ -47,7 +47,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def cropAnnotationMin(Long idAnnotation,Boolean draw, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?maxSize=256"  + (draw?"&draw=true":"" )
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?max_size=256"  + (draw?"&draw=true":"" )
         return downloadImage(URL,username,password)
     }
 
