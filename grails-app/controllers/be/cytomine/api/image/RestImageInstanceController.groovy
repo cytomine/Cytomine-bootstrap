@@ -1,11 +1,9 @@
 package be.cytomine.api.image
 
-
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
@@ -20,7 +18,6 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 
 import javax.imageio.ImageIO
-import java.awt.*
 import java.awt.image.BufferedImage
 
 /**

@@ -4,7 +4,6 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.Term
 import grails.converters.JSON
-import org.jsondoc.core.annotation.Api
 
 /**
  * Controller for relation between terms in ontology (ex: parent)

@@ -1,10 +1,7 @@
 package be.cytomine.image
 
-import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON

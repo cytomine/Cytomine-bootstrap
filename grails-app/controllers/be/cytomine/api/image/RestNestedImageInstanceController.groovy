@@ -1,24 +1,9 @@
 package be.cytomine.api.image
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.TooLongRequestException
-import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.*
-import be.cytomine.project.Project
-import be.cytomine.sql.ReviewedAnnotationListing
-import be.cytomine.utils.Description
-import be.cytomine.utils.GeometryUtils
-import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-
-import java.awt.*
-import java.awt.image.BufferedImage
 
 /**
  * Created by IntelliJ IDEA.

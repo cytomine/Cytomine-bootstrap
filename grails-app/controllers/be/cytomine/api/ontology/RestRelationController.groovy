@@ -2,13 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
-import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiError
-import org.jsondoc.core.annotation.ApiErrors
-import org.jsondoc.core.annotation.ApiMethod
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiParamType
 import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType

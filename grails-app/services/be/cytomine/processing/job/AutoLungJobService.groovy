@@ -15,7 +15,7 @@ class AutoLungJobService  extends AbstractJobService {
 
     static transactional = false
 
-    static rabbitQueue = 'jobQueue'
+    static final rabbitQueue = 'jobQueue'
 
     def cytomineService
     def commandService

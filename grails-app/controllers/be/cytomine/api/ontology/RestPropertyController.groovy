@@ -9,11 +9,7 @@ import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiError
-import org.jsondoc.core.annotation.ApiErrors
-import org.jsondoc.core.annotation.ApiMethod
-import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType
 

@@ -1,6 +1,5 @@
 package be.cytomine.command
 
-import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 

@@ -3,7 +3,6 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
 
 /**

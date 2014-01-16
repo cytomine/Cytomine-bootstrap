@@ -2,11 +2,7 @@ package be.cytomine.utils
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.Infos

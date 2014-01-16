@@ -1,17 +1,11 @@
 package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.project.Project
-import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.utils.JSONUtils
@@ -19,7 +13,6 @@ import grails.converters.JSON
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.text.SimpleDateFormat
 
 /**
  * Controller for annotation created by user

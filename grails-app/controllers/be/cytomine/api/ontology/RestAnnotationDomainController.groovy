@@ -24,8 +24,6 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
 
-import java.awt.Color
-import java.awt.image.BufferedImage
 import java.text.SimpleDateFormat
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION

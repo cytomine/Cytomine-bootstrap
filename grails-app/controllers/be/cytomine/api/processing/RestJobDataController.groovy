@@ -1,12 +1,10 @@
 package be.cytomine.api.processing
 
-import be.cytomine.Exception.ServerException
 import be.cytomine.api.RestController
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
 import be.cytomine.processing.JobDataBinaryValue
 import grails.converters.JSON
-import grails.util.GrailsUtil
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
 /**

@@ -14,7 +14,6 @@ import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovy.sql.Sql
 import groovyx.gpars.Asynchronizer
-import org.apache.catalina.core.ApplicationContext
 import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
@@ -30,8 +29,6 @@ class RetrievalService {
     static transactional = true
     def grailsApplication
     def dataSource
-
-    ApplicationContext applicationContext
 
     /**
      * Search similar annotation and best term for an annotation

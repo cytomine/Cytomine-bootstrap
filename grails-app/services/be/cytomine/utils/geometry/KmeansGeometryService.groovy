@@ -11,21 +11,21 @@ class KmeansGeometryService {
     def dataSource
     def annotationIndexService
 
-    public static int FULL = 3
-    public static int KMEANSFULL = 2
-    public static int KMEANSSOFT = 1
+    public static final int FULL = 3
+    public static final int KMEANSFULL = 2
+    public static final int KMEANSSOFT = 1
 
-    public static int ANNOTATIONSIZE1 = 0
-    public static int ANNOTATIONSIZE2 = 100
-    public static int ANNOTATIONSIZE3 = 2000
-    public static int ANNOTATIONSIZE4 = 10000
-    public static int ANNOTATIONSIZE5 = 100000
+    public static final int ANNOTATIONSIZE1 = 0
+    public static final int ANNOTATIONSIZE2 = 100
+    public static final int ANNOTATIONSIZE3 = 2000
+    public static final int ANNOTATIONSIZE4 = 10000
+    public static final int ANNOTATIONSIZE5 = 100000
 
-//    public static int ANNOTATIONSIZE1 = 0
-//    public static int ANNOTATIONSIZE2 = 50
-//    public static int ANNOTATIONSIZE3 = 100
-//    public static int ANNOTATIONSIZE4 = 300
-//    public static int ANNOTATIONSIZE5 = 400
+//    public static final int ANNOTATIONSIZE1 = 0
+//    public static final int ANNOTATIONSIZE2 = 50
+//    public static final int ANNOTATIONSIZE3 = 100
+//    public static final int ANNOTATIONSIZE4 = 300
+//    public static final int ANNOTATIONSIZE5 = 400
 
 
     public static def rules = [

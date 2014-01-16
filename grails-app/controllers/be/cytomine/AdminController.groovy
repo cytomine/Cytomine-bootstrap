@@ -1,9 +1,6 @@
 package be.cytomine
 
 import be.cytomine.api.RestController
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.Term
-import be.cytomine.test.BasicInstanceBuilder
 import grails.plugins.springsecurity.Secured
 
 @Secured(['ROLE_ADMIN'])

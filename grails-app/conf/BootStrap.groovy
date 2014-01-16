@@ -1,24 +1,12 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.ImageInstance
-import be.cytomine.image.multidim.ImageGroup
-import be.cytomine.image.multidim.ImageSequence
-import be.cytomine.project.Project
-import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
-import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.utils.News
 import grails.util.Environment
-import jsondoc.APIUtils
 import jsondoc.JSONUtils
-import jsondoc.TimerMethods
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import java.lang.management.ManagementFactory
-import java.text.SimpleDateFormat
 
 /**
  * Bootstrap contains code that must be execute during application (re)start

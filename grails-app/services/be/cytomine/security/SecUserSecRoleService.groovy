@@ -6,8 +6,6 @@ import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.NestedImageInstance
 import be.cytomine.processing.Job
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task

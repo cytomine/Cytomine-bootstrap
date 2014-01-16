@@ -1,19 +1,9 @@
 package be.cytomine.utils
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.ViewPortToBuildXML
 import be.cytomine.api.UrlApi
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.sql.UserAnnotationListing

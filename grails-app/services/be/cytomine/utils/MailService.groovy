@@ -8,7 +8,7 @@ import javax.mail.internet.MimeMessage
 
 class MailService {
 
-    static String DEFAULT_EMAIL = "cytomine.ulg@gmail.com"
+    static final String DEFAULT_EMAIL = "cytomine.ulg@gmail.com"
 
     static transactional = false
 

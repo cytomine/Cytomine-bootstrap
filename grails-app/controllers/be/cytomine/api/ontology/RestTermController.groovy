@@ -4,16 +4,8 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-import be.cytomine.security.User
 import grails.converters.JSON
-import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
-import org.jsondoc.core.annotation.ApiError
-import org.jsondoc.core.annotation.ApiErrors
-import org.jsondoc.core.annotation.ApiMethod
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiParamType
 import org.jsondoc.core.pojo.ApiVerb
 import org.springframework.http.MediaType

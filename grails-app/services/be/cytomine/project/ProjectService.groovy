@@ -3,7 +3,6 @@ package be.cytomine.project
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.NestedImageInstance
 import be.cytomine.image.multidim.ImageGroup
