@@ -116,7 +116,7 @@ grails.project.dependency.resolution = {
         compile ":executor:0.3"
 		
  //       test ':code-coverage:1.2'
-        test ':code-coverage:1.2.6'
+        test ':code-coverage:1.2.7'
 
 //        compile (':jaxrs:0.8') {
 //            excludes 'spring-core', 'spring-beans', 'spring-context', 'spring-web', 'spring-aop'
