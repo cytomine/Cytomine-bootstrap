@@ -2,7 +2,9 @@ package be.cytomine.api.project
 
 import be.cytomine.api.RestController
 import be.cytomine.project.Discipline
+import be.cytomine.project.Project
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiError
@@ -24,19 +26,14 @@ class RestDisciplineController extends RestController {
 
     def disciplineService
 
+    def currentDomain() {
+        Discipline
+    }
+
     /**
      * List all discipline
      */
-    @ApiMethod(
-            path="/discipline.json",
-            verb=ApiVerb.GET,
-            description="Get discipline listing, according to your access",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiResponseObject(objectIdentifier = "discipline", multiple = "true")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    ])
+    @ApiMethodLight(description="Get discipline listing, according to your access", listing = true)
     def list () {
         responseSuccess(disciplineService.list())
     }
@@ -44,19 +41,9 @@ class RestDisciplineController extends RestController {
     /**
      * Get a single discipline
      */
-    @ApiMethod(
-            path="/discipline/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get a discipline",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Get a discipline")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiResponseObject(objectIdentifier = "discipline", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The discipline id")
     ])
     def show () {
         Discipline discipline = disciplineService.read(params.long('id'))
@@ -70,19 +57,7 @@ class RestDisciplineController extends RestController {
     /**
      * Add a new discipline
      */
-    @ApiMethod(
-            path="/discipline.json",
-            verb=ApiVerb.POST,
-            description="Add a new discipline",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiBodyObject(name="discipline")
-    @ApiResponseObject(objectIdentifier = "discipline", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden")
-    ])
+    @ApiMethodLight(description="Add a new discipline")
     def add () {
         add(disciplineService, request.JSON)
     }
@@ -90,22 +65,9 @@ class RestDisciplineController extends RestController {
     /**
      * Update a existing discipline
      */
-    @ApiMethod(
-            path="/discipline/{id}.json",
-            verb=ApiVerb.PUT,
-            description="Update a discipline",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Update a discipline")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiBodyObject(name="discipline")
-    @ApiResponseObject(objectIdentifier = "discipline", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def update () {
         update(disciplineService, request.JSON)
@@ -114,18 +76,9 @@ class RestDisciplineController extends RestController {
     /**
      * Delete discipline
      */
-    @ApiMethod(
-            path="/discipline/{id}.json",
-            verb=ApiVerb.DELETE,
-            description="Delete a discipline",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Delete a discipline")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def delete () {
         delete(disciplineService, JSON.parse("{id : $params.id}"),null)

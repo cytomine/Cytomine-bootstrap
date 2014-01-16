@@ -108,6 +108,7 @@ class JobSecurityTests extends SecurityTestsAbstract{
       job = result.data
 
       job = BasicInstanceBuilder.getJob()
+      job.refresh()
       job.project = project
       job.save(flush:true)
 

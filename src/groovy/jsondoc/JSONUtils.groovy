@@ -107,7 +107,7 @@ class JSONUtils {
             returnArray['produces'] = it.produces
             returnArray['consumes'] = it.consumes
             returnArray['headers'] = it.headers
-            returnArray['urlparameters'] = it.pathparameters
+            returnArray['pathparameters'] = it.pathparameters
             returnArray['queryparameters'] = it.queryparameters
             returnArray['bodyobject'] = it.bodyobject
             returnArray['response'] = it.response

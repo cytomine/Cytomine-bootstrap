@@ -75,13 +75,21 @@ class Property extends CytomineDomain implements Serializable{
      * Define fields available for JSON response
      * This Method is called during application start
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Relation <<< " + getMappingFromAnnotation(Property)
-        JSON.registerObjectMarshaller(Property) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(Property))
+    static void registerMarshaller(){
+        JSON.registerObjectMarshaller(Property){
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['id'] = it.id
+            returnArray['domainIdent'] = it.domainIdent
+            returnArray['domainClassName'] = it.domainClassName
+            returnArray['key'] = it.key
+            returnArray['value'] = it.value
+            returnArray['created'] = it.created?.time
+            returnArray['updated'] = it.updated?.time
+            return returnArray
         }
     }
+
 
 
     /**

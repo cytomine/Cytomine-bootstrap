@@ -95,10 +95,6 @@ public class JSONDocUtilsLight extends JSONDocUtils {
 
                 apiMethodDoc.setQueryparameters(queryParameters.minus(null));
 
-
-
-
-
                 if(method.isAnnotationPresent(ApiBodyObject.class)) {
                     apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObject.class)));
                 } else if(verb.equals("POST") || verb.equals("PUT")) {

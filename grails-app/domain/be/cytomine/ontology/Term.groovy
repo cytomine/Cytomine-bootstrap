@@ -119,56 +119,78 @@ class Term extends CytomineDomain implements Serializable, Comparable {
     }
 
 
+//    /**
+//     * Define fields available for JSON response
+//     * This Method is called during application start
+//     */
+//    static void registerMarshaller() {
+//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+//        println "<<< mapping from Term <<< " + getMappingFromAnnotation(Term)
+//        JSON.registerObjectMarshaller(Term) { domain ->
+//            return getDataFromDomain(domain, getMappingFromAnnotation(Term))
+//        }
+//    }
+
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Term <<< " + getMappingFromAnnotation(Term)
-        JSON.registerObjectMarshaller(Term) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(Term))
-        }
-    }
-
-
-    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
-
-        /* base fields + api fields */
-        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
-
-        /* supplementary fields : which are NOT used in insertDataIntoDomain !
-        * Typically, these fields are shortcuts or supplementary information
-        * from other domains
-        * ::to do : hide these fields if not GUI ?
-        * */
-
-//        try {json['rate'] = domain.rate} catch (Exception e) {log.info e}
-        RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(domain.id))
-        json['parent'] = rt?.term1?.id
-        return json
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller2() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
         JSON.registerObjectMarshaller(Term) {
-            def json = [:]
-            //returnArray['class'] = it.class
-            //returnArray['id'] = it.id
-            //returnArray['name'] = it.name
-            //returnArray['comment'] = it.comment
-            //returnArray['ontology'] = it.ontology?.id
-            try {json['rate'] = it.rate} catch (Exception e) {log.info e}
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            returnArray['comment'] = it.comment
+            returnArray['ontology'] = it.ontology?.id
+            try {returnArray['rate'] = it.rate} catch (Exception e) {log.info e}
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
-            json['parent'] = rt?.term1?.id
-            if (it.color) json['color'] = it.color
-            return json
+            returnArray['parent'] = rt?.term1?.id
+            if (it.color) returnArray['color'] = it.color
+            return returnArray
         }
     }
+
+
+//
+//    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
+//
+//        /* base fields + api fields */
+//        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+//
+//        /* supplementary fields : which are NOT used in insertDataIntoDomain !
+//        * Typically, these fields are shortcuts or supplementary information
+//        * from other domains
+//        * ::to do : hide these fields if not GUI ?
+//        * */
+//
+////        try {json['rate'] = domain.rate} catch (Exception e) {log.info e}
+//        RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(domain.id))
+//        json['parent'] = rt?.term1?.id
+//        return json
+//    }
+//
+//    /**
+//     * Define fields available for JSON response
+//     * This Method is called during application start
+//     */
+//    static void registerMarshaller2() {
+//        Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
+//        JSON.registerObjectMarshaller(Term) {
+//            def json = [:]
+//            //returnArray['class'] = it.class
+//            //returnArray['id'] = it.id
+//            //returnArray['name'] = it.name
+//            //returnArray['comment'] = it.comment
+//            //returnArray['ontology'] = it.ontology?.id
+//            try {json['rate'] = it.rate} catch (Exception e) {log.info e}
+//            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
+//            json['parent'] = rt?.term1?.id
+//            if (it.color) json['color'] = it.color
+//            return json
+//        }
+//    }
 
     public boolean equals(Object o) {
         if (!o) {

@@ -72,7 +72,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
         return domain;
     }
 
-    static void registerMarshaller2() {
+    static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + RelationTerm.class)
         JSON.registerObjectMarshaller(RelationTerm) {
             def returnArray = [:]
@@ -85,18 +85,18 @@ class RelationTerm extends CytomineDomain implements Serializable {
             return returnArray
         }
     }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Term <<< " + getMappingFromAnnotation(RelationTerm)
-        JSON.registerObjectMarshaller(RelationTerm) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(RelationTerm))
-        }
-    }
+//
+//    /**
+//     * Define fields available for JSON response
+//     * This Method is called during application start
+//     */
+//    static void registerMarshaller() {
+//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+//        println "<<< mapping from Term <<< " + getMappingFromAnnotation(RelationTerm)
+//        JSON.registerObjectMarshaller(RelationTerm) { domain ->
+//            return getDataFromDomain(domain)
+//        }
+//    }
 
 
     /**

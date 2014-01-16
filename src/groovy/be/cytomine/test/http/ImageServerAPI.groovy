@@ -37,7 +37,7 @@ class ImageServerAPI extends DomainAPI {
 
 
     static def cropGeometryZoom(Long idAnnotation, int zoom,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/$zoom/crop.json"
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.json?zoom=$zoom"
         return downloadImage(URL,username,password)
     }
 
@@ -47,7 +47,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def cropAnnotationMin(Long idAnnotation,Boolean draw, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/cropMin.jpg?"  + (draw?"&draw=true":"" )
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?maxSize=256"  + (draw?"&draw=true":"" )
         return downloadImage(URL,username,password)
     }
 
@@ -56,7 +56,7 @@ class ImageServerAPI extends DomainAPI {
         return downloadImage(URL,username,password)
     }
     static def cropUserAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/$zoom/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
@@ -65,7 +65,7 @@ class ImageServerAPI extends DomainAPI {
         return downloadImage(URL,username,password)
     }
     static def cropAlgoAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/$zoom/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
@@ -74,7 +74,7 @@ class ImageServerAPI extends DomainAPI {
         return downloadImage(URL,username,password)
     }
     static def cropReviewedAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/$zoom/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
@@ -94,12 +94,12 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def maskUserAnnotation(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask-${idTerm}.jpg"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def maskUserAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask-${idTerm}.jpg"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask.jpg"
         return downloadImage(URL,username,password)
     }
 
@@ -109,7 +109,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def maskReviewedAnnotationAlpha(Long idAnnotation, Long idTerm, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask-${idTerm}.jpg"
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask.jpg"
         return downloadImage(URL,username,password)
     }
 

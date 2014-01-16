@@ -27,15 +27,30 @@ class Relation extends CytomineDomain implements Serializable {
         return name
     }
 
+//    /**
+//     * Define fields available for JSON response
+//     * This Method is called during application start
+//     */
+//    static void registerMarshaller() {
+//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+//        println "<<< mapping from Relation <<< " + getMappingFromAnnotation(Relation)
+//        JSON.registerObjectMarshaller(Relation) { domain ->
+//            return getDataFromDomain(domain, getMappingFromAnnotation(Relation))
+//        }
+//    }
+
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        println "<<< mapping from Relation <<< " + getMappingFromAnnotation(Relation)
-        JSON.registerObjectMarshaller(Relation) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(Relation))
+        Logger.getLogger(this).info("Register custom JSON renderer for " + Relation.class)
+        JSON.registerObjectMarshaller(Relation) {
+            def returnArray = [:]
+            returnArray['class'] = it.class
+            returnArray['id'] = it.id
+            returnArray['name'] = it.name
+            return returnArray
         }
     }
 
