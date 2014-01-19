@@ -37,7 +37,8 @@ class BootstrapTestDataService {
                 [extension : 'tiff', mimeType : 'image/tiff'],
                 [extension : 'svs', mimeType : 'openslide/svs'],
                 [extension : 'jp2', mimeType : 'image/jp2'],
-                [extension : 'scn', mimeType : 'openslide/scn']
+                [extension : 'scn', mimeType : 'openslide/scn'],
+                [extension : 'ndpi', mimeType : 'openslide/ndpi']
         ]
         bootstrapUtilsService.createMimes(mimeSamples)
         bootstrapUtilsService.createMimeImageServers()

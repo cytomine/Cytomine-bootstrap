@@ -104,8 +104,8 @@ grails.project.dependency.resolution = {
         //runtime ':fields:1.3'
         runtime ':twitter-bootstrap:2.0.4'
         runtime ":rabbitmq:1.0.0"
-        runtime ":quartz:1.0-RC9"
-        runtime ":quartz-monitor:0.3-RC1"
+        compile ":quartz:1.0.1"
+        runtime ":quartz-monitor:0.3-RC3"
   //      runtime ':rest:0.7'
         runtime ':cache:1.0.1'
         runtime ":database-migration:1.3.8"

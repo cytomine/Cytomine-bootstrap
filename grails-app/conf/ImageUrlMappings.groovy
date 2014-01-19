@@ -54,13 +54,13 @@ class ImageUrlMappings {
         }
 
 
-        "/api/image/$idImage/properties/clear.$format"(controller:"restUploadedFile"){
+        "/api/image/$id/properties/clear.$format"(controller:"restUploadedFile"){
             action = [POST:"clearProperties"]
         }
-        "/api/image/$idImage/properties/populate.$format"(controller:"restUploadedFile"){
+        "/api/image/$id/properties/populate.$format"(controller:"restUploadedFile"){
             action = [POST:"populateProperties"]
         }
-        "/api/image/$idImage/properties/extract.$format"(controller:"restUploadedFile"){
+        "/api/image/$id/properties/extract.$format"(controller:"restUploadedFile"){
             action = [POST:"extractProperties"]
         }
 

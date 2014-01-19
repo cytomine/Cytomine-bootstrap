@@ -59,6 +59,7 @@ class ImagePropertiesService implements Serializable{
     }
 
     def extractUseful(AbstractImage image) {
+        println "image=$image"
         switch (image.getMime().extension) {
             case "mrxs":
                 extractUsefulMrxs(image)
@@ -80,6 +81,10 @@ class ImagePropertiesService implements Serializable{
                 break;
             case "scn":
                 extractUsefulSCN(image)
+            case "ndpi":
+                extractUsefulTif(image)
+            default:
+                extractUsefulNDPI(image)
 
         }
         image.save(flush:true, failOnError: true)
@@ -211,6 +216,29 @@ class ImagePropertiesService implements Serializable{
         log.info "heightProperty="+heightProperty
         //openslide.mpp-x
         def resolutionProperty = ImageProperty.findByImageAndKey(image, "aperio.MPP")
+        if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
+        log.info "resolutionProperty="+resolutionProperty
+
+    }
+
+    private def extractUsefulNDPI(AbstractImage image) {
+        log.info "extract properties from svs : " + image.getFilename()
+        def magnificationProperty = ImageProperty.findByImageAndKey(image, "hamamatsu.SourceLens")
+        log.info "magnificationProperty="+magnificationProperty
+        if (magnificationProperty) {
+            def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
+            image.setMagnification(value.toInteger())
+        }
+        //Width openslide.level[0].width
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
+        if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
+        log.info "widthProperty="+widthProperty
+        //Height openslide.level[0].height
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
+        if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
+        log.info "heightProperty="+heightProperty
+        //openslide.mpp-x
+        def resolutionProperty = ImageProperty.findByImageAndKey(image, "openslide.mpp-x")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
         log.info "resolutionProperty="+resolutionProperty
 

@@ -360,9 +360,9 @@ class RestAnnotationDomainController extends RestController {
 
     def downloadIncludedAnnotation = {
         println "downloadIncludedAnnotation"
-        def image = imageInstanceService.read(params.long('idImage'))
+        ImageInstance image = imageInstanceService.read(params.long('idImage'))
         def lists = getIncludedAnnotation(params,['basic','meta','gis','image','term'])
-        downloadPdf(lists,image.project)
+        downloadPdf(lists, image.project)
     }
 
 

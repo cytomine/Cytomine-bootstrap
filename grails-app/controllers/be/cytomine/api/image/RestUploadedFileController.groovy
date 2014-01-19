@@ -52,19 +52,19 @@ class RestUploadedFileController extends RestController {
     }
 
     def clearProperties = {
-        AbstractImage abstractImage = abstractImageService.read(params.long('idImage'))
+        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
        imagePropertiesService.clear(abstractImage)
         responseSuccess([:])
     }
 
     def populateProperties = {
-        AbstractImage abstractImage = abstractImageService.read(params.long('idImage'))
+        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.populate(abstractImage)
         responseSuccess([:])
     }
 
     def extractProperties = {
-        AbstractImage abstractImage = abstractImageService.read(params.long('idImage'))
+        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.extractUseful(abstractImage)
         responseSuccess([:])
     }

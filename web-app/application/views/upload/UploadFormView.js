@@ -1,7 +1,7 @@
 var UploadFormView = Backbone.View.extend({
 
     statusLabels: {
-        uploadedLabel: '<span class="label label-inverse">UPLOADED</span>',
+        uploadedLabel: '<span class="label label-default">UPLOADED</span>',
         errorFormatLabel: '<span class="label label-important">ERROR FORMAT</span>',
         convertedLabel: '<span class="label label-info">TO DEPLOY</span>',
         deployedLabel: '<span class="label label-success">DEPLOYED</span>',
@@ -88,7 +88,6 @@ var UploadFormView = Backbone.View.extend({
 //                    withCredentials: true
 //                },
                 beforeSend: function (xhr, req) {
-                    console.log('************');
 
                     //wait for request that get the signature from server
                     while(self.waitForSigned) {
@@ -149,7 +148,7 @@ var UploadFormView = Backbone.View.extend({
                         // Iframe Transport does not support progress events.
                         // In lack of an indeterminate progress bar, we set
                         // the progress to 100%, showing the full animated bar:
-                        data.context.find('.progressbar div').css(
+                        data.context.find('.progress-bar').css(
                             'width',
                             parseInt(100, 10) + '%'
                         );
@@ -242,10 +241,7 @@ var UploadFormView = Backbone.View.extend({
                 progress: function (e, data) {
                     console.log(data.context)
                     if (data.context) {
-                        console.log(data.loaded);
-                        console.log(data.total);
-                        console.log(data.loaded / data.total * 100+"%");
-                        data.context.find('.progressbar div').css(
+                        data.context.find('.progress-bar').css(
                             'width',
                             parseInt(data.loaded / data.total * 100, 10) + '%'
                         );
@@ -253,20 +249,23 @@ var UploadFormView = Backbone.View.extend({
                 },
                 // Callback for global upload progress events:
                 progressall: function (e, data) {
-                    $(this).find('.fileupload-progressbar div').css(
+
+                    $(this).find('.fileupload-progressbar').css(
                         'width',
                         parseInt(data.loaded / data.total * 100, 10) + '%'
                     );
                 },
                 // Callback for uploads start, equivalent to the global ajaxStart event:
                 start: function () {
+                    $(this).find('.fileupload-progressbar').parent().show();
                     $(this).find('.fileupload-progressbar')
-                        .addClass('in').find('div').css('width', '0%');
+                        .addClass('in').css('width', '0%');
                 },
                 // Callback for uploads stop, equivalent to the global ajaxStop event:
                 stop: function () {
+                    $(this).find('.fileupload-progressbar').parent().hide();
                     $(this).find('.fileupload-progressbar')
-                        .removeClass('in').find('div').css('width', '0%');
+                        .removeClass('in').css('width', '0%');
                 },
                 // Callback for file deletion:
                 destroy: function (e, data) {
