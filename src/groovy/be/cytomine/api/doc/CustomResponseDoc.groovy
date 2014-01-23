@@ -22,5 +22,15 @@ class CustomResponseDoc {
      ])
     static def sequence_possibilties
 
-
+    //If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
+    @ApiObjectFieldLight(description = "Response for project sharing the same image (list)")
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "imageinstanceId", description = "Image id",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "layerId", description = "User id",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "layerName", description = "User name",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "projectId", description = "Project id",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "projectName", description = "Project name",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "admin", description = "User is admin or not",allowedType = "boolean",useForCreation = false),
+    ])
+    static def project_sharing_same_image
 }

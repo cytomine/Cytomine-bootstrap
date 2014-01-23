@@ -8,7 +8,10 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,31 +20,64 @@ import org.apache.log4j.Logger
  * Time: 8:33
  * An ImageInstance is an image map with a project
  */
+@ApiObject(name = "image instance")
 class ImageInstance extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The image linked to the project")
     AbstractImage baseImage
+
+    @ApiObjectFieldLight(description = "The project that keeps the image")
     Project project
+
+    @ApiObjectFieldLight(description = "The user that add the image to the project")
     SecUser user
+
+    @ApiObjectFieldLight(description = "The number of user annotation in the image", useForCreation = false, apiFieldName = "numberOfAnnotations")
     Long countImageAnnotations = 0L
+
+    @ApiObjectFieldLight(description = "The number of job annotation in the image", useForCreation = false, apiFieldName = "numberOfJobAnnotations")
     Long countImageJobAnnotations = 0L
+
+    @ApiObjectFieldLight(description = "The number of reviewed annotation in the image", useForCreation = false, apiFieldName = "numberOfReviewedAnnotations")
     Long countImageReviewedAnnotations = 0L
 
     //stack stuff
+    //TODO:APIDOC still used?
     Integer zIndex
+
+    //TODO:APIDOC still used?
     Integer channel
 
+    @ApiObjectFieldLight(description = "The start review date", useForCreation = false)
     Date reviewStart
+
+    @ApiObjectFieldLight(description = "The stop review date", useForCreation = false)
     Date reviewStop
+
+    @ApiObjectFieldLight(description = "The user who reviewed (or still reviewing) this image", useForCreation = false)
     SecUser reviewUser
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "resolution", description = "Abstract image resolution (see Abstract Image)",allowedType = "double",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "magnification", description = "Abstract image magnification (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false)
+     ])
+    static transients = []
 
     static belongsTo = [AbstractImage, Project, User]
 
     static constraints = {
         baseImage(unique: ['project'])
         countImageAnnotations nullable: true
-
-        //stack stuff
-//        stack(nullable: true)
         zIndex(nullable: true) //order in z-stack referenced by stack
         channel(nullable: true)  //e.g. fluo channel
         reviewStart nullable: true
@@ -104,34 +140,31 @@ class ImageInstance extends CytomineDomain implements Serializable {
     
     static def getDataFromDomain(def image) {
 
-        def returnArray = [:]
-        returnArray['class'] = image.class
-        returnArray['id'] = image.id
-        returnArray['baseImage'] = image.baseImage?.id
-        returnArray['project'] = image.project?.id
-        returnArray['user'] = image.user?.id
-        returnArray['created'] = image.created?.time?.toString()
-        returnArray['updated'] = image.updated?.time?.toString()
-        returnArray['filename'] = image.baseImage.filename
-        returnArray['originalFilename'] = image.baseImage.originalFilename
-        returnArray['sample'] = image.baseImage.sample?.id
-        returnArray['path'] = image.baseImage.path
-        returnArray['mime'] = image.baseImage.mime?.extension
-        returnArray['width'] = image.baseImage.width
-        returnArray['height'] = image.baseImage.height
-        returnArray['resolution'] = image.baseImage.resolution
-        returnArray['magnification'] = image.baseImage.magnification
-        returnArray['depth'] = image.baseImage.getZoomLevels()?.max
+        def returnArray = CytomineDomain.getDataFromDomain(image)
+        println image
+        returnArray['baseImage'] = image?.baseImage?.id
+        returnArray['project'] = image?.project?.id
+        returnArray['user'] = image?.user?.id
+        returnArray['filename'] = image?.baseImage?.filename
+        returnArray['originalFilename'] = image?.baseImage?.originalFilename
+        returnArray['sample'] = image?.baseImage?.sample?.id
+        returnArray['path'] = image?.baseImage?.path
+        returnArray['mime'] = image?.baseImage?.mime?.extension
+        returnArray['width'] = image?.baseImage?.width
+        returnArray['height'] = image?.baseImage?.height
+        returnArray['resolution'] = image?.baseImage?.resolution
+        returnArray['magnification'] = image?.baseImage?.magnification
+        returnArray['depth'] = image?.baseImage?.getZoomLevels()?.max
         try {returnArray['preview'] = image.baseImage ? image.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
         try {returnArray['thumb'] = image.baseImage ? image.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
-        try {returnArray['numberOfAnnotations'] = image.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
-        try {returnArray['numberOfJobAnnotations'] = image.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
-        try {returnArray['numberOfReviewedAnnotations'] = image.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
-        returnArray['reviewStart'] = image.reviewStart ? image.reviewStart.time.toString() : null
-        returnArray['reviewStop'] = image.reviewStop ? image.reviewStop.time.toString() : null
-        returnArray['reviewUser'] = image.reviewUser?.id
-        returnArray['reviewed'] = image.isReviewed()
-        returnArray['inReview'] = image.isInReviewMode()
+        try {returnArray['numberOfAnnotations'] = image?.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
+        try {returnArray['numberOfJobAnnotations'] = image?.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
+        try {returnArray['numberOfReviewedAnnotations'] = image?.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}
+        returnArray['reviewStart'] = image?.reviewStart ? image.reviewStart?.time?.toString() : null
+        returnArray['reviewStop'] = image?.reviewStop ? image.reviewStop?.time?.toString() : null
+        returnArray['reviewUser'] = image?.reviewUser?.id
+        returnArray['reviewed'] = image?.isReviewed()
+        returnArray['inReview'] = image?.isInReviewMode()
         return returnArray
     }    
     

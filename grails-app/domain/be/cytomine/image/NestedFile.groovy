@@ -1,5 +1,7 @@
 package be.cytomine.image
 
+import jsondoc.annotation.ApiObjectFieldLight
+
 /**
  * Any secondary file related to an abstract image.
  * Useful for image formats like VMS/MRXS which are composed of many files

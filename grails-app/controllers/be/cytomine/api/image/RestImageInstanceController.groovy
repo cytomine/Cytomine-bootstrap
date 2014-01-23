@@ -16,6 +16,12 @@ import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiBodyObject
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -26,6 +32,7 @@ import java.awt.image.BufferedImage
  * Date: 18/05/11
  * Controller that handle request for project images.
  */
+@Api(name = "image instance services", description = "Methods for managing an abstract image in a project")
 class RestImageInstanceController extends RestController {
 
     def segmentationService
@@ -42,10 +49,16 @@ class RestImageInstanceController extends RestController {
     def cytomineService
     def taskService
     def annotationIndexService
+    def descriptionService
+    def propertyService
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
-    def show = {
+    @ApiMethodLight(description="Get an image instance")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
+    ])    
+    def show() {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
             responseSuccess(image)
@@ -54,11 +67,13 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    def listByUser = {
+    @ApiMethodLight(description="Get all image instance available for the current user", listing = true)
+    def listByUser() {
          responseSuccess(imageInstanceService.list(cytomineService.currentUser))
     }
 
-    def listLastOpenImage = {
+    @ApiMethodLight(description="Get the last opened image for the current user", listing = true)
+    def listLastOpenImage() {
         def offset = params.long('offset')
         def max =params.long('max')
         params.offset = 0
@@ -66,7 +81,15 @@ class RestImageInstanceController extends RestController {
         responseSuccess(imageInstanceService.listLastOpened(cytomineService.currentUser,offset,max))
     }
 
-    def listByProject = {
+    @ApiMethodLight(description="Get all image instance for a specific project", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="tree", type="boolean", paramType = ApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
+        @ApiParam(name="sortColumn", type="string", paramType = ApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
+        @ApiParam(name="sortDirection", type="string", paramType = ApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
+        @ApiParam(name="search", type="string", paramType = ApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
+    ])
+    def listByProject() {
         Project project = projectService.read(params.long('id'))
         if (project && !params.tree) {
             String sortColumn = params.sortColumn ? params.sortColumn : "created"
@@ -82,7 +105,11 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    def next = {
+    @ApiMethodLight(description="Get the next project image (first image created before)", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    ])
+    def next() {
         def image = imageInstanceService.read(params.long('id'))
         def next = ImageInstance.findAllByProjectAndCreatedLessThan(image.project,image.created,[sort:'created',order:'desc',max:1])
         if(next && !next.isEmpty()) {
@@ -92,7 +119,11 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    def previous = {
+    @ApiMethodLight(description="Get the previous project image (first image created after)", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    ])
+    def previous() {
         def image = imageInstanceService.read(params.long('id'))
         def previous = ImageInstance.findAllByProjectAndCreatedGreaterThan(image.project,image.created,[sort:'created',order:'asc',max:1])
         if(previous && !previous.isEmpty()) {
@@ -102,8 +133,8 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-
-    def add = {
+    @ApiMethodLight(description="Add a new image in a project")
+    def add() {
         try {
             responseResult(imageInstanceService.add(request.JSON))
         } catch (CytomineException e) {
@@ -112,15 +143,24 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    def update = {
+    @ApiMethodLight(description="Update an image instance")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    ])
+    def update() {
         update(imageInstanceService, request.JSON)
     }
 
-    def delete = {
+    @ApiMethodLight(description="Delete an image from a project)")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    ])
+    def delete() {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
     }
 
-    def windowUrl = {
+    //TODO:APIDOC
+    def windowUrl() {
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
         def boundaries = [:]
@@ -131,7 +171,8 @@ class RestImageInstanceController extends RestController {
         responseSuccess([url : abstractImage.getCropURL(boundaries)])
     }
 
-    def window = {
+    //TODO:APIDOC
+    def window() {
         //TODO:: document this method
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
@@ -161,7 +202,8 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    def cropGeometry = {
+    //TODO:APIDOC
+    def cropGeometry() {
         //TODO:: document this method
         String geometrySTR = params.geometry
         println params
@@ -171,7 +213,8 @@ class RestImageInstanceController extends RestController {
         responseBufferedImage(imageProcessingService.crop(annotation, params))
     }
 
-    def mask = {
+    //TODO:APIDOC
+    def mask() {
         println "mask"
         //TODO:: document this method
         //TODO:: make alphamask
@@ -246,14 +289,13 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-
-
-
-
-    def descriptionService
-    def propertyService
-
-    def copyMetadata = {
+    @ApiMethodLight(description="Copy image metadata (description, properties...) from an image to another one")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParam(name="based", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    ])
+    @ApiBodyObject(name = "empty")
+    def copyMetadata() {
         try {
             ImageInstance based = imageInstanceService.read(params.long('based'))
             ImageInstance image = imageInstanceService.read(params.long('id'))
@@ -285,13 +327,17 @@ class RestImageInstanceController extends RestController {
 
     }
 
-
-
     /**
      * Check if an abstract image is already map with one or more projects
      * If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
      */
-    def retrieveSameImageOtherProject = {
+    @ApiMethodLight(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
+    @ApiBodyObject(name = "[project_sharing_same_image]")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    ])
+    def retrieveSameImageOtherProject() {
         try {
             ImageInstance image = imageInstanceService.read(params.long('id'))
             Project project = projectService.read(params.long('project'))
@@ -314,7 +360,15 @@ class RestImageInstanceController extends RestController {
      * Params must be &layers=IMAGEINSTANCE1_USER1,IMAGE_INSTANCE1_USER2,... which will add annotation
      * from user/image from another project.
      */
-    def copyAnnotationFromSameAbstractImage = {
+    @ApiMethodLight(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
+    @ApiBodyObject(name = "[copy_annotation_image]")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
+        @ApiParam(name="giveMe", type="boolean", paramType = ApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
+        @ApiParam(name="layers", type="list (x1_y1,x2_y2,...)", paramType = ApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
+    ])
+    def copyAnnotationFromSameAbstractImage() {
         try {
             ImageInstance image = imageInstanceService.read(params.long('id'))
             SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)

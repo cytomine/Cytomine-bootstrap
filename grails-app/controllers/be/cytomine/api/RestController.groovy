@@ -2,6 +2,7 @@ package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.test.HttpClient
+import be.cytomine.utils.StringUtils
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.converters.XML
@@ -26,13 +27,16 @@ class RestController {
         return null
     }
     def currentDomainName() {
+        println "currentDomainName()"
         def domain = currentDomain()
         if(domain) {
             Introspector.decapitalize(domain.simpleName)
         } else {
-            String domaineName = this.controllerName.replace("rest","")
+
+            String domaineName = this.class.simpleName.replace("Rest","")
+            println "domaineName=$domaineName"
             domaineName = domaineName.replace("Controller","")
-            Introspector.decapitalize(domaineName)
+            StringUtils.splitCamelToBlank(Introspector.decapitalize(domaineName))
         }
     }
 

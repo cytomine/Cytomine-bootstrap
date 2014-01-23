@@ -12,6 +12,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
 
+//TODO:APIDOC
 class RestStorageController extends RestController {
 
     def cytomineService

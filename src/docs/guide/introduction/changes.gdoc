@@ -16,14 +16,16 @@ Annotation crop service refactoring
 "/api/reviewedannotation/$annotation/alphamask-$term.$format" | "/api/reviewedannotation/$id/alphamask.$format" | Term params deleted
 {table}
 
-h3. 2013122 Version
-
 Nested images support
 
 *SQL Changes*
 {code}
 alter table image_instance add column class varchar(255);
 update image_instance set class = 'be.cytomine.image.ImageInstance' where parent_id is null;
+{code}
+{code}
+ALTER TABLE command ALTER COLUMN action_message TYPE character varying(4096);
+ALTER TABLE command_history ALTER COLUMN message TYPE character varying(4096);
 {code}
 
 h3. 20131216 Version

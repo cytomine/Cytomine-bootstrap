@@ -26,7 +26,7 @@ public class ApiObjectDocLight {
     }
 
     @SuppressWarnings("rawtypes")
-    public static ApiObjectDoc buildFromAnnotation(String name, String description, Class clazz) {
+    public static ApiObjectDoc buildFromAnnotation(String name, String description, Class clazz, boolean custom = false) {
         List<ApiObjectFieldDoc> fieldDocs = new ArrayList<ApiObjectFieldDoc>();
 
         //map that store: key=json field name and value = [type: field class, description: field desc,...]
@@ -48,7 +48,9 @@ public class ApiObjectDocLight {
             Object o = m.invoke(null,arrayWithNull );
             def jsonMap = o
 
+            println jsonMap
             jsonMap.each {
+                println it
                 def metadata = annotationsMap.get(it.key)
                 def type = "Undefined"
                 def desc = "Undefined"
@@ -72,7 +74,7 @@ public class ApiObjectDocLight {
 
         } else {
             //custom response doc, don't use json
-            fillAnnotationMap(clazz,annotationsMap)
+            fillAnnotationMap(clazz,annotationsMap,name)
         }
 
         //not in json but defined in project domain
@@ -81,8 +83,7 @@ public class ApiObjectDocLight {
             fieldDocs.add(buildFieldDocs(it.key.toString(),value['description'],value['type'],value['useForCreation'],value['mandatory'],value['defaultValue'],false));
         }
 
-
-        return new ApiObjectDoc(name, description, fieldDocs);
+        return new ApiObjectDoc(custom ? "["+name+"]" : name, description, fieldDocs);
     }
 
     static ApiObjectFieldDocLight buildFieldDocs(String name, String description, String type, Boolean useForCreation, Boolean mandatory, String defaultValue, Boolean presentInResponse) {
@@ -99,21 +100,30 @@ public class ApiObjectDocLight {
     }
 
     //take clas and fill the map with field metadata (from annotation)
-    static void fillAnnotationMap(def domainClass, def annotationsMap) {
+    static void fillAnnotationMap(def domainClass, def annotationsMap,String fieldname=null) {
         domainClass.declaredFields.each { field ->
             println "fields="+field.name
-            if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
-                def annotation = field.getAnnotation(ApiObjectFieldLight.class)
-                addAnnotationToMap(annotationsMap,field,annotation)
-            }
-            if(field.isAnnotationPresent(ApiObjectFieldsLight.class)) {
-                def annotation = field.getAnnotation(ApiObjectFieldsLight.class)
-                annotation.params().each { apiObjectFieldsLight ->
-                    addAnnotationToMap(annotationsMap,field,apiObjectFieldsLight)
+            if(fieldname==null || field.name.equals(fieldname)) {
+
+                if(fieldname==null) {
+                    //if fieldname!=null => custom field from CustomResponseDoc, so skip this annotation
+                    if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
+                        println "Annotation ApiObjectFieldLight"
+                        def annotation = field.getAnnotation(ApiObjectFieldLight.class)
+                        addAnnotationToMap(annotationsMap,field,annotation)
+                    }
+                }
+                if(field.isAnnotationPresent(ApiObjectFieldsLight.class)) {
+                    def annotation = field.getAnnotation(ApiObjectFieldsLight.class)
+                    annotation.params().each { apiObjectFieldsLight ->
+                        addAnnotationToMap(annotationsMap,field,apiObjectFieldsLight)
+                    }
                 }
             }
         }
     }
+
+
 
     //add field metadata to a map. Use field data if annotation data is missing
     static def addAnnotationToMap(Map<String,Map<String,String>> map, Field field, ApiObjectFieldLight annotation) {

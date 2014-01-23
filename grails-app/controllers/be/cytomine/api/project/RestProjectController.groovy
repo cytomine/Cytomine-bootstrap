@@ -130,7 +130,7 @@ class RestProjectController extends RestController {
      * ex: "user x add a new annotation on image y",...
      */
     @ApiMethodLight(description="Get the last action for a project", listing = true)
-    @ApiResponseObject(objectIdentifier="commandHistory")
+    @ApiResponseObject(objectIdentifier="command history")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
     ])

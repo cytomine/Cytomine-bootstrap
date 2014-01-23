@@ -4,14 +4,17 @@ import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
-/**
- * TODOSTEVBEN: doc
- */
+@ApiObject(name = "storage abstract image")
 class StorageAbstractImage extends CytomineDomain {
 
+    @ApiObjectFieldLight(description = "The storage id")
     Storage storage
+
+    @ApiObjectFieldLight(description = "The abstractimage id", apiFieldName = "abstractimage")
     AbstractImage abstractImage
 
     /**
@@ -30,15 +33,20 @@ class StorageAbstractImage extends CytomineDomain {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + StorageAbstractImage.class)
         JSON.registerObjectMarshaller(StorageAbstractImage) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-            returnArray['id'] = it.id
-            returnArray['storage'] = it.storage.id
-            returnArray['abstractimage'] = it.abstractImage.id
-            return returnArray
+            getDataFromDomain(it)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['storage'] = domain?.storage?.id
+        returnArray['abstractimage'] = domain?.abstractImage?.id
+        return returnArray
     }
 
     /**

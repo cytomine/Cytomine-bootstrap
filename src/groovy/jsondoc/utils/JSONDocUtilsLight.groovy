@@ -63,7 +63,7 @@ public class JSONDocUtilsLight extends JSONDocUtils {
         customResponseDoc.class.declaredFields.each { field ->
             if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
                 def annotation = field.getAnnotation(ApiObjectFieldLight.class)
-                ApiObjectDoc pojoDoc = ApiObjectDocLight.buildFromAnnotation("["+field.name+"]", annotation.description(),customResponseDoc.class);
+                ApiObjectDoc pojoDoc = ApiObjectDocLight.buildFromAnnotation(field.name, annotation.description(),customResponseDoc.class, true);
                 pojoDocs.add(pojoDoc);
             }
         }
@@ -117,6 +117,7 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObject.class)));
                 } else if(verb.equals("POST") || verb.equals("PUT")) {
                     String currentDomain = controller.newInstance().currentDomainName()
+                    println "currentDomainName=$currentDomain"
                     apiMethodDoc.setBodyobject(new ApiBodyObjectDoc(currentDomain, "", "", "Unknow", ""));
                 }
 

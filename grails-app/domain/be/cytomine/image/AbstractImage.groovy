@@ -14,28 +14,57 @@ import be.cytomine.security.SecUser
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * An abstract image is an image that can be map with projects.
  * When an "AbstractImage" is add to a project, a "ImageInstance" is created.
  */
+@ApiObject(name = "abstract image")
 class AbstractImage extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The image short filename (will be show in GUI)", useForCreation = false)
     String originalFilename
+
+    @ApiObjectFieldLight(description = "The exact image full filename")
     String filename
+
+    @ApiObjectFieldLight(description = "The instrument that digitalize the image", mandatory = false)
     Instrument scanner
+
+    @ApiObjectFieldLight(description = "The source of the image (human, annimal,...)", mandatory = false)
     Sample sample
+
+    @ApiObjectFieldLight(description = "The full image path directory")
     String path
+
+    @ApiObjectFieldLight(description = "The image type. For creation, use the ext (not the mime id!)")
     Mime mime
+
+    @ApiObjectFieldLight(description = "The image width lenght", mandatory = false, defaultValue = "-1")
     Integer width
+
+    @ApiObjectFieldLight(description = "The image height lenght", mandatory = false, defaultValue = "-1")
     Integer height
+
+    @ApiObjectFieldLight(description = "The image max zoom")
     Integer magnification
+
+    @ApiObjectFieldLight(description = "The image resolution (microm per pixel)")
     Double resolution
+
+    @ApiObjectFieldLight(description = "The image owner", mandatory = false, defaultValue = "current user")
     SecUser user //owner
 
     static belongsTo = Sample
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "metadataUrl", description = "URL to get image file metadata",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "thumb", description = "URL to get abstract image short view (htumb)",allowedType = "string",useForCreation = false)
+    ])
     static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {
@@ -96,30 +125,32 @@ class AbstractImage extends CytomineDomain implements Serializable {
      * This Method is called during application start
      */
     static void registerMarshaller() {
-
-        Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)
-        JSON.registerObjectMarshaller(AbstractImage) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['filename'] = it.filename
-            returnArray['originalFilename'] = it.originalFilename
-            returnArray['scanner'] = it.scanner?.id
-            returnArray['sample'] = it.sample?.id
-            returnArray['path'] = it.path
-            returnArray['mime'] = it.mime?.extension
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            returnArray['width'] = it.width
-            returnArray['height'] = it.height
-            returnArray['depth'] = it.getZoomLevels()?.max
-            returnArray['resolution'] = it.resolution
-            returnArray['magnification'] = it.magnification
-            returnArray['thumb'] = it.getThumbURL()
-            returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(it.id)
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
+        JSON.registerObjectMarshaller(AbstractImage) { image ->
+            return getDataFromDomain(image)
         }
     }
+
+    static def getDataFromDomain(def image) {
+
+        def returnArray = CytomineDomain.getDataFromDomain(image)
+        println image
+        returnArray['filename'] = image?.filename
+        returnArray['originalFilename'] = image?.originalFilename
+        returnArray['scanner'] = image?.scanner?.id
+        returnArray['sample'] = image?.sample?.id
+        returnArray['path'] = image?.path
+        returnArray['mime'] = image?.mime?.extension
+        returnArray['width'] = image?.width
+        returnArray['height'] = image?.height
+        returnArray['depth'] = image?.getZoomLevels()?.max
+        returnArray['resolution'] = image?.resolution
+        returnArray['magnification'] = image?.magnification
+        returnArray['thumb'] = image?.getThumbURL()
+        returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(image?.id)
+        returnArray
+    }
+
 
     def getImageServersStorage() {
         try {

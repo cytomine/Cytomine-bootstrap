@@ -1,24 +1,33 @@
 package be.cytomine.image
 
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
  * Date: 18/05/11
  * Time: 8:33
- * An ImageInstance is an image map with a project
+ * An nestedImageInstance is a subimage of an already existing image instance
  */
+@ApiObject(name = "nested image instance")
 class NestedImageInstance extends ImageInstance implements Serializable {
 
     //stack stuff
+    @ApiObjectFieldLight(description = "The image source for this sub-image")
     ImageInstance parent
+
+    @ApiObjectFieldLight(description = "Top x position of this image on the sub-image", mandatory = false)
     Integer x
+
+    @ApiObjectFieldLight(description = "Top y position of this image on the sub-image", mandatory = false)
     Integer y
 
     static belongsTo = [AbstractImage, Project, User]
@@ -69,14 +78,23 @@ class NestedImageInstance extends ImageInstance implements Serializable {
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + NestedImageInstance.class)
-        JSON.registerObjectMarshaller(NestedImageInstance) { nested ->
-            def returnArray = ImageInstance.getDataFromDomain(nested)
-            returnArray['parent'] = nested.parent.id
-            returnArray['x'] = nested.x
-            returnArray['y'] = nested.y
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(NestedImageInstance) { domain ->
+            return getDataFromDomain(domain)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = ImageInstance.getDataFromDomain(domain)
+        returnArray['parent'] = domain?.parent?.id
+        returnArray['x'] = domain?.x
+        returnArray['y'] = domain?.y
+        return returnArray
     }
 
 }

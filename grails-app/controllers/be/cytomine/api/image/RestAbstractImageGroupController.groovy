@@ -9,6 +9,7 @@ import grails.converters.JSON
  * Controller that handle operation on security access to abstractImage domain.
  * An abstract image may be visible by some groups.
  */
+//TODO:APIDOC
 class RestAbstractImageGroupController extends RestController {
 
     def abstractImageService
