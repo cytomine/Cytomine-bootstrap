@@ -18,7 +18,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : self.styleMap,
-        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","30px")}, //="48pt"
+        //onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","30px")}, //="48pt"
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],
@@ -67,11 +67,12 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
                  // important check that this is objects own property
                  // not from prototype prop inherited
                  if(featuresMap.hasOwnProperty(prop)){
-                     var x = prop.split("_")[0];
-                     var y = prop.split("_")[1];
+                     var x = parseFloat(prop.split("_")[0]);
+                     var y = parseFloat(prop.split("_")[1]);
                      var value = featuresMap[prop];
                      var format = new OpenLayers.Format.WKT();
                      var geom = "POINT("+x+" " + (y+100)+")";
+                     console.log(geom);
                      var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
                      pointFeature.attributes = { value: value};
                      features.push(pointFeature);

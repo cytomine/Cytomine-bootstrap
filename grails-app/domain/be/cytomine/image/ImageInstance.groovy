@@ -69,7 +69,8 @@ class ImageInstance extends CytomineDomain implements Serializable {
         @ApiObjectFieldLight(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false)
+        @ApiObjectFieldLight(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "depth", description = "?",allowedType = "long",useForCreation = false)
      ])
     static transients = []
 

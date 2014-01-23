@@ -31,6 +31,7 @@ class BuildPathMap extends AnsiConsoleUrlMappingsRenderer{
             }
             allMappings.addAll(grailsClassMappings)
         }
+        println "allmappings=${allMappings.size()}"
         return createUrlMappingMap(allMappings)
 
     }

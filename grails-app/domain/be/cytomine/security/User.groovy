@@ -97,35 +97,64 @@ class User extends SecUser {
         return domain;
     }    
 
+//    /**
+//     * Define fields available for JSON response
+//     * This Method is called during application start
+//     */
+//    static void registerMarshaller() {
+//        Logger.getLogger(this).info("Register custom JSON renderer for " + User.class)
+//        JSON.registerObjectMarshaller(User) { domain ->
+//            return getDataFromDomain(domain, getMappingFromAnnotation(User))
+//        }
+//    }
+//
+//    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
+//
+//        println "get user json"
+//        /* base fields + api fields */
+//        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
+//
+//        /* supplementary fields : which are NOT used in insertDataIntoDomain !
+//        * Typically, these fields are shortcuts or supplementary information
+//        * from other domains
+//        * ::to do : hide these fields if not GUI ?
+//        * */
+//        if (!(domain.springSecurityService.principal instanceof String) && domain.id == domain.springSecurityService.principal?.id) {
+//            json['publicKey'] = domain.publicKey
+//            json['privateKey'] = domain.privateKey
+//        }
+//
+//        json['algo'] = domain.algo()
+//
+//        return json
+//    }
+//
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + User.class)
-        JSON.registerObjectMarshaller(User) { domain ->
-            return getDataFromDomain(domain, getMappingFromAnnotation(User))
+        JSON.registerObjectMarshaller(User) {
+            def returnArray = [:]
+            returnArray['id'] = it.id
+            returnArray['username'] = it.username
+            returnArray['firstname'] = it.firstname
+            returnArray['lastname'] = it.lastname
+            returnArray['email'] = it.email
+            returnArray['sipAccount'] = it.sipAccount
+            if (!(it.springSecurityService.principal instanceof String) && it.id == it.springSecurityService.principal?.id) {
+                returnArray['publicKey'] = it.publicKey
+                returnArray['privateKey'] = it.privateKey
+            }
+            returnArray['color'] = it.color
+            returnArray['created'] = it.created?.time?.toString()
+            returnArray['updated'] = it.updated?.time?.toString()
+            returnArray['algo'] = it.algo()
+
+            return returnArray
         }
     }
 
-    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
 
-        println "get user json"
-        /* base fields + api fields */
-        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
-
-        /* supplementary fields : which are NOT used in insertDataIntoDomain !
-        * Typically, these fields are shortcuts or supplementary information
-        * from other domains
-        * ::to do : hide these fields if not GUI ?
-        * */
-        if (!(domain.springSecurityService.principal instanceof String) && domain.id == domain.springSecurityService.principal?.id) {
-            json['publicKey'] = domain.publicKey
-            json['privateKey'] = domain.privateKey
-        }
-
-        json['algo'] = domain.algo()
-
-        return json
-    }
 }

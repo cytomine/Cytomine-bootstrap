@@ -39,8 +39,18 @@ public class ApiObjectDocLight {
 
         //build map field (with super class too)
         if(domain) {
-            fillAnnotationMap(domain.clazz,annotationsMap)
-            fillAnnotationMap(domain.clazz.superclass,annotationsMap)
+
+            //analyse all fields for each classes and superclass
+            Class classToProcess = domain.clazz
+            while(classToProcess.simpleName!="Object") {
+                //for exemple: nested image instance EXTEND image instance EXTEND cytomine domain EXTEND object
+                //move throught the class flow
+                fillAnnotationMap(classToProcess,annotationsMap)
+                classToProcess = classToProcess.superclass
+            }
+
+
+
             //build map with json by calling getDataFromDomain
             Method m = clazz.getDeclaredMethod("getDataFromDomain", Object);
             def arrayWithNull = new String[1]
@@ -54,7 +64,7 @@ public class ApiObjectDocLight {
                 def metadata = annotationsMap.get(it.key)
                 def type = "Undefined"
                 def desc = "Undefined"
-                def useForCreation = false
+                def useForCreation = true
                 def mandatory = false
                 def defaultValue = "Undefined"
                 def presentInResponse = true
@@ -167,7 +177,7 @@ public class ApiObjectDocLight {
         if(!defaultValue.equals("")) {
             return defaultValue
         } else {
-            if(type.equals("long") || type.equals("int")) return "0 or null if domain"
+            if(type.equals("long") || type.equals("int") || type.equals("integer")) return "0 or null if domain"
             if(type.equals("list")) return "[]"
             if(type.equals("boolean")) return "false"
 
