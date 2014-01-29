@@ -9,11 +9,18 @@ import be.cytomine.ontology.Term
 import be.cytomine.security.SecUser
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiBodyObject
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller that handle request on annotation created by software (job)
  * Annotation my be created by humain (RestUserAnnotationController).
  */
+@Api(name = "algo annotation services", description = "Methods for managing an annotation created by a software")
 class  RestAlgoAnnotationController extends RestController {
 
     def exportService
@@ -34,7 +41,9 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * List all annotation (created by algo) visible for the current user
      */
-    def list = {
+    @ApiMethodLight(description="List all software annotation visible for the current user. See 'annotation domain' data for parameters (only show/hide parameters are available for this service). ", listing = true)
+    @ApiBodyObject(name = "[annotation listing]")
+    def list() {
         def annotations = []
         //get all user's project and list all algo annotation
         def projects = projectService.list()
@@ -47,7 +56,11 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Read a single algo annotation
      */
-    def show = {
+    @ApiMethodLight(description="Get an algo annotation")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
+    ])
+    def show() {
         AlgoAnnotation annotation = algoAnnotationService.read(params.long('id'))
         if (annotation) {
             responseSuccess(annotation)
@@ -62,7 +75,8 @@ class  RestAlgoAnnotationController extends RestController {
      * If JSON request params is an object, create a new annotation
      * If its a json array, create multiple annotation
      */
-    def add = {
+    @ApiMethodLight(description="Add an algo annotation")
+    def add(){
         def json = request.JSON
         try {
             if (json instanceof JSONArray) {
@@ -101,7 +115,11 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Update a single annotation created by algo
      */
-    def update = {
+    @ApiMethodLight(description="Update an algo annotation")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    ])
+    def update() {
         def json = request.JSON
         try {
             //get annotation from DB
@@ -118,12 +136,25 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Delete a single annotation created by algo
      */
-    def delete = {
+    @ApiMethodLight(description="Delete an algo annotation")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    ])
+    def delete() {
         def json = JSON.parse("{id : $params.id}")
         delete(algoAnnotationService, json,null)
     }
 
-    def downloadDocumentByProject = {
+    @ApiMethodLight(description="Download a report (pdf, xls,...) with software annotation data from a specific project")
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+        @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+        @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+        @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    ])
+    def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"ALGOANNOTATION")
     }
 
@@ -132,6 +163,14 @@ class  RestAlgoAnnotationController extends RestController {
      * Get annotation algo crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
+    @ApiMethodLight(description="Get annotation algo crop (image area that frame annotation)")
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
+        @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image"),
+    ])
     def crop() {
         AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
         if (!annotation) {
@@ -142,6 +181,7 @@ class  RestAlgoAnnotationController extends RestController {
 
     }
 
+    //TODO:APIDOC
     def cropMask () {
         AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
         if (!annotation) {
@@ -152,6 +192,7 @@ class  RestAlgoAnnotationController extends RestController {
 
     }
 
+    //TODO:APIDOC
     def cropAlphaMask () {
         AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))
         if (!annotation) {
@@ -168,7 +209,8 @@ class  RestAlgoAnnotationController extends RestController {
      * -minIntersectionLength: size of the intersection geometry between two annotation to merge them
      * -bufferLength: tolerance threshold for two annotation (if they are very close but not intersect)
      */
-    def union = {
+    @Deprecated
+    def union() {
         ImageInstance image = ImageInstance.read(params.getLong('idImage'))
         SecUser user = SecUser.read(params.getLong('idUser'))
         Term term = Term.read(params.getLong('idTerm'))

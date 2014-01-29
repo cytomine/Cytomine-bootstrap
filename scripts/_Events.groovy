@@ -1,6 +1,6 @@
 //import be.cytomine.ViewPortToBuildXML
 import grails.util.Environment
-import jsondoc.JsondocController
+
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 

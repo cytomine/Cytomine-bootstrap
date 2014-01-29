@@ -1,24 +1,41 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
+import be.cytomine.api.UrlApi
+import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Annotation filter define a set of filter for annotation listing
  */
+@ApiObject(name = "annotation filter")
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The filter name")
     String name
+
+    @ApiObjectFieldLight(description = "The project of the filter")
     Project project
+
+    @ApiObjectFieldLight(description = "The user that create the filter (auto field)", useForCreation = false)
     User user
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "terms", description = "Terms filter id",allowedType = "list",useForCreation = true, mandatory = false),
+        @ApiObjectFieldLight(apiFieldName = "users", description = "Users filter id",allowedType = "list",useForCreation = true, mandatory = false)
+    ])
     static hasMany = [terms: Term, users: SecUser]
+
 
     static constraints = {
         name (nullable : false, blank : false)
@@ -56,25 +73,31 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
         return [annotationFilterID: this?.id]
     }
 
+
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationFilter.class)
-        JSON.registerObjectMarshaller(AnnotationFilter) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['user'] = it.user?.id
-            returnArray['project'] = it.project?.id
-            returnArray['terms'] = it.terms.collect { it.id }
-            returnArray['users'] = it.users.collect { it.id }
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(AnnotationFilter) { domain ->
+            return getDataFromDomain(domain)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        returnArray['user'] = domain?.user?.id
+        returnArray['project'] = domain?.project?.id
+        returnArray['terms'] = domain?.terms?.collect { it.id }
+        returnArray['users'] = domain?.users?.collect { it.id }
+        return returnArray
     }
 
     /**

@@ -3,10 +3,16 @@ package be.cytomine.api.laboratory
 import be.cytomine.api.RestController
 import be.cytomine.laboratory.Sample
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for sample (part of 'source' that has been scan to image)
  */
+@Api(name = "sample services", description = "Methods for managing a sample, part of 'source' that has been scan to image")
 class RestSampleController extends RestController {
 
     def springSecurityService
@@ -17,14 +23,19 @@ class RestSampleController extends RestController {
     /**
      * List all available sample for the current user
      */
-    def list = {
+    @ApiMethodLight(description="Get all sample available for the current user", listing = true)
+    def list() {
         responseSuccess(sampleService.list(cytomineService.getCurrentUser()))
     }
 
     /**
      * Get a sample
      */
-    def show = {
+    @ApiMethodLight(description="Get a sample")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The sample id")
+    ])
+    def show() {
         Sample sample = sampleService.read(params.long('id'))
         if (sample) {
             responseSuccess(sample)
@@ -36,21 +47,30 @@ class RestSampleController extends RestController {
     /**
      * Add a new sample
      */
-    def add = {
+    @ApiMethodLight(description="Add a new sample")
+    def add() {
         add(sampleService, request.JSON)
     }
 
     /**
      * Update a existing sample
      */
-    def update = {
+    @ApiMethodLight(description="Update a sample")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    ])
+    def update() {
         update(sampleService, request.JSON)
     }
 
     /**
      * Delete sample
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a sample")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    ])
+    def delete() {
         delete(sampleService, JSON.parse("{id : $params.id}"),null)
     }
 }

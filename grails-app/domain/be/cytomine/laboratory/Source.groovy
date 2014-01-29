@@ -1,6 +1,7 @@
 package be.cytomine.laboratory
 
 import be.cytomine.CytomineDomain
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A source is a real thing that provide sample.

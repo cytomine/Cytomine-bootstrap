@@ -23,6 +23,12 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiBodyObject
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 import java.text.SimpleDateFormat
 
@@ -32,6 +38,7 @@ import static org.springframework.security.acls.domain.BasePermission.ADMINISTRA
  * Controller that handle request on annotation.
  * It's main utility is to redirect request to the correct controller: user/algo/reviewed
  */
+@Api(name = "generic annotation services", description = "Methods for managing an annotation created by a software")
 class RestAnnotationDomainController extends RestController {
 
     def userAnnotationService
@@ -49,12 +56,53 @@ class RestAnnotationDomainController extends RestController {
     def simplifyGeometryService
     def imageProcessingService
 
-
+    def currentDomainName() {
+        return "generic annotation" //needed because not RestAbstractImageController...
+    }
     /**
      * Search service for all annotation type
      * see AnnotationListing for all filters available
      */
-    def search = {
+    @ApiMethodLight(description="Search service for all annotation type. By default All fields are not visible (optim), you need to select fields using show/hideXXX query parameters.", listing = true)
+    @ApiBodyObject(name = "[annotation listing]")
+    @ApiParams(params=[
+        @ApiParam(name="showDefault", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show 'basic', 'meta', and 'term' properties group. See showBasic/Meta/... for more information (default: true ONLY IF NO OTHER show/hideXXX are set)"),
+        @ApiParam(name="showBasic", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show basic properties group (id, class...)"),
+        @ApiParam(name="showMeta", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show meta properties group (urls, image id, project id,...)"),
+        @ApiParam(name="showWKT", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the location WKT properties. This may slow down the request!."),
+        @ApiParam(name="showGIS", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the form GIS field (area, centroid,...). This may slow down the request!."),
+        @ApiParam(name="showTerm", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the term properties (id, user who add the term,...). This may slow down the request."),
+        @ApiParam(name="showAlgo", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the algo details (job,...). This may slow down the request."),
+        @ApiParam(name="showUser", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the annotation user details (username,...). This may slow down the request."),
+        @ApiParam(name="showImage", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show the annotation image details (filename,...). This may slow down the request."),
+        @ApiParam(name="hideBasic", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide basic properties group (id, class...)"),
+        @ApiParam(name="hideMeta", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide meta properties group (urls, image id, project id,...)"),
+        @ApiParam(name="hideWKT", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the location WKT properties. This may slow down the request!."),
+        @ApiParam(name="hideGIS", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the form GIS field (area, centroid,...). This may slow down the request!."),
+        @ApiParam(name="hideTerm", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the term properties (id, user who add the term,...). This may slow down the request."),
+        @ApiParam(name="hideAlgo", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the algo details (job,...). This may slow down the request."),
+        @ApiParam(name="hideUser", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the annotation user details (username,...). This may slow down the request."),
+        @ApiParam(name="hideImage", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, hide the annotation image details (filename,...). This may slow down the request."),
+        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for this project id"),
+        @ApiParam(name="job", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for this job id"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for this user id"),
+        @ApiParam(name="jobForTermAlgo", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation link with a term added by this job id"),
+        @ApiParam(name="term", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation link with this term id"),
+        @ApiParam(name="image", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for this image id"),
+        @ApiParam(name="suggestedTerm", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation suggested by for this term by a job"),
+        @ApiParam(name="userForTermAlgo", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Get only user annotation link with a term added by this job id"),
+        @ApiParam(name="kmeansValue", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Only used for GUI "),
+        @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for these users id"),
+        @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for these images id"),
+        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotation for these terms id"),
+        @ApiParam(name="notReviewedOnly", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Only get annotation not reviewed"),
+        @ApiParam(name="noTerm", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Only get annotation with no term"),
+        @ApiParam(name="noAlgoTerm", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Only get annotation with no term from a job"),
+        @ApiParam(name="multipleTerm", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Only get annotation with multiple terms"),
+        @ApiParam(name="kmeans", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Enable or not kmeans (only for GUI)"),
+        @ApiParam(name="bbox", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with the bbox (WKT)")
+    ])
+    def search() {
          try {
              responseSuccess(doSearch(params).result)
         } catch (CytomineException e) {
@@ -63,7 +111,12 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-    def downloadSearched = {
+    @ApiMethodLight(description="Download report for annotation. !!! See doc for /annotation/search to filter annotations!!!", listing = true)
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Output file format (pdf, xls,...)")
+    ])
+    def downloadSearched() {
         println "downloadSearched"
         def lists = doSearch(params)
         downloadDocument(lists.result,lists.project)
@@ -73,6 +126,15 @@ class RestAnnotationDomainController extends RestController {
      * Get annotation crop (image area that frame annotation)
      * This work for all kinds of annotations
      */
+
+    @ApiMethodLight(description="Get annotation crop  (image area that frame annotation). This work for all kinds of annotations.")
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
+        @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    ])
     def crop () {
         try {
             def annotation = AnnotationDomain.getAnnotationDomain(params.long("id"))
@@ -109,8 +171,6 @@ class RestAnnotationDomainController extends RestController {
         }
         [result: result, project: al.container().container()]
     }
-
-
 
     private downloadDocument(def annotations, Project project) {
         println "downloadDocument"
@@ -206,33 +266,6 @@ class RestAnnotationDomainController extends RestController {
 //            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Check if we ask reviewed annotation
@@ -334,7 +367,17 @@ class RestAnnotationDomainController extends RestController {
     /**
      * Download report for an annotation listing
      */
-    def downloadDocumentByProject = {
+    @ApiMethodLight(description="Download a report (pdf, xls,...) with software annotation data from a specific project.")
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+        @ApiParam(name="reviewed", type="boolean", paramType = ApiParamType.QUERY,description = "Get only reviewed annotation"),
+        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+        @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users). If reviewed flag is false then if first user is software, get algo annotation otherwise if first user is human, get user annotation. "),
+        @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+        @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    ])
+    def downloadDocumentByProject() {
 
         def users = []
         if (params.users != null && params.users != "") {
@@ -354,11 +397,29 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-    def listIncludedAnnotation = {
+    @ApiMethodLight(description="Get all annotation that intersect a geometry or another annotation. See /annotation/search for extra parameter (show/hide). ", listing=true)
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="idImage", type="long", paramType = ApiParamType.QUERY,description = "The image id"),
+        @ApiParam(name="geometry", type="string", paramType = ApiParamType.QUERY,description = "(Optional) WKT form of the geometry (if not set, set annotation param)"),
+        @ApiParam(name="annotation", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The annotation id for the geometry (if not set, set geometry param)"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.QUERY,description = "The annotation user id (may be an algo) "),
+        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id")
+    ])
+    def listIncludedAnnotation() {
         responseSuccess(getIncludedAnnotation(params))
     }
 
-    def downloadIncludedAnnotation = {
+    @ApiMethodLight(description="Get all annotation that intersect a geometry or another annotation. Unlike the simple list, extra parameter (show/hide) are not available. ")
+    @ApiBodyObject(name = "file")
+    @ApiParams(params=[
+        @ApiParam(name="idImage", type="long", paramType = ApiParamType.QUERY,description = "The image id"),
+        @ApiParam(name="geometry", type="string", paramType = ApiParamType.QUERY,description = "(Optional) WKT form of the geometry (if not set, set annotation param)"),
+        @ApiParam(name="annotation", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The annotation id for the geometry (if not set, set geometry param)"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.QUERY,description = "The annotation user id (may be an algo) "),
+        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id")
+    ])
+    def downloadIncludedAnnotation() {
         println "downloadIncludedAnnotation"
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         def lists = getIncludedAnnotation(params,['basic','meta','gis','image','term'])
@@ -461,7 +522,11 @@ class RestAnnotationDomainController extends RestController {
      * It's better to avoid the user of this method if we know the correct type of an annotation id
      * Annotation x => annotation/x.json is slower than userannotation/x.json or algoannotation/x.json
      */
-    def show = {
+    @ApiMethodLight(description="Get an annotation, this works for all kind of annotation (user/algo/reviewed). It's better to avoid the user of this method if we know the correct type of an annotation id. Annotation x => annotation/x.json is slower than userannotation/x.json or algoannotation/x.json")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
+    ])
+    def show() {
         AnnotationDomain annotation = userAnnotationService.read(params.long('id'))
         if (annotation) {
             forward(controller: "restUserAnnotation", action: "show")
@@ -480,7 +545,8 @@ class RestAnnotationDomainController extends RestController {
      * Add an annotation
      * Redirect to the controller depending on the user type
      */
-    def add = {
+    @ApiMethodLight(description="Add an annotation (only available for user/algo). If current user is algo, an algo annotation will be created. Otherwise, an user annotation")
+    def add() {
         println params
         SecUser user = cytomineService.currentUser
         if (user.algo()) {
@@ -494,7 +560,12 @@ class RestAnnotationDomainController extends RestController {
      * Update an annotation
      * Redirect to the good controller with the annotation type
      */
-    def update = {
+    @ApiMethodLight(description="Update an annotation. This works for all kind of annotation (user/algo/reviewed)")
+        @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="fill", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional, default: false) If true, fill holes in annotation")
+    ])
+    def update() {
         if (params.getBoolean('fill'))
         //if fill param is set, annotation will be filled (removed empty area inside geometry)
             forward(action: "fillAnnotation")
@@ -535,7 +606,11 @@ class RestAnnotationDomainController extends RestController {
      * Delete an annotation
      * Redirect to the good controller with the current user type
      */
-    def delete = {
+    @ApiMethodLight(description="Delete an annotation (only user/algo)")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    ])
+    def delete() {
         try {
             if (cytomineService.currentUser.algo()) {
                 forward(controller: "restAlgoAnnotation", action: "delete")
@@ -548,8 +623,13 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-    //simplify an existing annotation
-    def simplify = {
+    @ApiMethodLight(description="Simplify an existing annotation form (reducing the number of point). The number of points of the resulting form is not garantee to be between minPoint and maxPoint (best effort)")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="minPoint", type="int", paramType = ApiParamType.QUERY,description = "Minimum number of point"),
+        @ApiParam(name="maxPoint", type="int", paramType = ApiParamType.QUERY,description = "Maximum number of point")
+    ])
+    def simplify() {
         try {
             //extract params
             def minPoint = params.getLong('minPoint')
@@ -574,8 +654,13 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
-
-    def retrieveSimplify = {
+    @ApiMethodLight(description="Simplify and return a form. The number of points of the resulting form is not garantee to be between minPoint and maxPoint (best effort)")
+    @ApiParams(params=[
+        @ApiParam(name="minPoint", type="int", paramType = ApiParamType.QUERY,description = "Minimum number of point"),
+        @ApiParam(name="maxPoint", type="int", paramType = ApiParamType.QUERY,description = "Maximum number of point"),
+        @ApiParam(name="JSON POST DATA: wkt", type="string", paramType = ApiParamType.QUERY,description = "WKT form to return simplify. This may be big so must be in post data (not query param)")
+    ])
+    def retrieveSimplify() {
         def minPoint = params.getLong('minPoint')
         def maxPoint = params.getLong('maxPoint')
         def json = request.JSON
@@ -591,12 +676,16 @@ class RestAnnotationDomainController extends RestController {
      * Fill an annotation.
      * Remove empty space in the polygon
      */
-    def fillAnnotation = {
+    @ApiMethodLight(description="Fill an annotation")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+    ])
+    def fillAnnotation() {
         log.info "fillAnnotation"
         try {
             AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
             if (!annotation) {
-                throw new ObjectNotFoundException("Review Annotation ${params.long('id')} not found!")
+                throw new ObjectNotFoundException("Annotation ${params.long('id')} not found!")
             }
 
             //Is the first polygon always the big 'boundary' polygon?
@@ -689,7 +778,17 @@ class RestAnnotationDomainController extends RestController {
      * Add/Remove a geometry Y to/from the annotation geometry X.
      * Y must have intersection with X
      */
-    def addCorrection = {
+    @ApiMethodLight(description="Add/Remove a geometry Y to/from all annotations that intersects Y")
+    @ApiParams(params=[
+        @ApiParam(name="minPoint", type="int", paramType = ApiParamType.QUERY,description = "Minimum number of point"),
+        @ApiParam(name="maxPoint", type="int", paramType = ApiParamType.QUERY,description = "Maximum number of point"),
+        @ApiParam(name="JSON POST DATA: location", type="string", paramType = ApiParamType.QUERY,description = "WKT form of Y"),
+        @ApiParam(name="JSON POST DATA: review", type="boolean", paramType = ApiParamType.QUERY,description = "Only get reviewed annotation"),
+        @ApiParam(name="JSON POST DATA: image", type="long", paramType = ApiParamType.QUERY,description = "The image id"),
+        @ApiParam(name="JSON POST DATA: remove", type="boolean", paramType = ApiParamType.QUERY,description = "Add or remove Y"),
+        @ApiParam(name="JSON POST DATA: layers", type="list", paramType = ApiParamType.QUERY,description = "List of layers id")
+    ])
+    def addCorrection() {
         def json = request.JSON
         String location = json.location
         boolean review = json.review

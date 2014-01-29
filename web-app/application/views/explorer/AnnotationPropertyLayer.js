@@ -18,7 +18,7 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
         styleMap : self.styleMap,
-        //onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","30px")}, //="48pt"
+        onFeatureInsert: function(	feature	) {$("text > tspan").attr("font-size","30px")}, //="48pt"
         strategies: [
             new OpenLayers.Strategy.BBOX({resFactor: 1})
         ],

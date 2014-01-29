@@ -2,16 +2,21 @@ package be.cytomine.laboratory
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A sample is a source of image
  * This is a real thing: blood, a mouse lung,...
  */
+@ApiObject(name = "sample")
 class Sample extends CytomineDomain implements Serializable{
 
+    @ApiObjectFieldLight(description = "Sample name")
     String name
 
     static constraints = {
@@ -37,14 +42,21 @@ class Sample extends CytomineDomain implements Serializable{
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Sample.class)
-        JSON.registerObjectMarshaller(Sample) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(Sample) { domain ->
+            return getDataFromDomain(domain)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        return returnArray
     }
 
     /**

@@ -10,25 +10,39 @@ import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import jsondoc.annotation.ApiObjectFieldLight
+import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Annotation added by a job (software)
  * Extend AnnotationDomain that provide generic Annotation properties (location,...)
  */
+@ApiObject(name = "algo annotation")
 class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
     /**
      * Virtual user that create annotation
      */
+    @ApiObjectFieldLight(description = "The user job that add this annotation")
     UserJob user
 
     /**
      * Number of reviewed annotation
      * Rem: With UI client, it can only be 0 or 1
      */
+    @ApiObjectFieldLight(description = "The number of reviewed annotations for this annotation")
     Integer countReviewedAnnotations = 0
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "cropURL", description = "URL to get the annotation crop",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "smallCropURL", description = "URL to get a small annotation crop (<256px)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "url", description = "URL to go to the annotation on the image",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "imageURL", description = "URL to go to the image",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "reviewed", description = "True if annotation has at least one review",allowedType = "boolean",useForCreation = false),
+    ])
     static constraints = {
     }
 
@@ -143,39 +157,28 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + AlgoAnnotation.class)
-        JSON.registerObjectMarshaller(AlgoAnnotation) { AlgoAnnotation annotation ->
-            def returnArray = [:]
-            ImageInstance imageinstance = annotation.image
-            returnArray['class'] = annotation.class
-            returnArray['id'] = annotation.id
-            returnArray['location'] = annotation.location.toString()
-            returnArray['image'] = annotation.image?.id
-            returnArray['geometryCompression'] = annotation.geometryCompression
-            returnArray['project'] = annotation.project.id
-            returnArray['container'] = annotation.project.id
-            returnArray['user'] = annotation.user?.id
-            returnArray['nbComments'] = annotation.countComments
-            returnArray['area'] = annotation.area
-            returnArray['perimeterUnit'] = annotation.retrievePerimeterUnit()
-            returnArray['areaUnit'] = annotation.retrieveAreaUnit()
-            returnArray['perimeter'] = annotation.perimeter
-            returnArray['centroid'] = annotation.getCentroid()
-            returnArray['created'] = annotation.created?.time?.toString()
-            returnArray['updated'] = annotation.updated?.time?.toString()
-            returnArray['term'] = annotation.termsId()
-            returnArray['similarity'] = annotation.similarity
-            returnArray['rate'] = annotation.rate
-            returnArray['idTerm'] = annotation.idTerm
-            returnArray['idExpectedTerm'] = annotation.idExpectedTerm
-            returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(annotation.id)
-            returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(annotation.id, 256)
-            returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(annotation.id)
-            returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.project?.id, imageinstance.id, annotation.id)
-            returnArray['reviewed'] = annotation.hasReviewedAnnotation()
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(AlgoAnnotation) { domain ->
+            return getDataFromDomain(domain)
         }
     }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = AnnotationDomain.getDataFromDomain(domain)
+        ImageInstance imageinstance = domain?.image
+        returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(domain?.id, 256)
+        returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance?.project?.id, imageinstance?.id, domain?.id)
+        returnArray['reviewed'] = domain?.hasReviewedAnnotation()
+        return returnArray
+    }
+
 
     /**
      * Return domain user (annotation user, image user...)

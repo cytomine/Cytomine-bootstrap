@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -12,6 +13,11 @@ import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
+import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
+import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * User: lrollus
@@ -24,33 +30,40 @@ import com.vividsolutions.jts.io.WKTReader
  * -AlgoAnnotation => created by job
  * -ReviewedAnnotation => User or AlgoAnnotation validate by user
  */
+@ApiObject(name = "generic annotation")
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
+
 
     /**
      * Annotation geometry object
      */
+    @ApiObjectFieldLight(description = "The WKT of the annotation form", allowedType = "string")
     Geometry location
 
     /**
      * Annotation image
      */
+    @ApiObjectFieldLight(description = "The image id of the annotation")
     ImageInstance image
 
     /**
      * Annotation project
      * Redundant with image.project, speedup
      */
+    @ApiObjectFieldLight(description = "The project id of the annotation")
     Project project
 
     /**
      * Compression threshold used for annotation simplification
      */
+    @ApiObjectFieldLight(description = "The geometry compression rate used to simplify the annotation (during creation)", mandatory = false)
     Double geometryCompression
 
     /**
      * Number of comments for annotation
      * Redundant to speed up
      */
+    @ApiObjectFieldLight(description = "The number of comments added by a user on this annotation", apiFieldName = "nbComments", useForCreation = false)
     long countComments = 0L
 
     /**
@@ -61,19 +74,37 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     /* Transients values for JSON/XML rendering */
     //TODO:: remove from here, use custom SQL request with these info
+    @ApiObjectFieldLight(description = "The similarity rate for this annotation compare to another annotation (from retrieval)", useForCreation = false)
     Double similarity
+
+    @ApiObjectFieldLight(description = "The reliability value estimated by the software for the mapping between annotation and term", useForCreation = false)
     Double rate
+
+    @ApiObjectFieldLight(description = "The id of the term map with this annotation by a the software", useForCreation = false)
     Long idTerm
+
+    @ApiObjectFieldLight(description = "The id of the real term (corresponding to the term add by a real user)", useForCreation = false)
     Long idExpectedTerm
 
+    @ApiObjectFieldLight(description = "The annotation form area", useForCreation = false)
     Double area
+
+    @ApiObjectFieldLight(description = "The annotation form perimeter", useForCreation = false)
     Double perimeter
+
+    @ApiObjectFieldLight(description = "The annotation unit used for area (pixels²=1,micron²=3)", useForCreation = false)
     Integer areaUnit
+
+    @ApiObjectFieldLight(description = "The annotation unit used for perimeter (pixels=0,mm=2,)", useForCreation = false)
     Integer perimeterUnit
 
 
     static belongsTo = [ImageInstance, Project]
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "centroid", description = "X,Y coord of the annotation centroid",allowedType = "map(x,y)",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "term", description = "List of term id mapped with this annotation",allowedType = "list",useForCreation = true, mandatory=false),
+    ])
     static transients = ["boundaries", "similarity","rate", "idTerm", "idExpectedTerm"]
 
     static constraints = {
@@ -306,6 +337,33 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         }
 
 
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['location'] = domain?.location?.toString()
+        returnArray['image'] = domain?.image?.id
+        returnArray['geometryCompression'] = domain?.geometryCompression
+        returnArray['project'] = domain?.project?.id
+        returnArray['container'] = domain?.project?.id
+        returnArray['user'] = domain?.user?.id
+        returnArray['nbComments'] = domain?.countComments
+        returnArray['area'] = domain?.area
+        returnArray['perimeterUnit'] = domain?.retrievePerimeterUnit()
+        returnArray['areaUnit'] = domain?.retrieveAreaUnit()
+        returnArray['perimeter'] = domain?.perimeter
+        returnArray['centroid'] = domain?.getCentroid()
+        returnArray['term'] = domain?.termsId()
+        returnArray['similarity'] = domain?.similarity
+        returnArray['rate'] = domain?.rate
+        returnArray['idTerm'] = domain?.idTerm
+        returnArray['idExpectedTerm'] = domain?.idExpectedTerm
+        return returnArray
     }
 
 
