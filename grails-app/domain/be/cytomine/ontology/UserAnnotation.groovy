@@ -181,7 +181,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        JSON.registerObjectMarshaller(AlgoAnnotation) { domain ->
+        JSON.registerObjectMarshaller(UserAnnotation) { domain ->
             return getDataFromDomain(domain)
         }
     }

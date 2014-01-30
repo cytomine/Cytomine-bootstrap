@@ -54,7 +54,7 @@ class RelationTerm extends CytomineDomain implements Serializable {
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        JSON.registerObjectMarshaller(Relation) { domain ->
+        JSON.registerObjectMarshaller(RelationTerm) { domain ->
             return getDataFromDomain(domain)
         }
     }

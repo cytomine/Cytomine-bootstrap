@@ -134,7 +134,7 @@ class Term extends CytomineDomain implements Serializable, Comparable {
      * @return Map with fields (keys) and their values
      */
     static def getDataFromDomain(def domain) {
-        def returnArray = AnnotationDomain.getDataFromDomain(domain)
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
         returnArray['name'] = domain?.name
         returnArray['comment'] = domain?.comment
         returnArray['ontology'] = domain?.ontology?.id
