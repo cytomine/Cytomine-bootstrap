@@ -33,7 +33,7 @@ class AlgoAnnotation extends AnnotationDomain implements Serializable {
      * Number of reviewed annotation
      * Rem: With UI client, it can only be 0 or 1
      */
-    @ApiObjectFieldLight(description = "The number of reviewed annotations for this annotation")
+    @ApiObjectFieldLight(description = "The number of reviewed annotations for this annotation",useForCreation = false)
     Integer countReviewedAnnotations = 0
 
     @ApiObjectFieldsLight(params=[

@@ -12,12 +12,21 @@ import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.utils.StringUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
+
+import java.beans.Introspector
 
 /**
  * Controller that handle link between an annotation and a term
  * This controller carry request for (user)annotationterm and algoannotationterm
  */
+@Api(name = "annotation term service", description = "Methods for managing annotation term. Term added to an annotation by user or job.")
 class RestAnnotationTermController extends RestController {
 
     def termService
@@ -27,10 +36,19 @@ class RestAnnotationTermController extends RestController {
     def algoAnnotationTermService
     def cytomineService
 
+    def currentDomainName() {
+        "annotation term or algo annotation term"
+    }
+
     /**
      * List all term map with an annotation
      */
-    def listTermByAnnotation = {
+    @ApiMethodLight(description="Get all annotationterm for an annotation", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="idUser", type="long", paramType = ApiParamType.PATH,description = "(Optional) Only get term from this user id (may be a job)")
+    ])
+    def listTermByAnnotation() {
 
         if (params.idannotation == "undefined") {
             responseNotFound("Annotation Term", "Annotation", params.idannotation)
@@ -63,7 +81,12 @@ class RestAnnotationTermController extends RestController {
     /**
      * Get all term link with an annotation by all user except  params.idUser
      */
-    def listAnnotationTermByUserNot = {
+    @ApiMethodLight(description="Get all annotationterm for an annotation except annotationterm from the user in param", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="idNotUser", type="long", paramType = ApiParamType.PATH,description = "The user id")
+    ])
+    def listAnnotationTermByUserNot() {
         if (params.idannotation == "undefined") {
             responseNotFound("Annotation Term", "Annotation", params.idannotation)
         } else {
@@ -79,20 +102,12 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
-    def listAnnotationByProjectAndImageInstance = {
-        Term term = Term.read(params.idterm)
-        def annotations = []
-        UserAnnotation.findAllByImage(ImageInstance.read(params.idimageinstance)).each { annotation ->
-            AnnotationTerm.findAllByUserAnnotation(annotation).each { annotationTerm ->
-                if (annotationTerm.getTerm() == term) {
-                    annotations << annotation
-                }
-            }
-        }
-        responseSuccess(annotations)
-    }
-
-    def show = {
+    @ApiMethodLight(description="Get an annotation term")
+    @ApiParams(params=[
+        @ApiParam(name="idannotation", type="long", paramType = ApiParamType.PATH, description = "The annotation id"),
+        @ApiParam(name="idterm", type="long", paramType = ApiParamType.PATH, description = "The term id")
+    ])
+    def show() {
         AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('idannotation'))
         Term term = termService.read(params.long('idterm'))
 
@@ -125,13 +140,12 @@ class RestAnnotationTermController extends RestController {
                     if (annoterm) responseSuccess(annoterm)
                     else responseNotFound("Algo Annotation Term", "Term", "Annotation", params.idterm, params.idannotation)
                 }
-
             }
-
         }
     }
 
-    def add = {
+    @ApiMethodLight(description="Add an annotation term")
+    def add() {
         def json = request.JSON
         try {
             if(!cytomineService.isUserAlgo()) {
@@ -156,7 +170,12 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
-    def delete = {
+    @ApiMethodLight(description="Delete an annotation term")
+    @ApiParams(params=[
+        @ApiParam(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="idterm", type="long", paramType = ApiParamType.PATH,description = "The term id"),
+    ])
+    def delete() {
         if(cytomineService.isUserAlgo()) {
             throw new InvalidRequestException("A annotatation term from userJob cannot delete term")
         }
@@ -168,7 +187,13 @@ class RestAnnotationTermController extends RestController {
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
-    def addWithDeletingOldTerm = {
+    @ApiMethodLight(description="Add an annotation term and delete all other term added to this annotation by this user")
+    @ApiParams(params=[
+        @ApiParam(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="idterm", type="long", paramType = ApiParamType.PATH,description = "The term id"),
+        @ApiParam(name="clearForAll", type="boolean", paramType = ApiParamType.QUERY,description = "Delete term for all users (no algo)"),
+    ])
+    def addWithDeletingOldTerm() {
         try {
             if(cytomineService.isUserAlgo()) {
                 throw new InvalidRequestException("A userJob cannot delete user term from userannotation")

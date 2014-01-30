@@ -16,7 +16,7 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * A group of image with diff dimension
  */
-@ApiObject(name = "image group")
+@ApiObject(name = "image group", description = "A group of image from the same source with different dimension")
 class ImageGroup extends CytomineDomain implements Serializable {
 
     @ApiObjectFieldLight(description = "The name of the project")

@@ -4,6 +4,7 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.utils.Task
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiParamType
 import org.jsondoc.core.pojo.ApiVerb
@@ -25,15 +26,9 @@ class RestOntologyController extends RestController {
      * List all ontology visible for the current user
      * For each ontology, print the terms tree
      */
-    @ApiMethod(
-            path="/ontology.json",
-            verb=ApiVerb.GET,
-            description="Get ontologies listing, according to your access",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiResponseObject(objectIdentifier = "ontology", multiple = "true")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
+    @ApiMethodLight(description="Get all ontologies available", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="light", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional, default false) Only get a light list (with no term tree for each ontologies)")
     ])
     def list () {
         if(params.boolean("light")) {
@@ -43,19 +38,9 @@ class RestOntologyController extends RestController {
         }
     }
 
-    @ApiMethod(
-            path="/ontology/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get an ontology",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Get an ontology")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiResponseObject(objectIdentifier = "ontology", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
     ])
     def show () {
         Ontology ontology = ontologyService.read(params.long('id'))
@@ -66,56 +51,23 @@ class RestOntologyController extends RestController {
         }
     }
 
-    @ApiMethod(
-            path="/ontology.json",
-            verb=ApiVerb.POST,
-            description="Add a new ontology",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiBodyObject(name="ontology")
-    @ApiResponseObject(objectIdentifier = "ontology", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden")
-    ])
+    @ApiMethodLight(description="Add an ontology")
     def add () {
         add(ontologyService, request.JSON)
     }
 
-    @ApiMethod(
-            path="/ontology/{id}.json",
-            verb=ApiVerb.PUT,
-            description="Update an ontology",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Update an ontology")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiBodyObject(name="ontology")
-    @ApiResponseObject(objectIdentifier = "ontology", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
     ])
     def update () {
         update(ontologyService, request.JSON)
     }
 
-    @ApiMethod(
-            path="/ontology/{id}.json",
-            verb=ApiVerb.DELETE,
-            description="Delete an ontology",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Delete an ontology")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
+        @ApiParam(name="task", type="long", paramType = ApiParamType.PATH,description = "(Optional, default:null) The id of the task to update during process"),
     ])
     def delete () {
         Task task = taskService.read(params.getLong("task"))

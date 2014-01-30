@@ -3,12 +3,13 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A relation between terms (e.g. term1 PARENT term2)
  */
-//@ApiObject(name = "relation", description = "Type of relation between two terms", show = true)
+@ApiObject(name = "relation", description = "Type of relation between two terms (e.g. term1 PARENT term2)")
 class Relation extends CytomineDomain implements Serializable {
 
     @ApiObjectField(description = "The name of the relation")
@@ -26,31 +27,24 @@ class Relation extends CytomineDomain implements Serializable {
         return name
     }
 
-//    /**
-//     * Define fields available for JSON response
-//     * This Method is called during application start
-//     */
-//    static void registerMarshaller() {
-//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-//        println "<<< mapping from Relation <<< " + getMappingFromAnnotation(Relation)
-//        JSON.registerObjectMarshaller(Relation) { domain ->
-//            return getDataFromDomain(domain, getMappingFromAnnotation(Relation))
-//        }
-//    }
-
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Relation.class)
-        JSON.registerObjectMarshaller(Relation) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            return returnArray
+        JSON.registerObjectMarshaller(Relation) { domain ->
+            return getDataFromDomain(domain)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        return returnArray
     }
 
 }

@@ -6,16 +6,24 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Term added to an annotation by a real user (not a job!)
  * Many user can add a term to a single annotation (not only the user that created this annotation)
  */
+@ApiObject(name = "annotation term", description = "Term added to an annotation by a real user (not a job!). Many user can add a term to a single annotation (not only the user that created this annotation)")
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The annotation id", apiFieldName = "userannotation")
     UserAnnotation userAnnotation
+
+    @ApiObjectFieldLight(description = "The term id")
     Term term
+
+    @ApiObjectFieldLight(description = "The user id", mandatory = false, defaultValue = "current user")
     SecUser user
 
     static mapping = {
@@ -66,15 +74,20 @@ class AnnotationTerm extends CytomineDomain implements Serializable {
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AnnotationTerm.class)
-        JSON.registerObjectMarshaller(AnnotationTerm) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['userannotation'] = it.userAnnotation?.id
-            returnArray['term'] = it.term?.id
-            returnArray['user'] = it.user?.id
-            return returnArray
+        JSON.registerObjectMarshaller(AnnotationTerm) { image ->
+            return getDataFromDomain(image)
         }
     }
+
+    static def getDataFromDomain(def domain) {
+
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['userannotation'] = domain?.userAnnotation?.id
+        returnArray['term'] = domain?.term?.id
+        returnArray['user'] = domain?.user?.id
+        return returnArray
+    }
+
 
     /**
      * Return domain user (annotation user, image user...)

@@ -13,7 +13,7 @@ import org.jsondoc.core.annotation.ApiObject
  * A sample is a source of image
  * This is a real thing: blood, a mouse lung,...
  */
-@ApiObject(name = "sample")
+@ApiObject(name = "sample", description="A sample is a source of image. This is a real thing: blood, a mouse lung,...")
 class Sample extends CytomineDomain implements Serializable{
 
     @ApiObjectFieldLight(description = "Sample name")

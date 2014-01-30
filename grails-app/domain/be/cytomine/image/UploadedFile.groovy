@@ -17,7 +17,7 @@ import org.jsondoc.core.annotation.ApiObject
  * Uploaded are temporaly instances, files related to them are placed
  * in a buffer space before being converted into the right format and copied to the storages
  */
-@ApiObject(name = "uploaded file")
+@ApiObject(name = "uploaded file", description = "A file uploaded on the server, when finished, we create an 'abstract image' from this uploaded file")
 class UploadedFile extends CytomineDomain implements Serializable{
 
 //    public static allowedMime = ["svs", "opt", "jp2", "scn"]
@@ -30,21 +30,6 @@ class UploadedFile extends CytomineDomain implements Serializable{
     public static int ERROR_CONVERT = 4
     public static int UNCOMPRESSED = 5
     public static int TO_DEPLOY = 6
-
-
-//    returnArray['originalFilename'] = uploaded?.originalFilename
-//    returnArray['ext'] = uploaded?.ext
-//    returnArray['contentType'] = uploaded?.contentType
-//    returnArray['size'] = uploaded?.size
-//    returnArray['path'] = uploaded?.path
-//    returnArray['status'] = uploaded?.status
-//    returnArray['uploaded'] = (uploaded?.status == UploadedFile.UPLOADED)
-//    returnArray['converted'] = (uploaded?.status == UploadedFile.CONVERTED)
-//    returnArray['deployed'] = (uploaded?.status == UploadedFile.DEPLOYED)
-//    returnArray['error_format'] = (uploaded?.status == UploadedFile.ERROR_FORMAT)
-//    returnArray['error_convert'] = (uploaded?.status == UploadedFile.ERROR_CONVERT)
-//    returnArray['uncompressed'] = (uploaded?.status == UploadedFile.UNCOMPRESSED)
-//    returnArray['to_deploy'] = (uploaded?.status == UploadedFile.TO_DEPLOY)
 
     @ApiObjectFieldLight(description = "The user that upload the file")
     SecUser user

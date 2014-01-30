@@ -10,38 +10,61 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
+import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  *  A reviewed annotation is an user/algo-annotation validated by a user.
  *  When a user validate an user/algoannotation, we copy all data from the validated annotation to create the review annotation
  */
+@ApiObject(name = "reviewed annotation", description = "A reviewed annotation is an user/algo-annotation validated by a user. When a user validate an user/algoannotation, we copy all data from the validated annotation to create the review annotation")
 class ReviewedAnnotation extends AnnotationDomain implements Serializable {
 
-    static hasMany = [ terms: Term ]
+//    returnArray['terms'] = domain?.termsId()
+//    returnArray['term'] = returnArray['terms']
+
 
     /**
      * Annotation that has been reviewed (just keep a link)
      */
-    String parentClassName
+    @ApiObjectFieldLight(description = "Annotation id that has been reviewed")
     Long parentIdent
+
+    @ApiObjectFieldLight(description = "Annotation type that has been reviewed (algo/user)")
+    String parentClassName
 
     /**
      * Status for the reviewed (not yet use)
      * May be: 'validate','conflict',...
      */
+    @ApiObjectFieldLight(description = "Status for the reviewed", mandatory = false)
     Integer status
 
     /**
      * User that create the annotation that has been reviewed
      */
+    @ApiObjectFieldLight(description = "User that created the based annotation", useForCreation = false)
     SecUser user
 
     /**
      * User that review annotation
      */
+    @ApiObjectFieldLight(description = "User that review the based annotation", useForCreation = true, mandatory = false, defaultValue = "current user")
     SecUser reviewUser
 
+    static hasMany = [ terms: Term ]
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "terms", description = "List of term id mapped with this annotation",allowedType = "list",useForCreation = true, mandatory=false),
+        @ApiObjectFieldLight(apiFieldName = "cropURL", description = "URL to get the annotation crop",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "smallCropURL", description = "URL to get a small annotation crop (<256px)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "url", description = "URL to go to the annotation on the image",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "imageURL", description = "URL to go to the image",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "reviewed", description = "Always true",allowedType = "boolean",useForCreation = false)
+    ])
     static constraints = {
     }
 
@@ -192,44 +215,34 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
      * Define fields available for JSON response
      * This Method is called during application start
      */
-     static void registerMarshaller() {
-         Logger.getLogger(this).info("Register custom JSON renderer for " + ReviewedAnnotation.class)
-         JSON.registerObjectMarshaller(ReviewedAnnotation) { ReviewedAnnotation annotation ->
-             def returnArray = [:]
-             ImageInstance imageinstance = annotation.image
-             returnArray['class'] = annotation.class
-             returnArray['id'] = annotation.id
-             returnArray['parentIdent'] = annotation.parentIdent
-             returnArray['parentClassName'] = annotation.parentClassName
-             returnArray['status'] = annotation.status
-             returnArray['location'] = annotation.location.toString()
-             returnArray['image'] = annotation.image?.id
-             returnArray['geometryCompression'] = annotation.geometryCompression
-             returnArray['project'] = annotation.project.id
-             returnArray['container'] = annotation.project.id
-             returnArray['user'] = annotation.user?.id
-             returnArray['reviewUser'] = annotation.reviewUser?.id
-             returnArray['area'] = annotation.area
-             returnArray['perimeterUnit'] = annotation.retrievePerimeterUnit()
-             returnArray['areaUnit'] = annotation.retrieveAreaUnit()
-             returnArray['perimeter'] = annotation.perimeter
-             returnArray['centroid'] = annotation.getCentroid()
-             returnArray['created'] = annotation.created?.time?.toString()
-             returnArray['updated'] = annotation.updated?.time?.toString()
-             returnArray['terms'] = annotation.termsId()
-             returnArray['term'] = returnArray['terms']
-             returnArray['similarity'] = annotation.similarity
-             returnArray['rate'] = annotation.rate
-             returnArray['idTerm'] = annotation.idTerm
-             returnArray['idExpectedTerm'] = annotation.idExpectedTerm
-             returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(annotation.id)
-             returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(annotation.id, 256)
-             returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(annotation.id)
-             returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance.project?.id, imageinstance.id, annotation.id)
-             returnArray['reviewed'] = true
-             return returnArray
-         }
-     }
+    static void registerMarshaller() {
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(ReviewedAnnotation) { domain ->
+            return getDataFromDomain(domain)
+        }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = AnnotationDomain.getDataFromDomain(domain)
+        ImageInstance imageinstance = domain?.image
+        returnArray['parentIdent'] = domain?.parentIdent
+        returnArray['parentClassName'] = domain?.parentClassName
+        returnArray['status'] = domain?.status
+        returnArray['reviewUser'] = domain?.reviewUser?.id
+        returnArray['terms'] = domain?.termsId()
+        returnArray['term'] = returnArray['terms']
+        returnArray['cropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['smallCropURL'] = UrlApi.getReviewedAnnotationCropWithAnnotationIdWithMaxWithOrHeight(domain?.id, 256)
+        returnArray['url'] = UrlApi.getReviewedAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance?.project?.id, imageinstance?.id, domain?.id)
+        returnArray['reviewed'] = true
+        return returnArray
+    }
 
     /**
      * Check if this domain will cause unique constraint fail if saving on database

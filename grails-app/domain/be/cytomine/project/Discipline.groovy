@@ -11,7 +11,7 @@ import org.jsondoc.core.annotation.ApiObject
 /**
  * A discipline is a thematic for a project
  */
-@ApiObject(name = "discipline")
+@ApiObject(name = "discipline", description = "A discipline is a thematic for a project")
 class Discipline extends CytomineDomain implements Serializable{
 
     @ApiObjectFieldLight(description = "The name of the discipline")

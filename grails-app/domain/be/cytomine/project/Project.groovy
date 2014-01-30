@@ -14,7 +14,7 @@ import org.jsondoc.core.annotation.ApiObject
  * A project is the main cytomine domain
  * It structure user data
  */
-@ApiObject(name = "project")
+@ApiObject(name = "project", description="A project is the main cytomine domain, its a workspace to store images, annotations,...")
 class Project extends CytomineDomain implements Serializable {
 
     /**

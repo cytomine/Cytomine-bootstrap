@@ -8,7 +8,7 @@ import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
 
-@Api(name = "annotation index", description = "Methods for managing annotation index. Its auto index that store entries <image,user,nbreAnnotation,nbreReviewed")
+@Api(name = "annotation index service", description = "Methods for managing annotation index. Its auto index that store entries <image,user,nbreAnnotation,nbreReviewed")
 class RestAnnotationIndexController extends RestController {
 
     def annotationIndexService
@@ -16,7 +16,7 @@ class RestAnnotationIndexController extends RestController {
 
     @ApiMethodLight(description="Get all index entries for an image", listing=true)
     @ApiParams(params=[
-        @ApiParam(name="project", type="long", paramType = ApiParamType.PATH,description = "The image id")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
     ])
     def listByImage() {
         ImageInstance image = imageInstanceService.read(params.long('id'))

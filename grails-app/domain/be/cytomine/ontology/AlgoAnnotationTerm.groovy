@@ -7,7 +7,9 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Term added to an annotation by a job
@@ -15,6 +17,7 @@ import org.apache.log4j.Logger
  * -algo annotation (create by a job)
  * -user annotation (create by a real user)
  */
+@ApiObject(name = "algo annotation term", description ="Term added to an annotation by a job. Annotation can be: -algo annotation (create by a job) or -user annotation (create by a real user)")
 class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     /**
@@ -23,33 +26,41 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
      * are store in different table
      * So we store annotation type and annotation id
      */
+    @ApiObjectFieldLight(description = "The annotation class type (user or algo)")
     String annotationClassName
+
+    @ApiObjectFieldLight(description = "The annotation id")
     Long annotationIdent
 
     /**
      * Predicted term
      */
+    @ApiObjectFieldLight(description = "The term id")
     Term term
 
     /**
      * Real term (added by user)
      */
+    @ApiObjectFieldLight(description = "The real term id, the term added by the user previously")
     Term expectedTerm
 
     /**
      * Certainty rate
      */
+    @ApiObjectFieldLight(description = "The reliability of the prediction")
     Double rate
 
     /**
      * Virtual user that made the prediction
      */
+    @ApiObjectFieldLight(description = "The user job id", apiFieldName = "user")
     UserJob userJob
 
     /**
      * Project for the prediction
      * rem: redundance for optim (we should get it with retrieveAnnotationDomain().project)
      */
+    @ApiObjectFieldLight(description = "The project id")
     Project project
 
     static constraints = {
@@ -131,18 +142,21 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
      */
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + AlgoAnnotationTerm.class)
-        JSON.registerObjectMarshaller(AlgoAnnotationTerm) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['annotationIdent'] = it.annotationIdent
-            returnArray['annotationClassName'] = it.annotationClassName
-            returnArray['annotation'] = it.annotationIdent
-            returnArray['term'] = it.term?.id
-            returnArray['expectedTerm'] = it.expectedTerm?.id
-            returnArray['rate'] = it.rate
-            returnArray['user'] = it.userJob?.id
-            returnArray['project'] = it.project?.id
-            return returnArray
+        JSON.registerObjectMarshaller(AlgoAnnotationTerm) { image ->
+            return getDataFromDomain(image)
         }
+    }
+
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['annotationIdent'] = domain?.annotationIdent
+        returnArray['annotationClassName'] = domain?.annotationClassName
+        returnArray['annotation'] = domain?.annotationIdent
+        returnArray['term'] = domain?.term?.id
+        returnArray['expectedTerm'] = domain?.expectedTerm?.id
+        returnArray['rate'] = domain?.rate
+        returnArray['user'] = domain?.userJob?.id
+        returnArray['project'] = domain?.project?.id
+        return returnArray
     }
 }

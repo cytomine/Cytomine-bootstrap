@@ -8,7 +8,7 @@ import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
-@ApiObject(name = "storage abstract image")
+@ApiObject(name = "storage abstract image", description="A link between a storage and some images")
 class StorageAbstractImage extends CytomineDomain {
 
     @ApiObjectFieldLight(description = "The storage id")

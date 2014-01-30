@@ -18,7 +18,7 @@ import org.jsondoc.core.annotation.ApiObject
 /**
  * Annotation filter define a set of filter for annotation listing
  */
-@ApiObject(name = "annotation filter")
+@ApiObject(name = "annotation filter", description="Define a set of filter for annotation listing")
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
     @ApiObjectFieldLight(description = "The filter name")

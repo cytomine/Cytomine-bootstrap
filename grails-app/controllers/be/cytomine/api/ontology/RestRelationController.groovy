@@ -2,6 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
+import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiParamType
 import org.jsondoc.core.pojo.ApiVerb
@@ -21,16 +22,7 @@ class RestRelationController extends RestController {
     /**
      * List all relation available
      */
-    @ApiMethod(
-            path="/relation.json",
-            verb=ApiVerb.GET,
-            description="Get relation types listing",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiResponseObject(objectIdentifier = "relation", multiple = "true")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    ])
+    @ApiMethodLight(description="List all relation available", listing = true)
     def list () {
         responseSuccess(relationService.list())
     }
@@ -38,19 +30,9 @@ class RestRelationController extends RestController {
     /**
      * Get a single relation with its id
      */
-    @ApiMethod(
-            path="/relation/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get a relation",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Get a relation")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiResponseObject(objectIdentifier = "relation", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The relation id")
     ])
     def show () {
         Relation relation = relationService.read(params.long('id'))

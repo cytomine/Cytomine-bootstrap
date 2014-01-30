@@ -1,11 +1,16 @@
 package be.cytomine.ontology
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
+import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObjectField
 
@@ -16,30 +21,25 @@ import org.jsondoc.core.annotation.ApiObjectField
 //@ApiObject(name = "term", description = "Term description", show = true)
 class Term extends CytomineDomain implements Serializable, Comparable {
 
-    @ApiObjectField(description = "The name of the term")
+    @ApiObjectFieldLight(description = "The term name")
     String name
 
-    @ApiObjectField(description = "A description of the term, if necessary")
+    @ApiObjectFieldLight(description = "A comment about the term", mandatory = false)
     String comment
 
-    @ApiObjectField(
-            description = "The ontology associated",
-            allowedType = "integer",
-            apiFieldName = "ontology",
-            apiValueAccessor = "ontologyID")
+    @ApiObjectFieldLight(description = "The ontology that store the term")
     Ontology ontology
 
-    @ApiObjectField(description = "The color associated, in HTML format (e.g : RED = #FF0000)")
+    @ApiObjectFieldLight(description = "The color associated, in HTML format (e.g : RED = #FF0000)")
     String color
 
     Double rate // ?
 
-
-    private static Integer ontologyID(Term term) {
-        return term.getOntology()?.id
-    }
-
     static belongsTo = [ontology: Ontology]
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "parent", description = "The parent term id of this annotation",allowedType = "long",useForCreation = false)
+    ])
     static transients = ["rate"]
 
     static constraints = {
@@ -117,79 +117,36 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         return [ontologyID: this?.ontology?.id]
     }
 
-
-//    /**
-//     * Define fields available for JSON response
-//     * This Method is called during application start
-//     */
-//    static void registerMarshaller() {
-//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-//        println "<<< mapping from Term <<< " + getMappingFromAnnotation(Term)
-//        JSON.registerObjectMarshaller(Term) { domain ->
-//            return getDataFromDomain(domain, getMappingFromAnnotation(Term))
-//        }
-//    }
-
     /**
      * Define fields available for JSON response
      * This Method is called during application start
      */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
-        JSON.registerObjectMarshaller(Term) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['comment'] = it.comment
-            returnArray['ontology'] = it.ontology?.id
-            try {returnArray['rate'] = it.rate} catch (Exception e) {log.info e}
-            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
-            returnArray['parent'] = rt?.term1?.id
-            if (it.color) returnArray['color'] = it.color
-            return returnArray
+        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
+        JSON.registerObjectMarshaller(Term) { domain ->
+            return getDataFromDomain(domain)
         }
     }
 
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = AnnotationDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        returnArray['comment'] = domain?.comment
+        returnArray['ontology'] = domain?.ontology?.id
+        try {returnArray['rate'] = domain?.rate} catch (Exception e) {log.info e}
+        try {
+            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(domain?.id))
+            returnArray['parent'] = rt?.term1?.id
+        } catch (Exception e) {log.info e}
 
-//
-//    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
-//
-//        /* base fields + api fields */
-//        def json = getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
-//
-//        /* supplementary fields : which are NOT used in insertDataIntoDomain !
-//        * Typically, these fields are shortcuts or supplementary information
-//        * from other domains
-//        * ::to do : hide these fields if not GUI ?
-//        * */
-//
-////        try {json['rate'] = domain.rate} catch (Exception e) {log.info e}
-//        RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(domain.id))
-//        json['parent'] = rt?.term1?.id
-//        return json
-//    }
-//
-//    /**
-//     * Define fields available for JSON response
-//     * This Method is called during application start
-//     */
-//    static void registerMarshaller2() {
-//        Logger.getLogger(this).info("Register custom JSON renderer for " + Term.class)
-//        JSON.registerObjectMarshaller(Term) {
-//            def json = [:]
-//            //returnArray['class'] = it.class
-//            //returnArray['id'] = it.id
-//            //returnArray['name'] = it.name
-//            //returnArray['comment'] = it.comment
-//            //returnArray['ontology'] = it.ontology?.id
-//            try {json['rate'] = it.rate} catch (Exception e) {log.info e}
-//            RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(it.id))
-//            json['parent'] = rt?.term1?.id
-//            if (it.color) json['color'] = it.color
-//            return json
-//        }
-//    }
+        if (domain?.color) returnArray['color'] = domain?.color
+        return returnArray
+    }
 
     public boolean equals(Object o) {
         if (!o) {

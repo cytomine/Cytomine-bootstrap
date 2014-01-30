@@ -5,6 +5,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.*
 import org.jsondoc.core.pojo.ApiParamType
 import org.jsondoc.core.pojo.ApiVerb
@@ -23,16 +24,7 @@ class RestTermController extends RestController {
      * List all term available
      * @return All term available for the current user
      */
-    @ApiMethod(
-            path="/term.json",
-            verb=ApiVerb.GET,
-            description="Get terms listing, according to your access",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiResponseObject(objectIdentifier = "term", multiple = "true")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    ])
+    @ApiMethodLight(description="List all term available", listing = true)
     def list () {
         responseSuccess(termService.list())
     }
@@ -43,19 +35,9 @@ class RestTermController extends RestController {
      * @param  id The term id
      * @return A Term
      */
-    @ApiMethod(
-            path="/term/{id}.json",
-            verb=ApiVerb.GET,
-            description="Get a term",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Get a term")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def show() {
         Term term = termService.read(params.long('id'))
@@ -72,19 +54,7 @@ class RestTermController extends RestController {
      * @param data JSON with Term data
      * @return Response map with .code = http response code and .data.term = new created Term
      */
-    @ApiMethod(
-            path="/term.json",
-            verb=ApiVerb.POST,
-            description="Add a new term",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
-    @ApiBodyObject(name="term")
-    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden")
-    ])
+    @ApiMethodLight(description="Add a term in an ontology")
     def add () {
         add(termService, request.JSON)
     }
@@ -95,22 +65,9 @@ class RestTermController extends RestController {
      * @param data JSON with the new Term data
      * @return Response map with .code = http response code and .data.newTerm = new created Term and  .data.oldTerm = old term value
      */
-    @ApiMethod(
-            path="/term/{id}.json",
-            verb=ApiVerb.PUT,
-            description="Update an term",
-            produces=[MediaType.APPLICATION_JSON_VALUE],
-            consumes=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Update a term")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiBodyObject(name="term")
-    @ApiResponseObject(objectIdentifier = "term", multiple = "false")
-    @ApiErrors(apierrors=[
-    @ApiError(code="400", description="Bad Request"),
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def update () {
         update(termService, request.JSON)
@@ -121,18 +78,9 @@ class RestTermController extends RestController {
      * @param id Term id
      * @return Response map with .code = http response code and .data.term = deleted term value
      */
-    @ApiMethod(
-            path="/term/{id}.json",
-            verb=ApiVerb.DELETE,
-            description="Delete an term",
-            produces=[MediaType.APPLICATION_JSON_VALUE]
-    )
+    @ApiMethodLight(description="Delete a term")
     @ApiParams(params=[
-    @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
-    ])
-    @ApiErrors(apierrors=[
-    @ApiError(code="401", description="Forbidden"),
-    @ApiError(code="404", description="Not found")
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def delete () {
         delete(termService, JSON.parse("{id : $params.id}"),null)
@@ -143,7 +91,11 @@ class RestTermController extends RestController {
      * @param idontology Ontology filter
      * @return List of term
      */
-    def listByOntology = {
+    @ApiMethodLight(description="Get all term from an ontology", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
+    ])
+    def listByOntology() {
         Ontology ontology = Ontology.read(params.idontology)
         if (ontology) {
             responseSuccess(termService.list(ontology))
@@ -157,7 +109,11 @@ class RestTermController extends RestController {
      * @param idProject Project filter
      * @return List of term
      */
-    def listAllByProject = {
+    @ApiMethodLight(description="Get all term for a project", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
+    ])
+    def listAllByProject() {
         Project project = Project.read(params.idProject)
         if (project && project.ontology) {
             responseSuccess(termService.list(project))
@@ -172,7 +128,8 @@ class RestTermController extends RestController {
      * @Param id Term id
      * @return For each project with this Term, get a the term count
      */
-    def statProject = {
+    //TODO:APIDOC
+    def statProject() {
         Term term = Term.read(params.id)
         if (term) responseSuccess(termService.statProject(term))
         else responseNotFound("Project", params.id)

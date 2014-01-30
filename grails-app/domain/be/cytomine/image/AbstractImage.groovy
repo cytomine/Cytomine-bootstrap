@@ -23,7 +23,7 @@ import org.jsondoc.core.annotation.ApiObject
  * An abstract image is an image that can be map with projects.
  * When an "AbstractImage" is add to a project, a "ImageInstance" is created.
  */
-@ApiObject(name = "abstract image")
+@ApiObject(name = "abstract image", description = "A real image store on disk, see 'image instance' for an image link in a project")
 class AbstractImage extends CytomineDomain implements Serializable {
 
     @ApiObjectFieldLight(description = "The image short filename (will be show in GUI)", useForCreation = false)

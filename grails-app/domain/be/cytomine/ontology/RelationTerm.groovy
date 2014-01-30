@@ -5,48 +5,26 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * Relation between a term 1 and a term 2
  */
 //@ApiObject(name = "relationTerm", description = "Relation Term description", show = true)
+@ApiObject(name = "relation", description = "Relation between a term 1 , a term 2 and a relantion domain (e.g. term1 PARENT term2)")
 class RelationTerm extends CytomineDomain implements Serializable {
 
     static names = [PARENT: "parent", SYNONYM: "synonyme"]
 
-    @ApiObjectField(
-            description = "The relation associated",
-            allowedType = "integer",
-            apiFieldName = "relation",
-            apiValueAccessor = "relationID")
+    @ApiObjectField(description = "The relation")
     Relation relation
 
-    private static Integer relationID(RelationTerm relationTerm) {
-        return relationTerm.id
-    }
-
-    @ApiObjectField(
-            description = "The first term associated",
-            allowedType = "integer",
-            apiFieldName = "term1",
-            apiValueAccessor = "term1ID")
+    @ApiObjectField(description = "The first term")
     Term term1
 
-    private static Integer term1ID(RelationTerm relationTerm) {
-        return relationTerm.term1?.id
-    }
-
-    @ApiObjectField(
-            description = "The second term associated",
-            allowedType = "integer",
-            apiFieldName = "term2",
-            apiValueAccessor = "term2ID")
+    @ApiObjectField(description = "The second term")
     Term term2
-
-    private static Integer term2ID(RelationTerm relationTerm) {
-        return relationTerm.term2?.id
-    }
 
     static mapping = {
         id(generator: 'assigned', unique: true)
@@ -71,19 +49,28 @@ class RelationTerm extends CytomineDomain implements Serializable {
         return domain;
     }
 
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
     static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + RelationTerm.class)
-        JSON.registerObjectMarshaller(RelationTerm) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['relation'] = it.relation.id
-            returnArray['term1'] = it.term1.id
-            returnArray['term2'] = it.term2.id
-
-            return returnArray
+        JSON.registerObjectMarshaller(Relation) { domain ->
+            return getDataFromDomain(domain)
         }
     }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['relation'] = domain?.relation?.id
+        returnArray['term1'] = domain?.term1?.id
+        returnArray['term2'] = domain?.term2?.id
+        return returnArray
+    }
+
 //
 //    /**
 //     * Define fields available for JSON response

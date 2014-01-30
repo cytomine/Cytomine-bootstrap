@@ -20,7 +20,7 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * An ImageInstance is an image map with a project
  */
-@ApiObject(name = "image instance")
+@ApiObject(name = "image instance",description="A link between 'abstract image' and 'project'. An 'abstract image' may be in multiple projects.")
 class ImageInstance extends CytomineDomain implements Serializable {
 
     @ApiObjectFieldLight(description = "The image linked to the project")

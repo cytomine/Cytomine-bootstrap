@@ -17,7 +17,7 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * An nestedImageInstance is a subimage of an already existing image instance
  */
-@ApiObject(name = "nested image instance")
+@ApiObject(name = "nested image instance", description = "An sub image from an image instance (sub area, same image transformed,...)")
 class NestedImageInstance extends ImageInstance implements Serializable {
 
     //stack stuff
