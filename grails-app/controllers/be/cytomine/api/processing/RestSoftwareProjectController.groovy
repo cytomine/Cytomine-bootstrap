@@ -4,27 +4,38 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for software project link
  * A software may be used by some project
  */
+@Api(name = "software project services", description = "Methods for managing software, application that can be launch (job)")
 class RestSoftwareProjectController extends RestController{
 
     def softwareProjectService
     def projectService
 
     /**
-     * List all software parameter links
+     * List all software project links
      */
-    def list = {
+    @ApiMethodLight(description="List all software project links", listing = true)
+    def list() {
         responseSuccess(softwareProjectService.list())
     }
 
     /**
-     * List all software parameter by project
+     * List all software by project
      */
-    def listByProject = {
+    @ApiMethodLight(description="List all software project links by project", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    def listByProject() {
         Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(softwareProjectService.list(project))
@@ -36,23 +47,32 @@ class RestSoftwareProjectController extends RestController{
     /**
      * Get a software project link
      */
-    def show = {
+    @ApiMethodLight(description="Get a software project link")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
+    ])
+    def show() {
         SoftwareProject parameter = softwareProjectService.read(params.long('id'))
         if (parameter) responseSuccess(parameter)
         else responseNotFound("SoftwareProject", params.id)
     }
 
     /**
-     * Add a existing software to a project
+     * Add an existing software to a project
      */
-    def add = {
+    @ApiMethodLight(description="Add an existing software to a project")
+    def add () {
         add(softwareProjectService, request.JSON)
     }
 
     /**
      * Delete the software for the project
      */
-    def delete = {
+    @ApiMethodLight(description="Remove the software from the project")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
+    ])
+    def delete() {
         delete(softwareProjectService, JSON.parse("{id : $params.id}"),null)
     }
 }

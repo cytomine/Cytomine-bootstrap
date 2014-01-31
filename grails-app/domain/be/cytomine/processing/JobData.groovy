@@ -3,39 +3,51 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Data created by a job
  * This concerns only data files (annotation or term are store in domain database)
  */
+@ApiObject(name = "job data", description = "Data created by a job. This concerns only data files (annotation or term are store in domain database). If config cytomine.jobdata.filesystem is true, file are stored in filesystem, otherwise they are store in database.")
 class JobData extends CytomineDomain {
 
     /**
      * File key (what's the file)
      */
+    @ApiObjectFieldLight(description = "File key (what's the file)")
     String key
 
     /**
      * Data filename with extension
      */
+    @ApiObjectFieldLight(description = "Data filename with extension")
     String filename
 
     /**
      * ???
      */
+    @ApiObjectFieldLight(description = "File full path if 'cytomine.jobdata.filesystem' config is true", useForCreation = false)
     String dir
 
     /**
      * If data file is store on database (blob field), link to the file
      */
+    @ApiObjectFieldLight(description = "File data (from blob field) if 'cytomine.jobdata.filesystem' config is false", useForCreation = false)
     JobDataBinaryValue value
 
     /**
      * Data size (in Bytes)
      */
+    @ApiObjectFieldLight(description = "Data size (in Bytes)", useForCreation = false)
     Long size
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "job", description = "The job that store the data",allowedType = "long",useForCreation = true)
+    ])
     static belongsTo = [job: Job]
 
     static constraints = {
@@ -73,17 +85,21 @@ class JobData extends CytomineDomain {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + JobData.class)
         JSON.registerObjectMarshaller(JobData) { jobData ->
-            def returnArray = [:]
-            returnArray['class'] = jobData.class
-            returnArray['id'] = jobData.id
-            returnArray['key'] = jobData.key
-            returnArray['job'] = jobData.job.id
-            returnArray['filename'] = jobData.filename
-            returnArray['size'] = jobData.size
-            returnArray['created'] = jobData.created?.time?.toString()
-            returnArray['updated'] = jobData.updated?.time?.toString()
-            return returnArray
+            getDataFromDomain(jobData)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['key'] = domain?.key
+        returnArray['job'] = domain?.job?.id
+        returnArray['filename'] = domain?.filename
+        returnArray['size'] = domain?.size
+        return returnArray
     }
 
     /**

@@ -11,6 +11,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -68,7 +69,7 @@ class RestImageSequenceController extends RestController {
     }
 
     @ApiMethodLight(description="Get the image dimension index (e.g. c=0, z=1, t=3,...) and the possible range for each dimension (e.g. image x has channel [0-2], zstack only 0, time [0-1],... ")
-    @ApiBodyObject(name = "[sequence_possibilties]")
+    @ApiResponseObject(objectIdentifier =  "[sequence_possibilties]")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
     ])

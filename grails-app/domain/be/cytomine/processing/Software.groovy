@@ -5,19 +5,25 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Software is an application that can read/add/update/delete data from cytomine
- * When a software is launch, we add a
+ * Each time a software is launch, we create a job instance
  */
+@ApiObject(name = "software", description = "Software is an application that can read/add/update/delete data from cytomine. Each time a software is launch, we create a job instance")
 class Software extends CytomineDomain {
+
 
     def softwareParameterService
 
     /**
      * Application name
      */
+    @ApiObjectFieldLight(description = "The software name")
     String name
 
     /**
@@ -29,21 +35,24 @@ class Software extends CytomineDomain {
     /**
      * Service name used to load service
      */
+    @ApiObjectFieldLight(description = "Service name used to load software and create job", mandatory = false)
     String serviceName
 
     /**
      * Type of result page
      * For UI client, we load a specific page for each software to print data (charts, listing,...)
      */
+    @ApiObjectFieldLight(description = "For UI client: Type of result page. We load a specific page for each software to print data (charts, listing,...)", mandatory = false)
     String resultName
 
     /**
      * Software info
      */
+    @ApiObjectFieldLight(description = "Software info", mandatory = false)
     String description
 
     /**
-     * Result sample (image, report, ...)
+     * Result sample (image, report, ...). Still used?????
      */
     byte[] resultSample
 
@@ -51,6 +60,21 @@ class Software extends CytomineDomain {
      * (deprecated) Command to execute software
      */
     String executeCommand
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "parameters", description = "List of 'software parameter' for this software (sort by index asc)",allowedType = "list",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfJob", description = "The number of job for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfNotLaunch", description = "The number of job not launch for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfNotLaunch", description = "The number of job not launch for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfInQueue", description = "The number of job in queue for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfRunning", description = "The number of job currently running for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfSuccess", description = "The number of job finished with success for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfFailed", description = "The number of job failed for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfIndeterminate", description = "The number of job in indeterminate status for this software",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "numberOfWait", description = "The number of job waiting for this software",allowedType = "long",useForCreation = false),
+    ])
+    static transients = []
+
 
     static constraints = {
         name(nullable: false, unique: true)
@@ -126,27 +150,28 @@ class Software extends CytomineDomain {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Software.class)
         JSON.registerObjectMarshaller(Software) {
-            def software = [:]
-            software.id = it.id
-            software.name = it.name
-            software.created = it.created
-            software.serviceName = it.serviceName
-            software.resultName = it.resultName
-            software.description = it.description
-            try {
-                software.parameters = SoftwareParameter.findAllBySoftwareAndSetByServer(it, false, [sort : "index", order : "asc"])
-                software.numberOfJob = Job.countBySoftware(it)
-                software.numberOfNotLaunch = Job.countBySoftwareAndStatus(it,Job.NOTLAUNCH)
-                software.numberOfInQueue = Job.countBySoftwareAndStatus(it,Job.INQUEUE)
-                software.numberOfRunning = Job.countBySoftwareAndStatus(it,Job.RUNNING)
-                software.numberOfSuccess = Job.countBySoftwareAndStatus(it,Job.SUCCESS)
-                software.numberOfFailed = Job.countBySoftwareAndStatus(it,Job.FAILED)
-                software.numberOfIndeterminate = Job.countBySoftwareAndStatus(it,Job.INDETERMINATE)
-                software.numberOfWait = Job.countBySoftwareAndStatus(it,Job.WAIT)
-            } catch(Exception e) { log.info e; e.printStackTrace()}
-
-            return software
+            getDataFromDomain(it)
         }
+    }
+
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        returnArray['serviceName'] = domain?.serviceName
+        returnArray['resultName'] = domain?.resultName
+        returnArray['description'] = domain?.description
+        try {
+            returnArray['parameters'] = SoftwareParameter.findAllBySoftwareAndSetByServer(domain, false, [sort : "index", order : "asc"])
+            returnArray['numberOfJob'] = Job.countBySoftware(domain)
+            returnArray['numberOfNotLaunch'] = Job.countBySoftwareAndStatus(domain,Job.NOTLAUNCH)
+            returnArray['numberOfInQueue'] = Job.countBySoftwareAndStatus(domain,Job.INQUEUE)
+            returnArray['numberOfRunning'] = Job.countBySoftwareAndStatus(domain,Job.RUNNING)
+            returnArray['numberOfSuccess'] = Job.countBySoftwareAndStatus(domain,Job.SUCCESS)
+            returnArray['numberOfFailed'] = Job.countBySoftwareAndStatus(domain,Job.FAILED)
+            returnArray['numberOfIndeterminate'] = Job.countBySoftwareAndStatus(domain,Job.INDETERMINATE)
+            returnArray['numberOfWait'] = Job.countBySoftwareAndStatus(domain,Job.WAIT)
+        } catch(Exception e) { }
+        return returnArray
     }
 
     /**

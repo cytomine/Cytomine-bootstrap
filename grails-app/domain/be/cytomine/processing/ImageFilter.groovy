@@ -1,17 +1,30 @@
 package be.cytomine.processing
 
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * An image filter applies image operations (Binary, Eosin,...)
  */
+@ApiObject(name = "image filter", description = "An image filter applies image operations (Binary, Eosin,...)")
 class ImageFilter {
 
+    @ApiObjectFieldLight(description = "The filter name",useForCreation = false)
     String name
+
+    @ApiObjectFieldLight(description = "The URL path of the filter on the processing server",useForCreation = false)
     String baseUrl
+
+    @ApiObjectFieldLight(description = "The URL of the processing server", allowedType = "string",useForCreation = false)
     ProcessingServer processingServer
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "id", description = "The domain id",allowedType = "long",useForCreation = false)
+    ])
     static constraints = {
         name(blank: false, nullable: false)
         baseUrl(blank: false, nullable: false)
@@ -25,12 +38,20 @@ class ImageFilter {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilter.class)
         JSON.registerObjectMarshaller(ImageFilter) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['processingServer'] = it.processingServer.url
-            returnArray['baseUrl'] = it.baseUrl
-            return returnArray
+            getDataFromDomain(it)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = [:]
+        returnArray['id'] = domain?.id
+        returnArray['name'] = domain?.name
+        returnArray['processingServer'] = domain?.processingServer?.url
+        returnArray['baseUrl'] = domain?.baseUrl
+        return returnArray
     }
 }

@@ -23,6 +23,7 @@ class RetrievalSuggestStatsController extends RestController {
     /**
      * Get the AVG of prediction for this job
      */
+    //TODO:APIDOC
     def statRetrievalAVG = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -46,6 +47,7 @@ class RetrievalSuggestStatsController extends RestController {
      * Exp Term 2      0        5        0
      * Exp Term 3      1        0        1
      */
+    //TODO:APIDOC
     def statRetrievalConfusionMatrix = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -62,6 +64,7 @@ class RetrievalSuggestStatsController extends RestController {
     /**
      * Compute the term that have poor prediction
      */
+    //TODO:APIDOC
     def statRetrievalWorstTerm = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -76,6 +79,7 @@ class RetrievalSuggestStatsController extends RestController {
     /**
      *  Compute the term that have poor prediction and compute the predicted term for each case
      */
+    //TODO:APIDOC
     def statWorstTermWithSuggestedTerm = {
         log.info "statWorstTermWithSuggestedTerm"
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
@@ -95,6 +99,7 @@ class RetrievalSuggestStatsController extends RestController {
     /**
      * Compute the worst annotation (annotation with wrong prediction and hight similarity rate)
      */
+    //TODO:APIDOC
     def statRetrievalWorstAnnotation = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -109,6 +114,7 @@ class RetrievalSuggestStatsController extends RestController {
     /**
      * Compute the all retrieval AVG during the time (for all job)
      */
+    //TODO:APIDOC
     def statRetrievalEvolution = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -129,6 +135,7 @@ class RetrievalSuggestStatsController extends RestController {
      * @return Term
      * //TODO:: could be optim with no .each loop and a single request
      */
+
     def listWorstTerm(UserJob userJob) {
 
         //get a map with all term and a 0 value

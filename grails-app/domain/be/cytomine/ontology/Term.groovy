@@ -138,11 +138,11 @@ class Term extends CytomineDomain implements Serializable, Comparable {
         returnArray['name'] = domain?.name
         returnArray['comment'] = domain?.comment
         returnArray['ontology'] = domain?.ontology?.id
-        try {returnArray['rate'] = domain?.rate} catch (Exception e) {log.info e}
+        try {returnArray['rate'] = domain?.rate} catch (Exception e) {}
         try {
             RelationTerm rt = RelationTerm.findByRelationAndTerm2(Relation.findByName(RelationTerm.names.PARENT), Term.read(domain?.id))
             returnArray['parent'] = rt?.term1?.id
-        } catch (Exception e) {log.info e}
+        } catch (Exception e) {}
 
         if (domain?.color) returnArray['color'] = domain?.color
         return returnArray

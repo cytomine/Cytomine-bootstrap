@@ -2,10 +2,12 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.ProcessingServer
+import org.jsondoc.core.annotation.Api
 
 /**
  * TODO:: comment this controller. Explain the "processing server goal"
  */
+//TODO:APIDOC
 class RestProcessingServerController extends RestController {
 
     def processingServerService

@@ -5,10 +5,17 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for software: application that can be launch (job)
  */
+@Api(name = "software services", description = "Methods for managing software, application that can be launch (job)")
 class RestSoftwareController extends RestController {
 
     def softwareService
@@ -16,14 +23,19 @@ class RestSoftwareController extends RestController {
     /**
      * List all software available in cytomine
      */
-    def list = {
+    @ApiMethodLight(description="Get all software available in cytomine", listing = true)
+    def list() {
         responseSuccess(softwareService.list())
     }
 
     /**
      * List all software by project
      */
-    def listByProject = {
+    @ApiMethodLight(description="Get all software available in a project", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    def listByProject() {
         Project project = Project.read(params.long('id'))
         if(project) responseSuccess(softwareService.list(project))
         else responseNotFound("Project", params.id)
@@ -32,7 +44,11 @@ class RestSoftwareController extends RestController {
     /**
      * Get a specific software
      */
-    def show = {
+    @ApiMethodLight(description="Get a specific software")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    ])
+    def show() {
         Software software = softwareService.read(params.long('id'))
         if (software) {
             responseSuccess(software)
@@ -45,21 +61,30 @@ class RestSoftwareController extends RestController {
      * Add a new software to cytomine
      * We must add in other request: parameters, software-project link,...
      */
-    def add = {
+    @ApiMethodLight(description="Add a new software to cytomine. We must add in other request: software parameters, software project link,...")
+    def add() {
         add(softwareService, request.JSON)
     }
 
     /**
      * Update a software info
      */
-    def update = {
+    @ApiMethodLight(description="Update a software.", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    ])
+    def update() {
         update(softwareService, request.JSON)
     }
 
     /**
      * Delete software
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a software.", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    ])
+    def delete() {
         delete(softwareService, JSON.parse("{id : $params.id}"),null)
     }
 
@@ -68,7 +93,13 @@ class RestSoftwareController extends RestController {
      * TODO:: could be improved with a single SQL request
      *
      */
-    def softwareInfoForProject = {
+    @ApiMethodLight(description="For a software and a project, get the stats (number of job, succes,...)", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="idProject", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="idSoftware", type="long", paramType = ApiParamType.PATH, description = "The software id"),
+    ])
+    @ApiResponseObject(objectIdentifier = "[numberOfJob:x,numberOfNotLaunch:x,numberOfInQueue:x,numberOfRunning:x,numberOfSuccess:x,numberOfFailed:x,numberOfIndeterminate:x,numberOfWait:x]")
+    def softwareInfoForProject() {
         Project project = Project.read(params.long('idProject'))
         Software software = Software.read(params.long('idSoftware'))
         if(!project) {
@@ -103,10 +134,5 @@ class RestSoftwareController extends RestController {
 
             responseSuccess(result)
         }
-
-
-
-
-
     }
 }

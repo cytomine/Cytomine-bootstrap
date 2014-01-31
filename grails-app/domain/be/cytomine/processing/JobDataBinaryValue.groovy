@@ -1,6 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
+import org.jsondoc.core.annotation.ApiObject
 
 //* Its better to have a specific domain link than a simple 'byte[] value'.
 //* Each time we load a job data

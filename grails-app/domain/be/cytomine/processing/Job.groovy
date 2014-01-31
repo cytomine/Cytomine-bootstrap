@@ -6,12 +6,16 @@ import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A job is a software instance
  * This is the execution of software with some parameters
  */
+@ApiObject(name = "job", description = "A job is a software instance. This is the execution of software with some parameters")
 class Job extends CytomineDomain  {
     /**
      * Job status (enum type are too heavy with GORM)
@@ -28,41 +32,58 @@ class Job extends CytomineDomain  {
     /**
      * Job progression
      */
+    @ApiObjectFieldLight(description = "The algo progression (from 0 to 100)",mandatory = false)
     int progress = 0
 
     /**
      * Job status (see static int)
      */
+    @ApiObjectFieldLight(description = "The algo status (NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2,SUCCESS = 3,FAILED = 4,INDETERMINATE = 5,WAIT = 6,PREVIEWED = 7)",mandatory = false)
     int status = 0
 
     /**
      * Job Indice for this software in this project
      */
+    @ApiObjectFieldLight(description = "Job Indice for this software in this project",useForCreation = false)
     int number
 
     /**
      * Text comment for the job status
      */
+    @ApiObjectFieldLight(description = "Text comment for the job status", mandatory = false)
     String statusComment
 
     /**
      * Job project
      */
+    @ApiObjectFieldLight(description = "The project of the job")
     Project project
 
     /**
      * Generic field for job rate info
      * The rate is a quality value about the job works
      */
+    @ApiObjectFieldLight(description = "Generic field for job rate info. The rate is a quality value about the job works",mandatory = false)
     Double rate = null
 
     /**
      * Flag to see if data generate by this job are deleted
      */
+    @ApiObjectFieldLight(description = "Flag to see if data generate by this job are deleted",mandatory = false)
     boolean dataDeleted = false
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "algoType", description = "The algo type based on the class name",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "softwareName", description = "The software name of the job",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "username", description = "The username of the job",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "userJob", description = "The user of the job",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "jobParameters", description = "List of job parameters for this job",allowedType = "list",useForCreation = false)
+    ])
     static transients = ["url"]
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "software", description = "The software of the job",allowedType = "long",useForCreation = true)
+    ])
     static belongsTo = [software: Software]
 
     static constraints = {
@@ -118,31 +139,36 @@ class Job extends CytomineDomain  {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Job.class)
         JSON.registerObjectMarshaller(Job) {
-            def job = [:]
-            job.id = it.id
-            job.algoType = ResponseService.getClassName(it).toLowerCase()
-            job.progress = it.progress
-            job.status = it.status
-            job.number = it.number
-            job.statusComment = it.statusComment
-            job.project = it.project?.id
-            job.software = it.software?.id
-            job.softwareName = it.software?.name
-            job.rate = it.rate
-            job.created = it.created?.time?.toString()
-            job.updated = it.updated?.time?.toString()
-            job.dataDeleted = it.dataDeleted
-            try {
-                UserJob user = UserJob.findByJob(it)
-                job.username = user?.humanUsername()
-                job.userJob = user.id
-                job.jobParameters = it.parameters()
-            } catch (Exception e) {
-                log.info e
-            }
-            return job
+            getDataFromDomain(it)
         }
     }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['algoType'] = ResponseService?.getClassName(domain)?.toLowerCase()
+        returnArray['progress'] = domain?.progress
+        returnArray['status'] = domain?.status
+        returnArray['number'] = domain?.number
+        returnArray['statusComment'] = domain?.statusComment
+        returnArray['project'] = domain?.project?.id
+        returnArray['software'] = domain?.software?.id
+        returnArray['softwareName'] = domain?.software?.name
+        returnArray['rate'] = domain?.rate
+        returnArray['dataDeleted'] = domain?.dataDeleted
+        try {
+            UserJob user = UserJob.findByJob(domain)
+            returnArray['username'] = user?.humanUsername()
+            returnArray['userJob'] = user?.id
+            returnArray['jobParameters'] = domain?.parameters()
+        } catch (Exception e) {
+        }
+        return returnArray
+    }
+
 
     public List<JobParameter> parameters() {
         if(this.version!=null) {

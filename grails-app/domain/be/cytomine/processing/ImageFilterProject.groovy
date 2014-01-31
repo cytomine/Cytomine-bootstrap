@@ -5,15 +5,29 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * An image filter can be link to many projects
  */
-class ImageFilterProject extends CytomineDomain implements Serializable{
+@ApiObject(name = "image filter project", description = "An image filter can be link to many projects")
+class ImageFilterProject extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The filter")
     ImageFilter imageFilter
+
+    @ApiObjectFieldLight(description = "The project")
     Project project
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "processingServer", description = "The URL of the processing server",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "baseUrl", description = "The URL path of the filter on the processing server",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "name", description = "The filter name",allowedType = "string",useForCreation = false)
+    ])
+    static transients = []
 
     static mapping = {
         id(generator: 'assigned', unique: true)
@@ -60,16 +74,23 @@ class ImageFilterProject extends CytomineDomain implements Serializable{
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + ImageFilterProject.class)
         JSON.registerObjectMarshaller(ImageFilterProject) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['imageFilter'] = it.imageFilter?.id
-            returnArray['processingServer'] = it.imageFilter?.processingServer.url
-            returnArray['baseUrl'] = it.imageFilter?.baseUrl
-            returnArray['name'] = it.imageFilter?.name
-            returnArray['project'] = it.project?.id
-            return returnArray
+            getDataFromDomain(it)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['imageFilter'] = domain?.imageFilter?.id
+        returnArray['project'] = domain?.project?.id
+
+        returnArray['processingServer'] = domain?.imageFilter?.processingServer?.url
+        returnArray['baseUrl'] = domain?.imageFilter?.baseUrl
+        returnArray['name'] = domain?.imageFilter?.name
+        return returnArray
     }
 
     /**

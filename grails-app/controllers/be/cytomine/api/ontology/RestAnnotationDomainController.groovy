@@ -28,6 +28,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 import java.text.SimpleDateFormat
@@ -64,7 +65,7 @@ class RestAnnotationDomainController extends RestController {
      * see AnnotationListing for all filters available
      */
     @ApiMethodLight(description="Search service for all annotation type. By default All fields are not visible (optim), you need to select fields using show/hideXXX query parameters.", listing = true)
-    @ApiBodyObject(name = "[annotation listing]")
+    @ApiResponseObject(objectIdentifier = "[annotation listing]")
     @ApiParams(params=[
         @ApiParam(name="showDefault", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show 'basic', 'meta', and 'term' properties group. See showBasic/Meta/... for more information (default: true ONLY IF NO OTHER show/hideXXX are set)"),
         @ApiParam(name="showBasic", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) If true, show basic properties group (id, class...)"),
@@ -112,7 +113,7 @@ class RestAnnotationDomainController extends RestController {
     }
 
     @ApiMethodLight(description="Download report for annotation. !!! See doc for /annotation/search to filter annotations!!!", listing = true)
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier =  "file")
     @ApiParams(params=[
         @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Output file format (pdf, xls,...)")
     ])
@@ -128,7 +129,7 @@ class RestAnnotationDomainController extends RestController {
      */
 
     @ApiMethodLight(description="Get annotation crop  (image area that frame annotation). This work for all kinds of annotations.")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier =  "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
         @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
@@ -368,7 +369,7 @@ class RestAnnotationDomainController extends RestController {
      * Download report for an annotation listing
      */
     @ApiMethodLight(description="Download a report (pdf, xls,...) with software annotation data from a specific project.")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
         @ApiParam(name="reviewed", type="boolean", paramType = ApiParamType.QUERY,description = "Get only reviewed annotation"),
@@ -398,7 +399,7 @@ class RestAnnotationDomainController extends RestController {
     }
 
     @ApiMethodLight(description="Get all annotation that intersect a geometry or another annotation. See /annotation/search for extra parameter (show/hide). ", listing=true)
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
         @ApiParam(name="idImage", type="long", paramType = ApiParamType.QUERY,description = "The image id"),
         @ApiParam(name="geometry", type="string", paramType = ApiParamType.QUERY,description = "(Optional) WKT form of the geometry (if not set, set annotation param)"),
@@ -411,7 +412,7 @@ class RestAnnotationDomainController extends RestController {
     }
 
     @ApiMethodLight(description="Get all annotation that intersect a geometry or another annotation. Unlike the simple list, extra parameter (show/hide) are not available. ")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
         @ApiParam(name="idImage", type="long", paramType = ApiParamType.QUERY,description = "The image id"),
         @ApiParam(name="geometry", type="string", paramType = ApiParamType.QUERY,description = "(Optional) WKT form of the geometry (if not set, set annotation param)"),

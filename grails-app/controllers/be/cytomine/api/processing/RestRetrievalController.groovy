@@ -8,6 +8,7 @@ import be.cytomine.api.RestController
  * Controller that handle Retrieval request
  *
  */
+//TODO:APIDOC
 class RestRetrievalController extends RestController {
 
     def retrievalService

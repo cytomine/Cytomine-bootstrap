@@ -19,6 +19,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -55,7 +56,7 @@ class RestReviewedAnnotationController extends RestController {
     }
 
     @ApiMethodLight(description="Count the number of reviewed annotation for the current user")
-    @ApiBodyObject(name="[total:x]")
+    @ApiResponseObject(objectIdentifier = "[total:x]")
     def countByUser() {
         responseSuccess([total:reviewedAnnotationService.count(cytomineService.currentUser)])
     }
@@ -479,7 +480,7 @@ class RestReviewedAnnotationController extends RestController {
 
 
     @ApiMethodLight(description="Download a report (pdf, xls,...) with reviewed annotation data from a specific project")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
         @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
@@ -498,7 +499,7 @@ class RestReviewedAnnotationController extends RestController {
      * (Use this service if you know the annotation type)
      */
     @ApiMethodLight(description="Get annotation reviewed crop (image area that frame annotation)")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
         @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),

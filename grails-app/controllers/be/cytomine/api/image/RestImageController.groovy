@@ -13,9 +13,9 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 import sun.misc.BASE64Decoder
 
@@ -124,7 +124,7 @@ class RestImageController extends RestController {
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id"),
         @ApiParam(name="extract", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional) If true, populate data from metadata table into image object")
     ])
-    @ApiBodyObject(name="url")
+    @ApiResponseObject(objectIdentifier = "[metadata:x]")
     def metadata() {
         def idImage = params.long('id')
         def extract = params.boolean('extract')
@@ -145,7 +145,7 @@ class RestImageController extends RestController {
     @ApiParams(params=[
     @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
     ])
-    @ApiBodyObject(name="image property")
+    @ApiResponseObject(objectIdentifier = "image property")
     def imageProperties() {
         responseSuccess(abstractImageService.imageProperties(params.long('id')))
     }
@@ -157,7 +157,7 @@ class RestImageController extends RestController {
     @ApiParams(params=[
     @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image file property id")
     ])
-    @ApiBodyObject(name="image property")
+    @ApiResponseObject(objectIdentifier ="image property")
     def imageProperty() {
         def imageProperty = abstractImageService.imageProperty(params.long('imageproperty'))
         if (imageProperty) {
@@ -174,7 +174,7 @@ class RestImageController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
     ])
-    @ApiBodyObject(name="image (bytes)")
+    @ApiResponseObject(objectIdentifier = "image (bytes)")
     def thumb() {
         def url = abstractImageService.thumb(params.long('id'))
         log.info  "url=$url"
@@ -188,7 +188,7 @@ class RestImageController extends RestController {
     @ApiParams(params=[
     @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
     ])
-    @ApiBodyObject(name="image (bytes)")
+    @ApiResponseObject(objectIdentifier ="image (bytes)")
     def preview() {
         responseImage(abstractImageService.preview(params.long('id')))
     }
@@ -219,7 +219,7 @@ class RestImageController extends RestController {
         @ApiParam(name="channels", type="list", paramType = ApiParamType.QUERY,description = "(Optional) If merge is not null, the list of the sequence index to merge."),
         @ApiParam(name="colors", type="list", paramType = ApiParamType.QUERY,description = "(Optional) If merge is not null, the list of the color for each sequence index (colors.size == channels.size)"),
     ])
-    @ApiBodyObject(name="URL list")
+    @ApiResponseObject(objectIdentifier = "URL list")
     def imageServers() {
 
         try {

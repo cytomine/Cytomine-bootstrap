@@ -21,6 +21,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
@@ -294,7 +295,7 @@ class RestImageInstanceController extends RestController {
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
         @ApiParam(name="based", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
     ])
-    @ApiBodyObject(name = "empty")
+    @ApiResponseObject(objectIdentifier = "empty")
     def copyMetadata() {
         try {
             ImageInstance based = imageInstanceService.read(params.long('based'))
@@ -332,7 +333,7 @@ class RestImageInstanceController extends RestController {
      * If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
      */
     @ApiMethodLight(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
-    @ApiBodyObject(name = "[project_sharing_same_image]")
+    @ApiResponseObject(objectIdentifier =  "[project_sharing_same_image]")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
         @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
@@ -361,7 +362,7 @@ class RestImageInstanceController extends RestController {
      * from user/image from another project.
      */
     @ApiMethodLight(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
-    @ApiBodyObject(name = "[copy_annotation_image]")
+    @ApiResponseObject(objectIdentifier = "[copy_annotation_image]")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
         @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),

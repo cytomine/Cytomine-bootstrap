@@ -3,10 +3,16 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.project.Project
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller that handle the link between a project and a image filter
  */
+@Api(name = "image filter project services", description = "Methods for managing image filter project, a link between an image filter and a project")
 class RestImageFilterProjectController extends RestController {
 
     def imageFilterProjectService
@@ -16,14 +22,19 @@ class RestImageFilterProjectController extends RestController {
     /**
      * List all image filter project
      */
-    def list = {
+    @ApiMethodLight(description="List all image filter project", listing = true)
+    def list() {
  		responseSuccess(imageFilterProjectService.list())
     }
 
     /**
      * List all image filter for a project
      */
-    def listByProject = {
+    @ApiMethodLight(description="List all image filter project for a specific project", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="project", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    def listByProject() {
         def project = Project.read(params.project)
 		if (!project) {
             responseNotFound("Project", "Project", params.project)
@@ -36,14 +47,19 @@ class RestImageFilterProjectController extends RestController {
     /**
      * Add an image filter to a project
      */
-    def add = {
+    @ApiMethodLight(description="Add an image filter to a project")
+    def add () {
         add(imageFilterProjectService, request.JSON)
     }
 
     /**
      * Delete an image filter from a project
      */
-    def delete = {
+    @ApiMethodLight(description="Delete an image filter from a project")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image filter id")
+    ])
+    def delete() {
         delete(imageFilterProjectService, JSON.parse("{id : $params.id}"),null)
     }
 

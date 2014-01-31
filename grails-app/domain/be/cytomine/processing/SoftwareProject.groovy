@@ -4,16 +4,28 @@ import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A link between a software and a project
  * We can add a software to many projects
  */
+@ApiObject(name = "software project", description = "A link between a software and a project. We can add a software to many projects")
 class SoftwareProject extends CytomineDomain implements Serializable{
 
+    @ApiObjectFieldLight(description = "The software")
     Software software
+
+    @ApiObjectFieldLight(description = "The project")
     Project project
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "name", description = "The name of the software",allowedType = "string",useForCreation = false)
+    ])
+    static transients = []
 
     static mapping = {
         id(generator: 'assigned', unique: true)
@@ -46,15 +58,22 @@ class SoftwareProject extends CytomineDomain implements Serializable{
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + SoftwareProject.class)
         JSON.registerObjectMarshaller(SoftwareProject) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['software'] = it.software?.id
-            returnArray['name'] = it.software?.name
-            returnArray['project'] = it.project?.id
-            return returnArray
+            getDataFromDomain(it)
         }
     }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['software'] = domain?.software?.id
+        returnArray['name'] = domain?.software?.name
+        returnArray['project'] = domain?.project?.id
+        return returnArray
+    }
+
 
     /**
      * Get the container domain for this domain (usefull for security)

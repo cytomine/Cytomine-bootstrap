@@ -5,12 +5,18 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.JobData
 import be.cytomine.processing.JobDataBinaryValue
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
 /**
  *  Controller that handle job data files
  *  Files can be saved on filesystem or in database
  */
+@Api(name = "job services", description = "Methods for managing job data file. Files can be saved on filesystem or in database.")
 class RestJobDataController extends RestController {
 
     def jobDataService
@@ -18,14 +24,19 @@ class RestJobDataController extends RestController {
     /**
      * List all job data
      */
-    def list = {
+    @ApiMethodLight(description="Get all job data", listing = true)
+    def list() {
         responseSuccess(jobDataService.list())
     }
 
     /**
      * List all data files info by job
      */
-    def listByJob = {
+    @ApiMethodLight(description="Get all data for a job", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
+    ])
+    def listByJob() {
         Job job = Job.read(params.long('id'))
         if(job) {
             responseSuccess(jobDataService.list(job))
@@ -37,7 +48,11 @@ class RestJobDataController extends RestController {
     /**
      * Get a specific data file info
      */
-    def show = {
+    @ApiMethodLight(description="Get a specific data file info")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def show() {
         JobData jobData = jobDataService.read(params.long('id'))
         if (jobData) {
             responseSuccess(jobData)
@@ -50,7 +65,8 @@ class RestJobDataController extends RestController {
      * Add a new data file description
      * We must call then "upload" action to upload the file
      */
-    def add = {
+    @ApiMethodLight(description="Add a new data file description. After that, call then 'upload' action to upload the file")
+    def add() {
         println "Job Data Controller"
         println params
         add(jobDataService, request.JSON)
@@ -59,21 +75,33 @@ class RestJobDataController extends RestController {
     /**
      * Update file info
      */
-    def update = {
+    @ApiMethodLight(description="Edit a job data")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def update() {
         update(jobDataService, request.JSON)
     }
 
     /**
      * Delete file description
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a job data")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def delete() {
         delete(jobDataService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**
      * Upload a file
      */
-    def upload = {
+    @ApiMethodLight(description="Upload and add file to a job data")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def upload() {
         log.info "Upload file = " + params.getLong('id')
 
         JobData jobData = jobDataService.read(params.getLong('id'))
@@ -102,7 +130,11 @@ class RestJobDataController extends RestController {
     /**
      * View a job data file
      */
-    def view = {
+    @ApiMethodLight(description="View a job data file in the browser")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def view() {
         log.info "View file jobdata = " + params.getLong('id')
         JobData jobData = jobDataService.read(params.getLong('id'))
         if(!jobData) {
@@ -118,7 +150,11 @@ class RestJobDataController extends RestController {
     /**
      * Download a job data file
      */
-    def download = {
+    @ApiMethodLight(description="Download a job data file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job data id")
+    ])
+    def download() {
         log.info "Download file jobdata = " + params.getLong('id')
         JobData jobData = jobDataService.read(params.getLong('id'))
         if(!jobData) {

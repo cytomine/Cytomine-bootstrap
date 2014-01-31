@@ -10,6 +10,7 @@ import be.cytomine.security.UserJob
  * -> Each iteration is a different user job (ex: 01/01/2012 - user 1 ; 01/04/2012 - user 2...) and their share
  * a common job domain
  */
+//TODO:APIDOC
 class RetrievalEvolutionStatsController extends RestController {
 
     def termService
@@ -20,6 +21,7 @@ class RetrievalEvolutionStatsController extends RestController {
     /**
      * Compute the retrieval evolution success for all annotation
      */
+    //TODO:APIDOC
     def statRetrievalEvolution = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {
@@ -37,6 +39,7 @@ class RetrievalEvolutionStatsController extends RestController {
     /**
      * Compute the retrieval evolution success for annotation of a specific term
      */
+    //TODO:APIDOC
     def statRetrievalEvolutionByTerm = {
         UserJob userJob = jobService.retrieveUserJobFromParams(params)
         if(!userJob) {

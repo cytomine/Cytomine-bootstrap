@@ -14,6 +14,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -42,7 +43,7 @@ class  RestAlgoAnnotationController extends RestController {
      * List all annotation (created by algo) visible for the current user
      */
     @ApiMethodLight(description="List all software annotation visible for the current user. See 'annotation domain' data for parameters (only show/hide parameters are available for this service). ", listing = true)
-    @ApiBodyObject(name = "[annotation listing]")
+    @ApiResponseObject(objectIdentifier =  "[annotation listing]")
     def list() {
         def annotations = []
         //get all user's project and list all algo annotation
@@ -146,7 +147,7 @@ class  RestAlgoAnnotationController extends RestController {
     }
 
     @ApiMethodLight(description="Download a report (pdf, xls,...) with software annotation data from a specific project")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier =  "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
         @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
@@ -164,7 +165,7 @@ class  RestAlgoAnnotationController extends RestController {
      * (Use this service if you know the annotation type)
      */
     @ApiMethodLight(description="Get annotation algo crop (image area that frame annotation)")
-    @ApiBodyObject(name = "file")
+    @ApiResponseObject(objectIdentifier =  "file")
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
         @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),

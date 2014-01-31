@@ -4,12 +4,18 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobParameter
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for job parameter
  * Each software may have some parameters (e.g.: cytomine project id, number of thread,...)
  * A job parameter is a software parameter instance with a specific value for this job
  */
+@Api(name = "job parameter services", description = "Methods for managing job parameter. Each software may have some parameters (e.g.: cytomine project id, number of thread,...). A job parameter is a software parameter instance with a specific value for this job")
 class RestJobParameterController extends RestController {
 
     def jobParameterService
@@ -18,14 +24,19 @@ class RestJobParameterController extends RestController {
     /**
      * List all job parameter
      */
-    def list = {
+    @ApiMethodLight(description="Get all job parameter", listing = true)
+    def list() {
         responseSuccess(jobParameterService.list())
     }
 
     /**
      * List all job parameter for a job
      */
-    def listByJob = {
+    @ApiMethodLight(description="Get all job parameter for a job", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
+    ])
+    def listByJob() {
         Job job = jobService.read(params.long('id'));
         if (job) {
             responseSuccess(jobParameterService.list(job))
@@ -37,7 +48,11 @@ class RestJobParameterController extends RestController {
     /**
      * Get a job parameter
      */
-    def show = {
+    @ApiMethodLight(description="Get a job parameter")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    ])
+    def show() {
         JobParameter jobParameter = jobParameterService.read(params.long('id'))
         if (jobParameter) {
             responseSuccess(jobParameter)
@@ -49,21 +64,33 @@ class RestJobParameterController extends RestController {
     /**
      * Add a new job parameter
      */
-    def add = {
+    @ApiMethodLight(description="Add a new job parameter")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    ])
+    def add() {
         add(jobParameterService, request.JSON)
     }
 
     /**
      * Update job parameter
      */
-    def update = {
+    @ApiMethodLight(description="Update a job parameter")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    ])
+    def update() {
         update(jobParameterService, request.JSON)
     }
 
     /**
      * Delete job parameter
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a job parameter")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    ])
+    def delete() {
         delete(jobParameterService, JSON.parse("{id : $params.id}"),null)
     }
 

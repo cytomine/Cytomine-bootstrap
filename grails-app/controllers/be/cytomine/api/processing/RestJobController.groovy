@@ -12,11 +12,18 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.utils.Task
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for job request.
  * A job is a software instance that has been, is or will be running.
  */
+@Api(name = "job services", description = "Methods for managing job. A job is a software instance that has been, is or will be running.")
 class RestJobController extends RestController {
 
     def jobService
@@ -32,7 +39,13 @@ class RestJobController extends RestController {
     /**
      * List all job
      */
-    def list = {
+    @ApiMethodLight(description="Get an algo annotation", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="boolean", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional, default false) If true, get a light/quick listing (without job parameters,...)"),
+        @ApiParam(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of software id to filter"),
+        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of project id to filter")
+    ])
+    def list() {
         Boolean light = params.boolean('light') ? params.boolean('light') : false;
         def softwares_id = params.software ? params.software.split(',').collect { Long.parseLong(it)} : null
         def projects_id = params.project ? params.project.split(',').collect { Long.parseLong(it)} : null
@@ -57,7 +70,11 @@ class RestJobController extends RestController {
     /**
      * Get a specific job
      */
-    def show = {
+    @ApiMethodLight(description="Get a job", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
+    ])
+    def show() {
         Job job = jobService.read(params.long('id'))
         if (job) {
             responseSuccess(job)
@@ -69,7 +86,8 @@ class RestJobController extends RestController {
     /**
      * Add a new job and launch this new software instance
      */
-    def add = {
+    @ApiMethodLight(description="Add a new job and create the corresponding user job")
+    def add() {
         try {
             println "Job Controller"
             println params
@@ -86,7 +104,11 @@ class RestJobController extends RestController {
     /**
      * Update a job
      */
-    def update = {
+    @ApiMethodLight(description="Edit a job")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    ])
+    def update() {
         log.info "update"
         update(jobService, request.JSON)
     }
@@ -94,25 +116,35 @@ class RestJobController extends RestController {
     /**
      * Delete a job
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a job")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    ])
+    def delete() {
         delete(jobService, JSON.parse("{id : $params.id}"),null)
     }
 
-    def execute = {
+    @ApiMethodLight(description="Execute a job, launch the software")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    ])
+    def execute() {
         long idJob = params.long("id")
         Job job = Job.read(idJob)
         jobService.executeJob(job, false)
         responseSuccess(job)
     }
 
-    def preview = {
+    //TODO:APIDOC
+    def preview() {
         long idJob = params.long("id")
         Job job = Job.read(idJob)
         jobService.executeJob(job, true)
         responseSuccess(job)
     }
 
-    def getPreviewRoi = {
+    //TODO:APIDOC
+    def getPreviewRoi() {
         Job job = jobService.read(params.long('id'))
         byte[] data = job.software.service.getPreviewROI(job)
         if (data) {
@@ -124,7 +156,8 @@ class RestJobController extends RestController {
         }
     }
 
-    def getPreview = {
+    //TODO:APIDOC
+    def getPreview() {
         Job job = jobService.read(params.long('id'))
         byte[] data = job.software.service.getPreview(job)
         if (data) {
@@ -141,7 +174,13 @@ class RestJobController extends RestController {
      * This method will delete: annotation prediction, uploaded files,...
      * This method is heavy, so we use Task service to provide a progress status to the user interface
      */
-    def deleteAllJobData = {
+    @ApiMethodLight(description="Delete the full data set build by the job. This method will delete: annotation prediction, uploaded files,...")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
+        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+    ])
+    @ApiResponseObject(objectIdentifier = "[message:x]")
+    def deleteAllJobData() {
         Job job = jobService.read(params.long('id'));
 
 
@@ -185,7 +224,13 @@ class RestJobController extends RestController {
      * List all data build by the job
      * Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files
      */
-    def listAllJobData = {
+    @ApiMethodLight(description="List all data build by the job. Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
+        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+        ])
+    @ApiResponseObject(objectIdentifier = "[annotations:x,annotationsTerm:x,jobDatas:x,reviewed:x]")
+    def listAllJobData () {
         Job job = jobService.read(params.long('id'))
         if (!job)
             responseNotFound("Job",params.id)
@@ -207,8 +252,13 @@ class RestJobController extends RestController {
         }
     }
 
-
-    def purgeJobNotReviewed = {
+    @ApiMethodLight(description="For a project, delete all job data if the job has no reviewed annotation")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+    ])
+    @ApiResponseObject(objectIdentifier = "project")
+    def purgeJobNotReviewed () {
         //retrieve project
         Project  project = projectService.read(params.long('id'))
         try {
@@ -216,7 +266,7 @@ class RestJobController extends RestController {
 
             SecurityACL.checkIsAdminContainer(project,cytomineService.currentUser)
                if (!project)
-                   responseNotFound("Project",params.project)
+                   responseNotFound("Project",params.id)
                else {
                    //retrieve task
                    Task task = taskService.read(params.long('task'))

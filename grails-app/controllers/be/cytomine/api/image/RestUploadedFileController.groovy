@@ -20,6 +20,7 @@ import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 import javax.activation.MimetypesFileTypeMap
@@ -59,7 +60,7 @@ class RestUploadedFileController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
-    @ApiBodyObject(name="empty")
+    @ApiResponseObject(objectIdentifier = "empty")
     def clearProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
        imagePropertiesService.clear(abstractImage)
@@ -70,7 +71,7 @@ class RestUploadedFileController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
-    @ApiBodyObject(name="empty")
+    @ApiResponseObject(objectIdentifier = "empty")
     def populateProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.populate(abstractImage)
@@ -81,7 +82,7 @@ class RestUploadedFileController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
-    @ApiBodyObject(name="empty")
+    @ApiResponseObject(objectIdentifier = "empty")
     def extractProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.extractUseful(abstractImage)
@@ -143,7 +144,7 @@ class RestUploadedFileController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="uploadedFile", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
     ])
-    @ApiBodyObject(name="[abstractimage.|abstract image|]")
+    @ApiResponseObject(objectIdentifier = "[abstractimage.|abstract image|]")
     def createImage () {
         long timestamp = new Date().getTime()
         def currentUser = cytomineService.currentUser
