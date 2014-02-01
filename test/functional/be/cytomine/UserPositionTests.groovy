@@ -1,12 +1,10 @@
 package be.cytomine
 
-import be.cytomine.test.Infos
-
 import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
-import grails.converters.JSON
-
 import be.cytomine.test.http.UserPositionAPI
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,9 +1,9 @@
 package be.cytomine
 
+import be.cytomine.ontology.Relation
+import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-import be.cytomine.test.BasicInstanceBuilder
-import be.cytomine.ontology.Relation
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject

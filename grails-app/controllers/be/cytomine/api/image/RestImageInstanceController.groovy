@@ -41,6 +41,7 @@ class RestImageInstanceController extends RestController {
     def imageInstanceService
     def projectService
     def abstractImageService
+    def dataTablesService
     def userAnnotationService
     def algoAnnotationService
     def reviewedAnnotationService
@@ -92,7 +93,13 @@ class RestImageInstanceController extends RestController {
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
-        if (project && !params.tree) {
+        if (params.datatables) {
+            print "datatables"
+            def where = ""
+            def fieldFormat = []
+            responseSuccess(dataTablesService.process(params, ImageInstance, where, fieldFormat))
+        }
+        else if (project && !params.tree) {
             String sortColumn = params.sortColumn ? params.sortColumn : "created"
             String sortDirection = params.sortDirection ? params.sortDirection : "desc"
             String search = params.search

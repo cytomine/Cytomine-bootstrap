@@ -1,7 +1,7 @@
 package be.cytomine.security
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.authentication.AccountExpiredException
 import org.springframework.security.authentication.CredentialsExpiredException
 import org.springframework.security.authentication.DisabledException
@@ -23,7 +23,7 @@ class LoginController {
      */
     def springSecurityService
 
-    def loginWithoutLDAP = {
+    def loginWithoutLDAP () {
         println "loginWithoutLDAP"
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
@@ -39,20 +39,20 @@ class LoginController {
     /**
      * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
      */
-    def index = {
+    def index () {
         println "index"
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
         }
         else {
-            redirect action: auth, params: params
+            redirect action: "auth", params: params
         }
     }
 
     /**
      * Show the login page.
      */
-    def auth = {
+    def auth () {
         println "auth"
         def config = SpringSecurityUtils.securityConfig
 
@@ -70,19 +70,19 @@ class LoginController {
     /**
      * Show denied page.
      */
-    def denied = {
-        println "denied"
+    def denied () {
+        println "denied..."
         if (springSecurityService.isLoggedIn() &&
                 authenticationTrustResolver.isRememberMe(SCH.context?.authentication)) {
             // have cookie but the page is guarded with IS_AUTHENTICATED_FULLY
-            redirect action: full, params: params
+            redirect action: "full", params: params
         }
     }
 
     /**
      * Login page for users with a remember-me cookie but accessing a IS_AUTHENTICATED_FULLY page.
      */
-    def full = {
+    def full () {
         println "full"
         def config = SpringSecurityUtils.securityConfig
         render view: 'auth', params: params,
@@ -93,7 +93,7 @@ class LoginController {
     /**
      * Callback after a failed login. Redirects to the auth page with a warning message.
      */
-    def authfail = {
+    def authfail () {
         println "authfail"
         println "springSecurityService.isLoggedIn()="+springSecurityService.isLoggedIn()
         def msg = ''
@@ -156,7 +156,7 @@ class LoginController {
     }*/
 
 
-    def authAjax = {
+    def authAjax () {
         println "authAjax"
         response.sendError HttpServletResponse.SC_UNAUTHORIZED
     }
@@ -164,7 +164,7 @@ class LoginController {
     /**
      * The Ajax success redirect url.
      */
-    def ajaxSuccess = {
+    def ajaxSuccess () {
         println "ajaxSuccess"
         User user = User.read(springSecurityService.principal.id)
         render([success: true, id: user.id, fullname: user.firstname + " " + user.lastname] as JSON)
@@ -173,7 +173,7 @@ class LoginController {
     /**
      * The Ajax denied redirect url.
      */
-    def ajaxDenied = {
+    def ajaxDenied () {
         println "ajaxDenied"
         render([error: 'access denied'] as JSON)
     }

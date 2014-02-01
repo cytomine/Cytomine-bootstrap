@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
-
 import be.cytomine.test.http.AnnotationTermAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject

@@ -72,8 +72,6 @@ grails.spring.bean.packages = []
 cytomine.jobdata.filesystem = false
 cytomine.jobdata.filesystemPath = "algo/data/"
 
-//mail.error.port = 587
-//mail.error.starttls = true
 
 // set per-environment serverURL stem for creating absolute links
 environments {
@@ -81,26 +79,26 @@ environments {
         grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
-        grails.plugins.springsecurity.useBasicAuth = false
+        grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
     }
     development {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
         grails.uploadURL = "http://localhost:9090"
         grails.converters.default.pretty.print = true
-        grails.plugins.springsecurity.useBasicAuth = false
+        grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
     }
     test {
         grails.serverURL = "http://localhost:8090"
-        grails.plugins.springsecurity.useBasicAuth = true
-        grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+        grails.plugin.springsecurity.useBasicAuth = true
+        grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
     perf {
         grails.serverURL = "http://localhost:8080"
-        grails.plugins.springsecurity.useBasicAuth = true
-        grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+        grails.plugin.springsecurity.useBasicAuth = true
+        grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
     }
 }
@@ -180,8 +178,7 @@ log4j = {
     //appenders {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
-//   System.setProperty('mail.smtp.port', mail.error.port.toString())
-//   System.setProperty('mail.smtp.starttls.enable',  mail.error.starttls.toString())
+
 
     println "Log4j consoleLevel"
 
@@ -258,8 +255,8 @@ log4j = {
    debug 'grails.app'
    debug 'grails.app.services'
    debug 'grails.app.controllers
-    debug   'grails.plugins.springsecurity'
-    debug   'org.codehaus.groovy.grails.plugins.springsecurity'
+    debug   'grails.plugin.springsecurity'
+    debug   'org.codehaus.groovy.grails.plugin.springsecurity'
     debug   'org.springframework.security'
     debug   'org.jasig.cas.client' */
 
@@ -268,7 +265,11 @@ log4j = {
    //trace 'org.hibernate.type'
 }
 
-grails.plugins.springsecurity.interceptUrlMap = [
+
+grails.plugin.springsecurity.rejectIfNoRule = false
+grails.plugin.springsecurity.fii.rejectPublicInvocations = false
+grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
+grails.plugin.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
@@ -279,6 +280,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]
+
 /* Read CAS/LDAP config. A bad thing with Grails external config is that all config data from config properties file
    is set AFTER ldap/cas config. So we read config data from file directly and we force flag (active)
    def flag = readFromConfigFile()
@@ -291,91 +293,90 @@ Properties props = new Properties()
         props.load(propsFile.newDataInputStream())
     }
 
-    println "cas.active="+props.getProperty("grails.plugins.springsecurity.cas.active")
-    if(props.getProperty("grails.plugins.springsecurity.cas.active").toString()=="true") {
+    println "cas.active="+props.getProperty("grails.plugin.springsecurity.cas.active")
+    if(props.getProperty("grails.plugin.springsecurity.cas.active").toString()=="true") {
         println("enable CAS")
-        grails.plugins.springsecurity.cas.useSingleSignout = true
-        grails.plugins.springsecurity.cas.active = true
-        grails.plugins.springsecurity.ldap.active = true
-        grails.plugins.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be'
+        grails.plugin.springsecurity.cas.useSingleSignout = true
+        grails.plugin.springsecurity.cas.active = true
+        grails.plugin.springsecurity.ldap.active = true
+        grails.plugin.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be'
 
     } else {
         println("disable CAS")
-        grails.plugins.springsecurity.cas.useSingleSignout = false
-        grails.plugins.springsecurity.cas.active = false
-        grails.plugins.springsecurity.ldap.active = false
-        grails.plugins.springsecurity.interceptUrlMap.remove('/*')
+        grails.plugin.springsecurity.cas.useSingleSignout = false
+        grails.plugin.springsecurity.cas.active = false
+        grails.plugin.springsecurity.ldap.active = false
+        grails.plugin.springsecurity.interceptUrlMap.remove('/*')
     }
-grails.plugins.springsecurity.cas.loginUri = '/login'
-grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
+grails.plugin.springsecurity.cas.loginUri = '/login'
+grails.plugin.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
 
 
 environments {
   development {
-      grails.plugins.springsecurity.cas.serviceUrl = 'http://localhost:8080/j_spring_cas_security_check'
+      grails.plugin.springsecurity.cas.serviceUrl = 'http://localhost:8080/j_spring_cas_security_check'
   }
 test {
-    grails.plugins.springsecurity.cas.serviceUrl = 'http://localhost:8080/j_spring_cas_security_check'
+    grails.plugin.springsecurity.cas.serviceUrl = 'http://localhost:8080/j_spring_cas_security_check'
 }
   production {
-      grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'
+      grails.plugin.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'
   }
 }
 
 
 
 
-grails.plugins.springsecurity.auth.loginFormUrl = '/'
+//grails.plugin.springsecurity.auth.loginFormUrl = '/'
 
-grails.plugins.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
-grails.plugins.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
-grails.plugins.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
-grails.plugins.springsecurity.ldap.context.server = 'ldap://ldap.ulg.ac.be:389'
-grails.plugins.springsecurity.ldap.authorities.groupSearchBase =
+grails.plugin.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
+grails.plugin.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
+grails.plugin.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
+grails.plugin.springsecurity.ldap.context.server = 'ldap://ldap.ulg.ac.be:389'
+grails.plugin.springsecurity.ldap.authorities.groupSearchBase =
     'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
-grails.plugins.springsecurity.ldap.mapper.userDetailsClass= 'inetOrgPerson'// 'org.springframework.security.ldap.userdetails.InetOrgPerson'
-grails.plugins.springsecurity.ldap.mapper.usePassword= false
-grails.plugins.springsecurity.ldap.authorities.ignorePartialResultException = true
-grails.plugins.springsecurity.ldap.authorities.retrieveDatabaseRoles = true
+grails.plugin.springsecurity.ldap.mapper.userDetailsClass= 'inetOrgPerson'// 'org.springframework.security.ldap.userdetails.InetOrgPerson'
+grails.plugin.springsecurity.ldap.mapper.usePassword= false
+grails.plugin.springsecurity.ldap.authorities.ignorePartialResultException = true
+grails.plugin.springsecurity.ldap.authorities.retrieveDatabaseRoles = true
 //
-//grails.plugins.springsecurity.cas.useSingleSignout = false
-//grails.plugins.springsecurity.cas.active = false
-//grails.plugins.springsecurity.ldap.active = false
+//grails.plugin.springsecurity.cas.useSingleSignout = false
+//grails.plugin.springsecurity.cas.active = false
+//grails.plugin.springsecurity.ldap.active = false
 
 
 //CAS
-//grails.plugins.springsecurity.cas.useSingleSignout = false //false for beta
-//grails.plugins.springsecurity.cas.active = false //false for beta
-//grails.plugins.springsecurity.cas.loginUri = '/login'
-//grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
-//grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'
-//grails.plugins.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be'
-//grails.plugins.springsecurity.auth.loginFormUrl = '/'
+//grails.plugin.springsecurity.cas.useSingleSignout = false //false for beta
+//grails.plugin.springsecurity.cas.active = false //false for beta
+//grails.plugin.springsecurity.cas.loginUri = '/login'
+//grails.plugin.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
+//grails.plugin.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'
+//grails.plugin.springsecurity.logout.afterLogoutUrl ='https://www.intranet.ulg.ac.be/logout?url=http://shareview.ecampus.ulg.ac.be'
+//grails.plugin.springsecurity.auth.loginFormUrl = '/'
 
 
 //LDAP
-//grails.plugins.springsecurity.ldap.active = false //false for beta
-//grails.plugins.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
-//grails.plugins.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
-//grails.plugins.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
-//grails.plugins.springsecurity.ldap.context.server = 'ldap://ldap.ulg.ac.be:389'
-//grails.plugins.springsecurity.ldap.authorities.groupSearchBase =
+//grails.plugin.springsecurity.ldap.active = false //false for beta
+//grails.plugin.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
+//grails.plugin.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
+//grails.plugin.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
+//grails.plugin.springsecurity.ldap.context.server = 'ldap://ldap.ulg.ac.be:389'
+//grails.plugin.springsecurity.ldap.authorities.groupSearchBase =
 //    'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
-//grails.plugins.springsecurity.ldap.mapper.userDetailsClass= 'inetOrgPerson'// 'org.springframework.security.ldap.userdetails.InetOrgPerson'
-//grails.plugins.springsecurity.ldap.mapper.usePassword= false
-//grails.plugins.springsecurity.ldap.authorities.ignorePartialResultException = true
-//grails.plugins.springsecurity.ldap.authorities.retrieveDatabaseRoles = true
+//grails.plugin.springsecurity.ldap.mapper.userDetailsClass= 'inetOrgPerson'// 'org.springframework.security.ldap.userdetails.InetOrgPerson'
+//grails.plugin.springsecurity.ldap.mapper.usePassword= false
+//grails.plugin.springsecurity.ldap.authorities.ignorePartialResultException = true
+//grails.plugin.springsecurity.ldap.authorities.retrieveDatabaseRoles = true
 
 // Added by the Spring Security Core plugin:
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'be.cytomine.security.SecUser'
-grails.plugins.springsecurity.userLookup.passwordPropertyName = 'password'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.security.SecUserSecRole'
-grails.plugins.springsecurity.authority.className = 'be.cytomine.security.SecRole'
-grails.plugins.springsecurity.projectClass = 'be.cytomine.project.Project'
-grails.plugins.springsecurity.rememberMe.parameter = 'remember_me'
-grails.plugins.springsecurity.controllerAnnotations.staticRules = [
-        '/securityInfo/**': ['ROLE_ADMIN']
-]
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'be.cytomine.security.SecUser'
+grails.plugin.springsecurity.userLookup.passwordPropertyName = 'password'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.security.SecUserSecRole'
+grails.plugin.springsecurity.authority.className = 'be.cytomine.security.SecRole'
+grails.plugin.springsecurity.projectClass = 'be.cytomine.project.Project'
+grails.plugin.springsecurity.rememberMe.parameter = 'remember_me'
+
+
 
 //grails.resources.debug=true
 
@@ -388,11 +389,8 @@ grails.plugins.dynamicController.mixins = [
         'com.burtbeckwith.grails.plugins.appinfo.PropertiesControllerMixin' : 'com.burtbeckwith.appinfo_test.AdminManageController',
         'com.burtbeckwith.grails.plugins.appinfo.ScopesControllerMixin' :     'com.burtbeckwith.appinfo_test.AdminManageController'
 ]
-/*grails.plugins.springsecurity.controllerAnnotations.staticRules = [
-        '/admin/manage/**': ['ROLE_ADMIN']
-]*/
 
-grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
+
 
 
 
@@ -411,6 +409,19 @@ rabbitmq {
         jobQueue()
         detectSampleQueue()
         //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
+    }
+}
+
+grails {
+    mail {
+        host = "smtp.gmail.com"
+        port = 465
+        username = "cytomine.ulg@gmail.com"
+        password = "C3=8wj9R"
+        props = ["mail.smtp.auth":"true",
+                "mail.smtp.socketFactory.port":"465",
+                "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+                "mail.smtp.socketFactory.fallback":"false"]
     }
 }
 

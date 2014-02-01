@@ -6,11 +6,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AnnotationDomainAPI
-import be.cytomine.test.http.ImageInstanceAPI
-import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.http.PropertyAPI
-import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.test.http.*
 import grails.converters.JSON
 
 class PropertySecurityTests extends SecurityTestsAbstract {

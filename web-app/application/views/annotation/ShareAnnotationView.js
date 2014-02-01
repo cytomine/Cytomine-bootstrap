@@ -76,15 +76,20 @@ var ShareAnnotationView = Backbone.View.extend({
                 return users;
             } else if (value == "somebody") {
                 return self.userMaggicSuggest.getValue();
-            }
+            } else return null;
         }
 
         shareWithOption.change(function () {
             var value = $(this).val();
             if (value == "everyone") {
                 $("#selectUserShare" + self.model.id).hide();
+                $("#mailShare" + self.model.id).hide();
             } else if (value == "somebody") {
+                $("#mailShare" + self.model.id).hide();
                 $("#selectUserShare" + self.model.id).show();
+            } else if (value == "email") {
+                $("#mailShare" + self.model.id).show();
+                $("#selectUserShare" + self.model.id).hide();
             }
         });
 
@@ -101,7 +106,12 @@ var ShareAnnotationView = Backbone.View.extend({
             shareButton.html("Sending...");
 
             var users = getSelectedUsers();
-            var userName = (_.size(users) == 1) ? window.app.models.projectUser.get(users[0]).prettyName() : "user";
+            var emails = null;
+            if (users) {
+                var userName = (_.size(users) == 1) ? window.app.models.projectUser.get(users[0]).prettyName() : "user";
+            } else { //unexisting user, mail entered
+                emails = $("#mailShare" + self.model.id).val();
+            }
             var comment = $("#annotationComment" + self.model.id).val();
             var shareAnnotationURL = _.template("<%= serverURL %>/#share-annotation/<%= id %>", {
                 serverURL: window.app.status.serverURL,
@@ -126,6 +136,7 @@ var ShareAnnotationView = Backbone.View.extend({
                 annotation: self.model.id
             }).save({
                     users: users,
+                    emails : emails,
                     message: message,
                     comment: comment,
                     subject: subject,

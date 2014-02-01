@@ -2,12 +2,11 @@ package be.cytomine
 
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ImageInstanceAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import be.cytomine.test.http.UserAnnotationAPI
 
 /**
  * Created by IntelliJ IDEA.

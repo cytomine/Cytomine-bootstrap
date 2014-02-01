@@ -2,8 +2,6 @@ package be.cytomine.security
 
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
-import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImageGroup
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 
@@ -12,7 +10,6 @@ class GroupService extends ModelService {
     static transactional = true
     def cytomineService
     def commandService
-    def abstractImageGroupService
     def userGroupService
     def transactionService
 
@@ -23,11 +20,6 @@ class GroupService extends ModelService {
     def list() {
         SecurityACL.checkGuest(cytomineService.currentUser)
         return Group.list(sort: "name", order: "asc")
-    }
-
-    //TODO:: security!
-    def list(AbstractImage abstractImage) {
-        return AbstractImageGroup.findAllByAbstractImage(abstractImage).collect{it.group}
     }
 
     def list(User user) {
@@ -85,13 +77,6 @@ class GroupService extends ModelService {
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.name]
-    }
-
-
-    def deleteDependentAbstractImageGroup(Group group, Transaction transaction, Task task = null) {
-        AbstractImageGroup.findAllByGroup(group).each {
-            abstractImageGroupService.delete(it,transaction,null,false)
-        }
     }
 
     def deleteDependentUserGroup(Group group, Transaction transaction, Task task = null) {

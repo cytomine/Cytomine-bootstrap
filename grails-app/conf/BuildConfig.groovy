@@ -52,7 +52,8 @@ grails.project.dependency.resolution = {
         mavenRepo 'https://noams.artifactoryonline.com/noams/grails-jaxrs-plugin-snapshots'
         mavenRepo 'http://maven.restlet.org'
         mavenRepo "http://www.hibernatespatial.org/repository"
-        mavenRepo "http://www.terracotta.org/download/reflector/releases"
+		mavenRepo "http://repo.spring.io/milestone/"
+        //mavenRepo "http://www.terracotta.org/download/reflector/releases"
 
     }
     dependencies {
@@ -94,11 +95,12 @@ grails.project.dependency.resolution = {
 //        build ':tomcat:7.0.47'
 //        runtime ':hibernate:3.6.10.6'
 
-        runtime ':spring-security-core:1.2.7.3'
-        runtime ':spring-security-acl:1.1.1'
-        runtime ':spring-security-appinfo:1.0'
-		compile ":spring-security-cas:1.0.5"
-		compile ":spring-security-ldap:1.0.6"
+        compile ':spring-security-core:2.0-RC2'
+        compile ":spring-security-acl:2.0-RC1"
+        compile ":spring-security-appinfo:2.0-RC2"
+		compile ":spring-security-cas:2.0-RC1"
+		compile ":spring-security-ldap:2.0-RC2"
+		compile ":spring-security-ui:1.0-RC1"
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
         //runtime ':fields:1.3'
@@ -125,7 +127,7 @@ grails.project.dependency.resolution = {
 //        test ':selenium-rc:1.0.2'
 //        test ':functional-test:2.0.RC1'
 
-
+        compile ":mail:1.0.1"
 
 
 

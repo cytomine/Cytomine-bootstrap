@@ -1,13 +1,13 @@
 package be.cytomine
 
+import be.cytomine.security.Group
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.GroupAPI
+import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.security.Group
-import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,14 +1,13 @@
 package be.cytomine.security
 
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.BasicInstanceBuilder
-
+import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationTermAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.UserAnnotationAPI
 import grails.converters.JSON
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.test.Infos
 
 /**
  * Created by IntelliJ IDEA.

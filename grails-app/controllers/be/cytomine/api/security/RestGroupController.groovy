@@ -21,22 +21,6 @@ class RestGroupController extends RestController {
     }
 
     /**
-     * List group by abstract image
-     */
-    def listGroupByAbstractImage = {
-        if (params.idabstractimage == "undefined") {
-            responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
-        } else {
-            AbstractImage abstractImage = abstractImageService.read(params.long('idabstractimage'))
-            if (abstractImage) {
-                responseSuccess(groupService.list(abstractImage))
-            } else {
-                responseNotFound("AbstractImageGroup", "AbstractImage", params.idabstractimage)
-            }
-        }
-    }
-
-    /**
      * Get a group info
      */
     def show = {

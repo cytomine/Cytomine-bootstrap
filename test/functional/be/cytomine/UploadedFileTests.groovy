@@ -3,11 +3,9 @@ package be.cytomine
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
-import be.cytomine.project.Discipline
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.DisciplineAPI
 import be.cytomine.test.http.UploadedFileAPI
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON

@@ -1,28 +1,21 @@
 package be.cytomine
 
+import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.Exception.ConstraintException
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
-
+import be.cytomine.ontology.*
+import be.cytomine.security.SecUser
+import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.ImageInstanceAPI
+import be.cytomine.test.http.ReviewedAnnotationAPI
 import be.cytomine.test.http.UserAnnotationAPI
+import be.cytomine.utils.UpdateData
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.test.http.ReviewedAnnotationAPI
-import be.cytomine.ontology.ReviewedAnnotation
-
-import be.cytomine.security.UserJob
-import be.cytomine.ontology.AlgoAnnotation
-
-import be.cytomine.test.http.ImageInstanceAPI
-import be.cytomine.Exception.ConstraintException
-import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.security.SecUser
-import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.

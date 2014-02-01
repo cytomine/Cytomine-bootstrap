@@ -1,11 +1,9 @@
 package be.cytomine
 
-import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageGroupAPI
-import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray

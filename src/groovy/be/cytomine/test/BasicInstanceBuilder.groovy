@@ -559,19 +559,6 @@ class BasicInstanceBuilder {
         save ? saveDomain(image) : checkDomain(image)
     }
 
-    static AbstractImageGroup getAbstractImageGroup() {
-        def abstractImage = saveDomain(getAbstractImageNotExist())
-        def group = saveDomain(getGroupNotExist())
-        saveDomain(new AbstractImageGroup(abstractImage:abstractImage, group:group))
-    }
-
-    static AbstractImageGroup getAbstractImageGroupNotExist(boolean save = false) {
-        def group = saveDomain(getGroupNotExist())
-        def abstractImage = saveDomain(getAbstractImageNotExist())
-        def abstractImageGroup = new AbstractImageGroup(abstractImage: abstractImage, group: group)
-        save ? saveDomain(abstractImageGroup) : checkDomain(abstractImageGroup)
-    }
-
     static StorageAbstractImage getStorageAbstractImage() {
         def storage = getStorage()
         def abstractImage = getAbstractImage()

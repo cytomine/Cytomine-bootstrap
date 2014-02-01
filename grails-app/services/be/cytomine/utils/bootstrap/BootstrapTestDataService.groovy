@@ -38,7 +38,8 @@ class BootstrapTestDataService {
                 [extension : 'svs', mimeType : 'openslide/svs'],
                 [extension : 'jp2', mimeType : 'image/jp2'],
                 [extension : 'scn', mimeType : 'openslide/scn'],
-                [extension : 'ndpi', mimeType : 'openslide/ndpi']
+                [extension : 'ndpi', mimeType : 'openslide/ndpi'],
+                [extension : 'bif', mimeType : 'openslide/bif']
         ]
         bootstrapUtilsService.createMimes(mimeSamples)
         bootstrapUtilsService.createMimeImageServers()
@@ -47,7 +48,7 @@ class BootstrapTestDataService {
         def usersSamples = [
                 [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[name : "GIGA"]], password : 'rM$2011', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'lR$2011', color : "#00FF00", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'bstevens@ulg.ac.be', group : [[name : "GIGA"]], password : 'sB$2011', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]],
+                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'b.stevens@ulg.ac.be', group : [[name : "GIGA"]], password : 'sB$2011', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'botta', firstname : 'Vincent', lastname : 'Botta', email : 'vincent.botta@ulg.ac.be', group : [[name : "GIGA"]], password : 'vB$2013', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]],
                 [username : 'guest', firstname : 'Simply', lastname : 'guest', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'guest', color : "#FF0000", roles : ["ROLE_GUEST"]],

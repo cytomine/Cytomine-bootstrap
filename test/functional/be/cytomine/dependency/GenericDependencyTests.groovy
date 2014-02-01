@@ -1,7 +1,5 @@
 package be.cytomine.dependency
 
-import be.cytomine.utils.Task
-
 import be.cytomine.DependencyController
 
 /**

@@ -1,12 +1,9 @@
 package be.cytomine
 
-import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.StorageAPI
 import be.cytomine.test.http.StorageAbstractImageAPI
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 
 /**
  * Cytomine @ GIGA-ULG

@@ -49,11 +49,6 @@ class ImageUrlMappings {
             action = [GET:"listByProject"]
         }
 
-        "/api/image/$idabstractimage/group/$idgroup.$format"(controller:"restAbstractImageGroup"){
-            action = [GET:"show",DELETE:"delete",POST:"add"]
-        }
-
-
         "/api/image/$id/properties/clear.$format"(controller:"restUploadedFile"){
             action = [POST:"clearProperties"]
         }

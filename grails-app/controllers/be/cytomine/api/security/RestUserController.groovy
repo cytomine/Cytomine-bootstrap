@@ -340,7 +340,7 @@ class RestUserController extends RestController {
 
 
         def usersWithPosition = []
-        def userInfo
+        def userInfo = [:]
         long previousUser = -1
         userPositions.each {
             long currenUser = it[0]

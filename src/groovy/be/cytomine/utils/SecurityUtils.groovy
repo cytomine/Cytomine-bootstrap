@@ -1,7 +1,6 @@
 package be.cytomine.utils
 
 import be.cytomine.security.SecUser
-import org.springframework.security.core.codec.Base64
 
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -30,8 +29,7 @@ class SecurityUtils {
         byte[] rawHmac = mac.doFinal(new String(messageToSign.getBytes(), "UTF-8").getBytes())
 
         // base64-encode the hmac
-        byte[] signatureBytes = Base64.encode(rawHmac)
-        def signature = new String(signatureBytes)
+        def signature = rawHmac.encodeBase64().toString()
         return signature
     }
 }

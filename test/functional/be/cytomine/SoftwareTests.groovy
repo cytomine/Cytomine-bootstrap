@@ -6,10 +6,10 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.SoftwareAPI
 import be.cytomine.test.http.SoftwareParameterAPI
 import be.cytomine.test.http.SoftwareProjectAPI
+import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,6 +1,6 @@
 import be.cytomine.security.CASLdapUserDetailsService
 import be.cytomine.web.CytomineMultipartHttpServletRequest
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper
 
 

@@ -23,7 +23,6 @@ class AbstractImageService extends ModelService {
     def imagePropertiesService
     def transactionService
     def storageService
-    def abstractImageGroupService
     def groupService
     def imageInstanceService
 
@@ -125,9 +124,6 @@ class AbstractImageService extends ModelService {
         //AbstractImage abstractImage = retrieve(res.data.abstractimage)
         AbstractImage abstractImage = res.object
         Group group = Group.findByName(currentUser.getUsername())
-
-        AbstractImageGroup aig = new AbstractImageGroup(abstractImage: abstractImage,group:group)
-        aig.save(flush:true,failOnError: true)
 
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
@@ -250,17 +246,6 @@ class AbstractImageService extends ModelService {
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.filename]
-    }
-
-    def deleteDependentAbstractImageGroup(AbstractImage ai, Transaction transaction,Task task=null) {
-        if(task) {
-            def nb = AbstractImageGroup.countByAbstractImage(ai)
-            taskService.updateTask(task,"Delete $nb link to group")
-        }
-
-        AbstractImageGroup.findAllByAbstractImage(ai).each {
-            abstractImageGroupService.delete(it,transaction,null,false)
-        }
     }
 
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {

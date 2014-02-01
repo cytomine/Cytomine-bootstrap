@@ -1,47 +1,19 @@
 package be.cytomine
 
-import be.cytomine.command.Command
-import be.cytomine.command.CommandHistory
-import be.cytomine.command.RedoStackItem
-import be.cytomine.command.UndoStackItem
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.image.Mime
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.ImageServerStorage
-import be.cytomine.image.server.MimeImageServer
-import be.cytomine.image.server.Storage
-import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationFilter
 import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.processing.ProcessingServer
-import be.cytomine.project.Project
-import be.cytomine.server.resolvers.IIPResolver
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
-import be.cytomine.test.http.AbstractImageGroupAPI
-import be.cytomine.test.http.AnnotationFilterAPI
-import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ImageServerAPI
-import be.cytomine.test.http.UserAPI
-import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.utils.UpdateData
-import be.cytomine.utils.database.ArchiveCommandService
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-import grails.util.Environment
-import org.apache.commons.io.FileUtils
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.text.SimpleDateFormat
 
 /**
  * Created by IntelliJ IDEA.

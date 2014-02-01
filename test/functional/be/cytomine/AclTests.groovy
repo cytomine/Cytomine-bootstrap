@@ -3,16 +3,12 @@ package be.cytomine
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
-import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AclAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.http.UserAPI
-import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
-import static org.springframework.security.acls.domain.BasePermission.*
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

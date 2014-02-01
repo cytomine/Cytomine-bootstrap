@@ -34,7 +34,7 @@ class RestUploadedFileController extends RestController {
     def cytomineService
     def imagePropertiesService
     def projectService
-    def mailService
+    def cytomineMailService
     def storageService
     def grailsApplication
     def uploadedFileService
@@ -58,18 +58,18 @@ class RestUploadedFileController extends RestController {
 
     @ApiMethodLight(description="Delete all file properties for an image")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
     @ApiResponseObject(objectIdentifier = "empty")
     def clearProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
-       imagePropertiesService.clear(abstractImage)
+        imagePropertiesService.clear(abstractImage)
         responseSuccess([:])
     }
 
     @ApiMethodLight(description="Get all file properties for an image")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
     @ApiResponseObject(objectIdentifier = "empty")
     def populateProperties () {
@@ -80,7 +80,7 @@ class RestUploadedFileController extends RestController {
 
     @ApiMethodLight(description="Fill image field (magn, width,...) with all file properties")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
     ])
     @ApiResponseObject(objectIdentifier = "empty")
     def extractProperties () {
@@ -92,7 +92,7 @@ class RestUploadedFileController extends RestController {
 
     @ApiMethodLight(description="Get an uploaded file")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The uploaded file id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The uploaded file id")
     ])
     def show () {
         UploadedFile up = uploadedFileService.read(params.long('id'))
@@ -118,7 +118,7 @@ class RestUploadedFileController extends RestController {
      */
     @ApiMethodLight(description="Edit an uploaded file domain (usefull to edit its status during upload)")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
     ])
     def update () {
         update(uploadedFileService, request.JSON)
@@ -130,7 +130,7 @@ class RestUploadedFileController extends RestController {
      */
     @ApiMethodLight(description="Delete an uploaded file domain. This do not delete the file on disk.")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
     ])
     def delete () {
         delete(uploadedFileService, JSON.parse("{id : $params.id}"),null)
@@ -142,7 +142,7 @@ class RestUploadedFileController extends RestController {
 
     @ApiMethodLight(description="Create an image thanks to an uploaded file domain. THis add the image in the good storage and the project (if needed). This send too an email at the end to the uploader and the project admins.")
     @ApiParams(params=[
-        @ApiParam(name="uploadedFile", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @ApiParam(name="uploadedFile", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
     ])
     @ApiResponseObject(objectIdentifier = "[abstractimage.|abstract image|]")
     def createImage () {
@@ -158,58 +158,58 @@ class RestUploadedFileController extends RestController {
         Sample sample = new Sample(name : timestamp.toString() + "-" + uploadedFile.getOriginalFilename())
 
         def projects = []
-         //create domains instance
-         def ext = uploadedFile.getExt()
-         Mime mime = Mime.findByExtension(ext)
-         if (!mime) {
-             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-             String mimeType = mimeTypesMap.getContentType(uploadedFile.getAbsolutePath())
-             mime = new Mime(extension: ext, mimeType : mimeType)
-             mime.save(failOnError: true)
-         }
+        //create domains instance
+        def ext = uploadedFile.getExt()
+        Mime mime = Mime.findByExtension(ext)
+        if (!mime) {
+            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+            String mimeType = mimeTypesMap.getContentType(uploadedFile.getAbsolutePath())
+            mime = new Mime(extension: ext, mimeType : mimeType)
+            mime.save(failOnError: true)
+        }
         println "#################################################################"
         println "#################################################################"
         println "##############CREATE IMAGE#################"
         println "#################################################################"
         println "#################################################################"
-         AbstractImage abstractImage = new AbstractImage(
-                 filename: uploadedFile.getFilename(),
-                 originalFilename:  uploadedFile.getOriginalFilename(),
-                 scanner: null,
-                 sample: sample,
-                 path: uploadedFile.getFilename(),
-                 mime: mime)
+        AbstractImage abstractImage = new AbstractImage(
+                filename: uploadedFile.getFilename(),
+                originalFilename:  uploadedFile.getOriginalFilename(),
+                scanner: null,
+                sample: sample,
+                path: uploadedFile.getFilename(),
+                mime: mime)
 
-         if (sample.validate() && abstractImage.validate()) {
-             sample.save(flush : true,failOnError: true)
-             sample.refresh()
-             abstractImage.setSample(sample)
-             abstractImage.save(flush: true,failOnError: true)
+        if (sample.validate() && abstractImage.validate()) {
+            sample.save(flush : true,failOnError: true)
+            sample.refresh()
+            abstractImage.setSample(sample)
+            abstractImage.save(flush: true,failOnError: true)
 //             abstractImage.save(flush : true,failOnError: true)
 
-             storages.each { storage ->
-                 storageAbstractImageService.add(JSON.parse(JSONUtils.toJSONString([storage : storage.id, abstractimage : abstractImage.id])))
-             }
+            storages.each { storage ->
+                storageAbstractImageService.add(JSON.parse(JSONUtils.toJSONString([storage : storage.id, abstractimage : abstractImage.id])))
+            }
 
 
 
-             uploadedFile.getProjects()?.each { project_id ->
-                 Project project = projectService.read(project_id)
-                 projects << project
-                 ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  project, user :currentUser)
-                 imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
-             }
+            uploadedFile.getProjects()?.each { project_id ->
+                Project project = projectService.read(project_id)
+                projects << project
+                ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  project, user :currentUser)
+                imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
+            }
 
-         } else {
-             sample.errors?.each {
-                 log.info "Sample error : " + it
-             }
-             abstractImage.errors?.each {
-                 log.info "Sample error : " + it
-             }
-         }
-         writeMail(currentUser,abstractImage,projects)
-         responseSuccess([abstractimage: abstractImage])
+        } else {
+            sample.errors?.each {
+                log.info "Sample error : " + it
+            }
+            abstractImage.errors?.each {
+                log.info "Sample error : " + it
+            }
+        }
+        writeMail(currentUser,abstractImage,projects)
+        responseSuccess([abstractimage: abstractImage])
 
 
 
@@ -219,62 +219,67 @@ class RestUploadedFileController extends RestController {
     def secUserService
 
     private def writeMail(SecUser currentUser, def abstractImage, def projects) {
-     //send email
+        //send email
 
 
-            User recipient = null
-            if (currentUser instanceof User) {
-                recipient = (User) currentUser
-            } else if (currentUser instanceof UserJob) {
-                UserJob userJob = (UserJob) currentUser
-                recipient = userJob.getUser()
-            }
+        User recipient = null
+        if (currentUser instanceof User) {
+            recipient = (User) currentUser
+        } else if (currentUser instanceof UserJob) {
+            UserJob userJob = (UserJob) currentUser
+            recipient = userJob.getUser()
+        }
 
         // send email to uploader + all project admin
-            def users = [recipient]
-            projects.each {
-                users.addAll(secUserService.listAdmins(it))
+        def users = [recipient]
+        projects.each {
+            users.addAll(secUserService.listAdmins(it))
+        }
+        users.unique()
+
+        log.info "Send mail to $users"
+
+
+
+        StringBuffer message = new StringBuffer()
+        message.append("New images are available on Cytomine:<br/>")
+
+        for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
+            String url = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
+            message.append(url)
+            message.append("<br />")
+            url = UrlApi.getAbstractImageThumbURL(abstractImage.id)
+            message.append(url)
+            message.append("<br />")
+
+        }
+
+        //UrlApi.getBrowseImageInstanceURL(grailsApplication.config.grails.serverURL, )
+        message.append(abstractImage.getFilename())
+        message.append("<br />")
+        if(projects.isEmpty()) {
+            message.append("This image is not in a project.")
+
+
+        } else {
+            message.append("You can see images in projects: "+projects.collect{it.name}.join(','))
+        }
+
+
+
+        message.append("<br />")
+
+
+
+        if (recipient) {
+            String[] recipients = users.collect{it.getEmail()}
+            try {
+                cytomineMailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
+            } catch (java.net.UnknownHostException e) {
+                e.printStackTrace()
             }
-            users.unique()
 
-            log.info "Send mail to $users"
-
-
-
-            StringBuffer message = new StringBuffer()
-            message.append("New images are available on Cytomine:<br/>")
-
-                for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
-                    String url = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
-                    message.append(url)
-                    message.append("<br />")
-                    url = UrlApi.getAbstractImageThumbURL(abstractImage.id)
-                    message.append(url)
-                    message.append("<br />")
-
-                }
-
-                //UrlApi.getBrowseImageInstanceURL(grailsApplication.config.grails.serverURL, )
-                message.append(abstractImage.getFilename())
-                message.append("<br />")
-                 if(projects.isEmpty()) {
-                     message.append("This image is not in a project.")
-
-
-                 } else {
-                     message.append("You can see images in projects: "+projects.collect{it.name}.join(','))
-                 }
-
-
-
-                message.append("<br />")
-
-
-
-            if (recipient) {
-                String[] recipients = users.collect{it.getEmail()}
-                mailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
-            }
+        }
 
     }
 

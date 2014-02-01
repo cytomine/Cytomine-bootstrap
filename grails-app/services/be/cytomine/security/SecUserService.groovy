@@ -21,9 +21,9 @@ import be.cytomine.utils.ModelService
 import be.cytomine.utils.News
 import be.cytomine.utils.Task
 import be.cytomine.utils.Utils
+import grails.plugin.springsecurity.acl.AclSid
 import groovy.sql.Sql
 import org.apache.commons.collections.ListUtils
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclSid
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ

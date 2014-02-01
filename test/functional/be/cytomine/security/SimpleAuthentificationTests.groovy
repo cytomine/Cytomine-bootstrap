@@ -1,14 +1,8 @@
 package be.cytomine.security
 
-import be.cytomine.ontology.Ontology
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.OntologyAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.utils.UpdateData
-import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.

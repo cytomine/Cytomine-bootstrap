@@ -19,13 +19,15 @@
                                             Everyone
                                         </label>
                                         <label class="radio">
+                                            <input type="radio" name="shareWithOption" value="email">
+                                            Email
+                                        </label>
+                                        <input type="text" id="mailShare<%= id %>" name="selectUserShare<%= id %>" style="display: none;">
+                                        <label class="radio">
                                             <input type="radio" name="shareWithOption" value="somebody">
                                             Some users
                                         </label>
-                                        <label>
-                                            <div id="selectUserShare<%= id %>" name="selectUserShare<%= id %>"></div>
-                                        </label>
-
+                                        <div id="selectUserShare<%= id %>" name="selectUserShare<%= id %>" style="display: none;"></div>
                                     </div>
                                 </div>
 

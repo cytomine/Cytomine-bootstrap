@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.project.Project
 import grails.plugins.selenium.SeleniumAware
 
 @Mixin(SeleniumAware)

@@ -46,6 +46,8 @@ class SecUser extends CytomineDomain implements Serializable {
         username blank: false, unique: true
         password blank: false
         newPassword(nullable : true, blank : false)
+        publicKey (nullable : true, blank : false)
+        privateKey (nullable : true, blank : false)
         id unique: true
     }
 

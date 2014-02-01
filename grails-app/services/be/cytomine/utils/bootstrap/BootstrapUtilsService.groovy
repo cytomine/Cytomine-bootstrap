@@ -21,6 +21,7 @@ class BootstrapUtilsService {
         SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save(flush: true)
         SecRole.findByAuthority("ROLE_GUEST") ?: new SecRole(authority: "ROLE_GUEST").save(flush: true)
 
+        def usersCreated = []
         usersSamples.each { item ->
             User user = User.findByUsername(item.username)
             if (user)  return
@@ -42,27 +43,7 @@ class BootstrapUtilsService {
                 try {user.save(flush: true) } catch(Exception e) {println e}
                 log.info "Save ${user.username}..."
 
-                /* Create a special group the user */
-                def userGroupName = item.username
-                def userGroup = [
-                        [name: userGroupName]
-                ]
-                createGroups(userGroup)
-                Group group = Group.findByName(userGroupName)
-                UserGroup ug = new UserGroup(user:user, group:group)
-                ug.save(flush:true,failOnError: true)
-
-                /* Handle groups */
-                item.group.each { elem ->
-                    def newGroup = [
-                            [name: elem.name]
-                    ]
-                    createGroups(newGroup)
-                    log.info "Fetch group " + elem.name
-                    group = Group.findByName(elem.name)
-                    ug = new UserGroup(user:user, group:group)
-                    ug.save(flush:true,failOnError: true)
-                }
+                usersCreated << user
 
                 /* Add Roles */
                 item.roles.each { authority ->
@@ -78,6 +59,7 @@ class BootstrapUtilsService {
                 }
             }
         }
+        return usersCreated
     }
 
     public def createGroups(groupsSamples) {

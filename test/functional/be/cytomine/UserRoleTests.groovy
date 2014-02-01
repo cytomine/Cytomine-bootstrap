@@ -1,14 +1,11 @@
 package be.cytomine
 
+import be.cytomine.security.SecRole
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-
+import be.cytomine.test.http.UserRoleAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
-
-import be.cytomine.test.http.UserRoleAPI
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUserSecRole
 
 /**
  * Created by IntelliJ IDEA.

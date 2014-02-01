@@ -1,20 +1,11 @@
 package be.cytomine.dependency
 
-import be.cytomine.test.Infos
-
-import be.cytomine.test.BasicInstanceBuilder
-
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.ontology.Relation
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.AlgoAnnotationTerm
-
-import be.cytomine.test.http.TermAPI
-import be.cytomine.ontology.Ontology
+import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.test.Infos
 import be.cytomine.test.http.OntologyAPI
-import be.cytomine.ontology.ReviewedAnnotation
+import be.cytomine.test.http.TermAPI
 
 /**
  * Created by IntelliJ IDEA.

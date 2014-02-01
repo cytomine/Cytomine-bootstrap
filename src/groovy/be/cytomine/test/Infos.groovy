@@ -10,8 +10,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.util.Holders
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.plugins.springsecurity.acl.AclObjectIdentity
-import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder as SCH

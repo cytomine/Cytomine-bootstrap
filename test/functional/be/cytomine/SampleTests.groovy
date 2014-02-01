@@ -1,13 +1,13 @@
 package be.cytomine
 
-import be.cytomine.test.Infos
+import be.cytomine.laboratory.Sample
 import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.test.Infos
+import be.cytomine.test.http.SampleAPI
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.test.http.SampleAPI
-import be.cytomine.laboratory.Sample
 
 /**
  * Created by IntelliJ IDEA.

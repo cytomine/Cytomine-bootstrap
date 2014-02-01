@@ -67,6 +67,11 @@
 <script src="lib/nvd3/lib/d3.v2.min.js"></script>
 <script src="lib/nvd3/nv.d3.min.js"></script>
 
+<!-- Datatables -->
+<!--<script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>-->
+<script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
 
@@ -121,7 +126,7 @@
 
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
 
-<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>
+<!--<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>-->
 
 
 
@@ -131,11 +136,10 @@
 <script type="text/javascript" src="lib/colorpicker-2/js/bootstrap-colorpicker.js"></script>
 
 <!--jqgrid -->
-<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>
+<!--<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>-->
 
-<!-- Datatables -->
-<script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>
+
 
 
 <!-- Application -->

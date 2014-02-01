@@ -1,7 +1,6 @@
 package be.cytomine
 
 import be.cytomine.ontology.AnnotationTerm
-
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos

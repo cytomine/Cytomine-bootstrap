@@ -2,12 +2,11 @@ package be.cytomine
 
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-
+import be.cytomine.test.http.ImageFilterAPI
+import be.cytomine.test.http.ImageFilterProjectAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.test.http.ImageFilterAPI
-import be.cytomine.test.http.ImageFilterProjectAPI
 
 /**
  * Created by IntelliJ IDEA.

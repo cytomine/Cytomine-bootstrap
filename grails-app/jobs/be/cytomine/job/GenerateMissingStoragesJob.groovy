@@ -2,7 +2,7 @@ package be.cytomine.job
 
 import be.cytomine.image.server.Storage
 import be.cytomine.security.User
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 
 /**
  * Cytomine @ GIGA-ULG
@@ -21,7 +21,7 @@ class GenerateMissingStoragesJob {
     def concurrent = false
 
     static triggers = {
-        simple name: 'generateMissingStoragesJob', startDelay: 60000, repeatInterval: 60000
+        simple name: 'generateMissingStoragesJob', startDelay: 25000, repeatInterval: 15000
     }
 
     def execute() {

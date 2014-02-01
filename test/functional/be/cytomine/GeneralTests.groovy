@@ -4,6 +4,7 @@ import be.cytomine.command.Command
 import be.cytomine.command.CommandHistory
 import be.cytomine.command.RedoStackItem
 import be.cytomine.command.UndoStackItem
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
@@ -12,14 +13,11 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.News
-import be.cytomine.utils.database.ArchiveCommandService
 import grails.converters.JSON
 import grails.util.Environment
 import org.apache.commons.io.FileUtils
 import org.codehaus.groovy.grails.web.json.JSONArray
-import be.cytomine.ontology.UserAnnotation
 
 import java.text.SimpleDateFormat
 

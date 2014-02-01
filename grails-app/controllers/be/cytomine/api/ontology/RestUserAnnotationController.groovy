@@ -6,6 +6,7 @@ import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.utils.JSONUtils
@@ -34,7 +35,7 @@ class RestUserAnnotationController extends RestController {
     def secUserService
     def projectService
     def cytomineService
-    def mailService
+    def cytomineMailService
     def dataSource
     def paramsService
     def annotationListingService
@@ -70,6 +71,8 @@ class RestUserAnnotationController extends RestController {
     def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"USERANNOTATION")
     }
+
+    def bootstrapUtilsService
 
     /**
      * Add comment on an annotation to other user
@@ -111,14 +114,43 @@ class RestUserAnnotationController extends RestController {
         }
 
         //do receivers email list
-        List<User> receivers = JSONUtils.getJSONList(request.JSON.users).collect { userID ->
-            println "userID=$userID"
-            User.read(userID)
+        String[] receiversEmail
+        List<User> receivers = []
+        println "params.users $request.JSON.users"
+        println "params.emails $request.JSON.emails"
+        if (request.JSON.users) {
+            receivers = JSONUtils.getJSONList(request.JSON.users).collect { userID ->
+                println "userID=$userID"
+                User.read(userID)
+            }
+            receiversEmail = receivers.collect { it.getEmail() }
+        } else if (request.JSON.emails) {
+            receiversEmail = request.JSON.emails.split(",")
+            println "emails to send $receiversEmail"
+            receiversEmail.each { email ->
+                //to do use addCommandUser
+
+                def guestUser = [
+                        username : email.split("@")[0],
+                        firstname : '___',
+                        lastname : '---',
+                        email : email,
+                        group : [],
+                        password : 'guest',
+                        color : "#FF0000",
+                        roles : ["ROLE_GUEST"]
+                ]
+
+                def usersCreated = bootstrapUtilsService.createUsers([guestUser])
+                usersCreated.each {
+                    SecUser user = (SecUser) it
+                    user.setPasswordExpired(true)
+                    user.save()
+                }
+
+            }
         }
-        String[] receiversEmail = new String[receivers.size()]
-        for (int i = 0; i < receivers.size(); i++) {
-            receiversEmail[i] = receivers[i].getEmail();
-        }
+
         log.info "send mail to " + receiversEmail
 
         //create shared annotation domain
@@ -129,7 +161,7 @@ class RestUserAnnotationController extends RestController {
                 userAnnotation: annotation
         )
         if (sharedAnnotation.save()) {
-            mailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
+            cytomineMailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
             response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
         } else {
             response([success: false, message: "Error"], 400)

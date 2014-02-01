@@ -4,11 +4,11 @@ import be.cytomine.processing.JobData
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobDataAPI
+import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import grails.util.Holders
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.

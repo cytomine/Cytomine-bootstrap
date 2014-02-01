@@ -1,22 +1,17 @@
 package be.cytomine
 
 import be.cytomine.ontology.AlgoAnnotation
-
+import be.cytomine.ontology.AlgoAnnotationTerm
+import be.cytomine.processing.Job
 import be.cytomine.project.Project
-
+import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.SoftwareAPI
-import grails.converters.JSON
-
-import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.processing.Job
-import be.cytomine.security.UserJob
-import be.cytomine.ontology.AlgoAnnotationTerm
-
 import be.cytomine.test.http.JobAPI
-import be.cytomine.utils.Task
 import be.cytomine.test.http.TaskAPI
+import be.cytomine.utils.Task
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,15 +1,14 @@
 package be.cytomine.security
 
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
-import grails.converters.JSON
-
-import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.test.http.ReviewedAnnotationAPI
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.

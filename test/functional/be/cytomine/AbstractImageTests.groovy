@@ -1,24 +1,16 @@
 package be.cytomine
 
-import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
+import be.cytomine.security.Group
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
+import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.utils.UpdateData
-import be.cytomine.image.server.ImageProperty
-
-import be.cytomine.image.AbstractImageService
-import be.cytomine.ontology.UserAnnotation
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.image.ImagePropertiesService
-import be.cytomine.image.AbstractImageGroup
-import be.cytomine.security.Group
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,10 +31,6 @@ class AbstractImageTests {
   }
 
     void testListImagesDatatable() {
-        Storage storage = BasicInstanceBuilder.getStorage()
-        def abstractImage = BasicInstanceBuilder.getAbstractImage()
-        AbstractImageGroup aig = new AbstractImageGroup(abstractImage: abstractImage,group:Group.findByName(Infos.GOODLOGIN))
-        BasicInstanceBuilder.saveDomain(aig)
         def result = AbstractImageAPI.list(true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }

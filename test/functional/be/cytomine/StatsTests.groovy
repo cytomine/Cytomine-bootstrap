@@ -1,12 +1,11 @@
 package be.cytomine
 
+import be.cytomine.ontology.Term
 import be.cytomine.processing.Job
+import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
-
-import be.cytomine.ontology.Term
-import be.cytomine.project.Project
 
 /**
  * Created by IntelliJ IDEA.

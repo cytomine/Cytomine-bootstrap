@@ -1,10 +1,9 @@
 package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
-import grails.converters.JSON
-
-import org.apache.commons.logging.LogFactory
 import be.cytomine.test.BasicInstanceBuilder
+import grails.converters.JSON
+import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus

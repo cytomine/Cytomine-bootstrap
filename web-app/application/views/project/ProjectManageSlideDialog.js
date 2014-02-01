@@ -110,7 +110,6 @@ var ProjectManageSlideDialog = Backbone.View.extend({
         self.imageListing.refresh();
         $("#tabsProjectaddimagedialog" + self.model.id + "-2").show();
         $("#tabsProjectaddimagedialog" + self.model.id + "-1").hide();
-        /*****************************/
 
         $("#addimagediv").append($(self.divDialog + self.model.get('id')));
 

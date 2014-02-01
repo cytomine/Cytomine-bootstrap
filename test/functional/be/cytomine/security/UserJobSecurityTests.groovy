@@ -8,7 +8,6 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.JobAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.http.UserAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 

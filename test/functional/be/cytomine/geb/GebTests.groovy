@@ -1,13 +1,11 @@
 package be.cytomine.geb
 
-import geb.junit4.*
-import org.junit.Test
-import geb.Page
-import geb.Browser
-import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.Infos
+import be.cytomine.test.http.ProjectAPI
+import geb.junit4.GebReportingTest
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
+import org.junit.Test
 
 /**
  * User: lrollus

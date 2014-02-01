@@ -1,23 +1,18 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.project.Project
-import be.cytomine.security.User
-
+import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AlgoAnnotationAPI
 import be.cytomine.test.http.UserAnnotationAPI
-
-import be.cytomine.test.http.DomainAPI
 import be.cytomine.utils.JSONUtils
+import be.cytomine.utils.UpdateData
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import be.cytomine.ontology.*
-import be.cytomine.test.http.AnnotationDomainAPI
-import be.cytomine.utils.UpdateData
 
 /**
  * Created by IntelliJ IDEA.

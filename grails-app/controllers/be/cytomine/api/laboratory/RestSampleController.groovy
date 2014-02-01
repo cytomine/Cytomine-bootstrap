@@ -15,8 +15,6 @@ import org.jsondoc.core.pojo.ApiParamType
 @Api(name = "sample services", description = "Methods for managing a sample, part of 'source' that has been scan to image")
 class RestSampleController extends RestController {
 
-    def springSecurityService
-    def secUserService
     def sampleService
     def cytomineService
 

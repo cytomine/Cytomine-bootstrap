@@ -1,8 +1,8 @@
 package be.cytomine.security
 
-import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.userdetails.GormUserDetailsService
+import grails.plugin.springsecurity.userdetails.GrailsUser
 import org.springframework.dao.DataAccessException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
@@ -20,7 +20,6 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
 
     LdapUserDetailsService ldapUserDetailsService
-    def grailsApplication
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -33,7 +32,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     throws UsernameNotFoundException, DataAccessException {
 
         SecUser user = SecUser.findByUsername(username)
-        boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
+        boolean casDisabled = grailsApplication.config.grails.plugin.springsecurity.cas.active.toString()=="false"
 
         if(user==null && casDisabled)  {
             println "return null"

@@ -1,22 +1,18 @@
 package be.cytomine.dependency
 
-import be.cytomine.project.Project
-import be.cytomine.test.Infos
-
-import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.*
 import be.cytomine.processing.ImageFilterProject
-import be.cytomine.image.ImageInstance
 import be.cytomine.processing.Job
-import be.cytomine.social.LastConnection
-import be.cytomine.security.User
 import be.cytomine.processing.SoftwareProject
-import be.cytomine.utils.Task
+import be.cytomine.project.Project
+import be.cytomine.security.User
+import be.cytomine.social.LastConnection
 import be.cytomine.social.UserPosition
+import be.cytomine.test.BasicInstanceBuilder
+import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
-
-import be.cytomine.image.UploadedFile
-import be.cytomine.Exception.ConstraintException
+import be.cytomine.utils.Task
 
 /**
  * Created by IntelliJ IDEA.
