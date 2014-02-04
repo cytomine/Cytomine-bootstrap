@@ -68,13 +68,17 @@ class ServerController {
              reqcreate = reqcreate + " AND project_id is null"
          }
 
-        synchronized (this.getClass()) { //may be not synchronized for perf reasons (but table content will not be consistent)
-            int affectedRow = new Sql(dataSource).executeUpdate(reqcreate,data)
-
-            if(affectedRow==0) {
-                def reqinsert = "INSERT INTO last_connection(id,version,user_id,date,project_id,created) VALUES (nextval('hibernate_sequence'),0,"+idUser+",'" +new Date()+ "'," +idProject+",'" +new Date()+ "')"
-                new Sql(dataSource).execute(reqinsert)
-            }
+        //synchronized (this.getClass()) { //may be not synchronized for perf reasons (but table content will not be consistent)
+        def sql = new Sql(dataSource)
+        int affectedRow = sql.executeUpdate(reqcreate,data)
+        sql.close()
+        if(affectedRow==0) {
+            def reqinsert = "INSERT INTO last_connection(id,version,user_id,date,project_id,created) VALUES (nextval('hibernate_sequence'),0,"+idUser+",'" +new Date()+ "'," +idProject+",'" +new Date()+ "')"
+            sql = new Sql(dataSource)
+            sql.execute(reqinsert)
+            sql.close()
         }
+
+        //}
      }
 }

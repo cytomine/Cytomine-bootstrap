@@ -295,7 +295,8 @@ class RestProjectController extends RestController {
         def data = []
         Long start = System.currentTimeMillis()
 
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+         sql.eachRow(request) {
             if(data.isEmpty()) {
                 println "TOTAL1=${System.currentTimeMillis()-start}ms"
                 start = System.currentTimeMillis()
@@ -310,6 +311,7 @@ class RestProjectController extends RestController {
             data << line
 
         }
+        sql.close()
         println "TOTAL2=${System.currentTimeMillis()-start}ms"
         data
     }

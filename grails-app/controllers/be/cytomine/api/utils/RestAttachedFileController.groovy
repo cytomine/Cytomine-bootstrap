@@ -1,26 +1,43 @@
 package be.cytomine.api.utils
 
 import be.cytomine.api.RestController
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 
 /**
  * Controller for a description (big text data/with html format) on a specific domain
  */
+@Api(name = "attached services", description = "Methods for managing attached file on a specific domain")
 class RestAttachedFileController extends RestController {
 
     def springSecurityService
     def attachedFileService
 
-    def list = {
+    @ApiMethodLight(description="List all attached file available", listing=true)
+    def list() {
         responseSuccess(attachedFileService.list())
     }
 
-    def listByDomain = {
+    @ApiMethodLight(description="List all attached file for a given domain", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    ])
+    def listByDomain() {
         Long domainIdent = params.long("domainIdent")
         String domainClassName = params.get("domainClassName")
         responseSuccess(attachedFileService.list(domainIdent,domainClassName))
     }
 
-    def show = {
+    @ApiMethodLight(description="Get a specific attached file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The attached file id")
+    ])
+    def show() {
         def file = attachedFileService.read(params.get('id'))
         if(file) {
             responseSuccess(file)
@@ -30,7 +47,12 @@ class RestAttachedFileController extends RestController {
 
     }
 
-    def download = {
+    @ApiMethodLight(description="Download a file for a given attached file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The attached file id")
+    ])
+    @ApiResponseObject(objectIdentifier = "file")
+    def download() {
        def attached = attachedFileService.read(params.get('id'))
         if(!attached) {
             responseNotFound("AttachedFile",params.get('id'))
@@ -42,7 +64,12 @@ class RestAttachedFileController extends RestController {
         }
     }
 
-    def upload = {
+    @ApiMethodLight(description="Upload a file for a domain")
+    @ApiParams(params=[
+        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    ])
+    def upload() {
         log.info "Upload attached file"
         Long domainIdent = params.long("domainIdent")
         String domainClassName = params.get("domainClassName")

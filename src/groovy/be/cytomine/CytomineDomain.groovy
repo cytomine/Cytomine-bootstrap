@@ -227,9 +227,11 @@ abstract class CytomineDomain  implements Comparable{
             "AND ae.sid = sid.id "
 
             def masks = []
-            new Sql(dataSource).eachRow(request) {
+            def sql = new Sql(dataSource)
+            sql.eachRow(request) {
                 masks<<it[0]
             }
+            sql.close()
             return masks
 
         } catch (Exception e) {

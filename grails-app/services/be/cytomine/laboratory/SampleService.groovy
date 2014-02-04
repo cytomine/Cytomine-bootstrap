@@ -22,8 +22,9 @@ class SampleService extends ModelService {
         return Sample
     }
 
-    @Secured(['ROLE_ADMIN'])
+    //@Secured(['ROLE_ADMIN'])
     def list() {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
         Sample.list()
     }
 

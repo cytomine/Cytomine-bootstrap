@@ -78,4 +78,22 @@ class CustomResponseDoc {
         @ApiObjectFieldLight(apiFieldName = "firstname", description = "(If params showUser=true) the firstname of the creator",allowedType = "string",useForCreation = false)
     ])
     static def annotation_listing
+
+    @ApiObjectFieldLight(description = "Response for search request")
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "id", description = "Domain id",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "created", description = "Domain creation timestamp",allowedType = "date",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "class", description = "Domain class",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "name", description = "Domain name",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "description", description = "Domain description text",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "user", description = "Domain creator",allowedType = "long",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "userfullname", description = "Domain creator name (Lastname Firstname)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "projectName", description = "Project (storing the domain) name",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "imageName", description = "Image (storing the domain) name. If domain is project, then null" ,allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "urlImage", description = "Domain thumb (if annotation: crop, if image: thumb, if project: null)" ,allowedType = "list",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "urlGoTo", description = "URL to go to the domain on the webapp (GUI)" ,allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "urlApi", description = "URL to get JSON data on the current domain" ,allowedType = "string",useForCreation = false)
+    ])
+    static def search
+
 }

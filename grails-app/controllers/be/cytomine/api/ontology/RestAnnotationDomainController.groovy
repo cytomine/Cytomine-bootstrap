@@ -860,6 +860,7 @@ class RestAnnotationDomainController extends RestController {
             ids << it[0]
             users << it[1]
         }
+        sql.close()
         users.unique()
         if(users.size()>1) {
             throw new WrongArgumentException("Annotations from multiple users are under this area. You can correct only annotation from 1 user (hide layer if necessary)")

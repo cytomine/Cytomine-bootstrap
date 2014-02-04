@@ -61,6 +61,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         @ApiObjectFieldLight(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "sample", description = "Abstract image sample (see Abstract Image)",allowedType = "long",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
         @ApiObjectFieldLight(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),

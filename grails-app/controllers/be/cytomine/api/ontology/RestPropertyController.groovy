@@ -25,14 +25,6 @@ class RestPropertyController extends RestController {
     def secUserService
 
     /**
-     * List all annotationProperty visible for the current user
-     */
-    @ApiMethodLight(description="Get all properties available for the current user", listing=true)
-    def list () {
-        responseSuccess(propertyService.list())
-    }
-
-    /**
      * List all Property visible for the current user by Project, AnnotationDomain and ImageInstance
      */
     @ApiMethodLight(description="Get all properties for a project", listing=true)

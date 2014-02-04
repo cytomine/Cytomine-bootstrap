@@ -3,27 +3,32 @@ package be.cytomine.utils
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
- * A project is the main cytomine domain
- * It structure user data
+ * A domain description (text, image,...)
  */
+@ApiObject(name = "description", description = "A domain description (text, image,...).")
 class Description extends CytomineDomain implements Serializable {
 
     /**
      * text data
      */
+    @ApiObjectFieldLight(description = "Description text")
     String data
 
     /**
      * Domain class Name
      */
+    @ApiObjectFieldLight(description = "Domain class name")
     String domainClassName
 
     /**
      * Domain id
      */
+    @ApiObjectFieldLight(description = "Domain id")
     Long domainIdent
 
     static constraints = {
@@ -73,18 +78,20 @@ class Description extends CytomineDomain implements Serializable {
     static void registerMarshaller() {
         Logger.getLogger(this).info("Register custom JSON renderer for " + Description.class)
         JSON.registerObjectMarshaller(Description) { description ->
-            def returnArray = [:]
-            returnArray['class'] = description.class
-            returnArray['id'] = description.id
-            returnArray['domainClassName'] = description.domainClassName
-            returnArray['domainIdent'] = description.domainIdent
-
-            returnArray['data'] = description.data //'<br/><img src="http://localhost:8080/api/attachedfile/8527848/download.png" align="left"><br/>' //description.data
-
-            returnArray['created'] = description.created
-            returnArray['updated'] = description.updated
-            return returnArray
+            getDataFromDomain(description)
         }
+    }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['domainClassName'] = domain?.domainClassName
+        returnArray['domainIdent'] = domain?.domainIdent
+        returnArray['data'] = domain?.data //'<br/><img src="http://localhost:8080/api/attachedfile/8527848/download.png" align="left"><br/>' //description.data
+        return returnArray
     }
 
     /**

@@ -11,9 +11,10 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
 
     this.styleMap = new OpenLayers.StyleMap({'default':{
         label : "${value}",
-        fontColor: "green",
-        fontSize: "48pt",
-        fontWeight: "bold"
+        fontColor: "black",
+        fontSize: "24pt",
+        fontWeight: "bold",
+        labelAlign:"lt"
     }});
 
     this.vectorLayer = new OpenLayers.Layer.Vector("annotationPropertyValue", {
@@ -71,7 +72,7 @@ OpenLayers.Format.AnnotationProperty = OpenLayers.Class(OpenLayers.Format, {
                      var y = parseFloat(prop.split("_")[1]);
                      var value = featuresMap[prop];
                      var format = new OpenLayers.Format.WKT();
-                     var geom = "POINT("+x+" " + (y+100)+")";
+                     var geom = "POINT("+(x)+" " + (y)+")";
                      console.log(geom);
                      var pointFeature = new OpenLayers.Feature.Vector(format.read(geom).geometry);
                      pointFeature.attributes = { value: value};

@@ -1,5 +1,6 @@
 package jsondoc
 
+import grails.util.Holders
 import jsondoc.utils.JSONDocUtilsLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiObject
@@ -30,7 +31,7 @@ class APIUtils {
 
         ApiRegistry.jsondoc =
                 ["version" : "1.0",
-                 basePath : "http://localhost:8080/api",
+                 basePath : "${Holders.getGrailsApplication().config.grails.serverURL}/api",
                 "apis" : controllerDoc,
                 "objects" : objectsDoc]
     }
