@@ -30,13 +30,6 @@ class StorageAbstractImage extends CytomineDomain {
         return domain
     }
 
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + StorageAbstractImage.class)
-        JSON.registerObjectMarshaller(StorageAbstractImage) {
-            getDataFromDomain(it)
-        }
-    }
-
     /**
      * Define fields available for JSON response
      * @param domain Domain source for json value

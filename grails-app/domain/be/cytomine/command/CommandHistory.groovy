@@ -49,21 +49,15 @@ class CommandHistory extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + CommandHistory.class)
-        JSON.registerObjectMarshaller(CommandHistory) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['class'] = it.class
-            returnArray['command'] = it.command
-            returnArray['prefixAction'] = it.prefixAction
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-            returnArray['user'] = it.user
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['command'] = domain?.command
+        returnArray['prefixAction'] = domain?.prefixAction
+        returnArray['user'] = domain?.user
+        return returnArray
     }
 
 }

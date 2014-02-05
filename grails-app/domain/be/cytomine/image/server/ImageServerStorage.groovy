@@ -1,5 +1,6 @@
 package be.cytomine.image.server
 
+import be.cytomine.CytomineDomain
 import grails.converters.JSON
 import org.apache.log4j.Logger
 
@@ -17,15 +18,14 @@ class ImageServerStorage {
         return imageServer.url + imageServer.service + "?zoomify=" + storage.getBasePath()
     }
 
-
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageServerStorage.class)
-        JSON.registerObjectMarshaller(ImageServerStorage) {
-            def returnArray = [:]
-            returnArray['imageServer'] = it.imageServer
-            returnArray['storage'] = it.storage
-            //we exclude credentials information (password, keys) from marshaller
-            return returnArray
-        }
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def is) {
+        def returnArray = [:]
+        returnArray['imageServer'] = is?.imageServer
+        returnArray['storage'] = is?.storage
+        returnArray
     }
 }

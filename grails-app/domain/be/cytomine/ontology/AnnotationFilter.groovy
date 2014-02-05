@@ -73,18 +73,6 @@ class AnnotationFilter extends CytomineDomain implements Serializable {
         return [annotationFilterID: this?.id]
     }
 
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        JSON.registerObjectMarshaller(AnnotationFilter) { domain ->
-            return getDataFromDomain(domain)
-        }
-    }
-
     /**
      * Define fields available for JSON response
      * @param domain Domain source for json value

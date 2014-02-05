@@ -51,17 +51,8 @@ class RelationTerm extends CytomineDomain implements Serializable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        JSON.registerObjectMarshaller(RelationTerm) { domain ->
-            return getDataFromDomain(domain)
-        }
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)
@@ -70,20 +61,6 @@ class RelationTerm extends CytomineDomain implements Serializable {
         returnArray['term2'] = domain?.term2?.id
         return returnArray
     }
-
-//
-//    /**
-//     * Define fields available for JSON response
-//     * This Method is called during application start
-//     */
-//    static void registerMarshaller() {
-//        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-//        println "<<< mapping from Term <<< " + getMappingFromAnnotation(RelationTerm)
-//        JSON.registerObjectMarshaller(RelationTerm) { domain ->
-//            return getDataFromDomain(domain)
-//        }
-//    }
-
 
     /**
      * Get the container domain for this domain (usefull for security)

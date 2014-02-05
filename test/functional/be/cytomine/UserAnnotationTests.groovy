@@ -102,6 +102,10 @@ class UserAnnotationTests  {
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
         annotationWithTerm.term = [idTerm1, idTerm2]
 
+        log.info annotationToAdd.project.ontology.id
+        log.info idTerm1
+        log.info idTerm2
+
         def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id

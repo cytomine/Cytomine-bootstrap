@@ -5,13 +5,17 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
 import be.cytomine.security.SecUser
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
 
-/**
- * Handle HTTP Requests for CRUD operations on the User domain class.
- */
+@Api(name = "acl services", description = "Methods for managing ACL, a permission for an user on a specific domain instance")
 class RestACLController extends RestController {
 
     def springSecurityService
@@ -22,7 +26,14 @@ class RestACLController extends RestController {
     def imageInstanceService
     def aclAuthService
 
-    def list = {
+    @ApiMethodLight(description="Get all ACL for a user and a class.", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    def list() {
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
                 def domain = retrieveCytomineDomain(params.domainClassName,params.long('domainIdent'))
@@ -35,7 +46,14 @@ class RestACLController extends RestController {
         }
     }
 
-    def add ={
+    @ApiMethodLight(description="Add a new permission for a user on a domain", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    def add (){
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
                 def perm = findPermissionName(params.auth)
@@ -51,7 +69,14 @@ class RestACLController extends RestController {
         }
     }
 
-    def delete = {
+    @ApiMethodLight(description="Delete a permission for a user on a domain", listing=true)
+    @ApiParams(params=[
+        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    def delete() {
         try {
             def user = SecUser.read(params.long('user'))
             if(params.domainClassName && params.domainIdent && user) {

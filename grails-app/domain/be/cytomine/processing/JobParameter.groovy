@@ -79,18 +79,8 @@ class JobParameter extends CytomineDomain implements Comparable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + JobParameter.class)
-        JSON.registerObjectMarshaller(JobParameter) {
-            getDataFromDomain(it)
-        }
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)

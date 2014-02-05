@@ -37,22 +37,18 @@ class UserPosition extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
-     *
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-     static void registerMarshaller() {
-         Logger.getLogger(this).info("Register custom JSON renderer for " + UserPosition.class)
-        JSON.registerObjectMarshaller(UserPosition) {
-            def returnArray = [:]
-            returnArray.id = it.id
-            returnArray.date = it.updated != null ? it.updated : it.created
-            returnArray.user = it.user.id
-            returnArray.image = it.image.id
-            returnArray.project = it.project.id
-            returnArray.zoom = it.zoom
-            returnArray.latitude = it.latitude
-            returnArray.longitude = it.longitude
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray.date = domain?.updated != null ? domain?.updated : domain?.created
+        returnArray.user = domain?.user?.id
+        returnArray.image = domain?.image?.id
+        returnArray.project = domain?.project?.id
+        returnArray.zoom = domain?.zoom
+        returnArray.latitude = domain?.latitude
+        returnArray.longitude = domain?.longitude
+        returnArray
     }
 }

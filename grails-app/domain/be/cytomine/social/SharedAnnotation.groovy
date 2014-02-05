@@ -40,22 +40,15 @@ class SharedAnnotation extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-
-        Logger.getLogger(this).info("Register custom JSON renderer for " + SharedAnnotation.class)
-        JSON.registerObjectMarshaller(SharedAnnotation) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['comment'] = it.comment
-            returnArray['sender'] = it.sender.toString()
-            returnArray['userannotation'] = it.userAnnotation.id
-            returnArray['receivers'] = it.receivers?.collect { it.toString() }
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['comment'] = domain?.comment
+        returnArray['sender'] = domain?.sender?.toString()
+        returnArray['userannotation'] = domain?.userAnnotation?.id
+        returnArray['receivers'] = domain?.receivers?.collect { it.toString() }
+        returnArray
     }
 }

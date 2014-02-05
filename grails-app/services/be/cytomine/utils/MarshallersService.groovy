@@ -1,7 +1,10 @@
 package be.cytomine.utils
 
 import be.cytomine.image.NestedImageInstance
+import be.cytomine.security.User
+import be.cytomine.security.UserJob
 import grails.converters.JSON
+import org.apache.log4j.Logger
 
 /**
  * Service to manage marshaller
@@ -21,17 +24,26 @@ class MarshallersService {
         }
         grailsApplication.getDomainClasses().each { domain ->
             domain.metaClass.methods.each { method ->
-                if (method.name.equals("registerMarshaller")) {
+                if (method.name.equals("getDataFromDomain")) {
                     def domainFullName = domain.packageName + "." + domain.name
                     log.info "Init Marshaller for domain class : " + domainFullName
                     def domainInstance = grailsApplication.getDomainClass(domainFullName).newInstance()
-                    domainInstance.registerMarshaller()
+                    log.info("Register custom JSON renderer for " + this.class)
+                    JSON.registerObjectMarshaller(domain.clazz) { it ->
+                        return domainInstance.getDataFromDomain(it)
+                    }
                 }
-
             }
-
         }
         //if ImageInstance.registerMarshaller is call after NestedImageInstance..registerMarshaller, it override it
-        NestedImageInstance.registerMarshaller()
+        JSON.registerObjectMarshaller(NestedImageInstance) { it ->
+            return NestedImageInstance.getDataFromDomain(it)
+        }
+        JSON.registerObjectMarshaller(User) { it ->
+            return User.getDataFromDomain(it)
+        }
+        JSON.registerObjectMarshaller(UserJob) { it ->
+            return UserJob.getDataFromDomain(it)
+        }
     }
 }

@@ -142,18 +142,11 @@ class Software extends CytomineDomain {
         return domain;
     }
 
-
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Software.class)
-        JSON.registerObjectMarshaller(Software) {
-            getDataFromDomain(it)
-        }
-    }
-
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)
         returnArray['name'] = domain?.name

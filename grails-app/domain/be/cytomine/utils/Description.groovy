@@ -73,18 +73,8 @@ class Description extends CytomineDomain implements Serializable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Description.class)
-        JSON.registerObjectMarshaller(Description) { description ->
-            getDataFromDomain(description)
-        }
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)

@@ -60,7 +60,6 @@ class AnnotationListingService extends ModelService {
           def realColumn = []
          def request = al.getAnnotationsRequest()
           boolean termAsked = false
-           println  request
            def sql = new Sql(dataSource)
           sql.eachRow(request) {
               /**

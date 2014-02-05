@@ -96,20 +96,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         parent(nullable : true)
     }
 
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
-        JSON.registerObjectMarshaller(UploadedFile) { up ->
-            return getDataFromDomain(up)
-        }
-    }
-
     static def getDataFromDomain(def uploaded) {
-
         def returnArray = CytomineDomain.getDataFromDomain(uploaded)
         println uploaded
         returnArray['user'] = uploaded?.user?.id

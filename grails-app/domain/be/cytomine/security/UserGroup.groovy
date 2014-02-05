@@ -52,17 +52,14 @@ class UserGroup extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + UserGroup.class)
-        JSON.registerObjectMarshaller(UserGroup) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['user'] = it.user.id
-            returnArray['group'] = it.group.id
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['user'] = domain?.user?.id
+        returnArray['group'] = domain?.group?.id
+        returnArray
     }
 
     def getCallBack() {

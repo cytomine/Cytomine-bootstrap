@@ -4,13 +4,17 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A group is a set of user
  */
+@ApiObject(name = "group", description="A group is a set of users. A user may be in many groups")
 class Group extends CytomineDomain {
 
+    @ApiObjectFieldLight(description="The group name")
     String name
 
     static mapping = {
@@ -40,16 +44,13 @@ class Group extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Group.class)
-        JSON.registerObjectMarshaller(Group) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['name'] = domain?.name
+        returnArray
     }
 
     /**

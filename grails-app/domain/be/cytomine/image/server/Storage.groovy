@@ -42,23 +42,20 @@ class Storage extends CytomineDomain {
 
     static transients = ['newUsername', 'newPassword', 'newKeyFile']
 
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + Storage.class)
-        JSON.registerObjectMarshaller(Storage) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-            returnArray['id'] = it.id
-            returnArray['name'] = it.name
-            returnArray['basePath'] = it.basePath
-            returnArray['user'] = it.user.id
-            returnArray['ip'] = it.ip
-            returnArray['port'] = it.port
-            returnArray['username'] = it.username
-            //we exclude credentials information (password, keys) from marshaller
-            return returnArray
-        }
+
+    /**
+     * Define fields available for JSON response
+     * This Method is called during application start
+     */
+    static def getDataFromDomain(def storage) {
+        def returnArray = CytomineDomain.getDataFromDomain(storage)
+        returnArray['name'] = storage?.name
+        returnArray['basePath'] = storage?.basePath
+        returnArray['user'] = storage?.user?.id
+        returnArray['ip'] = storage?.ip
+        returnArray['port'] = storage?.port
+        returnArray['username'] = storage?.username
+        returnArray
     }
 
     def beforeUpdate() {

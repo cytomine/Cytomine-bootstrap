@@ -286,7 +286,6 @@ class RestProjectController extends RestController {
                     (user? "AND ch.user_id =  ${user.id} " : " ") +
                     "ORDER BY created desc LIMIT $max OFFSET $offset"
         }
-        println request
         def result = doGenericRequest(request,fullData)
         return result
     }

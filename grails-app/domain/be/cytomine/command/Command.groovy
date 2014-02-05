@@ -123,27 +123,21 @@ class Command extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info "Register custom JSON renderer for " + Command.class
-        JSON.registerObjectMarshaller(Command) {
-            def returnArray = [:]
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['CLASSNAME'] = domain?.class
+        returnArray['serviceName'] = domain?.serviceName
+        returnArray['action'] = domain?.actionMessage + " by " + domain?.user?.username
+        returnArray['data'] = domain?.data
+        returnArray['user'] = domain?.user?.id
+        returnArray['type'] = "UNKNOWN"
+        if (domain instanceof AddCommand) returnArray['type'] = "ADD"
+        else if (domain instanceof EditCommand) returnArray['type'] = "EDIT"
+        else if (domain instanceof DeleteCommand) returnArray['type'] = "DELETE"
 
-            returnArray['CLASSNAME'] = it.class
-            returnArray['serviceName'] = it.serviceName
-            returnArray['action'] = it.actionMessage + " by " + it?.user?.username
-            returnArray['data'] = it.data
-            returnArray['user'] = it.user.id
-            returnArray['type'] = "UNKNOWN"
-            if (it instanceof AddCommand) returnArray['type'] = "ADD"
-            else if (it instanceof EditCommand) returnArray['type'] = "EDIT"
-            else if (it instanceof DeleteCommand) returnArray['type'] = "DELETE"
-
-            returnArray['created'] = it.created ? it.created.time.toString() : null
-            returnArray['updated'] = it.updated ? it.updated.time.toString() : null
-
-            return returnArray
-        }
+        return returnArray
     }
 }

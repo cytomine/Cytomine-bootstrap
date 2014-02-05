@@ -1,9 +1,14 @@
 package be.cytomine.security
 
+import be.cytomine.CytomineDomain
 import be.cytomine.processing.Job
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
+@ApiObject(name = "user job", description="A cytomine software user")
 class UserJob extends SecUser {
 
     def springSecurityService
@@ -11,11 +16,19 @@ class UserJob extends SecUser {
     /**
      * Human user that launch algo
      */
+    @ApiObjectFieldLight(description = "Human user that launch the job")
     User user
 
+    @ApiObjectFieldLight(description = "The related job")
     Job job
 
+    @ApiObjectFieldLight(description = "The rate succes of the job", useForCreation = false, defaultValue = "-1")
     double rate = -1d
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "humanUsername", description = "The username of the user that launch this job",allowedType = "string",useForCreation = false)
+    ])
+    static transients = []
 
     static constraints = {
         job(nullable: true)
@@ -52,24 +65,17 @@ class UserJob extends SecUser {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + UserJob.class)
-        JSON.registerObjectMarshaller(UserJob) {
-            def returnArray = [:]
-            returnArray['id'] = it.id
-            returnArray['username'] = it.username
-            returnArray['humanUsername']= it.humanUsername()
-            returnArray['publicKey'] = it.publicKey
-            returnArray['privateKey'] = it.privateKey
-            returnArray['job'] = it.job?.id
-            returnArray['user'] = it.user?.id
-            returnArray['rate'] = it.rate
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            returnArray['algo'] = it.algo()
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = SecUser.getDataFromDomain(domain)
+        returnArray['humanUsername']= domain?.humanUsername()
+        returnArray['publicKey'] = domain?.publicKey
+        returnArray['privateKey'] = domain?.privateKey
+        returnArray['job'] = domain?.job?.id
+        returnArray['user'] = domain?.user?.id
+        returnArray['rate'] = domain?.rate
+        returnArray
     }
 }

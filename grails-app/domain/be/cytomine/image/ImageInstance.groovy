@@ -131,19 +131,12 @@ class ImageInstance extends CytomineDomain implements Serializable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageInstance.class)
-        JSON.registerObjectMarshaller(ImageInstance) { image ->
-            return getDataFromDomain(image)
-        }
-    }
-    
     static def getDataFromDomain(def image) {
 
         def returnArray = CytomineDomain.getDataFromDomain(image)
-        println image
         returnArray['baseImage'] = image?.baseImage?.id
         returnArray['project'] = image?.project?.id
         returnArray['user'] = image?.user?.id

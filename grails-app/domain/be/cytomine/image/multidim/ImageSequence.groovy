@@ -6,7 +6,10 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,16 +18,31 @@ import org.apache.log4j.Logger
  * Time: 8:33
  * A position of an image in its group
  */
+@ApiObject(name = "image sequence", description = "A position of an image in the image group")
 class ImageSequence extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The image")
     ImageInstance image
 
+    @ApiObjectFieldLight(description = "The image channel", mandatory = false)
     Integer channel
+
+    @ApiObjectFieldLight(description = "The image zStack", mandatory = false)
     Integer zStack
+
+    @ApiObjectFieldLight(description = "The image slice", mandatory = false)
     Integer slice
+
+    @ApiObjectFieldLight(description = "The image time", mandatory = false)
     Integer time
 
+    @ApiObjectFieldLight(description = "The image group")
     ImageGroup imageGroup
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "model", description = "The image instance full data (see image instance for more details)",allowedType = "domain",useForCreation = false)
+    ])
+    static transients = []
 
     static constraints = {
     }
@@ -72,25 +90,19 @@ class ImageSequence extends CytomineDomain implements Serializable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + ImageSequence.class)
-        JSON.registerObjectMarshaller(ImageSequence) {
-            def returnArray = [:]
-            returnArray['class'] = it.class
-            returnArray['id'] = it.id
-            returnArray['image'] = it.image.id
-            returnArray['zStack'] = it.zStack
-            returnArray['slice'] = it.slice
-            returnArray['time'] = it.time
-            returnArray['channel'] = it.channel
-            returnArray['imageGroup'] = it.imageGroup.id
-            returnArray['created'] = it.created?.time?.toString()
-            returnArray['updated'] = it.updated?.time?.toString()
-            returnArray['model'] = it.image
-            return returnArray
-        }
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['image'] = domain?.image?.id
+        returnArray['zStack'] = domain?.zStack
+        returnArray['slice'] = domain?.slice
+        returnArray['time'] = domain?.time
+        returnArray['channel'] = domain?.channel
+        returnArray['imageGroup'] = domain?.imageGroup?.id
+        returnArray['model'] = domain?.image
+        return returnArray
     }
 
     /**

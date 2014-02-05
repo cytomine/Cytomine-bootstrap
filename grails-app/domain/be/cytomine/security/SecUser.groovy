@@ -3,6 +3,8 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
+import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.jsondoc.core.annotation.ApiObjectField
 
 /**
@@ -12,34 +14,36 @@ import org.jsondoc.core.annotation.ApiObjectField
 //@ApiObject(name = "user")
 class SecUser extends CytomineDomain implements Serializable {
 
-    @ApiObjectField(description = "The username of the user")
+    @ApiObjectFieldLight(description = "The username of the user")
     String username
 
+    @ApiObjectFieldLight(description = "The user password", presentInResponse = false)
     String password
     String newPassword = null
+
+    @ApiObjectFieldLight(description = "The user public key", mandatory = false, defaultValue = "A generated key")
     String publicKey
+
+    @ApiObjectFieldLight(description = "The user private key", mandatory = false, defaultValue = "A generated key")
     String privateKey
 
-    @ApiObjectField(
-            description = "If true, account is enabled",
-            allowedType = "boolean")
+    @ApiObjectFieldLight(description = "If true, account is enabled", useForCreation = false,presentInResponse = false)
     boolean enabled
-    @ApiObjectField(
-            description = "If true, account is expired",
-            allowedType = "boolean")
 
+    @ApiObjectFieldLight(description = "If true, account is expired", useForCreation = false,presentInResponse = false)
     boolean accountExpired
 
-    @ApiObjectField(
-            description = "If true, account is locked",
-            allowedType = "boolean")
+    @ApiObjectFieldLight(description = "If true, account is locked",useForCreation = false,presentInResponse = false)
     boolean accountLocked
 
-    @ApiObjectField(
-            description = "If true, password is expired",
-            allowedType = "boolean")
+    @ApiObjectFieldLight(description = "If true, password is expired",useForCreation = false,presentInResponse = false)
     boolean passwordExpired
 
+
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "algo", description = "If true, user is a userjob",allowedType = "boolean",useForCreation = false)
+
+    ])
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
 
     static constraints = {
@@ -57,6 +61,17 @@ class SecUser extends CytomineDomain implements Serializable {
         sort "id"
     }
 
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['username'] = domain?.username
+        returnArray['algo'] = domain?.algo()
+        returnArray
+    }
 
     def beforeInsert() {
         println "SecUser.beforeValidate"

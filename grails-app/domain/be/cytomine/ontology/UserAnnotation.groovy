@@ -174,18 +174,6 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
         return domain;
     }
 
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        JSON.registerObjectMarshaller(UserAnnotation) { domain ->
-            return getDataFromDomain(domain)
-        }
-    }
-
     /**
      * Define fields available for JSON response
      * @param domain Domain source for json value
@@ -194,9 +182,9 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
     static def getDataFromDomain(def domain) {
         def returnArray = AnnotationDomain.getDataFromDomain(domain)
         ImageInstance imageinstance = domain?.image
-        returnArray['cropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(domain?.id)
-        returnArray['smallCropURL'] = UrlApi.getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(domain?.id, 256)
-        returnArray['url'] = UrlApi.getAlgoAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['cropURL'] = UrlApi.getUserAnnotationCropWithAnnotationId(domain?.id)
+        returnArray['smallCropURL'] = UrlApi.getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(domain?.id, 256)
+        returnArray['url'] = UrlApi.getUserAnnotationCropWithAnnotationId(domain?.id)
         returnArray['imageURL'] = UrlApi.getAnnotationURL(imageinstance?.project?.id, imageinstance?.id, domain?.id)
         returnArray['reviewed'] = domain?.hasReviewedAnnotation()
         return returnArray

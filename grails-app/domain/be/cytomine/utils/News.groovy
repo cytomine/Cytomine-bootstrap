@@ -25,17 +25,16 @@ class News extends CytomineDomain {
         sort "id"
     }
 
-    static void registerMarshaller() {
-         Logger.getLogger(this).info("Register custom JSON renderer for " + News.class)
-         JSON.registerObjectMarshaller(News) { news ->
-             def returnArray = [:]
-             returnArray['class'] = news.class
-             returnArray['text'] = news.text
-             returnArray['user'] = news.user.id
-             returnArray['added'] = news.added?.time?.toString()
-             returnArray['created'] = news.created?.time?.toString()
-             returnArray['updated'] = news.updated?.time?.toString()
-             return returnArray
-         }
-     }
+    /**
+     * Define fields available for JSON response
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
+     */
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['text'] = domain?.text
+        returnArray['user'] = domain?.user?.id
+        returnArray['added'] = domain?.added?.time?.toString()
+        returnArray
+    }
 }

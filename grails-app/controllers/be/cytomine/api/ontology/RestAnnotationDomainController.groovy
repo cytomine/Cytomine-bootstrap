@@ -150,6 +150,33 @@ class RestAnnotationDomainController extends RestController {
         }
     }
 
+    /**
+     * Get annotation crop (image area that frame annotation)
+     * This work for all kinds of annotations
+     */
+
+    @ApiMethodLight(description="Get annotation crop with minimal size (256*256max)  (image area that frame annotation). This work for all kinds of annotations.")
+    @ApiResponseObject(objectIdentifier =  "file")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
+        @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    ])
+    def cropMin () {
+        try {
+            params.max_size = 256
+            def annotation = AnnotationDomain.getAnnotationDomain(params.long("id"))
+            def image = imageProcessingService.crop(annotation, params)
+            responseBufferedImage(image)
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }catch (Exception e) {
+            log.error("GetThumb:" + e)
+        }
+    }
+
     private doSearch(def params) {
         AnnotationListing al
         def result = []

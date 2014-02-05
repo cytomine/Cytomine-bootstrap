@@ -40,17 +40,6 @@ class Discipline extends CytomineDomain implements Serializable{
     }
 
     /**
-     * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + this.class)
-        JSON.registerObjectMarshaller(Discipline) { domain ->
-            return getDataFromDomain(domain)
-        }
-    }
-
-    /**
      * Insert JSON data into domain in param
      * @param domain Domain that must be filled
      * @param json JSON containing data

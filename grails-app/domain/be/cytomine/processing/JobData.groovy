@@ -80,18 +80,8 @@ class JobData extends CytomineDomain {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
-     */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + JobData.class)
-        JSON.registerObjectMarshaller(JobData) { jobData ->
-            getDataFromDomain(jobData)
-        }
-    }
-
-    /**
-     * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)

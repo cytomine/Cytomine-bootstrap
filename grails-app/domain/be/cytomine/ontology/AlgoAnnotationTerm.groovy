@@ -138,15 +138,9 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     /**
      * Define fields available for JSON response
-     * This Method is called during application start
+     * @param domain Domain source for json value
+     * @return Map with fields (keys) and their values
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + AlgoAnnotationTerm.class)
-        JSON.registerObjectMarshaller(AlgoAnnotationTerm) { image ->
-            return getDataFromDomain(image)
-        }
-    }
-
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)
         returnArray['annotationIdent'] = domain?.annotationIdent

@@ -1,5 +1,6 @@
 package be.cytomine.image.server
 
+import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import grails.converters.JSON
 import org.apache.log4j.Logger
@@ -23,14 +24,11 @@ class ImageProperty {
      * Define fields available for JSON response
      * This Method is called during application start
      */
-    static void registerMarshaller() {
-        Logger.getLogger(this).info("Register custom JSON renderer for " + AbstractImage.class)
-        JSON.registerObjectMarshaller(ImageProperty) {
-            def returnArray = [:]
-            returnArray["id"] = it.id
-            returnArray["key"] = it.key
-            returnArray["value"] = it.value
-            return returnArray
-        }
+    static def getDataFromDomain(def prop) {
+        def returnArray = [:]
+        returnArray["id"] = prop?.id
+        returnArray["key"] = prop?.key
+        returnArray["value"] = prop?.value
+        returnArray
     }
 }
