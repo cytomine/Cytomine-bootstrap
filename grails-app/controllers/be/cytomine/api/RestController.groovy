@@ -26,6 +26,7 @@ class RestController {
     def currentDomain() {
         return null
     }
+
     def currentDomainName() {
         println "currentDomainName()"
         def domain = currentDomain()
@@ -188,32 +189,9 @@ class RestController {
     protected def responseList(List list) {
 
         Boolean datatables = (params.datatables != null)
-        Integer offset
-        Integer max
-        String sortCol
-        String sortColField
-        String sortDir
-        if (datatables) { //dataTables !
-            max = params.getInt('iDisplayLength')
-            offset = params.getInt('iDisplayStart')
-            sortCol = params.get('iSortCol_0')
-            /*sortDir = params.get('sSortDir_0')
-            sortColField = params.get('mDataProp_'+sortCol) //but this come from the marshaller...we have domain instances
-            if (sortColField) {
-                //sort list
-                list.sort ({ a, b ->
-                    a."${sortColField}" <=> b."${sortColField}"
-                }) as Comparator
-                println "sortDir $sortDir"
-                if (sortDir == "desc") {
-                    list = list.reverse()
-                }
-            }*/
 
-        } else {
-            offset = params.offset != null ? params.getInt('offset') : 0
-            max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
-        }
+        Integer offset = params.offset != null ? params.getInt('offset') : 0
+        Integer max = (params.max != null && params.getInt('max')!=0) ? params.getInt('max') : Integer.MAX_VALUE
 
         List subList
         if (offset >= list.size()) {

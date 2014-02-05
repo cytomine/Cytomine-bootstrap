@@ -46,12 +46,12 @@ class UploadedFileAPI extends DomainAPI {
 
 
     static def clearAbstractImageProperties(Long idImage,String username, String password) throws Exception {
-        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/clear.json","",username,password);
+        return doPOST(Infos.CYTOMINEURL+"/api/abstractimage/"+idImage+"/properties/clear.json","",username,password);
     }
     static def populateAbstractImageProperties(Long idImage,String username, String password) throws Exception {
-        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/populate.json","",username,password);
+        return doPOST(Infos.CYTOMINEURL+"/api/abstractimage/"+idImage+"/properties/populate.json","",username,password);
     }
     static def extractUsefulAbstractImageProperties(Long idImage,String username, String password) throws Exception {
-        return doPOST(Infos.CYTOMINEURL+"/api/image/"+idImage+"/properties/extract.json","",username,password);
+        return doPOST(Infos.CYTOMINEURL+"/api/abstractimage/"+idImage+"/properties/extract.json","",username,password);
     }
 }

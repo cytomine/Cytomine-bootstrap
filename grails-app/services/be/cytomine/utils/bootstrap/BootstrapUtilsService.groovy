@@ -3,8 +3,10 @@ package be.cytomine.utils.bootstrap
 import be.cytomine.image.Mime
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
+import be.cytomine.project.Project
 import be.cytomine.security.*
 
 /**

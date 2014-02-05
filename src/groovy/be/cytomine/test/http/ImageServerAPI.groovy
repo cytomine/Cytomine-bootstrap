@@ -11,12 +11,12 @@ import be.cytomine.test.Infos
 class ImageServerAPI extends DomainAPI {
 
     static def thumb(Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/$idImage/thumb.jpg"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/$idImage/thumb.jpg"
         return downloadImage(URL,username,password)
     }
 
     static def preview(Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/$idImage/preview.png"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/$idImage/preview.png"
         return downloadImage(URL,username,password)
     }
 
@@ -79,7 +79,7 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def imageServers(Long idImage, Long idImageInstance, Boolean merge, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/$idImage/imageservers.json?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true&channels=1,3&colors=ff0000,00ff00":"" )
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/$idImage/imageservers.json?"  + (idImageInstance?"&imageinstance=$idImageInstance":"" ) + (merge?"&merge=true&channels=1,3&colors=ff0000,00ff00":"" )
         return doGET(URL,username,password)
     }
 

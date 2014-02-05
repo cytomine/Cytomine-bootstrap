@@ -2,7 +2,7 @@ class JobDataUrlMappings {
 
     static mappings = {
         /* Job */
-        "/api/jobdata.$fomat"(controller: "restJobData"){
+        "/api/jobdata.$format"(controller: "restJobData"){
             action = [GET:"list", POST:"add"]
         }
         "/api/jobdata/$id.$format"(controller: "restJobData"){

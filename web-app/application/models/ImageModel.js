@@ -1,6 +1,6 @@
 var ImageModel = Backbone.Model.extend({
     url: function () {
-        var base = 'api/image';
+        var base = 'api/abstractimage';
         var format = '.json';
         if (this.isNew()) {
             return base + format;
@@ -37,7 +37,7 @@ var ImageMetadataModel = Backbone.Model.extend({
         this.image = options.image;
     },
     url: function () {
-        return 'api/image/' + this.image + "/metadata.json?extract=true";
+        return 'api/abstractimage/' + this.image + "/metadata.json?extract=true";
     }
 });
 
@@ -47,7 +47,7 @@ var ImagePropertyCollection = PaginatedCollection.extend({
         this.image = options.image;
     },
     url: function () {
-        return 'api/image/' + this.image + "/property.json";
+        return 'api/abstractimage/' + this.image + "/property.json";
     },
     comparator: function (model) {
         return model.get("key");
@@ -71,7 +71,7 @@ var ImageCollection = PaginatedCollection.extend({
 
 var ImageServerUrlsModel = Backbone.Model.extend({
     url: function () {
-        var url = 'api/image/' + this.id + "/imageservers.json?";
+        var url = 'api/abstractimage/' + this.id + "/imageservers.json?";
         if(this.merge) {
             url = url+ "&merge="+this.merge;
         }

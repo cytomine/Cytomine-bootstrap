@@ -14,17 +14,17 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 class AbstractImageAPI extends DomainAPI {
 
     static def list(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image.json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage.json"
         return doGET(URL, username, password)
     }
 
     static def list(boolean datatable,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image.json?datatable=${datatable}&_search=false&nd=1358249507672&rows=10&page=1&sidx=id&sord=asc"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage.json?datatable=${datatable}&_search=false&nd=1358249507672&rows=10&page=1&sidx=id&sord=asc"
         return doGET(URL, username, password)
     }
 
     static def show(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + ".json"
         return doGET(URL, username, password)
     }
 
@@ -34,18 +34,18 @@ class AbstractImageAPI extends DomainAPI {
     }
 
     static def getMetadata(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + "/metadata.json?extract=false"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + "/metadata.json?extract=false"
         return doGET(URL, username, password)
     }
 
     static def getMetadataExtract(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + "/metadata.json?extract=true"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + "/metadata.json?extract=true"
         return doGET(URL, username, password)
     }
 
 
     static def getInfo(Long id, String type,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + "/${type}.json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + "/${type}.json"
         return doGET(URL, username, password)
     }
 
@@ -56,7 +56,7 @@ class AbstractImageAPI extends DomainAPI {
 
     static def create(String jsonAbstractImage, String username, String password) {
         println "jsonAbstractImage=$jsonAbstractImage"
-        String URL = Infos.CYTOMINEURL + "api/image.json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage.json"
         def result = doPOST(URL, jsonAbstractImage,username, password)
         if(JSON.parse(jsonAbstractImage) instanceof JSONArray) return result
         result.data = AbstractImage.read(JSON.parse(result.data)?.abstractimage?.id)
@@ -64,12 +64,12 @@ class AbstractImageAPI extends DomainAPI {
     }
 
     static def update(def id, def jsonAbstractImage, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + ".json"
         return doPUT(URL,jsonAbstractImage,username,password)
     }
 
     static def delete(def id, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/image/" + id + ".json"
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/" + id + ".json"
         return doDELETE(URL,username,password)
     }
 

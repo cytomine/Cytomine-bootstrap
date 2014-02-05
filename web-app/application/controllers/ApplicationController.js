@@ -16,7 +16,7 @@ var ApplicationController = Backbone.Router.extend({
 
         self.dataTablesBootstrap();
 
-        //HotKeys.initHotKeys();
+        HotKeys.initHotKeys();
 
         require([
             "text!application/templates/explorer/SimilarAnnotationModal.tpl.html"

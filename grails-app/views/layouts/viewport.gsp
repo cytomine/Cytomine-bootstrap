@@ -13,7 +13,7 @@
 <html>
 <head>
 <title>Cytomine</title>
-
+<meta charset="UTF-8" />
 <!-- Of course it is advisable to have touch icons ready for each device -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" />
@@ -79,7 +79,7 @@
 <script type="text/javascript" src="lib/bootstrap-3.0.3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
 
-<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
+<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM}">
 
 
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
@@ -372,7 +372,7 @@
 
 </g:if>
 
-<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT}">
+<g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM }">
 <script type="text/javascript">
     $(function() {
         require(

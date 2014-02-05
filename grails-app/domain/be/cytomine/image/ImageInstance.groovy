@@ -159,6 +159,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['depth'] = image?.baseImage?.getZoomLevels()?.max
         try {returnArray['preview'] = image.baseImage ? image.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
         try {returnArray['thumb'] = image.baseImage ? image.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
+        try {returnArray['fullPath'] = image.baseImage ? image.baseImage.getFullPath() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
         try {returnArray['numberOfAnnotations'] = image?.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
         try {returnArray['numberOfJobAnnotations'] = image?.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}
         try {returnArray['numberOfReviewedAnnotations'] = image?.countImageReviewedAnnotations} catch (Exception e) {returnArray['numberOfReviewedAnnotations'] = -1}

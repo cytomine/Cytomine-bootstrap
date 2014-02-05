@@ -147,6 +147,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         returnArray['resolution'] = image?.resolution
         returnArray['magnification'] = image?.magnification
         returnArray['thumb'] = image?.getThumbURL()
+//        returnArray['fullPath'] = image?.getFullPath()
         returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(image?.id)
         returnArray
     }
@@ -214,6 +215,11 @@ class AbstractImage extends CytomineDomain implements Serializable {
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
         String url = resolver.getMetaDataURL(imageServerStorages[index].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator))
         return url
+    }
+
+    def getFullPath() {
+        Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
+        return [storage.getBasePath(), getPath()].join(File.separator)
     }
 
     def getCropURL(def boundaries) {

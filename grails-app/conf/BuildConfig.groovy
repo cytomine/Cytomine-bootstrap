@@ -100,37 +100,19 @@ grails.project.dependency.resolution = {
         compile ":spring-security-appinfo:2.0-RC2"
 		compile ":spring-security-cas:2.0-RC1"
 		compile ":spring-security-ldap:2.0-RC2"
-		compile ":spring-security-ui:1.0-RC1"
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
-        //runtime ':fields:1.3'
-        runtime ':twitter-bootstrap:2.0.4'
+        runtime ':twitter-bootstrap:3.0.3'
         runtime ":rabbitmq:1.0.0"
         compile ":quartz:1.0.1"
         runtime ":quartz-monitor:0.3-RC3"
-  //      runtime ':rest:0.7'
         runtime ':cache:1.0.1'
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.RC2"
         runtime ':jquery:1.8.3'
-//        runtime ":jawr:3.3.3"
-        //compile ":grails-ant:0.1.3"
         compile ":executor:0.3"
-		
- //       test ':code-coverage:1.2'
         test ':code-coverage:1.2.7'
-
-//        compile (':jaxrs:0.8') {
-//            excludes 'spring-core', 'spring-beans', 'spring-context', 'spring-web', 'spring-aop'
-//        }
-//
-//        test ':selenium-rc:1.0.2'
-//        test ':functional-test:2.0.RC1'
-
         compile ":mail:1.0.1"
-
-
-
         test(":spock:0.7") {
           exclude "spock-grails-support"
         }

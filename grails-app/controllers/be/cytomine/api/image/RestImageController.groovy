@@ -176,9 +176,39 @@ class RestImageController extends RestController {
     ])
     @ApiResponseObject(objectIdentifier = "image (bytes)")
     def thumb() {
-        def url = abstractImageService.thumb(params.long('id'))
+        String url = abstractImageService.thumb(params.long('id'))
         log.info  "url=$url"
         responseImage(url)
+    }
+
+    @ApiMethodLight(description="Get associated images labels for a specific image", listing = true)
+    @ApiParams(params=[
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
+    ])
+    @ApiResponseObject(objectIdentifier ="associated image labels")
+    def associated() {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        Long id = params.long("id")
+        String uri = "$imageServerURL/api/image/$id/associated"
+        def associated = JSON.parse( new URL(uri).text )
+        responseSuccess(associated)
+    }
+
+    /**
+     * Get associated image
+     */
+    @ApiMethodLight(description="Get an associated image of a abstract image (e.g. label, macro, thumnail")
+    @ApiParams(params=[
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id"),
+    @ApiParam(name="label", type="string", paramType = ApiParamType.PATH,description = "The associated image label")
+    ])
+    @ApiResponseObject(objectIdentifier = "image (bytes)")
+    def label() {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        Long id = params.long("id")
+        String label = params.label
+        String uri = "$imageServerURL/api/image/$id/associated/$label"
+        responseImage(uri)
     }
 
     /**

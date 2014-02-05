@@ -4,90 +4,105 @@ var HotKeys = {
         var idProject = window.app.status.currentProject;
         return "div#tabs-"+window.app.status.currentImage.prefix+"-"+idProject+"-"+idImage+"-";
     },
-
+    isBrowsingImage : function() {
+        var hash = window.location.hash.substring(1);
+        return hash.indexOf("tabs-review") != -1 && hash.indexOf("tabs-image") != 1;
+    },
     initHotKeys : function() {
         var self = this;
+        var target = $(document);
+        target.bind('keydown.b',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".selectButton");
+                }
+            }
+        );
+        target.bind('keydown.a',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review")) {
+                    self.doClick(self.context(),".acceptButton");
+                }
+            }
+        );
+        target.bind('keydown.r',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review")) {
+                    self.doClick(self.context(),".rejectButton");
+                }
+            }
+        );
+        target.bind('keydown.n',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".nextImage");
+                }
+            }
+        );
+        target.bind('keydown.p',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".previousImage");
+                }
+            }
+        );
 
-        $(document).bind('keydown.b',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".selectButton");
-                    }
+        target.bind('keydown.s',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".selectButton");
                 }
+            }
         );
-        $(document).bind('keydown.a',function (evt){
-                    if(self.checkMode("review")) {
-                        self.doClick(self.context(),".acceptButton");
-                    }
+        target.bind('keydown.f',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".freehandButton");
                 }
+            }
         );
-        $(document).bind('keydown.r',function (evt){
-                    if(self.checkMode("review")) {
-                        self.doClick(self.context(),".rejectButton");
-                    }
-                }
-        );
-        $(document).bind('keydown.n',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".nextImage");
-                    }
-                }
-        );
-        $(document).bind('keydown.p',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".previousImage");
-                    }
-                }
-        );
+        target.bind('keydown.w',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".magicWandButton");
 
-        $(document).bind('keydown.s',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".selectButton");
-                    }
                 }
+            }
         );
-        $(document).bind('keydown.f',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".freehandButton");
-                    }
+        target.bind('keydown.e',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".editButton");
                 }
+            }
         );
-        $(document).bind('keydown.w',function (evt){
-
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".magicWandButton");
-
-                    }
+        target.bind('keydown.c',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".cutButton");
                 }
+            }
         );
-        $(document).bind('keydown.e',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".editButton");
-                    }
+        target.bind('keydown.j',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".joinButton");
                 }
+            }
         );
-        $(document).bind('keydown.c',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".cutButton");
-                    }
+        target.bind('keydown.d',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review") || self.checkMode("image")) {
+                    self.doClick(self.context(),".deleteButton");
                 }
+            }
         );
-        $(document).bind('keydown.j',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".joinButton");
-                    }
+        target.bind('keydown.t',function (evt){
+                if (!isBrowsingImage) return;
+                if(self.checkMode("review")) {
+                    self.doClick(self.context(),".printReviewLayerButton");
                 }
-        );
-        $(document).bind('keydown.d',function (evt){
-                    if(self.checkMode("review") || self.checkMode("image")) {
-                        self.doClick(self.context(),".deleteButton");
-                    }
-                }
-        );
-        $(document).bind('keydown.t',function (evt){
-                    if(self.checkMode("review")) {
-                        self.doClick(self.context(),".printReviewLayerButton");
-                    }
-                }
+            }
         );
 
     },

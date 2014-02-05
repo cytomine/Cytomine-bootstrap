@@ -78,6 +78,7 @@ environments {
     production {
         grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
 //        grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
@@ -85,6 +86,15 @@ environments {
     development {
         grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
         grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
+        grails.converters.default.pretty.print = true
+        grails.plugin.springsecurity.useBasicAuth = false
+        grails.resources.adhoc.patterns = []
+    }
+    scratch {
+        grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
+        grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
@@ -227,6 +237,12 @@ log4j = {
                 additivity = true
             }
         }
+        scratch {
+            root {
+                info 'appLog',"logfile", 'stdout'
+                additivity = true
+            }
+        }
         development {
             root {
                 info 'appLog',"logfile", 'stdout'
@@ -276,7 +292,7 @@ grails.plugin.springsecurity.interceptUrlMap = [
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/css/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/images/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
+        //'/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
         '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]
@@ -324,11 +340,7 @@ test {
   }
 }
 
-
-
-
-//grails.plugin.springsecurity.auth.loginFormUrl = '/'
-
+grails.plugin.springsecurity.auth.loginFormUrl = '/'
 grails.plugin.springsecurity.ldap.search.base = 'dc=ulg,dc=ac,dc=be'
 grails.plugin.springsecurity.ldap.context.managerDn = 'uid=x000126,ou=specialusers,dc=ulg,dc=ac,dc=be'
 grails.plugin.springsecurity.ldap.context.managerPassword = 'R5fH3qcY65nUdR3'
@@ -391,7 +403,12 @@ grails.plugins.dynamicController.mixins = [
 ]
 
 
-
+grails.plugin.springsecurity.failureHandler.exceptionMappings = [
+        'org.springframework.security.authentication.LockedException':             '/user/accountLocked',
+        'org.springframework.security.authentication.DisabledException':           '/user/accountDisabled',
+        'org.springframework.security.authentication.AccountExpiredException':     '/user/accountExpired',
+        'org.springframework.security.authentication.CredentialsExpiredException': '/user/passwordExpired'
+]
 
 
 

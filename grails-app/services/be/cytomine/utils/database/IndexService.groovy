@@ -33,11 +33,6 @@ class IndexService {
             createIndex(statement, "abstract_image", "sample_id");
             createIndex(statement, "abstract_image", "created");
             /**
-             * Abstract_Image_group
-             */
-            createIndex(statement, "abstract_image_group", "abstract_image_id");
-            createIndex(statement, "abstract_image_group", "group_id");
-            /**
              * Image_Instance //base image & project already created
              */
             createIndex(statement, "image_instance", "user_id");
