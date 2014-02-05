@@ -3,5 +3,6 @@ introduction:
   features : Features
   changes: Change Log
 gettingStarted: Getting Started
+apidoc : API Documentation
 configuration : Configuration
 deployment : Deployment
