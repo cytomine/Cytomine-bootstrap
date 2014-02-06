@@ -5,6 +5,7 @@ import be.cytomine.SecurityACL
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.annotation.ApiObjectField
@@ -34,6 +35,11 @@ class User extends SecUser {
     @ApiObjectFieldLight(description = "The SIP account of the user")
     String sipAccount
 
+    @ApiObjectFieldsLight(params=[
+        @ApiObjectFieldLight(apiFieldName = "admin", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is ADMIN ",allowedType = "boolean",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "user", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN and is USER ",allowedType = "boolean",useForCreation = false),
+        @ApiObjectFieldLight(apiFieldName = "ghest", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN, NOT USER but a simple GHEST ",allowedType = "boolean",useForCreation = false)
+    ])
     static constraints = {
         firstname blank: false
         lastname blank: false
@@ -117,7 +123,7 @@ class User extends SecUser {
         returnArray['lastname'] = domain?.lastname
         returnArray['email'] = domain?.email
         returnArray['sipAccount'] = domain?.sipAccount
-        if (!(domain?.springSecurityService.principal instanceof String) && domain?.id == domain?.springSecurityService.principal?.id) {
+        if (!(domain?.springSecurityService?.principal instanceof String) && domain?.id == domain?.springSecurityService?.principal?.id) {
             returnArray['publicKey'] = domain?.publicKey
             returnArray['privateKey'] = domain?.privateKey
         }

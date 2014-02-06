@@ -11,12 +11,19 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import groovy.sql.Sql
 import javassist.tools.rmi.ObjectNotFoundException
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 
 import java.text.SimpleDateFormat
 
 /**
  * Handle HTTP Requests for CRUD operations on the User Job domain class.
  */
+@Api(name = "user job services", description = "Methods for managing a user job, a user created for a software execution")
 class RestUserJobController extends RestController {
 
     def springSecurityService
@@ -30,7 +37,11 @@ class RestUserJobController extends RestController {
     /**
      * Get a user job
      */
-    def showUserJob = {
+    @ApiMethodLight(description="Get a user job", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The user job id")
+    ])
+    def showUserJob() {
         UserJob userJob = UserJob.read(params.long('id'))
         if (userJob) {
             responseSuccess(userJob)
@@ -43,7 +54,15 @@ class RestUserJobController extends RestController {
     /**
      * Create a new user job for algo
      */
-    def createUserJob = {
+    @ApiMethodLight(description="Create a new user job for algo. If job param is null, a job will be create.")
+    @ApiParams(params=[
+        @ApiParam(name="JSON POST DATA: parent", type="long", paramType = ApiParamType.PATH, description = "The user id executing the software"),
+        @ApiParam(name="JSON POST DATA: job", type="long", paramType = ApiParamType.PATH, description = "(Optional, if null, software/project params must be set)The job id"),
+        @ApiParam(name="JSON POST DATA: software", type="long", paramType = ApiParamType.PATH, description = "(Optional, if null job param must be set)The software of the job"),
+        @ApiParam(name="JSON POST DATA: project", type="long", paramType = ApiParamType.PATH, description = "(Optional, if null job param must be set) The project of the job")
+    ])
+    @ApiResponseObject(objectIdentifier = "[userJob: x]")
+    def createUserJob() {
         def json = request.JSON
             try {
                 //get user job parent
@@ -84,7 +103,14 @@ class RestUserJobController extends RestController {
      * -filter image + list =>  Job.findAllByProject & countByUserAndImage should be replace by SQL request
      * -no filter =>  findAllByProject => idem sql request
      */
-    def listUserJobByProject = {
+    @ApiMethodLight(description="List user job for a project (in list or tree format)", listing = true)
+    @ApiParams(params=[
+    @ApiParam(name="id", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The project id"),
+    @ApiParam(name="tree", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Get a tree structure"),
+    @ApiParam(name="image", type="long", paramType = ApiParamType.QUERY, description = "(Optional) Only get job having data on this image"),
+     ])
+    @ApiResponseObject(objectIdentifier = "[userJob: x]")
+    def listUserJobByProject() {
         Project project = projectService.read(params.long('id'))
 
         if (project) {

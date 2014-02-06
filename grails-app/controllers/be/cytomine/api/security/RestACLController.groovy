@@ -50,7 +50,8 @@ class RestACLController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
         @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParam(name="auth", type="string", paramType = ApiParamType.QUERY, description = "(Optional, default READ) The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
     @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def add (){
@@ -73,7 +74,8 @@ class RestACLController extends RestController {
     @ApiParams(params=[
         @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
         @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParam(name="auth", type="string", paramType = ApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
     @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def delete() {
@@ -118,6 +120,4 @@ class RestACLController extends RestController {
         }
 
     }
-
-
 }

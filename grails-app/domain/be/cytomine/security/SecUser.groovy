@@ -42,7 +42,6 @@ class SecUser extends CytomineDomain implements Serializable {
 
     @ApiObjectFieldsLight(params=[
         @ApiObjectFieldLight(apiFieldName = "algo", description = "If true, user is a userjob",allowedType = "boolean",useForCreation = false)
-
     ])
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
 

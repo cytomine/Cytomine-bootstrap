@@ -4,16 +4,22 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * A group is a set of user
  * UserGroup is the link between a group and a user in database
  */
+@ApiObject(name = "user group", description="Link between a group and a user in database")
 class UserGroup extends CytomineDomain {
 
+    @ApiObjectFieldLight(description = "The user id")
     User user
+
+    @ApiObjectFieldLight(description = "The group id")
     Group group
 
     static belongsTo = [user: User,group: Group]

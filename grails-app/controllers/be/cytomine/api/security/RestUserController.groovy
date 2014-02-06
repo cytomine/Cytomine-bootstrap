@@ -11,11 +11,18 @@ import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import be.cytomine.utils.Utils
 import grails.converters.JSON
+import jsondoc.annotation.ApiMethodLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
+import org.jsondoc.core.pojo.ApiParamType
 
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.
  */
+@Api(name = "user services", description = "Methods for managing a user role")
 class RestUserController extends RestController {
 
     def springSecurityService
@@ -29,7 +36,12 @@ class RestUserController extends RestController {
      * Get all project users
      * Online flag may be set to get only online users
      */
-    def showByProject = {
+    @ApiMethodLight(description="Get all project users. Online flag may be set to get only online users", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="online", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional, default false) Get only online users for this project"),
+    ])
+    def showByProject() {
         boolean online = params.boolean('online')
         Project project = projectService.read(params.long('id'))
         if (project && !online) {
@@ -45,7 +57,11 @@ class RestUserController extends RestController {
     /**
      * Get all project admin
      */
-    def showAdminByProject = {
+    @ApiMethodLight(description="Get all project admin", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    def showAdminByProject() {
         Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess(secUserService.listAdmins(project))
@@ -57,7 +73,11 @@ class RestUserController extends RestController {
     /**
      * Get project creator
      */
-    def showCreatorByProject = {
+    @ApiMethodLight(description="Get project creator (Only 1 even if response is list)", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    def showCreatorByProject() {
         Project project = projectService.read(params.long('id'))
         if (project) {
             responseSuccess([secUserService.listCreator(project)])
@@ -69,7 +89,11 @@ class RestUserController extends RestController {
     /**
      * Get ontology creator
      */
-    def showCreatorByOntology = {
+    @ApiMethodLight(description="Get ontology creator (Only 1 even if response is list)", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
+    ])
+    def showCreatorByOntology() {
         Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) {
             responseSuccess([ontology.user])
@@ -80,7 +104,11 @@ class RestUserController extends RestController {
     /**
      * Get ontology user list
      */
-    def showUserByOntology = {
+    @ApiMethodLight(description="Get all ontology users. Online flag may be set to get only online users", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
+    ])
+    def showUserByOntology() {
         Ontology ontology = ontologyService.read(params.long('id'))
         if (ontology) {
             responseSuccess(secUserService.listUsers(ontology))
@@ -92,7 +120,14 @@ class RestUserController extends RestController {
     /**
      * Get all user layers available for a project
      */
-    def showLayerByProject = {
+    @ApiMethodLight(
+            description="Get all user layers available for a project. If image param is set, add user job layers. The result depends on the current user and the project flag (hideUsersLayers,...).",
+            listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="image", type="long", paramType = ApiParamType.PATH, description = "(Optional) The image id, if set add userjob layers"),
+    ])
+    def showLayerByProject() {
         Project project = projectService.read(params.long('id'))
         ImageInstance image = imageInstanceService.read(params.long('image'))
         if (project) {
@@ -106,7 +141,11 @@ class RestUserController extends RestController {
      * Render and returns all Users into the specified format given in the request
      * @return all Users into the specified format
      */
-    def list = {
+    @ApiMethodLight(description="Render and returns all Users",listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="publicKey", type="string", paramType = ApiParamType.QUERY, description = "(Optional) If set, get only user with the public key in param"),
+    ])
+    def list() {
         if (params.publicKey != null) {
             responseSuccess(secUserService.getByPublicKey(params.publicKey))
         } else {
@@ -119,7 +158,11 @@ class RestUserController extends RestController {
      * @param id the user identifier
      * @return user an User into the specified format
      */
-    def show = {
+    @ApiMethodLight(description="Get a user")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long/string", paramType = ApiParamType.PATH, description = "The user id or the user username")
+    ])
+    def show() {
         def id = params.long('id')
         SecUser user
         if(id) {
@@ -141,7 +184,13 @@ class RestUserController extends RestController {
         }
     }
 
-    def keys = {
+    @ApiMethodLight(description="Get the public and private key for a user. Request only available for Admin or if user is the current user")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "(Optional) The user id"),
+        @ApiParam(name="publicKey", type="string", paramType = ApiParamType.PATH, description = "(Optional) The user key")
+    ])
+    @ApiResponseObject(objectIdentifier = "[publicKey:x, privateKey:x]")
+    def keys() {
         def publicKey = params.publicKey
         def id = params.long('id')
         SecUser user
@@ -161,7 +210,17 @@ class RestUserController extends RestController {
         }
     }
 
-    def signature = {
+    @ApiMethodLight(description="Build a signature string based on params for the current user.")
+    @ApiParams(params=[
+        @ApiParam(name="method", type="string", paramType = ApiParamType.QUERY, description = "The request method action"),
+        @ApiParam(name="content-MD5", type="string", paramType = ApiParamType.QUERY, description = "(Optional) The request MD5"),
+        @ApiParam(name="content-type", type="string", paramType = ApiParamType.QUERY, description = "(Optional) The request content type"),
+        @ApiParam(name="date", type="string", paramType = ApiParamType.QUERY, description = "(Optional) The request date"),
+        @ApiParam(name="queryString", type="string", paramType = ApiParamType.QUERY, description = "(Optional) The request query string"),
+        @ApiParam(name="forwardURI", type="string", paramType = ApiParamType.QUERY, description = "(Optional) The request forward URI")
+        ])
+    @ApiResponseObject(objectIdentifier = "[signature:x, publicKey:x]")
+    def signature() {
         SecUser user = cytomineService.currentUser
 
         String method = params.get('method')
@@ -188,7 +247,8 @@ class RestUserController extends RestController {
     /**
      * Get current user info
      */
-    def showCurrent = {
+    @ApiMethodLight(description="Get current user info")
+    def showCurrent() {
         responseSuccess(secUserService.readCurrentUser())
     }
 
@@ -196,28 +256,43 @@ class RestUserController extends RestController {
     /**
      * Add a new user
      */
-    def add = {
+    @ApiMethodLight(description="Add a user, by default the sec role 'USER' is set")
+    def add() {
         add(secUserService, request.JSON)
     }
 
     /**
      * Update a user
      */
-    def update = {
+    @ApiMethodLight(description="Edit a user")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    def update() {
         update(secUserService, request.JSON)
     }
 
     /**
      * Delete a user
      */
-    def delete = {
+    @ApiMethodLight(description="Delete a user")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    def delete() {
         delete(secUserService, JSON.parse("{id : $params.id}"),null)
     }
 
     /**
      * Add a user to project user list
      */
-    def addUserToProject = {
+    @ApiMethodLight(description="Add user in a project as simple 'user'")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="idUser", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier = "empty")
+    def addUserToProject() {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         log.info "addUserToProject project=${project} user=${user}"
@@ -232,7 +307,13 @@ class RestUserController extends RestController {
     /**
      * Delete a user from a project user list
      */
-    def deleteUserFromProject = {
+    @ApiMethodLight(description="Delete user from a project as simple 'user'")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="idUser", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier = "empty")
+    def deleteUserFromProject() {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         secUserService.deleteUserFromProject(user, project, false)
@@ -244,7 +325,13 @@ class RestUserController extends RestController {
     /**
      * Add user in project admin list
      */
-    def addUserAdminToProject = {
+    @ApiMethodLight(description="Add user in project admin list")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="idUser", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier = "empty")
+    def addUserAdminToProject() {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
         secUserService.addUserFromProject(user, project, true)
@@ -257,7 +344,13 @@ class RestUserController extends RestController {
     /**
      * Delete user from project admin list
      */
-    def deleteUserAdminFromProject = {
+    @ApiMethodLight(description="Delete user from project admin list")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParam(name="idUser", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    ])
+    @ApiResponseObject(objectIdentifier = "empty")
+    def deleteUserAdminFromProject() {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         secUserService.deleteUserFromProject(user, project, true)
@@ -266,7 +359,12 @@ class RestUserController extends RestController {
         response(ret)
     }
 
-    def resetPassword = {
+    @ApiMethodLight(description="Change a user password for a user")
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParam(name="password", type="string", paramType = ApiParamType.QUERY, description = "The new password")
+    ])
+    def resetPassword () {
         try {
         SecUser user = SecUser.get(params.long('id'))
         String newPassword = params.get('password')
@@ -292,7 +390,13 @@ class RestUserController extends RestController {
     /**
      * Get all user friend (other user that share same project)
      */
-    def listFriends = {
+    @ApiMethodLight(description="Get all user friend (other user that share same project) for a specific user", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "The project id"),
+        @ApiParam(name="offline", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional, default false) Get online and offline user")
+    ])
+    def listFriends() {
         SecUser user = secUserService.get(params.long('id'))
         Project project = null
         if (params.long('project')) {
@@ -324,7 +428,12 @@ class RestUserController extends RestController {
     /**
      * List people connected now to the same project and get their openned pictures
      */
-    def listOnlineFriendsWithPosition = {
+    @ApiMethodLight(description="List people connected now to the same project and get their openned pictures", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    ])
+    @ApiResponseObject(objectIdentifier = "List of [id: %idUser%,image: %idImage%, filename: %Image path%, originalFilename:%Image filename%, date: %Last position date%]")
+    def listOnlineFriendsWithPosition() {
         Project project = projectService.read(params.long('id'))
         //= now - some seconds
         Date someSecondesBefore = Utils.getDatePlusSecond(-20)
@@ -362,7 +471,12 @@ class RestUserController extends RestController {
     }
 
     def CASLdapUserDetailsService
-    def addFromLDAP = {
+
+    @ApiMethodLight(description="Add a user from the LDAP", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="username", type="long", paramType = ApiParamType.QUERY, description = "The username in LDAP"),
+    ])
+    def addFromLDAP() {
         log.info  "username = " + params.username  + " role = " + params.role
         CASLdapUserDetailsService.loadUserByUsername(params.username)
         def resp = SecUser.findByUsername(params.username)

@@ -33,7 +33,9 @@ class AttachedFileService extends ModelService {
     def read(def id) {
         AttachedFile file = AttachedFile.read(id)
         if(file) {
-            SecurityACL.check(file.domainIdent,file.domainClassName,"container",READ)
+            //TODO: TEMPORARY disable security. There is an issue:
+            //if we copy layers from image x - project 1 to image x - project 2, users may not have the right to download the file
+            //SecurityACL.check(file.domainIdent,file.domainClassName,"container",READ)
         }
         file
     }

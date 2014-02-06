@@ -4,16 +4,22 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
+import jsondoc.annotation.ApiObjectFieldLight
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
+import org.jsondoc.core.annotation.ApiObject
 
 /**
  * User - role link
  * A user may have many role (user+admin for example)
  */
+@ApiObject(name = "sec user sec role", description="User - role link. A user may have many role (USER, ADMIN, GUEST)")
 class SecUserSecRole extends CytomineDomain implements Serializable {
 
+    @ApiObjectFieldLight(description = "The user id")
     SecUser secUser
+
+    @ApiObjectFieldLight(description = "The role id")
     SecRole secRole
 
     static mapping = {
