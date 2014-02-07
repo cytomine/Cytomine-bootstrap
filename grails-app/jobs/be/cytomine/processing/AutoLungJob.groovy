@@ -2,7 +2,7 @@ package be.cytomine.processing
 
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import grails.plugin.springsecurity.SpringSecurityUtils
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class AutoLungJob  {
 

@@ -1,8 +1,8 @@
 package be.cytomine.security
 
-import grails.plugin.springsecurity.SpringSecurityUtils
-import grails.plugin.springsecurity.userdetails.GormUserDetailsService
-import grails.plugin.springsecurity.userdetails.GrailsUser
+import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
+import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.dao.DataAccessException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
@@ -11,6 +11,7 @@ import org.springframework.security.ldap.userdetails.InetOrgPerson
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService
 
 class CASLdapUserDetailsService extends GormUserDetailsService {
+
 
     /**
      * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least
@@ -32,7 +33,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     throws UsernameNotFoundException, DataAccessException {
 
         SecUser user = SecUser.findByUsername(username)
-        boolean casDisabled = grailsApplication.config.grails.plugin.springsecurity.cas.active.toString()=="false"
+        boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
 
         if(user==null && casDisabled)  {
             println "return null"

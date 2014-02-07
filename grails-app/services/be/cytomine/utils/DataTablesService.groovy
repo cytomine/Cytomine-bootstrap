@@ -82,8 +82,7 @@ class DataTablesService {
 
             dataToRender.aaData << returnRow
         }
-
-        return dataToRender as JSON;
+        return dataToRender;
 
     }
 }

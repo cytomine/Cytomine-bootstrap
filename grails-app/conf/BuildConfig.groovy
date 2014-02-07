@@ -52,7 +52,7 @@ grails.project.dependency.resolution = {
         mavenRepo 'https://noams.artifactoryonline.com/noams/grails-jaxrs-plugin-snapshots'
         mavenRepo 'http://maven.restlet.org'
         mavenRepo "http://www.hibernatespatial.org/repository"
-		mavenRepo "http://repo.spring.io/milestone/"
+		//mavenRepo "http://repo.spring.io/milestone/"
         //mavenRepo "http://www.terracotta.org/download/reflector/releases"
 
     }
@@ -95,11 +95,17 @@ grails.project.dependency.resolution = {
 //        build ':tomcat:7.0.47'
 //        runtime ':hibernate:3.6.10.6'
 
-        compile ':spring-security-core:2.0-RC2'
-        compile ":spring-security-acl:2.0-RC1"
-        compile ":spring-security-appinfo:2.0-RC2"
-		compile ":spring-security-cas:2.0-RC1"
-		compile ":spring-security-ldap:2.0-RC2"
+//        compile ':spring-security-core:2.0-RC2'
+//        compile ":spring-security-acl:2.0-RC1"
+//        compile ":spring-security-appinfo:2.0-RC2"
+//		compile ":spring-security-cas:2.0-RC1"
+//		compile ":spring-security-ldap:2.0-RC2"
+        runtime ':spring-security-core:1.2.7.3'
+        runtime ':spring-security-acl:1.1.1'
+        runtime ':spring-security-appinfo:1.0'
+        compile ":spring-security-cas:1.0.5"
+        compile ":spring-security-ldap:1.0.6"
+
         runtime ':background-thread:1.6'
         runtime ':export:1.5'
         runtime ':twitter-bootstrap:3.0.3'

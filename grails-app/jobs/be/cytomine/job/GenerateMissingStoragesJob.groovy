@@ -2,7 +2,7 @@ package be.cytomine.job
 
 import be.cytomine.image.server.Storage
 import be.cytomine.security.User
-import grails.plugin.springsecurity.SpringSecurityUtils
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 /**
  * Cytomine @ GIGA-ULG

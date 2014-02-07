@@ -9,10 +9,10 @@ class SecurityFilters {
 
         all(uri:'/api/**') {
             before = {
-                /*if(!springSecurityService.isLoggedIn()) {
+                if(!springSecurityService.isLoggedIn()) {
                     redirect(uri:'/')
                     return false
-                }*/
+                }
             }
             after = {
 

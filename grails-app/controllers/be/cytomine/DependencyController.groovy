@@ -1,6 +1,6 @@
 package be.cytomine
 
-import grails.plugin.springsecurity.annotation.Secured
+import grails.plugins.springsecurity.Secured
 import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 
 @Secured(['ROLE_ADMIN'])

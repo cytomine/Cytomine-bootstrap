@@ -2,7 +2,7 @@ package cytomine.web
 
 import be.cytomine.security.SecUser
 import be.cytomine.utils.SecurityUtils
-import grails.plugin.springsecurity.SpringSecurityUtils
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig

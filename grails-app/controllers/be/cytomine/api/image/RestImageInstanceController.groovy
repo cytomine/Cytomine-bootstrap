@@ -94,8 +94,9 @@ class RestImageInstanceController extends RestController {
     def listByProject() {
         Project project = projectService.read(params.long('id'))
         if (params.datatables) {
-            def where = ""
+            def where = "project.id = ${project.id}"
             def fieldFormat = []
+            println "dataTablesService=$dataTablesService"
             responseSuccess(dataTablesService.process(params, ImageInstance, where, fieldFormat))
         }
         else if (project && !params.tree) {

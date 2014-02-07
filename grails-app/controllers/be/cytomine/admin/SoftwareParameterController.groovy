@@ -1,7 +1,7 @@
 package be.cytomine.admin
 
 import be.cytomine.processing.SoftwareParameter
-import grails.plugin.springsecurity.annotation.Secured
+import grails.plugins.springsecurity.Secured
 
 @Secured(['ROLE_ADMIN'])
 class SoftwareParameterController {
