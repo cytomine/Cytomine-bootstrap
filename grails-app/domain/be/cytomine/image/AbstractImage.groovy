@@ -220,7 +220,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     def getFullPath() {
-        return ":)"
         def storages = StorageAbstractImage.findAllByAbstractImage(this)
         if (storages && storages.size() > 0)
             return [storages.first().storage.getBasePath(), getPath()].join(File.separator)

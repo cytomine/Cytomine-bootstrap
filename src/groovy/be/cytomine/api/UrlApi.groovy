@@ -25,7 +25,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getMetadataURLWithImageId(Long idImage) {
-        return "${serverUrl()}/api/image/$idImage/metadata.json"
+        return "${serverUrl()}/api/abstractimage/$idImage/metadata.json"
     }
 
     /**
@@ -64,7 +64,7 @@ class UrlApi {
     }
 
     static def getAssociatedImage(Long idAbstractImage, String label, def maxSize) {
-        return "${serverUrl()}/api/abstractimage/$idAbstractImage/associated/$label.png?maxWidth=$maxSize"
+        return "${serverUrl()}/api/abstractimage/$idAbstractImage/associated/$label" + ".png?maxWidth=$maxSize"
     }
 
     /**
@@ -143,7 +143,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAbstractImageThumbURL(Long idImage) {
-        return  "${serverUrl()}/api/image/$idImage/thumb.png"
+        return  "${serverUrl()}/api/abstractimage/$idImage/thumb.png"
     }
 
     static def serverUrl() {
