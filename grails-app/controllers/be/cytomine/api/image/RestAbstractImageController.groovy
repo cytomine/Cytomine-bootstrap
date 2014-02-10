@@ -24,7 +24,7 @@ import sun.misc.BASE64Decoder
  * An abstract image can be add in n projects
  */
 @Api(name = "abstract image services", description = "Methods for managing an image. See image instance service to manage an instance of image in a project.")
-class RestImageController extends RestController {
+class RestAbstractImageController extends RestController {
 
     def imagePropertiesService
     def abstractImageService
@@ -181,16 +181,13 @@ class RestImageController extends RestController {
         responseImage(url)
     }
 
-    @ApiMethodLight(description="Get associated images labels for a specific image", listing = true)
+    @ApiMethodLight(description="Get available associated images", listing = true)
     @ApiParams(params=[
     @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image id")
     ])
     @ApiResponseObject(objectIdentifier ="associated image labels")
     def associated() {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        Long id = params.long("id")
-        String uri = "$imageServerURL/api/image/$id/associated"
-        def associated = JSON.parse( new URL(uri).text )
+        def associated = abstractImageService.getAvailableAssociatedImages(params.long("id"))
         responseSuccess(associated)
     }
 
@@ -204,11 +201,8 @@ class RestImageController extends RestController {
     ])
     @ApiResponseObject(objectIdentifier = "image (bytes)")
     def label() {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        Long id = params.long("id")
-        String label = params.label
-        String uri = "$imageServerURL/api/image/$id/associated/$label"
-        responseImage(uri)
+        def label = abstractImageService.getAssociatedImageURI(params.long("id"), params.label, params.maxWidth)
+        responseImage(label)
     }
 
     /**
@@ -236,6 +230,10 @@ class RestImageController extends RestController {
         response.setHeader "Content-disposition", "attachment; filename=capture.png"
         response.getOutputStream() << imageByte
         response.getOutputStream().flush()
+    }
+
+    def download() {
+        redirect (uri : abstractImageService.downloadURI(params.long("id")))
     }
 
 

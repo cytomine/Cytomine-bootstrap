@@ -4,41 +4,44 @@
  * Date: 10/10/11
  * Time: 13:52
  */
-class ImageUrlMappings {
+class AbstractImageUrlMappings {
 
     static mappings = {
         /* Abstract Image */
-        "/api/abstractimage.$format"(controller: "restImage"){
+        "/api/abstractimage.$format"(controller: "restAbstractImage"){
             action = [GET:"list", POST:"add"]
         }
-        "/api/camera.$format"(controller: "restImage"){
+        "/api/camera.$format"(controller: "restAbstractImage"){
             action = [POST:"camera"]
         }
-        "/api/abstractimage/$id.$format"(controller: "restImage"){
+        "/api/abstractimage/$id.$format"(controller: "restAbstractImage"){
             action = [GET:"show", PUT:"update", DELETE:"delete"]
         }
-        "/api/abstractimage/$id/thumb.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/download"(controller: "restAbstractImage"){
+            action = [GET:"download"]
+        }
+        "/api/abstractimage/$id/thumb.$format"(controller: "restAbstractImage"){
             action = [GET:"thumb"]
         }
-		"/api/abstractimage/$id/preview.$format"(controller: "restImage"){
+		"/api/abstractimage/$id/preview.$format"(controller: "restAbstractImage"){
             action = [GET:"preview"]
         }
-        "/api/abstractimage/$id/metadata.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/metadata.$format"(controller: "restAbstractImage"){
             action = [GET:"metadata"]
         }
-        "/api/abstractimage/$id/associated.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/associated.$format"(controller: "restAbstractImage"){
             action = [GET:"associated"]
         }
-        "/api/abstractimage/$id/associated/$label.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/associated/$label.$format"(controller: "restAbstractImage"){
             action = [GET:"label"]
         }
-        "/api/abstractimage/$id/property.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/property.$format"(controller: "restAbstractImage"){
             action = [GET:"imageProperties"]
         }
-        "/api/abstractimage/$id/property/$imageproperty.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/property/$imageproperty.$format"(controller: "restAbstractImage"){
             action = [GET:"imageProperty"]
         }
-        "/api/abstractimage/$id/imageservers.$format"(controller: "restImage"){
+        "/api/abstractimage/$id/imageservers.$format"(controller: "restAbstractImage"){
             action = [GET:"imageServers"]
         }
 //        "/api/abstractimage/$id/imageserversmerge.$format"(controller: "restImage"){
@@ -51,7 +54,7 @@ class ImageUrlMappings {
 
 
 
-        "/api/project/$id/image.$format"(controller: "restImage"){
+        "/api/project/$id/image.$format"(controller: "restAbstractImage"){
             action = [GET:"listByProject"]
         }
 

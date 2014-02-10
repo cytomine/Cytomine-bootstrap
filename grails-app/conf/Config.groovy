@@ -18,9 +18,10 @@ grails.config.locations = ["file:${userHome}/.grails/cytomineconfig.properties"]
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
-grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
+grails.mime.types = [
         json: ['application/json','text/json'],
         jsonp: 'application/javascript',
+        html: ['text/html','application/xhtml+xml'],
         xml: ['text/xml', 'application/xml'],
         png : 'image/png',
         jpg : 'image/jpeg',
@@ -35,7 +36,7 @@ grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
         multipartForm: 'multipart/form-data'
 ]
 cytomine.maxRequestSize = 10485760
-storage_path="/tmp/cytomine" //default path for image locations
+storage_path="/Users/stevben/cytomine/cytomine_storage" //default path for image locations
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
@@ -77,6 +78,14 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 
 // set per-environment serverURL stem for creating absolute links
 environments {
+    scratch {
+        grails.serverURL = "http://localhost:8080"
+        grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
+        grails.converters.default.pretty.print = true
+        grails.plugins.springsecurity.useBasicAuth = false
+        grails.resources.adhoc.patterns = []
+    }
     production {
         grails.serverURL = "http://shareview.ecampus.ulg.ac.be" //"http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
@@ -85,8 +94,9 @@ environments {
         grails.resources.adhoc.patterns = []
     }
     development {
-        grails.serverURL = "http://localhost:8080"  //BS : http://139.165.108.140:9090
+        grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = []
@@ -270,6 +280,7 @@ log4j = {
 
 grails.plugins.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN'],
+        '/monitoring/**':    ['ROLE_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
@@ -375,9 +386,12 @@ grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.s
 grails.plugins.springsecurity.authority.className = 'be.cytomine.security.SecRole'
 grails.plugins.springsecurity.projectClass = 'be.cytomine.project.Project'
 grails.plugins.springsecurity.rememberMe.parameter = 'remember_me'
+grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugins.springsecurity.controllerAnnotations.staticRules = [
-        '/securityInfo/**': ['ROLE_ADMIN']
+        '/securityInfo/**': ['ROLE_ADMIN'],
+        '/monitoring/**': ['ROLE_ADMIN']       //do not work...
 ]
+
 
 //grails.resources.debug=true
 
@@ -394,7 +408,7 @@ grails.plugins.dynamicController.mixins = [
         '/admin/manage/**': ['ROLE_ADMIN']
 ]*/
 
-grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
+
 
 
 

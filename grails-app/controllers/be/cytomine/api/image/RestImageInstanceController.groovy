@@ -18,7 +18,6 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
@@ -395,6 +394,39 @@ class RestImageInstanceController extends RestController {
         }
     }
 
+    def download() {
+        Long id = params.long("id")
+        ImageInstance imageInstance = imageInstanceService.read(id)
+        redirect (uri : abstractImageService.downloadURI(imageInstance.baseImage.id))
+    }
+
+    def metadata() {
+        Long id = params.long("id")
+        ImageInstance imageInstance = imageInstanceService.read(id)
+        def responseData = [:]
+        responseData.metadata = abstractImageService.metadata(imageInstance.baseImage.id)
+        response(responseData)
+    }
+
+    def associated() {
+        Long id = params.long("id")
+        ImageInstance imageInstance = imageInstanceService.read(id)
+        def associated = abstractImageService.getAvailableAssociatedImages(imageInstance.baseImage.id)
+        responseSuccess(associated)
+    }
+
+    def label() {
+        Long id = params.long("id")
+        ImageInstance imageInstance = imageInstanceService.read(id)
+        def label = abstractImageService.getAssociatedImageURI(imageInstance.baseImage.id, params.label, params.maxWidth)
+        responseImage(label)
+    }
+
+    def imageProperties() {
+        Long id = params.long("id")
+        ImageInstance imageInstance = imageInstanceService.read(id)
+        responseSuccess(abstractImageService.imageProperties(imageInstance.baseImage.id))
+    }
 
 
 

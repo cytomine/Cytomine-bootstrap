@@ -81,8 +81,13 @@ class ImagePropertiesService implements Serializable{
                 break;
             case "scn":
                 extractUsefulSCN(image)
+                break;
             case "ndpi":
                 extractUsefulTif(image)
+                break;
+            case "bif":
+                extractUsefulBif(image)
+                break;
             default:
                 extractUsefulNDPI(image)
 
@@ -216,6 +221,29 @@ class ImagePropertiesService implements Serializable{
         log.info "heightProperty="+heightProperty
         //openslide.mpp-x
         def resolutionProperty = ImageProperty.findByImageAndKey(image, "aperio.MPP")
+        if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
+        log.info "resolutionProperty="+resolutionProperty
+
+    }
+
+    private def extractUsefulBif(AbstractImage image) {
+        log.info "extract properties from bif : " + image.getFilename()
+        def magnificationProperty = ImageProperty.findByImageAndKey(image, "ventana.Magnification")
+        log.info "magnificationProperty="+magnificationProperty
+        if (magnificationProperty) {
+            def value = Float.parseFloat(magnificationProperty.getValue().replace(",", "."))
+            image.setMagnification(value.toInteger())
+        }
+        //Width openslide.level[0].width
+        def widthProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].width")
+        if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
+        log.info "widthProperty="+widthProperty
+        //Height openslide.level[0].height
+        def heightProperty = ImageProperty.findByImageAndKey(image, "openslide.level[0].height")
+        if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
+        log.info "heightProperty="+heightProperty
+        //ventana.Magnification
+        def resolutionProperty = ImageProperty.findByImageAndKey(image, "ventana.ScanRes")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
         log.info "resolutionProperty="+resolutionProperty
 

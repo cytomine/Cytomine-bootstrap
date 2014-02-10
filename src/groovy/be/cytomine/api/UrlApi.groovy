@@ -63,6 +63,10 @@ class UrlApi {
         return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg"
     }
 
+    static def getAssociatedImage(Long idAbstractImage, String label, def maxSize) {
+        return "${serverUrl()}/api/abstractimage/$idAbstractImage/associated/$label.png?maxWidth=$maxSize"
+    }
+
     /**
      * Return cytomine url to get a small crop annotation
      * @param url Cytomine base url

@@ -52,7 +52,6 @@ var InformationsPanel = SideBarPanel.extend({
         this.initToggle(el, elContent1, sourceEvent1, "infoPanelContent1");
         this.initToggle(el, elContent2, sourceEvent2, "infoPanelContent2");
 
-
         var content =_.template(tplaction, json);
         var panel = $('#informationsPanel' + self.model.get('id'));
         panel.find("#actionExploreButton").append(content);

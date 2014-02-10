@@ -66,7 +66,7 @@ class SecUserService extends ModelService {
     }
 
     SecUser getByPublicKey(String key) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        //SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
     }
 

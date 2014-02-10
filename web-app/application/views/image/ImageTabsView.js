@@ -23,12 +23,12 @@ var ImageTabsView = Backbone.View.extend({
         var body = $("#imageProjectArray" + self.idProject);
         var columns = [
             { sClass: 'center', "mData": "id", "bSearchable": false},
-            { "mData": "baseImage.thumbURL", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o) {
+            { "mData": "baseImage.macroURL", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o) {
                 return _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>",
                     {
                         project : self.idProject,
                         id : o.aData.id,
-                        thumb : o.aData["baseImage.thumbURL"]
+                        thumb : o.aData["baseImage.macroURL"]
                     });
             }},
             { "mDataProp": "baseImage.originalFilename", sDefaultContent: "", "bSearchable": true, "fnRender" : function (o) {
@@ -57,7 +57,19 @@ var ImageTabsView = Backbone.View.extend({
             { "mDataProp": "countImageJobAnnotations", "bSearchable": false },
             { "mDataProp": "countImageReviewedAnnotations", "bSearchable": false },
             { "mDataProp": "baseImage.mime.extension", sDefaultContent: "", "bSearchable": true, "fnRender" : function(o) {
-                return o.aData["baseImage.mime.extension"];
+                var extension = o.aData["baseImage.mime.extension"];
+                if (extension == "ndpi" || extension == "vms") {
+                     return '<img src="images/brands/hamamatsu.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                } else if (extension == "mrxs") {
+                    return '<img src="images/brands/3dh.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                } else if (extension == "svs") {
+                    return '<img src="images/brands/aperio.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                } else if (extension == "scn") {
+                    return '<img src="images/brands/leica.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                } else if (extension == "bif") {
+                    return '<img src="images/brands/roche.gif" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                }
+                else return o.aData["baseImage.mime.extension"];
             } },
             { "mDataProp": "created", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o, created) {
                 return window.app.convertLongToDate(created);

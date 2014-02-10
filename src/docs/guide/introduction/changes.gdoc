@@ -14,7 +14,7 @@ Annotation crop service refactoring
 "/api/userannotation/$id/crop-$term.$format" | "/api/userannotation/$id/crop.$format" | Term params deleted
 "/api/userannotation/$annotation/mask-$term.$format" | "/api/userannotation/$id/mask.$format" | Term params deleted
 "/api/reviewedannotation/$annotation/alphamask-$term.$format" | "/api/reviewedannotation/$id/alphamask.$format" | Term params deleted
-"/api/image/* | "/api/abstractimage/* | service name renamed to the read domain name
+"/api/image/* | "/api/abstractimage/* | service name renamed to the real domain name
 {table}
 
 Nested images support

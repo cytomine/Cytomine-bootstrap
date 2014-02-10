@@ -32,7 +32,21 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/mask.$format"(controller: "restImageInstance"){
             action = [GET:"mask", POST : "putMask"]
         }
-
+        "/api/imageinstance/$id/download"(controller: "restImageInstance"){
+            action = [GET:"download"]
+        }
+        "/api/imageinstance/$id/metadata.$format"(controller: "restImageInstance"){
+            action = [GET:"metadata"]
+        }
+        "/api/imageinstance/$id/associated.$format"(controller: "restImageInstance"){
+            action = [GET:"associated"]
+        }
+        "/api/imageinstance/$id/associated/$label.$format"(controller: "restImageInstance"){
+            action = [GET:"label"]
+        }
+        "/api/imageinstance/$id/property.$format"(controller: "restImageInstance"){
+            action = [GET:"imageProperties"]
+        }
         "/api/project/$id/imageinstance.$format"(controller: "restImageInstance"){
             action = [GET:"listByProject"]
         }

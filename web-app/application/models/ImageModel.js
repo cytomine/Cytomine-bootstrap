@@ -7,6 +7,13 @@ var ImageModel = Backbone.Model.extend({
         }
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
+    downloadUrl : function() {
+       if (this.get('id')) {
+           return 'api/abstractimage/' + id + "/download";
+       } else {
+           return null;
+       }
+    },
     getVisibleName : function(hideName) {
         if(!hideName) {
             return this.get('originalFilename');

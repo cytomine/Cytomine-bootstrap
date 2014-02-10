@@ -12,6 +12,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 import grails.orm.PagedResultList
 
 class AbstractImageService extends ModelService {
@@ -242,6 +243,28 @@ class AbstractImageService extends ModelService {
         } catch (Exception e) {
             log.error("GetThumb:" + e)
         }
+    }
+
+    def downloadURI(def id) {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        return "$imageServerURL/api/abstractimage/$id/download"
+    }
+
+    def getAvailableAssociatedImages(def id) {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String uri = "$imageServerURL/api/abstractimage/$id/associated"
+        return JSON.parse( new URL(uri).text )
+    }
+
+    def getAssociatedImageURI(def id, def label, def maxWidth) {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        def queryString = ""
+        if (maxWidth) {
+            queryString = "maxWidth=$maxWidth"
+        }
+        def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
+        println uri
+        return uri
     }
 
     def getStringParamsI18n(def domain) {

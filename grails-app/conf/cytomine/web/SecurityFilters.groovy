@@ -7,7 +7,7 @@ class SecurityFilters {
 
     def filters = {
 
-        all(uri:'/api/**') {
+        api(uri:'/api/**') {
             before = {
                 if(!springSecurityService.isLoggedIn()) {
                     redirect(uri:'/')
