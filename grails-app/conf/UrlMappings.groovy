@@ -5,19 +5,19 @@ import org.springframework.security.acls.model.NotFoundException
 class UrlMappings {
 
     static mappings = {     //?.$format
-        "/$controller/$action?/$id.$format"{
+        "/$controller/$action?/$id?.$format?"{
             constraints {
                 // apply constraints here
             }
         }
-        "/$controller/$action.$format"{
+        "/$controller/$action?.$format?"{
             constraints {
                 // apply constraints here
             }
         }
         "/jsondoc" (controller : "jsondoc")
-        "/admin/manage/$action.$format"(controller: "adminManage")
-        "/adminManage/$action.$format"(controller: "errors", action: "error500")
+        "/admin/manage/$action?.$format"(controller: "adminManage")
+        "/adminManage/$action?.$format"(controller: "errors", action: "error500")
 
         /* Home */
         "/"(view:"/index")

@@ -23,7 +23,7 @@ class UserUrlMappings {
         "/api/userkey/$publicKey/keys.$format"(controller:"restUser"){
             action = [GET:"keys"]
         }
-        "/api/user  /current.$format"(controller:"restUser"){
+        "/api/user/current.$format"(controller:"restUser"){
             action = [GET:"showCurrent"]
         }
         "/api/user/$id/friends.$format"(controller:"restUser"){
