@@ -10,11 +10,11 @@ import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.orm.PagedResultList
-import ij.ImagePlus
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -30,6 +30,7 @@ class AbstractImageService extends ModelService {
     def storageService
     def groupService
     def imageInstanceService
+    def attachedFileService
 
     def currentDomain() {
         return AbstractImage
@@ -128,10 +129,10 @@ class AbstractImageService extends ModelService {
         def res = executeCommand(c,null,json)
         //AbstractImage abstractImage = retrieve(res.data.abstractimage)
         AbstractImage abstractImage = res.object
-        Group group = Group.findByName(currentUser.getUsername())
 
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
+            //CHECK WRITE ON STORAGE
             StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
             sai.save(flush:true,failOnError: true)
         }
@@ -260,11 +261,10 @@ class AbstractImageService extends ModelService {
         return JSON.parse( new URL(uri).text )
     }
 
-    def getAssociatedImage(def id, String label, def maxWidth) {
-        AbstractImage abstractImage = read(id)
-        AssociatedImage associatedImage = AssociatedImage.findByAbstractImageAndLabel(abstractImage, label)
-        if (associatedImage) {
-            return ImageIO.read(new ByteArrayInputStream(associatedImage.getImageData()))
+    def getAssociatedImage(Long id, String label, def maxWidth) {
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, label)
+        if (attachedFile) {
+            return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
             String imageServerURL = grailsApplication.config.grails.imageServerURL
             def queryString = ""
@@ -274,7 +274,7 @@ class AbstractImageService extends ModelService {
             def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
             byte[] imageData = new URL(uri).getBytes()
             BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
-            new AssociatedImage( abstractImage: abstractImage, label : label, imageData: imageData).save(flush : true)
+            attachedFileService.add(label, imageData, id, AbstractImage.class.getName())
             return bufferedImage
         }
 
@@ -287,6 +287,12 @@ class AbstractImageService extends ModelService {
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
         ImageInstance.findAllByBaseImage(ai).each {
             imageInstanceService.delete(it,transaction,null,false)
+        }
+    }
+
+    def deleteDependentAttachedFile(AbstractImage ai, Transaction transaction,Task task=null) {
+        AttachedFile.findAllByDomainIdentAndDomainClassName(ai.id, ai.class.getName()).each {
+            attachedFileService.delete(it,transaction,null,false)
         }
     }
 

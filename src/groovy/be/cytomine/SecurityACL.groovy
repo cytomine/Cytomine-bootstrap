@@ -31,6 +31,32 @@ class SecurityACL {
         check(id, classObj.getName(), method, permission)
     }
 
+    static void checkAtLeastOne(def id, String className, String method, Permission permission) {
+        def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+        if (simpleObject) {
+            def containerObjects = simpleObject."$method"()
+            def atLeastOne = containerObjects.find {
+                it.checkPermission(permission)
+            }
+            if (!atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className}")
+        } else {
+            throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
+        }
+    }
+
+    static void checkAll(def id, String className, String method, Permission permission) {
+        def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+        if (simpleObject) {
+            def containerObjects = simpleObject."$method"()
+            def atLeastOne = containerObjects.find {
+                !it.checkPermission(permission)
+            }
+            if (atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className}")
+        } else {
+            throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
+        }
+    }
+
     static void check(def id, String className, String method, Permission permission) {
         def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
        if (simpleObject) {
@@ -39,8 +65,6 @@ class SecurityACL {
        } else {
            throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
        }
-
-
     }
 
     static void check(def id, String className, Permission permission) {

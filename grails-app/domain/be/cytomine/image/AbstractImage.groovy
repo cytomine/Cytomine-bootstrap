@@ -260,4 +260,14 @@ class AbstractImage extends CytomineDomain implements Serializable {
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
         return resolver?.getZoomLevels(imageServerStorages[0].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator), width, height)
     }
+
+    /**
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain[] containers() {
+        getImageServersStorage().collect {
+            it.storage
+        }
+    }
 }

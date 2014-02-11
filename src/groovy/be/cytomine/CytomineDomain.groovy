@@ -97,6 +97,18 @@ abstract class CytomineDomain  implements Comparable{
     }
 
     /**
+     * Get the container domains for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain[] containers() {
+        def container = container()
+        if (container)
+            return [container]
+        else
+            return []
+    }
+
+    /**
      * Build callback data for a domain (by default null)
      * Callback are metadata used by client
      * You need to override getCallBack() in domain class
