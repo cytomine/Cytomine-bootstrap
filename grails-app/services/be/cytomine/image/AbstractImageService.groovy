@@ -14,6 +14,10 @@ import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.orm.PagedResultList
+import ij.ImagePlus
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 class AbstractImageService extends ModelService {
 
@@ -256,15 +260,24 @@ class AbstractImageService extends ModelService {
         return JSON.parse( new URL(uri).text )
     }
 
-    def getAssociatedImageURI(def id, def label, def maxWidth) {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        def queryString = ""
-        if (maxWidth) {
-            queryString = "maxWidth=$maxWidth"
+    def getAssociatedImage(def id, String label, def maxWidth) {
+        AbstractImage abstractImage = read(id)
+        AssociatedImage associatedImage = AssociatedImage.findByAbstractImageAndLabel(abstractImage, label)
+        if (associatedImage) {
+            return ImageIO.read(new ByteArrayInputStream(associatedImage.getImageData()))
+        } else {
+            String imageServerURL = grailsApplication.config.grails.imageServerURL
+            def queryString = ""
+            if (maxWidth) {
+                queryString = "maxWidth=$maxWidth"
+            }
+            def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
+            byte[] imageData = new URL(uri).getBytes()
+            BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
+            new AssociatedImage( abstractImage: abstractImage, label : label, imageData: imageData).save(flush : true)
+            return bufferedImage
         }
-        def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
-        println uri
-        return uri
+
     }
 
     def getStringParamsI18n(def domain) {

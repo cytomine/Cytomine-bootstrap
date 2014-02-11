@@ -201,8 +201,8 @@ class RestAbstractImageController extends RestController {
     ])
     @ApiResponseObject(objectIdentifier = "image (bytes)")
     def label() {
-        def label = abstractImageService.getAssociatedImageURI(params.long("id"), params.label, params.maxWidth)
-        responseImage(label)
+        def associatedImage = abstractImageService.getAssociatedImage(params.long("id"), params.label, params.maxWidth)
+        responseBufferedImage(associatedImage)
     }
 
     /**

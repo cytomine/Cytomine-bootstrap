@@ -5,6 +5,7 @@ import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
+import be.cytomine.image.AssociatedImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
@@ -418,8 +419,8 @@ class RestImageInstanceController extends RestController {
     def label() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
-        def label = abstractImageService.getAssociatedImageURI(imageInstance.baseImage.id, params.label, params.maxWidth)
-        responseImage(label)
+        def associatedImage = abstractImageService.getAssociatedImage(imageInstance.baseImage.id, params.label, params.maxWidth)
+        responseBufferedImage(associatedImage)
     }
 
     def imageProperties() {
