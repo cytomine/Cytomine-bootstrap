@@ -5,7 +5,6 @@ import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.AssociatedImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
