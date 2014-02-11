@@ -643,7 +643,6 @@ class ReviewedAnnotationListing extends AnnotationListing {
               where = "$where" +
                       "AND a.id = at.reviewed_annotation_terms_id\n" +
                      " AND a.id = at2.reviewed_annotation_terms_id\n" +
-                     " AND at.id <> at2.id \n" +
                      " AND at.term_id <> at2.term_id \n"
           } else if(noTerm) {
               from = "$from LEFT OUTER JOIN reviewed_annotation_term at ON a.id = at.reviewed_annotation_terms_id "

@@ -1,3 +1,17 @@
+h3. 201402XX Version
+
+*SQL Changes*
+{code}
+UPDATE reviewed_annotation as ra
+SET user_id = (select user_id from user_annotation ua where ra.parent_ident = ua.id)
+WHERE parent_ident IN (select id from user_annotation);
+
+UPDATE reviewed_annotation as ra
+SET user_id = (select user_id from algo_annotation ua where ra.parent_ident = ua.id)
+WHERE parent_ident IN (select id from algo_annotation);
+{code}
+
+
 h3. 20140115 Version
 
 *API Changes*

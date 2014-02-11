@@ -12,35 +12,35 @@ var HotKeys = {
         var self = this;
         var target = $(document);
         target.bind('keydown.b',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".selectButton");
                 }
             }
         );
         target.bind('keydown.a',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review")) {
                     self.doClick(self.context(),".acceptButton");
                 }
             }
         );
         target.bind('keydown.r',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review")) {
                     self.doClick(self.context(),".rejectButton");
                 }
             }
         );
         target.bind('keydown.n',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".nextImage");
                 }
             }
         );
         target.bind('keydown.p',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".previousImage");
                 }
@@ -48,21 +48,21 @@ var HotKeys = {
         );
 
         target.bind('keydown.s',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".selectButton");
                 }
             }
         );
         target.bind('keydown.f',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".freehandButton");
                 }
             }
         );
         target.bind('keydown.w',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".magicWandButton");
 
@@ -70,35 +70,35 @@ var HotKeys = {
             }
         );
         target.bind('keydown.e',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".editButton");
                 }
             }
         );
         target.bind('keydown.c',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".cutButton");
                 }
             }
         );
         target.bind('keydown.j',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".joinButton");
                 }
             }
         );
         target.bind('keydown.d',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review") || self.checkMode("image")) {
                     self.doClick(self.context(),".deleteButton");
                 }
             }
         );
         target.bind('keydown.t',function (evt){
-                if (!isBrowsingImage) return;
+                if (!self.isBrowsingImage()) return;
                 if(self.checkMode("review")) {
                     self.doClick(self.context(),".printReviewLayerButton");
                 }

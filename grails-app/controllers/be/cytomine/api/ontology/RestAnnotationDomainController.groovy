@@ -613,7 +613,7 @@ class RestAnnotationDomainController extends RestController {
                         annotation = ReviewedAnnotation.read(params.getLong("id"))
 
                         if (annotation) {
-                            if (annotation.user != user) {
+                            if (annotation.reviewUser != user) {
                                 throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!")
                             }
                             forward(controller: "restReviewedAnnotation", action: "update")
@@ -873,11 +873,15 @@ class RestAnnotationDomainController extends RestController {
             layers = layers.findAll{(it+"")==(cytomineService.currentUser.id+"")}
         }
 
+        String userColumnName = "user_id"
+        if(table.equals("reviewed_annotation")) {
+            userColumnName = "review_user_id"
+        }
 
         String request = "SELECT annotation.id,user_id\n" +
                 "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
-                "AND user_id IN (${layers.join(',')})\n" +
+                "AND $userColumnName IN (${layers.join(',')})\n" +
                 "AND ST_Intersects(annotation.location,ST_GeometryFromText('" + location + "',0));"
 
         def sql = new Sql(dataSource)

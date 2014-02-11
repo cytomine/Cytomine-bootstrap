@@ -253,7 +253,7 @@ class ReviewedAnnotation extends AnnotationDomain implements Serializable {
      * @return Domain user
      */
     public SecUser userDomainCreator() {
-        return user;
+        return reviewUser;
     }
 
 }

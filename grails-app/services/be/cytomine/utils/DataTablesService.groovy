@@ -4,6 +4,7 @@ import grails.converters.JSON
 
 class DataTablesService {
 
+    //TODO: document this methods + params
     def process(params, domain, restrictions, returnFields) {
         def filters = []
         for(int i=0; i<params.int("iColumns"); i++) {

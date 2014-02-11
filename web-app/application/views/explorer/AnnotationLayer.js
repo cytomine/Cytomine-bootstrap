@@ -152,7 +152,6 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
         "select" : selectStyle
     });
 
-
     if (this.reviewLayer) {
         //review layer: paint it green
         styleMap.styles["default"].addRules(rules);

@@ -269,15 +269,12 @@ class ReviewedAnnotationService extends ModelService {
      */
     def add(def json) {
         //read annotation (annotation or annotationIdent)
-
         SecurityACL.check(json.project,Project,READ)
         SecurityACL.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         Transaction transaction = transactionService.start()
         //Synchronzed this part of code, prevent two annotation to be add at the same time
         synchronized (this.getClass()) {
-            //Add annotation user
-            json.user = currentUser.id
             //Add Annotation
             log.debug this.toString()
             def result = executeCommand(new AddCommand(user: currentUser, transaction: transaction),null,json)
