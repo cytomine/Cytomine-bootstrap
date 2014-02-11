@@ -218,9 +218,9 @@ var OntologyPanelView = Backbone.View.extend({
         var self = this;
         new UserCollection({ontology: self.model.id, creator: true}).fetch({
             success: function (creator, response) {
-                $("#ontologyCreator").empty();
+                $("#ontologyCreator"+self.model.id).empty();
                 creator.each(function (user) {
-                    $("#ontologyCreator").append(user.prettyName());
+                    $("#ontologyCreator"+self.model.id).append(user.prettyName());
                 });
             }});
     },
@@ -232,7 +232,7 @@ var OntologyPanelView = Backbone.View.extend({
                 users.each(function (user) {
                     usernames.push(user.prettyName());
                 });
-                $("#ontologyUsers").html(usernames.join(", "));
+                $("#ontologyUsers"+self.model.id).html(usernames.join(", "));
             }});
     },
     printProjects : function() {
@@ -241,7 +241,7 @@ var OntologyPanelView = Backbone.View.extend({
             var tpl = _.template("<a href='#tabs-dashboard-<%=   idProject %>'><%=   projectName %></a>", {idProject: project.id, projectName: project.name});
             projectsLinked.push(tpl);
         });
-        $("#projectsLinked").html(projectsLinked.join(", "));
+        $("#projectsLinked"+this.model.id).html(projectsLinked.join(", "));
     },
     buildOntologyTree: function () {
         var self = this;

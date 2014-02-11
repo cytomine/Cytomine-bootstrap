@@ -84,7 +84,6 @@ grails.project.dependency.resolution = {
 //        compile ":svn:1.0.2"
 
 //        build ":tomcat:7.0.42"
-
         build ":tomcat:7.0.42"
         compile ':hibernate:3.6.10.2'
 

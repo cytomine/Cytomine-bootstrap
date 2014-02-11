@@ -43,8 +43,8 @@ class Infos {
     public static String BADLOGIN = 'badlogin'
     public static String BADPASSWORD = 'badpassword'
 
-    public static String UNDOURL = "command/undo"
-    public static String REDOURL = "command/redo"
+    public static String UNDOURL = "command/undo.json"
+    public static String REDOURL = "command/redo.json"
 
 
     /**

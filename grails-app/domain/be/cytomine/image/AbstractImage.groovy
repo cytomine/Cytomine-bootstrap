@@ -220,11 +220,16 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }
 
     def getFullPath() {
-        def imageServersStorage = getImageServersStorage()
-        if (imageServersStorage && imageServersStorage.size() > 0)
-            return [imageServersStorage.first().storage.getBasePath(), getPath()].join(File.separator)
-        else
+        if(this.version) {
+            def imageServersStorage = getImageServersStorage()
+            if (imageServersStorage && imageServersStorage.size() > 0)
+                return [imageServersStorage.first().storage.getBasePath(), getPath()].join(File.separator)
+            else
+                return null
+        }
+         else {
             return null
+        }
     }
 
     def getCropURL(def boundaries) {

@@ -106,6 +106,7 @@ class RestUploadedFileController extends RestController {
     /**
      * Add a new image
      * TODO:: how to manage security here?
+     *
      */
     @ApiMethodLight(description="Add a new uploaded file. This DOES NOT upload the file, just create the domain.")
     def add () {

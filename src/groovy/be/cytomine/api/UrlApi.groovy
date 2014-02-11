@@ -76,6 +76,9 @@ class UrlApi {
     static def getAnnotationMinCropWithAnnotationId(Long idAnnotation) {
         return "${serverUrl()}/api/annotation/$idAnnotation/crop.jpg?max_size=256"
     }
+    static def getAnnotationMinCropWithAnnotationIdOld(Long idAnnotation) {
+        return "${serverUrl()}/api/annotation/$idAnnotation/cropMin.jpg"
+    }
 
     /**
      * Return cytomine url to get an algo crop annotation

@@ -233,12 +233,12 @@ class GeneralTests  {
 
  //        ArchiveCommandService archive = new ArchiveCommandService()
  //        archive.archiveOldCommand()
-         DomainAPI.doGET(Infos.CYTOMINEURL+"archive/archive",Infos.GOODLOGIN,Infos.GOODPASSWORD)
+         DomainAPI.doGET(Infos.CYTOMINEURL+"archive/archive.json",Infos.GOODLOGIN,Infos.GOODPASSWORD)
 
 
 
          assert new File("oldcommand/${Environment.getCurrent()}").exists()
-          def today = new Date()
+         def today = new Date()
          def firstFile = new File("oldcommand/${Environment.getCurrent()}/${today.year}-${today.month+1}-${today.date}.log")
 
          assert firstFile.exists()

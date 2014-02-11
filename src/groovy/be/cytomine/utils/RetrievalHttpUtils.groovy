@@ -19,7 +19,7 @@ class RetrievalHttpUtils {
     public static String getPostSearchResponse(String URL, String resource, AnnotationDomain annotation, String urlAnnotation, List<Long> projectsSearch) {
         println "getPostSearchResponse1"
         HttpClient client = new HttpClient()
-        def url = URL.replace("/retrieval-web/api/resource",resource)
+        def url = URL.replace("/retrieval-web/api/resource.json",resource)
         client.connect(url,'xxx','xxx')
         println url
         def params = ["id": annotation.id, "url": urlAnnotation, "containers": projectsSearch]
@@ -35,7 +35,7 @@ class RetrievalHttpUtils {
     public static String getPostResponse(String URL, String resource, def jsonStr) {
         println "getPostSearchResponse2"
         HttpClient client = new HttpClient()
-        def url = URL.replace("/retrieval-web/api/resource",resource)
+        def url = URL.replace("/retrieval-web/api/resource.json",resource)
         client.connect(url,'xxx','xxx')
         client.post(jsonStr)
         String response = client.getResponseData()
