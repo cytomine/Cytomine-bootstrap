@@ -527,7 +527,7 @@ class TriggerService {
         BEGIN
             SELECT * INTO currentImage FROM image_instance where id = NEW.image_id FOR UPDATE;
             SELECT * INTO currentProject FROM project where id = NEW.project_id FOR UPDATE;
-            SELECT * INTO currentAnnotationIndex FROM annotation_index WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+            SELECT * INTO currentAnnotationIndex FROM annotation_index WHERE user_id = NEW.review_user_id AND image_id = NEW.image_id;
 
             SELECT parent_class_name INTO current_class from reviewed_annotation where id = NEW.id;
             IF current_class = user_class THEN
@@ -569,11 +569,11 @@ class TriggerService {
             WHERE project.id = NEW.project_id;
 
 
-            SELECT count(*) INTO alreadyExist FROM annotation_index WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+            SELECT count(*) INTO alreadyExist FROM annotation_index WHERE user_id = NEW.review_user_id AND image_id = NEW.image_id;
             IF (alreadyExist=0) THEN
-                INSERT INTO annotation_index(user_id, image_id, count_annotation, count_reviewed_annotation, version, id) VALUES(NEW.user_id,NEW.image_id,0,0,0,nextval('hibernate_sequence'));
+                INSERT INTO annotation_index(user_id, image_id, count_annotation, count_reviewed_annotation, version, id) VALUES(NEW.review_user_id,NEW.image_id,0,0,0,nextval('hibernate_sequence'));
             END IF;
-            UPDATE annotation_index SET count_reviewed_annotation = count_reviewed_annotation+1, version = version+1 WHERE user_id = NEW.user_id AND image_id = NEW.image_id;
+            UPDATE annotation_index SET count_reviewed_annotation = count_reviewed_annotation+1, version = version+1 WHERE user_id = NEW.review_user_id AND image_id = NEW.image_id;
 
 
             SELECT parent_class_name INTO current_class from reviewed_annotation where id = NEW.id;
@@ -619,7 +619,7 @@ class TriggerService {
         BEGIN
             SELECT * INTO currentImage FROM image_instance where id = OLD.image_id FOR UPDATE;
             SELECT * INTO currentProject FROM project where id = OLD.project_id FOR UPDATE;
-            SELECT * INTO currentAnnotationIndex FROM annotation_index WHERE user_id = OLD.user_id AND image_id = OLD.image_id;
+            SELECT * INTO currentAnnotationIndex FROM annotation_index WHERE user_id = OLD.review_user_id AND image_id = OLD.image_id;
 
             SELECT parent_class_name INTO current_class from reviewed_annotation where id = OLD.id;
             IF current_class = user_class THEN
