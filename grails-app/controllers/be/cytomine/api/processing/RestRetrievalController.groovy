@@ -39,6 +39,7 @@ class RestRetrievalController extends RestController {
         }
     }
 
+
     def missingAnnotation = {
         log.info "get missing annotation"
         retrievalService.indexMissingAnnotation()

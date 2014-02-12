@@ -160,7 +160,7 @@ class UserAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json,def minPoint = null, def maxPoint = null) {
-        log.info "add"
+        log.info "log.addannotation1"
 
         SecurityACL.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -202,9 +202,11 @@ class UserAnnotationService extends ModelService {
 
 
             //add annotation on the retrieval
+        log.info "annotationID=$annotationID"
             if (annotationID && UserAnnotation.read(annotationID).location.getNumPoints() >= 3) {
-                if (false && !currentUser.algo()) {
+                if (!currentUser.algo()) {
                     try {
+                        log.info "log.addannotation2"
                         if (annotationID) indexRetrievalAnnotation(annotationID)
                     } catch (CytomineException ex) {
                         log.error "CytomineException index in retrieval:" + ex.toString()
@@ -270,6 +272,7 @@ class UserAnnotationService extends ModelService {
      */
     private indexRetrievalAnnotation(Long id) {
         //index in retrieval (asynchronous)
+        log.info "log.addannotation3"
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
         log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {

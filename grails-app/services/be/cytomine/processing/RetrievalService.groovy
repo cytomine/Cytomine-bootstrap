@@ -57,17 +57,23 @@ class RetrievalService {
             //retrieval avaliable, but only looks on a restricted project list
             projectSearch=project.retrievalProjects.collect {it.id}
         }
-        log.info "search ${annotation.id} on projects ${projectSearch}"
 
+        //Only keep projects available for the current user
+        projectSearch = projectSearch.findAll{ Project.read(it).checkPermission(READ)}
+
+        log.info "search ${annotation.id} on projects ${projectSearch}"
+        log.info "log.addannotation2"
         //Get similar annotation
         def similarAnnotations = loadAnnotationSimilarities(annotation,projectSearch)
         data.annotation = similarAnnotations
 
+        log.info "log.addannotation3"
         //Get all term from project
         def projectTerms = project.ontology.terms()
         def bestTermNotOrdered = getTermMap(projectTerms)
         ValueComparator bvc = new ValueComparator(bestTermNotOrdered);
 
+        log.info "log.addannotation4"
         //browse annotation
         similarAnnotations.each { similarAnnotation ->
             //for each annotation, browse annotation terms
@@ -80,12 +86,13 @@ class RetrievalService {
                 }
             }
         }
+        log.info "log.addannotation5"
 
         //Sort [term:rate] by rate (desc)
         TreeMap<Term, Double> bestTerm = new TreeMap(bvc);
         bestTerm.putAll(bestTermNotOrdered)
         def bestTermList = []
-
+        log.info "log.addannotation6"
         //Put them in a list
         for (Map.Entry<Term, Double> entry: bestTerm.entrySet()) {
             Term term = entry.getKey()
@@ -123,13 +130,12 @@ class RetrievalService {
         def data = []
         for (int i = 0; i < responseJSON.length(); i++) {
             def annotationjson = responseJSON.get(i)  //{"id":6754,"url":"http://beimport java.util.concurrent.Futureta.cytomine.be:48/api/annotation/6754/crop.jpg","sim":6.922589484181173E-6},{"id":5135,"url":"http://beta.cytomine.be:48/api/annotation/5135/crop.jpg","sim":6.912057598973113E-6}]
-
+            //TODO: this method should improve to optim perf during retrieval request
             try {
                 UserAnnotation annotation = UserAnnotation.read(annotationjson.id)
                 if (annotation && annotation.id != searchAnnotation.id) {
-                    SecurityACL.check(annotation.project,READ)
-                    annotation.similarity = new Double(annotationjson.sim)
-                    data << annotation
+                        annotation.similarity = new Double(annotationjson.sim)
+                        data << annotation
                 }
             }
             catch (AccessDeniedException ex) {log.info "User cannot have access to this userAnnotation"}
