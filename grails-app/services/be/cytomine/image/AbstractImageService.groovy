@@ -252,12 +252,12 @@ class AbstractImageService extends ModelService {
 
     def downloadURI(def id) {
         String imageServerURL = grailsApplication.config.grails.imageServerURL
-        return "$imageServerURL/api/abstractimage/$id/download"
+        return "$imageServerURL/api/abstractimage/$id/download?cytomineUrl=$grailsApplication.config.grails.serverURL"
     }
 
     def getAvailableAssociatedImages(def id) {
         String imageServerURL = grailsApplication.config.grails.imageServerURL
-        String uri = "$imageServerURL/api/abstractimage/$id/associated"
+        String uri = "$imageServerURL/api/abstractimage/$id/associated?cytomineUrl=$grailsApplication.config.grails.serverURL"
         return JSON.parse( new URL(uri).text )
     }
 
@@ -267,9 +267,9 @@ class AbstractImageService extends ModelService {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
             String imageServerURL = grailsApplication.config.grails.imageServerURL
-            def queryString = ""
+            def queryString = "cytomineUrl=$grailsApplication.config.grails.serverURL"
             if (maxWidth) {
-                queryString = "maxWidth=$maxWidth"
+                queryString += "&maxWidth=$maxWidth"
             }
             def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
             byte[] imageData = new URL(uri).getBytes()

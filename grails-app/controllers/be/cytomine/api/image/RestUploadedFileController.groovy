@@ -216,7 +216,7 @@ class RestUploadedFileController extends RestController {
         }
         notifyUsers(currentUser,abstractImage,projects)
         responseSuccess([abstractimage: abstractImage])
-}
+    }
 
     def secUserService
 
@@ -241,16 +241,20 @@ class RestUploadedFileController extends RestController {
 
         log.info "Send mail to $users"
 
-        String macroCID = UUID.randomUUID().toString()
+        String macroCID = null
 
         def attachments = []
 
-        BufferedImage bufferedImage = imageProcessingService.getImageFromURL(abstractImage.getThumbURL())
-        if (bufferedImage != null) {
-            File macroFile = File.createTempFile("temp", ".jpg")
-            macroFile.deleteOnExit()
-            ImageIO.write(bufferedImage, "JPG", macroFile)
-            attachments << [ cid : macroCID, file : macroFile]
+        String thumbURL = abstractImage.getThumbURL()
+        if (thumbURL) {
+            macroCID = UUID.randomUUID().toString()
+            BufferedImage bufferedImage = imageProcessingService.getImageFromURL(thumbURL)
+            if (bufferedImage != null) {
+                File macroFile = File.createTempFile("temp", ".jpg")
+                macroFile.deleteOnExit()
+                ImageIO.write(bufferedImage, "JPG", macroFile)
+                attachments << [ cid : macroCID, file : macroFile]
+            }
         }
 
         def imagesInstances = []
@@ -260,10 +264,10 @@ class RestUploadedFileController extends RestController {
 
         }
         String message = renderService.createNewImagesAvailableMessage([
-           abstractImageFilename : abstractImage.getOriginalFilename(),
-           cid : macroCID,
-           imagesInstances : imagesInstances,
-            by: grailsApplication.config.grails.serverURL,
+                abstractImageFilename : abstractImage.getOriginalFilename(),
+                cid : macroCID,
+                imagesInstances : imagesInstances,
+                by: grailsApplication.config.grails.serverURL,
         ])
 
         cytomineMailService.send(
