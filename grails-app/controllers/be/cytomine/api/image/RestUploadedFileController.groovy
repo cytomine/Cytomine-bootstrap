@@ -17,13 +17,14 @@ import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 import javax.activation.MimetypesFileTypeMap
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 /**
  * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)
@@ -31,6 +32,7 @@ import javax.activation.MimetypesFileTypeMap
 @Api(name = "uploaded file services", description = "Methods for managing an uploaded image file.")
 class RestUploadedFileController extends RestController {
 
+    def imageProcessingService
     def cytomineService
     def imagePropertiesService
     def projectService
@@ -41,6 +43,7 @@ class RestUploadedFileController extends RestController {
     def storageAbstractImageService
     def imageInstanceService
     def abstractImageService
+    def renderService
 
     static allowedMethods = [image: 'POST']
 
@@ -186,13 +189,15 @@ class RestUploadedFileController extends RestController {
             sample.refresh()
             abstractImage.setSample(sample)
             abstractImage.save(flush: true,failOnError: true)
-//             abstractImage.save(flush : true,failOnError: true)
 
             storages.each { storage ->
                 storageAbstractImageService.add(JSON.parse(JSONUtils.toJSONString([storage : storage.id, abstractimage : abstractImage.id])))
             }
 
-
+            imagePropertiesService.clear(abstractImage)
+            imagePropertiesService.populate(abstractImage)
+            imagePropertiesService.extractUseful(abstractImage)
+            abstractImage.save(flush: true,failOnError: true)
 
             uploadedFile.getProjects()?.each { project_id ->
                 Project project = projectService.read(project_id)
@@ -209,17 +214,13 @@ class RestUploadedFileController extends RestController {
                 log.info "Sample error : " + it
             }
         }
-        writeMail(currentUser,abstractImage,projects)
+        notifyUsers(currentUser,abstractImage,projects)
         responseSuccess([abstractimage: abstractImage])
-
-
-
-
-    }
+}
 
     def secUserService
 
-    private def writeMail(SecUser currentUser, def abstractImage, def projects) {
+    private def notifyUsers(SecUser currentUser, AbstractImage abstractImage, def projects) {
         //send email
 
 
@@ -240,47 +241,38 @@ class RestUploadedFileController extends RestController {
 
         log.info "Send mail to $users"
 
+        String macroCID = UUID.randomUUID().toString()
 
+        def attachments = []
 
-        StringBuffer message = new StringBuffer()
-        message.append("New images are available on Cytomine:<br/>")
+        BufferedImage bufferedImage = imageProcessingService.getImageFromURL(abstractImage.getThumbURL())
+        if (bufferedImage != null) {
+            File macroFile = File.createTempFile("temp", ".jpg")
+            macroFile.deleteOnExit()
+            ImageIO.write(bufferedImage, "JPG", macroFile)
+            attachments << [ cid : macroCID, file : macroFile]
+        }
 
+        def imagesInstances = []
         for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
-            String url = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
-            message.append(url)
-            message.append("<br />")
-            url = UrlApi.getAbstractImageThumbURL(abstractImage.id)
-            message.append(url)
-            message.append("<br />")
+            String urlImageInstance = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
+            imagesInstances << [urlImageInstance : urlImageInstance, projectName : imageInstance.project.getName()]
 
         }
+        String message = renderService.createNewImagesAvailableMessage([
+           abstractImageFilename : abstractImage.getOriginalFilename(),
+           cid : macroCID,
+           imagesInstances : imagesInstances,
+            by: grailsApplication.config.grails.serverURL,
+        ])
 
-        //UrlApi.getBrowseImageInstanceURL(grailsApplication.config.grails.serverURL, )
-        message.append(abstractImage.getFilename())
-        message.append("<br />")
-        if(projects.isEmpty()) {
-            message.append("This image is not in a project.")
-
-
-        } else {
-            message.append("You can see images in projects: "+projects.collect{it.name}.join(','))
-        }
-
-
-
-        message.append("<br />")
-
-
-
-        if (recipient) {
-            String[] recipients = users.collect{it.getEmail()}
-            try {
-                cytomineMailService.send(null, recipients, null, "New images available on Cytomine", message.toString(), null)
-            } catch (java.net.UnknownHostException e) {
-                e.printStackTrace()
-            }
-
-        }
+        cytomineMailService.send(
+                null,
+                (String[]) users.collect{it.getEmail()},
+                null,
+                "Cytomine : a new image is available",
+                message.toString(),
+                attachments)
 
     }
 

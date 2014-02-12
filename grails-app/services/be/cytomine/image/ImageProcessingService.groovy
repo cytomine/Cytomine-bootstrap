@@ -4,6 +4,7 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.Term
+import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.geom.Geometry
 import ij.ImagePlus
 
@@ -64,15 +65,9 @@ class ImageProcessingService {
      * @param url Picture url
      * @return Picture as an object
      */
-    protected BufferedImage getImageFromURL(String url) {
-        def out = new ByteArrayOutputStream()
-        try {
-            out << new URL(url).openStream()
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
-        InputStream inputStream = new ByteArrayInputStream(out.toByteArray())
-        return ImageIO.read(inputStream)
+    public BufferedImage getImageFromURL(String url) {
+        BufferedImage bufferedImage = ImageIO.read(new URL(url))
+        return bufferedImage
     }
 
     public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {

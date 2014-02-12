@@ -64,5 +64,13 @@ class UrlMappings {
         "/loginWithoutLDAP/login" (controller: "login") {
             action = [GET:"loginWithoutLDAP"]
         }
+
+        "/login/forgotPassword" (controller: "login") {
+            action = [POST:"forgotPassword"]
+        }
+
+        "/login/loginWithToken" (controller: "login") {
+            action = [GET:"loginWithToken"]
+        }
     }
 }

@@ -296,7 +296,7 @@ class RestUserController extends RestController {
         Project project = Project.get(params.id)
         SecUser user = SecUser.get(params.idUser)
         log.info "addUserToProject project=${project} user=${user}"
-        secUserService.addUserFromProject(user, project, false)
+        secUserService.addUserToProject(user, project, false)
         log.info "addUserToProject ok"
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
@@ -334,7 +334,7 @@ class RestUserController extends RestController {
     def addUserAdminToProject() {
         Project project = Project.get(params.id)
         User user = User.get(params.idUser)
-        secUserService.addUserFromProject(user, project, true)
+        secUserService.addUserToProject(user, project, true)
         response.status = 200
         def ret = [data: [message: "OK"], status: 200]
         response(ret)
@@ -367,6 +367,11 @@ class RestUserController extends RestController {
     def resetPassword () {
         try {
         SecUser user = SecUser.get(params.long('id'))
+        String oldPassword = params.get('oldPassword')
+        oldPassword = springSecurityService.encodePassword(oldPassword)
+        if (user.password != oldPassword && !user.passwordExpired) {
+            responseNotFound("Password",params.password)
+        }
         String newPassword = params.get('password')
         log.info "change password for user $user with new password $newPassword"
         if(user && newPassword) {

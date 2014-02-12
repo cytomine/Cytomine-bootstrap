@@ -195,7 +195,7 @@ class ProjectService extends ModelService {
                 users.each { idUser ->
                     SecUser user = SecUser.read(Long.parseLong(idUser+""))
                     log.info "addUserToProject project=${project} user=${user}"
-                    secUserService.addUserFromProject(user, project, false)
+                    secUserService.addUserToProject(user, project, false)
                     progress = progress + (40/users.size())
                     taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as User")
                 }
@@ -207,7 +207,7 @@ class ProjectService extends ModelService {
                     if(user.id!=cytomineService.currentUser.id) {
                         //current user is already added to admin group
                         log.info "addUserToProject project=${project} user=${user}"
-                        secUserService.addUserFromProject(user, project, true)
+                        secUserService.addUserToProject(user, project, true)
                         progress = progress + (40/admins.size())
                         taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as Admin")
                     }
@@ -271,7 +271,7 @@ class ProjectService extends ModelService {
         projectAddUser.each { idUser ->
             SecUser user = SecUser.read(Long.parseLong(idUser+""))
             log.info "projectAddUser project=${project} user=${user}"
-            secUserService.addUserFromProject(user, project, admin)
+            secUserService.addUserToProject(user, project, admin)
             progress = progress + (40/projectAddUser.size())
             taskService.updateTask(task,Math.min(100,progress),"User ${user.username} added as ${admin? "Admin" : "User"}")
         }

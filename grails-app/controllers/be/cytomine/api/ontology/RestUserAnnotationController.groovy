@@ -6,6 +6,8 @@ import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.security.ForgotPasswordToken
+import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
@@ -21,7 +23,7 @@ import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-
+import static grails.async.Promises.*
 /**
  * Controller for annotation created by user
  */
@@ -33,14 +35,16 @@ class RestUserAnnotationController extends RestController {
     def termService
     def imageInstanceService
     def secUserService
+    def secUserSecRoleService
+    def secRoleService
     def projectService
     def cytomineService
     def cytomineMailService
-    def dataSource
     def paramsService
     def annotationListingService
     def reportService
     def imageProcessingService
+    def renderService
 
     /**
      * List all annotation with light format
@@ -62,11 +66,11 @@ class RestUserAnnotationController extends RestController {
     @ApiMethodLight(description="Download a report (pdf, xls,...) with user annotation data from a specific project")
     @ApiResponseObject(objectIdentifier =  "file")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
-        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
-        @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
-        @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
-        @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+    @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+    @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+    @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+    @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
     ])
     def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"USERANNOTATION")
@@ -80,18 +84,18 @@ class RestUserAnnotationController extends RestController {
     @ApiMethodLight(description="Add comment on an annotation to other user and send a mail to users")
     @ApiResponseObject(objectIdentifier = "empty")
     @ApiParams(params=[
-        @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParam(name="POST JSON: subject", type="string", paramType = ApiParamType.PATH,description = "The subject"),
-        @ApiParam(name="POST JSON: message", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH COMMENT?"),
-        @ApiParam(name="POST JSON: users", type="list", paramType = ApiParamType.PATH,description = "The list of user (id) to send the mail"),
-        @ApiParam(name="POST JSON: comment", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH MESSAGE?"),
+    @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+    @ApiParam(name="POST JSON: subject", type="string", paramType = ApiParamType.PATH,description = "The subject"),
+    @ApiParam(name="POST JSON: message", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH COMMENT?"),
+    @ApiParam(name="POST JSON: users", type="list", paramType = ApiParamType.PATH,description = "The list of user (id) to send the mail"),
+    @ApiParam(name="POST JSON: comment", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH MESSAGE?"),
     ])
     def addComment() {
 
         User sender = User.read(springSecurityService.principal.id)
         SecurityACL.checkUser(sender)
         UserAnnotation annotation = userAnnotationService.read(params.getLong('userannotation'))
-        log.info "add comment from " + sender + " and userannotation " + annotation
+        String cid = UUID.randomUUID().toString()
 
         //create annotation crop (will be send with comment)
         File annnotationCrop = null
@@ -110,14 +114,13 @@ class RestUserAnnotationController extends RestController {
         }
         def attachments = []
         if (annnotationCrop != null) {
-            attachments << [cid: "annotation", file: annnotationCrop]
+            attachments << [cid: cid, file: annnotationCrop]
         }
 
         //do receivers email list
         String[] receiversEmail
         List<User> receivers = []
-        println "params.users $request.JSON.users"
-        println "params.emails $request.JSON.emails"
+
         if (request.JSON.users) {
             receivers = JSONUtils.getJSONList(request.JSON.users).collect { userID ->
                 println "userID=$userID"
@@ -126,30 +129,58 @@ class RestUserAnnotationController extends RestController {
             receiversEmail = receivers.collect { it.getEmail() }
         } else if (request.JSON.emails) {
             receiversEmail = request.JSON.emails.split(",")
-            println "emails to send $receiversEmail"
             receiversEmail.each { email ->
-                //to do use addCommandUser
+                if (!secUserService.findByEmail(email)) {
 
-                def guestUser = [
-                        username : email.split("@")[0],
-                        firstname : '___',
-                        lastname : '---',
-                        email : email,
-                        group : [],
-                        password : 'guest',
-                        color : "#FF0000",
-                        roles : ["ROLE_GUEST"]
-                ]
+                    def guestUser = [:]
+                    guestUser.username = email
+                    guestUser.firstname = 'firstname'
+                    guestUser.lastname = 'lastname'
+                    guestUser.email = email
+                    guestUser.group = []
+                    guestUser.password = 'passwordExpired'
+                    guestUser.color = "#FF0000"
 
-                def usersCreated = bootstrapUtilsService.createUsers([guestUser])
-                usersCreated.each {
-                    SecUser user = (SecUser) it
-                    user.setPasswordExpired(true)
-                    user.save()
+                    secUserService.add(JSON.parse(JSONUtils.toJSONString(guestUser)))
+                    User user = (User) secUserService.findByUsername(guestUser.username)
+                    SecRole secRole = secRoleService.findByAuthority("ROLE_GUEST")
+                    secUserSecRoleService.add(JSON.parse(JSONUtils.toJSONString([ user : user.id, role : secRole.id])))
+                    secUserService.addUserToProject(user, annotation.getProject(), false)
+
+                    if (user) {
+                        user.passwordExpired = true
+                        user.save()
+                        ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken(
+                                user : user,
+                                tokenKey: UUID.randomUUID().toString(),
+                                expiryDate: new Date() + 1
+                        ).save()
+                        String welcomeMessage = renderService.createWelcomeMessage([
+                                senderFirstname : sender.getFirstname(),
+                                senderLastname : sender.getLastname(),
+                                senderEmail : sender.getEmail(),
+                                username : guestUser.username,
+                                tokenKey : forgotPasswordToken.getTokenKey(),
+                                expiryDate : forgotPasswordToken.getExpiryDate(),
+                                by: grailsApplication.config.grails.serverURL,
+                        ])
+                        String mailTitle = sender.getFirstname() + " " + sender.getLastname() + " invited you to join Cytomine"
+                        cytomineMailService.send(
+                                null,
+                                (String[]) [guestUser.email],
+                                null,
+                                mailTitle,
+                                welcomeMessage,
+                                null)
+
+
+                    } else { //error
+                    }
+
                 }
-
             }
         }
+
 
         log.info "send mail to " + receiversEmail
 
@@ -161,8 +192,26 @@ class RestUserAnnotationController extends RestController {
                 userAnnotation: annotation
         )
         if (sharedAnnotation.save()) {
-            cytomineMailService.send("cytomine.ulg@gmail.com", receiversEmail, sender.getEmail(), request.JSON.subject, request.JSON.message, attachments)
-            response([success: true, message: "Annotation shared to " + receivers.toString()], 200)
+            String subject = request.JSON.subject
+            String shareMessage = renderService.createShareMessage([
+                    from: request.JSON.from,
+                    to: request.JSON.to,
+                    comment: request.JSON.comment,
+                    annotationURL: request.JSON.annotationURL,
+                    shareAnnotationURL: request.JSON.shareAnnotationURL,
+                    by: grailsApplication.config.grails.serverURL,
+                    cid : cid
+            ])
+
+            cytomineMailService.send(
+                    cytomineMailService.NO_REPLY_EMAIL,
+                    receiversEmail,
+                    sender.getEmail(),
+                    subject,
+                    shareMessage,
+                    attachments)
+
+            response([success: true, message: "Annotation shared to " + receiversEmail], 200)
         } else {
             response([success: false, message: "Error"], 400)
         }
@@ -173,8 +222,8 @@ class RestUserAnnotationController extends RestController {
      */
     @ApiMethodLight(description="Get a specific comment")
     @ApiParams(params=[
-        @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The comment id"),
+    @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The comment id"),
     ])
     def showComment() {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
@@ -194,7 +243,7 @@ class RestUserAnnotationController extends RestController {
      */
     @ApiMethodLight(description="Get all comments on annotation", listing=true)
     @ApiParams(params=[
-        @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParam(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def listComments() {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
@@ -221,7 +270,7 @@ class RestUserAnnotationController extends RestController {
      */
     @ApiMethodLight(description="Get a user annotation")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def show() {
         UserAnnotation annotation = userAnnotationService.read(params.long('id'))
@@ -248,10 +297,10 @@ class RestUserAnnotationController extends RestController {
     @ApiMethodLight(description="Get annotation user crop (image area that frame annotation)")
     @ApiResponseObject(objectIdentifier = "file")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
-        @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
-        @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+    @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+    @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
+    @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
     ])
     def crop() {
         UserAnnotation annotation = UserAnnotation.read(params.long("id"))
@@ -311,7 +360,7 @@ class RestUserAnnotationController extends RestController {
      */
     @ApiMethodLight(description="Update an annotation")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def update() {
         def json = request.JSON
@@ -330,7 +379,7 @@ class RestUserAnnotationController extends RestController {
      */
     @ApiMethodLight(description="Delete an annotation")
     @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def delete() {
         def json = JSON.parse("{id : $params.id}")

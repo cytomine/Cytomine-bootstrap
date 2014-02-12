@@ -16,57 +16,35 @@ class ServerController {
     def ping () {
 
         def jsonContent = request.JSON
-//        synchronized (this.getClass()) {
-            def data = [:]
-                    data.alive = true
-                    data.authenticated = springSecurityService.isLoggedIn()
-                    data.version = grailsApplication.metadata['app.version']
-                    data.serverURL = grailsApplication.config.grails.serverURL
-
-//                    Project project
-//                    if(!jsonContent.project.toString().equals("null"))
-//                        project = Project.read(Long.parseLong(jsonContent.project+""))
-
-                    if (data.authenticated)  {
-                        data.user = springSecurityService.principal.id
-                        //old code with deadlock and bad perf
-                        //set last ping
-//                        SecUser user = SecUser.get(springSecurityService.principal.id)
-//
-//                        LastConnection lastConnection =  LastConnection.findByUserAndProject(user,project)
-//                        if(!lastConnection) {
-//                            lastConnection = new LastConnection(user:user,date: new Date(),project:project)
-//                        } else {
-//                            lastConnection.setDate(new Date())
-//                        }
-//                        lastConnection.save(flush:true)
-                        def idProject = null
-                        def idUser = data.user
-                        if(!jsonContent.project.toString().equals("null")) {
-                            idProject = Long.parseLong(jsonContent.project+"")
-                        }
-
-
-                        addLastConnection(idUser,idProject)
-
-
-                    }
-            withFormat {
-                json { render data as JSON }
-                xml { render data as XML}
+        def data = [:]
+        data.alive = true
+        data.authenticated = springSecurityService.isLoggedIn()
+        data.version = grailsApplication.metadata['app.version']
+        data.serverURL = grailsApplication.config.grails.serverURL
+        if (data.authenticated)  {
+            data.user = springSecurityService.principal.id
+            def idProject = null
+            def idUser = data.user
+            if(!jsonContent.project.toString().equals("null")) {
+                idProject = Long.parseLong(jsonContent.project+"")
             }
-//        }
+            addLastConnection(idUser,idProject)
+        }
+        withFormat {
+            json { render data as JSON }
+            xml { render data as XML}
+        }
     }
 
     def addLastConnection(def idUser, def idProject) {
         def  data = [idUser]
-         def reqcreate = "UPDATE last_connection SET updated = '" +new Date()+ "', date = '" +new Date()+ "' WHERE user_id = ?"
-         if(idProject) {
-             data << idProject
-             reqcreate = reqcreate + " AND project_id = ?"
-         } else {
-             reqcreate = reqcreate + " AND project_id is null"
-         }
+        def reqcreate = "UPDATE last_connection SET updated = '" +new Date()+ "', date = '" +new Date()+ "' WHERE user_id = ?"
+        if(idProject) {
+            data << idProject
+            reqcreate = reqcreate + " AND project_id = ?"
+        } else {
+            reqcreate = reqcreate + " AND project_id is null"
+        }
 
         //synchronized (this.getClass()) { //may be not synchronized for perf reasons (but table content will not be consistent)
         def sql = new Sql(dataSource)
@@ -80,5 +58,5 @@ class ServerController {
         }
 
         //}
-     }
+    }
 }

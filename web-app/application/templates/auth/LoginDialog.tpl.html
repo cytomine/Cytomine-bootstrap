@@ -6,17 +6,22 @@
             </div>
             <div class="modal-body">
                 <form id="login-form" class="form-horizontal" role="form">
-                    <div class="form-group">
+                    <div class="form-group" id="formGrouploginUsername">
                         <div class="col-md-7">
                             <input id="j_username" name="j_username" type="text" class="form-control input-sm" placeholder="Username" required>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="formGrouploginEmail" style="display: none;">
+                        <div class="col-md-7">
+                            <input id="j_email" name="j_email" type="text" class="form-control input-sm" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="form-group" id="formGrouploginPassword">
                         <div class="col-md-7">
                             <input id="j_password" name="j_password" type="password" class="form-control input-sm" placeholder="Password" required>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="formGroupSubmitLogin">
                         <div class="col-md-4">
                             <input id="remember_me" name="remember_me" type="checkbox" checked> Remember me
                         </div>
@@ -24,8 +29,18 @@
                             <button id="submit-login" type="submit" class="btn btn-success btn-sm">Sign in</button>
                         </div>
                     </div>
-                    <br/><span class="help-inline">Forgot your <a href="mailto:raphael.maree@ulg.ac.be">username</a> or your <a
-                        href="mailto:raphael.maree@ulg.ac.be">password</a> ?</span>
+                    <div class="form-group" id="formGroupSubmitForgotPassword" style="display: none;">
+                        <div class="col-md-3" style="text-align: right;">
+                            <button id="submit-forgotPassword" type="submit" class="btn btn-success btn-sm">Reset my password</button>
+                        </div>
+                    </div>
+                    <div class="form-group" id="formGroupSubmitForgotUsername" style="display: none;">
+                        <div class="col-md-3" style="text-align: right;">
+                            <button id="submit-forgotUsername" type="submit" class="btn btn-success btn-sm">Get my username</button>
+                        </div>
+                    </div>
+                    <br/><span id="help-inline">Forgot your <a href="#forgotUsername">username</a> or your <a href="#forgotPassword">password</a> ?</span>
+                    <span id="help-inline-forgot" style="display: none;"><a href="#restoreLogin">Back to login form</a></span>
                 </form>
             </div>
             <div class="modal-footer">

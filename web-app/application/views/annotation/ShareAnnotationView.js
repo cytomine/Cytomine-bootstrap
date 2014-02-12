@@ -6,7 +6,7 @@ var ShareAnnotationView = Backbone.View.extend({
         this.dialog = null;
     },
 
-    doLayout: function (shareAnnotationViewTpl, shareAnnotationMailTpl) {
+    doLayout: function (shareAnnotationViewTpl) {
         var self = this;
         this.model.set({ "username": window.app.view.getUserNameById(this.model.get("user"))});
         this.model.set({ "terms": "undefined"});
@@ -123,24 +123,22 @@ var ShareAnnotationView = Backbone.View.extend({
                     idImage: self.image,
                     idAnnotation: self.model.id
                 });
-            var message = _.template(shareAnnotationMailTpl, {
-                from: window.app.models.projectUser.get(window.app.status.user.id).prettyName(),
-                to: userName,
-                comment: comment,
-                annotationURL: annotationURL,
-                shareAnnotationURL: shareAnnotationURL,
-                by: window.app.status.serverURL
-            });
             var subject = _.template("Cytomine : <%= from %> shared an annotation with you", { from: window.app.models.projectUser.get(window.app.status.user.id).prettyName()});
             new AnnotationCommentModel({
                 annotation: self.model.id
             }).save({
                     users: users,
                     emails : emails,
-                    message: message,
+                    from: window.app.models.projectUser.get(window.app.status.user.id).prettyName(),
+                    to: userName,
+                    comment: comment,
+                    annotationURL: annotationURL,
+                    shareAnnotationURL: shareAnnotationURL,
+                    by: window.app.status.serverURL,
                     comment: comment,
                     subject: subject,
-                    annotationURL: annotationURL
+                    annotationURL: annotationURL,
+                    cid : "annotation" + self.model.id
                 }, {
                     success: function (model, response) {
                         shareButton.html("Share");
@@ -160,9 +158,8 @@ var ShareAnnotationView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-        require(["text!application/templates/annotation/ShareAnnotationView.tpl.html",
-            "text!application/templates/annotation/ShareAnnotationMail.tpl.html"], function (shareAnnotationViewTpl, shareAnnotationMailTpl) {
-            self.doLayout(shareAnnotationViewTpl, shareAnnotationMailTpl);
+        require(["text!application/templates/annotation/ShareAnnotationView.tpl.html"], function (shareAnnotationViewTpl, shareAnnotationMailTpl) {
+            self.doLayout(shareAnnotationViewTpl);
         });
     }
 });

@@ -12,6 +12,11 @@ class SecRoleService {
         SecRole.read(id)
     }
 
+    def findByAuthority(String authority) {
+        SecurityACL.checkGuest(cytomineService.currentUser)
+        SecRole.findByAuthority(authority)
+    }
+
     def list() {
         SecurityACL.checkGuest(cytomineService.currentUser)
         SecRole.list()

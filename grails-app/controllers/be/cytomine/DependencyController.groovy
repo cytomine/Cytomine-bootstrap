@@ -13,7 +13,7 @@ class DependencyController {
 
     def check() {
         try {
-            checkDependance()
+            checkDependence()
 
         } catch(Exception e) {
             println e
@@ -23,7 +23,7 @@ class DependencyController {
 
     boolean printAll = false
 
-    public def checkDependance() {
+    public def checkDependence() {
         //domain to skip when checking dependence
         def domainToSkip = ["Command","AddCommand","EditCommand","DeleteCommand","CommandHistory","RedoStackItem","UndoStackItem"]
 

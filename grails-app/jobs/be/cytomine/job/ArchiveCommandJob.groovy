@@ -7,6 +7,7 @@ class ArchiveCommandJob {
 
     def retrievalService
     def archiveCommandService
+    def grailsApplication
 
     static triggers = {
         String cronexpr = "0 0 2 * * ?"
@@ -16,7 +17,8 @@ class ArchiveCommandJob {
      def execute(){
          //ask indexed annotation
          //retrievalService.indexMissingAnnotation()
-         APIUtils.buildApiRegistry(ctx, application)
+         def ctx = grailsApplication.mainContext
+         APIUtils.buildApiRegistry(ctx, grailsApplication)
      }
 
 

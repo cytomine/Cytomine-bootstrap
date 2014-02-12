@@ -126,6 +126,7 @@ class User extends SecUser {
         if (!(domain?.springSecurityService?.principal instanceof String) && domain?.id == domain?.springSecurityService?.principal?.id) {
             returnArray['publicKey'] = domain?.publicKey
             returnArray['privateKey'] = domain?.privateKey
+            returnArray['passwordExpired'] = domain?.passwordExpired
         }
         returnArray['color'] = domain?.color
         returnArray

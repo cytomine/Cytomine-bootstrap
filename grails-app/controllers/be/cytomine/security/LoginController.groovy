@@ -1,5 +1,7 @@
 package be.cytomine.security
 
+import be.cytomine.api.RestController
+import be.cytomine.utils.CytomineMailService
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.authentication.AccountExpiredException
@@ -12,7 +14,10 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import javax.servlet.http.HttpServletResponse
 
 
-class LoginController {
+class LoginController extends RestController {
+
+    def secUserService
+
 
     /**
      * Dependency injection for the authenticationTrustResolver.
@@ -23,6 +28,8 @@ class LoginController {
      * Dependency injection for the springSecurityService.
      */
     def springSecurityService
+    def cytomineMailService
+    def renderService
 
     def loginWithoutLDAP () {
         println "loginWithoutLDAP"
@@ -34,7 +41,7 @@ class LoginController {
         }
 
         //render view: "index", model: [postUrl: postUrl,
-             //   rememberMeParameter: config.rememberMe.parameter]
+        //   rememberMeParameter: config.rememberMe.parameter]
     }
 
     /**
@@ -177,6 +184,78 @@ class LoginController {
     def ajaxDenied () {
         println "ajaxDenied"
         render([error: 'access denied'] as JSON)
+    }
+
+    def forgotUsername () {
+        User user = User.findByEmail(params.j_email)
+        if (user) {
+            String message = renderService.createForgotUsernameMessage([
+                    username : user.getUsername(),
+                    by: grailsApplication.config.grails.serverURL
+            ])
+            cytomineMailService.send(
+                    cytomineMailService.NO_REPLY_EMAIL,
+                    (String[]) [user.getEmail()],
+                    "",
+                    "Cytomine : your username is $user.username",
+                    message)
+            response([success: true, message: "Check your inbox"], 200)
+        } else {
+            response([success: false, message: "User not found with email $params.j_email"], 400)
+        }
+    }
+
+    def loginWithToken() {
+        String username = params.username
+        String tokenKey = params.tokenKey
+        User user = User.findByUsername(username) //we are not logged, we bypass the service
+        ForgotPasswordToken forgotPasswordToken = ForgotPasswordToken.findByTokenKeyAndUser(tokenKey, user)
+        if (forgotPasswordToken && forgotPasswordToken.isValid())  {
+            user = forgotPasswordToken.user
+            user.setPasswordExpired(true)
+            user.save(flush :  true)
+            SpringSecurityUtils.reauthenticate user.username, null
+            if (params.redirect) {
+                redirect (uri : params.redirect)
+            } else {
+                redirect (uri : "/")
+            }
+
+        } else {
+            response([success: false, message: "Error : token invalid"], 400)
+        }
+
+    }
+
+    def forgotPassword () {
+        String username = params.j_username
+        if (username) {
+            User user = User.findByUsername(username) //we are not logged, so we bypass the service
+            if (user) {
+                String tokenKey = UUID.randomUUID().toString()
+                ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken(
+                        user : user,
+                        expiryDate: new Date() + 1, //tomorrow
+                        tokenKey: tokenKey
+                ).save(flush : true)
+
+                String message = renderService.createForgotPasswordMessage([
+                        username : user.getUsername(),
+                        tokenKey : forgotPasswordToken.getTokenKey(),
+                        expiryDate : forgotPasswordToken.getExpiryDate(),
+                        by: grailsApplication.config.grails.serverURL
+                ])
+
+                cytomineMailService.send(
+                        cytomineMailService.NO_REPLY_EMAIL,
+                        (String[]) [user.getEmail()],
+                        "",
+                        "Cytomine : reset your password",
+                        message)
+                response([success: true, message: "Check your inbox"], 200)
+            }
+
+        }
     }
 
 }

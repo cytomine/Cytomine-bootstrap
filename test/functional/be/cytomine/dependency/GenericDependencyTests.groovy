@@ -13,7 +13,7 @@ class GenericDependencyTests {
 
     void testMissingDeleteMethodDependency() {
         def controller = new DependencyController()
-        controller.checkDependance()
+        controller.checkDependence()
     }
 
 

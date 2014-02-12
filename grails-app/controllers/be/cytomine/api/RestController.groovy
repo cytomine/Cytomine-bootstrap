@@ -234,7 +234,7 @@ class RestController {
      */
     protected def responseNotFound(className, id) {
         log.info "responseNotFound $className $id"
-        log.error className + " Id " + id + " don't exist"
+        log.error className + " Id " + id + " does not exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id : " + id)
@@ -250,7 +250,7 @@ class RestController {
      * @param id1 Id for the first filter
      */
     protected def responseNotFound(className, filter, id) {
-        log.info className + ": " + filter + " " + id + " don't exist"
+        log.info className + ": " + filter + " " + id + " does not exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter + " : " + id)
@@ -268,7 +268,7 @@ class RestController {
      * @param id2 Id for the second filter
      */
     protected def responseNotFound(className, filter1, filter2, id1, id2) {
-        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " don't exist"
+        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " does not exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter1 + " : " + id1 + " and  " + filter2 + " : " + id2)
@@ -288,7 +288,7 @@ class RestController {
      * @param id3 Id for the third filter
      */
     protected def responseNotFound(className, filter1, id1, filter2, id2, filter3, id3) {
-        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " don't exist"
+        log.info className + ": " + filter1 + " " + id1 + ", " + filter2 + " " + id2 + " and " + filter3 + " " + id3 + " does not exist"
         response.status = NOT_FOUND_CODE
         render(contentType: 'text/json') {
             errors(message: className + " not found with id " + filter1 + " : " + id1 + ",  " + filter2 + " : " + id2 + " and " + filter3 + " : " + id3)
@@ -322,7 +322,6 @@ class RestController {
             jpg {
                 if (request.method == 'HEAD') {
                     render(text: "", contentType: "image/jpeg")
-
                 } else {
                     redirect(url: url)
                 }

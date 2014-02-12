@@ -19,9 +19,17 @@ var LoginDialogView = Backbone.View.extend({
         $("#j_password").click(function () {
             $(this).select();
         });
-        $('#login-form').submit(function(e) {
+        $('#submit-login').click(function(e) {
             e.preventDefault();
             window.app.controllers.auth.doLogin();
+        });
+        $('#submit-forgotPassword').click(function(e) {
+            e.preventDefault();
+            window.app.controllers.auth.doForgotPassword();
+        });
+        $('#submit-forgotUsername').click(function(e) {
+            e.preventDefault();
+            window.app.controllers.auth.doForgotUsername();
         });
         return this;
     },
@@ -34,5 +42,39 @@ var LoginDialogView = Backbone.View.extend({
     },
     close: function () {
         this.dialog.close();
+    },
+    forgotPassword : function () {
+        $("#formGrouploginPassword").hide();
+        $("#formGrouploginEmail").hide();
+        $("#formGroupSubmitLogin").hide();
+        $("#formGroupSubmitForgotUsername").hide();
+        $("#help-inline").hide();
+
+        $("#help-inline-forgot").show();
+        $("#formGrouploginUsername").show();
+        $("#formGroupSubmitForgotPassword").show();
+    },
+    forgotUsername : function () {
+        $("#formGrouploginUsername").hide();
+        $("#formGrouploginPassword").hide();
+        $("#formGroupSubmitLogin").hide();
+        $("#formGroupSubmitForgotPassword").hide();
+        $("#help-inline").hide();
+
+        $("#help-inline-forgot").show();
+        $("#formGrouploginEmail").show();
+        $("#formGroupSubmitForgotUsername").show();
+    },
+    restoreLogin : function () {
+        $("#formGrouploginUsername").show();
+        $("#formGrouploginPassword").show();
+        $("#formGroupSubmitLogin").show();
+        $("#help-inline").show();
+
+        $("#help-inline-forgot").hide();
+        $("#formGroupSubmitForgotPassword").hide();
+        $("#formGroupSubmitForgotUsername").hide();
+        $("#formGrouploginEmail").hide();
     }
+
 });

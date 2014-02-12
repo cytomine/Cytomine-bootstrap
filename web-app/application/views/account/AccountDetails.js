@@ -35,8 +35,8 @@ var AccountDetails = Backbone.View.extend({
     editPassword: function () {
         var user = new UserModel(this.model.toJSON());
         user.save({
-            "password": $("#input_new_password").val(),
-            "password2": $("#input_new_password").val()
+            "oldPassword": $("#password").val(),
+            "password": $("#input_new_password").val()
         }, {
             success: function (model, response) {
                 window.app.view.message("Success", response.message, "success");
@@ -46,6 +46,11 @@ var AccountDetails = Backbone.View.extend({
                 $("#input_password").closest(".form-group").removeClass("has-success");
                 $("#input_new_password").closest(".form-group").removeClass("has-success");
                 $("#input_new_password_confirm").closest(".form-group").removeClass("has-success");
+                $("#password_expired_alert").hide();
+                $("#input_password").closest('.form-group').show();
+                $("#input_new_password").attr("disabled", "disabled");
+                $("#input_new_password_confirm").attr("disabled", "disabled");
+
             },
             error: function (model, response) {
                 window.app.view.message("Error", response.message, "error");
@@ -61,6 +66,12 @@ var AccountDetails = Backbone.View.extend({
         var self = this;
         this.model.set({ host : window.location.host });
         $(this.el).html(_.template(tpl, this.model.toJSON()));
+
+        if (self.model.get("passwordExpired")) {
+            $("#input_password").closest('.form-group').hide();
+            $("#input_new_password").removeAttr("disabled");
+            $("#password_expired_alert").show();
+        }
         $("#edit_profile_form").submit(function (e) {
             self.editProfile();
             e.preventDefault();
@@ -92,6 +103,9 @@ var AccountDetails = Backbone.View.extend({
         $("#input_password").keyup(function () {
             console.log("change");
             var newPassword = $("#input_password").val();
+            if (self.model.get("passwordExpired")) {
+                return;
+            }
             var data = { 'j_username': self.model.get('username'), 'j_password': newPassword}
             $.ajax({
                 url: 'j_spring_security_check',

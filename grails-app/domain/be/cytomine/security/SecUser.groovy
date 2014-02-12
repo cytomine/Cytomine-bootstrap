@@ -84,6 +84,7 @@ class SecUser extends CytomineDomain implements Serializable {
         super.beforeUpdate()
         if (newPassword) {
             password = newPassword
+            passwordExpired = false
             encodePassword()
         }
     }

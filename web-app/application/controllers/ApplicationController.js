@@ -104,10 +104,11 @@ var ApplicationController = Backbone.Router.extend({
         window.app.controllers.phono = new PhonoController();
         window.app.controllers.userdashboard = new UserDashboardController();
         //window.app.controllers.admin        = new AdminController();
-        //Start the history
+
         window.app.view.initPreferences();
         window.app.view.initUserMenu();
 
+        //Start the history
         Backbone.history.start();
     },
     initialize: function () {
@@ -151,6 +152,7 @@ var ApplicationController = Backbone.Router.extend({
 
                 } else {
                     self.controllers.auth.login();
+                    Backbone.history.start();
                 }
             }
 

@@ -65,6 +65,12 @@ class SecUserService extends ModelService {
         SecUser.findByUsername(username)
     }
 
+    def findByEmail(def email) {
+        if(!email) return null
+        SecurityACL.checkGuest(cytomineService.currentUser)
+        User.findByEmail(email)
+    }
+
     SecUser getByPublicKey(String key) {
         //SecurityACL.checkGuest(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
@@ -348,11 +354,11 @@ class SecUserService extends ModelService {
      * @param admin Flaf if user will become a simple user or a project admin
      * @return Response structure
      */
-    def addUserFromProject(SecUser user, Project project, boolean admin) {
+    def addUserToProject(SecUser user, Project project, boolean admin) {
         SecurityACL.check(project,ADMINISTRATION)
-        log.info "service.addUserFromProject"
+        log.info "service.addUserToProject"
         if (project) {
-            log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+            log.info "addUserToProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
             if(admin) {
                 synchronized (this.getClass()) {
                     permissionService.addPermission(project,user.username,ADMINISTRATION)
@@ -362,9 +368,9 @@ class SecUserService extends ModelService {
             }
             else {
                 synchronized (this.getClass()) {
-                    log.info "addUserFromProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
+                    log.info "addUserToProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
                     permissionService.addPermission(project,user.username,READ)
-                    log.info "addUserFromProject ontology=" + project.ontology + " username=" + user?.username + " ADMIN=" + admin
+                    log.info "addUserToProject ontology=" + project.ontology + " username=" + user?.username + " ADMIN=" + admin
                     permissionService.addPermission(project.ontology,user.username,READ)
                 }
 
