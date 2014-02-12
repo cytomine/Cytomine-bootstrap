@@ -486,6 +486,16 @@ class SecUserService extends ModelService {
         }
     }
 
+    def deleteDependentForgotPasswordToken(SecUser secUser, Transaction transaction, Task task = null) {
+          if (secUser instanceof User) {
+              User user = (User) secUser
+              ForgotPasswordToken.findAllByUser(user).each {
+                  it.delete()
+              }
+          }
+
+    }
+
     def deleteDependentReviewedAnnotation(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             ReviewedAnnotation.findAllByUser(user).each {

@@ -80,6 +80,7 @@ class UserAPI extends DomainAPI {
         JSONElement jsonWithPassword = JSON.parse(json)
         if(jsonWithPassword.password==null || jsonWithPassword.password.toString()=="null") {
             jsonWithPassword.password = "toto"
+            jsonWithPassword.oldPassword = password
         }
         String URL = Infos.CYTOMINEURL + "api/user.json"
         def result = doPOST(URL,jsonWithPassword.toString(),username,password)
@@ -91,8 +92,12 @@ class UserAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/user/" + id + ".json"
         return doPUT(URL,jsonUser,username,password)
     }
-    static def resetPassword(def id,def newpass, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/user/" + id + "/password.json"+ (newpass?"?password=$newpass":"")
+    static def resetPassword(def id,def newPassword, String username, String password) {
+        def queryString = ""
+        if (newPassword) {
+            queryString = "password=$newPassword&oldPassword=$password"
+        }
+        String URL = Infos.CYTOMINEURL + "api/user/$id/password.json?$queryString"
         return doPUT(URL,"",username,password)
     }
 
