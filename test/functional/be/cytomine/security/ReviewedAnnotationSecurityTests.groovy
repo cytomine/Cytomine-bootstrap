@@ -75,6 +75,7 @@ class ReviewedAnnotationSecurityTests extends SecurityTestsAbstract {
         ReviewedAnnotation annotation = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         annotation.image = image
         annotation.project = image.project
+        annotation.reviewUser = user
         def result = ReviewedAnnotationAPI.create(annotation.encodeAsJSON(), SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
         assert 200 == result.code
         annotation = result.data
