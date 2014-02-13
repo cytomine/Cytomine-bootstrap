@@ -269,6 +269,7 @@ log4j = {
    debug 'grails.app.services'
    debug 'grails.app.controllers
     debug   'grails.plugins.springsecurity'
+    debug   'grails.plugins.springsecurity'
     debug   'org.codehaus.groovy.grails.plugins.springsecurity'
     debug   'org.springframework.security'
     debug   'org.jasig.cas.client' */
@@ -280,7 +281,7 @@ log4j = {
 
 grails.plugins.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN'],
-        '/monitoring/**':    ['ROLE_ADMIN'],
+//        '/monitoring/**':    ['ROLE_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],

@@ -336,7 +336,7 @@ class UserAnnotationService extends ModelService {
 
             long idAnnotation = it[0]
             long idContainer = it[1]
-            def url = UrlApi.getAnnotationMinCropWithAnnotationIdOld(idAnnotation)
+            def url = UrlApi.getAnnotationMinCropWithAnnotationId(idAnnotation)
             data << [id: idAnnotation, container: idContainer, url: url]
         }
         data

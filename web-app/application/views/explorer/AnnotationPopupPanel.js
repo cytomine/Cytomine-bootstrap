@@ -140,6 +140,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
     },
     showSimilarAnnotationResult: function (model) {
         var self = this;
+        console.log('showSimilarAnnotationResult');
         new AnnotationRetrievalModel({annotation: model.id}).fetch({
             success: function (collection, response) {
 
@@ -213,27 +214,45 @@ var AnnotationPopupPanel = SideBarPanel.extend({
             self.createSuggestedTermLink(bestTerm2, annotation);
         }
 
-        $("#loadSimilarAnnotation" + annotation.id).replaceWith('<a id="showRetrieval'+annotation.id+'" href="#myModalRetrieval" role="button" class="btn" data-toggle="modal">See similar annotations</a>');
+        require([
+            "text!application/templates/explorer/SimilarAnnotationModal.tpl.html"
+        ],
+            function (retrievalTpl) {
+                var template = _.template(retrievalTpl,{});
+                $("#loadSimilarAnnotation" + annotation.id).replaceWith('<a id="openRetrievalModal'+annotation.id+'" href="#myModalRetrieval'+annotation.id+'"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> See similar annotations</a>');
+                var modal = new CustomModal({
+                    idModal : "myModalRetrieval"+annotation.id,
+                    button : $('#openRetrievalModal'+annotation.id),
+                    header :"Retrieval",
+                    body :template,
+                    width : 900,
+                    height : 800
+                });
+                modal.addButtons("closeRetrieval","Close",true,true);
+
+                $("#openRetrievalModal"+annotation.id).click(function (event) {
+                    event.preventDefault();
+
+                    var bestTerms = [bestTerm1, bestTerm2];
+                    var bestTermsValue = [bestTerm1Value, bestTerm2Value];
+                    var panel = new AnnotationRetrievalView({
+                        model: new AnnotationRetrievalCollection(similarAnnotation),
+                        projectsPanel: self,
+                        container: self,
+                        el: "#annotationRetrievalInfo",
+                        baseAnnotation: annotation,
+                        terms: terms,
+                        bestTerms: bestTerms,
+                        bestTermsValue: bestTermsValue
+                    }).render();
+                });
+
+            });
 
 
-        $("#showRetrieval" + annotation.id).click(function (event) {
-            event.preventDefault();
-            console.log("click");
-            var bestTerms = [bestTerm1, bestTerm2];
-            var bestTermsValue = [bestTerm1Value, bestTerm2Value];
-            var panel = new AnnotationRetrievalView({
-                model: new AnnotationRetrievalCollection(similarAnnotation),
-                projectsPanel: self,
-                container: self,
-                el: "#annotationRetrievalInfo",
-                baseAnnotation: annotation,
-                terms: terms,
-                bestTerms: bestTerms,
-                bestTermsValue: bestTermsValue
-            }).render();
-            return true;
 
-        });
+
+
     },
 
     createSuggestedTermLink: function (term, annotation) {
