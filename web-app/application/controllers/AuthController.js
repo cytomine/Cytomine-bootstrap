@@ -3,20 +3,8 @@ var AuthController = Backbone.Router.extend({
     logoutDialog : null,
 
     routes: {
-        "forgotPassword" : "forgotPassword",
-        "forgotUsername" : "forgotUsername",
-        "restoreLogin" : "restoreLogin"
     },
-    restoreLogin : function() {
-        this.loginDialog.restoreLogin();
-        window.app.navigate("#", false);
-    },
-    forgotUsername : function() {
-        this.loginDialog.forgotUsername();
-    },
-    forgotPassword : function() {
-        this.loginDialog.forgotPassword();
-    },
+
 
     login: function () {
         this.loginDialog = new LoginDialogView({});
@@ -37,7 +25,7 @@ var AuthController = Backbone.Router.extend({
             data: data,
             success: function (data) {
                 app.message("Success", "Check your inbox", "success");
-                window.app.navigate("#restoreLogin", true);
+                self.loginDialog.restoreLogin();
             },
             error: function (data) {
                 var resp = $.parseJSON(data.responseText);
@@ -57,7 +45,7 @@ var AuthController = Backbone.Router.extend({
             data: data,
             success: function (data) {
                 app.message("Success", "Check your inbox", "success");
-                window.app.navigate("#restoreLogin", true);
+                self.loginDialog.restoreLogin();
             },
             error: function (data) {
                 var resp = $.parseJSON(data.responseText);

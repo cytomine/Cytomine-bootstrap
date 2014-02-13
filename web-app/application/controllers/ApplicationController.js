@@ -152,7 +152,6 @@ var ApplicationController = Backbone.Router.extend({
 
                 } else {
                     self.controllers.auth.login();
-                    Backbone.history.start();
                 }
             }
 

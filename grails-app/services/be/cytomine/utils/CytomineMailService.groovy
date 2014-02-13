@@ -44,6 +44,7 @@ class CytomineMailService {
             helper.addInline((String) it.cid, new FileSystemResource((File)it.file))
         }
 
+        println "send $mail"
         sender.send(mail);
     }
 }

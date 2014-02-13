@@ -4,6 +4,7 @@ var LoginDialogView = Backbone.View.extend({
     initialize: function (options) {
     },
     doLayout: function (tpl) {
+        var self = this;
         this.dialog = new ConfirmDialogView({
             el: '#dialogs',
             template: _.template(tpl, {version: window.app.status.version}),
@@ -31,6 +32,20 @@ var LoginDialogView = Backbone.View.extend({
             e.preventDefault();
             window.app.controllers.auth.doForgotUsername();
         });
+        $('#forgotUsername').click(function(e) {
+            e.preventDefault();
+            self.forgotUsername();
+        });
+        $('#forgotPassword').click(function(e) {
+            e.preventDefault();
+            self.forgotPassword();
+        });
+        $('#restoreLogin').click(function(e) {
+            e.preventDefault();
+            self.restoreLogin();
+        });
+
+
         return this;
     },
     render: function () {

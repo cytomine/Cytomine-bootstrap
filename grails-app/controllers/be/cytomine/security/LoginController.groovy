@@ -28,8 +28,7 @@ class LoginController extends RestController {
      * Dependency injection for the springSecurityService.
      */
     def springSecurityService
-    def cytomineMailService
-    def renderService
+    def notificationService
 
     def loginWithoutLDAP () {
         println "loginWithoutLDAP"
@@ -189,16 +188,7 @@ class LoginController extends RestController {
     def forgotUsername () {
         User user = User.findByEmail(params.j_email)
         if (user) {
-            String message = renderService.createForgotUsernameMessage([
-                    username : user.getUsername(),
-                    by: grailsApplication.config.grails.serverURL
-            ])
-            cytomineMailService.send(
-                    cytomineMailService.NO_REPLY_EMAIL,
-                    (String[]) [user.getEmail()],
-                    "",
-                    "Cytomine : your username is $user.username",
-                    message)
+            notificationService.notifyForgotUsername(user)
             response([success: true, message: "Check your inbox"], 200)
         } else {
             response([success: false, message: "User not found with email $params.j_email"], 400)
@@ -239,19 +229,8 @@ class LoginController extends RestController {
                         tokenKey: tokenKey
                 ).save(flush : true)
 
-                String message = renderService.createForgotPasswordMessage([
-                        username : user.getUsername(),
-                        tokenKey : forgotPasswordToken.getTokenKey(),
-                        expiryDate : forgotPasswordToken.getExpiryDate(),
-                        by: grailsApplication.config.grails.serverURL
-                ])
+                notificationService.notifyForgotPassword(user, forgotPasswordToken)
 
-                cytomineMailService.send(
-                        cytomineMailService.NO_REPLY_EMAIL,
-                        (String[]) [user.getEmail()],
-                        "",
-                        "Cytomine : reset your password",
-                        message)
                 response([success: true, message: "Check your inbox"], 200)
             }
 

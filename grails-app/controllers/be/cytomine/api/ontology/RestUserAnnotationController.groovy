@@ -39,12 +39,11 @@ class RestUserAnnotationController extends RestController {
     def secRoleService
     def projectService
     def cytomineService
-    def cytomineMailService
+    def notificationService
     def paramsService
     def annotationListingService
     def reportService
     def imageProcessingService
-    def renderService
 
     /**
      * List all annotation with light format
@@ -132,15 +131,9 @@ class RestUserAnnotationController extends RestController {
             receiversEmail.each { email ->
                 if (!secUserService.findByEmail(email)) {
 
-                    def guestUser = [:]
-                    guestUser.username = email
-                    guestUser.firstname = 'firstname'
-                    guestUser.lastname = 'lastname'
-                    guestUser.email = email
-                    guestUser.group = []
-                    guestUser.password = 'passwordExpired'
-                    guestUser.color = "#FF0000"
-
+                    def guestUser = [username : email, firstname : 'firstname',
+                            lastname : 'lastname', email : email,
+                            password : 'passwordExpired', color : "#FF0000"]
                     secUserService.add(JSON.parse(JSONUtils.toJSONString(guestUser)))
                     User user = (User) secUserService.findByUsername(guestUser.username)
                     SecRole secRole = secRoleService.findByAuthority("ROLE_GUEST")
@@ -155,25 +148,7 @@ class RestUserAnnotationController extends RestController {
                                 tokenKey: UUID.randomUUID().toString(),
                                 expiryDate: new Date() + 1
                         ).save()
-                        String welcomeMessage = renderService.createWelcomeMessage([
-                                senderFirstname : sender.getFirstname(),
-                                senderLastname : sender.getLastname(),
-                                senderEmail : sender.getEmail(),
-                                username : guestUser.username,
-                                tokenKey : forgotPasswordToken.getTokenKey(),
-                                expiryDate : forgotPasswordToken.getExpiryDate(),
-                                by: grailsApplication.config.grails.serverURL,
-                        ])
-                        String mailTitle = sender.getFirstname() + " " + sender.getLastname() + " invited you to join Cytomine"
-                        cytomineMailService.send(
-                                null,
-                                (String[]) [guestUser.email],
-                                null,
-                                mailTitle,
-                                welcomeMessage,
-                                null)
-
-
+                        notificationService.notifyWelcome(sender, user, forgotPasswordToken)
                     } else { //error
                     }
 
@@ -192,25 +167,7 @@ class RestUserAnnotationController extends RestController {
                 userAnnotation: annotation
         )
         if (sharedAnnotation.save()) {
-            String subject = request.JSON.subject
-            String shareMessage = renderService.createShareMessage([
-                    from: request.JSON.from,
-                    to: request.JSON.to,
-                    comment: request.JSON.comment,
-                    annotationURL: request.JSON.annotationURL,
-                    shareAnnotationURL: request.JSON.shareAnnotationURL,
-                    by: grailsApplication.config.grails.serverURL,
-                    cid : cid
-            ])
-
-            cytomineMailService.send(
-                    cytomineMailService.NO_REPLY_EMAIL,
-                    receiversEmail,
-                    sender.getEmail(),
-                    subject,
-                    shareMessage,
-                    attachments)
-
+            notificationService.notifyShareAnnotation(sender, receiversEmail, request, attachments, cid)
             response([success: true, message: "Annotation shared to " + receiversEmail], 200)
         } else {
             response([success: false, message: "Error"], 400)

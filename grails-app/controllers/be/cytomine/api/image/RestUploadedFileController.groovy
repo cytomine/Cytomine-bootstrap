@@ -2,7 +2,6 @@ package be.cytomine.api.image
 
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
@@ -10,9 +9,6 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
 import be.cytomine.laboratory.Sample
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
-import be.cytomine.security.User
-import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
@@ -23,8 +19,6 @@ import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 import javax.activation.MimetypesFileTypeMap
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 
 /**
  * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)
@@ -36,14 +30,13 @@ class RestUploadedFileController extends RestController {
     def cytomineService
     def imagePropertiesService
     def projectService
-    def cytomineMailService
     def storageService
     def grailsApplication
     def uploadedFileService
     def storageAbstractImageService
     def imageInstanceService
     def abstractImageService
-    def renderService
+    def notificationService
 
     static allowedMethods = [image: 'POST']
 
@@ -214,70 +207,12 @@ class RestUploadedFileController extends RestController {
                 log.info "Sample error : " + it
             }
         }
-        notifyUsers(currentUser,abstractImage,projects)
+        notificationService.notifyNewImageAvailable(currentUser,abstractImage,projects)
         responseSuccess([abstractimage: abstractImage])
     }
 
     def secUserService
 
-    private def notifyUsers(SecUser currentUser, AbstractImage abstractImage, def projects) {
-        //send email
 
-
-        User recipient = null
-        if (currentUser instanceof User) {
-            recipient = (User) currentUser
-        } else if (currentUser instanceof UserJob) {
-            UserJob userJob = (UserJob) currentUser
-            recipient = userJob.getUser()
-        }
-
-        // send email to uploader + all project admin
-        def users = [recipient]
-        projects.each {
-            users.addAll(secUserService.listAdmins(it))
-        }
-        users.unique()
-
-        log.info "Send mail to $users"
-
-        String macroCID = null
-
-        def attachments = []
-
-        String thumbURL = abstractImage.getThumbURL()
-        if (thumbURL) {
-            macroCID = UUID.randomUUID().toString()
-            BufferedImage bufferedImage = imageProcessingService.getImageFromURL(thumbURL)
-            if (bufferedImage != null) {
-                File macroFile = File.createTempFile("temp", ".jpg")
-                macroFile.deleteOnExit()
-                ImageIO.write(bufferedImage, "JPG", macroFile)
-                attachments << [ cid : macroCID, file : macroFile]
-            }
-        }
-
-        def imagesInstances = []
-        for (imageInstance in ImageInstance.findAllByBaseImage(abstractImage)) {
-            String urlImageInstance = UrlApi.getBrowseImageInstanceURL(imageInstance.getProject().id, imageInstance.getId())
-            imagesInstances << [urlImageInstance : urlImageInstance, projectName : imageInstance.project.getName()]
-
-        }
-        String message = renderService.createNewImagesAvailableMessage([
-                abstractImageFilename : abstractImage.getOriginalFilename(),
-                cid : macroCID,
-                imagesInstances : imagesInstances,
-                by: grailsApplication.config.grails.serverURL,
-        ])
-
-        cytomineMailService.send(
-                null,
-                (String[]) users.collect{it.getEmail()},
-                null,
-                "Cytomine : a new image is available",
-                message.toString(),
-                attachments)
-
-    }
 
 }
