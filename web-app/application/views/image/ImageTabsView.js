@@ -32,10 +32,10 @@ var ImageTabsView = Backbone.View.extend({
                     });
             }},
             { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": false, "fnRender" : function (o) {
-                //var imageInstanceModel = new ImageInstanceModel({});
-                // imageInstanceModel.set(o.aData);
-                // return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))
-                return o.aData["originalFilename"];
+                var imageInstanceModel = new ImageInstanceModel({});
+                imageInstanceModel.set(o.aData);
+                return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
+//                return o.aData["originalFilename"];
             }}
             ,
             { "mDataProp": "width", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
