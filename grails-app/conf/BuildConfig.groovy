@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
         // uncomment to disable ehcache
-        // excludes 'ehcache'
+//        excludes 'ehcache'
         excludes 'httpclient'
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
@@ -53,7 +53,6 @@ grails.project.dependency.resolution = {
         mavenRepo 'http://maven.restlet.org'
         mavenRepo "http://www.hibernatespatial.org/repository"
 		//mavenRepo "http://repo.spring.io/milestone/"
-        //mavenRepo "http://www.terracotta.org/download/reflector/releases"
 
     }
     dependencies {
@@ -85,7 +84,12 @@ grails.project.dependency.resolution = {
 
 //        build ":tomcat:7.0.42"
         build ":tomcat:7.0.42"
-        compile ':hibernate:3.6.10.2'
+        compile (':hibernate:3.6.10.2') {
+            excludes('hibernate-ehcache')
+        }
+
+
+
 
 //               build ":tomcat:$grailsVersion" //
 //        runtime ":hibernate:$grailsVersion" //
