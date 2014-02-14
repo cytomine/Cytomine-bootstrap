@@ -26,12 +26,9 @@ BrowseImageView = Backbone.View.extend({
         this.reviewPanel = null;
         this.annotationProperties = null;
         this.map = null;
-        //this.nbDigitialZoom = Math.round(Math.log(80 / this.model.get('magnification')) / Math.log(2));//max zoom desired is 80X
-        this.nbDigitialZoom = 0; //TMP DISABLED DUE TO OPENLAYERS BUG. http://dev.cytomine.be/jira/browse/CYTO-613
-        this.digitalResolutions = [];
-        for (var i = 0; i < this.nbDigitialZoom; i++) {
-            this.digitalResolutions.push(1 / Math.pow(2, i + 1));
-        }
+        this.nbDigitialZoom = 0 //max zoom desired is 80X
+        //this.nbDigitialZoom = 0; //TMP DISABLED DUE TO OPENLAYERS BUG. http://dev.cytomine.be/jira/browse/CYTO-613
+
 
         this.currentAnnotation = null;
         if (options.review != undefined) {
@@ -53,6 +50,7 @@ BrowseImageView = Backbone.View.extend({
      */
     doLayout: function (tpl) {
         var self = this;
+
 
         this.divId = "tabs-" + self.getMode() + "-" + window.app.status.currentProject + "-" + this.model.id + "-";
 
@@ -621,15 +619,23 @@ BrowseImageView = Backbone.View.extend({
             //self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;
             /* Map with raster coordinates (pixels) from Zoomify image */
+
+            //this.nbDigitialZoom = Math.round(Math.log(320 / this.model.get('magnification')) / Math.log(2));
             var serverResolutions = [];
             for (var z = metadata.nbZoom - 1; z >= 0; z--) {
                 serverResolutions.push(Math.pow(2, z));
             }
-            var resolutions = _.union(serverResolutions, self.digitalResolutions);
+            var digitalResolutions =[];
+            for (var i = 0; i < this.nbDigitialZoom; i++) {
+                serverResolutions.push(1 / Math.pow(2, i + 1));
+            }
+            var resolutions = _.union(serverResolutions, digitalResolutions);
+
             var options = {
                 theme: null, maxExtent: new OpenLayers.Bounds(0, 0, metadata.width, metadata.height),
                 resolutions: resolutions,
                 serverResolutions: serverResolutions,
+                fractionalZoom: false,
                 units: 'pixels',
                 tileSize: new OpenLayers.Size(self.tileSize, self.tileSize),
                 controls: [
