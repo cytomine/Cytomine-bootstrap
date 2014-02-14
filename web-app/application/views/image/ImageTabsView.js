@@ -23,41 +23,41 @@ var ImageTabsView = Backbone.View.extend({
         var body = $("#imageProjectArray" + self.idProject);
         var columns = [
             { sClass: 'center', "mData": "id", "bSearchable": false},
-            { "mData": "baseImage.macroURL", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o) {
+            { "mData": "macroURL", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o) {
                 return _.template("<div style='width : 130px;'><a href='#tabs-image-<%= project %>-<%=  id  %>-'><img src='<%= thumb %>' alt='originalFilename' style='max-height : 45px;max-width : 128px;'/></a></div>",
                     {
                         project : self.idProject,
                         id : o.aData.id,
-                        thumb : o.aData["baseImage.macroURL"]
+                        thumb : o.aData["macroURL"]
                     });
             }},
-            { "mDataProp": "baseImage.originalFilename", sDefaultContent: "", "bSearchable": true, "fnRender" : function (o) {
+            { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": false, "fnRender" : function (o) {
                 //var imageInstanceModel = new ImageInstanceModel({});
                 // imageInstanceModel.set(o.aData);
                 // return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))
-                return o.aData["baseImage.originalFilename"];
+                return o.aData["originalFilename"];
             }}
             ,
-            { "mDataProp": "baseImage.width", sDefaultContent: "", "bSearchable": false, "fnRender" : function(o) {
-                return o.aData["baseImage.width"] + " px";
+            { "mDataProp": "width", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                return o.aData["width"] + " px";
             }},
-            { "mDataProp": "baseImage.height", sDefaultContent: "", "bSearchable": false, "fnRender" : function(o) {
-                return o.aData["baseImage.height"] + " px";
+            { "mDataProp": "height", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                return o.aData["height"] + " px";
             } },
-            { "mDataProp": "baseImage.magnification", sDefaultContent: "", "bSearchable": false, "fnRender" : function(o) {
-                return o.aData["baseImage.magnification"] + " X";
+            { "mDataProp": "magnification", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                return o.aData["magnification"] + " X";
             }},
-            { "mDataProp": "baseImage.resolution", sDefaultContent: "", "bSearchable": false, "fnRender" : function(o) {
-                var resolution = o.aData["baseImage.resolution"];
+            { "mDataProp": "resolution", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                var resolution = o.aData["resolution"];
                 try {
                     return resolution.toFixed(3) + " µm/pixel";
                 }catch(e) {return "";}
             }},
-            { "mDataProp": "countImageAnnotations", "bSearchable": false },
-            { "mDataProp": "countImageJobAnnotations", "bSearchable": false },
-            { "mDataProp": "countImageReviewedAnnotations", "bSearchable": false },
-            { "mDataProp": "baseImage.mime.extension", sDefaultContent: "", "bSearchable": true, "fnRender" : function(o) {
-                var extension = o.aData["baseImage.mime.extension"];
+            { "mDataProp": "numberOfAnnotations", "bSearchable": false,"bSortable": false },
+            { "mDataProp": "numberOfJobAnnotations", "bSearchable": false,"bSortable": false },
+            { "mDataProp": "numberOfReviewedAnnotations", "bSearchable": false,"bSortable": false },
+            { "mDataProp": "extension", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                var extension = o.aData["extension"];
                 if (extension == "ndpi" || extension == "vms") {
                      return '<img src="images/brands/hamamatsu.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 } else if (extension == "mrxs") {
@@ -69,12 +69,12 @@ var ImageTabsView = Backbone.View.extend({
                 } else if (extension == "bif") {
                     return '<img src="images/brands/roche.gif" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 }
-                else return o.aData["baseImage.mime.extension"];
+                else return o.aData["extension"];
             } },
-            { "mDataProp": "created", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o, created) {
+            { "mDataProp": "created", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o, created) {
                 return window.app.convertLongToDate(created);
             }} ,
-            { "mDataProp": "reviewStart", sDefaultContent: "", "bSearchable": false, "fnRender" : function (o) {
+            { "mDataProp": "reviewStart", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o) {
                 if (o.aData.reviewStart) {
                     return '<span class="label label-success">Reviewed</span>';
                 }
@@ -84,13 +84,14 @@ var ImageTabsView = Backbone.View.extend({
                 //    return '<span class="label label-info">None</span>';
                 //}
             }},
-            { "mDataProp": "updated", sDefaultContent: "", "bSearchable": false, "fnRender" : function(o) {
-                new ImageInstanceModel({ id : o.aData.id}).fetch({
-                    success : function (model, response) {
+            { "mDataProp": "updated", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+//                new ImageInstanceModel({ id : o.aData.id}).fetch({
+//                    success : function (model, response) {
+                        var model = new ImageInstanceModel(o.aData);
                         var action = new ImageReviewAction({el:body,model:model, container : self});
                         action.configureAction();
-                    }
-                });
+//                    }
+//                });
                 o.aData["project"]  = self.idProject;
                 return _.template(actionMenuTpl, o.aData);
 

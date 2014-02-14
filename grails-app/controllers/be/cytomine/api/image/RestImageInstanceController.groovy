@@ -93,10 +93,10 @@ class RestImageInstanceController extends RestController {
     def listByProject() {
         Project project = projectService.read(params.long('id'))
         if (params.datatables) {
-            def where = "project.id = ${project.id}"
+            def where = "project_id = ${project.id}"
             def fieldFormat = []
             println "dataTablesService=$dataTablesService"
-            responseSuccess(dataTablesService.process(params, ImageInstance, where, fieldFormat))
+            responseSuccess(dataTablesService.process(params, ImageInstance, where, fieldFormat,project))
         }
         else if (project && !params.tree) {
             String sortColumn = params.sortColumn ? params.sortColumn : "created"
