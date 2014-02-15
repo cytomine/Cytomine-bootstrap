@@ -36,7 +36,8 @@ curl -s get.gvmtool.net | bash
  ```bash
 gvm install grails 2.3.5
  ```
- 
+[Grails Documentation](http://grails.org/doc/2.3.x/guide/)
+
 ## Init databases 
 
 These are different possible environment while running Cytomine Core 
@@ -60,6 +61,8 @@ Example on Os X for Scratch environment :
  psql cytomineempty -f /usr/local/Cellar/postgis20/2.0.4/share/postgis/spatial_ref_sys.sql;   
 ```
 ## Run Cytomine Core
+
+[Grails Command Line Documentation](http://grails.org/doc/2.3.x/guide/commandLine.html)
 
 #### In dev mode :
 ```bash
@@ -90,3 +93,22 @@ grails prod -Dserver.port=8080 run-app
 export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m -server -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog -Dorg.apache.commons.logging.simplelog.showdatetime=true -Dorg.apache.commons.logging.simplelog.log.org.apache.http=DEBUG"
 grails -Dserver.port=8090 test-app functional:functional -echoOut -coverage
 ```
+
+## Deployment : generate the WAR
+
+As simple as :
+```bash
+grails war
+```
+
+This command will generate `./target/cytomine.war`
+
+## Generate the documentation
+
+As simple as 
+```bash
+grails doc
+```
+
+This command will generate `./target/docs/index.html`
+
