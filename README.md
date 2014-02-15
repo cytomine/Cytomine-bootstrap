@@ -59,6 +59,34 @@ Example on Os X for Scratch environment :
  psql cytomineempty -f /usr/local/Cellar/postgis20/2.0.4/share/postgis/postgis.sql;
  psql cytomineempty -f /usr/local/Cellar/postgis20/2.0.4/share/postgis/spatial_ref_sys.sql;   
 ```
- 
- 
- 
+## Run Cytomine Core
+
+#### In dev mode :
+```bash
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m -server"
+grails -Dserver.port=8080 run-app
+```
+
+####  In scratch mode :
+```bash
+# free cytominempty
+dropdb cytomineempty;
+createdb cytomineempty;
+psql cytomineempty -f $PATH_TO_POSTIG_SQL;
+psql cytomineempty -f $PATH_TO_SPATIAL_REF_SYS_SQL;
+# start grails with scratch environment
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
+grails  -Dgrails.env=scratch -Dserver.port=8080 run-app
+```
+
+####  In prod mode :
+```bash
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
+grails prod -Dserver.port=8080 run-app
+```
+
+####  In test mode :
+```bash
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m -server -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog -Dorg.apache.commons.logging.simplelog.showdatetime=true -Dorg.apache.commons.logging.simplelog.log.org.apache.http=DEBUG"
+grails -Dserver.port=8090 test-app functional:functional -echoOut -coverage
+```
