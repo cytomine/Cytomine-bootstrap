@@ -19,6 +19,7 @@ var ImageTabsView = Backbone.View.extend({
     },
     doLayout: function (actionMenuTpl) {
         var self = this;
+        self.images = [];
         var table = $("#imageProjectTable" + self.idProject);
         var body = $("#imageProjectArray" + self.idProject);
         var columns = [
@@ -85,11 +86,12 @@ var ImageTabsView = Backbone.View.extend({
                 //}
             }},
             { "mDataProp": "updated", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                self.images.push(o.aData);
 //                new ImageInstanceModel({ id : o.aData.id}).fetch({
 //                    success : function (model, response) {
-                        var model = new ImageInstanceModel(o.aData);
-                        var action = new ImageReviewAction({el:body,model:model, container : self});
-                        action.configureAction();
+//                        var model = new ImageInstanceModel(o.aData);
+//                        var action = new ImageReviewAction({el:body,model:model, container : self});
+//                        action.configureAction();
 //                    }
 //                });
                 o.aData["project"]  = self.idProject;
@@ -103,6 +105,17 @@ var ImageTabsView = Backbone.View.extend({
             "sAjaxSource": new ImageInstanceCollection({project: this.idProject}).url(),
             "fnServerParams": function ( aoData ) {
                 aoData.push( { "name": "datatables", "value": "true" } );
+            },
+            "fnDrawCallback": function(oSettings, json) {
+
+                _.each(self.images, function(aData) {
+                    var model = new ImageInstanceModel(aData);
+                    var action = new ImageReviewAction({el:body,model:model, container : self});
+                    action.configureAction();
+                });
+
+
+                self.images = [];
             },
             "aoColumns" : columns
         });
