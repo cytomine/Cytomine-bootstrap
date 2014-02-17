@@ -63,35 +63,54 @@
             <fieldset title="Step 2" style="margin: auto;height: 300px;">
                 <legend>Project config</legend>
                 <div>
-                    <div class="alert alert-info">
-                        If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
-                        A project admin will still be able to see all layers.
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="hideAdminsLayers"> Hide admins layers
+                        </div>
+                        <div class="col-md-9">
+                            <div class="alert alert-info">
+                                If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
+                                A project admin will still be able to see all layers.
+                            </div>
+                        </div>
                     </div>
-                    <input type="checkbox" id="hideAdminsLayers"> Hide admins layers
 
-                    <br><br>
-                    <div class="alert alert-info">
-                        If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
-                        A project admin will still be able to see all layers.
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="hideUsersLayers"> Hide users layers
+                        </div>
+                        <div class="col-md-9">
+                            <div class="alert alert-info">
+                                If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
+                                A project admin will still be able to see all layers.
+                            </div>
+                        </div>
                     </div>
-                    <input type="checkbox" id="hideUsersLayers"> Hide users layers
 
-                    <br><br>
-
-                    <div class="alert alert-info">
-                        If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
-                        A project admin will still be able to see to add/edit or delete data for this project.
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="blindMode"> Blind Mode
+                        </div>
+                        <div class="col-md-9">
+                            <div class="alert alert-info">
+                                If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
+                                A project admin will still be able to see to add/edit or delete data for this project.
+                            </div>
+                        </div>
                     </div>
-                    <input type="checkbox" id="isReadOnly"> Read-Only project
 
-                            <br><br>
-
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="isReadOnly"> Read-Only project
+                        </div>
+                        <div class="col-md-9">
                             <div class="alert alert-info">
                                 If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
                             </div>
-                            <input type="checkbox" id="blindMode"> Blind Mode
                         </div>
-                        <br>
+                    </div>
+                </div>
+                 
                     </fieldset>
 
                     <fieldset title="Step 3" style="margin: auto;height: 300px;">
