@@ -17,12 +17,12 @@
         <li><a id="validateimage<%=  id  %>" href="#"><i class="icon-thumbs-up icon-black"></i> Validate image</a></li>
         <li><a id="unvalidateimage<%=  id  %>" href="#"><i class="icon-thumbs-down icon-black"></i> Unvalidate image</a>
         <li><a class="copyimage<%=  id  %> " href="#"><i class=" icon-folder-open icon-black"></i> Copy image and annotations</a><a style="display:none;" class="copyimage" href="#copyImageModal<%=  id  %>" role="button" data-toggle="modal"></a></li>
-
         <li><a class="importannotation<%=  id  %> " href="#"><i class=" icon-folder-open icon-black"></i> Import user annotations</a><a style="display:none;" class="importannotation" href="#importAnnotationModal<%=  id  %>" role="button" data-toggle="modal"></a></li>
 
         <li class="divider"></li>
         <li><a class="description<%=  id  %> " href="#"><i class="glyphicon glyphicon-align-justify"></i> Description</a><a style="display:none;" class="description" href="#descriptionModal<%=  id  %>" role="button" data-toggle="modal"></a></li>
         <li><a href="api/imageinstance/<%= id %>/download"><i class="glyphicon glyphicon-download"></i> Download</a></li>
+        <li><a class="deleteImage<%= id %>" href="#"><i class="glyphicon glyphicon-trash"></i> Delete</a></li>
         <li><a class="moreinfo<%=  id  %>" href="#"><i class="glyphicon glyphicon-info-sign"></i> More info</a></li>
 
     </ul>
