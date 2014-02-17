@@ -8,6 +8,8 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-4">
+                        <img class="thumbnail" src="<%= cropURL %>" style="max-height: 200px;max-width: 200px;"/>
+
                         <form>
                             <fieldset>
                                 <div class="control-group">
@@ -35,22 +37,19 @@
                                     <label for="annotationComment<%= id %>">Your comment</label>
 
                                     <div class="input">
-                                        <ul class="inputs-list">
-                                            <textarea class="xlarge" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="8" col="8"></textarea>
-                                        </ul>
+                                        <!--ul class="inputs-list"-->
+                                            <textarea class="form-control" id="annotationComment<%= id %>" name="annotationComment<%= id %>" rows="8"></textarea>
+                                        <!--/ul-->
                                     </div>
                                 </div>
                             </fieldset>
                         </form>
                     </div>
-                    <div class="col-md-4">
-                        <h2>Comments</h2>
-                        <ul id="comments<%= id %>">
+                    <div class="col-md-8" style="overflow:auto;max-height:500px">
+                        <h3><i class="glyphicon glyphicon-comment"></i> Comments</h3>
+                        <div id="comments<%= id %>">
 
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="<%= cropURL %>" style="max-height: 150px;max-width: 150px;"/>
+                        </div>
                     </div>
                 </div>
 
