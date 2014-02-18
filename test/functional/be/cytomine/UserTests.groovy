@@ -290,15 +290,6 @@ class UserTests  {
     void testDeleteMe() {
         def result = UserAPI.delete(User.findByUsername(Infos.GOODLOGIN).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 403==result.code
-    }    
-  
-        void testDeleteUserWithData() {
-        def userToDelete = BasicInstanceBuilder.getUser()
-        def image =  BasicInstanceBuilder.getImageInstance()
-        image.user = userToDelete
-        assert image.save(flush:true)!=null
-        def result = UserAPI.delete(userToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 200 == result.code
     }
 
     void testAddDeleteUserToProject() {

@@ -362,9 +362,14 @@ class UserAnnotationService extends ModelService {
 
     def deleteDependentSharedAnnotation(UserAnnotation ua, Transaction transaction, Task task = null) {
         //TODO: we should implement a full service for sharedannotation and delete them if annotation is deleted
-        if(SharedAnnotation.findByUserAnnotation(ua)) {
-            throw new ConstraintException("There are some comments on this annotation. Cannot delete it!")
+//        if(SharedAnnotation.findByUserAnnotation(ua)) {
+//            throw new ConstraintException("There are some comments on this annotation. Cannot delete it!")
+//        }
+
+        SharedAnnotation.findAllByUserAnnotation(ua).each {
+            annotationTermService.removeDomain(it)
         }
+
     }
 
     def deleteDependentProperty(UserAnnotation ua, Transaction transaction, Task task = null) {

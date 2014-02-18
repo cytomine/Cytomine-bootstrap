@@ -53,6 +53,8 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
       assert 200 == result.code
       Project project = result.data
 
+      println "PROJECT="+project.deleted
+
       //check if user 1 can access/update/delete
       assert (200 == ProjectAPI.show(project.id,USERNAME1,PASSWORD1).code)
       assert (true ==ProjectAPI.containsInJSONList(project.id,JSON.parse(ProjectAPI.list(USERNAME1,PASSWORD1).data)))
@@ -347,7 +349,7 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
         //delete image instance (simple user)
         ImageInstance image2 = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
-        assert 200 == ImageInstanceAPI.delete(image2, simpleUsername, password).code
+        assert 403 == ImageInstanceAPI.delete(image2, simpleUsername, password).code
 
         //start reviewing image (simple user)
         println "###" + image.id

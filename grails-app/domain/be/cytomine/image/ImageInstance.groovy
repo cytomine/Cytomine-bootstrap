@@ -115,6 +115,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
     static ImageInstance insertDataIntoDomain(def json, def domain = new ImageInstance()) {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.created = JSONUtils.getJSONAttrDate(json, "created")
+        domain.deleted = JSONUtils.getJSONAttrDate(json, "deleted")
         domain.updated = JSONUtils.getJSONAttrDate(json, "updated")
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), false)
         domain.baseImage = JSONUtils.getJSONAttrDomain(json, "baseImage", new AbstractImage(), false)

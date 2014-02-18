@@ -185,7 +185,7 @@ class AbstractImageTests {
     annotation.save(flush:true)
       Long id = imageToDelete.baseImage.id
       def result = AbstractImageAPI.delete(id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assert 200 == result.code
+      assert 400 == result.code
   }
 
   void testDeleteImageNoExist()  {

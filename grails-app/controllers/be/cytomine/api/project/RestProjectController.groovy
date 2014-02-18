@@ -239,7 +239,8 @@ class RestProjectController extends RestController {
     def listRetrieval() {
         Project project = projectService.read(params.long('id'))
         if (project) {
-            responseSuccess(project.retrievalProjects)
+            def projects = project.retrievalProjects.findAll{!it.deleted}
+            responseSuccess(projects)
         } else {
             responseNotFound("Project", params.id)
         }

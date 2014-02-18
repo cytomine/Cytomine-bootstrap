@@ -29,6 +29,11 @@ class ImageInstanceAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByProjectDatatables(Long id, int offset, int max, String sSearch, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json?datatables=true&iDisplayLength=$max&iDisplayStart=$offset" + (sSearch? "&sSearch=$sSearch":"")
+        return doGET(URL, username, password)
+    }
+
     static def listByProject(Long id, Long inf, Long sup,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/project/$id/imageinstance.json?inf=$inf&sup=$sup"
         return doGET(URL, username, password)

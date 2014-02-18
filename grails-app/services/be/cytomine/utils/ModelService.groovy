@@ -8,6 +8,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
+import be.cytomine.image.ImageInstance
 import grails.util.GrailsNameUtils
 
 import java.sql.ResultSet
@@ -31,6 +32,7 @@ abstract class ModelService {
      */
     def saveDomain(def newObject) {
         newObject.checkAlreadyExist()
+//        println "newObject.deleted="+newObject.deleted
         if (!newObject.validate()) {
             log.error newObject.errors
             log.error newObject.retrieveErrors().toString()
@@ -40,6 +42,7 @@ abstract class ModelService {
             println "error"
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
+//        println "newObject.deleted="+newObject.deleted
     }
 
     def saveAndReturnDomain(def newObject) {
@@ -54,6 +57,12 @@ abstract class ModelService {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
         newObject
+    }
+
+    def checkDeleted(CytomineDomain domain) {
+        if(domain.checkDeleted()) {
+            throw new ObjectNotFoundException("The domain " + domain + " has been deleted on ${domain.deleted}!")
+        }
     }
 
     /**
@@ -101,6 +110,7 @@ abstract class ModelService {
     protected executeCommand(Command c, Task task = null) {
         if(c instanceof DeleteCommand) {
             def domainToDelete = c.domain
+            //println "c.domain="+c.deleted
             //Create a backup (for 'undo' op)
             //We create before for deleteCommand to keep data from HasMany inside json (data will be deleted later)
             def backup = domainToDelete.encodeAsJSON()
@@ -209,6 +219,7 @@ abstract class ModelService {
      */
     def edit(Map json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
+        println "json="+json
         edit(fillDomainWithData(currentDomain().newInstance(), json), printMessage)
     }
 
@@ -221,6 +232,7 @@ abstract class ModelService {
     def edit(CytomineDomain domain, boolean printMessage) {
         //Build response message
         log.info "edit"
+//        println "domain.deleted="+domain.deleted
         def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
         //Save update
         log.info "beforeUpdate"

@@ -287,7 +287,7 @@ var ProjectAddImageListingDialog = Backbone.View.extend({
         var thumbColName = 'thumb';
         $("#" + self.listmanageall).jqGrid({
             datatype: "json",
-            url: 'api/image.json',
+            url: 'api/abstractimage.json',
             width: jqGridWidth,
             height: 500,
             colNames: ['id', thumbColName, 'filename', 'mime', 'created'],

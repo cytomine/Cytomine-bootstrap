@@ -25,6 +25,7 @@ class DataTablesService {
             createAlias("baseImage", abstractImageAlias)
             eq("project", project)
             isNull("parent")
+            isNull("deleted")
             fetchMode 'baseImage', FetchMode.JOIN
             ilike(abstractImageAlias + ".originalFilename", _search)
         }

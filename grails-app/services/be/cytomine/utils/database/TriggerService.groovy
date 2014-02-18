@@ -51,6 +51,8 @@ class TriggerService {
             statement.execute(getImageTriggerAfterInsert())
             statement.execute(getImageTriggerBeforeDelete())
             statement.execute(getImageTriggerAfterDelete())
+//            statement.execute(getImageTriggerBeforeUpdate())
+//            statement.execute(getImageTriggerAfterUpdate())
 
             statement.execute(getAnnotationCommentBeforeInsert())
             statement.execute(getAnnotationCommentAfterInsert())
@@ -447,6 +449,62 @@ class TriggerService {
 
 
 
+
+
+
+    String getImageTriggerBeforeUpdate() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION beforeUpdateImage() RETURNS TRIGGER AS \$decImageBefore\$
+        DECLARE
+            currentProject  project%ROWTYPE;
+        BEGIN
+            SELECT * INTO currentProject FROM project where id = OLD.project_id FOR UPDATE;
+            RETURN OLD;
+        END ;
+        \$decImageBefore\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS beforeUpdateImage on image_instance;"
+
+        String createTrigger = "CREATE TRIGGER beforeUpdateImage BEFORE UPDATE ON image_instance FOR EACH ROW EXECUTE PROCEDURE beforeUpdateImage(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
+
+
+    String getImageTriggerAfterUpdate() {
+        String createFunction = """
+        CREATE OR REPLACE FUNCTION afterUpdateImage() RETURNS TRIGGER AS \$decImageAfter\$
+        DECLARE
+            current_project_id image_instance.id%TYPE;
+        BEGIN
+            IF NEW.deleted IS NULL AND OLD.deleted IS NOT NULL THEN
+                UPDATE project SET count_images = count_images + 1 WHERE project.id = OLD.project_id;
+            ELSEIF NEW.deleted IS NOT NULL AND OLD.deleted IS NULL THEN
+                UPDATE project SET count_images = count_images - 1 WHERE project.id = OLD.project_id;
+            ELSEIF NEW.deleted IS NOT NULL AND OLD.deleted IS NOT NULL THEN
+                UPDATE project SET count_images = count_images - 66 WHERE project.id = OLD.project_id;
+            ELSEIF NEW.deleted IS NULL AND OLD.deleted IS NULL THEN
+                UPDATE project SET count_images = count_images - 166 WHERE project.id = OLD.project_id;
+            ELSE
+                UPDATE project SET count_images = count_images + 66 WHERE project.id = OLD.project_id;
+            END IF;
+
+            RETURN NEW;
+        END ;
+         \$decImageAfter\$ LANGUAGE plpgsql; """
+
+        String dropTrigger = "DROP TRIGGER IF EXISTS afterUpdateImageTrigger on image_instance;"
+
+        String createTrigger = "CREATE TRIGGER afterUpdateImageTrigger AFTER UPDATE ON image_instance FOR EACH ROW EXECUTE PROCEDURE afterUpdateImage(); "
+
+        log.info createFunction
+        log.info dropTrigger
+        log.info createTrigger
+        return createFunction + dropTrigger + createTrigger
+    }
 
 
 

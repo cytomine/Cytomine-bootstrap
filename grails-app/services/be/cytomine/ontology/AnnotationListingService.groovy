@@ -65,7 +65,7 @@ class AnnotationListingService extends ModelService {
               /**
                * If an annotation has n multiple term, it will be on "n" lines.
                * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
-               * For the other lines, we add term data to the last annotation
+               * For the other lines, we add term data t o the last annotation
                */
               if (it.id != lastAnnotationId) {
                   if(first) {

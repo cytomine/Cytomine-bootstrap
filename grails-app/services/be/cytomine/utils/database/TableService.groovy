@@ -51,7 +51,7 @@ class TableService {
                                 "AND acl_entry.sid = acl_sid.id\n" +
                                 "AND acl_entry.acl_object_identity = acl_object_identity.id\n" +
                                 "AND sec_user.user_id is null\n" +
-                                "AND mask >= 1"
+                                "AND mask >= 1 AND project.deleted IS NULL"
             createRequest('user_project',reqcreate)
 
             reqcreate = "CREATE VIEW admin_project AS\n" +
@@ -62,7 +62,7 @@ class TableService {
                                 "AND acl_entry.sid = acl_sid.id\n" +
                                 "AND acl_entry.acl_object_identity = acl_object_identity.id\n" +
                                 "AND sec_user.user_id is null\n" +
-                                "AND mask >= 16"
+                                "AND mask >= 16 AND project.deleted IS NULL"
             createRequest('admin_project',reqcreate)
 
             reqcreate = "CREATE VIEW creator_project AS\n" +
@@ -71,13 +71,15 @@ class TableService {
                                 "WHERE project.id = acl_object_identity.object_id_identity\n" +
                                 "AND acl_sid.sid = sec_user.username\n" +
                                 "AND acl_object_identity.owner_sid = acl_sid.id\n" +
-                                "AND sec_user.user_id is null"
+                                "AND sec_user.user_id is null AND project.deleted IS NULL"
             createRequest('creator_project',reqcreate)
 
             reqcreate = "CREATE VIEW user_image AS\n" +
                     "SELECT distinct image_instance.*, abstract_image.filename, abstract_image.original_filename, project.name as project_name, sec_user.id as user_image_id\n" +
                     "FROM project,  image_instance, abstract_image, acl_object_identity, sec_user, acl_sid, acl_entry \n" +
                     "WHERE project.id = acl_object_identity.object_id_identity\n" +
+                    "AND image_instance.deleted IS NULL \n" +
+                    "AND project.deleted IS NULL \n" +
                     "AND image_instance.project_id = project.id \n" +
                     "AND image_instance.parent_id IS NULL \n" + //don't get nested images
                     "AND abstract_image.id = image_instance.base_image_id\n" +

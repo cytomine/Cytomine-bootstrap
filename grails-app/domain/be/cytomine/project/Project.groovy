@@ -167,7 +167,7 @@ class Project extends CytomineDomain implements Serializable {
         domain.blindMode = JSONUtils.getJSONAttrBoolean(json, 'blindMode', false)
         domain.created = JSONUtils.getJSONAttrDate(json, 'created')
         domain.updated = JSONUtils.getJSONAttrDate(json, 'updated')
-
+        domain.deleted = JSONUtils.getJSONAttrDate(json, "deleted")
         domain.isClosed = JSONUtils.getJSONAttrBoolean(json, 'isClosed', false)
         domain.isReadOnly = JSONUtils.getJSONAttrBoolean(json, 'isReadOnly', false)
 

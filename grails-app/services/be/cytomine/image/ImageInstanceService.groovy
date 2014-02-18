@@ -13,9 +13,11 @@ import be.cytomine.social.UserPosition
 import be.cytomine.utils.Description
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode
 
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
@@ -23,7 +25,7 @@ import static org.springframework.security.acls.domain.BasePermission.READ
  */
 class ImageInstanceService extends ModelService {
 
-    static transactional = true
+    static transactional = false
 
     def cytomineService
     def transactionService
@@ -43,6 +45,8 @@ class ImageInstanceService extends ModelService {
         def image = ImageInstance.read(id)
         if(image) {
             SecurityACL.check(image.container(),READ)
+            checkDeleted(image)
+            //println image.id+"=>"+image.deleted + " version"+image.version
         }
         image
     }
@@ -57,6 +61,7 @@ class ImageInstanceService extends ModelService {
             isNull("parent")
             order("i.created", "desc")
             fetchMode 'baseImage', FetchMode.JOIN
+            isNull("deleted")
         }
         return images
     }
@@ -68,7 +73,7 @@ class ImageInstanceService extends ModelService {
         SecurityACL.check(project,READ)
 
         //better perf with sql request
-        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id  + " AND parent_id IS NULL"
+        String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id  + " AND parent_id IS NULL AND deleted IS NULL"
         def data = []
         new Sql(dataSource).eachRow(request) {
             data << it[0]
@@ -102,7 +107,7 @@ class ImageInstanceService extends ModelService {
 
         new Sql(dataSource).eachRow("SELECT image_id,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
                 "FROM user_position\n" +
-                "WHERE user_position.user_id = ? \n" + //no join with image instance / abstract img / project...too heavy
+                "WHERE user_position.user_id = ?\n" + //no join with image instance / abstract img / project...too heavy
                 "GROUP BY image_id \n" +
                 "ORDER BY maxDate desc " + offsetString,[user.id]) {
             try {
@@ -149,6 +154,7 @@ class ImageInstanceService extends ModelService {
             createAlias("baseImage", abstractImageAlias)
             eq("project", project)
             isNull("parent")
+            isNull("deleted")
             fetchMode 'baseImage', FetchMode.JOIN
             ilike(abstractImageAlias + ".originalFilename", _search)
             order(_sortColumn, sortDirection)
@@ -282,6 +288,7 @@ class ImageInstanceService extends ModelService {
             FROM image_instance ii, project p, ${admin? "admin_project" : "user_project" } up, sec_user su, annotation_index ai
             WHERE base_image_id = ?
             AND ii.id <> ?
+            AND ii.deleted IS NULL
             AND ii.parent_id IS NULL
             AND ii.project_id = p.id
             AND up.id = p.id
@@ -306,10 +313,30 @@ class ImageInstanceService extends ModelService {
         SecurityACL.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
-        synchronized (this.getClass()) {
-            Command c = new AddCommand(user: currentUser)
-            executeCommand(c,null,json)
+        log.info "json=$json"
+        def project = Project.read(json.project)
+        def baseImage = AbstractImage.read(json.baseImage)
+        log.info "project=$project baseImage=$baseImage"
+        def alreadyExist = ImageInstance.findByProjectAndBaseImage(project,baseImage)
+
+        log.info "alreadyExist=${alreadyExist}"
+        if(alreadyExist && alreadyExist.checkDeleted()) {
+            //Image was previously deleted, restore it
+            SecurityACL.check(alreadyExist.container(),ADMINISTRATION)
+            SecurityACL.checkReadOnly(alreadyExist.container())
+            def jsonNewData = JSON.parse(alreadyExist.encodeAsJSON())
+            jsonNewData.deleted = null
+            Command c = new EditCommand(user: currentUser)
+            return executeCommand(c,alreadyExist,jsonNewData)
+        } else {
+            synchronized (this.getClass()) {
+                Command c = new AddCommand(user: currentUser)
+                return executeCommand(c,null,json)
+            }
         }
+
+
+
     }
 
     /**
@@ -337,63 +364,73 @@ class ImageInstanceService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(ImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(domain.container(),READ)
+//        SecurityACL.check(domain.container(),READ)
+//        SecurityACL.checkReadOnly(domain.container())
+//        SecUser currentUser = cytomineService.getCurrentUser()
+//        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
+//        return executeCommand(c,domain,null)
+
+        //We don't delete domain, we juste change a flag
+        SecurityACL.check(domain.container(),ADMINISTRATION)
         SecurityACL.checkReadOnly(domain.container())
+        def jsonNewData = JSON.parse(domain.encodeAsJSON())
+        jsonNewData.deleted = new Date().time
+        println "jsonNewData.deleted="+jsonNewData.deleted
         SecUser currentUser = cytomineService.getCurrentUser()
-        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
-        return executeCommand(c,domain,null)
+        Command c = new EditCommand(user: currentUser)
+        return executeCommand(c,domain,jsonNewData)
     }
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.baseImage?.filename, domain.project.name]
     }
 
-    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
-        AlgoAnnotation.findAllByImage(image).each {
-            algoAnnotationService.delete(it,transaction)
-        }
-    }
-
-    def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
-        ReviewedAnnotation.findAllByImage(image).each {
-            reviewedAnnotationService.delete(it,transaction,null,false)
-        }
-    }
-
-    def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
-        UserAnnotation.findAllByImage(image).each {
-            userAnnotationService.delete(it,transaction,null,false)
-        }
-    }
-
-    def deleteDependentUserPosition(ImageInstance image,Transaction transaction, Task task = null) {
-        UserPosition.findAllByImage(image).each {
-            it.delete()
-        }
-    }
-
-    def deleteDependentAnnotationIndex(ImageInstance image,Transaction transaction, Task task = null) {
-        AnnotationIndex.findAllByImage(image).each {
-            it.delete()
-         }
-    }
-
-    def deleteDependentImageSequence(ImageInstance image, Transaction transaction, Task task = null) {
-        ImageSequence.findAllByImage(image).each {
-            imageSequenceService.delete(it,transaction,null,false)
-        }
-    }
-
-    def deleteDependentProperty(ImageInstance image, Transaction transaction, Task task = null) {
-        Property.findAllByDomainIdent(image.id).each {
-            propertyService.delete(it,transaction,null,false)
-        }
-
-    }
-
-    def deleteDependentNestedImageInstance(ImageInstance image, Transaction transaction,Task task=null) {
-        NestedImageInstance.findAllByParent(image).each {
-            it.delete(flush: true)
-        }
-    }
+//    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
+//        AlgoAnnotation.findAllByImage(image).each {
+//            algoAnnotationService.delete(it,transaction)
+//        }
+//    }
+//
+//    def deleteDependentReviewedAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
+//        ReviewedAnnotation.findAllByImage(image).each {
+//            reviewedAnnotationService.delete(it,transaction,null,false)
+//        }
+//    }
+//
+//    def deleteDependentUserAnnotation(ImageInstance image,Transaction transaction, Task task = null) {
+//        UserAnnotation.findAllByImage(image).each {
+//            userAnnotationService.delete(it,transaction,null,false)
+//        }
+//    }
+//
+//    def deleteDependentUserPosition(ImageInstance image,Transaction transaction, Task task = null) {
+//        UserPosition.findAllByImage(image).each {
+//            it.delete()
+//        }
+//    }
+//
+//    def deleteDependentAnnotationIndex(ImageInstance image,Transaction transaction, Task task = null) {
+//        AnnotationIndex.findAllByImage(image).each {
+//            it.delete()
+//         }
+//    }
+//
+//    def deleteDependentImageSequence(ImageInstance image, Transaction transaction, Task task = null) {
+//        ImageSequence.findAllByImage(image).each {
+//            imageSequenceService.delete(it,transaction,null,false)
+//        }
+//    }
+//
+//    def deleteDependentProperty(ImageInstance image, Transaction transaction, Task task = null) {
+//        Property.findAllByDomainIdent(image.id).each {
+//            propertyService.delete(it,transaction,null,false)
+//        }
+//
+//    }
+//
+//    def deleteDependentNestedImageInstance(ImageInstance image, Transaction transaction,Task task=null) {
+//        NestedImageInstance.findAllByParent(image).each {
+//            it.delete(flush: true)
+//        }
+//    }
 }

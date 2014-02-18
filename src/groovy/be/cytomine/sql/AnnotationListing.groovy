@@ -20,6 +20,8 @@ import com.vividsolutions.jts.io.WKTReader
  *
  */
 abstract class AnnotationListing {
+
+    def paramsService
     /**
      *  default property group to show
      */
@@ -232,8 +234,11 @@ abstract class AnnotationListing {
      }
 
      def getImagesConst() {
+
          if(images && project && images.size()==Project.read(project).countImages) {
              return "" //images number equals to project image number, no const needed
+         } else if(images && images.isEmpty()) {
+             throw new ObjectNotFoundException("The image has been deleted!")
          } else {
              return (images? "AND a.image_id IN (${images.join(",")})\n" : "")
          }
@@ -242,10 +247,11 @@ abstract class AnnotationListing {
 
      def getImageConst() {
          if(image) {
-             if(!ImageInstance.read(image)) {
+             def image = ImageInstance.read(image)
+             if(!image || image.checkDeleted()) {
                 throw new ObjectNotFoundException("Image $image not exist!")
             }
-             return "AND a.image_id = ${image}\n"
+             return "AND a.image_id = ${image.id}\n"
          } else {
             return ""
          }

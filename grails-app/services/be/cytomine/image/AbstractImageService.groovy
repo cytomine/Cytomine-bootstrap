@@ -2,6 +2,7 @@ package be.cytomine.image
 
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.*
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
@@ -285,8 +286,9 @@ class AbstractImageService extends ModelService {
     }
 
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
-        ImageInstance.findAllByBaseImage(ai).each {
-            imageInstanceService.delete(it,transaction,null,false)
+        def images = ImageInstance.findAllByBaseImage(ai)
+        if(!images.isEmpty()) {
+            throw new WrongArgumentException("You cannot delete this image, it has already been insert in projects " + images.collect{it.project.name})
         }
     }
 

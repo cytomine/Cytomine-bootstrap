@@ -53,6 +53,13 @@ class UserAnnotationAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def listByImages(Long project,List<Long> ids, String username, String password, List propertiesToShow = null) {
+        println "propertiesToShow=$propertiesToShow"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?project=${project}&images=${ids.join(',')}&" + buildPropertiesToShowURLParams(propertiesToShow)
+        println "url=$URL"
+        return doGET(URL, username, password)
+    }
+
     static def buildPropertiesToShowURLParams(List propertiesToShow) {
 
         println "propertiesToShow=$propertiesToShow"

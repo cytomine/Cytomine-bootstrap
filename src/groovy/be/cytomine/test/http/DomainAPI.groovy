@@ -28,12 +28,19 @@ class DomainAPI {
      * @param list JSON list
      * @return True if id is in list, otherwise, false
      */
-    static boolean containsInJSONList(Long id, def list) {
-        println "Search $id in ${list}"
-        if(list instanceof String) {
-            list = JSON.parse(list)
+    static boolean containsInJSONList(Long id, def responselist) {
+        println "Search $id in ${responselist}"
+        if(responselist instanceof String) {
+            responselist = JSON.parse(responselist)
         }
-        list = list.collection
+
+
+        def list = responselist.collection
+
+        if (list == null)  {
+            list = responselist.aaData
+        }
+
         if (list == []) return false
         boolean find = false
         list.each { item ->

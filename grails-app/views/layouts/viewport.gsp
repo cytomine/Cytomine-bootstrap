@@ -71,6 +71,8 @@
 <!--<script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>-->
 <script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
 
+<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>

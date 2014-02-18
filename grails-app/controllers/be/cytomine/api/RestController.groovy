@@ -1,6 +1,7 @@
 package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.image.ImageInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.StringUtils
 import be.cytomine.utils.Task

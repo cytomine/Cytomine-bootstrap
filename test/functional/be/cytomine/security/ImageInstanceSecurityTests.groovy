@@ -46,6 +46,39 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       assert (200 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN).code)
   }
 
+    void testImageInstanceSecurityForProjectAdmin() {
+
+        //Get user1
+        User user1 = getUser1()
+        User user2 = getUser2()
+
+        //Get admin user
+        User admin = getUserAdmin()
+
+        //Create new project (user1)
+        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(),SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+        assert 200 == result.code
+        Project project = result.data
+        def resAddUser = ProjectAPI.addAdminProject(project.id,user2.id,SecurityTestsAbstract.USERNAME1,SecurityTestsAbstract.PASSWORD1)
+        Infos.printRight(project)
+        assert 200 == resAddUser.code
+
+        //Add image instance to project
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()
+        image.project = project
+
+        //check if user 2 can access/update/delete
+        result = ImageInstanceAPI.create(image.encodeAsJSON(),SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
+        assert 200 == result.code
+        image = result.data
+        assert (200 == ImageInstanceAPI.show(image.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+        result = ImageInstanceAPI.listByProject(project.id,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2)
+        assert 200 == result.code
+        assert (true ==ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
+        //assert (200 == ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
+        assert (200 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+    }
+
   void testImageInstanceSecurityForProjectUser() {
 
       //Get user1
@@ -76,7 +109,7 @@ class ImageInstanceSecurityTests extends SecurityTestsAbstract{
       assert 200 == result.code
       assert (true ==ImageInstanceAPI.containsInJSONList(image.id,JSON.parse(result.data)))
       //assert (200 == ImageInstanceAPI.update(image,USERNAME2,PASSWORD2).code)
-      assert (200 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
+      assert (403 == ImageInstanceAPI.delete(image,SecurityTestsAbstract.USERNAME2,SecurityTestsAbstract.PASSWORD2).code)
   }
 
   void testImageInstanceSecurityForSimpleUser() {

@@ -255,6 +255,20 @@ class ImageInstanceCopyDataTests {
         data.project2 = BasicInstanceBuilder.getProjectNotExist(data.ontology1,true)
         data.project3 = BasicInstanceBuilder.getProjectNotExist(data.ontology1,true)
 
+        println "*** user ***"
+        println data.user1.deleted
+        println data.user2.deleted
+        println data.user3.deleted
+
+        println "*** ontology ***"
+        println data.ontology1.deleted
+        println data.ontology2.deleted
+
+        println "*** project ***"
+        println data.project1.deleted
+        println data.project2.deleted
+        println data.project3.deleted
+
         Infos.addUserRight(data.user1.username,data.project1)
         Infos.addUserRight(data.user1.username,data.project3)
 

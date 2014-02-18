@@ -1,10 +1,13 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ImageInstanceAPI
+import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -19,6 +22,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class ImageInstanceTests  {
 
+
     void testListImagesInstanceByProject() {
         BasicInstanceBuilder.getImageInstance()
         def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -28,6 +32,14 @@ class ImageInstanceTests  {
 
         result = ImageInstanceAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code
+    }
+
+    void testListImagesInstanceByProjectDatatables() {
+        BasicInstanceBuilder.getImageInstance()
+        def result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,"test",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
     }
 
     void testListImagesInstanceByProjectMaxOffset() {
@@ -197,10 +209,13 @@ class ImageInstanceTests  {
         def imageInstanceToDelete = BasicInstanceBuilder.getImageInstanceNotExist()
         assert imageInstanceToDelete.save(flush: true) != null
         def idImage = imageInstanceToDelete.id
+        println "Image=${imageInstanceToDelete.id} ${imageInstanceToDelete.deleted}"
 
         def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
 
+        imageInstanceToDelete.refresh()
+        println "Image=${imageInstanceToDelete.id} ${imageInstanceToDelete.deleted}"
         def showResult = ImageInstanceAPI.show(imageInstanceToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == showResult.code
 
@@ -265,5 +280,106 @@ class ImageInstanceTests  {
 
         result = ImageInstanceAPI.previous(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+    }
+
+
+    void testListDeleteImageInstance() {
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,image,true)
+
+        assert 200 == ImageInstanceAPI.show(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+
+        def response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = ImageInstanceAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = UserAnnotationAPI.listByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
+
+        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
+
+        //now delete image and check if correctloy removed from listing
+        def result = ImageInstanceAPI.delete(image, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        assert 404 == ImageInstanceAPI.show(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+
+        response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = ImageInstanceAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == response.code
+        assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
+
+        response = UserAnnotationAPI.listByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == response.code
+        assert !DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
+
+//        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        assert !DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
+
+
+
+
+    }
+
+    void testDeleteImageInstanceAndRestoreIt() {
+
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist(project).encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        ImageInstance image = result.data
+        Long idImage = image.id
+
+        project.refresh()
+        assert project.countImages == 1
+
+        result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ImageInstanceAPI.delete(image, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        println result.data
+
+
+        image = ImageInstance.read(image.id)
+        println image.id+"=>"+image.deleted  + " version"+image.version
+        image.refresh()
+        println image.id+"=>"+image.deleted + " version"+image.version
+
+        println project.list().collect{it.name}
+        project.refresh()
+        //assert project.countImages == 0
+
+        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+
+
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        project.refresh()
+        assert project.countImages == 1
+
+        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
     }
 }

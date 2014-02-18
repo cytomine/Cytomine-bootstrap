@@ -32,6 +32,9 @@ abstract class CytomineDomain  implements Comparable{
     @ApiObjectFieldLight(description = "The date of the domain modification", useForCreation = false)
     Date updated
 
+    @ApiObjectFieldLight(description = "When domain was removed from Cytomine", useForCreation = false)
+    Date deleted
+
     @ApiObjectFieldsLight(params=[
         @ApiObjectFieldLight(apiFieldName = "class", description = "The full class name of the domain",allowedType = "string",useForCreation = false)
     ])
@@ -46,6 +49,11 @@ abstract class CytomineDomain  implements Comparable{
     static constraints = {
         created nullable: true
         updated nullable: true
+        deleted nullable : true
+    }
+
+    public boolean checkDeleted() {
+        return deleted!=null
     }
 
     public beforeInsert() {
@@ -118,14 +126,6 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
-    protected static def getAPIBaseFields(def domain) {
-        def apiFields = [:]
-        apiFields['class'] = domain.class
-        apiFields['id'] = domain.id
-        apiFields['created'] = domain.created?.time?.toString()
-        apiFields['updated'] = domain.updated?.time?.toString()
-        apiFields
-    }
 
     protected static def getAPIDomainFields(def domain, LinkedHashMap<Field, Object> mapFields = null) {
         def apiFields = [:]
@@ -205,6 +205,7 @@ abstract class CytomineDomain  implements Comparable{
         returnArray['id'] = domain?.id
         returnArray['created'] = domain?.created?.time?.toString()
         returnArray['updated'] = domain?.updated?.time?.toString()
+        returnArray['deleted'] = domain?.deleted?.time?.toString()
         return returnArray
     }
 

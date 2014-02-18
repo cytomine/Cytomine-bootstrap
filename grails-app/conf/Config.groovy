@@ -267,7 +267,7 @@ log4j = {
 
 
 
-    //debug "org.hibernate.SQL"
+//    debug "org.hibernate.SQL"
 //    debug 'be.cytomine'
     /*
    debug 'grails.app'
@@ -280,8 +280,8 @@ log4j = {
     debug   'org.jasig.cas.client' */
 
     //UNCOMMENT THESE 2 LINES TO SEE SQL REQUEST AND THEIR PARAMETERS VALUES
-    //debug 'org.hibernate.SQL'
-    //trace 'org.hibernate.type'
+//    debug 'org.hibernate.SQL'
+//    trace 'org.hibernate.type'
 }
 
 grails.plugins.springsecurity.interceptUrlMap = [

@@ -82,7 +82,10 @@ class BasicInstanceBuilder {
         try {
             domain.refresh()
         } catch(Exception e) {}
-       assert ((domain.read(domain.id)!=null) == exist)
+        domain = domain.read(domain.id)
+        boolean domainExist = domain && !domain.checkDeleted()
+       assert domainExist == exist
+        domainExist
     }
 
     static void checkIfDomainsExist(def domains) {

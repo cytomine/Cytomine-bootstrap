@@ -169,22 +169,27 @@ class SecurityACL {
     static public List<Project> getProjectList(SecUser user) {
         //faster method
         if (user.admin) {
-            Project.list()
+            Project.findAllByDeletedIsNull()
         }
         else {
+
+            println "PROJECT DELETED="+Project.findAllByDeletedIsNull().collect{it.name}
+
+
             return Project.executeQuery(
                     "select distinct project "+
                     "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Project as project "+
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
-                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"' and project.deleted is null")
         }
     }
 
     static public List<Project> getProjectList(SecUser user, Ontology ontology) {
         //faster method
         if (user.admin) {
-            Project.findAllByOntology(ontology)
+            def projects = Project.findAllByOntologyAndDeletedIsNull(ontology)
+            return projects
         }
         else {
             return Project.executeQuery(
@@ -193,14 +198,14 @@ class SecurityACL {
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     (ontology? "and project.ontology.id = ${ontology.id} " : " ") +
-                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"' and project.deleted is null")
         }
     }
 
     static public List<Project> getProjectList(SecUser user, Software software) {
         //faster method
         if (user.admin) {
-            SoftwareProject.findAllBySoftware(software).collect{it.project}
+            SoftwareProject.findAllBySoftware(software).collect{it.project}.findAll{!it.checkDeleted()}
         }
         else {
             return Project.executeQuery(
@@ -209,7 +214,7 @@ class SecurityACL {
                     "where aclObjectId.objectId = project.id " +
                     "and aclEntry.aclObjectIdentity = aclObjectId.id "+
                     (software? " and project.id = softwareProject.project.id and softwareProject.software.id = ${software.id} " : " ") +
-                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"'")
+                    "and aclEntry.sid = aclSid.id and aclSid.sid like '"+user.username+"' and project.deleted is null")
         }
     }
 

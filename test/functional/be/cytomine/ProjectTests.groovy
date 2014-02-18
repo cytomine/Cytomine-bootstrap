@@ -5,10 +5,12 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.TaskAPI
 import be.cytomine.test.http.UserAnnotationAPI
@@ -475,5 +477,80 @@ class ProjectTests  {
         assert 200 == result.code
 
     }
+
+    void testDeleteProjectAndRestoreIt() {
+
+        //Create a project
+        def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        Project project = result.data
+
+        def user1 = User.findByUsername(Infos.GOODLOGIN)
+
+        //check if project is there
+       result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = ProjectAPI.listByUser(user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        SoftwareProject softproj = BasicInstanceBuilder.getSoftwareProjectNotExist(BasicInstanceBuilder.getSoftware(),project, true)
+        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+
+        //delete project
+        result = ProjectAPI.delete(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+
+        //check if project is not there
+        result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+
+        result = ProjectAPI.listByUser(user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+
+        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+
+        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
+    }
+
+
+
+
+
+
+
+
+
 
 }
