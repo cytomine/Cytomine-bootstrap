@@ -37,7 +37,7 @@ class JSONUtils {
      */
     static public Date getJSONAttrDate(def json, String attr) {
         if (json[attr] != null && !json[attr].toString().equals("null")) {
-            return new Date(Long.parseLong(json.created))
+            return new Date(Long.parseLong(json[attr].toString()))
         } else {
             return null
         }

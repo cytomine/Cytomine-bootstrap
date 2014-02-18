@@ -515,9 +515,14 @@ class ProjectTests  {
 
 
         //delete project
+        Date start = new Date()
         result = ProjectAPI.delete(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+        Date stop = new Date()
 
+        project.refresh()
+        assert project.deleted > start
+        assert project.deleted < stop
 
         //check if project is not there
         result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)

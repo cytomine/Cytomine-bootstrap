@@ -31,9 +31,11 @@ var InformationsPanel = SideBarPanel.extend({
     refresh: function() {
       //call when user do action with ImageReviewAction
     },
-
-
-
+    afterDeleteImageEvent : function() {
+        var self = this;
+        $("#closeTabtabs-image-" + self.model.id).click()
+        $("#closeTabtabs-review-" + self.model.id).click()
+    },
     /**
      * Render the html into the DOM element associated to the view
      * @param tpl
@@ -58,7 +60,7 @@ var InformationsPanel = SideBarPanel.extend({
 
         var action = new ImageReviewAction({el:panel.find("#actionExploreButton"),model:self.model, container : this});
         action.configureAction();
-        panel.find("#actionExploreButton").find("button").removeClass("btn-inverse")
+        panel.find("#actionExploreButton").find("button").removeClass("btn-inverse");
 
         $("#getNext"+self.model.id).click(function() {
             new ImageInstanceModel({next:true, id:self.model.id}).fetch({

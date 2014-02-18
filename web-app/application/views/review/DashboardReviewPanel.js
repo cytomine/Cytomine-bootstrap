@@ -81,6 +81,10 @@ var DashboardReviewPanel = Backbone.View.extend({
         window.app.view.currentReview = this;
         return this;
     },
+    afterDeleteImageEvent : function() {
+      var self = this;
+      this.refresh(self.image,self.user,self.term);
+    },
     refresh: function(image,user,term) {
         var self = this;
         if(!image) {

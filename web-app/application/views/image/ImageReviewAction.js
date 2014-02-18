@@ -5,6 +5,8 @@ var ImageReviewAction = Backbone.View.extend({
         this.model = options.model;
         this.container  = options.container;
     },
+
+
     configureAction: function () {
         var self = this;
         var el = $(self.el);
@@ -43,7 +45,7 @@ var ImageReviewAction = Backbone.View.extend({
         } else {
             el.find("#explore" + self.model.id).show();
             el.find("#review" + self.model.id).show();
-            el.find("#reviewCyto" + self.model.id).show()
+            el.find("#reviewCyto" + self.model.id).show();
             el.find("#startreview" + self.model.id).hide();
             el.find("#startCytoreview" + self.model.id).hide();
             el.find("#cancelreview" + self.model.id).hide();
@@ -57,11 +59,12 @@ var ImageReviewAction = Backbone.View.extend({
             self.startReviewing();
             return false;
         });
-        $(self.el).find("a.deleteImage" + self.model.id).bind('click',function(){console.log("del"+self.model.id);});
-/*        $("#deleteImage" + self.model.id).on("click", function () {
-
+        el.find("a.deleteImage" + self.model.id).bind('click',function(){
+            console.log("del"+self.model.id);
+            self.deleteImage();
             return false;
-        });*/
+        });
+
         el.find("#startCytoreview" + self.model.id).on("click", function () {
             self.startCytoReviewing();
             return false;
@@ -212,5 +215,56 @@ var ImageReviewAction = Backbone.View.extend({
     },
     isInReviewing: function () {
         return this.model.get("reviewStart") != null && this.model.get("reviewStop") == null
+    },
+
+    deleteImage: function () {
+        var self = this;
+        require(["text!application/templates/dashboard/ImageDeleteConfirmDialog.tpl.html"], function (tpl) {
+            // $('#dialogsTerm').empty();
+            var dialog = new ConfirmDialogView({
+                el: '#dialogsDeleteImage',
+                template: _.template(tpl, {image: self.model.get('originalFilename')}),
+                dialogAttr: {
+                    dialogID: '#delete-image-confirm'
+                }
+            }).render();
+            $("#closeImageDeleteConfirmDialog").click(function (event) {
+                event.preventDefault();
+                new TaskModel({project: self.model.get('project')}).save({}, {
+                        success: function (taskResponse, response) {
+                            var task = taskResponse.get('task');
+
+                            console.log("task"+task.id);
+                            var timer = window.app.view.printTaskEvolution(task, $("#deleteImageDialogContent"), 1000);
+
+
+                            new ImageInstanceModel({id: self.model.id,task: task.id}).destroy(
+                                {
+                                    success: function (model, response) {
+                                        window.app.view.message("Image", response.message, "success");
+                                        self.container.afterDeleteImageEvent();
+                                        clearInterval(timer);
+                                        dialog.close();
+
+                                    },
+                                    error: function (model, response) {
+                                        window.app.view.message("Image", "Errors!", "error");
+                                        clearInterval(timer);
+                                        var json = $.parseJSON(response.responseText);
+                                        window.app.view.message("Image", json.errors[0], "error");
+                                    }
+                                }
+                            );
+                            return false;
+                        },
+                        error: function (model, response) {
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Task", json.errors, "error");
+                        }
+                    }
+                );
+            });
+        });
+
     }
 });

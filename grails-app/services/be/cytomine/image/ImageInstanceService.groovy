@@ -378,6 +378,7 @@ class ImageInstanceService extends ModelService {
         println "jsonNewData.deleted="+jsonNewData.deleted
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
+        c.delete = true
         return executeCommand(c,domain,jsonNewData)
     }
 

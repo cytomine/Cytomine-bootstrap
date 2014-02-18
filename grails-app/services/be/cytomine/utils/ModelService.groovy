@@ -108,13 +108,15 @@ abstract class ModelService {
      * Execute command with JSON data
      */
     protected executeCommand(Command c, Task task = null) {
-        if(c instanceof DeleteCommand) {
+        log.info "Command ${c.class} with flag ${c.delete}"
+        if(c instanceof DeleteCommand || c.delete) {
             def domainToDelete = c.domain
-            //println "c.domain="+c.deleted
             //Create a backup (for 'undo' op)
             //We create before for deleteCommand to keep data from HasMany inside json (data will be deleted later)
-            def backup = domainToDelete.encodeAsJSON()
-            c.backup = backup
+            if(c instanceof DeleteCommand) {
+                def backup = domainToDelete.encodeAsJSON()
+                c.backup = backup
+            }
             //remove all dependent domains
             def allServiceMethods = this.metaClass.methods*.name
             int numberOfDirectDependence = 0

@@ -366,7 +366,7 @@ class ImageInstanceTests  {
 
         println project.list().collect{it.name}
         project.refresh()
-        //assert project.countImages == 0
+        assert project.countImages == 0
 
         result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 404 == result.code

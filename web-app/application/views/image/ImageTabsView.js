@@ -10,6 +10,13 @@ var ImageTabsView = Backbone.View.extend({
     refresh: function () {
 
     },
+    afterDeleteImageEvent: function () {
+        var table = $("#imageProjectTable" + this.idProject);
+        if(table && table.dataTable()) {
+            table.dataTable().fnDestroy();
+        }
+        this.render()
+    },
     render : function() {
         var self = this;
         require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {

@@ -40,6 +40,21 @@ class ProjectDependencyTests  {
 //        assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
     }
 
+    void testProjectDependencyWithImage() {
+        //create a term and all its dependence domain
+        def project = BasicInstanceBuilder.getProjectNotExist(true)
+        def image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+
+        BasicInstanceBuilder.checkIfDomainExist(project)
+        BasicInstanceBuilder.checkIfDomainExist(image)
+
+        //try to delete term
+        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+
+        BasicInstanceBuilder.checkIfDomainExist(project,false)
+        BasicInstanceBuilder.checkIfDomainExist(image,false)
+    }
+
 
     void testProjectDependencyWithTask() {
 

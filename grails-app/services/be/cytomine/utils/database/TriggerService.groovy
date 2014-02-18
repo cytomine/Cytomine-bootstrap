@@ -51,8 +51,8 @@ class TriggerService {
             statement.execute(getImageTriggerAfterInsert())
             statement.execute(getImageTriggerBeforeDelete())
             statement.execute(getImageTriggerAfterDelete())
-//            statement.execute(getImageTriggerBeforeUpdate())
-//            statement.execute(getImageTriggerAfterUpdate())
+            statement.execute(getImageTriggerBeforeUpdate())
+            statement.execute(getImageTriggerAfterUpdate())
 
             statement.execute(getAnnotationCommentBeforeInsert())
             statement.execute(getAnnotationCommentAfterInsert())
@@ -459,7 +459,7 @@ class TriggerService {
             currentProject  project%ROWTYPE;
         BEGIN
             SELECT * INTO currentProject FROM project where id = OLD.project_id FOR UPDATE;
-            RETURN OLD;
+            RETURN NEW;
         END ;
         \$decImageBefore\$ LANGUAGE plpgsql; """
 
@@ -484,12 +484,6 @@ class TriggerService {
                 UPDATE project SET count_images = count_images + 1 WHERE project.id = OLD.project_id;
             ELSEIF NEW.deleted IS NOT NULL AND OLD.deleted IS NULL THEN
                 UPDATE project SET count_images = count_images - 1 WHERE project.id = OLD.project_id;
-            ELSEIF NEW.deleted IS NOT NULL AND OLD.deleted IS NOT NULL THEN
-                UPDATE project SET count_images = count_images - 66 WHERE project.id = OLD.project_id;
-            ELSEIF NEW.deleted IS NULL AND OLD.deleted IS NULL THEN
-                UPDATE project SET count_images = count_images - 166 WHERE project.id = OLD.project_id;
-            ELSE
-                UPDATE project SET count_images = count_images + 66 WHERE project.id = OLD.project_id;
             END IF;
 
             RETURN NEW;

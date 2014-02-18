@@ -313,9 +313,10 @@ class ProjectService extends ModelService {
         SecurityACL.checkReadOnly(domain.container())
         def jsonNewData = JSON.parse(domain.encodeAsJSON())
         jsonNewData.deleted = new Date().time
-        println "jsonNewData.deleted="+jsonNewData.deleted
+        println "jsonNewData.deleted="+new Date(jsonNewData.deleted)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
+        c.delete = true
         return executeCommand(c,domain,jsonNewData)
     }
 
@@ -434,10 +435,11 @@ class ProjectService extends ModelService {
 //    }
 
     def deleteDependentImageInstance(Project project, Transaction transaction,Task task=null) {
-
+        println "****************** deleteDependentImageInstance"
         taskService.updateTask(task,task? "Delete ${ImageInstance.countByProject(project)} images":"")
 
         ImageInstance.findAllByProject(project).each {
+            println "DELETE DEPENDENCY:"+it.id
             imageInstanceService.delete(it,transaction,null, false)
         }
     }
