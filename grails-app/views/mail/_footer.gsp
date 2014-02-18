@@ -11,7 +11,7 @@
                         <td align="center">
                             <p>
                                 <a href="#">Terms</a> |
-                                <a href="#">Privacy</a> |
+                                <a href="#">Privacy</a>
                             </p>
                         </td>
                     </tr>

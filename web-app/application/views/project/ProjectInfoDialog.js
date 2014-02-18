@@ -73,7 +73,7 @@ var ProjectInfoDialog = Backbone.View.extend({
             success: function (collection, response) {
                 if (collection.length != 0) {
                     collection.each(function (image) {
-                        var imgLinkTpl = '<div style="display : inline;margin: 10px;"><a id="viewImg-<%= id %>" href="#tabs-image-<%= project %>-<%= id %>-"><img class="lazy" alt="<%= filename %>" src="<%= thumb %>" style="height:200px;" /></a></div>';
+                        var imgLinkTpl = '<div style="display : inline;margin: 10px;"><a id="viewImg-<%= id %>" href="#tabs-image-<%= project %>-<%= id %>-"><img class="lazy img-thumbnail" alt="<%= filename %>" src="<%= thumb %>" style="height:200px;" /></a></div>';
                         $("#imageInfoBigPanel-" + project.id).find(".row").append(_.template(imgLinkTpl, image.toJSON()));
                     })
                 } else {

@@ -986,6 +986,7 @@ div.olControlZoomPanel .olControlZoomOutItemInactive {
 div.olControlZoomPanel .olControlZoomInItemInactive,
 div.olControlZoomPanel .olControlZoomOutItemInactive {
     background:-webkit-gradient(linear,left top,left bottom,color-stop(5%,rgba(90,89,89,1)),color-stop(85%,rgba(66,65,65,1)));
+    background:-moz-linear-gradient(top, #5A5959 5%, #424141 85%); /* FF3.6+ */
     position: absolute;
 }
 div.olControlZoomPanel .olControlZoomInItemInactive {

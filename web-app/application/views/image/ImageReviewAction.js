@@ -57,7 +57,11 @@ var ImageReviewAction = Backbone.View.extend({
             self.startReviewing();
             return false;
         });
+        $(self.el).find("a.deleteImage" + self.model.id).bind('click',function(){console.log("del"+self.model.id);});
+/*        $("#deleteImage" + self.model.id).on("click", function () {
 
+            return false;
+        });*/
         el.find("#startCytoreview" + self.model.id).on("click", function () {
             self.startCytoReviewing();
             return false;

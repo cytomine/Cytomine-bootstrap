@@ -24,8 +24,8 @@ var ShareAnnotationView = Backbone.View.extend({
         var shareWithOption = $("input[name=shareWithOption]");
 
         new AnnotationCommentCollection({ annotation: self.model.id}).fetch({
-            success: function (collection, response) {
-                var commentTpl = "<ul><li><b>( <%= hour %> )</b> <%= sender %> : <i><%= comment %></i></li></ul>";
+            success: function (collection, response) {                
+                var commentTpl = "<p><span class='label label-default'><%= hour %></span> <span class='label label-info'><%= sender %></span></p><blockquote><p><%= comment %></p></blockquote>";
                 var lastDateString = undefined;
                 collection.each(function (model) {
                     var date = new Date();
@@ -33,7 +33,7 @@ var ShareAnnotationView = Backbone.View.extend({
                     var dateString = date.toLocaleDateString();
 
                     if (dateString != lastDateString) {
-                        comments.append(_.template("<h4><%= date %></h4>", {date: dateString}));
+                        comments.append(_.template("<p class='lead text-right'><%= date %></p><hr/>", {date: dateString}));
                         lastDateString = dateString
                     }
                     var hours = (date.getHours() < 10) ? "0" + date.getHours() : date.getHours();
