@@ -33,8 +33,8 @@ var InformationsPanel = SideBarPanel.extend({
     },
     afterDeleteImageEvent : function() {
         var self = this;
-        $("#closeTabtabs-image-" + self.model.id).click()
-        $("#closeTabtabs-review-" + self.model.id).click()
+        $("#closeTabtabs-image-" + self.model.id).click();
+        $("#closeTabtabs-review-" + self.model.id).click();
     },
     /**
      * Render the html into the DOM element associated to the view
