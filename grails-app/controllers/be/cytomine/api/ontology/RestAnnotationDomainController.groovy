@@ -8,15 +8,18 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.Job
+import be.cytomine.processing.RoiAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.sql.AlgoAnnotationListing
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
+import be.cytomine.sql.RoiAnnotationListing
 import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
@@ -184,6 +187,9 @@ class RestAnnotationDomainController extends RestController {
         if(isReviewedAnnotationAsked(params)) {
             al = new ReviewedAnnotationListing()
             result = createRequest(al, params)
+        } else if(isRoiAnnotationAsked(params)) {
+            al = new RoiAnnotationListing()
+            result = createRequest(al, params)
         } else if(isAlgoAnnotationAsked(params)) {
             al = new AlgoAnnotationListing()
             result.addAll(createRequest(al, params))
@@ -300,6 +306,13 @@ class RestAnnotationDomainController extends RestController {
      */
     private boolean isReviewedAnnotationAsked(def params) {
         return params.getBoolean('reviewed')
+    }
+
+    /**
+     * Check if we ask reviewed annotation
+     */
+    private boolean isRoiAnnotationAsked(def params) {
+        return params.getBoolean('roi')
     }
 
     /**
@@ -555,17 +568,17 @@ class RestAnnotationDomainController extends RestController {
         @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
     ])
     def show() {
-        AnnotationDomain annotation = userAnnotationService.read(params.long('id'))
-        if (annotation) {
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('id'))
+        if(!annotation) {
+            responseNotFound("Annotation",params.id)
+        } else if(annotation instanceof UserAnnotation) {
             forward(controller: "restUserAnnotation", action: "show")
-        }
-        else {
-            annotation = algoAnnotationService.read(params.long('id'))
-            if (annotation) {
-                forward(controller: "restAlgoAnnotation", action: "show")
-            } else {
-                forward(controller: "restReviewedAnnotation", action: "show")
-            }
+        } else if(annotation instanceof AlgoAnnotation) {
+            forward(controller: "restAlgoAnnotation", action: "show")
+        } else  if(annotation instanceof ReviewedAnnotation) {
+            forward(controller: "restReviewedAnnotation", action: "show")
+        }else  if(annotation instanceof RoiAnnotation) {
+            forward(controller: "restRoiAnnotation", action: "show")
         }
     }
 
@@ -577,7 +590,9 @@ class RestAnnotationDomainController extends RestController {
     def add() {
         println params
         SecUser user = cytomineService.currentUser
-        if (user.algo()) {
+        if(params.getBoolean('roi')) {
+            forward(controller: "restRoiAnnotation", action: "add")
+        } else if (user.algo()) {
             forward(controller: "restAlgoAnnotation", action: "add")
         } else {
             forward(controller: "restUserAnnotation", action: "add")
@@ -600,28 +615,21 @@ class RestAnnotationDomainController extends RestController {
         else {
             try {
                 SecUser user = cytomineService.currentUser
-                if (user.algo()) {
-                    //if user is algo, redirect to the correct controller
+
+                def annotation = AnnotationDomain.getAnnotationDomain(params.getLong("id"))
+                if(!annotation) {
+                    responseNotFound("Annotation",params.id)
+                } else if(annotation instanceof UserAnnotation) {
+                    forward(controller: "restUserAnnotation", action: "update")
+                } else if(annotation instanceof AlgoAnnotation) {
                     forward(controller: "restAlgoAnnotation", action: "update")
-                } else {
-                    //if user is human, check if its a user annotation or a reviewed annotation
-                    AnnotationDomain annotation = UserAnnotation.read(params.getLong("id"))
-
-                    if (annotation)
-                        forward(controller: "restUserAnnotation", action: "update")
-                    else {
-                        annotation = ReviewedAnnotation.read(params.getLong("id"))
-
-                        if (annotation) {
-                            if (annotation.reviewUser != user) {
-                                throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!")
-                            }
-                            forward(controller: "restReviewedAnnotation", action: "update")
-                        }
-                        else {
-                            throw new ObjectNotFoundException("Annotation not found with id " + params.id)
-                        }
+                } else  if(annotation instanceof ReviewedAnnotation) {
+                    if (annotation.reviewUser != user) {
+                        throw new ForbiddenException("You cannot update this annotation! Only ${annotation.user.username} can do that!")
                     }
+                    forward(controller: "restReviewedAnnotation", action: "update")
+                }else  if(annotation instanceof RoiAnnotation) {
+                    forward(controller: "restRoiAnnotation", action: "update")
                 }
             } catch (CytomineException e) {
                 log.error(e)
@@ -640,10 +648,15 @@ class RestAnnotationDomainController extends RestController {
     ])
     def delete() {
         try {
-            if (cytomineService.currentUser.algo()) {
-                forward(controller: "restAlgoAnnotation", action: "delete")
-            } else {
+            def annotation = AnnotationDomain.getAnnotationDomain(params.getLong("id"))
+            if(!annotation) {
+                responseNotFound("Annotation",params.id)
+            } else if(annotation instanceof UserAnnotation) {
                 forward(controller: "restUserAnnotation", action: "delete")
+            } else if(annotation instanceof AlgoAnnotation) {
+                forward(controller: "restAlgoAnnotation", action: "delete")
+            }else  if(annotation instanceof RoiAnnotation) {
+                forward(controller: "restRoiAnnotation", action: "delete")
             }
         } catch (CytomineException e) {
             log.error(e)

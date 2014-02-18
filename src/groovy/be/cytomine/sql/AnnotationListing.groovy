@@ -731,6 +731,81 @@ class ReviewedAnnotationListing extends AnnotationListing {
             return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
         }
      }
+}
 
 
+class RoiAnnotationListing extends AnnotationListing {
+
+    def getDomainClass() {
+        return "be.cytomine.processing.RoiAnnotation"
+    }
+
+    /**
+     *  all properties group available, each value is a list of assoc [propertyName, SQL columnName/methodName)
+     *  If value start with #, don't use SQL column, its a "trensiant property"
+     */
+    def availableColumn =
+            [
+                    basic : [id:'a.id'],
+                    meta : [
+                            reviewed : 'false',
+                            image : 'a.image_id',
+                            project : 'a.project_id',
+                            container : "a.project_id",
+                            created : 'extract(epoch from a.created)*1000',
+                            updated : 'extract(epoch from a.updated)*1000',
+                            user : 'a.user_id',
+                            geometryCompression : 'a.geometry_compression',
+                            cropURL : '#cropURL',
+                            smallCropURL : '#smallCropURL',
+                            url: '#url',
+                            imageURL : '#imageURL',
+                    ],
+                    wkt : [location:'a.wkt_location'],
+                    gis : [area: 'area',areaUnit: 'area_unit', perimeter:'perimeter',perimeterUnit : 'perimeter_unit',x:'ST_X(ST_centroid(a.location))',y:'ST_Y(ST_centroid(a.location))'],
+                    image : [originalfilename : 'ai.original_filename'],
+                    user : [creator:'u.username',lastname: 'u.lastname',firstname: 'u.firstname']
+            ]
+
+
+    /**
+     * Generate SQL string for FROM
+     * FROM depends on data to print (if image name is aksed, need to join with imageinstance+abstractimage,...)
+     */
+    def getFrom() {
+
+        def from  = "FROM roi_annotation a "
+        def where = "WHERE true\n"
+
+        if(columnToPrint.contains('image')) {
+            from = "$from, abstract_image ai, image_instance ii "
+            where = "$where AND a.image_id = ii.id \n" +
+                    "AND ii.base_image_id = ai.id\n"
+        }
+
+        if(columnToPrint.contains('user')) {
+            from = "$from, sec_user u "
+            where = "$where AND a.user_id = u.id \n"
+        }
+
+        return from +"\n" + where
+    }
+
+    def createOrderBy() {
+        if(kmeansValue<3) return ""
+        if(!orderBy) {
+            return "ORDER BY a.id desc"
+        } else {
+            return "ORDER BY " + orderBy.collect{it.key + " " + it.value}.join(", ")
+        }
+    }
+
+    def buildExtraRequest() {
+        columnToPrint.remove("term")
+
+    }
+
+    def getNotReviewedOnlyConst() {
+        return ""
+    }
 }

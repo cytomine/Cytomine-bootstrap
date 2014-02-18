@@ -8,6 +8,7 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.RoiAnnotation
 import be.cytomine.project.Project
 import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
@@ -300,10 +301,18 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
      */
     public static AnnotationDomain getAnnotationDomain(long id) {
         AnnotationDomain basedAnnotation = UserAnnotation.read(id)
-        if (!basedAnnotation)
+        if (!basedAnnotation) {
             basedAnnotation = AlgoAnnotation.read(id)
-        if (!basedAnnotation)
+        }
+
+        if (!basedAnnotation) {
             basedAnnotation = ReviewedAnnotation.read(id)
+        }
+
+        if (!basedAnnotation) {
+            basedAnnotation = RoiAnnotation.read(id)
+        }
+
         if (basedAnnotation) return basedAnnotation
         else throw new ObjectNotFoundException("Annotation ${id} not found")
 

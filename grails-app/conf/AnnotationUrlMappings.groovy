@@ -109,9 +109,24 @@ class AnnotationUrlMappings {
             action = [GET:"cropAlphaMask"]
         }
 
-
-
-
+        /**
+         * Roi Annotation
+         */
+        "/api/roiannotation.$format"(controller:"restRoiAnnotation"){
+            action = [GET: "list",POST:"add"]
+        }
+        "/api/roiannotation/$id.$format"(controller:"restRoiAnnotation"){
+            action = [GET:"show",PUT:"update", DELETE:"delete"]
+        }
+        "/api/roiannotation/$id/crop.$format"(controller: "restRoiAnnotation"){
+            action = [GET:"crop"]
+        }
+        "/api/roiannotation/$id/mask.$format"(controller: "restRoiAnnotation"){
+            action = [GET:"cropMask"]
+        }
+        "/api/roiannotation/$id/alphamask.$format"(controller: "restRoiAnnotation"){
+            action = [GET:"cropAlphaMask"]
+        }
 
 
 

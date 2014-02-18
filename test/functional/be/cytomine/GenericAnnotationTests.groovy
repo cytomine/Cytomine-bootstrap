@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.*
+import be.cytomine.processing.RoiAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -48,6 +49,14 @@ class GenericAnnotationTests  {
         assert json instanceof JSONObject
     }
 
+    void testGetAnnotationWithCredentialWidthAnnotationRoi() {
+        def annotation = BasicInstanceBuilder.getRoiAnnotation()
+        def result = AnnotationDomainAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
+
     void testListAnnotationByProject() {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
         def result = AnnotationDomainAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -59,7 +68,6 @@ class GenericAnnotationTests  {
         assert 404 == result.code
 
     }
-
 
     void testListAnnotationByProjecImageAndUsertWithCredentialWithAnnotationAlgo() {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
@@ -131,54 +139,6 @@ class GenericAnnotationTests  {
         //assert json.collection instanceof JSONArray
     }
 
-//    void testListAnnotationByProjectWithSuggestTerm() {
-//        //create annotation
-//        AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
-//        annotationTerm.term = BasicInstanceBuilder.getTerm()
-//        BasicInstanceBuilder.checkDomain(annotationTerm)
-//        BasicInstanceBuilder.saveDomain(annotationTerm)
-//        UserAnnotation annotation = annotationTerm.userAnnotation
-//
-//        //create job
-//        UserJob userJob = BasicInstanceBuilder.getUserJob(annotation.project)
-//        Job job = userJob.job
-//
-//        //create suggest with different term
-//        AlgoAnnotationTerm suggest = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation,userJob)
-//        suggest.term = BasicInstanceBuilder.getAnotherBasicTerm()
-//        BasicInstanceBuilder.checkDomain(suggest)
-//        BasicInstanceBuilder.saveDomain(suggest)
-//
-//        def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assert 200 == result.code
-//        def json = JSON.parse(result.data)
-//        assert json.collection instanceof JSONArray
-//        assert AnnotationDomainAPI.containsInJSONList(annotation.id,json)
-//
-//        //create annotation
-//        AnnotationTerm annotationTerm2 = BasicInstanceBuilder.getAnnotationTerm()
-//        annotationTerm2.userAnnotation = BasicInstanceBuilder.getUserAnnotationNotExist(annotationTerm2.container(),true)
-//        annotationTerm2.term = BasicInstanceBuilder.getTerm()
-//        BasicInstanceBuilder.checkDomain(annotationTerm2)
-//        BasicInstanceBuilder.saveDomain(annotationTerm2)
-//        UserAnnotation annotation2 = annotationTerm2.userAnnotation
-//
-//        //create suggest with same term
-//        AlgoAnnotationTerm suggest2 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,annotation2,userJob)
-//        suggest2.term = BasicInstanceBuilder.getTerm()
-//        BasicInstanceBuilder.checkDomain(suggest)
-//        BasicInstanceBuilder.saveDomain(suggest)
-//
-//        //We are looking for a different term => annotation shouldn't be in result
-//        result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation2.project.id, annotationTerm2.term.id, suggest.term.id, job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assert 200 == result.code
-//        json = JSON.parse(result.data)
-//        assert json.collection instanceof JSONArray
-//        assert !AnnotationDomainAPI.containsInJSONList(annotation2.id,json)
-//    }
-
-
-
     void testDownloadAnnotationDocumentForAnnotationAlgo() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
         def result = AnnotationDomainAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -198,9 +158,6 @@ class GenericAnnotationTests  {
         result = AnnotationDomainAPI.downloadDocumentNewImplementation(annotationTerm.userAnnotation.project.id,BasicInstanceBuilder.getUser2().id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
     }
-
-
-
 
 
     void testAddAnnotationCorrectForAlgo() {
@@ -247,6 +204,18 @@ class GenericAnnotationTests  {
 
         result = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
+    }
+
+    void testAddAnnotationCorrectForRoi() {
+        def annotationToAdd = BasicInstanceBuilder.getRoiAnnotation()
+        def result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
+        assert 200 == result.code
+        int idAnnotation = result.data.id
+
+        result = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        assert RoiAnnotation.read(idAnnotation)
     }
 
     void testEditAnnotationWithGenericCallForAlgo() {
@@ -305,6 +274,33 @@ class GenericAnnotationTests  {
         BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
+    void testEditAnnotationWithGenericCallForRoi() {
+        RoiAnnotation annotationToAdd = BasicInstanceBuilder.getRoiAnnotation()
+        def data = UpdateData.createUpdateSet(
+                BasicInstanceBuilder.getRoiAnnotation(),
+                [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
+        )
+        def result = AnnotationDomainAPI.update(annotationToAdd.id,data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        int idAnnotation = json.roiannotation.id
+
+        def showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        json = JSON.parse(showResult.data)
+        BasicInstanceBuilder.compare(data.mapNew, json)
+
+        showResult = AnnotationDomainAPI.undo()
+        assert 200 == result.code
+        showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
+
+        showResult = AnnotationDomainAPI.redo()
+        assert 200 == result.code
+        showResult = AnnotationDomainAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
+    }
+
     void testDeleteAnnotationForAlgo() {
         def annotationToDelete = BasicInstanceBuilder.getAlgoAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
@@ -332,6 +328,29 @@ class GenericAnnotationTests  {
 
     void testDeleteUserAnnotationForUser() {
         def annotationToDelete = BasicInstanceBuilder.getUserAnnotationNotExist()
+        assert annotationToDelete.save(flush: true)  != null
+        def id = annotationToDelete.id
+        def result = AnnotationDomainAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        def showResult = AnnotationDomainAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == showResult.code
+
+        result = AnnotationDomainAPI.undo()
+        assert 200 == result.code
+
+        result = AnnotationDomainAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = AnnotationDomainAPI.redo()
+        assert 200 == result.code
+
+        result = AnnotationDomainAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+    void testDeleteUserAnnotationForRoi() {
+        def annotationToDelete = BasicInstanceBuilder.getRoiAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         def id = annotationToDelete.id
         def result = AnnotationDomainAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
@@ -507,8 +526,6 @@ class GenericAnnotationTests  {
         def result = AnnotationDomainAPI.correctAnnotation(annotation.id, JSONUtils.toJSONString(json),Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 400 == result.code
     }
-
-
 
     private void doFreeHandAnnotationRem(def annotation, boolean reviewMode) {
         String basedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
@@ -855,83 +872,5 @@ class GenericAnnotationTests  {
         println "END NUMBER OF POINT:" + annotation.location.numPoints
 
     }
-//
-//
-//
-//    def testAnnotationNotWorking() {
-//        Project project = BasicInstanceBuilder.getProjectNotExist(true)
-//        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,false)
-//        annotation.location = new WKTReader().read(new File('test/functional/be/cytomine/utils/annotation_not_working.txt').text)
-//
-//        def result = UserAnnotationAPI.create(annotation.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assert 200 == result.code
-//        annotation = result.data
-//
-//    }
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-
-
-
-//
-//    private void doFreeHandAnnotationRem(def annotation, boolean reviewMode) {
-//        String basedLocation = "POLYGON ((0 0, 0 10000, 10000 10000, 10000 0, 0 0))"
-//        String removedLocation = "POLYGON ((0 5000, 10000 5000, 10000 10000, 0 10000, 0 5000))"
-//        String expectedLocation = "POLYGON ((0 0, 0 5000, 10000 5000, 10000 0, 0 0))"
-//
-//        //add annotation with empty space inside it
-//        annotation.user = User.findByUsername(Infos.GOODLOGIN)
-//        annotation.location = new WKTReader().read(basedLocation)
-//        assert annotation.save(flush: true)  != null
-//
-//        //correct remove
-//        def json = [:]
-//        json.location = removedLocation
-//        json.image = annotation.image.id
-//        json.review = reviewMode
-//        json.remove = true
-//        def result = AnnotationDomainAPI.correctAnnotation(annotation.id, json.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
-//        assert 200 == result.code
-//
-//        annotation.refresh()
-//        assert new WKTReader().read(expectedLocation).equals(annotation.location)
-//    }
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

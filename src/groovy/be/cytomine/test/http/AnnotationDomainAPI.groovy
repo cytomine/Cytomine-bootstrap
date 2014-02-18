@@ -3,6 +3,7 @@ package be.cytomine.test.http
 import be.cytomine.AnnotationDomain
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.RoiAnnotation
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -74,8 +75,8 @@ class AnnotationDomainAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def create(String jsonAnnotation, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation.json"
+    static def create(String jsonAnnotation, String username, String password, boolean roi = false) {
+        String URL = Infos.CYTOMINEURL + "api/annotation.json" + (roi? "?roi=true" : "")
         def result = doPOST(URL, jsonAnnotation,username, password)
         println result
         def json = JSON.parse(result.data)
@@ -83,6 +84,7 @@ class AnnotationDomainAPI extends DomainAPI {
         Long idAnnotation = json?.annotation?.id
         AnnotationDomain annotation = UserAnnotation.read(idAnnotation)
         if(!annotation)  annotation = AlgoAnnotation.read(idAnnotation)
+        if(!annotation)  annotation = RoiAnnotation.read(idAnnotation)
         result.data = annotation
         return result
     }

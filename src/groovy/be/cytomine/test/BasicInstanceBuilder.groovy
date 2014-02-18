@@ -411,6 +411,7 @@ class BasicInstanceBuilder {
         saveDomain(annotation)
     }
 
+
     static UserAnnotation getUserAnnotationNotExist(Project project = getImageInstance().project, boolean save = false) {
         getUserAnnotationNotExist(project,getImageInstance(),save)
     }
@@ -426,6 +427,35 @@ class BasicInstanceBuilder {
     }
 
 
+    static RoiAnnotation getRoiAnnotation() {
+        def annotation = RoiAnnotation.findOrCreateWhere(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: getImageInstance(),
+                user: getUser1(),
+                project:getImageInstance().project
+        )
+        saveDomain(annotation)
+    }
+
+    static RoiAnnotation getRoiAnnotationNotExist(ImageInstance image = getImageInstance(),boolean save = false) {
+        RoiAnnotation annotation = new RoiAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image:image,
+                user: getUser1(),
+                project:image.project
+        )
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
+
+    static RoiAnnotation getRoiAnnotationNotExist(ImageInstance image = getImageInstance(),User user,boolean save = false) {
+        RoiAnnotation annotation = new RoiAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image:image,
+                user: user,
+                project:image.project
+        )
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
 
     static UserAnnotation getUserAnnotationNotExist(ImageInstance image, String polygon, User user, Term term) {
         UserAnnotation annotation = new UserAnnotation(

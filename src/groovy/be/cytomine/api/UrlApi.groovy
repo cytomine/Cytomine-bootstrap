@@ -39,6 +39,16 @@ class UrlApi {
     }
 
     /**
+     * Return cytomine url to get a roi crop annotation
+     * @param url Cytomine base url
+     * @param idAnnotation Annotation id
+     * @return full cytomine url
+     */
+    static def getROIAnnotationCropWithAnnotationId(Long idAnnotation) {
+        return "${serverUrl()}/api/roiannotation/$idAnnotation/crop.jpg"
+    }
+
+    /**
      * Return cytomine url to get a user crop annotation
      * @param url Cytomine base url
      * @param idAnnotation Annotation id
