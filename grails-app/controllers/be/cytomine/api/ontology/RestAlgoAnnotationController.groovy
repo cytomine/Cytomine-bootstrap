@@ -8,10 +8,9 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.security.SecUser
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
 import jsondoc.annotation.ApiMethodLight
+import org.codehaus.groovy.grails.web.json.JSONArray
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
@@ -219,7 +218,6 @@ class  RestAlgoAnnotationController extends RestController {
         Integer bufferLength = params.getInt('bufferLength')
         Integer area = params.getInt('area')
 
-        println "area=$area"
         if (!image) {
             responseNotFound("ImageInstance", params.getLong('idImage'))
         }
@@ -237,7 +235,6 @@ class  RestAlgoAnnotationController extends RestController {
                 def imageSize = image.baseImage.width*image.baseImage.height
                 area = (Math.sqrt(imageSize)/(annotationNumber/1000))/4
                 area = Math.max(area,500)
-                println "area=$area"
             }
             unionAnnotations(image, user, term, minIntersectLength, bufferLength,area)
             def data = [:]
@@ -256,7 +253,6 @@ class  RestAlgoAnnotationController extends RestController {
      * @param bufferLength tolerance threshold for two annotation (if they are very close but not intersect)
      */
     private def unionAnnotations(ImageInstance image, SecUser user, Term term, Integer minIntersectLength, Integer bufferLength, Integer area) {
-        println "area=$area"
         unionGeometryService.unionPicture(image,user,term,area,area,bufferLength,minIntersectLength)
     }
 }

@@ -10,10 +10,10 @@ import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
-import org.jsondoc.core.annotation.*
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
-import org.jsondoc.core.pojo.ApiVerb
-import org.springframework.http.MediaType
 
 @Api(name = "property services", description = "Methods for managing properties")
 class RestPropertyController extends RestController {

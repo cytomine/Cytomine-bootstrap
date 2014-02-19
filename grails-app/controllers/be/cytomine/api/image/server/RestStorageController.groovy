@@ -105,10 +105,7 @@ class RestStorageController extends RestController {
      * Create a storage for user with default parameters
      */
     def create = {
-        println params
         def id = params.long('user')
-
-        println ">>> < user id : $id"
         SecUser user = secUserService.read(id)
         if (user instanceof User) {
             if (Storage.findByUser(user)) {

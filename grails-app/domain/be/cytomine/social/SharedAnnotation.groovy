@@ -3,8 +3,6 @@ package be.cytomine.social
 import be.cytomine.CytomineDomain
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
-import grails.converters.JSON
-import org.apache.log4j.Logger
 
 /**
  * A shared annotation is a comment on a specific annotation

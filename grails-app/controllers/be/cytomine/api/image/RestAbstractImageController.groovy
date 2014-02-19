@@ -219,8 +219,6 @@ class RestAbstractImageController extends RestController {
 
     //TODO:APIDOC
     def camera () {
-        println "camera"
-        println params.imgdata
         //:to do : save image in database ?
         //:+ send email
         String imageData = params.imgdata.replace(' ', '+')
@@ -281,8 +279,6 @@ class RestAbstractImageController extends RestController {
 
             def ids = params.get('channels').split(",").collect{Integer.parseInt(it)}
             def colors = params.get('colors').split(",").collect{it}
-            println "ids=$ids"
-            println "colors=$colors"
             def params = []
 
             ids.eachWithIndex {pos,index ->

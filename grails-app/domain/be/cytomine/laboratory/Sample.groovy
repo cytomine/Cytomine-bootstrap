@@ -2,11 +2,8 @@ package be.cytomine.laboratory
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 /**

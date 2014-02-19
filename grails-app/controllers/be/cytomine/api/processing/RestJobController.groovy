@@ -89,8 +89,6 @@ class RestJobController extends RestController {
     @ApiMethodLight(description="Add a new job and create the corresponding user job")
     def add() {
         try {
-            println "Job Controller"
-            println params
             def result = jobService.add(request.JSON)
             long idJob = result?.data?.job?.id
             jobService.createUserJob(User.read(springSecurityService.principal.id), Job.read(idJob))
@@ -189,13 +187,11 @@ class RestJobController extends RestController {
         } else {
             SecurityACL.checkReadOnly(job.container())
             SecurityACL.checkIsAdminContainer(job.project,cytomineService.currentUser)
-            println "1project=${job.project.id}"
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
             //TODO:: Optim instead of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
             taskService.updateTask(task,10,"Check if annotations are not reviewed...")
             List<AlgoAnnotation> annotations = algoAnnotationService.list(job)
-            println "2project=${job.project.id}"
             def reviewed = jobService.getReviewedAnnotation(annotations,job)
 
             if(!reviewed.isEmpty()) {

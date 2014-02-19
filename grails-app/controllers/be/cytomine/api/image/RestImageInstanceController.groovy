@@ -4,15 +4,11 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.command.Command
-import be.cytomine.command.EditCommand
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.Description
 import be.cytomine.utils.GeometryUtils
@@ -30,9 +26,6 @@ import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
  * Created by IntelliJ IDEA.
@@ -103,7 +96,6 @@ class RestImageInstanceController extends RestController {
         if (params.datatables) {
             def where = "project_id = ${project.id}"
             def fieldFormat = []
-            println "dataTablesService=$dataTablesService"
             responseSuccess(dataTablesService.process(params, ImageInstance, where, fieldFormat,project))
         }
         else if (project && !params.tree) {
@@ -172,67 +164,6 @@ class RestImageInstanceController extends RestController {
     ])
     def delete() {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
-
-////          def domain = imageInstanceService.retrieve(JSON.parse("{id : $params.id}"))
-////        println "======================> " + getInfo(params.id)
-////        SecurityACL.check(domain.container(),ADMINISTRATION)
-////        SecurityACL.checkReadOnly(domain.container())
-////        def jsonNewData = JSON.parse(domain.encodeAsJSON())
-////        jsonNewData.deleted = new Date().time
-////        println "jsonNewData.deleted="+jsonNewData.deleted
-////        SecUser currentUser = cytomineService.getCurrentUser()
-////        Command c = new EditCommand(user: currentUser)
-////        def result = imageInstanceService.executeCommand(c,domain,jsonNewData)
-////        println "result=$result"
-////        Project project = new Project(name:"coucou", ontology:Ontology.list().first())
-////        project.save(flush:true)
-////        responseResult(result)
-//        //domain.project = null
-////        domain.deleted = new Date()
-////        def names = domain.dirtyPropertyNames
-////
-////        println names
-//////        for (name in names) {
-//////            def originalValue = b.getPersistentValue(name)
-//////        }
-////
-////        //
-////        domain = imageInstanceService.saveAndReturnDomain(domain)
-////
-////
-////        domain.reviewStart = new Date()
-////        names = domain.dirtyPropertyNames
-////
-////        println names
-////        imageInstanceService.saveDomain(domain)
-////        println "======================> " + getInfo(params.id)
-//
-////
-//        def domain = ImageInstance.get(params.long("id"))
-//        println "domain " + domain.reviewStart + " " + domain.version
-//        domain.reviewStart = new Date()
-//        domain.save(flush:true, failOnError:true)
-//
-//        println "domain " + domain.reviewStart + " " + domain.version
-//        domain.reviewStart = new Date()
-//        domain.save(flush:true, failOnError:true)
-//
-//        println "domain " + domain.reviewStart + " " + domain.version
-//
-//
-//
-////        def domain = Project.read(16623)
-////        println "domain " + domain.name + " " + domain.version
-////        domain.name = "BOTANIQUE-LEAVES1"
-////        domain.deleted = new Date()
-////        domain.save(flush:true, failOnError:true)
-////
-////        println "domain " + domain.name + " " + domain.version
-////        domain.name = "BOTANIQUE-LEAVES2"
-////        domain.save(flush:true, failOnError:true)
-////
-////        println "domain " + domain.name + " " + domain.version
-//        response([])
     }
 
     def dataSource
@@ -298,7 +229,6 @@ class RestImageInstanceController extends RestController {
     def cropGeometry() {
         //TODO:: document this method
         String geometrySTR = params.geometry
-        println params
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.long("id"))
@@ -307,7 +237,6 @@ class RestImageInstanceController extends RestController {
 
     //TODO:APIDOC
     def mask() {
-        println "mask"
         //TODO:: document this method
         //TODO:: make alphamask
         ImageInstance image = ImageInstance.read(params.long('id'))

@@ -59,7 +59,7 @@ class ImagePropertiesService implements Serializable{
     }
 
     def extractUseful(AbstractImage image) {
-        println "image=$image"
+        log.info "image=$image"
         switch (image.getMime().extension) {
             case "mrxs":
                 extractUsefulMrxs(image)

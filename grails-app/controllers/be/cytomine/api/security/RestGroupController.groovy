@@ -1,14 +1,12 @@
 package be.cytomine.api.security
 
 import be.cytomine.api.RestController
-import be.cytomine.image.AbstractImage
 import be.cytomine.security.Group
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 /**

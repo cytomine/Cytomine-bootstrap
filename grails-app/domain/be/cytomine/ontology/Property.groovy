@@ -4,10 +4,8 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
 
 @ApiObject(name = "property", description = "A key-value entry that can be map to a domain (project, image, annotation,...)")
 class Property extends CytomineDomain implements Serializable{

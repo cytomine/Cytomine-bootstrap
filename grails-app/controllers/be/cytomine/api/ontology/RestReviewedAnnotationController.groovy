@@ -16,7 +16,6 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject

@@ -16,11 +16,7 @@ import be.cytomine.processing.RoiAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
-import be.cytomine.sql.AlgoAnnotationListing
-import be.cytomine.sql.AnnotationListing
-import be.cytomine.sql.ReviewedAnnotationListing
-import be.cytomine.sql.RoiAnnotationListing
-import be.cytomine.sql.UserAnnotationListing
+import be.cytomine.sql.*
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
@@ -28,7 +24,6 @@ import grails.converters.JSON
 import groovy.sql.Sql
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
@@ -121,7 +116,6 @@ class RestAnnotationDomainController extends RestController {
         @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Output file format (pdf, xls,...)")
     ])
     def downloadSearched() {
-        println "downloadSearched"
         def lists = doSearch(params)
         downloadDocument(lists.result,lists.project)
     }
@@ -207,7 +201,6 @@ class RestAnnotationDomainController extends RestController {
     }
 
     private downloadDocument(def annotations, Project project) {
-        println "downloadDocument"
         def ignoredField = ['class','image','project','user','container','userByTerm']
 
         if (params?.format && params.format != "html") {
@@ -233,7 +226,6 @@ class RestAnnotationDomainController extends RestController {
 
             if(!annotations.isEmpty()) {
                 annotations.first().each {
-                    println it.key + "=" + it.value
                     if(!ignoredField.contains(it.key)) {
                         fields << it.key
                     }
@@ -258,46 +250,17 @@ class RestAnnotationDomainController extends RestController {
                         }
                         it.value = termList
                     }
-
-                    //annotation[it.key]=it.value
                 }
 
                 exportResult.add(data)
-
-
-
-//                data.id = annotation.id
-//                data.area = (int) Math.floor(annotation.area)
-//                data.perimeter = (int) Math.floor(annotation.perimeter)
-//                data.XCentroid = (int) Math.floor(annotation.x)
-//                data.YCentroid = (int) Math.floor(annotation.y)
-//
-//                data.image = annotation.image
-//                data.filename = annotation.originalfilename
-//                data.user = usersIndex.get(annotation.user)
-//                data.term = annotation.term.collect {termsIndex.get(it).name}.join(", ")
-//                data.cropURL = annotation.cropURL
-//                data.cropGOTO = UrlApi.getAnnotationURL(project.id, data.image, data.id)
-//                exportResult.add(data)
             }
-
-
-
 
             def labels = [:]
             fields.each {
                 labels[it]=it
             }
-            println "exporterIdentifier=$exporterIdentifier"
-            println  "exportResult=${exportResult.size()}"
-            println "fields=${fields}"
-            println "labels=${labels}"
-//
-//            Map formatters = [author: upperCase]
-//         	Map parameters = [title: "Cool books", "column.widths": [0.2, 0.3, 0.5]]
 
             exportService.export(exporterIdentifier, response.outputStream, exportResult,fields,labels,[:],[:])
-//            exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.04, 0.06, 0.06, 0.04, 0.04, 0.04, 0.08, 0.06, 0.06, 0.25, 0.25], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
         }
     }
 
@@ -461,7 +424,6 @@ class RestAnnotationDomainController extends RestController {
         @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id")
     ])
     def downloadIncludedAnnotation() {
-        println "downloadIncludedAnnotation"
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
         def lists = getIncludedAnnotation(params,['basic','meta','gis','image','term'])
         downloadPdf(lists, image.project)
@@ -470,7 +432,6 @@ class RestAnnotationDomainController extends RestController {
 
 
     private downloadPdf(def annotations, Project project) {
-        println "downloadPdf"
         if (params?.format && params.format != "html") {
             def exporterIdentifier = params.format;
             if (exporterIdentifier == "xls") exporterIdentifier = "excel"
@@ -527,7 +488,6 @@ class RestAnnotationDomainController extends RestController {
         def geometry = params.geometry
         AnnotationDomain annotation = null
         if(!geometry) {
-            println params.long('annotation')
             annotation = AnnotationDomain.getAnnotationDomain(params.long('annotation'))
             geometry = annotation.location.toText()
         }
@@ -553,7 +513,6 @@ class RestAnnotationDomainController extends RestController {
             //goto user annotation
             response = userAnnotationService.listIncluded(image,geometry,user,terms,annotation,propertiesToShow)
         }
-        println "END" + AnnotationListing.availableColumnDefault
         response
 
     }
@@ -588,7 +547,6 @@ class RestAnnotationDomainController extends RestController {
      */
     @ApiMethodLight(description="Add an annotation (only available for user/algo). If current user is algo, an algo annotation will be created. Otherwise, an user annotation")
     def add() {
-        println params
         SecUser user = cytomineService.currentUser
         if(params.getBoolean('roi')) {
             forward(controller: "restRoiAnnotation", action: "add")
@@ -706,9 +664,7 @@ class RestAnnotationDomainController extends RestController {
         def maxPoint = params.getLong('maxPoint')
         def json = request.JSON
         def wkt = json.wkt
-        println wkt
         def result = simplifyGeometryService.simplifyPolygon(wkt,minPoint,maxPoint)
-        println result.geometry
         responseSuccess([wkt:result.geometry.toText()])
     }
 
@@ -879,7 +835,6 @@ class RestAnnotationDomainController extends RestController {
      * @return List of annotation id from idImage and idUser that touch location
      */
     def findAnnotationIdThatTouch(String location, def layers, long idImage, String table) {
-        println "findAnnotationIdThatTouch"
         ImageInstance image = ImageInstance.read(idImage)
         boolean projectAdmin = image.project.checkPermission(ADMINISTRATION)
         if(!projectAdmin) {
@@ -921,21 +876,15 @@ class RestAnnotationDomainController extends RestController {
             }
         }
 
-        println "annotations="+annotations
-
         def termSizes = [:]
         annotations.each { annotation ->
             def terms = annotation.termsId()
-            println "terms="+terms
             terms.each { term->
                 def value = termSizes.get(term)?:0
-                 println "add term="+value + "+"+annotation.area
                  termSizes.put(term,value+annotation.area)
 
             }
         }
-
-        println "termSizes="+termSizes
 
         Double min = Double.MAX_VALUE
         Long goodTerm = null
@@ -948,9 +897,6 @@ class RestAnnotationDomainController extends RestController {
                }
             }
 
-            println "goodTerm="+goodTerm
-            println "min="+min
-
             ids = []
             annotations.each { annotation ->
                 def terms = annotation.termsId()
@@ -959,8 +905,6 @@ class RestAnnotationDomainController extends RestController {
                 }
             }
         }
-
-        println "ids="+ids
 
         return ids.unique()
     }

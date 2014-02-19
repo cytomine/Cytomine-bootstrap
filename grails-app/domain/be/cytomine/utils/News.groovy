@@ -2,8 +2,6 @@ package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
 import be.cytomine.security.User
-import grails.converters.JSON
-import org.apache.log4j.Logger
 
 /**
  * Cytomine new

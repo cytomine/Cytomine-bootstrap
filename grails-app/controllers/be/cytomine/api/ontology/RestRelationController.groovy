@@ -3,10 +3,10 @@ package be.cytomine.api.ontology
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
 import jsondoc.annotation.ApiMethodLight
-import org.jsondoc.core.annotation.*
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
-import org.jsondoc.core.pojo.ApiVerb
-import org.springframework.http.MediaType
 
 /**
  * Controller for relation between terms (parent, synonym,...)

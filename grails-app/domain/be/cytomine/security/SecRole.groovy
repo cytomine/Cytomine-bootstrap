@@ -1,6 +1,5 @@
 package be.cytomine.security
 
-import be.cytomine.CytomineDomain
 import jsondoc.annotation.ApiObjectFieldLight
 import org.jsondoc.core.annotation.ApiObject
 

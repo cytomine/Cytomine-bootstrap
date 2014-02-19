@@ -190,7 +190,6 @@ class AbstractImageService extends ModelService {
     def metadata(def id) {
         AbstractImage image = read(id)
         def url = image.getMetadataURL()
-        println url
         url = new URL(url)
         return url.text
     }

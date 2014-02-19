@@ -5,10 +5,10 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
-import org.jsondoc.core.annotation.*
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
-import org.jsondoc.core.pojo.ApiVerb
-import org.springframework.http.MediaType
 
 /**
  * Controller for ontology (terms tree)

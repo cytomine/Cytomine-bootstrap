@@ -8,14 +8,12 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.ForgotPasswordToken
 import be.cytomine.security.SecRole
-import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiBodyObject
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
@@ -23,7 +21,7 @@ import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import static grails.async.Promises.*
+
 /**
  * Controller for annotation created by user
  */
@@ -122,7 +120,6 @@ class RestUserAnnotationController extends RestController {
 
         if (request.JSON.users) {
             receivers = JSONUtils.getJSONList(request.JSON.users).collect { userID ->
-                println "userID=$userID"
                 User.read(userID)
             }
             receiversEmail = receivers.collect { it.getEmail() }

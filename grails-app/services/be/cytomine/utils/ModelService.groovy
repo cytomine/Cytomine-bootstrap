@@ -32,17 +32,15 @@ abstract class ModelService {
      */
     def saveDomain(def newObject) {
         newObject.checkAlreadyExist()
-//        println "newObject.deleted="+newObject.deleted
         if (!newObject.validate()) {
             log.error newObject.errors
             log.error newObject.retrieveErrors().toString()
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
         if (!newObject.save(flush: true, failOnError: true)) {
-            println "error"
+            log.error "error"
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
-//        println "newObject.deleted="+newObject.deleted
     }
 
     def saveAndReturnDomain(def newObject) {
@@ -53,7 +51,7 @@ abstract class ModelService {
             throw new WrongArgumentException(newObject.retrieveErrors().toString())
         }
         if (!newObject.save(flush: true, failOnError: true)) {
-            println "error"
+            log.error "error"
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
         newObject
@@ -234,9 +232,7 @@ abstract class ModelService {
     def edit(CytomineDomain domain, boolean printMessage) {
         //Build response message
         log.info "edit"
-//        println "domain.deleted="+domain.deleted
         def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
-        //Save update
         log.info "beforeUpdate"
         beforeUpdate(domain)
         log.info "saveDomain"

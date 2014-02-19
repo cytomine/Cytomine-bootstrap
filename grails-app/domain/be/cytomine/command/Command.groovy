@@ -3,8 +3,6 @@ package be.cytomine.command
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import grails.converters.JSON
-import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.json.JSONElement
 
 /**

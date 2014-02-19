@@ -1,7 +1,6 @@
 package be.cytomine.security
 
 import be.cytomine.api.RestController
-import be.cytomine.utils.CytomineMailService
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.authentication.AccountExpiredException
@@ -12,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 
 import javax.servlet.http.HttpServletResponse
-
 
 class LoginController extends RestController {
 
@@ -31,7 +29,6 @@ class LoginController extends RestController {
     def notificationService
 
     def loginWithoutLDAP () {
-        println "loginWithoutLDAP"
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
         }
@@ -47,7 +44,6 @@ class LoginController extends RestController {
      * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
      */
     def index () {
-        println "index"
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
         }
@@ -60,14 +56,12 @@ class LoginController extends RestController {
      * Show the login page.
      */
     def auth () {
-        println "auth"
         def config = SpringSecurityUtils.securityConfig
 
         if (springSecurityService.isLoggedIn()) {
             redirect uri: config.successHandler.defaultTargetUrl
             return
         }
-        println "render"
         String view = 'auth'
         String postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
         render view: view, model: [postUrl: postUrl,
@@ -78,7 +72,6 @@ class LoginController extends RestController {
      * Show denied page.
      */
     def denied () {
-        println "denied..."
         if (springSecurityService.isLoggedIn() &&
                 authenticationTrustResolver.isRememberMe(SCH.context?.authentication)) {
             // have cookie but the page is guarded with IS_AUTHENTICATED_FULLY
@@ -90,7 +83,6 @@ class LoginController extends RestController {
      * Login page for users with a remember-me cookie but accessing a IS_AUTHENTICATED_FULLY page.
      */
     def full () {
-        println "full"
         def config = SpringSecurityUtils.securityConfig
         render view: 'auth', params: params,
                 model: [hasCookie: authenticationTrustResolver.isRememberMe(SCH.context?.authentication),
@@ -101,8 +93,7 @@ class LoginController extends RestController {
      * Callback after a failed login. Redirects to the auth page with a warning message.
      */
     def authfail () {
-        println "authfail"
-        println "springSecurityService.isLoggedIn()="+springSecurityService.isLoggedIn()
+        log.info "springSecurityService.isLoggedIn()="+springSecurityService.isLoggedIn()
         def msg = ''
         def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
         if (exception) {
@@ -164,7 +155,6 @@ class LoginController extends RestController {
 
 
     def authAjax () {
-        println "authAjax"
         response.sendError HttpServletResponse.SC_UNAUTHORIZED
     }
 
@@ -172,7 +162,6 @@ class LoginController extends RestController {
      * The Ajax success redirect url.
      */
     def ajaxSuccess () {
-        println "ajaxSuccess"
         User user = User.read(springSecurityService.principal.id)
         render([success: true, id: user.id, fullname: user.firstname + " " + user.lastname] as JSON)
     }
@@ -181,7 +170,6 @@ class LoginController extends RestController {
      * The Ajax denied redirect url.
      */
     def ajaxDenied () {
-        println "ajaxDenied"
         render([error: 'access denied'] as JSON)
     }
 

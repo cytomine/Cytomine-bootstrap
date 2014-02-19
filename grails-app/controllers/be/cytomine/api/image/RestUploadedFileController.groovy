@@ -164,11 +164,11 @@ class RestUploadedFileController extends RestController {
             mime = new Mime(extension: ext, mimeType : mimeType)
             mime.save(failOnError: true)
         }
-        println "#################################################################"
-        println "#################################################################"
-        println "##############CREATE IMAGE#################"
-        println "#################################################################"
-        println "#################################################################"
+        log.info "#################################################################"
+        log.info "#################################################################"
+        log.info "##############CREATE IMAGE#################"
+        log.info "#################################################################"
+        log.info "#################################################################"
         AbstractImage abstractImage = new AbstractImage(
                 filename: uploadedFile.getFilename(),
                 originalFilename:  uploadedFile.getOriginalFilename(),

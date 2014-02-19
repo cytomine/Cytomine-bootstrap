@@ -11,7 +11,10 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import groovy.sql.Sql
 import jsondoc.annotation.ApiMethodLight
-import org.jsondoc.core.annotation.*
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
+import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -298,7 +301,6 @@ class RestProjectController extends RestController {
         def sql = new Sql(dataSource)
          sql.eachRow(request) {
             if(data.isEmpty()) {
-                println "TOTAL1=${System.currentTimeMillis()-start}ms"
                 start = System.currentTimeMillis()
             }
             def line = [id:it.id,created:it.created,message:it.message,prefix:it.prefixAction,prefixAction:it.prefixAction,user:it.user,project:it.project]
@@ -312,7 +314,6 @@ class RestProjectController extends RestController {
 
         }
         sql.close()
-        println "TOTAL2=${System.currentTimeMillis()-start}ms"
         data
     }
 

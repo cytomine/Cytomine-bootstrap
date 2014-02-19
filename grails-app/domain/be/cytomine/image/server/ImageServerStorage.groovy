@@ -1,9 +1,4 @@
 package be.cytomine.image.server
-
-import be.cytomine.CytomineDomain
-import grails.converters.JSON
-import org.apache.log4j.Logger
-
 /**
  * Cytomine @ GIGA-ULG
  * User: stevben

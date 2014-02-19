@@ -67,8 +67,6 @@ class RestJobDataController extends RestController {
      */
     @ApiMethodLight(description="Add a new data file description. After that, call then 'upload' action to upload the file")
     def add() {
-        println "Job Data Controller"
-        println params
         add(jobDataService, request.JSON)
     }
 

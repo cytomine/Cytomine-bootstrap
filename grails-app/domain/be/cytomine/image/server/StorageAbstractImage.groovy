@@ -3,9 +3,7 @@ package be.cytomine.image.server
 import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 @ApiObject(name = "storage abstract image", description="A link between a storage and some images")

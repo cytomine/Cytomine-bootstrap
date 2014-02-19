@@ -1,11 +1,8 @@
 package be.cytomine.security
 
-import be.cytomine.CytomineDomain
 import be.cytomine.processing.Job
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 @ApiObject(name = "user job", description="A cytomine software user")

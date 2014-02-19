@@ -1,17 +1,8 @@
 package be.cytomine.api.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
-import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.RoiAnnotation
-import be.cytomine.security.ForgotPasswordToken
-import be.cytomine.security.SecRole
-import be.cytomine.security.User
-import be.cytomine.social.SharedAnnotation
-import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
@@ -19,9 +10,6 @@ import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
-
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
 
 /**
  * Controller for annotation created by user

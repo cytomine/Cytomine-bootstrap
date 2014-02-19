@@ -9,11 +9,8 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
-import grails.converters.JSON
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
 import jsondoc.annotation.ApiObjectFieldLight
-import org.apache.log4j.Logger
+import jsondoc.annotation.ApiObjectFieldsLight
 import org.jsondoc.core.annotation.ApiObject
 
 /**

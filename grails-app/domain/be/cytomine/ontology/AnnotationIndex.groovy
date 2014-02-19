@@ -1,15 +1,10 @@
 package be.cytomine.ontology
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
-import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
-
 
 @ApiObject(name = "annotation index", description="A index entry that store, for an image and a user, the number of annotation created/reviewed")
 class AnnotationIndex implements Serializable {

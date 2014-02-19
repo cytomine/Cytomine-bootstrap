@@ -6,10 +6,10 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
-import org.jsondoc.core.annotation.*
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiParam
+import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
-import org.jsondoc.core.pojo.ApiVerb
-import org.springframework.http.MediaType
 
 /**
  * Controller for term request (word in ontology)

@@ -1,18 +1,13 @@
 package be.cytomine.ontology
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.api.UrlApi
-import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 /**

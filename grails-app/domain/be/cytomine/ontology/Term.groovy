@@ -1,18 +1,12 @@
 package be.cytomine.ontology
 
-import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.UrlApi
-import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
-import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A term is a class that can be link to an annotation

@@ -3,10 +3,8 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 /**

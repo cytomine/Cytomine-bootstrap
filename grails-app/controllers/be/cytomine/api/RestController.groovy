@@ -1,7 +1,6 @@
 package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.image.ImageInstance
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.StringUtils
 import be.cytomine.utils.Task
@@ -29,14 +28,11 @@ class RestController {
     }
 
     def currentDomainName() {
-        println "currentDomainName()"
         def domain = currentDomain()
         if(domain) {
             Introspector.decapitalize(domain.simpleName)
         } else {
-
             String domaineName = this.class.simpleName.replace("Rest","")
-            println "domaineName=$domaineName"
             domaineName = domaineName.replace("Controller","")
             StringUtils.splitCamelToBlank(Introspector.decapitalize(domaineName))
         }

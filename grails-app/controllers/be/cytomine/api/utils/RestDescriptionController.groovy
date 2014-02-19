@@ -28,7 +28,6 @@ class RestDescriptionController extends RestController {
         @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
     ])
     def showByDomain() {
-        println "showByDomain"
         def id = params.long('domainIdent')
         def className = params.get('domainClassName')
 

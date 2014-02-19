@@ -5,22 +5,17 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
-import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.utils.StringUtils
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.pojo.ApiParamType
-
-import java.beans.Introspector
 
 /**
  * Controller that handle link between an annotation and a term

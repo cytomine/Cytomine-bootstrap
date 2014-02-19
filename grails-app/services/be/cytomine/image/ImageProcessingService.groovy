@@ -146,20 +146,12 @@ class ImageProcessingService {
     }
 
     public BufferedImage createCropWithDraw(AnnotationDomain annotation,BufferedImage baseImage) {
-
-        println "createCropWithDraw"
         //AbstractImage image, BufferedImage window, LineString lineString, Color color, int x, int y, double x_ratio, double y_ratio
         def boundaries = annotation.getBoundaries()
         double x_ratio = baseImage.getWidth() / boundaries.width
         double y_ratio = baseImage.getHeight() / boundaries.height
-
-        println boundaries.width
-        println x_ratio
         //int borderWidth = ((double)annotation.getArea()/(100000000d/50d))
         int borderWidth = ((double)boundaries.width/(15000/250d))*x_ratio
-
-
-        println "borderWidth="+borderWidth
 
         //AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, Color c, int borderWidth,int x, int y, double x_ratio, double y_ratio
         baseImage = segmentationService.drawPolygon(

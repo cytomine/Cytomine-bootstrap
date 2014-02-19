@@ -5,7 +5,6 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * Cytomine user.

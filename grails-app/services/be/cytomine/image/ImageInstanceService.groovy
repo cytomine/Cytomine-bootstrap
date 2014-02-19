@@ -194,8 +194,6 @@ class ImageInstanceService extends ModelService {
         //copy term
 
         AnnotationTerm.findAllByUserAnnotation(based).each { basedAT ->
-            println "at="+basedAT.term.ontology
-            println "dest=" +dest.project.ontology
             if(usersProject.contains(basedAT.user.id) && basedAT.term.ontology==dest.project.ontology) {
                 AnnotationTerm at = new AnnotationTerm()
                 at.user = basedAT.user
@@ -255,10 +253,7 @@ class ImageInstanceService extends ModelService {
            def adminsMap = [:]
 
            def req1 = getLayersFromAbtrsactImageSQLRequestStr(true,project)
-        println "req1=$req1"
-        println ""+[image.id,exclude.id]
            new Sql(dataSource).eachRow(req1,[image.id,exclude.id]) {
-               println it
                if(currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
                    layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
                    adminsMap.put(it.image+"_"+it.user,true)
@@ -267,17 +262,13 @@ class ImageInstanceService extends ModelService {
            }
 
         def req2 = getLayersFromAbtrsactImageSQLRequestStr(false,project)
-        println "req2=$req2";
-        println ""+[image.id,exclude.id];
 
             new Sql(dataSource).eachRow(req2,[image.id,exclude.id]) {
-                println it
                 if(!adminsMap.get(it.image+"_"+it.user) && currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
                     layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
                 }
 
             }
-        println layers
             return layers
 
     }
@@ -375,7 +366,6 @@ class ImageInstanceService extends ModelService {
         SecurityACL.checkReadOnly(domain.container())
         def jsonNewData = JSON.parse(domain.encodeAsJSON())
         jsonNewData.deleted = new Date().time
-        println "jsonNewData.deleted="+jsonNewData.deleted
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
         c.delete = true

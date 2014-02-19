@@ -16,7 +16,7 @@ class DependencyController {
             checkDependence()
 
         } catch(Exception e) {
-            println e
+            log.error e
         }
 
     }
@@ -49,10 +49,10 @@ class DependencyController {
             }
         }
 
-        println "There are ${allErrors.size()} dependency conflict!"
+        log.error "There are ${allErrors.size()} dependency conflict!"
 
         allErrors.sort().each {
-            println it
+            log.error it
         }
         if (!allErrors.isEmpty()) {
             throw new Exception(allErrors.join(","))

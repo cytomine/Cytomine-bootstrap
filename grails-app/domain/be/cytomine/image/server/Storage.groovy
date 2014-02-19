@@ -3,8 +3,6 @@ package be.cytomine.image.server
 import be.cytomine.CytomineDomain
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
-import grails.converters.JSON
-import org.apache.log4j.Logger
 
 /**
  * A storage is a remote file repository

@@ -1,9 +1,6 @@
 package be.cytomine.image.server
 
-import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
-import grails.converters.JSON
-import org.apache.log4j.Logger
 
 /**
  * Property (key-value) map with an image
