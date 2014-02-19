@@ -117,16 +117,25 @@ class IndexService {
              */
             createIndex(statement, "term", "ontology_id");
 
+            createIndex(statement, "storage", "user_id");
+
+            createIndex(statement, "acl_object_identity", "object_id_identity");
+            createIndex(statement, "acl_entry", "acl_object_identity");
+            createIndex(statement, "acl_sid", "sid");
+
             createIndex(statement, "annotation_index", "image_id");
             createIndex(statement, "annotation_index", "user_id");
 
             createIndex(statement, "user_position", "user_id");
             createIndex(statement, "user_position", "updated");
             createIndex(statement, "user_position", "image_id");
+            createIndex(statement, "user_position", "project_id");
             createIndex(statement, "user_position", "latitude");
             createIndex(statement, "user_position", "longitude");
             createIndex(statement, "user_position", "date_part('epoch'::text, created)","btree", "user_position_epochcreated");
             createIndex(statement, "user_position", "date_part('epoch'::text, updated)","btree", "user_position_epochupdated");
+            createIndex(statement, "user_position", "created","btree", "user_position_created");
+            createIndex(statement, "user_position", "updated","btree", "user_position_updated");
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e

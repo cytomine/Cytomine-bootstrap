@@ -33,7 +33,7 @@ environments {
       dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-      url="jdbc:postgresql://localhost:5432/cytomineelearn"
+      url="jdbc:postgresql://localhost:5432/cytomine"
       password = "postgres"
     }
   }

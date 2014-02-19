@@ -172,10 +172,6 @@ class SecurityACL {
             Project.findAllByDeletedIsNull()
         }
         else {
-
-            println "PROJECT DELETED="+Project.findAllByDeletedIsNull().collect{it.name}
-
-
             return Project.executeQuery(
                     "select distinct project "+
                     "from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, Project as project "+
