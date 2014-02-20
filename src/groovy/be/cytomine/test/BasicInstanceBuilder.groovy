@@ -713,6 +713,37 @@ class BasicInstanceBuilder {
         save ? saveDomain(job) : checkDomain(job)
     }
 
+    static JobTemplate getJobTemplate() {
+        def job = JobTemplate.findByProjectAndSoftwareAndName(getProject(),getSoftware(),"jobtemplate")
+        if(!job) {
+            job = new JobTemplate(project:getProject(),software:getSoftware(), name:"jobtemplate")
+            saveDomain(job)
+        }
+        job
+    }
+
+    static JobTemplate getJobTemplateNotExist(boolean save = false) {
+        JobTemplate job =  new JobTemplate(software:saveDomain(getSoftwareNotExist()), project : saveDomain(getProjectNotExist()), name:getRandomString())
+        save ? saveDomain(job) : checkDomain(job)
+    }
+
+    static JobTemplateAnnotation getJobTemplateAnnotation() {
+        def job = JobTemplateAnnotation.findByJobTemplateAndAnnotationIdent(getJobTemplate(),getRoiAnnotation().id)
+        if(!job) {
+            job = new JobTemplateAnnotation(jobTemplate: getJobTemplate())
+            job.setAnnotation(getRoiAnnotation())
+            saveDomain(job)
+        }
+        job
+    }
+
+    static JobTemplateAnnotation getJobTemplateAnnotationNotExist(boolean save = false) {
+        RoiAnnotation annotation = saveDomain(getRoiAnnotation())
+        JobTemplateAnnotation jobTemplateAnnotation =  new JobTemplateAnnotation(jobTemplate:saveDomain(getJobTemplate()))
+        jobTemplateAnnotation.setAnnotation(getRoiAnnotation())
+        save ? saveDomain(jobTemplateAnnotation) : checkDomain(jobTemplateAnnotation)
+    }
+
 
     static JobData getJobDataNotExist() {
         JobData jobData =  new JobData(job:saveDomain(getJobNotExist()), key : "TESTKEY", filename: "filename.jpg")

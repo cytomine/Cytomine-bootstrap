@@ -1,6 +1,7 @@
 package be.cytomine.utils
 
 import be.cytomine.image.NestedImageInstance
+import be.cytomine.processing.JobTemplate
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import grails.converters.JSON
@@ -44,6 +45,9 @@ class MarshallersService {
         }
         JSON.registerObjectMarshaller(UserJob) { it ->
             return UserJob.getDataFromDomain(it)
+        }
+        JSON.registerObjectMarshaller(JobTemplate) { it ->
+            return JobTemplate.getDataFromDomain(it)
         }
     }
 }

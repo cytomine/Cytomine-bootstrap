@@ -45,6 +45,7 @@ class JobParameterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
+        println "check:" + json
         SecurityACL.check(json.job,Job,"container", READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
