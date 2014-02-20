@@ -128,7 +128,7 @@
 
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
 
-<!--<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>-->
+<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>
 
 
 
