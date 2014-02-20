@@ -26,7 +26,7 @@ class SoftwareService extends ModelService {
         Software
     }
 
-    def read(def id) {
+    Software read(def id) {
         //TODO: check authorization?
         Software.read(id)
     }

@@ -58,8 +58,10 @@ class SecurityACL {
     }
 
     static void check(def id, String className, String method, Permission permission) {
+        println "check:" + id + " className=$className method=$method"
         def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
        if (simpleObject) {
+           println "simpleObject=" + simpleObject."$method"()
            def containerObject = simpleObject."$method"()
            check(containerObject,permission)
        } else {

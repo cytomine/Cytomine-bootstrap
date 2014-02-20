@@ -1,5 +1,4 @@
 package be.cytomine.processing
-
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
