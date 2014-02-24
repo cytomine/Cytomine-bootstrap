@@ -83,3 +83,72 @@ var JobCollection = PaginatedCollection.extend({
         return -job.get("id");
     }
 });
+
+
+var JobTemplateModel = Backbone.Model.extend({
+    url: function () {
+        var base = 'api/jobtemplate';
+        var format = '.json';
+        if (this.isNew()) {
+            return base + format;
+        }
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    },
+    initialize: function (options) {
+        this.project = options.project;
+    }
+});
+
+
+// define our collection
+var JobTemplateCollection = PaginatedCollection.extend({
+    model: JobTemplateModel,
+    url: function () {
+        return "api/project/"+this.project + "/jobtemplate.json"
+    },
+    initialize: function (options) {
+        this.initPaginator(options);
+        this.project = options.project;
+    },
+    comparator: function (job) {
+        return -job.get("id");
+    }
+});
+
+
+var JobTemplateAnnotationModel = Backbone.Model.extend({
+    url: function () {
+        var base = 'api/jobtemplateannotation';
+        var format = '.json';
+        if (this.isNew()) {
+            return base + format;
+        }
+        return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
+    }
+});
+
+
+// define our collection
+var JobTemplateAnnotationCollection = PaginatedCollection.extend({
+    model: JobTemplateModel,
+    url: function () {
+        var query = "";
+        if(this.annotation) {
+            query = query + "&annotation="+this.annotation;
+        }
+        if(this.jobtemplate) {
+            query = query + "&jobtemplate="+this.jobtemplate;
+        }
+        return "api/jobtemplateannotation.json?"+query
+    },
+    initialize: function (options) {
+        this.initPaginator(options);
+        this.annotation = options.annotation;
+        this.jobtemplate = options.jobtemplate;
+    },
+    comparator: function (job) {
+        return -job.get("id");
+    }
+});
+
+

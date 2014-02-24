@@ -54,7 +54,7 @@ class Software extends CytomineDomain {
     byte[] resultSample
 
     /**
-     * (deprecated) Command to execute software
+     * Command to execute software
      */
     String executeCommand
 

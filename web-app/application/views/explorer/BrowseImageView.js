@@ -565,6 +565,16 @@ BrowseImageView = Backbone.View.extend({
             el: self.el
         }).render();
     },
+
+    createJobTemplatePanel: function () {
+        var self = this;
+
+        this.jobTemplatePanel = new JobTemplatePanel({
+            browseImageView: self,
+            model: self.model,
+            el: self.el
+        }).render();
+    },
     createMultiDimensionPanel: function () {
         var self = this;
 
@@ -615,6 +625,7 @@ BrowseImageView = Backbone.View.extend({
                 console.log("LAYER SWITECHER=" + $(".layerSwitcherPanel").length)
             }
             self.createInformationPanel();
+            self.createJobTemplatePanel();
             self.createMultiDimensionPanel();
             //self.initImageFiltersPanel();
             //var numZoomLevels =  metadata.nbZoom;

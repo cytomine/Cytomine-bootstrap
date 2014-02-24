@@ -1,5 +1,11 @@
 package be.cytomine.utils.bootstrap
 
+import be.cytomine.processing.JobParameter
+import be.cytomine.processing.JobTemplate
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareParameter
+import be.cytomine.processing.SoftwareProject
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import groovy.sql.Sql
 
@@ -13,6 +19,7 @@ class BootstrapTestDataService {
 
     def bootstrapUtilsService
     def dataSource
+
 
     def initData() {
 
@@ -67,5 +74,41 @@ class BootstrapTestDataService {
 
     }
 
+    def initSoftwareAndJobTemplate(Long idProject) {
+
+        Project project = Project.read(idProject)
+
+        Software software = new Software(
+                name: "computeAnnotationStats",
+                serviceName: 'launchLocalScriptService',
+                resultName:'DownloadFiles',
+                description: 'Compute term stats area for an annotation',
+                executeCommand: "groovy -cp algo/computeAnnotationStats/Cytomine-Java-Client.jar:algo/computeAnnotationStats/jts-1.13.jar algo/computeAnnotationStats/computeAnnotationStats.groovy"
+        )
+        software.save(failOnError: true,flush: true)
+
+        SoftwareProject softwareProject = new SoftwareProject(software:software, project: project)
+        softwareProject.save(failOnError: true,flush: true)
+
+        SoftwareParameter param0 = new SoftwareParameter(software:software, name:"host",type:"String",required: true, index:10,setByServer:true)
+        param0.save(failOnError: true,flush:true)
+
+        SoftwareParameter param1 = new SoftwareParameter(software:software, name:"publicKey",type:"String",required: true, index:100,setByServer:true)
+        param1.save(failOnError: true,flush:true)
+        SoftwareParameter param2 = new SoftwareParameter(software:software, name:"privateKey",type:"String",required: true, index:200,setByServer:true)
+        param2.save(failOnError: true,flush:true)
+
+        SoftwareParameter param3 = new SoftwareParameter(software:software, name:"annotation",type:"Domain",required: true, index:400)
+        param3.save(failOnError: true,flush:true)
+        SoftwareParameter param4 = new SoftwareParameter(software:software, name:"term",type:"Domain",required: true, index:500)
+        param4.save(failOnError: true,flush:true)
+
+        JobTemplate jobTemplate = new JobTemplate(name:"ComputeAdenocarcinomesStat", software: software, project: project)
+        jobTemplate.save(failOnError: true,flush:true)
+
+        JobParameter paramTmpl1 = new JobParameter(job: jobTemplate,softwareParameter: param4, value: "20202")
+        paramTmpl1.save(failOnError: true, flush:true)
+
+    }
 
 }

@@ -349,6 +349,7 @@ AnnotationLayer.prototype = {
                         self.removeSelection();
                     } else {
                         self.showPopup(map, evt);
+                        self.browseImageView.jobTemplatePanel.changeAnnotation(evt.feature.attributes.idAnnotation);
                         //self.vectorsLayer.drawFeature(evt.feature);
                     }
                 }

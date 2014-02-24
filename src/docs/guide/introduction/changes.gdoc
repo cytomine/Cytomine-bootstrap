@@ -3,6 +3,7 @@ h3. 20140220 Version
 *SQL Changes*
 {code}
 alter table job add column class varchar(255);
+ update job set class = 'be.cytomine.processing.Job';
 {code}
 
 h3. 20140214 Version

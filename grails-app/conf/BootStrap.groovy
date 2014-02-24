@@ -1,6 +1,12 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.processing.JobParameter
+import be.cytomine.processing.JobTemplate
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareParameter
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.test.BasicInstanceBuilder
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -74,19 +80,15 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
         }
 
-
-
-        //jsondoc init
         JSONUtils.registerMarshallers()
-//        use (TimerMethods) {
-//            def timer = new Timer()
-//            def task = timer.runEvery(1000, 10000) {
-//                //println "Task executed at ${new Date()}."
-//                APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
-//            }
-//            println "Current date is ${new Date()}."
-//        }
 
+
+        //comment this after first exec
+        if(Environment.getCurrent() != Environment.TEST) {
+            bootstrapTestDataService.initSoftwareAndJobTemplate(57l)
+        } else {
+            bootstrapTestDataService.initSoftwareAndJobTemplate(BasicInstanceBuilder.getProjectNotExist(true).id)
+        }
 
     }
 
@@ -101,6 +103,9 @@ class BootStrap {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
     }
+
+
+
 
 
 

@@ -1,12 +1,15 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -21,6 +24,8 @@ class JobTemplateAnnotationService extends ModelService {
      def dataSource
      def reviewedAnnotationService
      def propertyService
+     def jobService
+     def jobParameterService
 
      def currentDomain() {
          return JobTemplateAnnotation
@@ -58,7 +63,9 @@ class JobTemplateAnnotationService extends ModelService {
          SecUser currentUser = cytomineService.getCurrentUser()
          json.user = currentUser.id
          Command c = new AddCommand(user: currentUser)
-         executeCommand(c,null,json)
+         def result = executeCommand(c,null,json)
+         return result
+
      }
 
      /**

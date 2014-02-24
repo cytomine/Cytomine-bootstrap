@@ -1,11 +1,17 @@
 package be.cytomine.api.processing
 
+import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
+import be.cytomine.processing.Job
+import be.cytomine.processing.JobParameter
 import be.cytomine.processing.JobTemplate
 import be.cytomine.processing.JobTemplateAnnotation
+import be.cytomine.processing.SoftwareParameter
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import org.codehaus.groovy.grails.web.json.JSONArray
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
@@ -21,6 +27,9 @@ class RestJobTemplateAnnotationController extends RestController{
     def jobTemplateAnnotationService
     def jobTemplateService
     def userAnnotationService
+    def jobParameterService
+    def jobService
+    def cytomineService
 
     /**
      * List all software by project
@@ -58,7 +67,40 @@ class RestJobTemplateAnnotationController extends RestController{
      */
     @ApiMethodLight(description="Add a link between a job and an annotation")
     def add () {
-        add(jobTemplateAnnotationService, request.JSON)
+        try {
+            def result = jobTemplateAnnotationService.add(request.JSON)
+            println result
+            JobTemplateAnnotation jobTemplateAnnotation = result.object
+
+            //init a job with the template
+            Job jobToAdd = new Job(project:jobTemplateAnnotation.jobTemplate.project, software:jobTemplateAnnotation.jobTemplate.software)
+            jobToAdd = jobService.add(JSON.parse(jobToAdd.encodeAsJSON())).object
+
+            //copy parameters
+            jobTemplateAnnotation.jobTemplate.parameters().each { paramTemplate ->
+                jobParameterService.add(JSON.parse(new JobParameter(softwareParameter: paramTemplate.softwareParameter,value: paramTemplate.value, job:jobToAdd).encodeAsJSON()))
+            }
+
+            //add the annotation parameters
+            SoftwareParameter annotationParam = SoftwareParameter.findBySoftwareAndName(jobTemplateAnnotation.jobTemplate.software,"annotation")
+            if(!annotationParam) {
+                throw new WrongArgumentException("Software must have a parameter called 'annotation'!")
+            }
+            jobParameterService.add(JSON.parse(new JobParameter(softwareParameter: annotationParam,value: jobTemplateAnnotation.annotationIdent, job:jobToAdd).encodeAsJSON()))
+
+            //create user job
+            jobService.createUserJob(cytomineService.currentUser, jobToAdd)
+
+            jobService.executeJob(jobToAdd,false)
+
+            result.job = jobToAdd
+        } catch (CytomineException e) {
+            log.error("add error:" + e.msg)
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
+
+
     }
 
     /**

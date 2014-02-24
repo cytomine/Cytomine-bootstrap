@@ -37,9 +37,9 @@ class JobTemplate extends Job implements Serializable {
      */
     void checkAlreadyExist() {
         JobTemplate.withNewSession {
-            JobTemplate job = JobTemplate.findByName(name)
+            JobTemplate job = JobTemplate.findByNameAndProject(name,super.project)
             if (job != null && (job.id != id)) {
-                throw new AlreadyExistException("Job template" + name + " already exist")
+                throw new AlreadyExistException("Job template" + name + " already exist in project" +super.project.name)
             }
         }
     }
