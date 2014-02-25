@@ -10,6 +10,7 @@ import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.image.ImageInstance
 import grails.util.GrailsNameUtils
+import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
@@ -32,6 +33,14 @@ abstract class ModelService {
      */
     def saveDomain(def newObject) {
         newObject.checkAlreadyExist()
+
+        def names = newObject.dirtyPropertyNames
+        for (name in names) {
+            def originalValue = newObject.getPersistentValue(name)
+            println "$name originalValue=$originalValue "
+            println "$name realValue=${newObject[name]}"
+        }
+
         if (!newObject.validate()) {
             log.error newObject.errors
             log.error newObject.retrieveErrors().toString()

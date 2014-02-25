@@ -69,4 +69,9 @@ class JobAPI extends DomainAPI {
         return doPOST(URL,"", username, password)
     }
 
+    static def execute(def id,String username,String password) {
+        String URL = Infos.CYTOMINEURL + "/api/job/$id/execute.json"
+        return doPOST(URL,"", username, password)
+    }
+
 }

@@ -91,9 +91,8 @@ class RestJobTemplateAnnotationController extends RestController{
             //create user job
             jobService.createUserJob(cytomineService.currentUser, jobToAdd)
 
-            jobService.executeJob(jobToAdd,false)
-
-            result.job = jobToAdd
+            result.data.job = jobToAdd
+            responseResult(result)
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)

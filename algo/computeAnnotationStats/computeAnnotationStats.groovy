@@ -19,10 +19,11 @@ import be.cytomine.client.*;
 import com.vividsolutions.jts.precision.SimpleGeometryPrecisionReducer;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
+def sleep = 0
 
 println args
 
-String job = args[0]
+Long idJob = Long.parseLong(args[0])
 String userjob = args[1]
 String host= args[2]
 String publickey = args[3]
@@ -31,12 +32,28 @@ String annotation= args[5]
 String idTerm = args[6]
 
 
+println "Job=$idJob"
+
 Cytomine cytomine = new Cytomine(host, publickey, privatekey, "./");
+
+cytomine.changeStatus(idJob,Cytomine.JobStatus.RUNNING,0)
+Thread.sleep(sleep)
+
+println "Get annotation and term"
+
 Annotation baseAnnotation = cytomine.getAnnotation(Long.parseLong(annotation))
 Term term = cytomine.getTerm(Long.parseLong(idTerm))
 
+cytomine.changeStatus(idJob,Cytomine.JobStatus.RUNNING,10)
+Thread.sleep(sleep)
+
+println "Get annotations in ROI"
+
 String propertyNumber = "NUMBER_OF_"+term.getStr("name")
 String propertyArea = "AREA_OF_"+term.getStr("name")
+
+cytomine.changeStatus(idJob,Cytomine.JobStatus.RUNNING,20)
+Thread.sleep(sleep)
 
 def filters = [:]
 filters.put("project",baseAnnotation.getStr("project"));
@@ -50,8 +67,11 @@ filters.put("bbox",URLEncoder.encode(baseAnnotation.getStr("location"), "UTF-8")
 
 AnnotationCollection annotationsSameTerm = cytomine.getAnnotations(filters);
 
+cytomine.changeStatus(idJob,Cytomine.JobStatus.RUNNING,50)
 
 Long size = 0l
+
+println "Compute stats"
 
 def baseGeometry = new WKTReader().read(baseAnnotation.get('location'))
 def geometries = []
@@ -60,6 +80,8 @@ for(int i=0;i<annotationsSameTerm.size();i++) {
     geometries << new WKTReader().read(annotationsSameTerm.get(i).getStr('location'))
 }
 
+cytomine.changeStatus(idJob,Cytomine.JobStatus.RUNNING,75)
+Thread.sleep(sleep)
 
 
 def insideBaseGeometry = geometries.collect{it.intersection(baseGeometry)}
@@ -68,21 +90,42 @@ insideBaseGeometry.each {
     size = size + it.area
 }
 
+println "Add property"
+
 addProperty(cytomine,baseAnnotation.getId(),propertyNumber,annotationsSameTerm.size()+"")
 addProperty(cytomine,baseAnnotation.getId(),propertyArea,size + baseAnnotation.getStr("areaUnit"))
 
-
+cytomine.changeStatus(idJob,Cytomine.JobStatus.SUCCESS,100)
+Thread.sleep(sleep)
 
 println size
 
 
 def addProperty(def cytomine,Long idAnnotation, String key, String value) {
-    Property property = null
+    PropertyCollection properties = null
     try {
-        property = cytomine.getPropertyByDomainAndKey("annotation", idAnnotation,property);
-        cytomine.deleteDomainProperty("annotation", idAnnotation,property.getId())
+        println "Update property $key for annotation $idAnnotation"
+        properties = cytomine.getDomainProperties("annotation",idAnnotation);
+
+        for(int i=0;i<properties.size();i++) {
+            Property property = properties.get(i)
+
+            try {
+                if(property.getStr("key").equals(key)) {
+                    println "annotation-" + idAnnotation + "-" + property.getId()
+                    println "delete " + property.getStr("key") + "=" + property.getStr("value")
+                    cytomine.deleteDomainProperty("annotation",property.getId(),idAnnotation)
+                }
+            } catch(Exception e) {
+
+            }
+
+        }
+
+
     } catch(Exception e) {
-        println e
+        println e.stackTrace
     }
+    println "add "
     cytomine.addDomainProperties("annotation", idAnnotation,key,value)
 }

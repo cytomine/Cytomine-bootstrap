@@ -1,12 +1,26 @@
 package be.cytomine
 
+import be.cytomine.image.ImageInstance
+import be.cytomine.ontology.Ontology
+import be.cytomine.ontology.Property
+import be.cytomine.ontology.Term
+import be.cytomine.ontology.UserAnnotation
+import be.cytomine.processing.JobParameter
 import be.cytomine.processing.JobTemplate
+import be.cytomine.processing.JobTemplateAnnotation
+import be.cytomine.processing.RoiAnnotation
+import be.cytomine.processing.Software
+import be.cytomine.processing.SoftwareParameter
+import be.cytomine.processing.SoftwareProject
+import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobAPI
 import be.cytomine.test.http.JobParameterAPI
 import be.cytomine.test.http.JobTemplateAPI
+import be.cytomine.test.http.JobTemplateAnnotationAPI
 import be.cytomine.utils.UpdateData
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -161,6 +175,101 @@ class JobTemplateTests {
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.jobParameters.size()==1
+    }
+
+
+    void testAddJobTemplateConcreteCase() {
+        //Algo compute area/number of annotation of a specific term inside a ROI annotation (for area: only the annotation part INSIDE the roi)
+        //The job template is a shortcut to launch this algo for term "adeno"
+
+        //create ontology and term
+        Ontology ontology = BasicInstanceBuilder.getOntologyNotExist(true)
+        Term term = BasicInstanceBuilder.getTermNotExist(ontology,true)
+        term.name = "Adeno"
+        BasicInstanceBuilder.saveDomain(term)
+
+        //create a project + image
+        Project project = BasicInstanceBuilder.getProjectNotExist(ontology,true)
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+
+        //add software + jobtemplate
+        Software software = new Software(
+                name: "computeAnnotationStats",
+                serviceName: 'launchLocalScriptService',
+                resultName:'DownloadFiles',
+                description: 'Compute term stats area for an annotation',
+                executeCommand: "groovy -cp algo/computeAnnotationStats/Cytomine-Java-Client.jar:algo/computeAnnotationStats/jts-1.13.jar algo/computeAnnotationStats/computeAnnotationStats.groovy"
+        )
+        software.save(failOnError: true,flush: true)
+
+        SoftwareProject softwareProject = new SoftwareProject(software:software, project: project)
+        softwareProject.save(failOnError: true,flush: true)
+
+        SoftwareParameter param0 = new SoftwareParameter(software:software, name:"host",type:"String",required: true, index:10,setByServer:true)
+        param0.save(failOnError: true,flush:true)
+
+        SoftwareParameter param1 = new SoftwareParameter(software:software, name:"publicKey",type:"String",required: true, index:100,setByServer:true)
+        param1.save(failOnError: true,flush:true)
+        SoftwareParameter param2 = new SoftwareParameter(software:software, name:"privateKey",type:"String",required: true, index:200,setByServer:true)
+        param2.save(failOnError: true,flush:true)
+
+        SoftwareParameter param3 = new SoftwareParameter(software:software, name:"annotation",type:"Domain",required: true, index:400)
+        param3.save(failOnError: true,flush:true)
+        SoftwareParameter param4 = new SoftwareParameter(software:software, name:"term",type:"Domain",required: true, index:500)
+        param4.save(failOnError: true,flush:true)
+
+        JobTemplate jobTemplate = new JobTemplate(name:"ComputeAdenocarcinomesStat", software: software, project: project)
+        jobTemplate.save(failOnError: true,flush:true)
+
+        JobParameter paramTmpl1 = new JobParameter(job: jobTemplate,softwareParameter: param4, value: term.id+"")
+        paramTmpl1.save(failOnError: true, flush:true)
+
+        //add 3 annotation + 1 roi
+        def polygons = [
+                "POLYGON ((11504 17216, 12208 19104, 14640 19264, 15952 17952, 15216 16928, 12944 16704, 12784 16672, 11504 17216))",
+                "POLYGON ((12432 22400, 14736 24576, 16592 22464, 16688 21056, 15152 20160, 13648 20928, 12432 22400))",
+                "POLYGON ((6864 19040, 8112 21248, 10192 20256, 10320 18464, 8656 17312, 7664 17760, 6864 19040))"
+        ]
+
+        polygons.each {
+            BasicInstanceBuilder.getUserAnnotationNotExist(image,it,BasicInstanceBuilder.getUser(),term)
+        }
+
+
+        RoiAnnotation roi = BasicInstanceBuilder.getRoiAnnotationNotExist(image,BasicInstanceBuilder.getUser())
+        roi.location = new WKTReader().read("POLYGON ((9616 16480, 8048 21120, 10480 24640, 16240 25120, 16240.000000000002 16256, 9616 16480))")
+        BasicInstanceBuilder.saveDomain(roi)
+
+        //add job template annotation link
+        def JobTemplateAnnotationToAdd = new JobTemplateAnnotation(jobTemplate: jobTemplate, annotationIdent: roi.id, annotationClassName: roi.class.name)
+        def result = JobTemplateAnnotationAPI.create(JobTemplateAnnotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+        int idJob = result.job.id
+
+        result = JobAPI.execute(idJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        //wait
+
+
+        //check annotation property ROI
+        println Property.findAllByDomainIdent(roi.id)
+        def areaProp
+        def numberProp
+
+        def start = System.currentTimeMillis()
+
+        while(System.currentTimeMillis()-start<10000 && !areaProp) {
+            areaProp = Property.findByDomainIdentAndKey(roi.id,"AREA_OF_"+term.name)
+            numberProp = Property.findByDomainIdentAndKey(roi.id,"NUMBER_OF_"+term.name)
+        }
+
+        assert numberProp
+        assert numberProp.value.equals("3")
+
+
+        assert areaProp
+        assert areaProp.value.equals("23108698pixels²")
     }
 
 

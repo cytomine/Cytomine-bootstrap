@@ -11,9 +11,10 @@ import grails.util.Holders
  */
 class LaunchLocalScriptService extends AbstractJobService{
 
-//    static transactional = false
+    static transactional = true
 
     def jobParameterService
+
 
     def init(Job job, UserJob userJob) {
         jobParameterService.add(JSON.parse(createJobParameter("host",job,Holders.getGrailsApplication().config.grails.serverURL).encodeAsJSON()))
@@ -44,8 +45,9 @@ class LaunchLocalScriptService extends AbstractJobService{
             allArgs[index++] = it
         }
 
+        job.discard()
         printStartJobInfo(job,allArgs)
-        launchAndWaitSoftware(allArgs,job)
+        launchSoftware(allArgs,job)
         printStopJobInfo(job,allArgs)
     }
 

@@ -13,6 +13,7 @@ class AdminController extends RestController {
     def archiveCommandService
     def simplifyGeometryService
     def scriptService
+    def bootstrapTestDataService
 
     @Secured(['ROLE_ADMIN'])
     def index() {
@@ -23,6 +24,10 @@ class AdminController extends RestController {
     def archive() {
         archiveCommandService.archiveOldCommand()
         responseSuccess([])
+    }
+
+    def insert() {
+        bootstrapTestDataService.initSoftwareAndJobTemplate(params.long('id'))
     }
 
 

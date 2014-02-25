@@ -462,7 +462,7 @@ class BasicInstanceBuilder {
                 location: new WKTReader().read(polygon),
                 image:image,
                 user: user,
-                project:project
+                project:image.project
         )
         annotation = saveDomain(annotation)
 
@@ -719,6 +719,8 @@ class BasicInstanceBuilder {
             job = new JobTemplate(project:getProject(),software:getSoftware(), name:"jobtemplate")
             saveDomain(job)
         }
+        SoftwareParameter param = new SoftwareParameter(software:software, name:"annotation",type:"Domain",required: true, index:400)
+        saveDomain(param)
         job
     }
 

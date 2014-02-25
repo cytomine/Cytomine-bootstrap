@@ -81,15 +81,6 @@ class BootStrap {
         }
 
         JSONUtils.registerMarshallers()
-
-
-        //comment this after first exec
-        if(Environment.getCurrent() != Environment.TEST) {
-            bootstrapTestDataService.initSoftwareAndJobTemplate(57l)
-        } else {
-            bootstrapTestDataService.initSoftwareAndJobTemplate(BasicInstanceBuilder.getProjectNotExist(true).id)
-        }
-
     }
 
     def saveDomain(def newObject, boolean flush = true) {

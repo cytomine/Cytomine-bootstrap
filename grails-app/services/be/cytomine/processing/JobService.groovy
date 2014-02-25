@@ -13,6 +13,7 @@ import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import groovy.sql.Sql
+import static grails.async.Promises.*
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -243,35 +244,37 @@ class JobService extends ModelService {
     }
 
 
-    /**
-     * Create a new user that will be link with the job and launch the exe with parameters
-     * @param job Job to launch
-     * @param preview indicates if the  Job should only computes the preview or not
-     * @return The job
-     */
-    public def executeJob(Job job, boolean preview) {
-
-        if (preview && !job.software.service.previewAvailable()) {
-            throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
-        }
-
-        SecurityACL.check(job.container(),READ)
-
-        UserJob userJob = UserJob.findByJob(job)
-
-        job.software.service.init(job, userJob)
-
-        println "preciew ???? $preview"
-
-        job.software.service.execute(job, userJob, preview)
-
-
-
-        log.info "Launch thread";
-
-
-        job
-    }
+//    /**
+//     * Create a new user that will be link with the job and launch the exe with parameters
+//     * @param job Job to launch
+//     * @param preview indicates if the  Job should only computes the preview or not
+//     * @return The job
+//     */
+//    public def executeJob(Job job, boolean preview) {
+//
+//        if (preview && !job.software.service.previewAvailable()) {
+//            throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
+//        }
+//
+//        SecurityACL.check(job.container(),READ)
+//
+//        UserJob userJob = UserJob.findByJob(job)
+//
+//        job.software.service.init(job, userJob)
+//
+//        println "preciew ???? $preview"
+//
+//
+//
+//
+//            job.software.service.execute(job, userJob, preview)
+//
+//
+//        log.info "Launch thread";
+//
+//
+//        job
+//    }
 
     public UserJob createUserJob(User user, Job job) {
         SecurityACL.check(job.container(),READ)

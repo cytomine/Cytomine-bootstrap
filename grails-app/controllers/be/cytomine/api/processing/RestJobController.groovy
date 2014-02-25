@@ -2,6 +2,7 @@ package be.cytomine.api.processing
 
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
@@ -10,6 +11,7 @@ import be.cytomine.processing.JobData
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.User
+import be.cytomine.security.UserJob
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
@@ -18,6 +20,8 @@ import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
+import static grails.async.Promises.*
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**
  * Controller for job request.
@@ -129,7 +133,10 @@ class RestJobController extends RestController {
     def execute() {
         long idJob = params.long("id")
         Job job = Job.read(idJob)
-        jobService.executeJob(job, false)
+        SecurityACL.check(job.container(),READ)
+        UserJob userJob = UserJob.findByJob(job)
+        job.software.service.init(job, userJob)
+        job.software.service.execute(job, userJob, false)
         responseSuccess(job)
     }
 
@@ -137,7 +144,13 @@ class RestJobController extends RestController {
     def preview() {
         long idJob = params.long("id")
         Job job = Job.read(idJob)
-        jobService.executeJob(job, true)
+        if (!job.software.service.previewAvailable()) {
+            throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
+        }
+        SecurityACL.check(job.container(),READ)
+        UserJob userJob = UserJob.findByJob(job)
+        job.software.service.init(job, userJob)
+        job.software.service.execute(job, userJob, true)
         responseSuccess(job)
     }
 

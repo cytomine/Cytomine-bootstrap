@@ -43,7 +43,7 @@ class ComputeTermAreaJobService extends AbstractJobService{
         }
 
         printStartJobInfo(job,allArgs)
-        launchAndWaitSoftware(allArgs,job)
+        launchSoftware(allArgs,job)
         printStopJobInfo(job,allArgs)
     }
 

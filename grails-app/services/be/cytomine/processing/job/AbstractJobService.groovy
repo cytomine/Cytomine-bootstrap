@@ -80,7 +80,7 @@ abstract class AbstractJobService {
      * @param args Job argument
      * @param job Software instance that will be launch
      */
-    void launchAndWaitSoftware(String[] args, Job job) {
+    void launchSoftware(String[] args, Job job) {
         Runtime runtime = Runtime.getRuntime();
         final Process process = runtime.exec(args);
 
@@ -120,7 +120,7 @@ abstract class AbstractJobService {
                 }
             }
         }.start();
-        process.waitFor();
+//        process.waitFor();
 //        job.refresh()
 //        job.rate = job.software.service.computeRate(job)
 //        job.save(flush: true)

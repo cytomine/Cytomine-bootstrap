@@ -105,9 +105,9 @@ class PropertyService extends ModelService {
     }
 
     def read(CytomineDomain domain, String key) {
-        def cytomineDomain = Property.findByDomainIdentAndKey(domain.id,key)
-        if (cytomineDomain) {
-            SecurityACL.check(cytomineDomain.container(),READ)
+        def cytomineDomain = Property.findAllByDomainIdentAndKey(domain.id,key)
+        if (cytomineDomain && !cytomineDomain.isEmpty()) {
+            SecurityACL.check(cytomineDomain.first().container(),READ)
         }
         cytomineDomain
     }
