@@ -16,6 +16,7 @@ import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.News
 import grails.converters.JSON
 import grails.util.Environment
+import grails.util.Holders
 import org.apache.commons.io.FileUtils
 import org.codehaus.groovy.grails.web.json.JSONArray
 

@@ -49,24 +49,30 @@ var JobTemplatePanel = SideBarPanel.extend({
 
         var jobTemplate = $('input[name=groupJobTemplate'+self.model.id+']:checked').val();
 
-        new JobTemplateAnnotationModel({annotationIdent: self.currentAnnotation, jobTemplate:jobTemplate}).save({}, {
-                success: function (model, response) {
+        if(!jobTemplate || !self.currentAnnotation) {
+            window.app.view.message("Job", "Select a ROI and a job shortcut!", "error");
+        } else {
+            new JobTemplateAnnotationModel({annotationIdent: self.currentAnnotation, jobTemplate:jobTemplate}).save({}, {
+                    success: function (model, response) {
 
-                    var job = new JobModel({ id : model.get('job').id});
-                    $.post(job.executeUrl())
-                        .done(function() {
-                            window.app.view.message("Job", "Job running!", "success");
-                            self.printJobStatus( model.get('job').id);
-                        })
-                        .fail(function() { console.log("error"); })
-                        .always(function() { console.log("finished"); });
-                },
-                error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Job", json.errors, "error");
+                        var job = new JobModel({ id : model.get('job').id});
+                        $.post(job.executeUrl())
+                            .done(function() {
+                                window.app.view.message("Job", "Job running!", "success");
+                                self.printJobStatus( model.get('job').id);
+                            })
+                            .fail(function() { console.log("error"); })
+                            .always(function() { console.log("finished"); });
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        window.app.view.message("Job", json.errors, "error");
+                    }
                 }
-            }
-        );
+            );
+        }
+
+
     },
     printJobStatus : function(idJob) {
         var self = this;

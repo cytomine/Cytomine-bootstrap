@@ -74,12 +74,12 @@ class BootstrapTestDataService {
 
     }
 
-    def initSoftwareAndJobTemplate(Long idProject) {
+    def initSoftwareAndJobTemplate(Long idProject, Long term) {
 
         Project project = Project.read(idProject)
 
         Software software = new Software(
-                name: "computeAnnotationStats",
+                name: "computeTermStats",
                 serviceName: 'launchLocalScriptService',
                 resultName:'DownloadFiles',
                 description: 'Compute term stats area for an annotation',
@@ -106,7 +106,7 @@ class BootstrapTestDataService {
         JobTemplate jobTemplate = new JobTemplate(name:"ComputeAdenocarcinomesStat", software: software, project: project)
         jobTemplate.save(failOnError: true,flush:true)
 
-        JobParameter paramTmpl1 = new JobParameter(job: jobTemplate,softwareParameter: param4, value: "20202")
+        JobParameter paramTmpl1 = new JobParameter(job: jobTemplate,softwareParameter: param4, value: term)
         paramTmpl1.save(failOnError: true, flush:true)
 
     }

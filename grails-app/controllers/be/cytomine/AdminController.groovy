@@ -26,10 +26,4 @@ class AdminController extends RestController {
         responseSuccess([])
     }
 
-    def insert() {
-        bootstrapTestDataService.initSoftwareAndJobTemplate(params.long('id'))
-    }
-
-
-
 }

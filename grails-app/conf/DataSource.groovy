@@ -5,6 +5,7 @@ dataSource {
   username = "postgres"
 
   dialect = org.hibernatespatial.postgis.PostgisDialect
+
 }
 hibernate {
   cache.use_second_level_cache = true
@@ -35,6 +36,7 @@ environments {
 //      password = 'postgres'
       url="jdbc:postgresql://localhost:5432/cytomine"
       password = "postgres"
+
     }
   }
   test {

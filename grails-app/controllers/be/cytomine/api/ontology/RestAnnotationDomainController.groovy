@@ -849,7 +849,7 @@ class RestAnnotationDomainController extends RestController {
         String request = "SELECT annotation.id,user_id\n" +
                 "FROM $table annotation\n" +
                 "WHERE annotation.image_id = $idImage\n" +
-                "AND $userColumnName IN (${layers.join(',')})\n" +
+                (userColumnName.equals("user_id")? "AND $userColumnName IN (${layers.join(',')})\n" : "") +
                 "AND ST_Intersects(annotation.location,ST_GeometryFromText('" + location + "',0));"
 
         def sql = new Sql(dataSource)
@@ -861,7 +861,7 @@ class RestAnnotationDomainController extends RestController {
         }
         sql.close()
         users.unique()
-        if(users.size()>1) {
+        if(users.size()>1 && userColumnName.equals("user_id")) { //if more annotation from more than 1 user NOT IN REVIEW MODE!
             throw new WrongArgumentException("Annotations from multiple users are under this area. You can correct only annotation from 1 user (hide layer if necessary)")
         }
 
