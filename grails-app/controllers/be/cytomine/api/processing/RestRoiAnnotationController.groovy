@@ -1,7 +1,9 @@
 package be.cytomine.api.processing
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
+import be.cytomine.image.ImageInstance
 import be.cytomine.processing.RoiAnnotation
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
@@ -47,6 +49,25 @@ class RestRoiAnnotationController extends RestController {
     @ApiMethodLight(description="Add an annotation created by user")
     def add(){
         add(roiAnnotationService, request.JSON)
+    }
+
+    @Override
+    public Object addOne(def service, def json) {
+        if (!json.project || json.isNull('project')) {
+            ImageInstance image = ImageInstance.read(json.image)
+            if (image) json.project = image.project.id
+        }
+        if (json.isNull('project')) {
+            throw new WrongArgumentException("Annotation must have a valide project:" + json.project)
+        }
+        if (json.isNull('location')) {
+            throw new WrongArgumentException("Annotation must have a valide geometry:" + json.location)
+        }
+        def minPoint = params.getLong('minPoint')
+        def maxPoint = params.getLong('maxPoint')
+
+        def result = roiAnnotationService.add(json,minPoint,maxPoint)
+        return result
     }
 
 

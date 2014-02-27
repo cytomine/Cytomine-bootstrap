@@ -45,6 +45,9 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
     },
     addVectorLayer: function (layer, model, userID) {
+
+        if(userID=="ROI") return;
+
         console.log("### addVectorLayer");
         console.log(model);
         var self = this;
@@ -54,7 +57,6 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         if (userID == "REVIEW") {
             color = "#5BB75B";
         }
-
         var button = '<button class="btn btn-xs btn-default removeImageLayers" id="removeImageLayers' + userID + '" data-user="' + userID + '" style="height:18px;"> <i class="glyphicon glyphicon-trash"></i></button>'
 
 
@@ -196,6 +198,30 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         });
 
     },
+    roiLayer : null,
+    showROI : function() {
+        var self = this;
+        console.log("### SHOW ROI");
+        if(!self.roiLayer) {
+            self.roiLayer = new AnnotationLayer(null, "ROI layer", self.model.get('id'), "ROI", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+            self.roiLayer.isOwner = false;
+            self.loadedVectorLayers.push({ id: "ROI", user: 0});
+            self.roiLayer.loadAnnotations(self.browseImageView);
+            self.roiLayer.vectorsLayer.setVisibility(true);
+        } else {
+            self.roiLayer.vectorsLayer.setVisibility(true);
+        }
+        self.browseImageView.refreshLayers();
+
+    },
+    hideROI : function() {
+        var self = this;
+        if(self.roiLayer) {
+            self.roiLayer.vectorsLayer.setVisibility(false);
+            self.browseImageView.refreshLayers();
+        }
+
+    },
     initLayerSelection: function () {
         var self = this;
         var select = $("#selectLayerSwitcher" + self.model.id);
@@ -246,13 +272,6 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                         layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
                         self.loadedVectorLayers.push({ id: user.id, user: user});
 
-//                        if(layerAnnotation.isOwner) {
-//                            layerAnnotation.toggleIrregular();
-//                        } else {
-//                            layerAnnotation.controls.select.activate();
-//                        }
-
-
                     } else {
                         console.log("### create layer: Review layer");
                         layerAnnotation = new AnnotationLayer(null, "Review layer", self.model.get('id'), "REVIEW", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
@@ -287,30 +306,8 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             select.val(select.find("option:visible").val());
 
             var item = panel.find("#entry" + window.app.status.user.id);
-            if (item) {
-                //a bug print annotation from the current user even if not selected...
-//                _.each(self.browseImageView.layers,function(layer) {
-//                    console.log(layer);
-//                    console.log(self.loadedVectorLayers);
-//                    if(layer.userID==window.app.status.user.id) {
-//                        layer.vectorsLayer.setVisibility(item.find(".showUser").is(":checked"));
-//                    }
-//
-//                });
-            }
 
         });
-
-
-//         if(self.allVectorLayers.length<20) {
-//             //if not too much layer, show them all, otherwise, user must select
-//             _.each(self.allVectorLayers,function(layer) {
-//                 self.showLayer(layer.id);
-//             });
-//             panel.find("#layerComp"+self.model.get("id")).hide();
-//             panel.find(".removeImageLayers").hide();
-//         } else {
-//            self.showLayer(window.app.status.user.id);
             panel.find("#layerComp" + self.model.get("id")).show();
             panel.find(".removeImageLayers").show();
 //        }
@@ -320,23 +317,13 @@ var LayerSwitcherPanel = SideBarPanel.extend({
     registerRemoveLayerButton: function (idLayer) {
         var self = this;
         self.disableEvent = true;
-//        var panel = $("#layerSwitcher" + self.model.get("id"));
-//        panel.find(".removeImageLayers").unbind();
-//
-//       _.each(self.loadedVectorLayers, function(layer) {
         var panel = $("#layerSwitcher" + self.model.get("id"));
         var select = $("#selectLayerSwitcher" + self.model.id);
         panel.find("#removeImageLayers" + idLayer).click(function () {
-            console.log("click");
             var button = $(this);
-            console.log(button);
             var user = button.data("user");
-            console.log("user=" + user);
             var option = select.find("option[value=" + user + "]");
-            console.log(select);
             var item = panel.find("#entry" + user);
-            console.log(option);
-            console.log(item);
             option.show();
             //item.find(".showUser").attr("checked",false);
             if (!self.disableEvent) {
@@ -346,36 +333,8 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             }
             item.hide();
         });
-//       });
         self.disableEvent = false;
     },
-//    registerRemoveLayerButton:function() {
-//        var self = this;
-//        self.disableEvent = true;
-//        var panel = $("#layerSwitcher" + self.model.get("id"));
-//        panel.find(".removeImageLayers").unbind();
-//
-//       _.each(self.loadedVectorLayers, function(layer) {
-//
-//           panel.bind("#removeImageLayers"+layer.id).click(function() {
-//               console.log("click");
-//               var button = $(this);
-//               console.log(button);
-//               var user = button.data("user");
-//               console.log("user="+user);
-//               var option = select.find("option[value="+user+"]");
-//               console.log(select);
-//               var item = panel.find("#entry"+user);
-//               console.log(option);
-//               console.log(item);
-//               option.show();
-//               //item.find(".showUser").attr("checked",false);
-//               if(!self.disableEvent) item.find(".showUser").click();
-//               item.hide();
-//           });
-//       });
-//        self.disableEvent = false;
-//    },
     showLayer: function (id) {
         var self = this;
         console.log("### showLayer " + id);

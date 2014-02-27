@@ -295,19 +295,28 @@ var DashboardController = Backbone.Router.extend({
         else if (param.type == "ListDomain" || param.type == "Domain") {
             var ids = param.value.split(",");
             console.log("Domain or ListDomain:" + ids);
-            var collection = window.app.getFromCache(window.app.replaceVariable(param.uri));
-            if (collection == undefined || (collection.length > 0 && collection.at(0).id == undefined)) {
-                console.log("Collection is NOT CACHE - Reload collection");
-                collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut: param.uriSortAttribut});
-                collection.fetch({
-                    success: function (col, response) {
-                        window.app.addToCache(window.app.replaceVariable(param.uri), col);
-                        cell.html(self.createJobParameterDomainValue(ids, col, param, maxSize));
-                    }
-                });
+
+            if(param.uri) {
+                var collection = window.app.getFromCache(window.app.replaceVariable(param.uri));
+                if (collection == undefined || (collection.length > 0 && collection.at(0).id == undefined)) {
+                    console.log("Collection is NOT CACHE - Reload collection");
+                    collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(param.uri), sortAttribut: param.uriSortAttribut});
+                    collection.fetch({
+                        success: function (col, response) {
+                            window.app.addToCache(window.app.replaceVariable(param.uri), col);
+                            cell.html(self.createJobParameterDomainValue(ids, col, param, maxSize));
+                        }
+                    });
+                } else {
+                    console.log("Collection is CACHE");
+                    cell.html(self.createJobParameterDomainValue(ids, collection, param, maxSize));
+                }
             } else {
-                console.log("Collection is CACHE");
-                cell.html(self.createJobParameterDomainValue(ids, collection, param, maxSize));
+                var computeValue = param.value;
+                if (param.name.toLowerCase() == "privatekey" || param.name.toLowerCase() == "publickey") {
+                    computeValue = "************************************";
+                }
+                cell.html(computeValue);
             }
         }
         else {

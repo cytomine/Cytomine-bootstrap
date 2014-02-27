@@ -30,6 +30,7 @@ class RestAnnotationTermController extends RestController {
     def algoAnnotationService
     def algoAnnotationTermService
     def cytomineService
+    def roiAnnotationService
 
     def currentDomainName() {
         "annotation term or algo annotation term"
@@ -52,6 +53,10 @@ class RestAnnotationTermController extends RestController {
             AnnotationDomain annotation = userAnnotationService.read(params.long('idannotation'))
             if (!annotation) {
                 annotation = algoAnnotationService.read(params.long('idannotation'))
+            }
+            if (!annotation) {
+                annotation = roiAnnotationService.read(params.long('idannotation'))
+                responseSuccess([])
             }
 
             if (annotation && !params.idUser && annotation instanceof UserAnnotation) {

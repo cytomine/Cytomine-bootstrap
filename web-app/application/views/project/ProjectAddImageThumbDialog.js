@@ -242,7 +242,6 @@ var ProjectAddImageThumbDialog = Backbone.View.extend({
     },
 
     initEvents: function () {
-        alert("initEvents");
         /* TO DO
          Recode this method : don't repeat yourself
          Use Backbone view EVENTs to bind CLICK

@@ -2,8 +2,19 @@
     <label>Jobs Template <i class="toggle-content1 glyphicon glyphicon-plus"></i></label>
 </div>
 <div class="JobTemplateContent1 sidebar-map-content" style="display: none;">
+
     <h5>Choose a ROI</h5>
-    <div class="jobTemplateInfo" style="border:2px;border-color:#5E5E5E;border-radius:10px; border-style:solid;padding:2px;text-align: center;">No ROI selected</div>
+    <div class="jobTemplateROI" style="border:2px;border-color:#5E5E5E;border-radius:10px; border-style:solid;padding:2px;text-align: center;">
+
+        <button data-toggle="tooltip" title="Draw a ROI"  style="display: inline;" class="btn btn-default btn-xs" id="roi<%= id %>" ><i class="glyphicon glyphicon-unchecked"/> Draw a ROI</button>
+        <input id="showRoiLayer<%= id %>" class="showRoi" type="checkbox" value="showLayerROI" style="display: inline;margin-left: 10px;"> Show ROI layer
+
+        <div class="jobTemplateInfo" style="margin-top:3px;border:2px;border-color:#5E5E5E;border-radius:10px; border-style:solid;padding:2px;text-align: center;">
+
+
+            No ROI selected
+        </div>
+    </div>
     <h5>Choose a job shortcut</h5>
     <div class="jobTemplateList" style="border:2px;border-color:#5E5E5E;border-radius:10px; border-style:solid;padding:2px;"
             ><div class="alert alert-info"><i class="glyphicon glyphicon-refresh"/> Loading...</div>

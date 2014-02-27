@@ -15,8 +15,12 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
     var point = format.read(location);
     var geom = point.geometry;
     var feature = new OpenLayers.Feature.Vector(geom, {zIndex : 999});
+
     var term = AnnotationStatus.NO_TERM; //no term associated
-    if (terms.length > 1) { //multiple term
+
+    if (terms.length==1 && terms[0]==0) { //multiple term
+        term = AnnotationStatus.NO_TERM;
+    } else if (terms.length > 1) { //multiple term
         term = AnnotationStatus.MULTIPLE_TERM;
     } else if (terms.length == 1) {
         term = terms[0]; //put ID
@@ -44,6 +48,10 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
         var isTermRestriction = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.isTermRestriction(); // //just for perf
 
         _.each(nestedCollection, function (annotation) {
+
+            if(!annotation.term) {
+                annotation.term = [];
+            }
 
             var terms = annotation.term || annotation.get('term');
             if(terms.length==0){
@@ -77,6 +85,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     this.imageID = imageID;
     this.userID = userID;
     this.reviewLayer = (name == "REVIEW") || (name == "Review layer");
+    var roi  = (userID == "ROI");
     this.reviewMode = reviewMode;
     var rules = [new OpenLayers.Rule({
         symbolizer: {strokeColor: "#0000ff", strokeWidth: 2},
@@ -158,6 +167,11 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerReview(false));
         styleMap.styles["select"].addRules(rules);
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReview(true));
+    } else if(userID == "ROI") {
+        styleMap.styles["default"].addRules(rules);
+        styleMap.addUniqueValueRules('default', 'term', this.getSymbolizerRoi(false));
+        styleMap.styles["select"].addRules(rules);
+        styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerRoi(true));
     } else if (!reviewMode) {
         styleMap.styles["default"].addRules(rules);
         styleMap.addUniqueValueRules('default', 'term', this.getSymbolizer(false));
@@ -171,7 +185,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
         styleMap.addUniqueValueRules('select', 'term', this.getSymbolizerReviewNotReviewLayer(true));
     }
 
-    var annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true, kmeans:true}).url().replace("json", "jsonp");
+    var annotationsCollection = new AnnotationCollection({user: this.userID, image: this.imageID, roi:roi,notReviewedOnly: reviewMode,reviewed:this.reviewLayer,showWKT: true,showTerm: true, kmeans:true}).url().replace("json", "jsonp");
 
 
 
@@ -287,6 +301,38 @@ AnnotationLayer.prototype = {
                 'pointRadius': self.pointRadius
             }
         });
+        return symbolizers_lookup
+    },
+    getSymbolizerRoi: function (selected) {
+
+        var strokeColor = this.defaultStrokeColor;
+        if (selected) {
+            strokeColor = this.selectedStrokeColor;
+        }
+        var symbolizers_lookup = {};
+        var self = this;
+        symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
+            'fillColor': "#FCF8E3",
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#FCF8E3",
+            'strokeWidth': 3,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#FCF8E3",
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#FCF8E3",
+            'strokeWidth': 5,
+            'pointRadius': this.pointRadius
+        };
+
+
         return symbolizers_lookup
     },
     getSymbolizerReviewNotReviewLayer: function (selected) {
@@ -608,20 +654,20 @@ AnnotationLayer.prototype = {
         var format = new OpenLayers.Format.WKT();
         var geomwkt = format.write(feature);
 
-        console.log(feature)
+        console.log(feature);
         if(self.browseImageView.arrow) {
             var point = feature.geometry
             console.log(point);
             var size = 300;
             var arrow = "POLYGON ((";
-            arrow = arrow + point.x + " " + point.y + ", "
-            arrow = arrow + (point.x - size/2) + " " + (point.y- size/2) +","
-            arrow = arrow + (point.x - size/4) + " " + (point.y- size/2) +","
-            arrow = arrow + (point.x - size/4) + " " + (point.y- size*2) +","
-            arrow = arrow + (point.x + size/4) + " " + (point.y- size*2) +","
-            arrow = arrow + (point.x + size/4) + " " + (point.y- size/2) +","
-            arrow = arrow + (point.x + size/2) + " " + (point.y- size/2) +","
-            arrow = arrow + point.x + " " + point.y + "))"
+            arrow = arrow + point.x + " " + point.y + ", ";
+            arrow = arrow + (point.x - size/2) + " " + (point.y- size/2) +",";
+            arrow = arrow + (point.x - size/4) + " " + (point.y- size/2) +",";
+            arrow = arrow + (point.x - size/4) + " " + (point.y- size*2) +",";
+            arrow = arrow + (point.x + size/4) + " " + (point.y- size*2) +",";
+            arrow = arrow + (point.x + size/4) + " " + (point.y- size/2) +",";
+            arrow = arrow + (point.x + size/2) + " " + (point.y- size/2) +",";
+            arrow = arrow + point.x + " " + point.y + "))";
             geomwkt = arrow;
         }
 
@@ -632,7 +678,8 @@ AnnotationLayer.prototype = {
             name: "",
             location: geomwkt,
             image: this.imageID,
-            term: terms
+            term: terms,
+            roi:self.browseImageView.roi
         });
 
         if (self.reviewMode && !self.browseImageView.reviewPanel.isLayerPrinted(window.app.status.user.id)) {

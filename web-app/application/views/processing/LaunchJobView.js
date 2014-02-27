@@ -48,7 +48,9 @@ var LaunchJobView = Backbone.View.extend({
         if (param.type == "String") {
             return new InputTextView({param: param});
         }
-        if (param.type == "Number") {
+        console.log("##########################");
+        console.log(param);
+        if (param.type == "Number" || (param.type == "Domain" && !param.uri)) {
             return new InputNumberView({param: param});
         }
         if (param.type == "Date") {
@@ -242,7 +244,7 @@ var InputNumberView = Backbone.View.extend({
     getHtmlElem: function () {
         return _.template('<div class="control-group success"><div class="controls"><input type="text" class="col-md-3" value="<%= value%>" <%= required %>></div></div>', {
             value : this.getDefaultValue(),
-            required: (self.param.required) ? "required" : ""
+            required: (this.param.required) ? "required" : ""
         });
     },
     getDefaultValue: function () {

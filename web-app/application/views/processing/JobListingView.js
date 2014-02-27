@@ -12,7 +12,6 @@ var JobListingView = Backbone.View.extend({
     },
     render: function () {
         var self = this;
-        alert("used here!");
         console.log("trace");
         require([
             "text!application/templates/processing/JobListing.tpl.html"

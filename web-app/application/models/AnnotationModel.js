@@ -2,18 +2,27 @@ var AnnotationModel = Backbone.Model.extend({
     url: function () {
         var base = 'api/annotation';
         var format = '.json';
-        if (this.isNew()) {
-            return base + format;
-        }
-        var params = "";
+
+        var params = "?";
         if (this.fill) {
-            params = "?fill=true";
+            params = params +"&fill=true";
         }
+        if(this.roi) {
+            params =params + "&roi=true"
+        }
+
+
+        if (this.isNew()) {
+            return base + format + params;
+        }
+
+
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format + params;
     },
     initialize: function (options) {
         this.id = options.id;
         this.fill = options.fill;
+        this.roi = options.roi;
     }
 });
 

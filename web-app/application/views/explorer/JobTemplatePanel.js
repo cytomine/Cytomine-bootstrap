@@ -30,8 +30,21 @@ var JobTemplatePanel = SideBarPanel.extend({
         return this;
     },
     refresh: function() {
-        alert("refresh");
         this.doLayout();
+    },
+    printROILayerChoice : function() {
+        var self = this;
+        var panel = $('#jobTemplatePanel' + self.model.get('id'));
+        panel.find('input[id=showRoiLayer' + this.model.get('id') + ']').click(function () {
+            if($(this).is(':checked')) {
+                self.browseImageView.layerSwitcherPanel.showROI();
+            } else {
+                self.browseImageView.layerSwitcherPanel.hideROI();
+            }
+
+        });
+
+
     },
     changeAnnotation : function(idAnnotation) {
         var self = this;
@@ -41,7 +54,7 @@ var JobTemplatePanel = SideBarPanel.extend({
         panel.find(".jobTemplateInfo").append('<img src="'+window.location.origin+'/api/annotation/'+idAnnotation+ '/crop.png?max_size=128&draw=true" /><br/>');
         panel.find(".jobTemplateInfo").append("Annotation " + idAnnotation + "<br/>");
 
-        panel.find(".jobTemplateInfo").css("border-color","#47a447");
+        panel.find(".jobTemplateROI").css("border-color","#47a447");
 
     },
     linkTemplateToAnntation : function() {
@@ -115,7 +128,7 @@ var JobTemplatePanel = SideBarPanel.extend({
     doLayout: function (tpl) {
         var self = this;
         var panel = $('#jobTemplatePanel' + self.model.get('id'));
-        var content =_.template(tpl, {});
+        var content =_.template(tpl, {id:self.model.get('id')});
         panel.html(content);
         var elContent1 = panel.find(".JobTemplateContent1");
         var sourceEvent1 = panel.find(".toggle-content1");
@@ -148,19 +161,42 @@ var JobTemplatePanel = SideBarPanel.extend({
                         var str = '<li><input type="radio" name="groupJobTemplate'+self.model.get('id')+'" value="'+jobTemplate.get('id')+'"> '+jobTemplate.get('name')+'</li>';
                         list.find("."+jobTemplate.get('software')).append(str);
                     });
-                    panel.find("input").click(function() {
+                    panel.find("input[name=groupJobTemplate"+self.model.get('id')+"]").click(function() {
                         panel.find(".jobTemplateList").css("border-color","#47a447");
                     });
                 }
             }
         });
 
+        console.log('**************** 1');
         panel.find("button.Launch").click(function() {
             panel.find(".jobTemplateAction").css("border-color","#47a447");
             panel.find(".jobTemplateStatus").css("border-color","#5E5E5E");
 
             self.linkTemplateToAnntation();
-        })
+        });
 
+
+        console.log('**************** 2');
+        var toolbar = $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id'));
+        var cssActivate = function(elToActivate) {
+            toolbar.find("button").removeClass("active");
+            $('button[id=roi' + self.model.get('id') + ']').removeClass("active");
+            $(elToActivate).addClass("active");
+        }
+
+        console.log('**************** 3');
+        var checkBox = panel.find('input[id=showRoiLayer' + this.model.get('id') + ']');
+
+        panel.find('button[id=roi' + this.model.get('id') + ']').click(function () {
+            //if ROI layer is not visible, show this layer
+            if(!checkBox.is(':checked')) {
+                checkBox.click();
+            }
+            cssActivate(this);
+            self.browseImageView.initROI();
+        });
+
+        self.printROILayerChoice();
     }
 });

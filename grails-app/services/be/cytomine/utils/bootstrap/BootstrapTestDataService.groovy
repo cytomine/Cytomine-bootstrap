@@ -100,7 +100,7 @@ class BootstrapTestDataService {
 
         SoftwareParameter param3 = new SoftwareParameter(software:software, name:"annotation",type:"Domain",required: true, index:400)
         param3.save(failOnError: true,flush:true)
-        SoftwareParameter param4 = new SoftwareParameter(software:software, name:"term",type:"Domain",required: true, index:500)
+        SoftwareParameter param4 = new SoftwareParameter(software:software, name:"term",type:"Domain",required: true, index:500, uri: '/api/project/$currentProject$/term.json',uriPrintAttribut: 'name',uriSortAttribut: 'name')
         param4.save(failOnError: true,flush:true)
 
         JobTemplate jobTemplate = new JobTemplate(name:"ComputeAdenocarcinomesStat", software: software, project: project)
