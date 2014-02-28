@@ -32,9 +32,6 @@ class AnnotationTermTests  {
     assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json.collection instanceof JSONArray
-
-    result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-    assert 404 == result.code
   }
 
     void testListAnnotationTermByAnnotationWithCredentialWithUser() {
@@ -42,9 +39,6 @@ class AnnotationTermTests  {
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
-
-      result = AnnotationTermAPI.listAnnotationTermByAnnotation(-99,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-      assert 404 == result.code
     }
 
     void testListAnnotationTermByUserNotWithCredential() {

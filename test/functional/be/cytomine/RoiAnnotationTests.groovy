@@ -63,14 +63,6 @@ class RoiAnnotationTests {
         assert 200 == result.code
     }
 
-    void testAddRoiAnnotationCorrectWithoutProject() {
-        def annotationToAdd = BasicInstanceBuilder.getRoiAnnotation()
-        def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
-        updateAnnotation.project = null
-        def result = RoiAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        assert 404 == result.code
-    }
-
     void testAddRoiAnnotationBadGeom() {
         def annotationToAdd = BasicInstanceBuilder.getRoiAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
