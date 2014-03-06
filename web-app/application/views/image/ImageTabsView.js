@@ -3,9 +3,12 @@ var ImageTabsView = Backbone.View.extend({
     images: null, //array of images that are printed
     idProject: null,
     searchPanel: null,
+    project : null,
     initialize: function (options) {
         this.idProject = options.idProject;
         this.container = options.container;
+        console.log(options);
+        this.project = options.project;
     },
     refresh: function () {
 
@@ -20,7 +23,10 @@ var ImageTabsView = Backbone.View.extend({
     render : function() {
         var self = this;
         require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {
-            self.doLayout(actionMenuTpl)
+            self.doLayout(actionMenuTpl);
+            $("#imageAdd"+self.idProject).click(function() {
+                new AddImageToProjectDialog({el: "#dialogs", model: self.project}).render();
+            });
         });
         return this;
     },
@@ -43,7 +49,7 @@ var ImageTabsView = Backbone.View.extend({
                 var imageInstanceModel = new ImageInstanceModel({});
                 imageInstanceModel.set(o.aData);
                 return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
-//                return o.aData["originalFilename"];
+                return o.aData["originalFilename"];
             }}
             ,
             { "mDataProp": "width", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
@@ -67,7 +73,7 @@ var ImageTabsView = Backbone.View.extend({
             { "mDataProp": "extension", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
                 var extension = o.aData["extension"];
                 if (extension == "ndpi" || extension == "vms") {
-                     return '<img src="images/brands/hamamatsu.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                    return '<img src="images/brands/hamamatsu.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 } else if (extension == "mrxs") {
                     return '<img src="images/brands/3dh.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 } else if (extension == "svs") {
@@ -126,7 +132,7 @@ var ImageTabsView = Backbone.View.extend({
             },
             "aoColumns" : columns
         });
-        $('#projectImageListing' + self.idProject).hide();
-        $('#projectImageTable' + self.idProject).show();
+//        $('#projectImageListing' + self.idProject).hide();
+//        $('#projectImageTable' + self.idProject).show();
     }
 });

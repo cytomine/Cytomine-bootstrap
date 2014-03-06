@@ -32,18 +32,26 @@ class RestAbstractImageController extends RestController {
     def projectService
     def segmentationService
     def imageSequenceService
-
-    def currentDomainName() {
-        return "abstract image" //needed because not RestAbstractImageController...
-    }
+    def dataTablesService
 
     /**
      * List all abstract image available on cytomine
      */
     //TODO:APIDOC
+
+    @ApiMethodLight(description="Get all image available for the current user", listing = true)
+    @ApiParams(params=[
+        @ApiParam(name="project", type="long", paramType = ApiParamType.PATH, description = "(Optional) If set, check if image is in project or not"),
+        @ApiParam(name="sortColumn", type="string", paramType = ApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
+        @ApiParam(name="sortDirection", type="string", paramType = ApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
+        @ApiParam(name="search", type="string", paramType = ApiParamType.QUERY, description = "(optional) Original filename search filter (all by default)")
+    ])
     def list() {
         SecUser user = cytomineService.getCurrentUser()
-        if(params.rows!=null) {
+        if (params.datatables) {
+            Project project = projectService.read(params.long("project"))
+            responseSuccess(dataTablesService.process(params, AbstractImage, null, [],project))
+        } else if(params.rows!=null) {
             responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
         } else {
             responseSuccess(abstractImageService.list(user))

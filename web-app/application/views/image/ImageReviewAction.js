@@ -248,10 +248,10 @@ var ImageReviewAction = Backbone.View.extend({
 
                                     },
                                     error: function (model, response) {
-                                        window.app.view.message("Image", "Errors!", "error");
                                         clearInterval(timer);
+                                        console.log(response);
                                         var json = $.parseJSON(response.responseText);
-                                        window.app.view.message("Image", json.errors[0], "error");
+                                        window.app.view.message("Image", json.errors, "error");
                                     }
                                 }
                             );

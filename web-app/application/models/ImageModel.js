@@ -65,11 +65,12 @@ var ImagePropertyCollection = PaginatedCollection.extend({
 var ImageCollection = PaginatedCollection.extend({
     model: ImageModel,
     url: function () {
-        if (this.project != undefined) {
-            return "api/project/" + this.project + "/image.json";
-        } else {
-            return "api/image.json?datatable=true";
+
+        var params = "?";
+        if(this.project) {
+            params = params + "project="+ this.project;
         }
+        return "api/abstractimage.json"+params;
     },
     initialize: function (options) {
         this.project = options.project;

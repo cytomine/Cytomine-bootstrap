@@ -39,6 +39,7 @@
 <link rel='stylesheet' href='lib/fileupload-8.8.3/css/jquery.fileupload-ui.css' type='text/css'/>
 <link rel="stylesheet" type="text/css" href="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.css"/>
 
+<script type="text/javascript" src="lib/mousetrap.min.js"></script>
 
 <!-- JQuery & JQuery UI -->
 <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
@@ -128,7 +129,7 @@
 
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
 
-<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>
+%{--<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>--}%
 
 
 
@@ -213,6 +214,8 @@
 
 <script type="text/javascript" src="application/views/utils/MultiSelectView.js" ></script>
 
+
+<script type="text/javascript" src="application/views/dashboard/AddImageToProjectDialog.js" ></script>
 <script type="text/javascript" src="application/views/dashboard/AnnotationThumbView.js" ></script>
 <script type="text/javascript" src="application/views/dashboard/AnnotationView.js" ></script>
 <script type="text/javascript" src="application/views/dashboard/ProjectDashboardView.js" ></script>
