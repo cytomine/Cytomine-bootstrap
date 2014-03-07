@@ -27,7 +27,6 @@ class JobTemplateAnnotationAPI extends DomainAPI {
     static def create(String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/jobtemplateannotation.json"
         def result = doPOST(URL,json,username,password)
-        println result
         result.job = Job.get(JSON.parse(result.data)?.job?.id)
         result.data = JobTemplateAnnotation.get(JSON.parse(result.data)?.jobtemplateannotation?.id)
         return result

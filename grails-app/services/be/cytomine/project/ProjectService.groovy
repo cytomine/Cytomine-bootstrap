@@ -181,7 +181,7 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,10,"Check retrieval consistency")
         checkRetrievalConsistency(json)
         def result = executeCommand(new AddCommand(user: currentUser),null,json)
-        def project = Project.read(result?.data?.project.id)
+        def project = Project.read(result?.data?.project?.id)
         taskService.updateTask(task,20,"Project $project created")
         log.info "project=" + project + " json.users=" + json.users + " json.admins=" + json.admins
         //Add annotation-term if term
@@ -233,7 +233,7 @@ class ProjectService extends ModelService {
         SecurityACL.check(project.container(),WRITE)
         def result = executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
 
-        project = Project.read(result?.data?.project.id)
+        project = Project.read(result?.data?.project?.id)
         taskService.updateTask(task,20,"Project ${project.name} edited")
 
 
@@ -246,8 +246,8 @@ class ProjectService extends ModelService {
             projectNewUsers.addAll(JSONUtils.getJSONList(jsonNewData.admins).collect{Long.parseLong(it+"")})  //add new admin as user too
             projectNewUsers.add(currentUser.id)
             projectNewUsers = projectNewUsers.unique()
-            println "projectOldUsers=$projectOldUsers"
-            println "projectNewUsers=$projectNewUsers"
+            log.info "projectOldUsers=$projectOldUsers"
+            log.info "projectNewUsers=$projectNewUsers"
             changeProjectUser(project,projectNewUsers,projectOldUsers,false,task,20)
         }
 
@@ -256,8 +256,8 @@ class ProjectService extends ModelService {
             def projectNewAdmins = JSONUtils.getJSONList(jsonNewData.admins).collect{Long.parseLong(it+"")}.sort() //[a,b,x]
             projectNewAdmins.add(currentUser.id)
             projectNewAdmins = projectNewAdmins.unique()
-            println "projectOldAdmins=$projectOldAdmins"
-            println "projectNewAdmins=$projectNewAdmins"
+            log.info "projectOldAdmins=$projectOldAdmins"
+            log.info "projectNewAdmins=$projectNewAdmins"
             changeProjectUser(project,projectNewAdmins,projectOldAdmins,true,task,60)
         }
         return result
@@ -268,8 +268,8 @@ class ProjectService extends ModelService {
         def projectAddUser = projectNewUsers - projectOldUsers
         def projectDeleteUser = projectOldUsers - projectNewUsers
 
-        println "projectAddUser=$projectAddUser"
-        println "projectDeleteUser=$projectDeleteUser"
+        log.info "projectAddUser=$projectAddUser"
+        log.info "projectDeleteUser=$projectDeleteUser"
         projectAddUser.each { idUser ->
             SecUser user = SecUser.read(Long.parseLong(idUser+""))
             log.info "projectAddUser project=${project} user=${user}"
@@ -306,7 +306,6 @@ class ProjectService extends ModelService {
         SecurityACL.checkReadOnly(domain.container())
         def jsonNewData = JSON.parse(domain.encodeAsJSON())
         jsonNewData.deleted = new Date().time
-        println "jsonNewData.deleted="+new Date(jsonNewData.deleted)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
         c.delete = true
@@ -315,11 +314,11 @@ class ProjectService extends ModelService {
 
     def afterAdd(Project domain, def response) {
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
-        if(!domain.hasPermission(READ)) {
+        if(!domain.hasACLPermission(READ)) {
             log.info("force to put it in list")
             permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.READ)
         }
-        if(!domain.hasPermission(ADMINISTRATION)) {
+        if(!domain.hasACLPermission(ADMINISTRATION)) {
             log.info("force to put it in list")
             permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
         }
@@ -428,11 +427,9 @@ class ProjectService extends ModelService {
 //    }
 
     def deleteDependentImageInstance(Project project, Transaction transaction,Task task=null) {
-        println "****************** deleteDependentImageInstance"
         taskService.updateTask(task,task? "Delete ${ImageInstance.countByProject(project)} images":"")
 
         ImageInstance.findAllByProject(project).each {
-            println "DELETE DEPENDENCY:"+it.id
             imageInstanceService.delete(it,transaction,null, false)
         }
     }

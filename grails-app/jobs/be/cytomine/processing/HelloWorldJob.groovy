@@ -22,7 +22,7 @@ class HelloWorldJob {
     }
 
     def execute(context) {
-        println "Start HellWorld"
+        log.info "Start HellWorld"
 
         Boolean preview = (Boolean) context.mergedJobDataMap.get('preview')
         Job job = (Job) context.mergedJobDataMap.get('job')

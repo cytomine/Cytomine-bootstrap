@@ -48,8 +48,7 @@ class AnnotationTermAPI extends DomainAPI {
         else  URL=Infos.CYTOMINEURL+"api/annotation/"+ json.userannotation +"/term/"+ json.term +".json"
         def result = doPOST(URL,jsonAnnotationTerm,username,password)
         json = JSON.parse(result.data)
-        int idAnnotationTerm
-        try {idAnnotationTerm= json?.annotationterm?.id } catch(Exception e) {println e}
+        def idAnnotationTerm = json?.annotationterm?.id
         return [data: AnnotationTerm.get(idAnnotationTerm), code: result.code]
     }
 

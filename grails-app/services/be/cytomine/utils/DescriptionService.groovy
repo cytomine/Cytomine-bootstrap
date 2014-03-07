@@ -36,7 +36,6 @@ class DescriptionService extends ModelService {
      * Get a description thanks to its domain info (id and class)
      */
     def get(def domainIdent, def domainClassName) {
-        println "get=$domainIdent $domainClassName"
         SecurityACL.check(domainIdent,domainClassName,READ)
         Description.findByDomainIdentAndDomainClassName(domainIdent,domainClassName)
     }

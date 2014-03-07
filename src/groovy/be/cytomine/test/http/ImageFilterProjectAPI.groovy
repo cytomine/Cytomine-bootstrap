@@ -26,7 +26,6 @@ class ImageFilterProjectAPI extends DomainAPI {
     static def create(String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/imagefilterproject.json"
         def result = doPOST(URL,json,username,password)
-        println "result.data=$result.data"
         def jsonResponse = JSON.parse(result.data)
         def id = jsonResponse.imagefilterproject.id
         return [data: ImageFilterProject.get(id), code: result.code]

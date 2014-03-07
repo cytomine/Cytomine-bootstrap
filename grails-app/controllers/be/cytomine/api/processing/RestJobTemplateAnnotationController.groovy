@@ -63,7 +63,6 @@ class RestJobTemplateAnnotationController extends RestController{
     def add () {
         try {
             def result = jobTemplateAnnotationService.add(request.JSON)
-            println result
             JobTemplateAnnotation jobTemplateAnnotation = result.object
 
             //init a job with the template

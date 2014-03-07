@@ -1,5 +1,8 @@
 package be.cytomine.Exception;
 
+
+import groovy.util.logging.Log;
+
 /**
  * User: lrollus
  * Date: 17/11/11
@@ -25,7 +28,7 @@ public abstract class CytomineException extends RuntimeException{
      * @param code Http code
      */
     public CytomineException(String msg, int code) {
-        System.out.println(msg);
+        System.out.println(code + "=>" + msg);
         this.msg=msg;
         this.code = code;
     }

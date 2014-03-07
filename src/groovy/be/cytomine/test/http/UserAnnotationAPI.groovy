@@ -47,28 +47,21 @@ class UserAnnotationAPI extends DomainAPI {
     }
 
     static def listByImage(Long id, String username, String password, List propertiesToShow = null) {
-        println "propertiesToShow=$propertiesToShow"
         String URL = Infos.CYTOMINEURL + "api/annotation.json?image=$id&" + buildPropertiesToShowURLParams(propertiesToShow)
-        println "url=$URL"
         return doGET(URL, username, password)
     }
 
     static def listByImages(Long project,List<Long> ids, String username, String password, List propertiesToShow = null) {
-        println "propertiesToShow=$propertiesToShow"
         String URL = Infos.CYTOMINEURL + "api/annotation.json?project=${project}&images=${ids.join(',')}&" + buildPropertiesToShowURLParams(propertiesToShow)
-        println "url=$URL"
         return doGET(URL, username, password)
     }
 
     static def buildPropertiesToShowURLParams(List propertiesToShow) {
-
-        println "propertiesToShow=$propertiesToShow"
         if(!propertiesToShow)  return ""
         def params = []
         propertiesToShow.each {
             params << it + "=true"
         }
-        println "params=${params.join("&")}"
         return params.join("&")
     }
 
@@ -119,12 +112,9 @@ class UserAnnotationAPI extends DomainAPI {
 
     static def create(String jsonAnnotation, def minPoint,def maxPoint,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/userannotation.json?"+(minPoint? "&minPoint=$minPoint": "")+(maxPoint? "&maxPoint=$maxPoint": "")
-        println "jsonAnnotation="+jsonAnnotation
         def result = doPOST(URL,jsonAnnotation,username,password)
-        println result
         def json = JSON.parse(result.data)
         if(JSON.parse(jsonAnnotation) instanceof JSONArray) return [code: result.code]
-        println "json="+json
         Long idAnnotation = json?.annotation?.id
         return [data: UserAnnotation.get(idAnnotation), code: result.code]
     }

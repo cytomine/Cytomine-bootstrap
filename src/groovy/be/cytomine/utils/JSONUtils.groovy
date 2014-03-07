@@ -137,10 +137,7 @@ class JSONUtils {
             if(column.equals('id')) {
                 domainRead = domain.read(Long.parseLong(json[attr].toString()))
             } else {
-                println json[attr].toString()
                 def value = convertValue(json[attr].toString(), columnType)
-                println "value=$value ${value.class.name}"
-                println "column=$column"
                 domainRead = domain.findWhere(("$column".toString()): value)
             }
             if (!domainRead) {
@@ -165,14 +162,12 @@ class JSONUtils {
         }else if(item instanceof String) {
             return JSON.parse(item)
         }
-        println "item.class=${item.class}"
         return item
     }
 
 
 
     static public def convertValue(String value, String type) {
-        println "convertValue=$value $type"
         if(value.equals("null")) {
             return null
         }else if (type.equals("String")) {

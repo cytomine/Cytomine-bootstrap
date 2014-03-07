@@ -56,7 +56,6 @@ class Task {
     }
 
     Task saveOnDatabase() {
-        println AH.application.mainContext.dataSource
         boolean isAlreadyInDatabase = false
         Sql sql = createSQLDB()
         sql.eachRow("SELECT id FROM task where id = ${id}") {
@@ -68,12 +67,9 @@ class Task {
             sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id,print_in_activity) VALUES ($id,$progress,$projectIdent,$userIdent,$printInActivity)")
         } else {
             sql.executeUpdate("UPDATE task set progress=${progress} WHERE id=$id")
-            println "UPDATE task set progress=${progress} WHERE id=$id"
-            println getFromDatabase(id).progress
         }
         closeSQL(sql)
         getFromDatabase(id)
-
     }
 
     def getFromDatabase(def id) {

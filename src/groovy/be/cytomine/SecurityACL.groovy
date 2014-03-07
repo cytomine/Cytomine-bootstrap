@@ -10,6 +10,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
+import groovy.util.logging.Log
 import org.springframework.security.acls.model.Permission
 
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
@@ -21,6 +22,7 @@ import static org.springframework.security.acls.domain.BasePermission.ADMINISTRA
  *
  * Security object usefull to check right access for a domain
  */
+@Log
 class SecurityACL {
 
     static void check(def id, Class classObj, Permission permission) {
@@ -58,10 +60,9 @@ class SecurityACL {
     }
 
     static void check(def id, String className, String method, Permission permission) {
-        println "check:" + id + " className=$className method=$method"
+        log.info "check:" + id + " className=$className method=$method"
         def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
        if (simpleObject) {
-           println "simpleObject=" + simpleObject."$method"()
            def containerObject = simpleObject."$method"()
            check(containerObject,permission)
        } else {
@@ -132,7 +133,7 @@ class SecurityACL {
     static void checkReadOnly(CytomineDomain domain) {
         if (domain) {
             boolean readOnly = !domain.container().canUpdateContent()
-            boolean containerAdmin = domain.container().hasPermission(domain.container(),ADMINISTRATION)
+            boolean containerAdmin = domain.container().hasACLPermission(domain.container(),ADMINISTRATION)
             if(readOnly && !containerAdmin) {
                throw new ForbiddenException("The project for this data is in readonly mode! You must be project admin to add, edit or delete this resource in a readonly project.")
            }
@@ -244,7 +245,6 @@ class SecurityACL {
 
     static public def checkIsAdminContainer(CytomineDomain domain,SecUser currentUser) {
             if (domain) {
-                println "Admin=${domain.container().checkPermission(ADMINISTRATION)}"
                 if (!domain.container().checkPermission(ADMINISTRATION)) {
                     throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
                 }
@@ -255,13 +255,9 @@ class SecurityACL {
     }
 
     static public def checkIsSameUserOrAdminContainer(CytomineDomain domain,SecUser user,SecUser currentUser) {
-        println "user=${user.username}"
-        println "currentUser=${currentUser.username}"
         boolean isNotSameUser = (!currentUser.admin && (user.id!=currentUser.id))
-        println "isNotSameUser=$isNotSameUser"
         if (isNotSameUser) {
             if (domain) {
-                println "Admin=${domain.container().checkPermission(ADMINISTRATION)}"
                 if (!domain.container().checkPermission(ADMINISTRATION)) {
                     throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
                 }

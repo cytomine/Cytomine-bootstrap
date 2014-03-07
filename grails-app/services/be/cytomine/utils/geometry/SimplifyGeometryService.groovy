@@ -16,8 +16,6 @@ class SimplifyGeometryService {
 
     def transactional = false
 
-    static transaction = false
-
     /**
      * Simplify form (limit point number)
      * Return simplify polygon and the rate used for simplification
@@ -68,7 +66,7 @@ class SimplifyGeometryService {
         /* Max number of loop (prevent infinite loop) */
         int maxLoop = 1000
         double rate = 0
-//        println "numberOfPoint=$numberOfPoint"
+
         Boolean isPolygonAndNotValid = (annotationFull instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotationFull).isValid())
         Boolean isMultiPolygon = (annotationFull instanceof com.vividsolutions.jts.geom.MultiPolygon)
         while (numberOfPoint > rateLimitMax && maxLoop > 0) {
@@ -79,9 +77,6 @@ class SimplifyGeometryService {
             } else {
                 lastAnnotationFull = DouglasPeuckerSimplifier.simplify(annotationFull, rate)
             }
-            println "X=${lastAnnotationFull.getNumGeometries()} rateLimitMin=$rateLimitMin"
-            println "X=${lastAnnotationFull.getNumPoints()} y=$rate"
-//            println "rateLimitMin=$rateLimitMin maxLoop=$maxLoop"
 
             if (lastAnnotationFull.getNumPoints() < rateLimitMin) break;
             annotationFull = lastAnnotationFull

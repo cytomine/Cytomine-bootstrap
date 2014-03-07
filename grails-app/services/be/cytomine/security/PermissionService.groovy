@@ -32,7 +32,7 @@ class PermissionService {
 //    }
 
     void deletePermission(def domain, String username, Permission permission) {
-        println "Delete permission for $username, ${permission.mask}, ${domain.id}"
+        log.info "Delete permission for $username, ${permission.mask}, ${domain.id}"
         def aoi = executeAclRequest("SELECT id FROM acl_object_identity WHERE object_id_identity = ?",[domain.id])
         int mask = permission.mask
         def sid = executeAclRequest("SELECT id FROM acl_sid WHERE sid = ?",[username])

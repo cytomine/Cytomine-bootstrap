@@ -335,7 +335,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             type = geom.getGeometryType().toUpperCase()
         }
         if (geom.isEmpty()) {
-            println "Geometry is empty"
+            log.info "Geometry is empty"
             //empty polygon,...
             throw new WrongArgumentException("${geom.toText()} is an empty geometry!")
         }

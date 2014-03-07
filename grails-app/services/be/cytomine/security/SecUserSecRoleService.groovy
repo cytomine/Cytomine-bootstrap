@@ -56,8 +56,6 @@ class SecUserSecRoleService extends ModelService {
      */
     def delete(SecUserSecRole domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        println "delete="+domain.id
-        SecUserSecRole.list().each {println it.id}
         if(domain.secUser.algo()) {
             Job job = ((UserJob)domain.secUser).job
             SecurityACL.check(job?.container(),READ)
@@ -66,8 +64,6 @@ class SecUserSecRoleService extends ModelService {
         }
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         def result = executeCommand(c,domain,null)
-        println "result="+result
-        SecUserSecRole.list().each {println it.id}
         result
     }
 

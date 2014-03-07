@@ -57,7 +57,6 @@ class ImageSequenceService extends ModelService {
         }
 
         def poss = ImageSequence.findAllByImageGroup(imageSeq.imageGroup)
-        println "poss=$poss"
 
         def z = []
         def t = []
@@ -65,8 +64,6 @@ class ImageSequenceService extends ModelService {
         def s = []
 
         poss.each {
-            println "it=$it"
-            println "z=$z"
             z << it.zStack
             t << it.time
             c << it.channel
@@ -77,7 +74,6 @@ class ImageSequenceService extends ModelService {
         t = t.unique().sort()
         c = c.unique().sort()
         s = s.unique().sort()
-        println "z final=$z"
         return [slice:s,zStack:z,time:t,channel:c, imageGroup:imageSeq.imageGroup.id,c:imageSeq.channel,z:imageSeq.zStack,s:imageSeq.slice,t:imageSeq.time]
     }
 

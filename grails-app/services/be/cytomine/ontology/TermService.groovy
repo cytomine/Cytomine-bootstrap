@@ -100,10 +100,6 @@ class TermService extends ModelService {
         }
 
         projects.each { project ->
-
-            println "project=$project"
-
-            println "secUserService.listLayers(project)=${secUserService.listLayers(project)}"
             def layers = secUserService.listLayers(project)
             if(!layers.isEmpty()) {
                 def annotations = UserAnnotation.createCriteria().list {

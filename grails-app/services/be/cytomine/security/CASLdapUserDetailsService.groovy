@@ -36,7 +36,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
 
         if(user==null && casDisabled)  {
-            println "return null"
+            log.info "return null"
             return null
         }
 
@@ -81,8 +81,8 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
                     secUsersecRole.save(flush: true)
 
                 } else {
-                    println user.errors.each {
-                        println it
+                    user.errors.each {
+                        log.warn it
                     }
                 }
             }

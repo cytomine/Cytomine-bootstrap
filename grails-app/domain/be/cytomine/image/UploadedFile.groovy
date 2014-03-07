@@ -95,7 +95,6 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
     static def getDataFromDomain(def uploaded) {
         def returnArray = CytomineDomain.getDataFromDomain(uploaded)
-        println uploaded
         returnArray['user'] = uploaded?.user?.id
         returnArray['projects'] = uploaded?.projects
         returnArray['storages'] = uploaded?.storages
@@ -126,8 +125,6 @@ class UploadedFile extends CytomineDomain implements Serializable{
      * @return Domain with json data filled
      */
     static UploadedFile insertDataIntoDomain(def json, def domain = new UploadedFile()) throws CytomineException {
-        println json
-
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.created = JSONUtils.getJSONAttrDate(json,'created')
         domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
@@ -152,7 +149,6 @@ class UploadedFile extends CytomineDomain implements Serializable{
         domain.status = JSONUtils.getJSONAttrInteger(json,'status',0)
 
         domain.converted = JSONUtils.getJSONAttrBoolean(json,'converted',false)
-
 
         return domain;
     }

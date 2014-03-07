@@ -40,12 +40,10 @@ class EditCommand extends Command {
      */
     def execute() {
         initService()
-//        println "execute.deleted="+this.domain.deleted
         //Retrieve domain to update it
         def updatedDomain = this.domain
         def oldDomain = updatedDomain.encodeAsJSON()
         updatedDomain.insertDataIntoDomain(json,updatedDomain)
-//        println "execute.deleted="+this.domain.deleted
         //Init command info
         CytomineDomain container = updatedDomain?.container()
         if(container && container instanceof Project) {
@@ -53,8 +51,6 @@ class EditCommand extends Command {
         }
         def response = service.edit(updatedDomain, printMessage)
         fillCommandInfo(updatedDomain, oldDomain, response.data.message)
-//        println "execute.deleted="+this.domain.deleted
-//        println "response="+response
         return response
     }
 

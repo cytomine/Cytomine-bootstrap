@@ -3,6 +3,7 @@ package be.cytomine.test.http
 import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
+import groovy.util.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
@@ -18,9 +19,8 @@ import java.awt.image.BufferedImage
  * It encapsulate all HTTP request to have clean test
  *
  */
+@Log
 class DomainAPI {
-
-    private static final log = LogFactory.getLog(this)
 
     /**
      * Check if json list contains number id
@@ -29,7 +29,7 @@ class DomainAPI {
      * @return True if id is in list, otherwise, false
      */
     static boolean containsInJSONList(Long id, def responselist) {
-        println "Search $id in ${responselist}"
+        log.info "Search $id in ${responselist}"
         if(responselist instanceof String) {
             responselist = JSON.parse(responselist)
         }
@@ -51,7 +51,7 @@ class DomainAPI {
     }
 
     static boolean containsStringInJSONList(String key, def list) {
-        println "Search $key in ${list}"
+        log.info "Search $key in ${list}"
         list = list.collection
         if (list == []) return false
         boolean find = false
@@ -74,7 +74,6 @@ class DomainAPI {
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
-        println "undo = " + response
         client.disconnect();
         return [data: response, code: code]
     }
@@ -90,7 +89,6 @@ class DomainAPI {
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
-        println "redo = " + response
         client.disconnect();
         return [data: response, code: code]
     }
@@ -107,7 +105,6 @@ class DomainAPI {
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
-        println "undo = " + response
         client.disconnect();
         return [data: response, code: code]
     }
@@ -123,7 +120,6 @@ class DomainAPI {
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
-        println "redo = " + response
         client.disconnect();
         return [data: response, code: code]
     }

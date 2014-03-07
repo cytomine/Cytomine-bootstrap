@@ -62,7 +62,6 @@ class UserAnnotationService extends ModelService {
 
     def listIncluded(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
         SecurityACL.check(image.container(),READ)
-        println "x" + AnnotationListing.availableColumnDefault
         AnnotationListing al = new UserAnnotationListing(
                 columnToPrint: propertiesToShow,
                 image : image.id,
@@ -190,8 +189,6 @@ class UserAnnotationService extends ModelService {
             //Add annotation-term if term
             if (annotationID) {
                 def term = JSONUtils.getJSONList(json.term);
-                println "term=$term"
-                println "class=${term.class}"
                 if (term) {
                     term.each { idTerm ->
                         annotationTermService.addAnnotationTerm(annotationID, idTerm, null, currentUser.id, currentUser, transaction)

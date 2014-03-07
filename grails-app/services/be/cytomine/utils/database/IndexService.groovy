@@ -21,121 +21,118 @@ class IndexService {
      * Create domain index
      */
     def initIndex() {
-//        sessionFactory.getCurrentSession().clear();
-//        def connection = sessionFactory.currentSession.connection()
 
         try {
-           def statement
 
             /**
              * Abastract Image //already created (via unique) on filename
              */
-            createIndex(statement, "abstract_image", "sample_id");
-            createIndex(statement, "abstract_image", "created");
+            createIndex("abstract_image", "sample_id");
+            createIndex("abstract_image", "created");
             /**
              * Image_Instance //base image & project already created
              */
-            createIndex(statement, "image_instance", "user_id");
-            createIndex(statement, "image_instance", "created");
+            createIndex("image_instance", "user_id");
+            createIndex("image_instance", "created");
             /**
              * Annotation
              */
-            createIndex(statement, "user_annotation", "image_id");
-            createIndex(statement, "user_annotation", "user_id");
-            createIndex(statement, "user_annotation", "created");
-            createIndex(statement, "user_annotation", "project_id");
-            createIndex(statement, "user_annotation", "location", "GIST");
+            createIndex("user_annotation", "image_id");
+            createIndex("user_annotation", "user_id");
+            createIndex("user_annotation", "created");
+            createIndex("user_annotation", "project_id");
+            createIndex("user_annotation", "location", "GIST");
 
-            createIndex(statement, "algo_annotation", "image_id");
-            createIndex(statement, "algo_annotation", "user_id");
-            createIndex(statement, "algo_annotation", "created");
-            createIndex(statement, "algo_annotation", "project_id");
-            createIndex(statement, "algo_annotation", "location", "GIST");
+            createIndex("algo_annotation", "image_id");
+            createIndex("algo_annotation", "user_id");
+            createIndex("algo_annotation", "created");
+            createIndex("algo_annotation", "project_id");
+            createIndex("algo_annotation", "location", "GIST");
 
             /**
              * ReviewedAnnotation
              */
-            createIndex(statement, "reviewed_annotation", "project_id");
-            createIndex(statement, "reviewed_annotation", "user_id");
-            createIndex(statement, "reviewed_annotation", "image_id");  //GIST
-            createIndex(statement, "reviewed_annotation", "location", "GIST");
+            createIndex("reviewed_annotation", "project_id");
+            createIndex("reviewed_annotation", "user_id");
+            createIndex("reviewed_annotation", "image_id");  //GIST
+            createIndex("reviewed_annotation", "location", "GIST");
 
             /**
              * Annotation_term
              */
-            createIndex(statement, "annotation_term", "user_annotation_id");
-            createIndex(statement, "annotation_term", "term_id");
+            createIndex("annotation_term", "user_annotation_id");
+            createIndex("annotation_term", "term_id");
 
             /**
              * Algo_annotation_term
              */
-            createIndex(statement,"algo_annotation_term","annotation_ident")
-            createIndex(statement,"algo_annotation_term","project_id")
-            createIndex(statement,"algo_annotation_term","rate")
-            createIndex(statement,"algo_annotation_term","term_id")
-            createIndex(statement,"algo_annotation_term","user_job_id")
+            createIndex("algo_annotation_term","annotation_ident")
+            createIndex("algo_annotation_term","project_id")
+            createIndex("algo_annotation_term","rate")
+            createIndex("algo_annotation_term","term_id")
+            createIndex("algo_annotation_term","user_job_id")
 
 
             /**
              * relation_term
              */
-            createIndex(statement, "relation_term", "relation_id");
-            createIndex(statement, "relation_term", "term1_id");
-            createIndex(statement, "relation_term", "term2_id");
+            createIndex("relation_term", "relation_id");
+            createIndex("relation_term", "term1_id");
+            createIndex("relation_term", "term2_id");
 
             /**
              * Sample
              */
-            createIndex(statement, "sample", "name");
-            createIndex(statement, "sample", "created");
+            createIndex("sample", "name");
+            createIndex("sample", "created");
             /**
              * Use_group
              */
-            createIndex(statement, "user_group", "user_id");
-            createIndex(statement, "user_group", "group_id");
+            createIndex("user_group", "user_id");
+            createIndex("user_group", "group_id");
 
             /**
              * Command
              */
-            createIndex(statement, "command", "user_id");
-            createIndex(statement, "command", "project_id");
-            createIndex(statement, "command", "created");
+            createIndex("command", "user_id");
+            createIndex("command", "project_id");
+            createIndex("command", "created");
 
             /**
              * CommandHistory
              */
-            createIndex(statement, "command_history", "project_id");
-            createIndex(statement, "command_history", "user_id");
-            createIndex(statement, "command_history", "created");
-            createIndex(statement, "command_history", "command_id");
+            createIndex("command_history", "project_id");
+            createIndex("command_history", "user_id");
+            createIndex("command_history", "created");
+            createIndex("command_history", "command_id");
 
-            createIndex(statement, "undo_stack_item", "command_id");
-            createIndex(statement, "redo_stack_item", "command_id");
+            createIndex("undo_stack_item", "command_id");
+            createIndex("redo_stack_item", "command_id");
 
             /**
              * Term
              */
-            createIndex(statement, "term", "ontology_id");
+            createIndex("term", "ontology_id");
 
-            createIndex(statement, "storage", "user_id");
+            createIndex("storage", "user_id");
 
-            createIndex(statement, "acl_object_identity", "object_id_identity");
-            createIndex(statement, "acl_entry", "acl_object_identity");
-            createIndex(statement, "acl_sid", "sid");
+            createIndex("acl_object_identity", "object_id_identity");
+            createIndex("acl_entry", "acl_object_identity");
+            createIndex("acl_sid", "sid");
 
-            createIndex(statement, "annotation_index", "image_id");
-            createIndex(statement, "annotation_index", "user_id");
+            createIndex("annotation_index", "image_id");
+            createIndex("annotation_index", "user_id");
 
-            createIndex(statement, "user_position", "user_id");
-            createIndex(statement, "user_position", "updated");
-            createIndex(statement, "user_position", "image_id");
-            createIndex(statement, "user_position", "project_id");
-            createIndex(statement, "user_position", "latitude");
-            createIndex(statement, "user_position", "longitude");
-            createIndex(statement, "user_position", "date_part('epoch'::text, created)","btree", "user_position_epochcreated");
-            createIndex(statement, "user_position", "date_part('epoch'::text, updated)","btree", "user_position_epochupdated");
-            createIndex(statement, "user_position", "created","btree", "user_position_created");
-            createIndex(statement, "user_position", "updated","btree", "user_position_updated");
+            createIndex("user_position", "user_id");
+            createIndex("user_position", "updated");
+            createIndex("user_position", "image_id");
+            createIndex("user_position", "project_id");
+            createIndex("user_position", "latitude");
+            createIndex("user_position", "longitude");
+            createIndex("user_position", "date_part('epoch'::text, created)","btree", "user_position_epochcreated");
+            createIndex("user_position", "date_part('epoch'::text, updated)","btree", "user_position_epochupdated");
+            createIndex("user_position", "created","btree", "user_position_created");
+            createIndex("user_position", "updated","btree", "user_position_updated");
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
@@ -148,8 +145,8 @@ class IndexService {
      * @param table Table for index
      * @param col Column for index
      */
-    def createIndex(def statement, String table, String col) {
-        createIndex(statement,table,col,"btree",null);
+    def createIndex(String table, String col) {
+        createIndex(table,col,"btree",null);
     }
 
     /**
@@ -159,7 +156,7 @@ class IndexService {
      * @param col Column for index
      * @param type Index structure type (BTREE, HASH, GIST,...)
      */
-    def createIndex(def statement, String table, String col, String type, String overidedname = null) {
+    def createIndex(String table, String col, String type, String overidedname = null) {
         String name = overidedname? overidedname : table + "_" + col + "_index"
 
         boolean alreadyExist = false
@@ -179,7 +176,7 @@ class IndexService {
             }
 
         } catch(Exception e) {
-            println e
+            log.error e
         }
     }
 

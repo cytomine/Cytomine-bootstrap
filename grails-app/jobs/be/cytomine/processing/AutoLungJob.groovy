@@ -16,7 +16,7 @@ class AutoLungJob  {
     }
 
     def execute(context) {
-        println "Start AutoLungJob"
+        log.info "Start AutoLungJob"
 
         Boolean preview = (Boolean) context.mergedJobDataMap.get('preview')
         Job job = (Job) context.mergedJobDataMap.get('job')

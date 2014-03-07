@@ -4,22 +4,22 @@ import be.cytomine.security.SecUser
 import grails.converters.JSON
 import grails.util.Holders
 import groovy.sql.Sql
+import groovy.util.logging.Log
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObjectField
 import org.springframework.security.acls.model.Permission
-
-import java.lang.reflect.Field
 
 /**
  * CytomineDomain is the parent class for all domain.
  * It allow to give an id to each instance of a domain, to get a created date,...
  */
+@Log
 abstract class CytomineDomain  implements Comparable{
 
     def springSecurityService
     def cytomineService
     def sequenceService
+    def dataSource
 
     static def grailsApplication
 
@@ -126,78 +126,12 @@ abstract class CytomineDomain  implements Comparable{
         return null
     }
 
-
-    protected static def getAPIDomainFields(def domain, LinkedHashMap<Field, Object> mapFields = null) {
-        def apiFields = [:]
-        println "###################"
-        println mapFields
-        mapFields?.each {
-            def field = it.key
-            String originalFieldName = field.name
-            String apiFieldName = it.value["apiFieldName"]
-            String accessor = it.value["apiValueAccessor"]
-
-            println "accessor=$accessor"
-            if (accessor != "") {
-
-                println "ask accessor $accessor <<<<<<================================================ "
-                apiFields["$apiFieldName"] =  domain.class."$accessor"(domain)
-            } else {
-                println "get field $originalFieldName <<<<<<================================================ "
-                if(isGrailsDomain(field.type.name)) {
-                    println "domain grails"
-                    apiFields["$apiFieldName"] =  domain."$originalFieldName"?.id
-                } else {
-                    apiFields["$apiFieldName"] =  domain."$originalFieldName"
-                }
-
-
-            }
-        }
-
-        apiFields
-    }
-
-
     public static boolean isGrailsDomain(String fullName) {
         def domain = Holders.getGrailsApplication().getDomainClasses().find {
             it.fullName.equals(fullName)
         }
         return domain != null
     }
-
-    protected static LinkedHashMap<String, Object> getMappingFromAnnotation(Class clazz) {
-        def mapping = [:]
-
-        Field[] fields = clazz.getDeclaredFields()
-        // look for fields annotated in super classes
-        def cl = clazz
-        while (cl.superclass) {
-            cl = cl.superclass
-            fields += cl.getDeclaredFields()
-        }
-
-        for (Field field : fields) {
-            if (field.getAnnotation(ApiObjectField.class) != null) {
-                ApiObjectField apiObjectField = field.getAnnotation(ApiObjectField.class)
-                String apiFieldName = field.getName()
-                if (!apiObjectField.apiFieldName().equals(""))
-                    apiFieldName = apiObjectField.apiFieldName()
-                String apiValueAccessor = apiObjectField.apiValueAccessor()
-                /*if (apiValueAccessor.equals("")) {
-                    apiValueAccessor = "get" + apiFieldName.capitalize()
-                }*/
-                mapping.put(field, [apiFieldName : apiFieldName, apiValueAccessor : apiValueAccessor])
-            }
-        }
-        return mapping
-    }
-
-
-//    static def getDataFromDomain(def domain, LinkedHashMap<String, Object> mapFields = null) {
-//       return getAPIBaseFields(domain) + getAPIDomainFields(domain, mapFields)
-//
-//    }
 
     static def getDataFromDomain(def domain) {
         def returnArray = [:]
@@ -209,29 +143,36 @@ abstract class CytomineDomain  implements Comparable{
         return returnArray
     }
 
-    boolean hasPermission(Permission permission) {
-        try {
-            return hasPermission(this,permission)
-        } catch (Exception e) {e.printStackTrace()}
-        return false
-    }
-
+    /**
+     * Check if user has permission on the curret domain
+     * @param permission Permission to check (READ,...)
+     * @return true if user has this permission on current domain
+     */
     boolean checkPermission(Permission permission) {
-        boolean right = hasPermission(permission) || cytomineService.currentUser.admin
+        boolean right = hasACLPermission(permission) || cytomineService.currentUser.admin
         return right
     }
 
-
-    def dataSource
-    boolean hasPermission(def domain,Permission permission) {
-        def masks = getPermission(domain,cytomineService.getCurrentUser())
-        return masks.max() >= permission.mask
-
+    /**
+     * Check if user has ACL entry for this permission and this domain.
+     * IT DOESN'T CHECK IF CURRENT USER IS ADMIN
+     * @param permission Permission to check (READ,...)
+     * @return true if user has this permission on current domain
+     */
+    boolean hasACLPermission(Permission permission) {
+        try {
+            return hasACLPermission(this,permission)
+        } catch (Exception e) {}
         return false
     }
 
+    boolean hasACLPermission(def domain,Permission permission) {
+        def masks = getPermissionInACL(domain,cytomineService.getCurrentUser())
+        return masks.max() >= permission.mask
+    }
 
-    List getPermission(def domain, def user = null) {
+
+    List getPermissionInACL(def domain, def user = null) {
         try {
             String request = "SELECT mask FROM acl_object_identity aoi, acl_sid sid, acl_entry ae " +
             "WHERE aoi.object_id_identity = ${domain.id} " +
@@ -248,8 +189,7 @@ abstract class CytomineDomain  implements Comparable{
             return masks
 
         } catch (Exception e) {
-            println e.toString()
-            e.printStackTrace()
+            log.error e.toString()
         }
         return []
     }

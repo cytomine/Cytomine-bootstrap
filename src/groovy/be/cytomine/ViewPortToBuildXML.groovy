@@ -1,5 +1,6 @@
 package be.cytomine
 
+import groovy.util.logging.Log
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -20,6 +21,7 @@ import javax.xml.transform.stream.StreamResult
  * application.js: all js files from cytomine
  * lib.js: all js files from lib
  */
+@Log
 class ViewPortToBuildXML {
 
     /**
@@ -129,7 +131,7 @@ class ViewPortToBuildXML {
         }
 
         libFiles.each {
-            println "lib -> " + it
+            log.info "lib -> " + it
         }
 
         return libFiles
@@ -160,7 +162,7 @@ class ViewPortToBuildXML {
             }
         }
         appFiles.each {
-            println "app -> " + it
+            log.info "app -> " + it
         }
 
         return appFiles
@@ -175,7 +177,6 @@ class ViewPortToBuildXML {
         def g = null
         viewPortXML.getElementsByTagName("head").item(0).childNodes.each {
             if (it.nodeName.equals("g:if") && g == null) g = it
-            //println it.nodeName
         }
         return g
     }
@@ -208,7 +209,7 @@ class ViewPortToBuildXML {
      */
     public static void writeToFile(def xmlString, def filePath) {
         new File("$filePath").withWriter { out ->
-            out.println xmlString
+            log.info xmlString
         }
     }
 }

@@ -177,7 +177,6 @@ class SecUserService extends ModelService {
                         "AND u.job_id = j.id\n" +
                         "AND j.software_id = s.id\n" +
                         "ORDER BY j.created"
-                println request
                 def data = []
                 new Sql(dataSource).eachRow(request) {
                     def item = [:]

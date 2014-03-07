@@ -72,14 +72,12 @@ class SecUser extends CytomineDomain implements Serializable {
     }
 
     def beforeInsert() {
-        println "SecUser.beforeValidate"
         super.beforeInsert()
         encodePassword()
         generateKeys()
     }
 
     def beforeUpdate() {
-        println "SecUser.beforeUpdate"
         super.beforeUpdate()
         if (newPassword) {
             password = newPassword
@@ -158,7 +156,7 @@ class SecUser extends CytomineDomain implements Serializable {
     }
 
     protected void encodePassword() {
-        println "encodePassword for user="+username
+        log.info "encodePassword for user="+username
         if(password.size()<4) throw new WrongArgumentException("Your password must have at least 5 characters!")
         if (password == "") password = ".+7dWl_=]@8%,<&"
         password = springSecurityService.encodePassword(password)

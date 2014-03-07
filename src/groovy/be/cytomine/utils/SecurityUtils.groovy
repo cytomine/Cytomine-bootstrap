@@ -15,7 +15,6 @@ class SecurityUtils {
 
     public static String generateKeys(String method, String content_md5, String content_type, String date, String queryString, String path,SecUser user) {
         String canonicalHeaders = method + "\n" + content_md5 + "\n" + content_type + "\n" + date + "\n"
-//            println "canonicalHeaders="+canonicalHeaders
             String canonicalExtensionHeaders = ""
         String canonicalResource = path + queryString
         String messageToSign = canonicalHeaders + canonicalExtensionHeaders + canonicalResource

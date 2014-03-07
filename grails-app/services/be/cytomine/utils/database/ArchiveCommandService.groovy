@@ -36,16 +36,15 @@ class ArchiveCommandService {
         int i = 0
         def total
         def request = "select count(id) from command_history where extract(epoch from created)*1000 < ${before.getTime()}"
-        println request
         new Sql(dataSource).eachRow(request) {
             total = it[0]
         }
-        println "TOTAL=$total"
+        log.info "TOTAL=$total"
         request = "SELECT command.id || ';' || extract(epoch from command.created) || ';' || command_history.prefix_action || ';'  || command.action_message || ';' ||  command.user_id || ';' || command_history.project_id \n" +
                 "FROM command, command_history\n" +
                 "WHERE command_history.command_id = command.id\n" +
                 "AND extract(epoch from command.created)*1000 < ${before.getTime()} order by command.id asc"
-        println request
+        log.info request
         new Sql(dataSource).eachRow(request) {
 
             if (i % 10000 == 0) {
@@ -55,16 +54,16 @@ class ArchiveCommandService {
             i++
         }
         request = "delete from command_history where extract(epoch from created)*1000 < ${before.getTime()}"
-        println request
+        log.info request
         new Sql(dataSource).execute(request)
         request = "delete from undo_stack_item where extract(epoch from created)*1000 < ${before.getTime()}"
-        println request
+        log.info request
         new Sql(dataSource).execute(request)
         request = "delete from redo_stack_item"
-         println request
+        log.info request
          new Sql(dataSource).execute(request)
         request = "delete from command where extract(epoch from created)*1000 < ${before.getTime()-10000}"
-         println request
+        log.info request
          new Sql(dataSource).execute(request)
     }
 

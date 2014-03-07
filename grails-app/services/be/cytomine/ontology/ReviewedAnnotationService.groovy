@@ -67,7 +67,6 @@ class ReviewedAnnotationService extends ModelService {
                 "ORDER BY total desc;"
 
         def data = []
-        println request
 
         new Sql(dataSource).eachRow(request) {
              data << [user : it[0],all : it[1],reviewed : it[2]
@@ -136,8 +135,7 @@ class ReviewedAnnotationService extends ModelService {
                 log.info "imageWidth=$imageWidth"
                 log.info "bboxWidth=$bboxWidth"
                 log.info "ratio=$ratio"
-
-                println "zoomToLow="+zoomToLow
+                log.info  "zoomToLow="+zoomToLow
                 String subRequest
                 if (zoomToLow) {
                     subRequest = "(SELECT SUM(ST_CoveredBy(ga.location,gb.location )::integer) "

@@ -21,14 +21,8 @@ class KmeansGeometryService {
     public static final int ANNOTATIONSIZE4 = 10000
     public static final int ANNOTATIONSIZE5 = 100000
 
-//    public static final int ANNOTATIONSIZE1 = 0
-//    public static final int ANNOTATIONSIZE2 = 50
-//    public static final int ANNOTATIONSIZE3 = 100
-//    public static final int ANNOTATIONSIZE4 = 300
-//    public static final int ANNOTATIONSIZE5 = 400
 
-
-    public static def rules = [
+    public static final def rules = [
             100 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): KMEANSFULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
             75 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): KMEANSFULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
             50 : [((int)ANNOTATIONSIZE1): FULL, ((int)ANNOTATIONSIZE2): FULL, ((int)ANNOTATIONSIZE3): FULL, ((int)ANNOTATIONSIZE4): FULL, ((int)ANNOTATIONSIZE5): KMEANSFULL],
@@ -57,7 +51,6 @@ class KmeansGeometryService {
 
     private def selectAnnotationLightKmeans(String request) {
         def data = []
-        println request
 
         double max = 1
 
@@ -100,23 +93,16 @@ class KmeansGeometryService {
 
         int ratio25 = ((int)((ratio/25d)*100))*25
 
-//        log.info "ration25=$ratio25"
-
         def ruleLine = rules.get(Math.min(ratio25,100))
-
-//        log.info "ruleLine=$ruleLine"
 
         int numberOfAnnotation = annotationIndexService.count(image,user)
 
         def rule = getRuleForNumberOfAnnotations(numberOfAnnotation, ruleLine)
 
-//        log.info "rule=$rule"
-
         return rule
     }
 
     public def getRuleForNumberOfAnnotations(def annotations, def ruleLine) {
-//        println "getRuleForNumberOfAnnotations=$annotations"
         if (annotations >= ANNOTATIONSIZE5) return ruleLine.get(ANNOTATIONSIZE5)
         if (annotations >= ANNOTATIONSIZE4) return ruleLine.get(ANNOTATIONSIZE4)
         if (annotations >= ANNOTATIONSIZE3) return ruleLine.get(ANNOTATIONSIZE3)

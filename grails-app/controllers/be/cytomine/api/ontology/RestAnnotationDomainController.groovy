@@ -944,9 +944,6 @@ class RestAnnotationDomainController extends RestController {
      */
     def findUserAnnotationWithTerm(def ids, def termsId) {
         List<UserAnnotation> annotationsWithSameTerm = []
-        boolean multipleTerm
-        def termSize = [:]
-        List<UserAnnotation> annotations = []
 
         ids.each { id ->
              UserAnnotation compared = UserAnnotation.read(id)

@@ -36,7 +36,7 @@ class PropertyService extends ModelService {
         Property.findAllByDomainIdent(cytomineDomain.id)
     }
 
-    private List<String> listKeysForAnnotation(Project project, ImageInstance image) {
+    List<String> listKeysForAnnotation(Project project, ImageInstance image) {
         if (project != null)
             SecurityACL.check(project,READ)
         else
@@ -63,7 +63,7 @@ class PropertyService extends ModelService {
         return selectListkey(request)
     }
 
-    private List<String> listKeysForImageInstance(Project project) {
+     List<String> listKeysForImageInstance(Project project) {
         if (project != null)
             SecurityACL.check(project,READ)
 

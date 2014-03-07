@@ -49,7 +49,6 @@ class ImageInstanceService extends ModelService {
         if(image) {
             SecurityACL.check(image.container(),READ)
             checkDeleted(image)
-            //println image.id+"=>"+image.deleted + " version"+image.version
         }
         image
     }
@@ -249,7 +248,7 @@ class ImageInstanceService extends ModelService {
     }
 
 
-    private def getLayersFromAbstractImage(AbstractImage image, ImageInstance exclude, def currentUsersProject,def layerFromNewImage, Project project = null) {
+    def getLayersFromAbstractImage(AbstractImage image, ImageInstance exclude, def currentUsersProject,def layerFromNewImage, Project project = null) {
            //get id of last open image
 
            def layers = []

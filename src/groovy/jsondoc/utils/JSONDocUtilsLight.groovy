@@ -25,9 +25,6 @@ import org.jsondoc.core.pojo.ApiResponseObjectDoc
 import org.reflections.Reflections
 
 public class JSONDocUtilsLight extends JSONDocUtils {
-    public static final String UNDEFINED = "undefined";
-    public static final String WILDCARD = "wildcard";
-    private static Reflections reflections = null;
 
     @Override
     public static Set<ApiDoc> getApiDocs(Set<Class<?>> classes) {
@@ -82,7 +79,6 @@ public class JSONDocUtilsLight extends JSONDocUtils {
 
             if(method.isAnnotationPresent(ApiMethodLight.class)) {
                 RuleLight rule = rules.getRule(controller.simpleName,method.name)
-                println rule
                 String verb = "GET"
                 String path = "Undefined"
                 if(rule) {
@@ -109,7 +105,6 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     queryParameters.add(new ApiParamDoc("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
                     queryParameters.add(new ApiParamDoc("offset", "Pagination: Offset of first record (default 0 = first record)", "int", "false", new String[0], ""))
                 }
-                println "queryParameters=$queryParameters"
 
                 apiMethodDoc.setQueryparameters(queryParameters.minus(null));
 
@@ -117,7 +112,6 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObject.class)));
                 } else if(verb.equals("POST") || verb.equals("PUT")) {
                     String currentDomain = controller.newInstance().currentDomainName()
-                    println "currentDomainName=$currentDomain"
                     apiMethodDoc.setBodyobject(new ApiBodyObjectDoc(currentDomain, "", "", "Unknow", ""));
                 }
 

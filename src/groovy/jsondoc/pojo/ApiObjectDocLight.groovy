@@ -35,7 +35,6 @@ public class ApiObjectDocLight {
         def domain = Holders.getGrailsApplication().getDomainClasses().find {
             it.shortName.equals(clazz.simpleName)
         }
-        println "domain=$domain"
 
         //build map field (with super class too)
         if(domain) {
@@ -57,10 +56,7 @@ public class ApiObjectDocLight {
             arrayWithNull[0] = null
             Object o = m.invoke(null,arrayWithNull );
             def jsonMap = o
-
-            println jsonMap
             jsonMap.each {
-                println it
                 def metadata = annotationsMap.get(it.key)
                 def type = "Undefined"
                 def desc = "Undefined"
@@ -118,7 +114,6 @@ public class ApiObjectDocLight {
                 if(fieldname==null) {
                     //if fieldname!=null => custom field from CustomResponseDoc, so skip this annotation
                     if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
-                        println "Annotation ApiObjectFieldLight"
                         def annotation = field.getAnnotation(ApiObjectFieldLight.class)
                         addAnnotationToMap(annotationsMap,field,annotation)
                     }
@@ -167,9 +162,6 @@ public class ApiObjectDocLight {
             annotationData["defaultValue"] = findDefaultValue(annotationData['type'].toString(),annotation.defaultValue())
 
         }
-
-
-        println annotationData['name'] + "=> " + annotationData
         map.put(annotationData['name'],annotationData)
     }
 

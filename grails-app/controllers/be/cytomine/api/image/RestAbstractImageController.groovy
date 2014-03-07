@@ -51,9 +51,7 @@ class RestAbstractImageController extends RestController {
         if (params.datatables) {
             Project project = projectService.read(params.long("project"))
             responseSuccess(dataTablesService.process(params, AbstractImage, null, [],project))
-        } else if(params.rows!=null) {
-            responseSuccess(abstractImageService.list(user, params.page, params.rows, params.sidx, params.sord, params.filename, params.createdstart, params.createdstop))
-        } else {
+        }  else {
             responseSuccess(abstractImageService.list(user))
         }
     }

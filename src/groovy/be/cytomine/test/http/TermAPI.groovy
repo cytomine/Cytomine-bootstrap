@@ -49,8 +49,6 @@ class TermAPI extends DomainAPI {
 
     static def update(def id, def jsonTerm, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/term/" + id + ".json"
-        println "jsonTerm=$jsonTerm"
-        println jsonTerm.class
         return doPUT(URL,jsonTerm,username,password)
     }
 

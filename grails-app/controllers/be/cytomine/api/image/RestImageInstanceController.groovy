@@ -306,7 +306,6 @@ class RestImageInstanceController extends RestController {
             responseBufferedImage(mask)
         } catch (Exception e) {
             log.error("GetThumb:" + e)
-            e.printStackTrace()
         }
     }
 

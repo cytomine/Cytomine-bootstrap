@@ -43,7 +43,6 @@ class PropertyAPI extends DomainAPI {
     static def create(Long idDomain, String type, String json, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property.json"
         def result = doPOST(URL,json,username,password)
-        println "result=$result"
         result.data = Property.get(JSON.parse(result.data)?.property?.id)
         return result
     }

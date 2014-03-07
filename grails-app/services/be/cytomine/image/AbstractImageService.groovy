@@ -71,49 +71,6 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    //TODO: secure! ACL
-    def list(SecUser user, def page, def limit, def sortedRow, def sord, def filename, def dateStart, def dateStop) {
-        def data = [:]
-
-        log.info "page=" + page + " limit=" + limit + " sortedRow=" + sortedRow + " sord=" + sord
-
-        if (page || limit || sortedRow || sord) {
-            int pg = Integer.parseInt(page) - 1
-            int max = Integer.parseInt(limit)
-            int offset = pg * max
-
-            String filenameSearch = filename!=null ? filename : ""
-            Date dateAddedStart = dateStart!=null && dateStart!="" ? new Date(Long.parseLong(dateStart)) : new Date(0)
-            Date dateAddedStop = dateStop!=null && dateStop!="" ? new Date(Long.parseLong(dateStop)) : new Date(8099, 11, 31) //another way to keep the max date?
-
-            log.info "filenameSearch=" + filenameSearch + " dateAddedStart=" + dateAddedStart + " dateAddedStop=" + dateAddedStop
-
-            def abstractImages = StorageAbstractImage.findAllByStorageInList(storageService.list()).collect { it.abstractImage.id }
-
-            if(!abstractImages.isEmpty())   {
-                log.info "${abstractImages.size()} offset=$offset max=$max sortedRow=$sortedRow sord=$sord filename=%$filenameSearch% created $dateAddedStart < $dateAddedStop"
-                PagedResultList results = AbstractImage.createCriteria().list(offset: offset, max: max, sort: sortedRow, order: sord) {
-                    inList("id", abstractImages)
-                    ilike("filename", "%" + filenameSearch + "%")
-                    between('created', dateAddedStart, dateAddedStop)
-
-                }
-                data.page = page + ""
-                data.records = results.totalCount
-                data.total = Math.ceil(results.totalCount / max) + "" //[100/10 => 10 page] [5/15
-                data.rows = results.list
-                /*} else {
-                    //GORM GOTCHA: list in inList cannot be empty
-                    data.page = page + ""
-                    data.records = 0
-                    data.total = 0
-                    data.rows = []
-                }*/
-            }
-        }
-        return data
-    }
-
 
     //TODO:: how to manage security here?
     /**

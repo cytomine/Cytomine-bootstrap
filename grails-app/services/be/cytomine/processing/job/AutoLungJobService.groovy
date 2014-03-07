@@ -35,7 +35,6 @@ class AutoLungJobService  extends AbstractJobService {
     }
 
     def execute(Job job, UserJob userJob, boolean preview) {
-        println "execute job $job, preview : $preview"
         AutoLungJob.triggerNow([ job : job, userJob: userJob, preview : preview])
     }
 

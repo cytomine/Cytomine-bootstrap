@@ -32,13 +32,6 @@ abstract class ModelService {
     def saveDomain(def newObject) {
         newObject.checkAlreadyExist()
 
-        def names = newObject.dirtyPropertyNames
-        for (name in names) {
-            def originalValue = newObject.getPersistentValue(name)
-            println "$name originalValue=$originalValue "
-            println "$name realValue=${newObject[name]}"
-        }
-
         if (!newObject.validate()) {
             log.error newObject.errors
             log.error newObject.retrieveErrors().toString()
@@ -226,7 +219,6 @@ abstract class ModelService {
      */
     def edit(Map json, boolean printMessage) {
         //Rebuilt previous state of object that was previoulsy edited
-        println "json="+json
         edit(fillDomainWithData(currentDomain().newInstance(), json), printMessage)
     }
 

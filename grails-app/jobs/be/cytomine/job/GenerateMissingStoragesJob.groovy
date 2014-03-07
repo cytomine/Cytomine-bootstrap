@@ -28,7 +28,7 @@ class GenerateMissingStoragesJob {
         SpringSecurityUtils.reauthenticate "admin", null
         for (user in User.findAll()) {
             if (!Storage.findByUser(user)) {
-                println "generate missing storage for $user"
+                log.info "generate missing storage for $user"
                 storageService.initUserStorage(user)
             }
         }

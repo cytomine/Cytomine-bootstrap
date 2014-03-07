@@ -41,12 +41,6 @@ class ReportService {
         Term.findAllByIdInList(terms).each {
             termsName.put(it.id,it.name)
         }
-        println termsName
-        println images
-
-//        def termsName = Term.findAllByIdInList(terms).collect { it.toString() }
-//        def usersName = SecUser.findAllByIdInList(users).collect { it.toString() }
-//        def imageInstances = ImageInstance.findAllByIdInList(images)
 
         def exporterIdentifier = format;
         if (exporterIdentifier == "xls") {
@@ -79,7 +73,6 @@ class ReportService {
 
         annotations.each { annotation ->
             def data = [:]
-            println annotation
             data.id = annotation.id
             data.perimeterUnit = annotation.perimeterUnit
             data.areaUnit = annotation.areaUnit

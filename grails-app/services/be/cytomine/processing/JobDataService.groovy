@@ -123,7 +123,6 @@ class JobDataService extends ModelService {
                  w << new BufferedInputStream( new ByteArrayInputStream(data) )
              }
          } catch(Exception e) {
-             e.printStackTrace()
              throw new ServerException("Cannot create file: " + e)
          }
      }

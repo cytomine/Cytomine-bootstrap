@@ -28,7 +28,6 @@ class TriggerService {
 
         try {
             new Sql(dataSource).eachRow("SELECT 'DROP TRIGGER ' || trigger_name || ' ON ' || event_object_table || ';' FROM information_schema.triggers") {
-                println  it[0]
                 new Sql(dataSource).execute(it[0])
             }
 

@@ -29,7 +29,6 @@ class UnionGeometryService {
          //makeValidPolygon(image,user)
 
          //http://localhost:8080/api/algoannotation/union?idImage=8120370&idUser=11974001&idTerm=9444456&minIntersectionLength=10&bufferLength=0&area=2000
-        println "areaWidth=$areaWidth"
 
          def areas = computeArea(image,areaWidth,areaHeight)
 
@@ -50,7 +49,6 @@ class UnionGeometryService {
 
         unionedAnnotation.unique()
 
-        println "SIMPLIFY NOW"
         unionedAnnotation.each { idAnnotation ->
             try {
                 def annotation = AnnotationDomain.getAnnotationDomain(idAnnotation)
@@ -91,17 +89,17 @@ class UnionGeometryService {
          Double width = image.baseImage.width
          Double height = image.baseImage.height
 
-         println "width=$width"
-         println "height=$height"
+         log.info "width=$width"
+         log.info "height=$height"
 
-         println "maxW=$maxW"
-         println "maxH=$maxH"
+         log.info "maxW=$maxW"
+         log.info "maxH=$maxH"
 
          Integer nbreAreaW =  Math.ceil(width/(double)maxW)
          Integer nbreAreaH = Math.ceil(height/(double)maxH)
 
-         println "nbreAreaW=$nbreAreaW"
-         println "height=$height"
+         log.info "nbreAreaW=$nbreAreaW"
+         log.info "height=$height"
 
          def areas = []
          for(int i=0;i<nbreAreaW;i++) {
@@ -242,14 +240,7 @@ class UnionGeometryService {
             request = request +  " AND ST_Perimeter(ST_Intersection(annotation1.location, annotation2.location))>=$minIntersectLength\n"
          }
 
-
-
-
-//
-//         printDebugInfo(image,user,term,bbox,bufferLength,minIntersectLength)
-
-
-         println request
+         log.info request
 
          def sql = new Sql(dataSource)
 
@@ -277,11 +268,11 @@ class UnionGeometryService {
                     " AND ST_Intersects(annotation1.location,ST_GeometryFromText('" + bbox.toString() + "',0)) \n" +
                     " AND ST_Intersects(annotation2.location,ST_GeometryFromText('" + bbox.toString() + "',0)) "
 
-        println request
+        log.info request
         def sql = new Sql(dataSource)
         def data = []
         sql.eachRow(request) {
-            println it[2] + "\t" + it[0] + "\t" + it[1]  + "\t" + it[3]  + "\t" + it[4]
+            log.info it[2] + "\t" + it[0] + "\t" + it[1]  + "\t" + it[3]  + "\t" + it[4]
         }
 
 

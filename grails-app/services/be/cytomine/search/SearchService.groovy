@@ -171,7 +171,6 @@ class SearchService extends ModelService {
     private def select(String request) {
         def data = []
         String domain
-        println request
 
         new Sql(dataSource).eachRow(request) {
             def dataTmp = [:]

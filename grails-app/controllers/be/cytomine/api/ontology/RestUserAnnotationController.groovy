@@ -339,24 +339,4 @@ class RestUserAnnotationController extends RestController {
         def json = JSON.parse("{id : $params.id}")
         delete(userAnnotationService, json,null)
     }
-
-    /**
-     * Return a list of annotation (if list = [[annotation1,rate1, term1, expectedTerm1],..], add rate,term1,expected value in annotation]
-     * @param list annotation list
-     * @return annotation list with all info
-     */
-    private def mergeResults(def list) {
-        //list = [ [a,b],...,[x,y]]  => [a.rate = b, x.rate = y...]
-        if (list.isEmpty() || list[0] instanceof UserAnnotation || list[0].class.equals("be.cytomine.ontology.UserAnnotation")) return list
-//        def result = []
-//        list.each {
-//            UserAnnotation annotation = it[0]
-//            annotation.rate = it[1]
-//            annotation.idTerm = it[2]
-//            annotation.idExpectedTerm = it[3]
-//            result << annotation
-//        }
-//        return result
-        return list
-    }
 }

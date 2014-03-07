@@ -175,11 +175,9 @@ class JobService extends ModelService {
      */
     public def getReviewedAnnotation(def annotations, def job) {
         List<Long> annotationsId = annotations.collect{ it.id }
-        println "annotationsId=$annotationsId"
         if (annotationsId.isEmpty()) {
             return  []
         }
-        println "4project=${job.project.id}"
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(project:job.project.id, parents:annotationsId)
 
 
@@ -187,18 +185,17 @@ class JobService extends ModelService {
     }
 
     public boolean hasReviewedAnnotation(def job) {
-        println job
         def user = UserJob.findByJob(job)
         if(!user) {
            return true
         }
 
         def annotations = annotationListingService.listGeneric(new AlgoAnnotationListing(project:job.project.id,user:user.id))
-        println "Job ${job.id} has ${annotations.size()} annotations"
+        log.info "Job ${job.id} has ${annotations.size()} annotations"
         if (annotations.isEmpty()) return false
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(project:job.project.id, parents:annotations.collect{ it.id })
         def list = annotationListingService.listGeneric(al)
-        println "Job ${job.id} has ${list.size()} annotations reviewed"
+        log.info "Job ${job.id} has ${list.size()} annotations reviewed"
         return !list.isEmpty()
     }
 
@@ -210,10 +207,7 @@ class JobService extends ModelService {
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         def request = "delete from algo_annotation where user_id in (" + usersId.join(',') +")"
-        println request
         new Sql(dataSource).execute(request,[])
-
-//        AlgoAnnotation.executeUpdate("delete from AlgoAnnotation a where a.user.id in (:list)",[list:usersId])
     }
 
     /**
@@ -223,9 +217,7 @@ class JobService extends ModelService {
         SecurityACL.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
-//        AlgoAnnotationTerm.executeUpdate("delete from AlgoAnnotationTerm a where a.userJob.id IN (:list)",[list:usersId])
         def request = "delete from algo_annotation_term where user_job_id in ("+ usersId.join(',')+")"
-        println request
         new Sql(dataSource).execute(request,[])
 
     }
@@ -240,39 +232,6 @@ class JobService extends ModelService {
         if (jobDatasId.isEmpty()) return
         JobData.executeUpdate("delete from JobData a where a.id IN (:list)",[list:jobDatasId])
     }
-
-
-//    /**
-//     * Create a new user that will be link with the job and launch the exe with parameters
-//     * @param job Job to launch
-//     * @param preview indicates if the  Job should only computes the preview or not
-//     * @return The job
-//     */
-//    public def executeJob(Job job, boolean preview) {
-//
-//        if (preview && !job.software.service.previewAvailable()) {
-//            throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
-//        }
-//
-//        SecurityACL.check(job.container(),READ)
-//
-//        UserJob userJob = UserJob.findByJob(job)
-//
-//        job.software.service.init(job, userJob)
-//
-//        println "preciew ???? $preview"
-//
-//
-//
-//
-//            job.software.service.execute(job, userJob, preview)
-//
-//
-//        log.info "Launch thread";
-//
-//
-//        job
-//    }
 
     public UserJob createUserJob(User user, Job job) {
         SecurityACL.check(job.container(),READ)

@@ -232,7 +232,7 @@ class RetrievalService {
             Closure deleteAnnotation = {
                 try {
                     deleteAnnotationSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
+                } catch (Exception e) {log.error e}
             }
             Closure annotationDeleting = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
             annotationDeleting()
@@ -249,7 +249,7 @@ class RetrievalService {
             Closure deleteContainer = {
                 try {
                     deleteContainerSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
+                } catch (Exception e) {log.error e}
             }
             Closure containerDeleting = deleteContainer.async()  //create a new closure, which starts the original closure on a thread pool
             containerDeleting()
@@ -264,7 +264,7 @@ class RetrievalService {
                 try {
                     deleteAnnotationSynchronous(id)
                     indexAnnotationSynchronous(id)
-                } catch (Exception e) {e.printStackTrace()}
+                } catch (Exception e) {log.error e}
             }
             Closure annotationUpdating = deleteAnnotation.async()  //create a new closure, which starts the original closure on a thread pool
             annotationUpdating()
@@ -284,7 +284,7 @@ class RetrievalService {
             log.debug "Annotation $i/" + annotations.size()
             if (!resources.contains(annotation.id)) {
                 log.debug "Annotation $annotation.id IS NOT INDEXED"
-                try {indexAnnotationSynchronous(annotation)} catch (Exception e) {e.printStackTrace()}
+                try {indexAnnotationSynchronous(annotation)} catch (Exception e) {log.error e}
             } else {
                 log.debug "Annotation $annotation.id IS INDEXED"
             }

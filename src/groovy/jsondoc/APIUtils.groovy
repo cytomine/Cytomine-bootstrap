@@ -17,14 +17,11 @@ class APIUtils {
             controllersClasses.add(controllerClass)
         }
 
-
         Set<Class<?>> objectClasses = new LinkedList<Class<?>>()
         grailsApplication.domainClasses.findAll {it.clazz.isAnnotationPresent(ApiObject) }.each { domainArtefact ->
             def domainClass = domainArtefact.getClazz()
-            //println "$domainArtefact, $domainClass"
             objectClasses.add(domainClass)
         }
-
 
         def objectsDoc = JSONDocUtilsLight.getApiObjectDocs(objectClasses)
         def controllerDoc = JSONDocUtilsLight.getApiDocs(controllersClasses)
