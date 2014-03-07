@@ -11,9 +11,6 @@ class AdminController extends RestController {
     def modelService
     def springSecurityService
     def archiveCommandService
-    def simplifyGeometryService
-    def scriptService
-    def bootstrapTestDataService
 
     @Secured(['ROLE_ADMIN'])
     def index() {

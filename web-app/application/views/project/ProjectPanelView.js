@@ -12,7 +12,6 @@ var ProjectPanelView = Backbone.View.extend({
     project: null,
     projectElem: "#projectlist", //div with project info
     imageOpenElem: "#projectopenimages",
-    imageAddElem: "#projectaddimages",
     projectChangeElem: "#radioprojectchange",
     projectChangeDialog: "div#projectchangedialog",
     loadImagesInAddPanel: true,
@@ -26,7 +25,6 @@ var ProjectPanelView = Backbone.View.extend({
         _.bindAll(this, 'render');
     },
     events: {
-        "click .addSlide": "showAddSlidesPanel",
         "click .seeSlide": "showSlidesPanel",
         "click .editProject": "editProject",
         "click .deleteProject": "deleteProject",
@@ -202,9 +200,6 @@ var ProjectPanelView = Backbone.View.extend({
             });
         });
 
-    },
-    showAddSlidesPanel: function () {
-        window.location = "#project-manage-" + this.model.id;
     },
     showSlidesPanel: function () {
         var self = this;

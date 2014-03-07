@@ -3,11 +3,12 @@ package be.cytomine.utils.bootstrap
 import be.cytomine.image.Mime
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
-import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
-import be.cytomine.project.Project
-import be.cytomine.security.*
+import be.cytomine.security.Group
+import be.cytomine.security.SecRole
+import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
 
 /**
  * Cytomine @ GIGA-ULG

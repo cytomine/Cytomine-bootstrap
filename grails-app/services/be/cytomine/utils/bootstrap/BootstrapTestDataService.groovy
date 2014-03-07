@@ -1,10 +1,6 @@
 package be.cytomine.utils.bootstrap
 
-import be.cytomine.processing.JobParameter
-import be.cytomine.processing.JobTemplate
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.processing.SoftwareProject
+import be.cytomine.processing.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import groovy.sql.Sql

@@ -20,7 +20,7 @@ import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams
 import org.jsondoc.core.annotation.ApiResponseObject
 import org.jsondoc.core.pojo.ApiParamType
-import static grails.async.Promises.*
+
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**

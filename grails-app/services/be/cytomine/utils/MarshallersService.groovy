@@ -5,7 +5,6 @@ import be.cytomine.processing.JobTemplate
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import grails.converters.JSON
-import org.apache.log4j.Logger
 
 /**
  * Service to manage marshaller

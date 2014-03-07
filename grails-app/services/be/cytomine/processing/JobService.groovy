@@ -1,6 +1,5 @@
 package be.cytomine.processing
 
-import be.cytomine.Exception.CytomineMethodNotYetImplementedException
 import be.cytomine.SecurityACL
 import be.cytomine.command.*
 import be.cytomine.project.Project
@@ -13,7 +12,6 @@ import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import groovy.sql.Sql
-import static grails.async.Promises.*
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 

@@ -15,6 +15,7 @@ import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
+import groovy.util.logging.Log
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
 import org.apache.log4j.Logger
@@ -31,6 +32,7 @@ import org.jsondoc.core.annotation.ApiObject
  * -AlgoAnnotation => created by job
  * -ReviewedAnnotation => User or AlgoAnnotation validate by user
  */
+@Log
 @ApiObject(name = "generic annotation")
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
@@ -257,7 +259,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
          Integer minX = env.getMinX();
          Integer width = env.getWidth();
          Integer height = env.getHeight();
-         println ""+[topLeftX: minX, topLeftY: maxY, width: width, height: height]
          return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
        } else if (location.getNumPoints() == 1) {
            Envelope env = location.getEnvelopeInternal();
@@ -325,7 +326,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         String type = geom.getGeometryType().toUpperCase()
 
         if (!geom.isValid()) {
-            println "Geometry is not valid"
+            log.info "Geometry is not valid"
             //selfintersect,...
             validGeom = geom.buffer(0)
             this.location = validGeom

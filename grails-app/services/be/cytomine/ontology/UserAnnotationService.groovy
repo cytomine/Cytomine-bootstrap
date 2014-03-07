@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.SecurityACL
 import be.cytomine.api.UrlApi

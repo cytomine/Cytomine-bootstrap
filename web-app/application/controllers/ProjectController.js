@@ -1,8 +1,7 @@
 var ProjectController = Backbone.Router.extend({
     manageView: null,
     routes: {
-        "project": "project",
-        "project-manage-:idProject": "manage"
+        "project": "project"
     },
 
     initView: function () {
@@ -55,28 +54,6 @@ var ProjectController = Backbone.Router.extend({
             projectCallback.call();
         }
 
-
-    },
-
-    manage: function (idProject) {
-        var self = this;
-
-        var showManageImages = function () {
-            $("#projectdiv").hide();
-            $("#addimagediv").show();
-            new ProjectModel({id: idProject}).fetch({
-                success: function (model, response) {
-                    self.manageView = new ProjectManageSlideDialog({model: model, projectPanel: null, el: $("#project")}).render();
-                }});
-        }
-
-        if (self.view == undefined) {
-            self.project(showManageImages);
-        } else {
-            self.view.container.show(self.view, "#project", "project");
-            window.app.view.showComponent(window.app.view.components.project);
-            showManageImages();
-        }
 
     }
 });

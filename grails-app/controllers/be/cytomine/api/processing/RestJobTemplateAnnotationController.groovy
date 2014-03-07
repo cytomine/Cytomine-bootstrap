@@ -3,15 +3,9 @@ package be.cytomine.api.processing
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
-import be.cytomine.processing.Job
-import be.cytomine.processing.JobParameter
-import be.cytomine.processing.JobTemplate
-import be.cytomine.processing.JobTemplateAnnotation
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.project.Project
+import be.cytomine.processing.*
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
-import org.codehaus.groovy.grails.web.json.JSONArray
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiParam
 import org.jsondoc.core.annotation.ApiParams

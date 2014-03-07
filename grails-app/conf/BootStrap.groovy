@@ -1,17 +1,10 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.processing.JobParameter
-import be.cytomine.processing.JobTemplate
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
-import be.cytomine.test.BasicInstanceBuilder
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-
 import grails.util.Environment
 import jsondoc.JSONUtils
+import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import java.lang.management.ManagementFactory
 

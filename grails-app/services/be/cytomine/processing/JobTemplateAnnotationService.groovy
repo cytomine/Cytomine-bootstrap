@@ -1,15 +1,14 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
-import be.cytomine.command.*
-import be.cytomine.project.Project
+import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
-import be.cytomine.security.User
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import grails.converters.JSON
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 

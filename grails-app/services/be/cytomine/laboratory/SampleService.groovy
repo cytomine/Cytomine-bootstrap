@@ -8,7 +8,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import grails.plugins.springsecurity.Secured
 
 class SampleService extends ModelService {
 

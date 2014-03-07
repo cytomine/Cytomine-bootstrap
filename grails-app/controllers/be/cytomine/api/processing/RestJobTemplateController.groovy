@@ -2,7 +2,6 @@ package be.cytomine.api.processing
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-import be.cytomine.image.ImageInstance
 import be.cytomine.processing.JobTemplate
 import be.cytomine.processing.Software
 import be.cytomine.project.Project

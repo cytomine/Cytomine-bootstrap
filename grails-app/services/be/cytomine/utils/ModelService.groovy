@@ -8,9 +8,7 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.SecurityACL
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
-import be.cytomine.image.ImageInstance
 import grails.util.GrailsNameUtils
-import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData

@@ -2,7 +2,6 @@ package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term

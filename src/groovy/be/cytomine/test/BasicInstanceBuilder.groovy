@@ -234,6 +234,16 @@ class BasicInstanceBuilder {
         save ? BasicInstanceBuilder.saveDomain(nestedImage) : BasicInstanceBuilder.checkDomain(nestedImage)
     }
 
+    static AlgoAnnotation getAlgoAnnotationNotExist(ImageInstance image, boolean save = false) {
+        def annotation = new AlgoAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: getUserJob(),
+                project:image.project
+        )
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
+
 
     static AlgoAnnotation getAlgoAnnotation() {
         def annotation = AlgoAnnotation.findOrCreateWhere(
@@ -343,6 +353,28 @@ class BasicInstanceBuilder {
         review
     }
 
+    static ReviewedAnnotation getReviewedAnnotation(ImageInstance image, boolean save = false) {
+        def basedAnnotation = saveDomain(getUserAnnotationNotExist())
+        def annotation = new ReviewedAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: getUser1(),
+                project:image.project,
+                status : 0,
+                reviewUser: getUser1()
+        )
+        annotation.putParentAnnotation(basedAnnotation)
+        save ? saveDomain(annotation) : checkDomain(annotation)
+
+        def term = getTerm()
+        term.ontology = image.project.ontology
+        save ? saveDomain(term) : checkDomain(term)
+
+        annotation.addToTerms(term)
+        save ? saveDomain(annotation) : checkDomain(term)
+        annotation
+    }
+
     static ReviewedAnnotation getReviewedAnnotation() {
          def basedAnnotation = saveDomain(getUserAnnotationNotExist())
          def image = getImageInstance()
@@ -367,6 +399,21 @@ class BasicInstanceBuilder {
          saveDomain(annotation)
          annotation
      }
+
+    static ReviewedAnnotation getReviewedAnnotationNotExist(ImageInstance image, boolean save = false) {
+        def basedAnnotation = saveDomain(getUserAnnotationNotExist())
+
+        def annotation = new ReviewedAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: image,
+                user: getUser1(),
+                project:image.project,
+                status : 0,
+                reviewUser: getUser1()
+        )
+        annotation.putParentAnnotation(basedAnnotation)
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
 
      static ReviewedAnnotation getReviewedAnnotationNotExist() {
          def basedAnnotation = saveDomain(getUserAnnotationNotExist())

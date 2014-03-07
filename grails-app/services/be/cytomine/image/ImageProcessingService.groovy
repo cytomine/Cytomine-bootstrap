@@ -4,7 +4,6 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.Term
-import be.cytomine.test.HttpClient
 import com.vividsolutions.jts.geom.Geometry
 import ij.ImagePlus
 

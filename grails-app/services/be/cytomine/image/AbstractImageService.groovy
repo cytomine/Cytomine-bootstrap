@@ -1,6 +1,5 @@
 package be.cytomine.image
 
-
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.*
@@ -8,7 +7,6 @@ import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Project
-import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.AttachedFile
