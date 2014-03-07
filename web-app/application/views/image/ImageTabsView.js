@@ -89,24 +89,16 @@ var ImageTabsView = Backbone.View.extend({
                 return window.app.convertLongToDate(created);
             }} ,
             { "mDataProp": "reviewStart", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o) {
-                if (o.aData.reviewStart) {
+                if (o.aData.reviewStart && o.aData.reviewStop) {
                     return '<span class="label label-success">Reviewed</span>';
+                } else if (o.aData.reviewStart) {
+                return '<span class="label label-warning">In review</span>';
+                } else {
+                    return '<span class="label label-info">None</span>';
                 }
-                //else if (inReview) {
-                // return '<span class="label label-warning">In review</span>';
-                // } else {
-                //    return '<span class="label label-info">None</span>';
-                //}
             }},
             { "mDataProp": "updated", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
                 self.images.push(o.aData);
-//                new ImageInstanceModel({ id : o.aData.id}).fetch({
-//                    success : function (model, response) {
-//                        var model = new ImageInstanceModel(o.aData);
-//                        var action = new ImageReviewAction({el:body,model:model, container : self});
-//                        action.configureAction();
-//                    }
-//                });
                 o.aData["project"]  = self.idProject;
                 return _.template(actionMenuTpl, o.aData);
 
