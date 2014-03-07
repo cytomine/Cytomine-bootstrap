@@ -7,6 +7,7 @@ BrowseImageView = Backbone.View.extend({
     divId: "",
     currentAnnotation: null,
     userJobForImage: null,
+    maggicWandLoaded : false,
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
@@ -415,7 +416,11 @@ BrowseImageView = Backbone.View.extend({
                 self.initCallback.call();
             }
 
-            self.initAutoAnnoteTools();
+            if(!self.maggicWandLoaded) {
+                self.initAutoAnnoteTools();
+                self.maggicWandLoaded = true;
+            }
+
 
         } else { //            if (_.isFunction(self.initCallback)) {
 //                self.initCallback.call();
@@ -1047,6 +1052,7 @@ BrowseImageView = Backbone.View.extend({
         }
         if (self.getUserLayer() != undefined) {
             //self.map.events.register("touchend", self.getUserLayer().vectorsLayer, handleMapClick); // evt.xy = null on ipad :(
+            self.map.events.unregister("click", self.getUserLayer().vectorsLayer, handleMapClick);
             self.map.events.register("click", self.getUserLayer().vectorsLayer, handleMapClick);
         }
     },
