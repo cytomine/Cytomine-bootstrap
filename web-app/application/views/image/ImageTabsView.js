@@ -11,7 +11,7 @@ var ImageTabsView = Backbone.View.extend({
         this.project = options.project;
     },
     refresh: function () {
-
+        this.afterDeleteImageEvent();
     },
     afterDeleteImageEvent: function () {
         var table = $("#imageProjectTable" + this.idProject);
@@ -45,7 +45,7 @@ var ImageTabsView = Backbone.View.extend({
                         thumb : o.aData["macroURL"]
                     });
             }},
-            { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": false, "fnRender" : function (o) {
+            { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": true, "fnRender" : function (o) {
                 var imageInstanceModel = new ImageInstanceModel({});
                 imageInstanceModel.set(o.aData);
                 return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
@@ -67,9 +67,9 @@ var ImageTabsView = Backbone.View.extend({
                     return resolution.toFixed(3) + " µm/pixel";
                 }catch(e) {return "";}
             }},
-            { "mDataProp": "numberOfAnnotations", "bSearchable": false,"bSortable": false },
-            { "mDataProp": "numberOfJobAnnotations", "bSearchable": false,"bSortable": false },
-            { "mDataProp": "numberOfReviewedAnnotations", "bSearchable": false,"bSortable": false },
+            { "mDataProp": "numberOfAnnotations", "bSearchable": false,"bSortable": true },
+            { "mDataProp": "numberOfJobAnnotations", "bSearchable": false,"bSortable": true },
+            { "mDataProp": "numberOfReviewedAnnotations", "bSearchable": false,"bSortable": true },
             { "mDataProp": "extension", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
                 var extension = o.aData["extension"];
                 if (extension == "ndpi" || extension == "vms") {
@@ -85,7 +85,7 @@ var ImageTabsView = Backbone.View.extend({
                 }
                 else return o.aData["extension"];
             } },
-            { "mDataProp": "created", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o, created) {
+            { "mDataProp": "created", sDefaultContent: "", "bSearchable": false,"bSortable": true, "fnRender" : function (o, created) {
                 return window.app.convertLongToDate(created);
             }} ,
             { "mDataProp": "reviewStart", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function (o) {

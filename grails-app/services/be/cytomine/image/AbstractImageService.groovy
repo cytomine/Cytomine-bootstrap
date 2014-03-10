@@ -227,6 +227,7 @@ class AbstractImageService extends ModelService {
                 queryString += "&maxWidth=$maxWidth"
             }
             def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
+            log.info uri
             byte[] imageData = new URL(uri).getBytes()
             BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
             attachedFileService.add(label, imageData, id, AbstractImage.class.getName())

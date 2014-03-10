@@ -3,6 +3,7 @@ package be.cytomine.utils
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode
 
@@ -21,6 +22,16 @@ class DataTablesService {
         String abstractImageAlias = "ai"
         String _search = params.sSearch ? "%"+params.sSearch+"%" : "%"
 
+        //&iSortCol_0=7&sSortDir_0=asc
+        //iSortCol_0=0&sSortDir_0=asc
+
+        //assert ["hi","hey","hello"] == ["hello","hi","hey"].sort { a, b -> a.length() <=> b.length() }
+
+        println "********************"
+        def col = params.get("iSortCol_0");
+        def sort = params.get("sSortDir_0")
+        def sortProperty = "mDataProp_"+col
+
         if(domain==ImageInstance) {
             List<ImageInstance> images = ImageInstance.createCriteria().list() {
                 createAlias("baseImage", abstractImageAlias)
@@ -30,6 +41,37 @@ class DataTablesService {
                 fetchMode 'baseImage', FetchMode.JOIN
                 ilike(abstractImageAlias + ".originalFilename", _search)
             }
+
+            images.sort {
+                //id, name,....
+                def property = params.get(sortProperty)
+
+                def data = null
+
+                if(property.equals("numberOfAnnotations")) {
+                    data = it.countImageAnnotations
+                } else if(property.equals("numberOfJobAnnotations")) {
+                    data = it.countImageJobAnnotations
+                }else if(property.equals("numberOfReviewedAnnotations")) {
+                    data = it.countImageReviewedAnnotations
+                }else if(property.equals("originalFilename")) {
+                    data = it.baseImage.originalFilename
+                }else {
+                    data = it."$property"
+                }
+
+                return data
+            }
+
+            //if desc order, inverse
+            if(sort.equals("desc")) {
+                images = images.reverse()
+            }
+
+            println images.collect{it.id}
+
+
+
             return images
         } else if(domain==AbstractImage) {
             //FIRST OF UNION: take all image in project
@@ -60,6 +102,20 @@ class DataTablesService {
                 img.inProject = it[3]
                 data << img
             }
+
+
+            data.sort {
+                //id, name,....
+                def property = params.get(sortProperty)
+                return it."$property"
+            }
+
+            //if desc order, inverse
+            if(sort.equals("desc")) {
+                println "reverse"
+                data = data.reverse()
+            }
+
             return data
         }
 

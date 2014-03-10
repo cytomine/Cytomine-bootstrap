@@ -14,7 +14,7 @@ var HotKeys = {
             }
         );
         Mousetrap.bind('b',function (evt){
-                console.log("***************** ACCEPT *****************")
+                console.log("***************** ACCEPT *****************");
                 if(self.checkMode("review")) {
                     self.doClick(self.context(),".acceptButton");
                 }
