@@ -739,7 +739,7 @@ var UploadFormView = Backbone.View.extend({
         $form.prop('action',"upload?idProject=@PROJECT@&idStorage=@STORAGE@&cytomine="+window.location.protocol + "//" + window.location.host);
 
         if(idProject==null){
-            $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@", ""));
+            $form.prop('action', $form.prop('action').replace("idProject=@PROJECT@&", ""));
         } else {
             $form.prop('action', $form.prop('action').replace("@PROJECT@", idProject));
         }

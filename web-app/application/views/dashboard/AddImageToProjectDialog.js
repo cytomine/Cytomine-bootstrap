@@ -53,7 +53,7 @@ var AddImageToProjectDialog = Backbone.View.extend({
                 if(o.aData["inProject"]) {
                     return '<label id="labelAddToProject'+o.aData["id"]+'">Already in project</label>';
                 } else {
-                    return '<button id="btnAddToProject'+o.aData["id"]+'" type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus"></span> Add</button>';
+                    return '<button id="btnAddToProject'+o.aData["id"]+'" type="button" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-plus"></span> Add</button>';
                 }
             }}
         ];

@@ -125,12 +125,12 @@ class UploadedFile extends CytomineDomain implements Serializable{
      * @return Domain with json data filled
      */
     static UploadedFile insertDataIntoDomain(def json, def domain = new UploadedFile()) throws CytomineException {
+
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.created = JSONUtils.getJSONAttrDate(json,'created')
         domain.updated = JSONUtils.getJSONAttrDate(json,'updated')
 
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new User(), true)
-
         domain.projects = JSONUtils.getJSONAttrListLong(json,'projects')
         domain.storages = JSONUtils.getJSONAttrListLong(json,'storages')
 
