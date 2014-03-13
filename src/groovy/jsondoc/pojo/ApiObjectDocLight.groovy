@@ -1,13 +1,13 @@
 package jsondoc.pojo
 
 import be.cytomine.CytomineDomain
-import be.cytomine.project.Project
 import grails.util.Holders
-import jsondoc.utils.JSONDocUtilsLight
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
+import jsondoc.utils.JSONDocUtilsLight
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.pojo.*
+import org.jsondoc.core.pojo.ApiObjectDoc
+import org.jsondoc.core.pojo.ApiObjectFieldDoc
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method

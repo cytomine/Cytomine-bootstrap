@@ -83,5 +83,30 @@ class RestAttachedFileController extends RestController {
         def result = attachedFileService.add(filename,f.getBytes(),domainIdent,domainClassName)
         responseSuccess(result)
     }
+
+    @ApiMethodLight(description="Upload a file for a domain. Decode params filled by CKEditor")
+    @ApiParams(params=[
+    @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+    @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    ])
+    def uploadFromCKEditor() {
+        log.info "Upload attached file"
+        Long domainIdent = params.long("domainIdent")
+        String domainClassName = params.get("domainClassName")
+        def upload = params.upload
+        String filename = upload.getOriginalFilename()
+        log.info "Upload $filename for domain $domainClassName $domainIdent"
+
+        def result = attachedFileService.add(filename,upload.getBytes(),domainIdent,domainClassName)
+
+        //tricky :-) difficult to interact with ckeeditor
+       // String resp = '<div><script>$("span:contains(\'Send it to the Server\')").hide();</script>' +
+         //       '<div style="width:400px;height:400px">Image was saved correctly. Copy this url: api/attachedfile/'+result.id+'/download, click on "image info" tabs and copy the content in the URL field.</div></div>'
+         //: api/attachedfile/'+result.domain.id+'/download" />'
+
+        String resp = "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction(${params.CKEditorFuncNum}, 'api/attachedfile/${result.id}/download', '');</script>"
+
+        render(resp)
+    }
 }
 

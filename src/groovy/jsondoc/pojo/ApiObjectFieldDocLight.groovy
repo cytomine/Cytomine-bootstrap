@@ -1,6 +1,7 @@
 package jsondoc.pojo
 
-import org.jsondoc.core.pojo.*
+import org.jsondoc.core.pojo.ApiObjectFieldDoc
+
 /**
  * ApiMethodDocLight must be used instead of ApiMethodDoc to use a light rest api doc
  * @author Loïc Rollus

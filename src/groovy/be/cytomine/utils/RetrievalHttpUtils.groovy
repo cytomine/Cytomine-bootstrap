@@ -3,8 +3,6 @@ package be.cytomine.utils
 import be.cytomine.AnnotationDomain
 import be.cytomine.test.HttpClient
 import grails.converters.JSON
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 
 /**
  * User: lrollus

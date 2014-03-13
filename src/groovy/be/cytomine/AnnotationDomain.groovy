@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -14,11 +13,9 @@ import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
-import grails.converters.JSON
 import groovy.util.logging.Log
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.apache.log4j.Logger
 import org.jsondoc.core.annotation.ApiObject
 
 /**

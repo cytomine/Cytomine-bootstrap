@@ -3,26 +3,13 @@ package jsondoc.utils
 import be.cytomine.api.doc.CustomResponseDoc
 import jsondoc.annotation.ApiMethodLight
 import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
 import jsondoc.pojo.ApiMethodDocLight
 import jsondoc.pojo.ApiObjectDocLight
+import org.jsondoc.core.annotation.*
+import org.jsondoc.core.pojo.*
 import org.jsondoc.core.util.JSONDocUtils
 
-
-
 import java.lang.reflect.Method
-
-import org.jsondoc.core.annotation.*;
-import org.jsondoc.core.pojo.ApiBodyObjectDoc;
-import org.jsondoc.core.pojo.ApiDoc;
-import org.jsondoc.core.pojo.ApiErrorDoc;
-import org.jsondoc.core.pojo.ApiHeaderDoc;
-import org.jsondoc.core.pojo.ApiMethodDoc;
-import org.jsondoc.core.pojo.ApiObjectDoc;
-import org.jsondoc.core.pojo.ApiParamDoc;
-import org.jsondoc.core.pojo.ApiParamType;
-import org.jsondoc.core.pojo.ApiResponseObjectDoc
-import org.reflections.Reflections
 
 public class JSONDocUtilsLight extends JSONDocUtils {
 

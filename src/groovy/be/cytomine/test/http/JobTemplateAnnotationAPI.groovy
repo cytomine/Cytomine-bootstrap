@@ -1,7 +1,6 @@
 package be.cytomine.test.http
 
 import be.cytomine.processing.Job
-import be.cytomine.processing.JobTemplate
 import be.cytomine.processing.JobTemplateAnnotation
 import be.cytomine.test.Infos
 import grails.converters.JSON

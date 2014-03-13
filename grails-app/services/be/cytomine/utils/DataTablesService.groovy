@@ -42,34 +42,35 @@ class DataTablesService {
                 ilike(abstractImageAlias + ".originalFilename", _search)
             }
 
-            images.sort {
-                //id, name,....
-                def property = params.get(sortProperty)
+            def property = params.get(sortProperty)
 
-                def data = null
+            if(property) {
+                images.sort {
+                    //id, name,....
 
-                if(property.equals("numberOfAnnotations")) {
-                    data = it.countImageAnnotations
-                } else if(property.equals("numberOfJobAnnotations")) {
-                    data = it.countImageJobAnnotations
-                }else if(property.equals("numberOfReviewedAnnotations")) {
-                    data = it.countImageReviewedAnnotations
-                }else if(property.equals("originalFilename")) {
-                    data = it.baseImage.originalFilename
-                }else {
-                    data = it."$property"
+
+                    def data = null
+
+                    if(property.equals("numberOfAnnotations")) {
+                        data = it.countImageAnnotations
+                    } else if(property.equals("numberOfJobAnnotations")) {
+                        data = it.countImageJobAnnotations
+                    }else if(property.equals("numberOfReviewedAnnotations")) {
+                        data = it.countImageReviewedAnnotations
+                    }else if(property.equals("originalFilename")) {
+                        data = it.baseImage.originalFilename
+                    }else {
+                        data = it."$property"
+                    }
+
+                    return data
                 }
 
-                return data
+                //if desc order, inverse
+                if(sort.equals("desc")) {
+                    images = images.reverse()
+                }
             }
-
-            //if desc order, inverse
-            if(sort.equals("desc")) {
-                images = images.reverse()
-            }
-
-            println images.collect{it.id}
-
 
 
             return images

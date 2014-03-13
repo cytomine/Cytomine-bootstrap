@@ -1,17 +1,8 @@
 package jsondoc
 
 import grails.converters.JSON
-import jsondoc.pojo.ApiMethodDocLight
 import jsondoc.pojo.ApiObjectFieldDocLight
-import org.jsondoc.core.pojo.ApiBodyObjectDoc
-import org.jsondoc.core.pojo.ApiDoc
-import org.jsondoc.core.pojo.ApiErrorDoc
-import org.jsondoc.core.pojo.ApiHeaderDoc
-import org.jsondoc.core.pojo.ApiMethodDoc
-import org.jsondoc.core.pojo.ApiObjectDoc
-import org.jsondoc.core.pojo.ApiParamDoc
-import org.jsondoc.core.pojo.ApiResponseObjectDoc
-import org.jsondoc.core.pojo.ApiVerb
+import org.jsondoc.core.pojo.*
 
 /**
  * Created by stevben on 16/12/13.

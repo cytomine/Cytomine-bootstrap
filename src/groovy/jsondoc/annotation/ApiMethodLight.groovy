@@ -1,14 +1,8 @@
 package jsondoc.annotation
 
-import org.springframework.http.MediaType
+import org.jsondoc.core.pojo.ApiVerb
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.jsondoc.core.pojo.ApiVerb;
+import java.lang.annotation.*
 
 /**
  * Override ApiMethod to hbe allowed to have have no value for some fields

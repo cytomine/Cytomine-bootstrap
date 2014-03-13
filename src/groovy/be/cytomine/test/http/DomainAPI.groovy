@@ -4,7 +4,6 @@ import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 import grails.converters.JSON
 import groovy.util.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.codehaus.groovy.grails.web.json.JSONObject

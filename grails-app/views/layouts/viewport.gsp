@@ -98,6 +98,8 @@
 
 <script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
 <script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
+
+<script src="lib/ckeditor/ckeditor.js"></script>
 <!-- wysihtml5 parser rules -->
 %{--<script src="lib/wysiwyg/parser_rules/advanced.js"></script>--}%
 %{--<!-- Library -->--}%
@@ -397,6 +399,12 @@
 
     });
 </script>
+
+
+
+
 </g:if>
+
+
 
 </html>

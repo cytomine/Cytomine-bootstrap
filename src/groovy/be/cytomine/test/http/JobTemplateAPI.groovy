@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.image.NestedImageInstance
 import be.cytomine.processing.JobTemplate
 import be.cytomine.test.Infos
 import grails.converters.JSON

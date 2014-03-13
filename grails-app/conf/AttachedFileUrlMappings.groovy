@@ -23,5 +23,11 @@ class AttachedFileUrlMappings {
         "/api/attachedfile/$id/download"(controller: "restAttachedFile") {
             action = [GET:"download"]
         }
+
+
+        // FOR JS
+        "/api/attachedfileCKEditor.$format"(controller: "restAttachedFile") {
+            action = [POST:"uploadFromCKEditor"]
+        }
     }
 }

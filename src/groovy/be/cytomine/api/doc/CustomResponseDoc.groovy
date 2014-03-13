@@ -2,9 +2,6 @@ package be.cytomine.api.doc
 
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
-
 
 class CustomResponseDoc {
 

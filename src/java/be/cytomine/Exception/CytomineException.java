@@ -1,8 +1,6 @@
 package be.cytomine.Exception;
 
 
-import groovy.util.logging.Log;
-
 /**
  * User: lrollus
  * Date: 17/11/11

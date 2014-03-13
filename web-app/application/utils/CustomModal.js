@@ -87,9 +87,33 @@ var DescriptionModal = {
             body: 'Add the keyword STOP_PREVIEW where you want to delimit the preview text.<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
             wide: true,
             callBack: function () {
-                $("#descriptionArea" + domainIdent).wysihtml5({});
-                var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
-                console.log("edidatble="+editable)
+                //$("#descriptionArea" + domainIdent).wysihtml5({});
+
+//                <textarea name="editor1" id="editor1" rows="10" cols="80">
+//                This is my textarea to be replaced with CKEditor.
+//                </textarea>
+
+
+
+                var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin);
+
+                if(editable) {
+                    CKEDITOR.replace("descriptionArea" + domainIdent,
+                        {    filebrowserBrowseUrl: '/test/browse.php',
+                            filebrowserImageBrowseUrl: '/browser/browse.php?type=Images',
+                            filebrowserUploadUrl: '/api/attachedfileCKEditor.json?domainClassName='+domainClassName+"&domainIdent="+domainIdent,
+                            filebrowserImageUploadUrl: '/api/attachedfileCKEditor.json?domainClassName='+domainClassName+"&domainIdent="+domainIdent});
+
+
+
+                } else {
+                    $("#description" + domainIdent).html(text);
+                }
+
+
+
+
+                console.log("edidatble="+editable);
                 setTimeout(
                   function() {
                       $("iframe").contents().find("body").attr('contenteditable',editable);
@@ -101,7 +125,8 @@ var DescriptionModal = {
 
                 $("#saveDescription" + idDescription).click(function (e) {
                     // remove the host url for images
-                    text = $("#descriptionArea" + domainIdent).val().split(window.location.protocol + "//" + window.location.host + '/api/attachedfile').join('/api/attachedfile');
+
+                    text =CKEDITOR.instances["descriptionArea" + domainIdent].getData().split(window.location.protocol + "//" + window.location.host + '/api/attachedfile').join('/api/attachedfile');
                     new DescriptionModel({id: idDescription, domainIdent: domainIdent, domainClassName: domainClassName}).save({
                         domainIdent: domainIdent,
                         domainClassName: domainClassName,
