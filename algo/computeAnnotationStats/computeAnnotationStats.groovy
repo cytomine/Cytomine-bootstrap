@@ -19,7 +19,7 @@ import be.cytomine.client.*;
 import com.vividsolutions.jts.precision.SimpleGeometryPrecisionReducer;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-def sleep = 1000
+def sleep = 0
 
 println args
 

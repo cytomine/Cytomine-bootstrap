@@ -76,15 +76,20 @@ var DescriptionModal = {
         text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host + '/api/attachedfile');
 
         var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
+        var message = "Add the keyword STOP_PREVIEW where you want to delimit the preview text.";
         if(!editable) {
             text = text.replace("STOP_PREVIEW","");
+            message = "";
         }
+
+
+
 
         var modal = new CustomModal({
             idModal: "descriptionModal" + domainIdent,
             button: container.find("a.description"),
             header: "Description",
-            body: 'Add the keyword STOP_PREVIEW where you want to delimit the preview text.<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
+            body: message+'<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
             wide: true,
             callBack: function () {
                 //$("#descriptionArea" + domainIdent).wysihtml5({});
