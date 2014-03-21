@@ -82,6 +82,9 @@
 <script type="text/javascript" src="lib/bootstrap-3.0.3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
 
+
+<script src="lib/ckeditor/ckeditor.js"></script>
+
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM}">
 
 <!-- Core Libs -->
@@ -94,7 +97,6 @@
 <script src="lib/bootstrap-wysihtml5-0.0.2/libs/js/wysihtml5-0.3.0_rc2.min.js"></script>
 <script src="lib/bootstrap-wysihtml5-0.0.2/bootstrap-wysihtml5-0.0.2.min.js"></script>
 
-<script src="lib/ckeditor/ckeditor.js"></script>
 <!-- wysihtml5 parser rules -->
 %{--<script src="lib/wysiwyg/parser_rules/advanced.js"></script>--}%
 %{--<!-- Library -->--}%
