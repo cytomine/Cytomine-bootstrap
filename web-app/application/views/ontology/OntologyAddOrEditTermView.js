@@ -136,13 +136,16 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
 
     buildColorInfo: function () {
         var self = this;
-        var colorPicker = self.$colorChooser.farbtastic('#color1AddOrEditTerm');
+        var newColorField = $('#color1AddOrEditTerm');
+        newColorField.pickAColor();
         var color = self.model.get('color');
-        self.$inputOldColor.val(color);
-        self.$inputNewColor.val(color);
+        self.$inputOldColor.val(color.replace("#",""));
+        self.$inputNewColor.val(color.replace("#",""));
         self.$inputOldColor.css("background", color);
         self.$inputNewColor.css("background", color);
-        self.$inputNewColor.css("color", self.$inputOldColor.css("color"));
+        $("#color1AddOrEditTerm").on("change", function () {
+            self.$inputNewColor.css("background", self.getNewColor());
+        });
     },
     addFolder: function () {
         //create a new node as a folder
@@ -246,7 +249,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         return node.parent.data.id;
     },
     getNewColor: function () {
-        return  this.$inputNewColor.val();
+        return  "#" + this.$inputNewColor.val();
     },
     refresh: function () {
 

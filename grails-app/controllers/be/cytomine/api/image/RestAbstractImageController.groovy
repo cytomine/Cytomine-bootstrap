@@ -242,6 +242,17 @@ class RestAbstractImageController extends RestController {
 
 
     /**
+     * Get Image Tile
+     * @param id
+     * @param params
+     */
+    def tile() {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String tileURL = abstractImageService.tile(params)
+        redirect (url : "$imageServerURL/proxy?url=$tileURL")
+    }
+
+    /**
      * Get all image servers URL for an image
      */
     @ApiMethodLight(description="Get all image servers URL for an image")

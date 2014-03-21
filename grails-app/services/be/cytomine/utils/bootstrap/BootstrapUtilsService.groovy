@@ -144,17 +144,20 @@ class BootstrapUtilsService {
         }
     }
 
-    public def createMimeImageServers() {
-        List<ImageServer> imageServers = ImageServer.list()
-        Mime.list().each { mime ->
-            imageServers.each { imageServer ->
-                MimeImageServer mimeImageServer = new MimeImageServer(
-                        mime : mime,
-                        imageServer: imageServer
-                ).save()
-
+    public def createMimeImageServers(def imageServerCollection, def mimeCollection) {
+        imageServerCollection.each {
+            ImageServer imageServer = ImageServer.findByName(it.name)
+            if (imageServer) {
+                mimeCollection.each {
+                    Mime mime = Mime.findByExtension(it.extension)
+                    if (mime) {
+                        new MimeImageServer(
+                                mime : mime,
+                                imageServer: imageServer
+                        ).save()
+                    }
+                }
             }
-
         }
     }
 }

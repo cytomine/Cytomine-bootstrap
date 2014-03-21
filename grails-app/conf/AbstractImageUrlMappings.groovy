@@ -29,6 +29,9 @@ class AbstractImageUrlMappings {
         "/api/abstractimage/$id/metadata.$format"(controller: "restAbstractImage"){
             action = [GET:"metadata"]
         }
+        "/api/abstractimage/$id/tile.$format"(controller: "restAbstractImage"){
+            action = [GET:"tile"]
+        }
         "/api/abstractimage/$id/associated.$format"(controller: "restAbstractImage"){
             action = [GET:"associated"]
         }

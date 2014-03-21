@@ -7,15 +7,6 @@
             <div class="modal-body">
                 <form id="form-<%= action %>-ontology-term">
                     <div class="row">
-                        <div class="col-md-4" style="min-height: 400px;width : 400px;">
-                            <div class="control-group">
-                                <label class="control-label">Parent (Drag & Drop)</label>
-
-                                <div class="controls">
-                                    <div id="<%= action %>ontologytermtree"></div>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-md-4">
                             <div id="<%= action %>ontologytermerrorlabel" class="alert alert-error" style="display: none;">
                                 <i class="icon-warning-sign"/>
@@ -26,10 +17,8 @@
                                 <label class="control-label">Name</label>
 
                                 <div class="controls">
-                                    <input type="text" id="<%= action %>termname" name="name"/>
+                                    <input type="text"  class="form-control"  id="<%= action %>termname" name="name"/>
                                 </div>
-                                <label class="control-label">Color</label>
-
                                 <div class="controls">
                                     <div class="colorpickerAddOrEditTerm">
                                         <div id="colorpicker1AddOrEditTerm"></div>
@@ -38,16 +27,28 @@
                                 <label class="control-label">Old color</label>
 
                                 <div class="controls">
-                                    <input type="text" id="oldcolorAddOrEditTerm" value="<%= oldColor %>"/>
+                                    <div class="input-group pick-a-color-markup">
+                                        <span class="hex-pound input-group-addon">#</span>
+                                        <input type="text"  class="pick-a-color form-control" id="oldColorAddOrEditTerm" value="<%= oldColor %>"/>
+                                    </div>
+
                                 </div>
                                 <label class="control-label">New Color</label>
 
                                 <div class="controls">
-                                    <input type="text" id="color1AddOrEditTerm" value="<%= oldColor %>"/>
+                                    <input type="text" id="color1AddOrEditTerm"  class="pick-a-color form-control" value="<%= oldColor %>"/>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-4" style="min-height: 400px;width : 400px;">
+                            <div class="control-group">
+                                <label class="control-label">Parent (Drag & Drop)</label>
 
+                                <div class="controls">
+                                    <div id="<%= action %>ontologytermtree"></div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!--<button class="addFolder" id='buttonAddFolderForTree' type="button">Add Folder</button>  -->
                     </div>
