@@ -163,6 +163,7 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         self.$tree.dynatree({
             children: self.ontology.toJSON(),
             onExpand: function () {
+                self.$tree.find("a").attr( "href" ,window.location.hash);
             },
             onRender: function (node, nodeSpan) {
                 self.$tree.find("a.dynatree-title").css("color", "black");
@@ -234,6 +235,10 @@ var OntologyAddOrEditTermView = Backbone.View.extend({
         if (self.action == "Edit") {
             self.$textboxName.click();
         }
+
+
+
+
     },
 
     getNewName: function () {

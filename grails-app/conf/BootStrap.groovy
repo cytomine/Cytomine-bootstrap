@@ -1,5 +1,7 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.ontology.Relation
+import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecUser
 import grails.util.Environment
 import jsondoc.JSONUtils
@@ -71,6 +73,11 @@ class BootStrap {
 
         if(!SecUser.findByUsername("admin")) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
+        }
+
+        if(!Relation.findByName(RelationTerm.names.PARENT)) {
+            Relation relation = new Relation(name: RelationTerm.names.PARENT)
+            relation.save(flush:true,failOnError: true)
         }
 
         JSONUtils.registerMarshallers()
