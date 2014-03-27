@@ -73,7 +73,7 @@
 
 <script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
 <script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
-<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css">
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css"/>
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>

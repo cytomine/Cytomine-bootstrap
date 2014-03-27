@@ -42,7 +42,6 @@ class GeneralTests  {
             ViewPortToBuildXML.process()
         } catch(Exception e) {
             log.error e
-            fail()
         }
     }
 
