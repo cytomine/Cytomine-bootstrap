@@ -5,9 +5,10 @@ import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -32,9 +33,9 @@ class RestSoftwareParameterController extends RestController{
      * List all sofwtare parameter for a single software
      */
     @ApiMethodLight(description="Get all software parameters for a software", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id"),
-        @ApiParam(name="setByServer", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Include params set by server"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id"),
+        @ApiParamLight(name="setByServer", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional) Include params set by server"),
     ])
     def listBySoftware() {
         Software software = Software.read(params.long('id'))
@@ -50,8 +51,8 @@ class RestSoftwareParameterController extends RestController{
      * Get a software parameter info
      */
     @ApiMethodLight(description="Get a software parameter info")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
     ])
     def show() {
         SoftwareParameter parameter = softwareParameterService.read(params.long('id'))
@@ -74,8 +75,8 @@ class RestSoftwareParameterController extends RestController{
      * Update a software parameter
      */
     @ApiMethodLight(description="Update a software parameter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software parameter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software parameter id")
     ])
     def update() {
         update(softwareParameterService, request.JSON)
@@ -85,8 +86,8 @@ class RestSoftwareParameterController extends RestController{
      * Delete a software parameter
      */
     @ApiMethodLight(description="Delete a software parameter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software parameter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software parameter id")
     ])
     def delete() {
         delete(softwareParameterService, JSON.parse("{id : $params.id}"),null)

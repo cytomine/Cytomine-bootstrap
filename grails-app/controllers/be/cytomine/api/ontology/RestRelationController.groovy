@@ -3,9 +3,10 @@ package be.cytomine.api.ontology
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -31,8 +32,8 @@ class RestRelationController extends RestController {
      * Get a single relation with its id
      */
     @ApiMethodLight(description="Get a relation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The relation id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The relation id")
     ])
     def show () {
         Relation relation = relationService.read(params.long('id'))

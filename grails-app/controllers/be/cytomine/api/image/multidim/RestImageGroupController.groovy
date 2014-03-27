@@ -5,9 +5,10 @@ import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -22,8 +23,8 @@ class RestImageGroupController extends RestController {
     def projectService
 
     @ApiMethodLight(description="Get an image group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image group id")
     ])
     def show() {
         ImageGroup image = imageGroupService.read(params.long('id'))
@@ -35,8 +36,8 @@ class RestImageGroupController extends RestController {
     }
 
     @ApiMethodLight(description="Get image group listing by project", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -55,16 +56,16 @@ class RestImageGroupController extends RestController {
     }
 
     @ApiMethodLight(description="Update an image group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH, description = "The image group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH, description = "The image group id")
     ])
     def update() {
         update(imageGroupService, request.JSON)
     }
 
     @ApiMethodLight(description="Delete an image group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image group")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image group")
     ])
     def delete() {
         delete(imageGroupService, JSON.parse("{id : $params.id}"),null)

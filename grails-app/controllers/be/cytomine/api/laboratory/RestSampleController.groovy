@@ -4,9 +4,10 @@ import be.cytomine.api.RestController
 import be.cytomine.laboratory.Sample
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -30,8 +31,8 @@ class RestSampleController extends RestController {
      * Get a sample
      */
     @ApiMethodLight(description="Get a sample")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The sample id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The sample id")
     ])
     def show() {
         Sample sample = sampleService.read(params.long('id'))
@@ -54,8 +55,8 @@ class RestSampleController extends RestController {
      * Update a existing sample
      */
     @ApiMethodLight(description="Update a sample")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
     ])
     def update() {
         update(sampleService, request.JSON)
@@ -65,8 +66,8 @@ class RestSampleController extends RestController {
      * Delete sample
      */
     @ApiMethodLight(description="Delete a sample")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
     ])
     def delete() {
         delete(sampleService, JSON.parse("{id : $params.id}"),null)

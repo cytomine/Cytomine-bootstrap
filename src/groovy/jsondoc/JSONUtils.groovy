@@ -2,6 +2,8 @@ package jsondoc
 
 import grails.converters.JSON
 import jsondoc.pojo.ApiObjectFieldDocLight
+import jsondoc.pojo.ApiParamDocLight
+import jsondoc.pojo.ApiResponseObjectDocLight
 import org.jsondoc.core.pojo.*
 
 /**
@@ -29,7 +31,7 @@ class JSONUtils {
         }
 
 
-        JSON.registerObjectMarshaller(ApiResponseObjectDoc) {
+        JSON.registerObjectMarshaller(ApiResponseObjectDocLight) {
             def returnArray = [:]
             returnArray['jsondocId'] = it.jsondocId
             returnArray['mapKeyObject'] = it.mapKeyObject
@@ -41,7 +43,7 @@ class JSONUtils {
 
 
 
-        JSON.registerObjectMarshaller(ApiParamDoc) {
+        JSON.registerObjectMarshaller(ApiParamDocLight) {
             def returnArray = [:]
             returnArray['jsondocId'] = it.jsondocId
             returnArray['name'] = it.name

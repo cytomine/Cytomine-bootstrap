@@ -11,10 +11,11 @@ import be.cytomine.utils.Task
 import grails.converters.JSON
 import groovy.sql.Sql
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -55,8 +56,8 @@ class RestProjectController extends RestController {
      * Get a project
      */
     @ApiMethodLight(description="Get a project")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
     ])
     def show () {
         Project project = projectService.read(params.long('id'))
@@ -88,8 +89,8 @@ class RestProjectController extends RestController {
      * Update a project
      */
     @ApiMethodLight(description="Update a project")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH, description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH, description = "The project id")
     ])
     def update () {
         try {
@@ -109,8 +110,8 @@ class RestProjectController extends RestController {
      * Delete a project
      */
     @ApiMethodLight(description="Delete a project")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
     ])
     def delete () {
         try {
@@ -133,9 +134,9 @@ class RestProjectController extends RestController {
      * ex: "user x add a new annotation on image y",...
      */
     @ApiMethodLight(description="Get the last action for a project", listing = true)
-    @ApiResponseObject(objectIdentifier="command history")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
+    @ApiResponseObjectLight(objectIdentifier="command history")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
     ])
     def lastAction() {
         Project project = projectService.read(params.long('id'))
@@ -158,8 +159,8 @@ class RestProjectController extends RestController {
      * List all project available for this user, that can use a software
      */
     @ApiMethodLight(description="Get projects available for the current user that can use a specific software", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The software id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The software id")
     ])
     def listBySoftware() {
         Software software = Software.read(params.long('id'))
@@ -174,8 +175,8 @@ class RestProjectController extends RestController {
      * List all project available for this user, that use a ontology
      */
     @ApiMethodLight(description="Get projects available for the current user that can use a specific ontology", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
     ])
     def listByOntology() {
         Ontology ontology = ontologyService.read(params.long('id'));
@@ -190,8 +191,8 @@ class RestProjectController extends RestController {
      * List all project available for the current user, that can be used by a user
      */
     @ApiMethodLight(description="Get projects available for the current user and available for a specific user", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The user id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The user id")
     ])
     def listByUser() {
         User user = User.read(params.long('id'))
@@ -206,12 +207,12 @@ class RestProjectController extends RestController {
      * List all project available for the current user
      */
     @ApiMethodLight(description="Get projects available for the current user and available for a specific user in a specific role (user, admin, creator). ", listing = true)
-    @ApiResponseObject(objectIdentifier="project (light)")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The user id"),
-        @ApiParam(name="creator", type="boolean", paramType = ApiParamType.QUERY,description = "filter by creator"),
-        @ApiParam(name="admin", type="boolean", paramType = ApiParamType.QUERY,description = "filter by admin"),
-        @ApiParam(name="user", type="boolean", paramType = ApiParamType.QUERY,description = "filter by user")
+    @ApiResponseObjectLight(objectIdentifier="project (light)")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The user id"),
+        @ApiParamLight(name="creator", type="boolean", paramType = ApiParamType.QUERY,description = "filter by creator"),
+        @ApiParamLight(name="admin", type="boolean", paramType = ApiParamType.QUERY,description = "filter by admin"),
+        @ApiParamLight(name="user", type="boolean", paramType = ApiParamType.QUERY,description = "filter by user")
     ])
     def listLightByUser() {
         User user = secUserService.read(params.long('id'))
@@ -236,8 +237,8 @@ class RestProjectController extends RestController {
      * The suggested term can use data from other project (with same ontology).
      */
     @ApiMethodLight(description="List all retrieval-project for a specific project. The suggested term can use data from other project (with same ontology).", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
     ])
     def listRetrieval() {
         Project project = projectService.read(params.long('id'))
@@ -250,11 +251,11 @@ class RestProjectController extends RestController {
     }
 
     @ApiMethodLight(description="Get the last action for a user in a project or in all projects available for the current user", listing = true)
-    @ApiResponseObject(objectIdentifier="commandHistory")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id (if null: all projects)"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.QUERY,description = "The user id"),
-        @ApiParam(name="fullData", type="boolean", paramType = ApiParamType.QUERY,description = "Flag to include the full JSON of the data field on each command history. Not recommended for long listing.")
+    @ApiResponseObjectLight(objectIdentifier="commandHistory")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id (if null: all projects)"),
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.QUERY,description = "The user id"),
+        @ApiParamLight(name="fullData", type="boolean", paramType = ApiParamType.QUERY,description = "Flag to include the full JSON of the data field on each command history. Not recommended for long listing.")
     ])
     def listCommandHistory() {
         Project project = projectService.read(params.long('id'))

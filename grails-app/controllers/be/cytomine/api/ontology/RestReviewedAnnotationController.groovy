@@ -15,10 +15,11 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -55,14 +56,14 @@ class RestReviewedAnnotationController extends RestController {
     }
 
     @ApiMethodLight(description="Count the number of reviewed annotation for the current user")
-    @ApiResponseObject(objectIdentifier = "[total:x]")
+    @ApiResponseObjectLight(objectIdentifier = "[total:x]")
     def countByUser() {
         responseSuccess([total:reviewedAnnotationService.count(cytomineService.currentUser)])
     }
 
     @ApiMethodLight(description="Get the number of review for each user in an image")
-    @ApiParams(params=[
-        @ApiParam(name="image", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="image", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
     ])
     def stats() {
         ImageInstance image = imageInstanceService.read(params.long('image'))
@@ -78,8 +79,8 @@ class RestReviewedAnnotationController extends RestController {
      * Get a single reviewed annotation
      */
     @ApiMethodLight(description="Get a reviewed annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
     ])
     def show() {
         ReviewedAnnotation annotation = reviewedAnnotationService.read(params.long('id'))
@@ -105,8 +106,8 @@ class RestReviewedAnnotationController extends RestController {
      * Update reviewed annotation
      */
     @ApiMethodLight(description="Update a reviewed annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def update() {
         update(reviewedAnnotationService, request.JSON)
@@ -116,8 +117,8 @@ class RestReviewedAnnotationController extends RestController {
      * Delete reviewed annotation
      */
     @ApiMethodLight(description="Delete a reviewed annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
     ])
     def delete() {
         delete(reviewedAnnotationService, JSON.parse("{id : $params.id}"),null)
@@ -128,8 +129,8 @@ class RestReviewedAnnotationController extends RestController {
      * To review annotation, a user must enable review mode in the current image
      */
     @ApiMethodLight(description="Start to review an image. The current user will be the reviewer.")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
     ])
     def startImageInstanceReview() {
         try {
@@ -161,9 +162,9 @@ class RestReviewedAnnotationController extends RestController {
      * -validate
      */
     @ApiMethodLight(description="Stop to review an image. ")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id"),
-        @ApiParam(name="cancel", type="boolean", paramType = ApiParamType.QUERY,description = "If false, the image will be validated. If true, the image return in unreview status (only if no reviewed annotation) "),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id"),
+        @ApiParamLight(name="cancel", type="boolean", paramType = ApiParamType.QUERY,description = "If false, the image will be validated. If true, the image return in unreview status (only if no reviewed annotation) "),
     ])
     def stopImageInstanceReview() {
         try {
@@ -216,9 +217,9 @@ class RestReviewedAnnotationController extends RestController {
      * Review annotation
      */
     @ApiMethodLight(description="Review a user or algo annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParam(name="POST JSON (terms)", type="list", paramType = ApiParamType.QUERY,description = "List of annotation terms (if null, keep term already map with this annotation by the annotation creator)"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParamLight(name="POST JSON (terms)", type="list", paramType = ApiParamType.QUERY,description = "List of annotation terms (if null, keep term already map with this annotation by the annotation creator)"),
     ])
     def addAnnotationReview() {
         try {
@@ -253,8 +254,8 @@ class RestReviewedAnnotationController extends RestController {
      * Unreview annotation
      */
     @ApiMethodLight(description="Unreview (cancel the review) a user or algo annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
      ])
     def deleteAnnotationReview() {
         try {
@@ -283,9 +284,9 @@ class RestReviewedAnnotationController extends RestController {
      * User can access task status by getting the task info
      */
     @ApiMethodLight(description="Review all annotation in image for a list of user")
-    @ApiParams(params=[
-        @ApiParam(name="image", type="long", paramType = ApiParamType.PATH,description = "The image id"),
-        @ApiParam(name="users", type="list", paramType = ApiParamType.PATH,description = "The list of users id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="image", type="long", paramType = ApiParamType.PATH,description = "The image id"),
+        @ApiParamLight(name="users", type="list", paramType = ApiParamType.PATH,description = "The list of users id")
     ])
     def reviewLayer() {
 
@@ -361,9 +362,9 @@ class RestReviewedAnnotationController extends RestController {
      * Unreview all annotation for all layers in params
      */
     @ApiMethodLight(description="Cancel the review of all annotation in image for a list of user")
-    @ApiParams(params=[
-        @ApiParam(name="image", type="long", paramType = ApiParamType.PATH,description = "The image id"),
-        @ApiParam(name="users", type="list", paramType = ApiParamType.PATH,description = "The list of users id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="image", type="long", paramType = ApiParamType.PATH,description = "The image id"),
+        @ApiParamLight(name="users", type="list", paramType = ApiParamType.PATH,description = "The list of users id")
     ])
     def unReviewLayer(){
         try {
@@ -479,13 +480,13 @@ class RestReviewedAnnotationController extends RestController {
 
 
     @ApiMethodLight(description="Download a report (pdf, xls,...) with reviewed annotation data from a specific project")
-    @ApiResponseObject(objectIdentifier = "file")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
-        @ApiParam(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
-        @ApiParam(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
-        @ApiParam(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
-        @ApiParam(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    @ApiResponseObjectLight(objectIdentifier = "file")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+        @ApiParamLight(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+        @ApiParamLight(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+        @ApiParamLight(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+        @ApiParamLight(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
     ])
     def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"REVIEWEDANNOTATION")
@@ -498,12 +499,12 @@ class RestReviewedAnnotationController extends RestController {
      * (Use this service if you know the annotation type)
      */
     @ApiMethodLight(description="Get annotation reviewed crop (image area that frame annotation)")
-    @ApiResponseObject(objectIdentifier = "file")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParam(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
-        @ApiParam(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
-        @ApiParam(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    @ApiResponseObjectLight(objectIdentifier = "file")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
+        @ApiParamLight(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @ApiParamLight(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
+        @ApiParamLight(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
     ])
     def crop() {
         ReviewedAnnotation annotation = ReviewedAnnotation.read(params.long("id"))

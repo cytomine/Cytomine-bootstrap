@@ -6,9 +6,10 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.*
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -29,9 +30,9 @@ class RestJobTemplateAnnotationController extends RestController{
      * List all software by project
      */
     @ApiMethodLight(description="List all link beetween a job template and an annotation", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="jobtemplate", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The job template id"),
-        @ApiParam(name="annotation", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The annotation ROI id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="jobtemplate", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The job template id"),
+        @ApiParamLight(name="annotation", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The annotation ROI id")
     ])
     def list() {
         JobTemplate template = jobTemplateService.read(params.long('jobtemplate'))
@@ -47,8 +48,8 @@ class RestJobTemplateAnnotationController extends RestController{
      * Get a software project link
      */
     @ApiMethodLight(description="Get a link between a job and an annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
     ])
     def show() {
         JobTemplateAnnotation parameter = jobTemplateAnnotationService.read(params.long('id'))
@@ -99,8 +100,8 @@ class RestJobTemplateAnnotationController extends RestController{
      * Delete the software for the project
      */
     @ApiMethodLight(description="Remove the link beween the job and the annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
     ])
     def delete() {
         delete(jobTemplateAnnotationService, JSON.parse("{id : $params.id}"),null)

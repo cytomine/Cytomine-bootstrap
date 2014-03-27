@@ -7,9 +7,10 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -35,8 +36,8 @@ class RestJobTemplateController extends RestController {
     def softwareService
 
     @ApiMethodLight(description="Get a job template")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The template id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The template id")
     ])
     def show() {
         JobTemplate job = jobTemplateService.read(params.long('id'))
@@ -48,9 +49,9 @@ class RestJobTemplateController extends RestController {
     }
 
     @ApiMethodLight(description="List template for the specific filter", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="project", type="long", paramType = ApiParamType.PATH, description = "The projecte id"),
-        @ApiParam(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The software id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="project", type="long", paramType = ApiParamType.PATH, description = "The projecte id"),
+        @ApiParamLight(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The software id"),
     ])
     def list() {
         Project project = projectService.read(params.long('project'))
@@ -80,8 +81,8 @@ class RestJobTemplateController extends RestController {
     }
 
     @ApiMethodLight(description="Delete a job template")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The template id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The template id")
     ])
     def delete() {
         delete(jobTemplateService, JSON.parse("{id : $params.id}"),null)

@@ -2,9 +2,10 @@ package be.cytomine.api.security
 
 import be.cytomine.api.RestController
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -25,8 +26,8 @@ class RestSecRoleController extends RestController {
     }
 
     @ApiMethodLight(description="Get a role")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The role id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The role id")
     ])
     def show() {
         responseSuccess(secRoleService.read(params.id))

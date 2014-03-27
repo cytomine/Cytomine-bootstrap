@@ -5,9 +5,9 @@ import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -34,8 +34,8 @@ class RestNestedImageInstanceController extends RestController {
     def taskService
 
     @ApiMethodLight(description="Get a nested image")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The nested image id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The nested image id")
     ])
     def show() {
         ImageInstance image = nestedImageInstanceService.read(params.long('id'))
@@ -47,8 +47,8 @@ class RestNestedImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="List all nested image for an image instance", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="idImage", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="idImage", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
     ])
     def listByImageInstance() {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
@@ -76,8 +76,8 @@ class RestNestedImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Delete a nested image instance)")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The nested image id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The nested image id")
     ])
     def delete() {
         delete(nestedImageInstanceService, JSON.parse("{id : $params.id}"),null)

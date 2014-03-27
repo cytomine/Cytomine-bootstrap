@@ -3,9 +3,10 @@ package be.cytomine.api.utils
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -23,9 +24,9 @@ class RestDescriptionController extends RestController {
     }
 
     @ApiMethodLight(description="Get a description for a specific domain (id and class)")
-    @ApiParams(params=[
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
     ])
     def showByDomain() {
         def id = params.long('domainIdent')
@@ -55,9 +56,9 @@ class RestDescriptionController extends RestController {
      * Update a description
      */
     @ApiMethodLight(description="Update a description")
-    @ApiParams(params=[
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
     ])
     def update() {
         update(descriptionService, request.JSON)
@@ -67,9 +68,9 @@ class RestDescriptionController extends RestController {
      * Delete a description
      */
     @ApiMethodLight(description="Delete a description")
-    @ApiParams(params=[
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
     ])
     def delete() {
         try {

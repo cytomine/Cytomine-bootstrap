@@ -15,10 +15,11 @@ import be.cytomine.security.UserJob
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 
 import static org.springframework.security.acls.domain.BasePermission.READ
@@ -44,10 +45,10 @@ class RestJobController extends RestController {
      * List all job
      */
     @ApiMethodLight(description="Get an algo annotation", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="boolean", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional, default false) If true, get a light/quick listing (without job parameters,...)"),
-        @ApiParam(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of software id to filter"),
-        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of project id to filter")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="boolean", type="boolean", paramType = ApiParamType.QUERY, description = "(Optional, default false) If true, get a light/quick listing (without job parameters,...)"),
+        @ApiParamLight(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of software id to filter"),
+        @ApiParamLight(name="project", type="long", paramType = ApiParamType.QUERY, description = "(Optional, default get all) A list of project id to filter")
     ])
     def list() {
         Boolean light = params.boolean('light') ? params.boolean('light') : false;
@@ -75,8 +76,8 @@ class RestJobController extends RestController {
      * Get a specific job
      */
     @ApiMethodLight(description="Get a job", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
     ])
     def show() {
         Job job = jobService.read(params.long('id'))
@@ -107,8 +108,8 @@ class RestJobController extends RestController {
      * Update a job
      */
     @ApiMethodLight(description="Edit a job")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
     ])
     def update() {
         log.info "update"
@@ -119,16 +120,16 @@ class RestJobController extends RestController {
      * Delete a job
      */
     @ApiMethodLight(description="Delete a job")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
     ])
     def delete() {
         delete(jobService, JSON.parse("{id : $params.id}"),null)
     }
 
     @ApiMethodLight(description="Execute a job, launch the software")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id")
     ])
     def execute() {
         long idJob = params.long("id")
@@ -186,11 +187,11 @@ class RestJobController extends RestController {
      * This method is heavy, so we use Task service to provide a progress status to the user interface
      */
     @ApiMethodLight(description="Delete the full data set build by the job. This method will delete: annotation prediction, uploaded files,...")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
-        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
+        @ApiParamLight(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
     ])
-    @ApiResponseObject(objectIdentifier = "[message:x]")
+    @ApiResponseObjectLight(objectIdentifier = "[message:x]")
     def deleteAllJobData() {
         Job job = jobService.read(params.long('id'));
 
@@ -234,11 +235,11 @@ class RestJobController extends RestController {
      * Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files
      */
     @ApiMethodLight(description="List all data build by the job. Job data are prediction (algoannotationterm, algoannotation,...) and uploaded files")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
-        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The job id"),
+        @ApiParamLight(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
         ])
-    @ApiResponseObject(objectIdentifier = "[annotations:x,annotationsTerm:x,jobDatas:x,reviewed:x]")
+    @ApiResponseObjectLight(objectIdentifier = "[annotations:x,annotationsTerm:x,jobDatas:x,reviewed:x]")
     def listAllJobData () {
         Job job = jobService.read(params.long('id'))
         if (!job)
@@ -262,11 +263,11 @@ class RestJobController extends RestController {
     }
 
     @ApiMethodLight(description="For a project, delete all job data if the job has no reviewed annotation")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
-        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+        @ApiParamLight(name="task", type="long", paramType = ApiParamType.QUERY,description = "(Optional) The task id. This method is heavy, so we use Task service to provide a progress status to the user interface.")
     ])
-    @ApiResponseObject(objectIdentifier = "project")
+    @ApiResponseObjectLight(objectIdentifier = "project")
     def purgeJobNotReviewed () {
         //retrieve project
         Project  project = projectService.read(params.long('id'))

@@ -6,9 +6,10 @@ import be.cytomine.security.User
 import be.cytomine.security.UserGroup
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -26,8 +27,8 @@ class RestUserGroupController extends RestController {
      * List all user-group for a user
      */
     @ApiMethodLight(description="List all user group for a user", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
     ])
     def list() {
         User user = secUserService.read(params.long('user'));
@@ -38,9 +39,9 @@ class RestUserGroupController extends RestController {
      * Get a user-group relation
      */
     @ApiMethodLight(description="Get a user-group relation")
-    @ApiParams(params=[
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParam(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParamLight(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
     ])
     def show() {
         User user = secUserService.read(params.long('user'));
@@ -65,9 +66,9 @@ class RestUserGroupController extends RestController {
      * Remove a user from a group
      */
     @ApiMethodLight(description="Remove a user from a group")
-    @ApiParams(params=[
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParam(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParamLight(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
     ])
     def delete() {
         def json = JSON.parse("{user : $params.user, group: $params.group}")

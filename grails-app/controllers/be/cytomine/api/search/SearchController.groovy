@@ -5,10 +5,11 @@ import be.cytomine.api.RestController
 import be.cytomine.utils.SearchFilter
 import be.cytomine.utils.SearchOperator
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -24,13 +25,13 @@ class SearchController extends RestController {
     def searchService
 
     @ApiMethodLight(description="Search for domain with a keywords list. The search will into properties value and description domain.")
-    @ApiParams(params=[
-        @ApiParam(name="keywords", type="list", paramType = ApiParamType.QUERY, description = "(Optional) List of keywords. If null, take all domain."),
-        @ApiParam(name="operator", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Operator between keyword (OR or AND). If null, take OR."),
-        @ApiParam(name="filter", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Domain type (PROJECT, IMAGE, ANNOTATION or ALL). If null, get all domain type"),
-        @ApiParam(name="projects", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Look only on domain from the project list id. If null, look into all project (available for the current user)"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="keywords", type="list", paramType = ApiParamType.QUERY, description = "(Optional) List of keywords. If null, take all domain."),
+        @ApiParamLight(name="operator", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Operator between keyword (OR or AND). If null, take OR."),
+        @ApiParamLight(name="filter", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Domain type (PROJECT, IMAGE, ANNOTATION or ALL). If null, get all domain type"),
+        @ApiParamLight(name="projects", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Look only on domain from the project list id. If null, look into all project (available for the current user)"),
     ])
-    @ApiResponseObject(objectIdentifier = "[search]")
+    @ApiResponseObjectLight(objectIdentifier = "[search]")
     def listResponse() {
         List<String> listKeyword = []
 

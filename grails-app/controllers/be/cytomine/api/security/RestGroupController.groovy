@@ -4,9 +4,10 @@ import be.cytomine.api.RestController
 import be.cytomine.security.Group
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -30,8 +31,8 @@ class RestGroupController extends RestController {
      * Get a group info
      */
     @ApiMethodLight(description="Get a group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
     ])
     def show() {
         Group group = groupService.read(params.long('id'))
@@ -54,8 +55,8 @@ class RestGroupController extends RestController {
      * Update a group
      */
     @ApiMethodLight(description="Edit a group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
     ])
     def update() {
         update(groupService, request.JSON)
@@ -65,8 +66,8 @@ class RestGroupController extends RestController {
      * Delete a group
      */
     @ApiMethodLight(description="Delete a group")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
     ])
     def delete() {
         delete(groupService, JSON.parse("{id : $params.id}"),null)

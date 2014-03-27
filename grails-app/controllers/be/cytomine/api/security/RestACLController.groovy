@@ -6,10 +6,11 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
 import be.cytomine.security.SecUser
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 import org.springframework.security.acls.domain.BasePermission
 
@@ -27,12 +28,12 @@ class RestACLController extends RestController {
     def aclAuthService
 
     @ApiMethodLight(description="Get all ACL for a user and a class.", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
     ])
-    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
     def list() {
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
@@ -47,13 +48,13 @@ class RestACLController extends RestController {
     }
 
     @ApiMethodLight(description="Add a new permission for a user on a domain", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParam(name="auth", type="string", paramType = ApiParamType.QUERY, description = "(Optional, default READ) The permission (READ, WRITE, DELETE or PERMISSION)")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParamLight(name="auth", type="string", paramType = ApiParamType.QUERY, description = "(Optional, default READ) The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
-    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
     def add (){
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
@@ -71,13 +72,13 @@ class RestACLController extends RestController {
     }
 
     @ApiMethodLight(description="Delete a permission for a user on a domain", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParam(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParam(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParam(name="auth", type="string", paramType = ApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
+        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
+        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
+        @ApiParamLight(name="auth", type="string", paramType = ApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
-    @ApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
     def delete() {
         try {
             def user = SecUser.read(params.long('user'))

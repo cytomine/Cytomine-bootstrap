@@ -6,9 +6,10 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -25,8 +26,8 @@ class RestAnnotationFilterController extends RestController {
      * List all filter for a project
      */
     @ApiMethodLight(description="Get all annotation filters available for a specific project ", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="project", type="long", paramType = ApiParamType.PATH,description = "The project id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="project", type="long", paramType = ApiParamType.PATH,description = "The project id"),
     ])
     def listByProject() {
         Long idProject = params.long('project');
@@ -42,8 +43,8 @@ class RestAnnotationFilterController extends RestController {
      * List all filter for an ontology
      */
     @ApiMethodLight(description="Get all annotation filters available for an ontology ", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="idOntology", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="idOntology", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
     ])
     def listByOntology() {
         Ontology ontology = Ontology.read(params.idOntology)
@@ -63,8 +64,8 @@ class RestAnnotationFilterController extends RestController {
      * Get an annotation filter
      */
     @ApiMethodLight(description="Get an annotation filter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The filter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The filter id")
     ])
     def show() {
         AnnotationFilter annotationFilter = annotationFilterService.read(params.id)
@@ -89,8 +90,8 @@ class RestAnnotationFilterController extends RestController {
      * Update an annotation filter
      */
     @ApiMethodLight(description="Update a filter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The filter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The filter id")
     ])
     def update() {
         update(annotationFilterService, request.JSON)
@@ -100,8 +101,8 @@ class RestAnnotationFilterController extends RestController {
      * Delete an annotation filter
      */
     @ApiMethodLight(description="Delete a filter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The filter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The filter id")
     ])
     def delete() {
         delete(annotationFilterService,  JSON.parse("{id : $params.id}"),null)

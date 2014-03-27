@@ -1,6 +1,5 @@
 package jsondoc
 
-import be.cytomine.api.doc.CustomResponseDoc
 import grails.util.Holders
 import groovy.util.logging.Log
 import jsondoc.utils.JSONDocUtilsLight
@@ -17,7 +16,7 @@ class APIUtils {
     static String BASEPATH = "....TO REPLACE...."
 
 
-    static void buildApiRegistry(grailsApplication) {
+    static void buildApiRegistry(grailsApplication,customDoc=null) {
 
         //Retrieve all controlers (for method doc)
         log.info "Retrieve Controller..."
@@ -37,7 +36,7 @@ class APIUtils {
         }
 
         //Generate doc
-        def objectsDoc = JSONDocUtilsLight.getApiObjectDocs(objectClasses,new  CustomResponseDoc())
+        def objectsDoc = JSONDocUtilsLight.getApiObjectDocs(objectClasses, customDoc)
         def controllerDoc = JSONDocUtilsLight.getApiDocs(controllersClasses)
 
         //Register doc

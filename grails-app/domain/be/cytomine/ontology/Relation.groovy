@@ -1,8 +1,8 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
+import jsondoc.annotation.ApiObjectFieldLight
 import org.jsondoc.core.annotation.ApiObject
-import org.jsondoc.core.annotation.ApiObjectField
 
 /**
  * A relation between terms (e.g. term1 PARENT term2)
@@ -10,7 +10,7 @@ import org.jsondoc.core.annotation.ApiObjectField
 @ApiObject(name = "relation", description = "Type of relation between two terms (e.g. term1 PARENT term2)")
 class Relation extends CytomineDomain implements Serializable {
 
-    @ApiObjectField(description = "The name of the relation")
+    @ApiObjectFieldLight(description = "The name of the relation")
     String name
 
     static constraints = {

@@ -4,9 +4,10 @@ import be.cytomine.api.RestController
 import be.cytomine.project.Discipline
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -29,8 +30,8 @@ class RestDisciplineController extends RestController {
      * Get a single discipline
      */
     @ApiMethodLight(description="Get a discipline")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The discipline id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The discipline id")
     ])
     def show () {
         Discipline discipline = disciplineService.read(params.long('id'))
@@ -53,8 +54,8 @@ class RestDisciplineController extends RestController {
      * Update a existing discipline
      */
     @ApiMethodLight(description="Update a discipline")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def update () {
         update(disciplineService, request.JSON)
@@ -64,8 +65,8 @@ class RestDisciplineController extends RestController {
      * Delete discipline
      */
     @ApiMethodLight(description="Delete a discipline")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="int", paramType = ApiParamType.PATH)
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH)
     ])
     def delete () {
         delete(disciplineService, JSON.parse("{id : $params.id}"),null)

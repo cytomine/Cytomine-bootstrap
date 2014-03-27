@@ -6,9 +6,10 @@ import be.cytomine.ontology.Term
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -36,8 +37,8 @@ class RestTermController extends RestController {
      * @return A Term
      */
     @ApiMethodLight(description="Get a term")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def show() {
         Term term = termService.read(params.long('id'))
@@ -66,8 +67,8 @@ class RestTermController extends RestController {
      * @return Response map with .code = http response code and .data.newTerm = new created Term and  .data.oldTerm = old term value
      */
     @ApiMethodLight(description="Update a term")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def update () {
         update(termService, request.JSON)
@@ -79,8 +80,8 @@ class RestTermController extends RestController {
      * @return Response map with .code = http response code and .data.term = deleted term value
      */
     @ApiMethodLight(description="Delete a term")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id")
     ])
     def delete () {
         delete(termService, JSON.parse("{id : $params.id}"),null)
@@ -92,8 +93,8 @@ class RestTermController extends RestController {
      * @return List of term
      */
     @ApiMethodLight(description="Get all term from an ontology", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
     ])
     def listByOntology() {
         Ontology ontology = Ontology.read(params.idontology)
@@ -110,8 +111,8 @@ class RestTermController extends RestController {
      * @return List of term
      */
     @ApiMethodLight(description="Get all term for a project", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id")
     ])
     def listAllByProject() {
         Project project = Project.read(params.idProject)

@@ -3,9 +3,10 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -29,8 +30,8 @@ class RestImageFilterController extends RestController {
      * Get an image filter
      */
     @ApiMethodLight(description="Get an image filter")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image filter id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image filter id")
     ])
     def show() {
         ImageFilter imageFilter = imageFilterService.read(params.long('id'))

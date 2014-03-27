@@ -5,9 +5,10 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -32,8 +33,8 @@ class RestSoftwareProjectController extends RestController{
      * List all software by project
      */
     @ApiMethodLight(description="List all software project links by project", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -48,8 +49,8 @@ class RestSoftwareProjectController extends RestController{
      * Get a software project link
      */
     @ApiMethodLight(description="Get a software project link")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
     ])
     def show() {
         SoftwareProject parameter = softwareProjectService.read(params.long('id'))
@@ -69,8 +70,8 @@ class RestSoftwareProjectController extends RestController{
      * Delete the software for the project
      */
     @ApiMethodLight(description="Remove the software from the project")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software project id")
     ])
     def delete() {
         delete(softwareProjectService, JSON.parse("{id : $params.id}"),null)

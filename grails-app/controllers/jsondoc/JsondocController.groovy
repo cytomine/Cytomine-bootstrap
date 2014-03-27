@@ -1,5 +1,6 @@
 package jsondoc
 
+import be.cytomine.api.doc.CustomResponseDoc
 import grails.converters.JSON
 import jsondoc.utils.BuildPathMap
 import jsondoc.utils.MappingRules
@@ -27,7 +28,7 @@ class JsondocController {
         BuildPathMap buildPathMap = new BuildPathMap()
         MappingRules rules = buildPathMap.build()
         render rules.rules
-        APIUtils.buildApiRegistry(grailsApplication)
+        APIUtils.buildApiRegistry(grailsApplication,new  CustomResponseDoc())
         File docFile = new File(JSONFILE)
         docFile.write((ApiRegistry.jsondoc as JSON).toString(true))
     }

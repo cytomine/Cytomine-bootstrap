@@ -5,9 +5,10 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
+
+import jsondoc.annotation.ApiParamsLight
 import org.jsondoc.core.pojo.ApiParamType
 
 /**
@@ -27,8 +28,8 @@ class RestOntologyController extends RestController {
      * For each ontology, print the terms tree
      */
     @ApiMethodLight(description="Get all ontologies available", listing=true)
-    @ApiParams(params=[
-        @ApiParam(name="light", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional, default false) Only get a light list (with no term tree for each ontologies)")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="light", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional, default false) Only get a light list (with no term tree for each ontologies)")
     ])
     def list () {
         if(params.boolean("light")) {
@@ -39,8 +40,8 @@ class RestOntologyController extends RestController {
     }
 
     @ApiMethodLight(description="Get an ontology")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
     ])
     def show () {
         Ontology ontology = ontologyService.read(params.long('id'))
@@ -57,17 +58,17 @@ class RestOntologyController extends RestController {
     }
 
     @ApiMethodLight(description="Update an ontology")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
     ])
     def update () {
         update(ontologyService, request.JSON)
     }
 
     @ApiMethodLight(description="Delete an ontology")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
-        @ApiParam(name="task", type="long", paramType = ApiParamType.PATH,description = "(Optional, default:null) The id of the task to update during process"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
+        @ApiParamLight(name="task", type="long", paramType = ApiParamType.PATH,description = "(Optional, default:null) The id of the task to update during process"),
     ])
     def delete () {
         Task task = taskService.read(params.getLong("task"))

@@ -8,7 +8,6 @@ import jsondoc.annotation.ApiObjectFieldsLight
 import jsondoc.utils.JSONDocUtilsLight
 import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.pojo.ApiObjectDoc
-import org.jsondoc.core.pojo.ApiObjectFieldDoc
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -19,13 +18,17 @@ import java.lang.reflect.Method
  *
  */
 @Log
-public class ApiObjectDocLight {
+public class ApiObjectDocLight extends ApiObjectDoc {
 
+
+    public ApiObjectDocLight(String name, String description, List<ApiObjectFieldDocLight> fields) {
+        super(name,description,fields);
+    }
     /**
      * Build an object Doc from a domain annotation
      */
     @SuppressWarnings("rawtypes")
-    public static ApiObjectDoc buildFromAnnotation(ApiObject annotation, Class clazz) {
+    public static ApiObjectDocLight buildFromAnnotation(ApiObject annotation, Class clazz) {
         buildFromAnnotation(annotation.name(),annotation.description(),clazz)
     }
 
@@ -34,8 +37,8 @@ public class ApiObjectDocLight {
      * @param custom Not a real grails domain
      */
     @SuppressWarnings("rawtypes")
-    public static ApiObjectDoc buildFromAnnotation(String name, String description, Class clazz, boolean custom = false) {
-        List<ApiObjectFieldDoc> fieldDocs = new ArrayList<ApiObjectFieldDoc>();
+    public static ApiObjectDocLight buildFromAnnotation(String name, String description, Class clazz, boolean custom = false) {
+        List<ApiObjectFieldDocLight> fieldDocs = new ArrayList<ApiObjectFieldDocLight>();
 
         //map that store: key=json field name and value = [type: field class, description: field desc,...]
         Map<String,Map<String,String>> annotationsMap = new TreeMap<String,Map<String,String>>()
@@ -103,7 +106,7 @@ public class ApiObjectDocLight {
             fieldDocs.add(buildFieldDocs(it.key.toString(),value['description'],value['type'],value['useForCreation'],value['mandatory'],value['defaultValue'],false));
         }
 
-        return new ApiObjectDoc(custom ? "["+name+"]" : name, description, fieldDocs);
+        return new ApiObjectDocLight(custom ? "["+name+"]" : name, description, fieldDocs);
     }
 
     static ApiObjectFieldDocLight buildFieldDocs(String name, String description, String type, Boolean useForCreation, Boolean mandatory, String defaultValue, Boolean presentInResponse) {

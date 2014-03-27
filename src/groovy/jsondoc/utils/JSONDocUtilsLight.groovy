@@ -1,12 +1,19 @@
 package jsondoc.utils
 
-import be.cytomine.api.doc.CustomResponseDoc
 import groovy.util.logging.Log
+import jsondoc.annotation.ApiBodyObjectLight
 import jsondoc.annotation.ApiMethodLight
 import jsondoc.annotation.ApiObjectFieldLight
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import jsondoc.pojo.ApiMethodDocLight
 import jsondoc.pojo.ApiObjectDocLight
-import org.jsondoc.core.annotation.*
+import jsondoc.pojo.ApiParamDocLight
+import jsondoc.pojo.ApiResponseObjectDocLight
+import org.jsondoc.core.annotation.Api
+import org.jsondoc.core.annotation.ApiErrors
+import org.jsondoc.core.annotation.ApiHeaders
+import org.jsondoc.core.annotation.ApiObject
 import org.jsondoc.core.pojo.*
 import org.jsondoc.core.util.JSONDocUtils
 
@@ -63,7 +70,7 @@ public class JSONDocUtilsLight extends JSONDocUtils {
      * @return Domain object doc
      */
     @Override
-    public static Set<ApiObjectDoc> getApiObjectDocs(Set<Class<?>> classes,CustomResponseDoc customResponseDoc=null) {
+    public static Set<ApiObjectDoc> getApiObjectDocs(Set<Class<?>> classes,def customResponseDoc=null) {
 
         Set<ApiObjectDoc> pojoDocs = new TreeSet<ApiObjectDoc>();
         for (Class<?> pojo : classes) {
@@ -120,33 +127,33 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                 }
 
                 def queryParameters = []
-                if(method.isAnnotationPresent(ApiParams.class)) {
+                if(method.isAnnotationPresent(ApiParamsLight.class)) {
 
-                    def urlParams = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.PATH)
+                    def urlParams = ApiParamDocLight.buildFromAnnotation(method.getAnnotation(ApiParamsLight.class), ApiParamType.PATH)
                     apiMethodDoc.setPathparameters(urlParams.minus(null));
 
-                    queryParameters = ApiParamDoc.buildFromAnnotation(method.getAnnotation(ApiParams.class), ApiParamType.QUERY)
+                    queryParameters = ApiParamDocLight.buildFromAnnotation(method.getAnnotation(ApiParamsLight.class), ApiParamType.QUERY)
                 }
 
                 if(method.getAnnotation(ApiMethodLight.class).listing()) {
-                    queryParameters.add(new ApiParamDoc("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
-                    queryParameters.add(new ApiParamDoc("offset", "Pagination: Offset of first record (default 0 = first record)", "int", "false", new String[0], ""))
+                    queryParameters.add(new ApiParamDocLight("max", "Pagination: Number of record per page (default 0 = no pagination)", "int", "false", new String[0], ""))
+                    queryParameters.add(new ApiParamDocLight("offset", "Pagination: Offset of first record (default 0 = first record)", "int", "false", new String[0], ""))
                 }
 
                 apiMethodDoc.setQueryparameters(queryParameters.minus(null));
 
-                if(method.isAnnotationPresent(ApiBodyObject.class)) {
-                    apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObject.class)));
+                if(method.isAnnotationPresent(ApiBodyObjectLight.class)) {
+                    apiMethodDoc.setBodyobject(ApiBodyObjectDoc.buildFromAnnotation(method.getAnnotation(ApiBodyObjectLight.class)));
                 } else if(verb.equals("POST") || verb.equals("PUT")) {
                     String currentDomain = controller.newInstance().currentDomainName()
                     apiMethodDoc.setBodyobject(new ApiBodyObjectDoc(currentDomain, "", "", "Unknow", ""));
                 }
 
-                if(method.isAnnotationPresent(ApiResponseObject.class)) {
-                    apiMethodDoc.setResponse(ApiResponseObjectDoc.buildFromAnnotation(method.getAnnotation(ApiResponseObject.class), method));
+                if(method.isAnnotationPresent(ApiResponseObjectLight.class)) {
+                    apiMethodDoc.setResponse(ApiResponseObjectDocLight.buildFromAnnotation(method.getAnnotation(ApiResponseObjectLight.class), method));
                 } else {
                     String currentDomain = controller.newInstance().currentDomainName()
-                    apiMethodDoc.setResponse(new ApiResponseObjectDoc(currentDomain, "", "", "Unknow", ""))
+                    apiMethodDoc.setResponse(new ApiResponseObjectDocLight(currentDomain, "", "", "Unknow", ""))
                 }
 
                 List<ApiErrorDoc> errors = []

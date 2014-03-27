@@ -18,10 +18,10 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
 import jsondoc.annotation.ApiMethodLight
+import jsondoc.annotation.ApiParamLight
 import org.jsondoc.core.annotation.Api
-import org.jsondoc.core.annotation.ApiParam
-import org.jsondoc.core.annotation.ApiParams
-import org.jsondoc.core.annotation.ApiResponseObject
+import jsondoc.annotation.ApiParamsLight
+import jsondoc.annotation.ApiResponseObjectLight
 import org.jsondoc.core.pojo.ApiParamType
 
 import javax.imageio.ImageIO
@@ -57,8 +57,8 @@ class RestImageInstanceController extends RestController {
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
     @ApiMethodLight(description="Get an image instance")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
     ])    
     def show() {
         ImageInstance image = imageInstanceService.read(params.long('id'))
@@ -84,12 +84,12 @@ class RestImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Get all image instance for a specific project", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
-        @ApiParam(name="tree", type="boolean", paramType = ApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
-        @ApiParam(name="sortColumn", type="string", paramType = ApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
-        @ApiParam(name="sortDirection", type="string", paramType = ApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
-        @ApiParam(name="search", type="string", paramType = ApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+        @ApiParamLight(name="tree", type="boolean", paramType = ApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
+        @ApiParamLight(name="sortColumn", type="string", paramType = ApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
+        @ApiParamLight(name="sortDirection", type="string", paramType = ApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
+        @ApiParamLight(name="search", type="string", paramType = ApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -113,8 +113,8 @@ class RestImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Get the next project image (first image created before)", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
     ])
     def next() {
         def image = imageInstanceService.read(params.long('id'))
@@ -127,8 +127,8 @@ class RestImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Get the previous project image (first image created after)", listing = true)
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
     ])
     def previous() {
         def image = imageInstanceService.read(params.long('id'))
@@ -151,16 +151,16 @@ class RestImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Update an image instance")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
     ])
     def update() {
         update(imageInstanceService, request.JSON)
     }
 
     @ApiMethodLight(description="Delete an image from a project)")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
     ])
     def delete() {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
@@ -310,11 +310,11 @@ class RestImageInstanceController extends RestController {
     }
 
     @ApiMethodLight(description="Copy image metadata (description, properties...) from an image to another one")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParam(name="based", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParamLight(name="based", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
     ])
-    @ApiResponseObject(objectIdentifier = "empty")
+    @ApiResponseObjectLight(objectIdentifier = "empty")
     def copyMetadata() {
         try {
             ImageInstance based = imageInstanceService.read(params.long('based'))
@@ -352,10 +352,10 @@ class RestImageInstanceController extends RestController {
      * If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
      */
     @ApiMethodLight(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
-    @ApiResponseObject(objectIdentifier =  "[project_sharing_same_image]")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParam(name="project", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    @ApiResponseObjectLight(objectIdentifier =  "[project_sharing_same_image]")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParamLight(name="project", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
     ])
     def retrieveSameImageOtherProject() {
         try {
@@ -381,12 +381,12 @@ class RestImageInstanceController extends RestController {
      * from user/image from another project.
      */
     @ApiMethodLight(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
-    @ApiResponseObject(objectIdentifier = "[copy_annotation_image]")
-    @ApiParams(params=[
-        @ApiParam(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParam(name="task", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
-        @ApiParam(name="giveMe", type="boolean", paramType = ApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
-        @ApiParam(name="layers", type="list (x1_y1,x2_y2,...)", paramType = ApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
+    @ApiResponseObjectLight(objectIdentifier = "[copy_annotation_image]")
+    @ApiParamsLight(params=[
+        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
+        @ApiParamLight(name="task", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
+        @ApiParamLight(name="giveMe", type="boolean", paramType = ApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
+        @ApiParamLight(name="layers", type="list (x1_y1,x2_y2,...)", paramType = ApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
     ])
     def copyAnnotationFromSameAbstractImage() {
         try {
