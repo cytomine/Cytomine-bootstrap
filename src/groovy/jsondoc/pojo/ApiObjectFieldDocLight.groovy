@@ -9,6 +9,7 @@ import org.jsondoc.core.pojo.ApiObjectFieldDoc
  */
 public class ApiObjectFieldDocLight extends ApiObjectFieldDoc {
 
+    //field is use for domain creation
     Boolean useForCreation
 
     //only user if userForCreation = true
@@ -17,6 +18,7 @@ public class ApiObjectFieldDocLight extends ApiObjectFieldDoc {
     //only if diff from java standart (bool true, string non empty, number !=0,...)
     String defaultValue
 
+    //field is prent in response
     Boolean presentInResponse
 
 

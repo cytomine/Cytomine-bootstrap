@@ -1,6 +1,7 @@
 package jsondoc.utils
 
 import be.cytomine.api.doc.CustomResponseDoc
+import groovy.util.logging.Log
 import jsondoc.annotation.ApiMethodLight
 import jsondoc.annotation.ApiObjectFieldLight
 import jsondoc.pojo.ApiMethodDocLight
@@ -11,16 +12,43 @@ import org.jsondoc.core.util.JSONDocUtils
 
 import java.lang.reflect.Method
 
+@Log
 public class JSONDocUtilsLight extends JSONDocUtils {
 
+    static def DEFAULT_ERROR_ALL = [
+            "400": "Bad Request: missing parameters or bad message format",
+            "401": "Unauthorized: must be auth",
+            "403": "Forbidden: role error",
+            "404": "Object not found"
+    ]
+
+    static def DEFAULT_ERROR_GET = [:]
+
+    static def DEFAULT_ERROR_POST = [
+            "409": "Object already exist"
+    ]
+
+    static def DEFAULT_ERROR_PUT = [
+            "409": "Object already exist"
+    ]
+
+    static def DEFAULT_ERROR_DELETE = [:]
+
+    /**
+     * Build Doc for controller method
+     * @param classes Controllers classes
+     * @return Controller method doc
+     */
     @Override
     public static Set<ApiDoc> getApiDocs(Set<Class<?>> classes) {
         Set<ApiDoc> apiDocs = new TreeSet<ApiDoc>();
 
-        //build map with "controller.action" => path and verb
+        //build map with ["controller.action" => path and verb]
+        log.info "Build path map..."
         BuildPathMap buildPathMap = new BuildPathMap()
-        RulesLight rules = buildPathMap.build()
+        MappingRules rules = buildPathMap.build()
 
+        //For each controller, build doc from annotation and build method doc
         for (Class<?> controller : classes) {
             ApiDoc apiDoc = ApiDoc.buildFromAnnotation(controller.getAnnotation(Api.class));
             apiDoc.setMethods(getApiMethodDocs(controller,rules));
@@ -29,8 +57,14 @@ public class JSONDocUtilsLight extends JSONDocUtils {
         return apiDocs;
     }
 
+    /**
+     * Build doc for domain
+     * @param classes Domain classes
+     * @return Domain object doc
+     */
     @Override
-    public static Set<ApiObjectDoc> getApiObjectDocs(Set<Class<?>> classes) {
+    public static Set<ApiObjectDoc> getApiObjectDocs(Set<Class<?>> classes,CustomResponseDoc customResponseDoc=null) {
+
         Set<ApiObjectDoc> pojoDocs = new TreeSet<ApiObjectDoc>();
         for (Class<?> pojo : classes) {
             ApiObject annotation = pojo.getAnnotation(ApiObject.class);
@@ -40,32 +74,38 @@ public class JSONDocUtilsLight extends JSONDocUtils {
             }
         }
 
-
         //if response is not "standard" (with json) simply use CustomResponseDoc class
-        CustomResponseDoc customResponseDoc = new  CustomResponseDoc()
-
-        customResponseDoc.class.declaredFields.each { field ->
-            if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
-                def annotation = field.getAnnotation(ApiObjectFieldLight.class)
-                ApiObjectDoc pojoDoc = ApiObjectDocLight.buildFromAnnotation(field.name, annotation.description(),customResponseDoc.class, true);
-                pojoDocs.add(pojoDoc);
+        if(customResponseDoc) {
+            customResponseDoc.class.declaredFields.each { field ->
+                if(field.isAnnotationPresent(ApiObjectFieldLight.class)) {
+                    def annotation = field.getAnnotation(ApiObjectFieldLight.class)
+                    ApiObjectDoc pojoDoc = ApiObjectDocLight.buildFromAnnotation(field.name, annotation.description(),customResponseDoc.class, true);
+                    pojoDocs.add(pojoDoc);
+                }
             }
         }
+
 
 
 
         return pojoDocs;
     }
 
+    /**
+     * Build method doc object for all controller methods
+     */
     @Override
-    private static List<ApiMethodDoc> getApiMethodDocs(Class<?> controller, RulesLight rules) {
+    private static List<ApiMethodDoc> getApiMethodDocs(Class<?> controller, MappingRules rules) {
+        log.info "\tProcess controller ${controller} ..."
         List<ApiMethodDoc> apiMethodDocs = new ArrayList<ApiMethodDoc>();
         Method[] methods = controller.getMethods();
 
         for (Method method : methods) {
-
+            log.info "\t\tProcess method ${method} ..."
             if(method.isAnnotationPresent(ApiMethodLight.class)) {
-                RuleLight rule = rules.getRule(controller.simpleName,method.name)
+
+                //Retrieve the path/verb to go to this method
+                MappingRulesEntry rule = rules.getRule(controller.simpleName,method.name)
                 String verb = "GET"
                 String path = "Undefined"
                 if(rule) {
@@ -114,42 +154,44 @@ public class JSONDocUtilsLight extends JSONDocUtils {
                     errors = ApiErrorDoc.buildFromAnnotation(method.getAnnotation(ApiErrors.class))
                 }
 
-                //add 401,403,404 by default and 409 only if POST/PUT
-                def error400 = errors.find{it.code.equals("400")}
-                if(!error400) {
-                    errors.add(new ApiErrorDoc("400", "Bad Request: missing parameters or bad message format"));
+                //add default errors
+                DEFAULT_ERROR_ALL.each { code ->
+                    if(!errors.find{it.code.equals(code.key)}) {
+                        errors.add(new ApiErrorDoc(code.key, code.value));
+                    }
                 }
 
-                def error401 = errors.find{it.code.equals("401")}
-                if(!error401) {
-                    errors.add(new ApiErrorDoc("401", "Unauthorized: must be auth"));
-                }
-
-                def error403 = errors.find{it.code.equals("403")}
-                if(!error403) {
-                    errors.add(new ApiErrorDoc("403", "Forbidden: role error"));
-                }
-
-                def error404 = errors.find{it.code.equals("401")}
-                if(!error404) {
-                    errors.add(new ApiErrorDoc("404", "Object not found"));
-                }
-
-                if(verb.equals("POST") || verb.equals("PUT")) {
-                    def error409 = errors.find{it.code.equals("409")}
-                    if(!error409) {
-                        errors.add(new ApiErrorDoc("409", "Object already exist"));
+                if(verb.equals("GET")) {
+                    DEFAULT_ERROR_GET.each { code ->
+                        if(!errors.find{it.code.equals(code.key)}) {
+                            errors.add(new ApiErrorDoc(code.key, code.value));
+                        }
+                    }
+                } else if(verb.equals("POST")) {
+                    DEFAULT_ERROR_POST.each { code ->
+                        if(!errors.find{it.code.equals(code.key)}) {
+                            errors.add(new ApiErrorDoc(code.key, code.value));
+                        }
+                    }
+                } else if(verb.equals("PUT")) {
+                    DEFAULT_ERROR_PUT.each { code ->
+                        if(!errors.find{it.code.equals(code.key)}) {
+                            errors.add(new ApiErrorDoc(code.key, code.value));
+                        }
+                    }
+                } else if(verb.equals("DELETE")) {
+                    DEFAULT_ERROR_DELETE.each { code ->
+                        if(!errors.find{it.code.equals(code.key)}) {
+                            errors.add(new ApiErrorDoc(code.key, code.value));
+                        }
                     }
                 }
                 apiMethodDoc.setApierrors(errors)
-
                 apiMethodDocs.add(apiMethodDoc);
             }
-
         }
         return apiMethodDocs;
     }
-
 
     public static boolean isMultiple(String className) {
         if(className.toLowerCase().equals("list") || className.toLowerCase().equals("map")) {

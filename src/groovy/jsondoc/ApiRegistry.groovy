@@ -1,4 +1,5 @@
 package jsondoc
+
 /**
  * Created by stevben on 16/12/13.
  */

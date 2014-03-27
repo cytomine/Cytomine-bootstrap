@@ -12,9 +12,17 @@ import org.springframework.http.MediaType
  */
 public class ApiMethodDocLight {
 
+    public final static String DEFAULT_TYPE = MediaType.APPLICATION_JSON_VALUE
+
     public final static String UNDEFINED = "Undefined"
 
-
+    /**
+     * Build a method doc from annotation
+     * @param annotation Method annotation
+     * @param path HTTP REST path to the method
+     * @param verb HTTP verb for the method path
+     * @return A method doc object
+     */
     public static ApiMethodDoc buildFromAnnotation(ApiMethodLight annotation, String path, String verb) {
         ApiMethodDoc apiMethodDoc = new ApiMethodDoc();
 
@@ -22,7 +30,7 @@ public class ApiMethodDocLight {
         String newPath = path.trim()
 
         if(!annotation.path().equals(UNDEFINED)) {
-            //path has been overrided
+            //path has been overrided in urlmapping
             newPath = annotation.path()
             objVerb = annotation.verb()
         }
@@ -32,7 +40,7 @@ public class ApiMethodDocLight {
 
         if(cons.isEmpty() && (objVerb==ApiVerb.POST || objVerb==ApiVerb.PUT)) {
             //if no cons definition and POST/PUT method => auto put json
-            cons = [MediaType.APPLICATION_JSON_VALUE]
+            cons = [DEFAULT_TYPE]
         }
         if(!cons.isEmpty() && (cons.first()==null && cons.first().equals(""))) {
             //if force set cons to null/empty string, no cons definition
@@ -41,7 +49,7 @@ public class ApiMethodDocLight {
 
         if(prod.isEmpty()) {
             //if no cons definition => auto put json for all verb
-            prod = [MediaType.APPLICATION_JSON_VALUE]
+            prod = [DEFAULT_TYPE]
         }
         if(!prod.isEmpty() && (prod.first()==null && prod.first().equals(""))) {
             //if force set cons to null/empty string, no cons definition
@@ -59,9 +67,7 @@ public class ApiMethodDocLight {
     }
 
     public static ApiVerb retrieveVerb(String verb) {
-        //return ApiVerb.valueOf(verb.toUpperCase())
         return ApiVerb.valueOf(verb.toUpperCase())
     }
-
 
 }

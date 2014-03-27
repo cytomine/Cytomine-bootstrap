@@ -1,6 +1,8 @@
 package jsondoc
 
+import be.cytomine.api.doc.CustomResponseDoc
 import grails.util.Holders
+import groovy.util.logging.Log
 import jsondoc.utils.JSONDocUtilsLight
 import org.jsondoc.core.annotation.Api
 import org.jsondoc.core.annotation.ApiObject
@@ -8,8 +10,17 @@ import org.jsondoc.core.annotation.ApiObject
 /**
  * Created by stevben on 16/12/13.
  */
+@Log
 class APIUtils {
-    static void buildApiRegistry(applicationContext, grailsApplication) {
+
+    static String VERSION = "1.0"
+    static String BASEPATH = "....TO REPLACE...."
+
+
+    static void buildApiRegistry(grailsApplication) {
+
+        //Retrieve all controlers (for method doc)
+        log.info "Retrieve Controller..."
         Set<Class> controllersClasses = new LinkedList<Class>()
         grailsApplication.controllerClasses.findAll {it.clazz.isAnnotationPresent(Api) }
                 .each { controllerArtefact ->
@@ -17,17 +28,21 @@ class APIUtils {
             controllersClasses.add(controllerClass)
         }
 
+        //Retrieve all domains (for object doc)
+        log.info "Retrieve Domain..."
         Set<Class<?>> objectClasses = new LinkedList<Class<?>>()
         grailsApplication.domainClasses.findAll {it.clazz.isAnnotationPresent(ApiObject) }.each { domainArtefact ->
             def domainClass = domainArtefact.getClazz()
             objectClasses.add(domainClass)
         }
 
-        def objectsDoc = JSONDocUtilsLight.getApiObjectDocs(objectClasses)
+        //Generate doc
+        def objectsDoc = JSONDocUtilsLight.getApiObjectDocs(objectClasses,new  CustomResponseDoc())
         def controllerDoc = JSONDocUtilsLight.getApiDocs(controllersClasses)
 
+        //Register doc
         ApiRegistry.jsondoc =
-                ["version" : "1.0",
+                ["version" : VERSION,
                  basePath : "${Holders.getGrailsApplication().config.grails.serverURL}/api",
                 "apis" : controllerDoc,
                 "objects" : objectsDoc]

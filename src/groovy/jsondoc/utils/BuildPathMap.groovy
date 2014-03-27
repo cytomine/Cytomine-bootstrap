@@ -9,24 +9,25 @@ import java.util.regex.Pattern
 
 /**
  * Thanks to URL MAPPING files, build a map that helps to get path/verb for a specific controller action
+ *
  * Created by lrollus on 1/10/14.
  */
 class BuildPathMap extends AnsiConsoleUrlMappingsRenderer{
 
-    RulesLight build() {
+    /**
+     * Build a MappingRules (map controller.action => path + verb) thanks to url mapping
+     */
+    MappingRules build() {
 
         def mappings = Holders.getGrailsApplication().getArtefacts(UrlMappingsArtefactHandler.TYPE)
         def evaluator = Holders.getGrailsApplication().classLoader.loadClass("org.codehaus.groovy.grails.web.mapping.DefaultUrlMappingEvaluator").newInstance(Holders.getGrailsApplication().classLoader.loadClass('org.springframework.mock.web.MockServletContext').newInstance())
         def allMappings = []
 
-
         for(m in mappings) {
-
             List grailsClassMappings
             if (Script.isAssignableFrom(m.getClazz())) {
                 grailsClassMappings = evaluator.evaluateMappings(m.getClazz())
-            }
-            else {
+            } else {
                 grailsClassMappings = evaluator.evaluateMappings(m.getMappingsClosure())
             }
             allMappings.addAll(grailsClassMappings)
@@ -35,14 +36,13 @@ class BuildPathMap extends AnsiConsoleUrlMappingsRenderer{
 
     }
 
-    RulesLight createUrlMappingMap(List<UrlMapping> urlMappings) {
+    MappingRules createUrlMappingMap(List<UrlMapping> urlMappings) {
 
-        RulesLight rules = new RulesLight()
+        MappingRules rules = new MappingRules()
 
         final mappingsByController = urlMappings.groupBy { UrlMapping mapping -> mapping.controllerName }
         def longestMapping = establishUrlPattern(urlMappings.max { UrlMapping mapping -> establishUrlPattern(mapping, false).length() }, false).length() + 5
         final controllerNames = mappingsByController.keySet().sort()
-
 
         for (controller in controllerNames) {
             final controllerUrlMappings = mappingsByController.get(controller)
@@ -66,11 +66,11 @@ class BuildPathMap extends AnsiConsoleUrlMappingsRenderer{
     public static String cleanString(String dirtyString) {
 
         Pattern escapeCodePattern = Pattern.compile(
-                "\u001B"		// Le code d'échappement
-                        + "\\["			// Le caractère [ qui commence la séquence
-                        + "\\d+"		// Un nombre
-                        + "(;\\d+)*"	// Des nombres supplémentaires, précédé par un point-virgule
-                        + "[@-~]"		// Un caractère de fin, qui représente la commande
+                "\u001B"		// escape code
+                        + "\\["
+                        + "\\d+"
+                        + "(;\\d+)*"
+                        + "[@-~]"
         );
         escapeCodePattern.matcher(dirtyString).replaceAll("");
 

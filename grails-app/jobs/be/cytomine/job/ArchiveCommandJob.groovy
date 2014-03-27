@@ -15,10 +15,7 @@ class ArchiveCommandJob {
       }
 
      def execute(){
-         //ask indexed annotation
-         //retrievalService.indexMissingAnnotation()
-         def ctx = grailsApplication.mainContext
-         APIUtils.buildApiRegistry(ctx, grailsApplication)
+         APIUtils.buildApiRegistry(grailsApplication)
      }
 
 

@@ -2,10 +2,12 @@ package jsondoc
 
 import grails.converters.JSON
 import jsondoc.utils.BuildPathMap
-import jsondoc.utils.RulesLight
+import jsondoc.utils.MappingRules
 import org.reflections.Reflections
 
 class JsondocController {
+
+    static String JSONFILE = "doc.json"
 
     def grailsApplication
 
@@ -17,26 +19,17 @@ class JsondocController {
     }
 
     def apiprod() {
-        File docFile = new File("doc.json")
+        File docFile = new File(JSONFILE)
         render(docFile.text)
     }
 
     def build() {
         BuildPathMap buildPathMap = new BuildPathMap()
-        RulesLight rules = buildPathMap.build()
+        MappingRules rules = buildPathMap.build()
         render rules.rules
-        APIUtils.buildApiRegistry(grailsApplication.mainContext, grailsApplication)
-        File docFile = new File("doc.json")
+        APIUtils.buildApiRegistry(grailsApplication)
+        File docFile = new File(JSONFILE)
         docFile.write((ApiRegistry.jsondoc as JSON).toString(true))
-    }
-
-    def listdocClass() {
-        Reflections reflections = new Reflections("be.cytomine.api.doc");
-
-        reflections.get
-
-        Set<Class<? extends Object>> allClasses =
-                reflections.getSubTypesOf(Object.class);
     }
 
 }
