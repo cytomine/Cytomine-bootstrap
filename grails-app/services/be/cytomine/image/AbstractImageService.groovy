@@ -9,6 +9,7 @@ import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -147,6 +148,21 @@ class AbstractImageService extends ModelService {
         def url = image.getMetadataURL()
         url = new URL(url)
         return url.text
+    }
+
+    def tile(params) {
+        AbstractImage abstractImage = read(params.id)
+
+        def imageServerStorages = abstractImage.getImageServersStorage()
+        if (imageServerStorages == null || imageServerStorages.size() == 0) {
+            return "error_tile.jpg"
+        }
+        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
+        Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
+        if (!resolver) return null
+        def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
+
+        resolver.tileURL(baseUrl, abstractImage.getFullPath(), params)
     }
 
     /**

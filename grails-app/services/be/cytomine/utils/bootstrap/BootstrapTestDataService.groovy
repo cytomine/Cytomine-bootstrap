@@ -29,11 +29,12 @@ class BootstrapTestDataService {
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
 
 
-        def imageServerSamples = [
-                [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : 'http://localhost:8081', available : true]
-        ]
-        bootstrapUtilsService.createImageServers(imageServerSamples)
-        def mimeSamples = [
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : 'http://localhost:8081', available : true]
+        def LociImageServer = [className : 'LociResolver', name : 'Loci', service : '/loci/tile', url : 'http://localhost:9080', available : true]
+
+        bootstrapUtilsService.createImageServers([IIPImageServer])
+        bootstrapUtilsService.createImageServers([LociImageServer])
+        def IIPMimeSamples = [
                 [extension : 'mrxs', mimeType : 'openslide/mrxs'],
                 [extension : 'vms', mimeType : 'openslide/vms'],
                 [extension : 'tif', mimeType : 'image/tiff'],
@@ -44,10 +45,13 @@ class BootstrapTestDataService {
                 [extension : 'ndpi', mimeType : 'openslide/ndpi'],
                 [extension : 'bif', mimeType : 'openslide/bif']
         ]
-        bootstrapUtilsService.createMimes(mimeSamples)
-        bootstrapUtilsService.createMimeImageServers()
-
-
+        bootstrapUtilsService.createMimes(IIPMimeSamples)
+        bootstrapUtilsService.createMimeImageServers([IIPImageServer], IIPMimeSamples)
+        def LociMimeSamples = [
+                [extension : 'zvi', mimeType : 'zeiss/zvi']
+        ]
+        bootstrapUtilsService.createMimes(LociMimeSamples)
+        bootstrapUtilsService.createMimeImageServers([LociImageServer], LociMimeSamples)
         def usersSamples = [
                 [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[name : "GIGA"]], password : 'rM$2011', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'lR$2011', color : "#00FF00", roles : ["ROLE_USER", "ROLE_ADMIN"]],

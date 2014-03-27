@@ -20,6 +20,7 @@ abstract class Resolver {
         /* Init resolvers, maybe we should load it dynamically with name but fails in grails */
         Map<String, Object> resolvers = new HashMap<String,Object>()
         resolvers.put("IIPResolver", new IIPResolver())
+        resolvers.put("LociResolver", new LociResolver())
         return (Resolver) resolvers.get(className)
 
     }
@@ -30,4 +31,5 @@ abstract class Resolver {
     public abstract String getPreviewUrl(String baseUrl, String imagePath)
     public abstract String getCropURL(String baseUrl, String imagePath, def boundaries)
     public abstract Object getZoomLevels  (String baseUrl, String imagePath, int width, int height)
+    public abstract String tileURL(String baseUrl, String imagePath, def params)
 }

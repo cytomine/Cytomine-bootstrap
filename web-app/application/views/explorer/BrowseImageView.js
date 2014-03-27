@@ -739,8 +739,26 @@ BrowseImageView = Backbone.View.extend({
                 zoomify_urls,
                 new OpenLayers.Size(metadata.width, metadata.height)
             );
-            baseLayer.tileOptions = {crossOriginKeyword: 'anonymous'};
+            //baseLayer.tileOptions = {crossOriginKeyword: 'anonymous'};
+            /*baseLayer.getURL = function (bounds) {
+                bounds = this.adjustBounds(bounds);
+                var res = this.getServerResolution();
+                var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+                var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
+                var z = this.getZoomForResolution( res );
+                var channels = 0;
+                var layer = 0;
+                var timeframe = 0;
+                var tileIndex = x + y * this.tierSizeInTiles[z].w + this.tileCountUpToTier[z];
+                var path = "tile.jpg?TileGroup=" + Math.floor( (tileIndex) / 256 ) +
+                    "&z=" + z + "&x=" + x + "&y=" + y + "&channels=" + channels + "&layer=" + layer + "&timeframe=" + timeframe;
+                var url = this.url;
+                if (OpenLayers.Util.isArray(url)) {
+                    url = this.selectUrl(path, url);
+                }
 
+                return url + path;
+            }; */
             //baseLayer.transitionEffect = 'resize';
             baseLayer.getImageSize = function (bounds) {
 
@@ -884,6 +902,12 @@ BrowseImageView = Backbone.View.extend({
 
             }
         });
+        /*new ProjectImageFilterCollection({ project: self.model.get("project")}).fetch({
+            success: function (imageFilters, response) {
+                initZoomifyLayer(metadata, "api/abstractimage/"+self.model.get('baseImage')+"/", imageFilters);
+            }
+        });*/
+
 
     },
     broadcastPosition: function () {
@@ -938,7 +962,7 @@ BrowseImageView = Backbone.View.extend({
     },
     initAutoAnnoteTools: function () {
         var self = this;
-        var processInProgress = false;
+
         var handleMapClick = function handleMapClick(evt) {
             if (!self.getUserLayer().magicOnClick) {
                 return;
@@ -948,7 +972,7 @@ BrowseImageView = Backbone.View.extend({
                 window.app.view.message("Warning", "Magic Wand in progress...", "warning");
                 return;
             }
-            processInProgress = true;
+
             var tiles = self.map.baseLayer.grid;
             var newCanvas = document.createElement('canvas');
             var newContext = newCanvas.getContext("2d");

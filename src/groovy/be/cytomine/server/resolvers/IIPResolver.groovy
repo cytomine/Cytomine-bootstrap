@@ -115,4 +115,23 @@ class IIPResolver extends Resolver{
         }
         return [min : 0, max : nbZoom, middle : (nbZoom / 2), overviewWidth : Math.round(tmpWidth), overviewHeight : Math.round(tmpHeight), width : width, height : height]
     }
+
+    String tileURL(String baseUrl, String imagePath, params) { //String imagePath, int x, int y, int z, int channels, int timeframe, int layer) {
+
+        /*int channels = params.int("channels")
+        int timeframe = params.int("timeframe")
+        int layer = params.int("layer")*/
+        //long id = params.long("id")
+
+        int tileGroup = params.int("TileGroup")
+        int x = params.int("x")
+        int y = params.int("y")
+        int z = params.int("z")
+
+        def zoomifyQuery = "$imagePath/TileGroup$tileGroup/$z-$x-$y" + ".jpg"
+        args.clear()
+        args.add("zoomify" + ARGS_EQUAL +  zoomifyQuery)
+        return toURL(baseUrl)
+
+    }
 }

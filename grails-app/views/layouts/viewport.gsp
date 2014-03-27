@@ -69,11 +69,11 @@
 <script src="lib/nvd3/nv.d3.min.js"></script>
 
 <!-- Datatables -->
-<!--<script src="lib/DataTables-1.9.0/media/js/jquery.dataTables.js" type="text/javascript"></script>-->
 <script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
 
-<!--<script src="lib/jqgrid-4.4.5/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-<script src="lib/jqgrid-4.4.5/js/jquery.jqGrid.src.js" type="text/javascript"></script>-->
+<script type="text/javascript" src="lib/pick-a-color-master/build/1.2.2/js/pick-a-color-1.2.2.min.js"></script>
+<script type="text/javascript" src="lib/TinyColor-master/dist/tinycolor-min.js"></script>
+<link rel="stylesheet" href="lib/pick-a-color-master/build/1.2.2/css/pick-a-color-1.2.2.min.css">
 
 <!-- RequireJS -->
 <script type="text/javascript" src="lib/requirejs/require.js"></script>
@@ -86,11 +86,6 @@
 <script src="lib/ckeditor/ckeditor.js"></script>
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM}">
-
-
-%{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-instrumenter.js"></script>--}%
-
-
 
 <!-- Core Libs -->
 <script type="text/javascript" src="lib/underscore.js"></script>
@@ -116,7 +111,6 @@
 
 <script src="lib/ui.panel/ui.panel.min.js" type="text/javascript"></script>
 
-<script type="text/javascript" src="lib/farbtastic/farbtastic.js"></script>
 
 
 <script type="text/javascript" src="lib/magicsuggest/magicsuggest-1.2.7-min.js"></script>
@@ -130,11 +124,6 @@
 <script type="text/javascript" src="lib/multiselect/src/jquery.multiselect.filter.js"></script>
 
 <script type="text/javascript" src="lib/stepy/js/jquery.stepy.min.js"></script>
-
-%{--<script type="text/javascript" src="lib/jqhotkeys/jquery.hotkeys.js"></script>--}%
-
-<link href="lib/colorpicker-2/css/colorpicker.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="lib/colorpicker-2/js/bootstrap-colorpicker.js"></script>
 
 
 <!-- Application -->
