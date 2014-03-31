@@ -2,7 +2,7 @@ package be.cytomine.utils
 
 import be.cytomine.api.RestController
 
-//@ApiObject(name = "city")
+//@RestApiObject(name = "city")
 class ArchiveController extends RestController {
 
     def grailsApplication

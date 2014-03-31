@@ -2,31 +2,31 @@ package be.cytomine.api.utils
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for a description (big text data/with html format) on a specific domain
  */
-@Api(name = "description services", description = "Methods for managing description on a specific domain")
+@RestApi(name = "description services", description = "Methods for managing description on a specific domain")
 class RestDescriptionController extends RestController {
 
     def springSecurityService
     def descriptionService
 
-    @ApiMethodLight(description="List all description available", listing=true)
+    @RestApiMethod(description="List all description available", listing=true)
     def list() {
         responseSuccess(descriptionService.list())
     }
 
-    @ApiMethodLight(description="Get a description for a specific domain (id and class)")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="Get a description for a specific domain (id and class)")
+    @RestApiParams(params=[
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def showByDomain() {
         def id = params.long('domainIdent')
@@ -47,7 +47,7 @@ class RestDescriptionController extends RestController {
     /**
      * Add a new description to a domain
      */
-    @ApiMethodLight(description="Add a new description to a domain")
+    @RestApiMethod(description="Add a new description to a domain")
     def add() {
         add(descriptionService, request.JSON)
     }
@@ -55,10 +55,10 @@ class RestDescriptionController extends RestController {
     /**
      * Update a description
      */
-    @ApiMethodLight(description="Update a description")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="Update a description")
+    @RestApiParams(params=[
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def update() {
         update(descriptionService, request.JSON)
@@ -67,10 +67,10 @@ class RestDescriptionController extends RestController {
     /**
      * Delete a description
      */
-    @ApiMethodLight(description="Delete a description")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="Delete a description")
+    @RestApiParams(params=[
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def delete() {
         try {

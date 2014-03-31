@@ -13,55 +13,55 @@ import be.cytomine.laboratory.Sample
 import be.cytomine.security.SecUser
 import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * An abstract image is an image that can be map with projects.
  * When an "AbstractImage" is add to a project, a "ImageInstance" is created.
  */
-@ApiObject(name = "abstract image", description = "A real image store on disk, see 'image instance' for an image link in a project")
+@RestApiObject(name = "abstract image", description = "A real image store on disk, see 'image instance' for an image link in a project")
 class AbstractImage extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The image short filename (will be show in GUI)", useForCreation = false)
+    @RestApiObjectField(description = "The image short filename (will be show in GUI)", useForCreation = false)
     String originalFilename
 
-    @ApiObjectFieldLight(description = "The exact image full filename")
+    @RestApiObjectField(description = "The exact image full filename")
     String filename
 
-    @ApiObjectFieldLight(description = "The instrument that digitalize the image", mandatory = false)
+    @RestApiObjectField(description = "The instrument that digitalize the image", mandatory = false)
     Instrument scanner
 
-    @ApiObjectFieldLight(description = "The source of the image (human, annimal,...)", mandatory = false)
+    @RestApiObjectField(description = "The source of the image (human, annimal,...)", mandatory = false)
     Sample sample
 
-    @ApiObjectFieldLight(description = "The full image path directory")
+    @RestApiObjectField(description = "The full image path directory")
     String path
 
-    @ApiObjectFieldLight(description = "The image type. For creation, use the ext (not the mime id!)")
+    @RestApiObjectField(description = "The image type. For creation, use the ext (not the mime id!)")
     Mime mime
 
-    @ApiObjectFieldLight(description = "The image width lenght", mandatory = false, defaultValue = "-1")
+    @RestApiObjectField(description = "The image width lenght", mandatory = false, defaultValue = "-1")
     Integer width
 
-    @ApiObjectFieldLight(description = "The image height lenght", mandatory = false, defaultValue = "-1")
+    @RestApiObjectField(description = "The image height lenght", mandatory = false, defaultValue = "-1")
     Integer height
 
-    @ApiObjectFieldLight(description = "The image max zoom")
+    @RestApiObjectField(description = "The image max zoom")
     Integer magnification
 
-    @ApiObjectFieldLight(description = "The image resolution (microm per pixel)")
+    @RestApiObjectField(description = "The image resolution (microm per pixel)")
     Double resolution
 
-    @ApiObjectFieldLight(description = "The image owner", mandatory = false, defaultValue = "current user")
+    @RestApiObjectField(description = "The image owner", mandatory = false, defaultValue = "current user")
     SecUser user //owner
 
     static belongsTo = Sample
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "metadataUrl", description = "URL to get image file metadata",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "thumb", description = "URL to get abstract image short view (htumb)",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "metadataUrl", description = "URL to get image file metadata",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "thumb", description = "URL to get abstract image short view (htumb)",allowedType = "string",useForCreation = false)
     ])
     static transients = ["zoomLevels", "thumbURL", MIME_WITH_MACRO_IMAGES]
 

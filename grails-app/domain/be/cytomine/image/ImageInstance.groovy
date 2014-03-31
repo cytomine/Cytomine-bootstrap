@@ -7,9 +7,9 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,25 +18,25 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * An ImageInstance is an image map with a project
  */
-@ApiObject(name = "image instance",description="A link between 'abstract image' and 'project'. An 'abstract image' may be in multiple projects.")
+@RestApiObject(name = "image instance",description="A link between 'abstract image' and 'project'. An 'abstract image' may be in multiple projects.")
 class ImageInstance extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The image linked to the project")
+    @RestApiObjectField(description = "The image linked to the project")
     AbstractImage baseImage
 
-    @ApiObjectFieldLight(description = "The project that keeps the image")
+    @RestApiObjectField(description = "The project that keeps the image")
     Project project
 
-    @ApiObjectFieldLight(description = "The user that add the image to the project")
+    @RestApiObjectField(description = "The user that add the image to the project")
     SecUser user
 
-    @ApiObjectFieldLight(description = "The number of user annotation in the image", useForCreation = false, apiFieldName = "numberOfAnnotations")
+    @RestApiObjectField(description = "The number of user annotation in the image", useForCreation = false, apiFieldName = "numberOfAnnotations")
     Long countImageAnnotations = 0L
 
-    @ApiObjectFieldLight(description = "The number of job annotation in the image", useForCreation = false, apiFieldName = "numberOfJobAnnotations")
+    @RestApiObjectField(description = "The number of job annotation in the image", useForCreation = false, apiFieldName = "numberOfJobAnnotations")
     Long countImageJobAnnotations = 0L
 
-    @ApiObjectFieldLight(description = "The number of reviewed annotation in the image", useForCreation = false, apiFieldName = "numberOfReviewedAnnotations")
+    @RestApiObjectField(description = "The number of reviewed annotation in the image", useForCreation = false, apiFieldName = "numberOfReviewedAnnotations")
     Long countImageReviewedAnnotations = 0L
 
     //stack stuff
@@ -46,30 +46,30 @@ class ImageInstance extends CytomineDomain implements Serializable {
     //TODO:APIDOC still used?
     Integer channel
 
-    @ApiObjectFieldLight(description = "The start review date", useForCreation = false)
+    @RestApiObjectField(description = "The start review date", useForCreation = false)
     Date reviewStart
 
-    @ApiObjectFieldLight(description = "The stop review date", useForCreation = false)
+    @RestApiObjectField(description = "The stop review date", useForCreation = false)
     Date reviewStop
 
-    @ApiObjectFieldLight(description = "The user who reviewed (or still reviewing) this image", useForCreation = false)
+    @RestApiObjectField(description = "The user who reviewed (or still reviewing) this image", useForCreation = false)
     SecUser reviewUser
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "sample", description = "Abstract image sample (see Abstract Image)",allowedType = "long",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "resolution", description = "Abstract image resolution (see Abstract Image)",allowedType = "double",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "magnification", description = "Abstract image magnification (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "depth", description = "?",allowedType = "long",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "sample", description = "Abstract image sample (see Abstract Image)",allowedType = "long",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "resolution", description = "Abstract image resolution (see Abstract Image)",allowedType = "double",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "magnification", description = "Abstract image magnification (see Abstract Image)",allowedType = "int",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "depth", description = "?",allowedType = "long",useForCreation = false)
      ])
     static transients = []
 

@@ -4,26 +4,26 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * An image filter can be link to many projects
  */
-@ApiObject(name = "image filter project", description = "An image filter can be link to many projects")
+@RestApiObject(name = "image filter project", description = "An image filter can be link to many projects")
 class ImageFilterProject extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The filter")
+    @RestApiObjectField(description = "The filter")
     ImageFilter imageFilter
 
-    @ApiObjectFieldLight(description = "The project")
+    @RestApiObjectField(description = "The project")
     Project project
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "processingServer", description = "The URL of the processing server",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "baseUrl", description = "The URL path of the filter on the processing server",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "name", description = "The filter name",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "processingServer", description = "The URL of the processing server",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "baseUrl", description = "The URL path of the filter on the processing server",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "name", description = "The filter name",allowedType = "string",useForCreation = false)
     ])
     static transients = []
 

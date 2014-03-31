@@ -2,49 +2,49 @@ package be.cytomine.processing
 
 import be.cytomine.CytomineDomain
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Data created by a job
  * This concerns only data files (annotation or term are store in domain database)
  */
-@ApiObject(name = "job data", description = "Data created by a job. This concerns only data files (annotation or term are store in domain database). If config cytomine.jobdata.filesystem is true, file are stored in filesystem, otherwise they are store in database.")
+@RestApiObject(name = "job data", description = "Data created by a job. This concerns only data files (annotation or term are store in domain database). If config cytomine.jobdata.filesystem is true, file are stored in filesystem, otherwise they are store in database.")
 class JobData extends CytomineDomain {
 
     /**
      * File key (what's the file)
      */
-    @ApiObjectFieldLight(description = "File key (what's the file)")
+    @RestApiObjectField(description = "File key (what's the file)")
     String key
 
     /**
      * Data filename with extension
      */
-    @ApiObjectFieldLight(description = "Data filename with extension")
+    @RestApiObjectField(description = "Data filename with extension")
     String filename
 
     /**
      * ???
      */
-    @ApiObjectFieldLight(description = "File full path if 'cytomine.jobdata.filesystem' config is true", useForCreation = false)
+    @RestApiObjectField(description = "File full path if 'cytomine.jobdata.filesystem' config is true", useForCreation = false)
     String dir
 
     /**
      * If data file is store on database (blob field), link to the file
      */
-    @ApiObjectFieldLight(description = "File data (from blob field) if 'cytomine.jobdata.filesystem' config is false", useForCreation = false)
+    @RestApiObjectField(description = "File data (from blob field) if 'cytomine.jobdata.filesystem' config is false", useForCreation = false)
     JobDataBinaryValue value
 
     /**
      * Data size (in Bytes)
      */
-    @ApiObjectFieldLight(description = "Data size (in Bytes)", useForCreation = false)
+    @RestApiObjectField(description = "Data size (in Bytes)", useForCreation = false)
     Long size
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "job", description = "The job that store the data",allowedType = "long",useForCreation = true)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "job", description = "The job that store the data",allowedType = "long",useForCreation = true)
     ])
     static belongsTo = [job: Job]
 

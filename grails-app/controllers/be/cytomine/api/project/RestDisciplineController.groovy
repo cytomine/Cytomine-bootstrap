@@ -3,25 +3,25 @@ package be.cytomine.api.project
 import be.cytomine.api.RestController
 import be.cytomine.project.Discipline
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for discipline
  * A discipline can be link with a project
  */
-@Api(name = "discipline services", description = "Methods for managing discipline")
+@RestApi(name = "discipline services", description = "Methods for managing discipline")
 class RestDisciplineController extends RestController {
 
     def disciplineService
     /**
      * List all discipline
      */
-    @ApiMethodLight(description="Get discipline listing, according to your access", listing = true)
+    @RestApiMethod(description="Get discipline listing, according to your access", listing = true)
     def list () {
         responseSuccess(disciplineService.list())
     }
@@ -29,9 +29,9 @@ class RestDisciplineController extends RestController {
     /**
      * Get a single discipline
      */
-    @ApiMethodLight(description="Get a discipline")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The discipline id")
+    @RestApiMethod(description="Get a discipline")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The discipline id")
     ])
     def show () {
         Discipline discipline = disciplineService.read(params.long('id'))
@@ -45,7 +45,7 @@ class RestDisciplineController extends RestController {
     /**
      * Add a new discipline
      */
-    @ApiMethodLight(description="Add a new discipline")
+    @RestApiMethod(description="Add a new discipline")
     def add () {
         add(disciplineService, request.JSON)
     }
@@ -53,9 +53,9 @@ class RestDisciplineController extends RestController {
     /**
      * Update a existing discipline
      */
-    @ApiMethodLight(description="Update a discipline")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH)
+    @RestApiMethod(description="Update a discipline")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="int", paramType = RestApiParamType.PATH)
     ])
     def update () {
         update(disciplineService, request.JSON)
@@ -64,9 +64,9 @@ class RestDisciplineController extends RestController {
     /**
      * Delete discipline
      */
-    @ApiMethodLight(description="Delete a discipline")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH)
+    @RestApiMethod(description="Delete a discipline")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="int", paramType = RestApiParamType.PATH)
     ])
     def delete () {
         delete(disciplineService, JSON.parse("{id : $params.id}"),null)

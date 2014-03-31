@@ -5,18 +5,18 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.processing.*
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for software project link
  * A software may be used by some project
  */
-@Api(name = "job template annotation services", description = "Methods for managing a link between a job template and an annotation (roi or other type)")
+@RestApi(name = "job template annotation services", description = "Methods for managing a link between a job template and an annotation (roi or other type)")
 class RestJobTemplateAnnotationController extends RestController{
 
     def jobTemplateAnnotationService
@@ -29,10 +29,10 @@ class RestJobTemplateAnnotationController extends RestController{
     /**
      * List all software by project
      */
-    @ApiMethodLight(description="List all link beetween a job template and an annotation", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="jobtemplate", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The job template id"),
-        @ApiParamLight(name="annotation", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The annotation ROI id")
+    @RestApiMethod(description="List all link beetween a job template and an annotation", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="jobtemplate", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The job template id"),
+        @RestApiParam(name="annotation", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The annotation ROI id")
     ])
     def list() {
         JobTemplate template = jobTemplateService.read(params.long('jobtemplate'))
@@ -47,9 +47,9 @@ class RestJobTemplateAnnotationController extends RestController{
     /**
      * Get a software project link
      */
-    @ApiMethodLight(description="Get a link between a job and an annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
+    @RestApiMethod(description="Get a link between a job and an annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The link id")
     ])
     def show() {
         JobTemplateAnnotation parameter = jobTemplateAnnotationService.read(params.long('id'))
@@ -60,7 +60,7 @@ class RestJobTemplateAnnotationController extends RestController{
     /**
      * Add an existing software to a project
      */
-    @ApiMethodLight(description="Add a link between a job and an annotation")
+    @RestApiMethod(description="Add a link between a job and an annotation")
     def add () {
         try {
             def result = jobTemplateAnnotationService.add(request.JSON)
@@ -99,9 +99,9 @@ class RestJobTemplateAnnotationController extends RestController{
     /**
      * Delete the software for the project
      */
-    @ApiMethodLight(description="Remove the link beween the job and the annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The link id")
+    @RestApiMethod(description="Remove the link beween the job and the annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The link id")
     ])
     def delete() {
         delete(jobTemplateAnnotationService, JSON.parse("{id : $params.id}"),null)

@@ -3,17 +3,17 @@ package be.cytomine.api.security
 import be.cytomine.api.RestController
 import be.cytomine.security.Group
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for group of users
  */
-@Api(name = "group services", description = "Methods for managing user groups")
+@RestApi(name = "group services", description = "Methods for managing user groups")
 class RestGroupController extends RestController {
 
     def abstractImageService
@@ -22,7 +22,7 @@ class RestGroupController extends RestController {
     /**
      * List all group
      */
-    @ApiMethodLight(description="List all group", listing=true)
+    @RestApiMethod(description="List all group", listing=true)
     def list() {
         responseSuccess(groupService.list())
     }
@@ -30,9 +30,9 @@ class RestGroupController extends RestController {
     /**
      * Get a group info
      */
-    @ApiMethodLight(description="Get a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @RestApiMethod(description="Get a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The group id")
     ])
     def show() {
         Group group = groupService.read(params.long('id'))
@@ -46,7 +46,7 @@ class RestGroupController extends RestController {
     /**
      * Add a new group
      */
-    @ApiMethodLight(description="Add a new group")
+    @RestApiMethod(description="Add a new group")
     def add() {
         add(groupService, request.JSON)
     }
@@ -54,9 +54,9 @@ class RestGroupController extends RestController {
     /**
      * Update a group
      */
-    @ApiMethodLight(description="Edit a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @RestApiMethod(description="Edit a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The group id")
     ])
     def update() {
         update(groupService, request.JSON)
@@ -65,9 +65,9 @@ class RestGroupController extends RestController {
     /**
      * Delete a group
      */
-    @ApiMethodLight(description="Delete a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @RestApiMethod(description="Delete a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The group id")
     ])
     def delete() {
         delete(groupService, JSON.parse("{id : $params.id}"),null)

@@ -5,34 +5,34 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
 
 /**
  * A term is a class that can be link to an annotation
  * A term is a part of ontology (list/tree of terms)
  */
-//@ApiObject(name = "term", description = "Term description", show = true)
+//@RestApiObject(name = "term", description = "Term description", show = true)
 class Term extends CytomineDomain implements Serializable, Comparable {
 
-    @ApiObjectFieldLight(description = "The term name")
+    @RestApiObjectField(description = "The term name")
     String name
 
-    @ApiObjectFieldLight(description = "A comment about the term", mandatory = false)
+    @RestApiObjectField(description = "A comment about the term", mandatory = false)
     String comment
 
-    @ApiObjectFieldLight(description = "The ontology that store the term")
+    @RestApiObjectField(description = "The ontology that store the term")
     Ontology ontology
 
-    @ApiObjectFieldLight(description = "The color associated, in HTML format (e.g : RED = #FF0000)")
+    @RestApiObjectField(description = "The color associated, in HTML format (e.g : RED = #FF0000)")
     String color
 
     Double rate // ?
 
     static belongsTo = [ontology: Ontology]
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "parent", description = "The parent term id of this annotation",allowedType = "long",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "parent", description = "The parent term id of this annotation",allowedType = "long",useForCreation = false)
     ])
     static transients = ["rate"]
 

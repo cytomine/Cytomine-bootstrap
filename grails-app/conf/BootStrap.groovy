@@ -4,7 +4,6 @@ import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecUser
 import grails.util.Environment
-import jsondoc.JSONUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -79,8 +78,6 @@ class BootStrap {
             Relation relation = new Relation(name: RelationTerm.names.PARENT)
             relation.save(flush:true,failOnError: true)
         }
-
-        JSONUtils.registerMarshallers()
     }
 
     def saveDomain(def newObject, boolean flush = true) {

@@ -5,18 +5,18 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
 import be.cytomine.security.SecUser
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
 
-@Api(name = "acl services", description = "Methods for managing ACL, a permission for an user on a specific domain instance")
+@RestApi(name = "acl services", description = "Methods for managing ACL, a permission for an user on a specific domain instance")
 class RestACLController extends RestController {
 
     def springSecurityService
@@ -27,13 +27,13 @@ class RestACLController extends RestController {
     def imageInstanceService
     def aclAuthService
 
-    @ApiMethodLight(description="Get all ACL for a user and a class.", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    @RestApiMethod(description="Get all ACL for a user and a class.", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class"),
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id")
     ])
-    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @RestApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def list() {
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
@@ -47,14 +47,14 @@ class RestACLController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add a new permission for a user on a domain", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="auth", type="string", paramType = ApiParamType.QUERY, description = "(Optional, default READ) The permission (READ, WRITE, DELETE or PERMISSION)")
+    @RestApiMethod(description="Add a new permission for a user on a domain", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class"),
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="auth", type="string", paramType = RestApiParamType.QUERY, description = "(Optional, default READ) The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
-    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @RestApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def add (){
         try {
             if(params.domainClassName && params.domainIdent && params.user) {
@@ -71,14 +71,14 @@ class RestACLController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Delete a permission for a user on a domain", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class"),
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="auth", type="string", paramType = ApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
+    @RestApiMethod(description="Delete a permission for a user on a domain", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class"),
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="auth", type="string", paramType = RestApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
-    @ApiResponseObjectLight(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @RestApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def delete() {
         try {
             def user = SecUser.read(params.long('user'))

@@ -4,13 +4,13 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.api.RestController
 import be.cytomine.utils.SearchFilter
 import be.cytomine.utils.SearchOperator
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,19 +19,19 @@ import org.jsondoc.core.pojo.ApiParamType
  * Time: 15:37
  * To change this template use File | Settings | File Templates.
  */
-@Api(name = "search services", description = "Methods for searching domain")
+@RestApi(name = "search services", description = "Methods for searching domain")
 class SearchController extends RestController {
 
     def searchService
 
-    @ApiMethodLight(description="Search for domain with a keywords list. The search will into properties value and description domain.")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="keywords", type="list", paramType = ApiParamType.QUERY, description = "(Optional) List of keywords. If null, take all domain."),
-        @ApiParamLight(name="operator", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Operator between keyword (OR or AND). If null, take OR."),
-        @ApiParamLight(name="filter", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Domain type (PROJECT, IMAGE, ANNOTATION or ALL). If null, get all domain type"),
-        @ApiParamLight(name="projects", type="string", paramType = ApiParamType.QUERY, description = "(Optional) Look only on domain from the project list id. If null, look into all project (available for the current user)"),
+    @RestApiMethod(description="Search for domain with a keywords list. The search will into properties value and description domain.")
+    @RestApiParams(params=[
+        @RestApiParam(name="keywords", type="list", paramType = RestApiParamType.QUERY, description = "(Optional) List of keywords. If null, take all domain."),
+        @RestApiParam(name="operator", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Operator between keyword (OR or AND). If null, take OR."),
+        @RestApiParam(name="filter", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Domain type (PROJECT, IMAGE, ANNOTATION or ALL). If null, get all domain type"),
+        @RestApiParam(name="projects", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Look only on domain from the project list id. If null, look into all project (available for the current user)"),
     ])
-    @ApiResponseObjectLight(objectIdentifier = "[search]")
+    @RestApiResponseObject(objectIdentifier = "[search]")
     def listResponse() {
         List<String> listKeyword = []
 

@@ -4,22 +4,22 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
-@ApiObject(name = "property", description = "A key-value entry that can be map to a domain (project, image, annotation,...)")
+@RestApiObject(name = "property", description = "A key-value entry that can be map to a domain (project, image, annotation,...)")
 class Property extends CytomineDomain implements Serializable{
 
-    @ApiObjectFieldLight(description = "The domain class")
+    @RestApiObjectField(description = "The domain class")
     String domainClassName
 
-    @ApiObjectFieldLight(description = "The domain identifier (id)")
+    @RestApiObjectField(description = "The domain identifier (id)")
     Long domainIdent
 
-    @ApiObjectFieldLight(description = "The property key")
+    @RestApiObjectField(description = "The property key")
     String key
 
-    @ApiObjectFieldLight(description = "The property value")
+    @RestApiObjectField(description = "The property value")
     String value
 
     static constraints = {

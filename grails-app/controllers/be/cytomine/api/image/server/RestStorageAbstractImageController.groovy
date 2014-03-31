@@ -1,14 +1,14 @@
 package be.cytomine.api.image.server
 
 import be.cytomine.api.RestController
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
-@Api(name = "storage abstract image services", description = "Methods for managing the link between an image and its storage list")
+@RestApi(name = "storage abstract image services", description = "Methods for managing the link between an image and its storage list")
 class RestStorageAbstractImageController extends RestController {
 
     def storageAbstractImageService
@@ -16,7 +16,7 @@ class RestStorageAbstractImageController extends RestController {
     /**
      * Add a new storage to an abstract image
      */
-    @ApiMethodLight(description="Add a new storage to an abstract image")
+    @RestApiMethod(description="Add a new storage to an abstract image")
     def add() {
         add(storageAbstractImageService, request.JSON)
     }
@@ -24,9 +24,9 @@ class RestStorageAbstractImageController extends RestController {
     /**
      * Remove a group from an abstract image
      */
-    @ApiMethodLight(description="Delete a storage from an abstract image list)")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The abstractimage-storage id")
+    @RestApiMethod(description="Delete a storage from an abstract image list)")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The abstractimage-storage id")
     ])
     def delete() {
         delete(storageAbstractImageService,[id : params.id], null)

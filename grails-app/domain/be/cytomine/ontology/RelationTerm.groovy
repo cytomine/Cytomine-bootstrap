@@ -3,25 +3,25 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Relation between a term 1 and a term 2
  */
-//@ApiObject(name = "relationTerm", description = "Relation Term description", show = true)
-@ApiObject(name = "relation", description = "Relation between a term 1 , a term 2 and a relantion domain (e.g. term1 PARENT term2)")
+//@RestApiObject(name = "relationTerm", description = "Relation Term description", show = true)
+@RestApiObject(name = "relation", description = "Relation between a term 1 , a term 2 and a relantion domain (e.g. term1 PARENT term2)")
 class RelationTerm extends CytomineDomain implements Serializable {
 
     static names = [PARENT: "parent", SYNONYM: "synonyme"]
 
-    @ApiObjectFieldLight(description = "The relation")
+    @RestApiObjectField(description = "The relation")
     Relation relation
 
-    @ApiObjectFieldLight(description = "The first term")
+    @RestApiObjectField(description = "The first term")
     Term term1
 
-    @ApiObjectFieldLight(description = "The second term")
+    @RestApiObjectField(description = "The second term")
     Term term2
 
     static mapping = {

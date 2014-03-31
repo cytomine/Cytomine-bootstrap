@@ -20,6 +20,9 @@ grails.project.fork = [ test: false, run: false, war: false, console: false ]
         console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ] */
 //grails.plugin.location."grails-jsondoc" = "/Users/stevben/Cytomine/github/grails-jsondoc"
+
+grails.plugin.location.restapidoc = "../RestApiDoc"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {

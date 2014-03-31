@@ -4,19 +4,19 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.Job
 import be.cytomine.processing.JobParameter
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for job parameter
  * Each software may have some parameters (e.g.: cytomine project id, number of thread,...)
  * A job parameter is a software parameter instance with a specific value for this job
  */
-@Api(name = "job parameter services", description = "Methods for managing job parameter. Each software may have some parameters (e.g.: cytomine project id, number of thread,...). A job parameter is a software parameter instance with a specific value for this job")
+@RestApi(name = "job parameter services", description = "Methods for managing job parameter. Each software may have some parameters (e.g.: cytomine project id, number of thread,...). A job parameter is a software parameter instance with a specific value for this job")
 class RestJobParameterController extends RestController {
 
     def jobParameterService
@@ -25,7 +25,7 @@ class RestJobParameterController extends RestController {
     /**
      * List all job parameter
      */
-    @ApiMethodLight(description="Get all job parameter", listing = true)
+    @RestApiMethod(description="Get all job parameter", listing = true)
     def list() {
         responseSuccess(jobParameterService.list())
     }
@@ -33,9 +33,9 @@ class RestJobParameterController extends RestController {
     /**
      * List all job parameter for a job
      */
-    @ApiMethodLight(description="Get all job parameter for a job", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job id")
+    @RestApiMethod(description="Get all job parameter for a job", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The job id")
     ])
     def listByJob() {
         Job job = jobService.read(params.long('id'));
@@ -49,9 +49,9 @@ class RestJobParameterController extends RestController {
     /**
      * Get a job parameter
      */
-    @ApiMethodLight(description="Get a job parameter")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    @RestApiMethod(description="Get a job parameter")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The job parameter id")
     ])
     def show() {
         JobParameter jobParameter = jobParameterService.read(params.long('id'))
@@ -65,9 +65,9 @@ class RestJobParameterController extends RestController {
     /**
      * Add a new job parameter
      */
-    @ApiMethodLight(description="Add a new job parameter")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    @RestApiMethod(description="Add a new job parameter")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The job parameter id")
     ])
     def add() {
         add(jobParameterService, request.JSON)
@@ -76,9 +76,9 @@ class RestJobParameterController extends RestController {
     /**
      * Update job parameter
      */
-    @ApiMethodLight(description="Update a job parameter")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    @RestApiMethod(description="Update a job parameter")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The job parameter id")
     ])
     def update() {
         update(jobParameterService, request.JSON)
@@ -87,9 +87,9 @@ class RestJobParameterController extends RestController {
     /**
      * Delete job parameter
      */
-    @ApiMethodLight(description="Delete a job parameter")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The job parameter id")
+    @RestApiMethod(description="Delete a job parameter")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The job parameter id")
     ])
     def delete() {
         delete(jobParameterService, JSON.parse("{id : $params.id}"),null)

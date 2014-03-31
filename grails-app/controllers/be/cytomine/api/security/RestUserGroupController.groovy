@@ -5,17 +5,17 @@ import be.cytomine.security.Group
 import be.cytomine.security.User
 import be.cytomine.security.UserGroup
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller to manage user in group
  */
-@Api(name = "user group services", description = "Methods for managing a user in groups")
+@RestApi(name = "user group services", description = "Methods for managing a user in groups")
 class RestUserGroupController extends RestController {
 
     def userGroupService
@@ -26,9 +26,9 @@ class RestUserGroupController extends RestController {
     /**
      * List all user-group for a user
      */
-    @ApiMethodLight(description="List all user group for a user", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id")
+    @RestApiMethod(description="List all user group for a user", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id")
     ])
     def list() {
         User user = secUserService.read(params.long('user'));
@@ -38,10 +38,10 @@ class RestUserGroupController extends RestController {
     /**
      * Get a user-group relation
      */
-    @ApiMethodLight(description="Get a user-group relation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @RestApiMethod(description="Get a user-group relation")
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="group", type="long", paramType = RestApiParamType.PATH, description = "The group id")
     ])
     def show() {
         User user = secUserService.read(params.long('user'));
@@ -57,7 +57,7 @@ class RestUserGroupController extends RestController {
     /**
      * Add a new user to a group
      */
-    @ApiMethodLight(description="Get a user-group relation")
+    @RestApiMethod(description="Get a user-group relation")
     def add() {
         add(userGroupService, request.JSON)
     }
@@ -65,10 +65,10 @@ class RestUserGroupController extends RestController {
     /**
      * Remove a user from a group
      */
-    @ApiMethodLight(description="Remove a user from a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="long", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="group", type="long", paramType = ApiParamType.PATH, description = "The group id")
+    @RestApiMethod(description="Remove a user from a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="group", type="long", paramType = RestApiParamType.PATH, description = "The group id")
     ])
     def delete() {
         def json = JSON.parse("{user : $params.user, group: $params.group}")

@@ -1,39 +1,39 @@
 package be.cytomine.security
 
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A cytomine human user
  */
-@ApiObject(name = "user", description="A cytomine human user")
+@RestApiObject(name = "user", description="A cytomine human user")
 class User extends SecUser {
 
     transient springSecurityService
 
-    @ApiObjectFieldLight(description = "The firstname of the user")
+    @RestApiObjectField(description = "The firstname of the user")
     String firstname
 
-    @ApiObjectFieldLight(description = "The lastname of the user")
+    @RestApiObjectField(description = "The lastname of the user")
     String lastname
 
-    @ApiObjectFieldLight(description = "The email of the user")
+    @RestApiObjectField(description = "The email of the user")
     String email
 
     String color //deprecated
 
-    @ApiObjectFieldLight(description = "The skype account of the user")
+    @RestApiObjectField(description = "The skype account of the user")
     String skypeAccount
 
-    @ApiObjectFieldLight(description = "The SIP account of the user")
+    @RestApiObjectField(description = "The SIP account of the user")
     String sipAccount
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "admin", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is ADMIN ",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "user", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN and is USER ",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "ghest", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN, NOT USER but a simple GHEST ",allowedType = "boolean",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "admin", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is ADMIN ",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "user", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN and is USER ",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "ghest", description = "(ONLY VISIBLE WHEN DOING GET /api/user/id.format service) True if the user is NOT ADMIN, NOT USER but a simple GHEST ",allowedType = "boolean",useForCreation = false)
     ])
     static constraints = {
         firstname blank: false

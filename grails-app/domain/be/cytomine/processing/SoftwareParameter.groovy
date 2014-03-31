@@ -3,14 +3,14 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A parameter for a software.
  * It's a template to create job parameter.
  */
-@ApiObject(name = "software parameter", description = "A parameter for a software. It's a template to create job parameter. When job is init, we create job parameter list based on software parameter list.")
+@RestApiObject(name = "software parameter", description = "A parameter for a software. It's a template to create job parameter. When job is init, we create job parameter list based on software parameter list.")
 class SoftwareParameter extends CytomineDomain {
 
 //    returnArray['name'] = domain?.name
@@ -29,39 +29,39 @@ class SoftwareParameter extends CytomineDomain {
     /**
      * Software for parameter
      */
-    @ApiObjectFieldLight(description = "The software of the parameter")
+    @RestApiObjectField(description = "The software of the parameter")
     Software software
 
     /**
      * Parameter name
      */
-    @ApiObjectFieldLight(description = "The parameter name")
+    @RestApiObjectField(description = "The parameter name")
     String name
 
     /**
      * Parameter type
      */
-    @ApiObjectFieldLight(description = "The parameter data type (Number, String, Date, Boolean, Domain (e.g: image instance id,...), ListDomain )")
+    @RestApiObjectField(description = "The parameter data type (Number, String, Date, Boolean, Domain (e.g: image instance id,...), ListDomain )")
     String type
 
     /**
      * Default value when creating job parameter
      * All value are stored in (generic) String
      */
-    @ApiObjectFieldLight(description = "Default value when creating job parameter", mandatory = false, apiFieldName = "defaultParamValue")
+    @RestApiObjectField(description = "Default value when creating job parameter", mandatory = false, apiFieldName = "defaultParamValue")
     String defaultValue
 
     /**
      * Flag if value is mandatory
      */
-    @ApiObjectFieldLight(description = "Flag if value is mandatory", mandatory = false)
+    @RestApiObjectField(description = "Flag if value is mandatory", mandatory = false)
     Boolean required = false
 
     /**
      * Index for parameter position.
      * When launching software, parameter will be send ordered by index (asc)
      */
-    @ApiObjectFieldLight(description = "Index for parameter position. When launching software, parameter will be send ordered by index (asc).", mandatory = false, defaultValue="-1")
+    @RestApiObjectField(description = "Index for parameter position. When launching software, parameter will be send ordered by index (asc).", mandatory = false, defaultValue="-1")
     Integer index=-1
 
     /**
@@ -69,26 +69,26 @@ class SoftwareParameter extends CytomineDomain {
      * If parameter has "Domain" type, the URI will provide a list of choice.
      *
      */
-    @ApiObjectFieldLight(description = "Used for UI. If parameter has '(List)Domain' type, the URI will provide a list of choice. E.g. if uri is 'api/project.json', the choice list will be cytomine project list", mandatory = false)
+    @RestApiObjectField(description = "Used for UI. If parameter has '(List)Domain' type, the URI will provide a list of choice. E.g. if uri is 'api/project.json', the choice list will be cytomine project list", mandatory = false)
     String uri
 
     /**
      * JSON Fields to print in choice list
      * E.g. if uri is api/project.json and uriPrintAttribut is "name", the choice list will contains project name
      */
-    @ApiObjectFieldLight(description = "Used for UI. JSON Fields to print in choice list. E.g. if uri is api/project.json and uriPrintAttribut is 'name', the choice list will contains project name ", mandatory = false)
+    @RestApiObjectField(description = "Used for UI. JSON Fields to print in choice list. E.g. if uri is api/project.json and uriPrintAttribut is 'name', the choice list will contains project name ", mandatory = false)
     String uriPrintAttribut
 
     /**
      * JSON Fields used to sort choice list
      */
-    @ApiObjectFieldLight(description = "Used for UI. JSON Fields used to sort choice list. E.g. if uri is api/project.json and uriSortAttribut is 'id', projects will be sort by id (not by name) ", mandatory = false)
+    @RestApiObjectField(description = "Used for UI. JSON Fields used to sort choice list. E.g. if uri is api/project.json and uriSortAttribut is 'id', projects will be sort by id (not by name) ", mandatory = false)
     String uriSortAttribut
 
     /**
      * Indicated if the field is autofilled by the server
      */
-    @ApiObjectFieldLight(description = "Indicated if the field is autofilled by the server", mandatory = false)
+    @RestApiObjectField(description = "Indicated if the field is autofilled by the server", mandatory = false)
     Boolean setByServer = false
 
 

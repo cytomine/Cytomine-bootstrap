@@ -4,11 +4,11 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +16,7 @@ import org.jsondoc.core.pojo.ApiParamType
  * Date: 18/05/11
  * Controller that handle request for project images.
  */
-@Api(name = "nested image services", description = "Methods for managing a nested image, a sub-image of an existing image instance")
+@RestApi(name = "nested image services", description = "Methods for managing a nested image, a sub-image of an existing image instance")
 class RestNestedImageInstanceController extends RestController {
 
     def segmentationService
@@ -33,9 +33,9 @@ class RestNestedImageInstanceController extends RestController {
     def cytomineService
     def taskService
 
-    @ApiMethodLight(description="Get a nested image")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The nested image id")
+    @RestApiMethod(description="Get a nested image")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The nested image id")
     ])
     def show() {
         ImageInstance image = nestedImageInstanceService.read(params.long('id'))
@@ -46,9 +46,9 @@ class RestNestedImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="List all nested image for an image instance", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idImage", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
+    @RestApiMethod(description="List all nested image for an image instance", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idImage", type="long", paramType = RestApiParamType.PATH, description = "The image instance id")
     ])
     def listByImageInstance() {
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
@@ -60,7 +60,7 @@ class RestNestedImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add a new nested image (from an image instance)")
+    @RestApiMethod(description="Add a new nested image (from an image instance)")
     def add() {
         try {
             responseResult(nestedImageInstanceService.add(request.JSON))
@@ -70,14 +70,14 @@ class RestNestedImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Update a nested image instance")
+    @RestApiMethod(description="Update a nested image instance")
     def update() {
         update(nestedImageInstanceService, request.JSON)
     }
 
-    @ApiMethodLight(description="Delete a nested image instance)")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The nested image id")
+    @RestApiMethod(description="Delete a nested image instance)")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The nested image id")
     ])
     def delete() {
         delete(nestedImageInstanceService, JSON.parse("{id : $params.id}"),null)

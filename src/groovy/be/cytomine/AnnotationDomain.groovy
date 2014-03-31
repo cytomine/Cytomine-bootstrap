@@ -14,9 +14,9 @@ import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import groovy.util.logging.Log
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * User: lrollus
@@ -30,40 +30,40 @@ import org.jsondoc.core.annotation.ApiObject
  * -ReviewedAnnotation => User or AlgoAnnotation validate by user
  */
 @Log
-@ApiObject(name = "generic annotation")
+@RestApiObject(name = "generic annotation")
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
 
     /**
      * Annotation geometry object
      */
-    @ApiObjectFieldLight(description = "The WKT of the annotation form", allowedType = "string")
+    @RestApiObjectField(description = "The WKT of the annotation form", allowedType = "string")
     Geometry location
 
     /**
      * Annotation image
      */
-    @ApiObjectFieldLight(description = "The image id of the annotation")
+    @RestApiObjectField(description = "The image id of the annotation")
     ImageInstance image
 
     /**
      * Annotation project
      * Redundant with image.project, speedup
      */
-    @ApiObjectFieldLight(description = "The project id of the annotation")
+    @RestApiObjectField(description = "The project id of the annotation")
     Project project
 
     /**
      * Compression threshold used for annotation simplification
      */
-    @ApiObjectFieldLight(description = "The geometry compression rate used to simplify the annotation (during creation)", mandatory = false)
+    @RestApiObjectField(description = "The geometry compression rate used to simplify the annotation (during creation)", mandatory = false)
     Double geometryCompression
 
     /**
      * Number of comments for annotation
      * Redundant to speed up
      */
-    @ApiObjectFieldLight(description = "The number of comments added by a user on this annotation", apiFieldName = "nbComments", useForCreation = false)
+    @RestApiObjectField(description = "The number of comments added by a user on this annotation", apiFieldName = "nbComments", useForCreation = false)
     long countComments = 0L
 
     /**
@@ -74,36 +74,36 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     /* Transients values for JSON/XML rendering */
     //TODO:: remove from here, use custom SQL request with these info
-    @ApiObjectFieldLight(description = "The similarity rate for this annotation compare to another annotation (from retrieval)", useForCreation = false)
+    @RestApiObjectField(description = "The similarity rate for this annotation compare to another annotation (from retrieval)", useForCreation = false)
     Double similarity
 
-    @ApiObjectFieldLight(description = "The reliability value estimated by the software for the mapping between annotation and term", useForCreation = false)
+    @RestApiObjectField(description = "The reliability value estimated by the software for the mapping between annotation and term", useForCreation = false)
     Double rate
 
-    @ApiObjectFieldLight(description = "The id of the term map with this annotation by a the software", useForCreation = false)
+    @RestApiObjectField(description = "The id of the term map with this annotation by a the software", useForCreation = false)
     Long idTerm
 
-    @ApiObjectFieldLight(description = "The id of the real term (corresponding to the term add by a real user)", useForCreation = false)
+    @RestApiObjectField(description = "The id of the real term (corresponding to the term add by a real user)", useForCreation = false)
     Long idExpectedTerm
 
-    @ApiObjectFieldLight(description = "The annotation form area", useForCreation = false)
+    @RestApiObjectField(description = "The annotation form area", useForCreation = false)
     Double area
 
-    @ApiObjectFieldLight(description = "The annotation form perimeter", useForCreation = false)
+    @RestApiObjectField(description = "The annotation form perimeter", useForCreation = false)
     Double perimeter
 
-    @ApiObjectFieldLight(description = "The annotation unit used for area (pixels²=1,micron²=3)", useForCreation = false)
+    @RestApiObjectField(description = "The annotation unit used for area (pixels²=1,micron²=3)", useForCreation = false)
     Integer areaUnit
 
-    @ApiObjectFieldLight(description = "The annotation unit used for perimeter (pixels=0,mm=2,)", useForCreation = false)
+    @RestApiObjectField(description = "The annotation unit used for perimeter (pixels=0,mm=2,)", useForCreation = false)
     Integer perimeterUnit
 
 
     static belongsTo = [ImageInstance, Project]
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "centroid", description = "X,Y coord of the annotation centroid",allowedType = "map(x,y)",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "term", description = "List of term id mapped with this annotation",allowedType = "list",useForCreation = true, mandatory=false),
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "centroid", description = "X,Y coord of the annotation centroid",allowedType = "map(x,y)",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "term", description = "List of term id mapped with this annotation",allowedType = "list",useForCreation = true, mandatory=false),
     ])
     static transients = ["boundaries", "similarity","rate", "idTerm", "idExpectedTerm"]
 

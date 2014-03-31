@@ -5,9 +5,9 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.ImageInstance
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,29 +16,29 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * A position of an image in its group
  */
-@ApiObject(name = "image sequence", description = "A position of an image in the image group")
+@RestApiObject(name = "image sequence", description = "A position of an image in the image group")
 class ImageSequence extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The image")
+    @RestApiObjectField(description = "The image")
     ImageInstance image
 
-    @ApiObjectFieldLight(description = "The image channel", mandatory = false)
+    @RestApiObjectField(description = "The image channel", mandatory = false)
     Integer channel
 
-    @ApiObjectFieldLight(description = "The image zStack", mandatory = false)
+    @RestApiObjectField(description = "The image zStack", mandatory = false)
     Integer zStack
 
-    @ApiObjectFieldLight(description = "The image slice", mandatory = false)
+    @RestApiObjectField(description = "The image slice", mandatory = false)
     Integer slice
 
-    @ApiObjectFieldLight(description = "The image time", mandatory = false)
+    @RestApiObjectField(description = "The image time", mandatory = false)
     Integer time
 
-    @ApiObjectFieldLight(description = "The image group")
+    @RestApiObjectField(description = "The image group")
     ImageGroup imageGroup
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "model", description = "The image instance full data (see image instance for more details)",allowedType = "domain",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "model", description = "The image instance full data (see image instance for more details)",allowedType = "domain",useForCreation = false)
     ])
     static transients = []
 

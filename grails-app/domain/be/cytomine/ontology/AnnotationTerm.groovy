@@ -5,23 +5,23 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Term added to an annotation by a real user (not a job!)
  * Many user can add a term to a single annotation (not only the user that created this annotation)
  */
-@ApiObject(name = "annotation term", description = "Term added to an annotation by a real user (not a job!). Many user can add a term to a single annotation (not only the user that created this annotation)")
+@RestApiObject(name = "annotation term", description = "Term added to an annotation by a real user (not a job!). Many user can add a term to a single annotation (not only the user that created this annotation)")
 class AnnotationTerm extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The annotation id", apiFieldName = "userannotation")
+    @RestApiObjectField(description = "The annotation id", apiFieldName = "userannotation")
     UserAnnotation userAnnotation
 
-    @ApiObjectFieldLight(description = "The term id")
+    @RestApiObjectField(description = "The term id")
     Term term
 
-    @ApiObjectFieldLight(description = "The user id", mandatory = false, defaultValue = "current user")
+    @RestApiObjectField(description = "The user id", mandatory = false, defaultValue = "current user")
     SecUser user
 
     static mapping = {

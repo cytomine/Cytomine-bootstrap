@@ -4,27 +4,27 @@ import be.cytomine.api.RestController
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.project.Project
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
  * Date: 18/05/11
  */
-@Api(name = "image group services", description = "Methods for managing image group, a group of image from the same sample in different dimension (channel, zstack,...)")
+@RestApi(name = "image group services", description = "Methods for managing image group, a group of image from the same sample in different dimension (channel, zstack,...)")
 class RestImageGroupController extends RestController {
 
     def imageGroupService
     def projectService
 
-    @ApiMethodLight(description="Get an image group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image group id")
+    @RestApiMethod(description="Get an image group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image group id")
     ])
     def show() {
         ImageGroup image = imageGroupService.read(params.long('id'))
@@ -35,9 +35,9 @@ class RestImageGroupController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get image group listing by project", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @RestApiMethod(description="Get image group listing by project", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -50,22 +50,22 @@ class RestImageGroupController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add a new image group")
+    @RestApiMethod(description="Add a new image group")
     def add () {
         add(imageGroupService, request.JSON)
     }
 
-    @ApiMethodLight(description="Update an image group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="int", paramType = ApiParamType.PATH, description = "The image group id")
+    @RestApiMethod(description="Update an image group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="int", paramType = RestApiParamType.PATH, description = "The image group id")
     ])
     def update() {
         update(imageGroupService, request.JSON)
     }
 
-    @ApiMethodLight(description="Delete an image group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image group")
+    @RestApiMethod(description="Delete an image group")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image group")
     ])
     def delete() {
         delete(imageGroupService, JSON.parse("{id : $params.id}"),null)

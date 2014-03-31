@@ -1,32 +1,32 @@
 package be.cytomine.api.utils
 
 import be.cytomine.api.RestController
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for a description (big text data/with html format) on a specific domain
  */
-@Api(name = "attached services", description = "Methods for managing attached file on a specific domain")
+@RestApi(name = "attached services", description = "Methods for managing attached file on a specific domain")
 class RestAttachedFileController extends RestController {
 
     def springSecurityService
     def attachedFileService
 
-    @ApiMethodLight(description="List all attached file available", listing=true)
+    @RestApiMethod(description="List all attached file available", listing=true)
     def list() {
         responseSuccess(attachedFileService.list())
     }
 
-    @ApiMethodLight(description="List all attached file for a given domain", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="List all attached file for a given domain", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def listByDomain() {
         Long domainIdent = params.long("domainIdent")
@@ -34,9 +34,9 @@ class RestAttachedFileController extends RestController {
         responseSuccess(attachedFileService.list(domainIdent,domainClassName))
     }
 
-    @ApiMethodLight(description="Get a specific attached file")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The attached file id")
+    @RestApiMethod(description="Get a specific attached file")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The attached file id")
     ])
     def show() {
         def file = attachedFileService.read(params.get('id'))
@@ -48,11 +48,11 @@ class RestAttachedFileController extends RestController {
 
     }
 
-    @ApiMethodLight(description="Download a file for a given attached file")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The attached file id")
+    @RestApiMethod(description="Download a file for a given attached file")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The attached file id")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "file")
+    @RestApiResponseObject(objectIdentifier = "file")
     def download() {
        def attached = attachedFileService.read(params.get('id'))
         if(!attached) {
@@ -65,10 +65,10 @@ class RestAttachedFileController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Upload a file for a domain")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-        @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="Upload a file for a domain")
+    @RestApiParams(params=[
+        @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+        @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def upload() {
         log.info "Upload attached file"
@@ -85,10 +85,10 @@ class RestAttachedFileController extends RestController {
         responseSuccess(result)
     }
 
-    @ApiMethodLight(description="Upload a file for a domain. Decode params filled by CKEditor")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="domainIdent", type="long", paramType = ApiParamType.PATH, description = "The domain id"),
-    @ApiParamLight(name="domainClassName", type="string", paramType = ApiParamType.PATH, description = "The domain class")
+    @RestApiMethod(description="Upload a file for a domain. Decode params filled by CKEditor")
+    @RestApiParams(params=[
+    @RestApiParam(name="domainIdent", type="long", paramType = RestApiParamType.PATH, description = "The domain id"),
+    @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain class")
     ])
     def uploadFromCKEditor() {
         log.info "Upload attached file"

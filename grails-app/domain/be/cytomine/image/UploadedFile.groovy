@@ -5,16 +5,16 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * An UploadedFile is a file uploaded through the API.
  * Uploaded are temporaly instances, files related to them are placed
  * in a buffer space before being converted into the right format and copied to the storages
  */
-@ApiObject(name = "uploaded file", description = "A file uploaded on the server, when finished, we create an 'abstract image' from this uploaded file")
+@RestApiObject(name = "uploaded file", description = "A file uploaded on the server, when finished, we create an 'abstract image' from this uploaded file")
 class UploadedFile extends CytomineDomain implements Serializable{
 
 //    public static allowedMime = ["svs", "opt", "jp2", "scn"]
@@ -28,58 +28,58 @@ class UploadedFile extends CytomineDomain implements Serializable{
     public static int UNCOMPRESSED = 5
     public static int TO_DEPLOY = 6
 
-    @ApiObjectFieldLight(description = "The user that upload the file")
+    @RestApiObjectField(description = "The user that upload the file")
     SecUser user
 
-    @ApiObjectFieldLight(description = "List of project (id) that will get the image")
+    @RestApiObjectField(description = "List of project (id) that will get the image")
     Long[] projects //projects ids that we have to link with the new file
 
-    @ApiObjectFieldLight(description = "List of storage (id) that will store the image")
+    @RestApiObjectField(description = "List of storage (id) that will store the image")
     Long[] storages //storage ids on which we have to upload files
 
-    @ApiObjectFieldLight(description = "Upload file filename")
+    @RestApiObjectField(description = "Upload file filename")
     String filename
 
-    @ApiObjectFieldLight(description = "Upload file short name")
+    @RestApiObjectField(description = "Upload file short name")
     String originalFilename
 
-    @ApiObjectFieldLight(description = "The converted filename", presentInResponse = false)
+    @RestApiObjectField(description = "The converted filename", presentInResponse = false)
     String convertedFilename
 
-    @ApiObjectFieldLight(description = "The converted extension", presentInResponse = false)
+    @RestApiObjectField(description = "The converted extension", presentInResponse = false)
     String convertedExt
 
-    @ApiObjectFieldLight(description = "Extension name")
+    @RestApiObjectField(description = "Extension name")
     String ext
 
-    @ApiObjectFieldLight(description = "Path name")
+    @RestApiObjectField(description = "Path name")
     String path
 
-    @ApiObjectFieldLight(description = "File content type", presentInResponse = false)
+    @RestApiObjectField(description = "File content type", presentInResponse = false)
     String contentType
 
 
     UploadedFile parent
 
-    @ApiObjectFieldLight(description = "File size", mandatory = false)
+    @RestApiObjectField(description = "File size", mandatory = false)
     Long size
 
-    @ApiObjectFieldLight(description = "File status (UPLOADED = 0,CONVERTED = 1,DEPLOYED = 2,ERROR_FORMAT = 3,ERROR_CONVERT = 4,UNCOMPRESSED = 5,TO_DEPLOY = 6)", mandatory = false)
+    @RestApiObjectField(description = "File status (UPLOADED = 0,CONVERTED = 1,DEPLOYED = 2,ERROR_FORMAT = 3,ERROR_CONVERT = 4,UNCOMPRESSED = 5,TO_DEPLOY = 6)", mandatory = false)
     int status = 0
 
     /**
      * Indicates whether or not a conversion was done
      */
-    @ApiObjectFieldLight(description = "Indicates wether or not a conversion was done", mandatory = false)
+    @RestApiObjectField(description = "Indicates wether or not a conversion was done", mandatory = false)
     Boolean converted = false
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "uploaded", description = "Indicates if the file is uploaded",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "converted", description = "Indicates if the file is converted",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "deployed", description = "Indicates if the file is deployed",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "error_format", description = "Indicates if there is a error with file format",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "error_convert", description = "Indicates if there is an error with file conversion",allowedType = "boolean",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "uncompressed", description = "Indicates if the file is not compressed",allowedType = "boolean",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "uploaded", description = "Indicates if the file is uploaded",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "converted", description = "Indicates if the file is converted",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "deployed", description = "Indicates if the file is deployed",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "error_format", description = "Indicates if there is a error with file format",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "error_convert", description = "Indicates if there is an error with file conversion",allowedType = "boolean",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "uncompressed", description = "Indicates if the file is not compressed",allowedType = "boolean",useForCreation = false)
     ])
     static transients = ["zoomLevels", "thumbURL"]
 

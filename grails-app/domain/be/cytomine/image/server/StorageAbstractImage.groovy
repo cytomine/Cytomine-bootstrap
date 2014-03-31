@@ -3,16 +3,16 @@ package be.cytomine.image.server
 import be.cytomine.CytomineDomain
 import be.cytomine.image.AbstractImage
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
-@ApiObject(name = "storage abstract image", description="A link between a storage and some images")
+@RestApiObject(name = "storage abstract image", description="A link between a storage and some images")
 class StorageAbstractImage extends CytomineDomain {
 
-    @ApiObjectFieldLight(description = "The storage id")
+    @RestApiObjectField(description = "The storage id")
     Storage storage
 
-    @ApiObjectFieldLight(description = "The abstractimage id", apiFieldName = "abstractimage")
+    @RestApiObjectField(description = "The abstractimage id", apiFieldName = "abstractimage")
     AbstractImage abstractImage
 
     /**

@@ -1,11 +1,11 @@
 package be.cytomine.security
 
 import be.cytomine.processing.Job
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
-@ApiObject(name = "user job", description="A cytomine software user")
+@RestApiObject(name = "user job", description="A cytomine software user")
 class UserJob extends SecUser {
 
     def springSecurityService
@@ -13,17 +13,17 @@ class UserJob extends SecUser {
     /**
      * Human user that launch algo
      */
-    @ApiObjectFieldLight(description = "Human user that launch the job")
+    @RestApiObjectField(description = "Human user that launch the job")
     User user
 
-    @ApiObjectFieldLight(description = "The related job")
+    @RestApiObjectField(description = "The related job")
     Job job
 
-    @ApiObjectFieldLight(description = "The rate succes of the job", useForCreation = false, defaultValue = "-1")
+    @RestApiObjectField(description = "The rate succes of the job", useForCreation = false, defaultValue = "-1")
     double rate = -1d
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "humanUsername", description = "The username of the user that launch this job",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "humanUsername", description = "The username of the user that launch this job",allowedType = "string",useForCreation = false)
     ])
     static transients = []
 

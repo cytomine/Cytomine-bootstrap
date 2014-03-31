@@ -8,20 +8,20 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.security.SecUser
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
 import org.codehaus.groovy.grails.web.json.JSONArray
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller that handle request on annotation created by software (job)
  * Annotation my be created by humain (RestUserAnnotationController).
  */
-@Api(name = "algo annotation services", description = "Methods for managing an annotation created by a software")
+@RestApi(name = "algo annotation services", description = "Methods for managing an annotation created by a software")
 class  RestAlgoAnnotationController extends RestController {
 
     def exportService
@@ -42,8 +42,8 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * List all annotation (created by algo) visible for the current user
      */
-    @ApiMethodLight(description="List all software annotation visible for the current user. See 'annotation domain' data for parameters (only show/hide parameters are available for this service). ", listing = true)
-    @ApiResponseObjectLight(objectIdentifier =  "[annotation listing]")
+    @RestApiMethod(description="List all software annotation visible for the current user. See 'annotation domain' data for parameters (only show/hide parameters are available for this service). ", listing = true)
+    @RestApiResponseObject(objectIdentifier =  "[annotation listing]")
     def list() {
         def annotations = []
         //get all user's project and list all algo annotation
@@ -57,9 +57,9 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Read a single algo annotation
      */
-    @ApiMethodLight(description="Get an algo annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The annotation id")
+    @RestApiMethod(description="Get an algo annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The annotation id")
     ])
     def show() {
         AlgoAnnotation annotation = algoAnnotationService.read(params.long('id'))
@@ -76,7 +76,7 @@ class  RestAlgoAnnotationController extends RestController {
      * If JSON request params is an object, create a new annotation
      * If its a json array, create multiple annotation
      */
-    @ApiMethodLight(description="Add an algo annotation")
+    @RestApiMethod(description="Add an algo annotation")
     def add(){
         def json = request.JSON
         try {
@@ -116,9 +116,9 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Update a single annotation created by algo
      */
-    @ApiMethodLight(description="Update an algo annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Update an algo annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def update() {
         def json = request.JSON
@@ -137,23 +137,23 @@ class  RestAlgoAnnotationController extends RestController {
     /**
      * Delete a single annotation created by algo
      */
-    @ApiMethodLight(description="Delete an algo annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Delete an algo annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def delete() {
         def json = JSON.parse("{id : $params.id}")
         delete(algoAnnotationService, json,null)
     }
 
-    @ApiMethodLight(description="Download a report (pdf, xls,...) with software annotation data from a specific project")
-    @ApiResponseObjectLight(objectIdentifier =  "file")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
-        @ApiParamLight(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
-        @ApiParamLight(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
-        @ApiParamLight(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
-        @ApiParamLight(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    @RestApiMethod(description="Download a report (pdf, xls,...) with software annotation data from a specific project")
+    @RestApiResponseObject(objectIdentifier =  "file")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id"),
+        @RestApiParam(name="terms", type="list", paramType = RestApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+        @RestApiParam(name="users", type="list", paramType = RestApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+        @RestApiParam(name="images", type="list", paramType = RestApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+        @RestApiParam(name="format", type="string", paramType = RestApiParamType.QUERY,description = "The report format (pdf, xls,...)")
     ])
     def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"ALGOANNOTATION")
@@ -164,13 +164,13 @@ class  RestAlgoAnnotationController extends RestController {
      * Get annotation algo crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
-    @ApiMethodLight(description="Get annotation algo crop (image area that frame annotation)")
-    @ApiResponseObjectLight(objectIdentifier =  "file")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParamLight(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
-        @ApiParamLight(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
-        @ApiParamLight(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image"),
+    @RestApiMethod(description="Get annotation algo crop (image area that frame annotation)")
+    @RestApiResponseObject(objectIdentifier =  "file")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+        @RestApiParam(name="max_size", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @RestApiParam(name="zoom", type="int", paramType = RestApiParamType.PATH,description = "Zoom level"),
+        @RestApiParam(name="draw", type="boolean", paramType = RestApiParamType.PATH,description = "Draw annotation form border on the image"),
     ])
     def crop() {
         AlgoAnnotation annotation = AlgoAnnotation.read(params.long("id"))

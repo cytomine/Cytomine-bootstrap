@@ -1,26 +1,26 @@
 package be.cytomine.processing
 
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * An image filter applies image operations (Binary, Eosin,...)
  */
-@ApiObject(name = "image filter", description = "An image filter applies image operations (Binary, Eosin,...)")
+@RestApiObject(name = "image filter", description = "An image filter applies image operations (Binary, Eosin,...)")
 class ImageFilter {
 
-    @ApiObjectFieldLight(description = "The filter name",useForCreation = false)
+    @RestApiObjectField(description = "The filter name",useForCreation = false)
     String name
 
-    @ApiObjectFieldLight(description = "The URL path of the filter on the processing server",useForCreation = false)
+    @RestApiObjectField(description = "The URL path of the filter on the processing server",useForCreation = false)
     String baseUrl
 
-    @ApiObjectFieldLight(description = "The URL of the processing server", allowedType = "string",useForCreation = false)
+    @RestApiObjectField(description = "The URL of the processing server", allowedType = "string",useForCreation = false)
     ProcessingServer processingServer
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "id", description = "The domain id",allowedType = "long",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "id", description = "The domain id",allowedType = "long",useForCreation = false)
     ])
     static constraints = {
         name(blank: false, nullable: false)

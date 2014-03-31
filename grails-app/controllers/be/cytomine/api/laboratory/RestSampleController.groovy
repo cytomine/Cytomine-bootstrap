@@ -3,17 +3,17 @@ package be.cytomine.api.laboratory
 import be.cytomine.api.RestController
 import be.cytomine.laboratory.Sample
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for sample (part of 'source' that has been scan to image)
  */
-@Api(name = "sample services", description = "Methods for managing a sample, part of 'source' that has been scan to image")
+@RestApi(name = "sample services", description = "Methods for managing a sample, part of 'source' that has been scan to image")
 class RestSampleController extends RestController {
 
     def sampleService
@@ -22,7 +22,7 @@ class RestSampleController extends RestController {
     /**
      * List all available sample for the current user
      */
-    @ApiMethodLight(description="Get all sample available for the current user", listing = true)
+    @RestApiMethod(description="Get all sample available for the current user", listing = true)
     def list() {
         responseSuccess(sampleService.list(cytomineService.getCurrentUser()))
     }
@@ -30,9 +30,9 @@ class RestSampleController extends RestController {
     /**
      * Get a sample
      */
-    @ApiMethodLight(description="Get a sample")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The sample id")
+    @RestApiMethod(description="Get a sample")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The sample id")
     ])
     def show() {
         Sample sample = sampleService.read(params.long('id'))
@@ -46,7 +46,7 @@ class RestSampleController extends RestController {
     /**
      * Add a new sample
      */
-    @ApiMethodLight(description="Add a new sample")
+    @RestApiMethod(description="Add a new sample")
     def add() {
         add(sampleService, request.JSON)
     }
@@ -54,9 +54,9 @@ class RestSampleController extends RestController {
     /**
      * Update a existing sample
      */
-    @ApiMethodLight(description="Update a sample")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    @RestApiMethod(description="Update a sample")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The sample id")
     ])
     def update() {
         update(sampleService, request.JSON)
@@ -65,9 +65,9 @@ class RestSampleController extends RestController {
     /**
      * Delete sample
      */
-    @ApiMethodLight(description="Delete a sample")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The sample id")
+    @RestApiMethod(description="Delete a sample")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The sample id")
     ])
     def delete() {
         delete(sampleService, JSON.parse("{id : $params.id}"),null)

@@ -2,17 +2,17 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for image filter, filter that can be apply to a picture
  */
-@Api(name = "image filter services", description = "Methods for managing image filter, filter that can be apply to a picture")
+@RestApi(name = "image filter services", description = "Methods for managing image filter, filter that can be apply to a picture")
 class RestImageFilterController extends RestController {
 
     def imageFilterService
@@ -21,7 +21,7 @@ class RestImageFilterController extends RestController {
     /**
      * List all image filter
      */
-    @ApiMethodLight(description="List all image filter", listing = true)
+    @RestApiMethod(description="List all image filter", listing = true)
     def list() {
         responseSuccess(imageFilterService.list())
     }
@@ -29,9 +29,9 @@ class RestImageFilterController extends RestController {
     /**
      * Get an image filter
      */
-    @ApiMethodLight(description="Get an image filter")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image filter id")
+    @RestApiMethod(description="Get an image filter")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image filter id")
     ])
     def show() {
         ImageFilter imageFilter = imageFilterService.read(params.long('id'))

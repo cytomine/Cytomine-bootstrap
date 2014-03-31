@@ -4,96 +4,96 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.ontology.Ontology
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A project is the main cytomine domain
  * It structure user data
  */
-@ApiObject(name = "project", description="A project is the main cytomine domain, its a workspace to store images, annotations,...")
+@RestApiObject(name = "project", description="A project is the main cytomine domain, its a workspace to store images, annotations,...")
 class Project extends CytomineDomain implements Serializable {
 
     /**
      * Project name
      */
-    @ApiObjectFieldLight(description = "The name of the project")
+    @RestApiObjectField(description = "The name of the project")
     String name
 
     /**
      * Project ontology link
      */
-    @ApiObjectFieldLight(description = "The ontology identifier of the project")
+    @RestApiObjectField(description = "The ontology identifier of the project")
     Ontology ontology
 
     /**
      * Project discipline link
      */
-    @ApiObjectFieldLight(description = "The discipline identifier of the project", mandatory = false)
+    @RestApiObjectField(description = "The discipline identifier of the project", mandatory = false)
     Discipline discipline
 
 
-    @ApiObjectFieldLight(description = "Blind mode (if true, image filename are hidden)",mandatory = false)
+    @RestApiObjectField(description = "Blind mode (if true, image filename are hidden)",mandatory = false)
     boolean blindMode = false
 
     /**
      * Number of projects user annotations
      */
-    @ApiObjectFieldLight(description = "Number of annotations created by human user in the project", apiFieldName="numberOfAnnotations", useForCreation = false)
+    @RestApiObjectField(description = "Number of annotations created by human user in the project", apiFieldName="numberOfAnnotations", useForCreation = false)
     long countAnnotations
 
     /**
      * Number of projects algo annotations
      */
-    @ApiObjectFieldLight(description = "Number of annotations created by software in the project", apiFieldName="numberOfJobAnnotations",useForCreation = false)
+    @RestApiObjectField(description = "Number of annotations created by software in the project", apiFieldName="numberOfJobAnnotations",useForCreation = false)
     long countJobAnnotations
 
     /**
      * Number of projects images
      */
-    @ApiObjectFieldLight(description = "Number of image in the project", apiFieldName="numberOfImages",useForCreation = false)
+    @RestApiObjectField(description = "Number of image in the project", apiFieldName="numberOfImages",useForCreation = false)
     long countImages
 
     /**
      * Number of projects reviewed annotations
      */
-    @ApiObjectFieldLight(description = "Number of annotations validated in the project", apiFieldName="numberOfReviewedAnnotations",useForCreation = false)
+    @RestApiObjectField(description = "Number of annotations validated in the project", apiFieldName="numberOfReviewedAnnotations",useForCreation = false)
     long countReviewedAnnotations
 
     /**
      * Flag if retrieval is disable
      * If true, don't suggest similar annotations
      */
-    @ApiObjectFieldLight(description = "If true, don't suggest similar annotations")
+    @RestApiObjectField(description = "If true, don't suggest similar annotations")
     boolean retrievalDisable = false
 
     /**
      * Flag for retrieval search on all ontologies
      * If true, search similar annotations on all project that share the same ontology
      */
-    @ApiObjectFieldLight(description = "If true, search similar annotations on all project that share the same ontology",defaultValue = "true")
+    @RestApiObjectField(description = "If true, search similar annotations on all project that share the same ontology",defaultValue = "true")
     boolean retrievalAllOntology = true
 
-    @ApiObjectFieldLight(description = "If true, project is closed",mandatory = false)
+    @RestApiObjectField(description = "If true, project is closed",mandatory = false)
     boolean isClosed = false
 
-    @ApiObjectFieldLight(description = "If true, project is in read only mode",mandatory = false)
+    @RestApiObjectField(description = "If true, project is in read only mode",mandatory = false)
     boolean isReadOnly = false
 
-    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see others users layers",mandatory = false)
+    @RestApiObjectField(description = "If true, an user (which is not an administrator of the project) cannot see others users layers",mandatory = false)
     boolean hideUsersLayers = false
 
-    @ApiObjectFieldLight(description = "If true, an user (which is not an administrator of the project) cannot see admins layers", mandatory = false)
+    @RestApiObjectField(description = "If true, an user (which is not an administrator of the project) cannot see admins layers", mandatory = false)
     boolean hideAdminsLayers = false
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "users", description = "Users id that will be in the project",allowedType = "list",useForCreation = true, presentInResponse = false),
-        @ApiObjectFieldLight(apiFieldName = "admins", description = "Admins id that will be in the project",allowedType = "list",useForCreation = true, presentInResponse = false),
-        @ApiObjectFieldLight(apiFieldName = "ontologyName", description = "The ontology name for the project",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "disciplineName", description = "The discipline name for the project",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "numberOfSlides", description = "The number of samples in the project", allowedType = "long",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "retrievalProjects", description = "List all projects id that are used for retrieval search (if retrievalDisable = false and retrievalAllOntology = false)",allowedType = "list",mandatory = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "users", description = "Users id that will be in the project",allowedType = "list",useForCreation = true, presentInResponse = false),
+        @RestApiObjectField(apiFieldName = "admins", description = "Admins id that will be in the project",allowedType = "list",useForCreation = true, presentInResponse = false),
+        @RestApiObjectField(apiFieldName = "ontologyName", description = "The ontology name for the project",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "disciplineName", description = "The discipline name for the project",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "numberOfSlides", description = "The number of samples in the project", allowedType = "long",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "retrievalProjects", description = "List all projects id that are used for retrieval search (if retrievalDisable = false and retrievalAllOntology = false)",allowedType = "list",mandatory = false)
     ])
     static transients = []
 

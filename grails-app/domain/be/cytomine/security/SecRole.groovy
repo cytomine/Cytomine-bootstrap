@@ -1,15 +1,15 @@
 package be.cytomine.security
 
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * User role (user, admin,...)
  */
-@ApiObject(name = "sec role", description="A user role on the full app (user, admin, guest,...)")
+@RestApiObject(name = "sec role", description="A user role on the full app (user, admin, guest,...)")
 class SecRole {
 
-    @ApiObjectFieldLight(description="The role name")
+    @RestApiObjectField(description="The role name")
     String authority
 
     static mapping = {

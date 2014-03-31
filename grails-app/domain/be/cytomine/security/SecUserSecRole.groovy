@@ -3,21 +3,21 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
+import org.restapidoc.annotation.RestApiObjectField
 import org.apache.commons.lang.builder.HashCodeBuilder
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * User - role link
  * A user may have many role (user+admin for example)
  */
-@ApiObject(name = "sec user sec role", description="User - role link. A user may have many role (USER, ADMIN, GUEST)")
+@RestApiObject(name = "sec user sec role", description="User - role link. A user may have many role (USER, ADMIN, GUEST)")
 class SecUserSecRole extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The user id")
+    @RestApiObjectField(description = "The user id")
     SecUser secUser
 
-    @ApiObjectFieldLight(description = "The role id")
+    @RestApiObjectField(description = "The role id")
     SecRole secRole
 
     static mapping = {

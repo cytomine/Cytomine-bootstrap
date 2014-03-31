@@ -3,44 +3,44 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
 
 /**
  * Cytomine user.
  * Its the parent class for "user" (human) and "user job" (algo).
  */
-//@ApiObject(name = "user")
+//@RestApiObject(name = "user")
 class SecUser extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The username of the user")
+    @RestApiObjectField(description = "The username of the user")
     String username
 
-    @ApiObjectFieldLight(description = "The user password", presentInResponse = false)
+    @RestApiObjectField(description = "The user password", presentInResponse = false)
     String password
     String newPassword = null
 
-    @ApiObjectFieldLight(description = "The user public key", mandatory = false, defaultValue = "A generated key")
+    @RestApiObjectField(description = "The user public key", mandatory = false, defaultValue = "A generated key")
     String publicKey
 
-    @ApiObjectFieldLight(description = "The user private key", mandatory = false, defaultValue = "A generated key")
+    @RestApiObjectField(description = "The user private key", mandatory = false, defaultValue = "A generated key")
     String privateKey
 
-    @ApiObjectFieldLight(description = "If true, account is enabled", useForCreation = false,presentInResponse = false)
+    @RestApiObjectField(description = "If true, account is enabled", useForCreation = false,presentInResponse = false)
     boolean enabled
 
-    @ApiObjectFieldLight(description = "If true, account is expired", useForCreation = false,presentInResponse = false)
+    @RestApiObjectField(description = "If true, account is expired", useForCreation = false,presentInResponse = false)
     boolean accountExpired
 
-    @ApiObjectFieldLight(description = "If true, account is locked",useForCreation = false,presentInResponse = false)
+    @RestApiObjectField(description = "If true, account is locked",useForCreation = false,presentInResponse = false)
     boolean accountLocked
 
-    @ApiObjectFieldLight(description = "If true, password is expired",useForCreation = false,presentInResponse = false)
+    @RestApiObjectField(description = "If true, password is expired",useForCreation = false,presentInResponse = false)
     boolean passwordExpired
 
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "algo", description = "If true, user is a userjob",allowedType = "boolean",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "algo", description = "If true, user is a userjob",allowedType = "boolean",useForCreation = false)
     ])
     static transients = ["newPassword", "currentTransaction", "nextTransaction"]
 

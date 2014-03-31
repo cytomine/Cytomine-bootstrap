@@ -4,8 +4,8 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,17 +14,17 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * An nestedImageInstance is a subimage of an already existing image instance
  */
-@ApiObject(name = "nested image instance", description = "An sub image from an image instance (sub area, same image transformed,...)")
+@RestApiObject(name = "nested image instance", description = "An sub image from an image instance (sub area, same image transformed,...)")
 class NestedImageInstance extends ImageInstance implements Serializable {
 
     //stack stuff
-    @ApiObjectFieldLight(description = "The image source for this sub-image")
+    @RestApiObjectField(description = "The image source for this sub-image")
     ImageInstance parent
 
-    @ApiObjectFieldLight(description = "Top x position of this image on the sub-image", mandatory = false)
+    @RestApiObjectField(description = "Top x position of this image on the sub-image", mandatory = false)
     Integer x
 
-    @ApiObjectFieldLight(description = "Top y position of this image on the sub-image", mandatory = false)
+    @RestApiObjectField(description = "Top y position of this image on the sub-image", mandatory = false)
     Integer y
 
     static belongsTo = [AbstractImage, Project, User]

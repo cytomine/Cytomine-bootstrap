@@ -17,12 +17,12 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -33,7 +33,7 @@ import java.awt.image.BufferedImage
  * Date: 18/05/11
  * Controller that handle request for project images.
  */
-@Api(name = "image instance services", description = "Methods for managing an abstract image in a project")
+@RestApi(name = "image instance services", description = "Methods for managing an abstract image in a project")
 class RestImageInstanceController extends RestController {
 
     def segmentationService
@@ -56,9 +56,9 @@ class RestImageInstanceController extends RestController {
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
-    @ApiMethodLight(description="Get an image instance")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image instance id")
+    @RestApiMethod(description="Get an image instance")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image instance id")
     ])    
     def show() {
         ImageInstance image = imageInstanceService.read(params.long('id'))
@@ -69,12 +69,12 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get all image instance available for the current user", listing = true)
+    @RestApiMethod(description="Get all image instance available for the current user", listing = true)
     def listByUser() {
          responseSuccess(imageInstanceService.list(cytomineService.currentUser))
     }
 
-    @ApiMethodLight(description="Get the last opened image for the current user", listing = true)
+    @RestApiMethod(description="Get the last opened image for the current user", listing = true)
     def listLastOpenImage() {
         def offset = params.long('offset')
         def max =params.long('max')
@@ -83,13 +83,13 @@ class RestImageInstanceController extends RestController {
         responseSuccess(imageInstanceService.listLastOpened(cytomineService.currentUser,offset,max))
     }
 
-    @ApiMethodLight(description="Get all image instance for a specific project", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id"),
-        @ApiParamLight(name="tree", type="boolean", paramType = ApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
-        @ApiParamLight(name="sortColumn", type="string", paramType = ApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
-        @ApiParamLight(name="sortDirection", type="string", paramType = ApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
-        @ApiParamLight(name="search", type="string", paramType = ApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
+    @RestApiMethod(description="Get all image instance for a specific project", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
+        @RestApiParam(name="tree", type="boolean", paramType = RestApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
+        @RestApiParam(name="sortColumn", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
+        @RestApiParam(name="sortDirection", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
+        @RestApiParam(name="search", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -112,9 +112,9 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get the next project image (first image created before)", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    @RestApiMethod(description="Get the next project image (first image created before)", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
     ])
     def next() {
         def image = imageInstanceService.read(params.long('id'))
@@ -126,9 +126,9 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get the previous project image (first image created after)", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The current image instance id"),
+    @RestApiMethod(description="Get the previous project image (first image created after)", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
     ])
     def previous() {
         def image = imageInstanceService.read(params.long('id'))
@@ -140,7 +140,7 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add a new image in a project")
+    @RestApiMethod(description="Add a new image in a project")
     def add() {
         try {
             responseResult(imageInstanceService.add(request.JSON))
@@ -150,17 +150,17 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Update an image instance")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @RestApiMethod(description="Update an image instance")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
     ])
     def update() {
         update(imageInstanceService, request.JSON)
     }
 
-    @ApiMethodLight(description="Delete an image from a project)")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @RestApiMethod(description="Delete an image from a project)")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
     ])
     def delete() {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
@@ -309,12 +309,12 @@ class RestImageInstanceController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Copy image metadata (description, properties...) from an image to another one")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParamLight(name="based", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    @RestApiMethod(description="Copy image metadata (description, properties...) from an image to another one")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+        @RestApiParam(name="based", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "empty")
+    @RestApiResponseObject(objectIdentifier = "empty")
     def copyMetadata() {
         try {
             ImageInstance based = imageInstanceService.read(params.long('based'))
@@ -351,11 +351,11 @@ class RestImageInstanceController extends RestController {
      * Check if an abstract image is already map with one or more projects
      * If true, send an array with item {imageinstanceId,layerId,layerName,projectId, projectName, admin}
      */
-    @ApiMethodLight(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
-    @ApiResponseObjectLight(objectIdentifier =  "[project_sharing_same_image]")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParamLight(name="project", type="long", paramType = ApiParamType.QUERY, description = "The image source for the data")
+    @RestApiMethod(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
+    @RestApiResponseObject(objectIdentifier =  "[project_sharing_same_image]")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+        @RestApiParam(name="project", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
     ])
     def retrieveSameImageOtherProject() {
         try {
@@ -380,13 +380,13 @@ class RestImageInstanceController extends RestController {
      * Params must be &layers=IMAGEINSTANCE1_USER1,IMAGE_INSTANCE1_USER2,... which will add annotation
      * from user/image from another project.
      */
-    @ApiMethodLight(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
-    @ApiResponseObjectLight(objectIdentifier = "[copy_annotation_image]")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image that get the data"),
-        @ApiParamLight(name="task", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
-        @ApiParamLight(name="giveMe", type="boolean", paramType = ApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
-        @ApiParamLight(name="layers", type="list (x1_y1,x2_y2,...)", paramType = ApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
+    @RestApiMethod(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
+    @RestApiResponseObject(objectIdentifier = "[copy_annotation_image]")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+        @RestApiParam(name="task", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
+        @RestApiParam(name="giveMe", type="boolean", paramType = RestApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
+        @RestApiParam(name="layers", type="list (x1_y1,x2_y2,...)", paramType = RestApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
     ])
     def copyAnnotationFromSameAbstractImage() {
         try {

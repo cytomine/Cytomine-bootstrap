@@ -9,36 +9,36 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Annotation added by a job (software)
  * Extend AnnotationDomain that provide generic Annotation properties (location,...)
  */
-@ApiObject(name = "algo annotation")
+@RestApiObject(name = "algo annotation")
 class AlgoAnnotation extends AnnotationDomain implements Serializable {
 
     /**
      * Virtual user that create annotation
      */
-    @ApiObjectFieldLight(description = "The user job that add this annotation")
+    @RestApiObjectField(description = "The user job that add this annotation")
     UserJob user
 
     /**
      * Number of reviewed annotation
      * Rem: With UI client, it can only be 0 or 1
      */
-    @ApiObjectFieldLight(description = "The number of reviewed annotations for this annotation",useForCreation = false)
+    @RestApiObjectField(description = "The number of reviewed annotations for this annotation",useForCreation = false)
     Integer countReviewedAnnotations = 0
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "cropURL", description = "URL to get the annotation crop",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "smallCropURL", description = "URL to get a small annotation crop (<256px)",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "url", description = "URL to go to the annotation on the image",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "imageURL", description = "URL to go to the image",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "reviewed", description = "True if annotation has at least one review",allowedType = "boolean",useForCreation = false),
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "cropURL", description = "URL to get the annotation crop",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "smallCropURL", description = "URL to get a small annotation crop (<256px)",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "url", description = "URL to go to the annotation on the image",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "imageURL", description = "URL to go to the image",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "reviewed", description = "True if annotation has at least one review",allowedType = "boolean",useForCreation = false),
     ])
     static constraints = {
     }

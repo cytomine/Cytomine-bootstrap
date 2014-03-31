@@ -4,23 +4,23 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A link between a ROI and a job template
  * The ROI may be a ROIAnnotation or antoher kind of annotation.
  */
-@ApiObject(name = "software project", description = "A link between a ROI and a job template")
+@RestApiObject(name = "software project", description = "A link between a ROI and a job template")
 class JobTemplateAnnotation extends CytomineDomain implements Serializable{
 
-    @ApiObjectFieldLight(description = "The template")
+    @RestApiObjectField(description = "The template")
     JobTemplate jobTemplate
 
-    @ApiObjectFieldLight(description = "The annotation class type (roi,user,algo,...)", useForCreation = false)
+    @RestApiObjectField(description = "The annotation class type (roi,user,algo,...)", useForCreation = false)
     String annotationClassName
 
-    @ApiObjectFieldLight(description = "The annotation id")
+    @RestApiObjectField(description = "The annotation id")
     Long annotationIdent
 
     static transients = []

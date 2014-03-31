@@ -3,32 +3,32 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A job parameter is an instance of software parameter
  * When a job is created, we create a job parameter for each software parameter.
  */
-@ApiObject(name = "job parameter", description = "A job parameter is an instance of software parameter. When a job is created, we create a job parameter for each software parameter.")
+@RestApiObject(name = "job parameter", description = "A job parameter is an instance of software parameter. When a job is created, we create a job parameter for each software parameter.")
 class JobParameter extends CytomineDomain implements Comparable {
 
     /**
      * Job parameter value
      */
-    @ApiObjectFieldLight(description = "Job parameter value")
+    @RestApiObjectField(description = "Job parameter value")
     String value
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "job", description = "The job of the parameter",allowedType = "long",useForCreation = true),
-        @ApiObjectFieldLight(apiFieldName = "softwareParameter", description = "The parameter id of the software",allowedType = "long",useForCreation = true),
-        @ApiObjectFieldLight(apiFieldName = "name", description = "The parameter name", useForCreation = false, allowedType = "string"),
-        @ApiObjectFieldLight(apiFieldName = "type", description = "The parameter data type (Number, String, Date, Boolean, Domain (e.g: image instance id,...), ListDomain )", useForCreation = false, allowedType = "string"),
-        @ApiObjectFieldLight(apiFieldName = "index",description = "Index for parameter position. When launching software, parameter will be send ordered by index (asc).", useForCreation = false, allowedType = "string"),
-        @ApiObjectFieldLight(apiFieldName = "uri", description = "Used for UI. If parameter has '(List)Domain' type, the URI will provide a list of choice. E.g. if uri is 'api/project.json', the choice list will be cytomine project list", useForCreation = false, allowedType = "string"),
-        @ApiObjectFieldLight(apiFieldName = "uriPrintAttribut", description = "Used for UI. JSON Fields to print in choice list. E.g. if uri is api/project.json and uriPrintAttribut is 'name', the choice list will contains project name ", useForCreation = false, allowedType = "string"),
-        @ApiObjectFieldLight(apiFieldName = "uriSortAttribut", description = "Used for UI. JSON Fields used to sort choice list. E.g. if uri is api/project.json and uriSortAttribut is 'id', projects will be sort by id (not by name) ", useForCreation = false, allowedType = "string")
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "job", description = "The job of the parameter",allowedType = "long",useForCreation = true),
+        @RestApiObjectField(apiFieldName = "softwareParameter", description = "The parameter id of the software",allowedType = "long",useForCreation = true),
+        @RestApiObjectField(apiFieldName = "name", description = "The parameter name", useForCreation = false, allowedType = "string"),
+        @RestApiObjectField(apiFieldName = "type", description = "The parameter data type (Number, String, Date, Boolean, Domain (e.g: image instance id,...), ListDomain )", useForCreation = false, allowedType = "string"),
+        @RestApiObjectField(apiFieldName = "index",description = "Index for parameter position. When launching software, parameter will be send ordered by index (asc).", useForCreation = false, allowedType = "string"),
+        @RestApiObjectField(apiFieldName = "uri", description = "Used for UI. If parameter has '(List)Domain' type, the URI will provide a list of choice. E.g. if uri is 'api/project.json', the choice list will be cytomine project list", useForCreation = false, allowedType = "string"),
+        @RestApiObjectField(apiFieldName = "uriPrintAttribut", description = "Used for UI. JSON Fields to print in choice list. E.g. if uri is api/project.json and uriPrintAttribut is 'name', the choice list will contains project name ", useForCreation = false, allowedType = "string"),
+        @RestApiObjectField(apiFieldName = "uriSortAttribut", description = "Used for UI. JSON Fields used to sort choice list. E.g. if uri is api/project.json and uriSortAttribut is 'id', projects will be sort by id (not by name) ", useForCreation = false, allowedType = "string")
     ])
     static belongsTo = [job: Job, softwareParameter: SoftwareParameter]
 

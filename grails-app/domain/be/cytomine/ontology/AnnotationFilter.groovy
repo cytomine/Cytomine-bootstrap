@@ -6,28 +6,28 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Annotation filter define a set of filter for annotation listing
  */
-@ApiObject(name = "annotation filter", description="Define a set of filter for annotation listing")
+@RestApiObject(name = "annotation filter", description="Define a set of filter for annotation listing")
 class AnnotationFilter extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The filter name")
+    @RestApiObjectField(description = "The filter name")
     String name
 
-    @ApiObjectFieldLight(description = "The project of the filter")
+    @RestApiObjectField(description = "The project of the filter")
     Project project
 
-    @ApiObjectFieldLight(description = "The user that create the filter (auto field)", useForCreation = false)
+    @RestApiObjectField(description = "The user that create the filter (auto field)", useForCreation = false)
     User user
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "terms", description = "Terms filter id",allowedType = "list",useForCreation = true, mandatory = false),
-        @ApiObjectFieldLight(apiFieldName = "users", description = "Users filter id",allowedType = "list",useForCreation = true, mandatory = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "terms", description = "Terms filter id",allowedType = "list",useForCreation = true, mandatory = false),
+        @RestApiObjectField(apiFieldName = "users", description = "Users filter id",allowedType = "list",useForCreation = true, mandatory = false)
     ])
     static hasMany = [terms: Term, users: SecUser]
 

@@ -6,8 +6,8 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Term added to an annotation by a job
@@ -15,7 +15,7 @@ import org.jsondoc.core.annotation.ApiObject
  * -algo annotation (create by a job)
  * -user annotation (create by a real user)
  */
-@ApiObject(name = "algo annotation term", description ="Term added to an annotation by a job. Annotation can be: -algo annotation (create by a job) or -user annotation (create by a real user)")
+@RestApiObject(name = "algo annotation term", description ="Term added to an annotation by a job. Annotation can be: -algo annotation (create by a job) or -user annotation (create by a real user)")
 class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
 
     /**
@@ -24,41 +24,41 @@ class AlgoAnnotationTerm extends CytomineDomain implements Serializable {
      * are store in different table
      * So we store annotation type and annotation id
      */
-    @ApiObjectFieldLight(description = "The annotation class type (user or algo)")
+    @RestApiObjectField(description = "The annotation class type (user or algo)")
     String annotationClassName
 
-    @ApiObjectFieldLight(description = "The annotation id")
+    @RestApiObjectField(description = "The annotation id")
     Long annotationIdent
 
     /**
      * Predicted term
      */
-    @ApiObjectFieldLight(description = "The term id")
+    @RestApiObjectField(description = "The term id")
     Term term
 
     /**
      * Real term (added by user)
      */
-    @ApiObjectFieldLight(description = "The real term id, the term added by the user previously")
+    @RestApiObjectField(description = "The real term id, the term added by the user previously")
     Term expectedTerm
 
     /**
      * Certainty rate
      */
-    @ApiObjectFieldLight(description = "The reliability of the prediction")
+    @RestApiObjectField(description = "The reliability of the prediction")
     Double rate
 
     /**
      * Virtual user that made the prediction
      */
-    @ApiObjectFieldLight(description = "The user job id", apiFieldName = "user")
+    @RestApiObjectField(description = "The user job id", apiFieldName = "user")
     UserJob userJob
 
     /**
      * Project for the prediction
      * rem: redundance for optim (we should get it with retrieveAnnotationDomain().project)
      */
-    @ApiObjectFieldLight(description = "The project id")
+    @RestApiObjectField(description = "The project id")
     Project project
 
     static constraints = {

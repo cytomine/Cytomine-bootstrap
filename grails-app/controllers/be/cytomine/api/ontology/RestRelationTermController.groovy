@@ -4,17 +4,17 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.Term
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for relation between terms in ontology (ex: parent)
  */
-@Api(name = "relation term services", description = "Methods for managing relation between terms in ontology (ex: t1 parent t2)")
+@RestApi(name = "relation term services", description = "Methods for managing relation between terms in ontology (ex: t1 parent t2)")
 class RestRelationTermController extends RestController {
 
     def relationService
@@ -25,10 +25,10 @@ class RestRelationTermController extends RestController {
     /**
      * List all relation for a specific term and position
      */
-    @ApiMethodLight(description="List all relation for a specific term and position (1 or 2)", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id"),
-        @ApiParamLight(name="i", type="int", paramType = ApiParamType.PATH,description = "The position index (1 or 2)")
+    @RestApiMethod(description="List all relation for a specific term and position (1 or 2)", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The term id"),
+        @RestApiParam(name="i", type="int", paramType = RestApiParamType.PATH,description = "The position index (1 or 2)")
     ])
     def listByTerm() {
         Term term = termService.read(params.long('id'))
@@ -44,10 +44,10 @@ class RestRelationTermController extends RestController {
     /**
      * List all relation for a specific term
      */
-    @ApiMethodLight(description="List all relation for a specific term", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The term id"),
-        @ApiParamLight(name="i", type="int", paramType = ApiParamType.PATH,description = "The position index (1 or 2)")
+    @RestApiMethod(description="List all relation for a specific term", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The term id"),
+        @RestApiParam(name="i", type="int", paramType = RestApiParamType.PATH,description = "The position index (1 or 2)")
     ])
     def listByTermAll() {
         Term term = termService.read(params.long('id'))
@@ -62,11 +62,11 @@ class RestRelationTermController extends RestController {
     /**
      * Check if a relation exist with term1 and term2
      */
-    @ApiMethodLight(description="Get a project property with its id or its key")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idrelation", type="long", paramType = ApiParamType.PATH, description = "The relation id"),
-        @ApiParamLight(name="idterm1", type="long", paramType = ApiParamType.PATH,description = "The term 1 id"),
-        @ApiParamLight(name="idterm2", type="long", paramType = ApiParamType.PATH,description = "The term 2 id")
+    @RestApiMethod(description="Get a project property with its id or its key")
+    @RestApiParams(params=[
+        @RestApiParam(name="idrelation", type="long", paramType = RestApiParamType.PATH, description = "The relation id"),
+        @RestApiParam(name="idterm1", type="long", paramType = RestApiParamType.PATH,description = "The term 1 id"),
+        @RestApiParam(name="idterm2", type="long", paramType = RestApiParamType.PATH,description = "The term 2 id")
     ])
     def show() {
         Relation relation
@@ -96,7 +96,7 @@ class RestRelationTermController extends RestController {
     /**
      * Add a new relation with two terms
      */
-    @ApiMethodLight(description="Add a relation between two terms. If not set, relation is PARENT")
+    @RestApiMethod(description="Add a relation between two terms. If not set, relation is PARENT")
     def add() {
         def json = request.JSON
         Relation relation
@@ -115,11 +115,11 @@ class RestRelationTermController extends RestController {
     /**
      * Delete a relation between two terms
      */
-    @ApiMethodLight(description="Delete a relation between two terms")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idrelation", type="long", paramType = ApiParamType.PATH,description = "The relation id"),
-        @ApiParamLight(name="idterm1", type="long", paramType = ApiParamType.PATH,description = "The term 1"),
-        @ApiParamLight(name="idterm2", type="long", paramType = ApiParamType.PATH,description = "The term 2")
+    @RestApiMethod(description="Delete a relation between two terms")
+    @RestApiParams(params=[
+        @RestApiParam(name="idrelation", type="long", paramType = RestApiParamType.PATH,description = "The relation id"),
+        @RestApiParam(name="idterm1", type="long", paramType = RestApiParamType.PATH,description = "The term 1"),
+        @RestApiParam(name="idterm2", type="long", paramType = RestApiParamType.PATH,description = "The term 2")
     ])
     def delete() {
 

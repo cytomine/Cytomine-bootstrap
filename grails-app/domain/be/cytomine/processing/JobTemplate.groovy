@@ -3,8 +3,8 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,10 +13,10 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 7:33
  * A job template is a job with pre-filled parameters. It can be used to init a new "real" job on the basis of this template.
  */
-@ApiObject(name = "job template", description = "A job template is a job with pre-filled parameters. It can be used to init a new 'real' job on the basis of this template.")
+@RestApiObject(name = "job template", description = "A job template is a job with pre-filled parameters. It can be used to init a new 'real' job on the basis of this template.")
 class JobTemplate extends Job implements Serializable {
 
-    @ApiObjectFieldLight(description = "The template name")
+    @RestApiObjectField(description = "The template name")
     String name
 
     static constraints = {

@@ -3,16 +3,16 @@ package be.cytomine.project
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A discipline is a thematic for a project
  */
-@ApiObject(name = "discipline", description = "A discipline is a thematic for a project")
+@RestApiObject(name = "discipline", description = "A discipline is a thematic for a project")
 class Discipline extends CytomineDomain implements Serializable{
 
-    @ApiObjectFieldLight(description = "The name of the discipline")
+    @RestApiObjectField(description = "The name of the discipline")
     String name
 
     static constraints = {

@@ -27,17 +27,11 @@ class RestController {
         return null
     }
 
-    def currentDomainName() {
-        def domain = currentDomain()
-        if(domain) {
-            Introspector.decapitalize(domain.simpleName)
-        } else {
-            String domaineName = this.class.simpleName.replace("Rest","")
-            domaineName = domaineName.replace("Controller","")
-            StringUtils.splitCamelToBlank(Introspector.decapitalize(domaineName))
-        }
-    }
 
+    //usefull for doc
+//    def currentDomainName() {
+//        return
+//    }
     /**
      * Call add function for this service with the json
      * json parameter can be an array or a single item

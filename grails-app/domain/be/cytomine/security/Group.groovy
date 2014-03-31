@@ -3,16 +3,16 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A group is a set of user
  */
-@ApiObject(name = "group", description="A group is a set of users. A user may be in many groups")
+@RestApiObject(name = "group", description="A group is a set of users. A user may be in many groups")
 class Group extends CytomineDomain {
 
-    @ApiObjectFieldLight(description="The group name")
+    @RestApiObjectField(description="The group name")
     String name
 
     static mapping = {

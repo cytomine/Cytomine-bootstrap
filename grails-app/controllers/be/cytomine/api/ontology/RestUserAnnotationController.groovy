@@ -12,13 +12,13 @@ import be.cytomine.security.User
 import be.cytomine.social.SharedAnnotation
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage
 /**
  * Controller for annotation created by user
  */
-@Api(name = "user annotation services", description = "Methods for managing an annotation created by a human user")
+@RestApi(name = "user annotation services", description = "Methods for managing an annotation created by a human user")
 class RestUserAnnotationController extends RestController {
 
     def exportService
@@ -47,13 +47,13 @@ class RestUserAnnotationController extends RestController {
     /**
      * List all annotation with light format
      */
-    @ApiMethodLight(description="List all annotation (very light format)", listing = true)
+    @RestApiMethod(description="List all annotation (very light format)", listing = true)
     def list() {
         responseSuccess(userAnnotationService.listLightForRetrieval())
     }
 
-    @ApiMethodLight(description="Count the number of annotation for the current user")
-    @ApiResponseObjectLight(objectIdentifier = "[total:x]")
+    @RestApiMethod(description="Count the number of annotation for the current user")
+    @RestApiResponseObject(objectIdentifier = "[total:x]")
     def countByUser() {
         responseSuccess([total:userAnnotationService.count(cytomineService.currentUser)])
     }
@@ -61,14 +61,14 @@ class RestUserAnnotationController extends RestController {
     /**
      * Download report with annotation
      */
-    @ApiMethodLight(description="Download a report (pdf, xls,...) with user annotation data from a specific project")
-    @ApiResponseObjectLight(objectIdentifier =  "file")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The project id"),
-    @ApiParamLight(name="terms", type="list", paramType = ApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
-    @ApiParamLight(name="users", type="list", paramType = ApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
-    @ApiParamLight(name="images", type="list", paramType = ApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
-    @ApiParamLight(name="format", type="string", paramType = ApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    @RestApiMethod(description="Download a report (pdf, xls,...) with user annotation data from a specific project")
+    @RestApiResponseObject(objectIdentifier =  "file")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id"),
+    @RestApiParam(name="terms", type="list", paramType = RestApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+    @RestApiParam(name="users", type="list", paramType = RestApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+    @RestApiParam(name="images", type="list", paramType = RestApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+    @RestApiParam(name="format", type="string", paramType = RestApiParamType.QUERY,description = "The report format (pdf, xls,...)")
     ])
     def downloadDocumentByProject() {
         reportService.createAnnotationDocuments(params.long('id'),params.terms,params.users,params.images,params.format,response,"USERANNOTATION")
@@ -79,14 +79,14 @@ class RestUserAnnotationController extends RestController {
     /**
      * Add comment on an annotation to other user
      */
-    @ApiMethodLight(description="Add comment on an annotation to other user and send a mail to users")
-    @ApiResponseObjectLight(objectIdentifier = "empty")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-    @ApiParamLight(name="POST JSON: subject", type="string", paramType = ApiParamType.PATH,description = "The subject"),
-    @ApiParamLight(name="POST JSON: message", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH COMMENT?"),
-    @ApiParamLight(name="POST JSON: users", type="list", paramType = ApiParamType.PATH,description = "The list of user (id) to send the mail"),
-    @ApiParamLight(name="POST JSON: comment", type="string", paramType = ApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH MESSAGE?"),
+    @RestApiMethod(description="Add comment on an annotation to other user and send a mail to users")
+    @RestApiResponseObject(objectIdentifier = "empty")
+    @RestApiParams(params=[
+    @RestApiParam(name="userannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+    @RestApiParam(name="POST JSON: subject", type="string", paramType = RestApiParamType.PATH,description = "The subject"),
+    @RestApiParam(name="POST JSON: message", type="string", paramType = RestApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH COMMENT?"),
+    @RestApiParam(name="POST JSON: users", type="list", paramType = RestApiParamType.PATH,description = "The list of user (id) to send the mail"),
+    @RestApiParam(name="POST JSON: comment", type="string", paramType = RestApiParamType.PATH,description = "TODO:APIDOC, DIFF WITH MESSAGE?"),
     ])
     def addComment() {
 
@@ -175,10 +175,10 @@ class RestUserAnnotationController extends RestController {
     /**
      * Show a single comment for an annotation
      */
-    @ApiMethodLight(description="Get a specific comment")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The comment id"),
+    @RestApiMethod(description="Get a specific comment")
+    @RestApiParams(params=[
+    @RestApiParam(name="userannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The comment id"),
     ])
     def showComment() {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
@@ -196,9 +196,9 @@ class RestUserAnnotationController extends RestController {
     /**
      * List all comments for an annotation
      */
-    @ApiMethodLight(description="Get all comments on annotation", listing=true)
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="userannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Get all comments on annotation", listing=true)
+    @RestApiParams(params=[
+    @RestApiParam(name="userannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def listComments() {
         UserAnnotation annotation = userAnnotationService.read(params.long('userannotation'))
@@ -223,9 +223,9 @@ class RestUserAnnotationController extends RestController {
     /**
      * Get a single annotation
      */
-    @ApiMethodLight(description="Get a user annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Get a user annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def show() {
         UserAnnotation annotation = userAnnotationService.read(params.long('id'))
@@ -239,7 +239,7 @@ class RestUserAnnotationController extends RestController {
     /**
      * Add annotation created by user
      */
-    @ApiMethodLight(description="Add an annotation created by user")
+    @RestApiMethod(description="Add an annotation created by user")
     def add(){
         add(userAnnotationService, request.JSON)
     }
@@ -249,13 +249,13 @@ class RestUserAnnotationController extends RestController {
      * Get annotation user crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
-    @ApiMethodLight(description="Get annotation user crop (image area that frame annotation)")
-    @ApiResponseObjectLight(objectIdentifier = "file")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-    @ApiParamLight(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
-    @ApiParamLight(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
-    @ApiParamLight(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    @RestApiMethod(description="Get annotation user crop (image area that frame annotation)")
+    @RestApiResponseObject(objectIdentifier = "file")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+    @RestApiParam(name="max_size", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+    @RestApiParam(name="zoom", type="int", paramType = RestApiParamType.PATH,description = "Zoom level"),
+    @RestApiParam(name="draw", type="boolean", paramType = RestApiParamType.PATH,description = "Draw annotation form border on the image")
     ])
     def crop() {
         UserAnnotation annotation = UserAnnotation.read(params.long("id"))
@@ -313,9 +313,9 @@ class RestUserAnnotationController extends RestController {
     /**
      * Update annotation created by user
      */
-    @ApiMethodLight(description="Update an annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Update an annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def update() {
         def json = request.JSON
@@ -332,9 +332,9 @@ class RestUserAnnotationController extends RestController {
     /**
      * Delete annotation created by user
      */
-    @ApiMethodLight(description="Delete an annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Delete an annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def delete() {
         def json = JSON.parse("{id : $params.id}")

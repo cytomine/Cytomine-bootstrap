@@ -9,14 +9,14 @@ import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
-@Api(name = "property services", description = "Methods for managing properties")
+@RestApi(name = "property services", description = "Methods for managing properties")
 class RestPropertyController extends RestController {
 
     def propertyService
@@ -28,9 +28,9 @@ class RestPropertyController extends RestController {
     /**
      * List all Property visible for the current user by Project, AnnotationDomain and ImageInstance
      */
-    @ApiMethodLight(description="Get all properties for a project", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.PATH,description = "The project id")
+    @RestApiMethod(description="Get all properties for a project", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.PATH,description = "The project id")
     ])
     def listByProject() {
         def projectId = params.long('idProject')
@@ -42,9 +42,9 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get all properties for an annotation (algo,user, or reviewed)", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idAnnotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Get all properties for an annotation (algo,user, or reviewed)", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idAnnotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def listByAnnotation() {
         try {
@@ -61,9 +61,9 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get all properties for an image instance", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idImageInstance", type="long", paramType = ApiParamType.PATH,description = "The image instance id")
+    @RestApiMethod(description="Get all properties for an image instance", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idImageInstance", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
     ])
     def listByImageInstance() {
         def imageInstanceId = params.long('idImageInstance')
@@ -75,10 +75,10 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get all keys of annotation properties in a project or image", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
-        @ApiParamLight(name="idImage", type="long", paramType = ApiParamType.QUERY,description = "(Optional, if null idProject must be set) The image instance id")
+    @RestApiMethod(description="Get all keys of annotation properties in a project or image", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
+        @RestApiParam(name="idImage", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idProject must be set) The image instance id")
     ])
     def listKeyForAnnotation() {
         Project project = projectService.read(params.long('idProject'))
@@ -93,9 +93,9 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get all keys of images properties in a project", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
+    @RestApiMethod(description="Get all keys of images properties in a project", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
     ])
     def listKeyForImageInstance() {
         Project project = projectService.read(params.long('idProject'))
@@ -107,12 +107,12 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="For a specific key, Get all annotation centroid (x,y) and the corresponding value for an image and a layer (user)", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idImage", type="long", paramType = ApiParamType.PATH,description = "The image id"),
-        @ApiParamLight(name="idUser", type="long", paramType = ApiParamType.PATH,description = "The layer id"),
-        @ApiParamLight(name="key", type="long", paramType = ApiParamType.QUERY,description = "The properties key"),
-        @ApiParamLight(name="bbox", type="string", paramType = ApiParamType.QUERY,description = "(Optional) Form of the restricted area"),
+    @RestApiMethod(description="For a specific key, Get all annotation centroid (x,y) and the corresponding value for an image and a layer (user)", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idImage", type="long", paramType = RestApiParamType.PATH,description = "The image id"),
+        @RestApiParam(name="idUser", type="long", paramType = RestApiParamType.PATH,description = "The layer id"),
+        @RestApiParam(name="key", type="long", paramType = RestApiParamType.QUERY,description = "The properties key"),
+        @RestApiParam(name="bbox", type="string", paramType = RestApiParamType.QUERY,description = "(Optional) Form of the restricted area"),
     ])
     def listAnnotationPosition() {
         def image = imageInstanceService.read(params.long('idImage'))
@@ -133,11 +133,11 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get a project property with tis id or its key")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.PATH, description = "The project id"),
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
-        @ApiParamLight(name="key", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
+    @RestApiMethod(description="Get a project property with tis id or its key")
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
+        @RestApiParam(name="key", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
     ])
     def showProject() {
         def projectId = params.long('idProject')
@@ -157,11 +157,11 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get a project property with its id or its key")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idAnnotation", type="long", paramType = ApiParamType.PATH, description = "The annotation id"),
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
-        @ApiParamLight(name="key", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
+    @RestApiMethod(description="Get a project property with its id or its key")
+    @RestApiParams(params=[
+        @RestApiParam(name="idAnnotation", type="long", paramType = RestApiParamType.PATH, description = "The annotation id"),
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
+        @RestApiParam(name="key", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
     ])
     def showAnnotation() {
         def annotationId = params.long('idAnnotation')
@@ -181,11 +181,11 @@ class RestPropertyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get an image instance property with its id or its key")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idImageInstance", type="long", paramType = ApiParamType.PATH, description = "The image instance id"),
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
-        @ApiParamLight(name="key", type="long", paramType = ApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
+    @RestApiMethod(description="Get an image instance property with its id or its key")
+    @RestApiParams(params=[
+        @RestApiParam(name="idImageInstance", type="long", paramType = RestApiParamType.PATH, description = "The image instance id"),
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
+        @RestApiParam(name="key", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
     ])
     def showImageInstance() {
         def imageInstanceId = params.long('idImageInstance')
@@ -209,9 +209,9 @@ class RestPropertyController extends RestController {
     /**
      * Add a new Property (Method from RestController)
      */
-    @ApiMethodLight(description="Add a property to a project")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.PATH, description = "The project id"),
+    @RestApiMethod(description="Add a property to a project")
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
     ])
     def addPropertyProject() {
         def json = request.JSON
@@ -219,9 +219,9 @@ class RestPropertyController extends RestController {
         add(propertyService, request.JSON)
     }
 
-    @ApiMethodLight(description="Add a property to an annotation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idAnnotation", type="long", paramType = ApiParamType.PATH, description = "The annotation id"),
+    @RestApiMethod(description="Add a property to an annotation")
+    @RestApiParams(params=[
+        @RestApiParam(name="idAnnotation", type="long", paramType = RestApiParamType.PATH, description = "The annotation id"),
     ])
     def addPropertyAnnotation()  {
         def json = request.JSON
@@ -230,9 +230,9 @@ class RestPropertyController extends RestController {
         add(propertyService, request.JSON)
     }
 
-    @ApiMethodLight(description="Add a property to a image instance")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idImageInstance", type="long", paramType = ApiParamType.PATH, description = "The image instance id"),
+    @RestApiMethod(description="Add a property to a image instance")
+    @RestApiParams(params=[
+        @RestApiParam(name="idImageInstance", type="long", paramType = RestApiParamType.PATH, description = "The image instance id"),
     ])
     def addPropertyImageInstance()  {
         def json = request.JSON
@@ -244,11 +244,11 @@ class RestPropertyController extends RestController {
     /**
      * Update a Property (Method from RestController)
      */
-    @ApiMethodLight(description="Edit a property")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idAnnotation", type="long", paramType = ApiParamType.PATH,description = "(Optional) The annotation id"),
-        @ApiParamLight(name="idImageInstance", type="long", paramType = ApiParamType.PATH,description = "(Optional) The image instance id"),
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.PATH,description = "(Optional) The project id")
+    @RestApiMethod(description="Edit a property")
+    @RestApiParams(params=[
+        @RestApiParam(name="idAnnotation", type="long", paramType = RestApiParamType.PATH,description = "(Optional) The annotation id"),
+        @RestApiParam(name="idImageInstance", type="long", paramType = RestApiParamType.PATH,description = "(Optional) The image instance id"),
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.PATH,description = "(Optional) The project id")
     ])
     def update() {
         update(propertyService, request.JSON)
@@ -257,9 +257,9 @@ class RestPropertyController extends RestController {
     /**
      * Delete a Property (Method from RestController)
      */
-    @ApiMethodLight(description="Delete a property")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The property id")
+    @RestApiMethod(description="Delete a property")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The property id")
     ])
     def delete()  {
         def json = JSON.parse("{id : $params.id}")

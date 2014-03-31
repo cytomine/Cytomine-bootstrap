@@ -6,12 +6,12 @@ import be.cytomine.processing.JobTemplate
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +19,7 @@ import org.jsondoc.core.pojo.ApiParamType
  * Date: 18/05/11
  * Controller that handle request for project images.
  */
-@Api(name = "job template services", description = "Methods for managing job template, a pre-filled job to quickly run")
+@RestApi(name = "job template services", description = "Methods for managing job template, a pre-filled job to quickly run")
 class RestJobTemplateController extends RestController {
 
     def imageProcessingService
@@ -35,9 +35,9 @@ class RestJobTemplateController extends RestController {
     def taskService
     def softwareService
 
-    @ApiMethodLight(description="Get a job template")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The template id")
+    @RestApiMethod(description="Get a job template")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The template id")
     ])
     def show() {
         JobTemplate job = jobTemplateService.read(params.long('id'))
@@ -48,10 +48,10 @@ class RestJobTemplateController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="List template for the specific filter", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="project", type="long", paramType = ApiParamType.PATH, description = "The projecte id"),
-        @ApiParamLight(name="software", type="long", paramType = ApiParamType.QUERY, description = "(Optional) The software id"),
+    @RestApiMethod(description="List template for the specific filter", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="project", type="long", paramType = RestApiParamType.PATH, description = "The projecte id"),
+        @RestApiParam(name="software", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The software id"),
     ])
     def list() {
         Project project = projectService.read(params.long('project'))
@@ -65,7 +65,7 @@ class RestJobTemplateController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add a new job template")
+    @RestApiMethod(description="Add a new job template")
     def add() {
         try {
             responseResult(jobTemplateService.add(request.JSON))
@@ -75,14 +75,14 @@ class RestJobTemplateController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Update a job template")
+    @RestApiMethod(description="Update a job template")
     def update() {
         update(jobTemplateService, request.JSON)
     }
 
-    @ApiMethodLight(description="Delete a job template")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The template id")
+    @RestApiMethod(description="Delete a job template")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The template id")
     ])
     def delete() {
         delete(jobTemplateService, JSON.parse("{id : $params.id}"),null)

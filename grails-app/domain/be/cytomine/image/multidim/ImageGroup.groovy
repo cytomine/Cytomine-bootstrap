@@ -4,8 +4,8 @@ import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,13 +14,13 @@ import org.jsondoc.core.annotation.ApiObject
  * Time: 8:33
  * A group of image with diff dimension
  */
-@ApiObject(name = "image group", description = "A group of image from the same source with different dimension")
+@RestApiObject(name = "image group", description = "A group of image from the same source with different dimension")
 class ImageGroup extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The name of the project")
+    @RestApiObjectField(description = "The name of the project")
     String name
 
-    @ApiObjectFieldLight(description = "The image group project")
+    @RestApiObjectField(description = "The image group project")
     Project project
 
     static constraints = {

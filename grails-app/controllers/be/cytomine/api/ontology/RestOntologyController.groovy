@@ -4,17 +4,17 @@ import be.cytomine.api.RestController
 import be.cytomine.ontology.Ontology
 import be.cytomine.utils.Task
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for ontology (terms tree)
  */
-@Api(name = "ontology services", description = "Methods for managing ontologies")
+@RestApi(name = "ontology services", description = "Methods for managing ontologies")
 class RestOntologyController extends RestController {
 
     def springSecurityService
@@ -27,9 +27,9 @@ class RestOntologyController extends RestController {
      * List all ontology visible for the current user
      * For each ontology, print the terms tree
      */
-    @ApiMethodLight(description="Get all ontologies available", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="light", type="boolean", paramType = ApiParamType.QUERY,description = "(Optional, default false) Only get a light list (with no term tree for each ontologies)")
+    @RestApiMethod(description="Get all ontologies available", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="light", type="boolean", paramType = RestApiParamType.QUERY,description = "(Optional, default false) Only get a light list (with no term tree for each ontologies)")
     ])
     def list () {
         if(params.boolean("light")) {
@@ -39,9 +39,9 @@ class RestOntologyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get an ontology")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The ontology id")
+    @RestApiMethod(description="Get an ontology")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The ontology id")
     ])
     def show () {
         Ontology ontology = ontologyService.read(params.long('id'))
@@ -52,23 +52,23 @@ class RestOntologyController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add an ontology")
+    @RestApiMethod(description="Add an ontology")
     def add () {
         add(ontologyService, request.JSON)
     }
 
-    @ApiMethodLight(description="Update an ontology")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id")
+    @RestApiMethod(description="Update an ontology")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The ontology id")
     ])
     def update () {
         update(ontologyService, request.JSON)
     }
 
-    @ApiMethodLight(description="Delete an ontology")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The ontology id"),
-        @ApiParamLight(name="task", type="long", paramType = ApiParamType.PATH,description = "(Optional, default:null) The id of the task to update during process"),
+    @RestApiMethod(description="Delete an ontology")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The ontology id"),
+        @RestApiParam(name="task", type="long", paramType = RestApiParamType.PATH,description = "(Optional, default:null) The id of the task to update during process"),
     ])
     def delete () {
         Task task = taskService.read(params.getLong("task"))

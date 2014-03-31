@@ -5,8 +5,8 @@ import grails.converters.JSON
 import grails.util.Holders
 import groovy.sql.Sql
 import groovy.util.logging.Log
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
 import org.springframework.security.acls.model.Permission
 
 /**
@@ -23,20 +23,20 @@ abstract class CytomineDomain  implements Comparable{
 
     static def grailsApplication
 
-    @ApiObjectFieldLight(description = "The domain id", useForCreation = false)
+    @RestApiObjectField(description = "The domain id", useForCreation = false)
     Long id
 
-    @ApiObjectFieldLight(description = "The date of the domain creation", useForCreation = false)
+    @RestApiObjectField(description = "The date of the domain creation", useForCreation = false)
     Date created
 
-    @ApiObjectFieldLight(description = "The date of the domain modification", useForCreation = false)
+    @RestApiObjectField(description = "The date of the domain modification", useForCreation = false)
     Date updated
 
-    @ApiObjectFieldLight(description = "When domain was removed from Cytomine", useForCreation = false)
+    @RestApiObjectField(description = "When domain was removed from Cytomine", useForCreation = false)
     Date deleted
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "class", description = "The full class name of the domain",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "class", description = "The full class name of the domain",allowedType = "string",useForCreation = false)
     ])
     static transients = []
 

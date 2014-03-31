@@ -11,21 +11,21 @@ import be.cytomine.laboratory.Sample
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 import javax.activation.MimetypesFileTypeMap
 
 /**
  * Controller that handle request on file uploading (when a file is uploaded, list uploaded files...)
  */
-@Api(name = "uploaded file services", description = "Methods for managing an uploaded image file.")
+@RestApi(name = "uploaded file services", description = "Methods for managing an uploaded image file.")
 class RestUploadedFileController extends RestController {
 
     def imageProcessingService
@@ -42,7 +42,7 @@ class RestUploadedFileController extends RestController {
 
     static allowedMethods = [image: 'POST']
 
-    @ApiMethodLight(description="Get all uploaded file made by the current user")
+    @RestApiMethod(description="Get all uploaded file made by the current user")
     def list() {
         //get all uploaded file for this user
         def uploadedFiles = uploadedFileService.list(cytomineService.getCurrentUser())
@@ -54,33 +54,33 @@ class RestUploadedFileController extends RestController {
         responseSuccess(uploadedFiles)
     }
 
-    @ApiMethodLight(description="Delete all file properties for an image")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @RestApiMethod(description="Delete all file properties for an image")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image id")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "empty")
+    @RestApiResponseObject(objectIdentifier = "empty")
     def clearProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.clear(abstractImage)
         responseSuccess([:])
     }
 
-    @ApiMethodLight(description="Get all file properties for an image")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @RestApiMethod(description="Get all file properties for an image")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image id")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "empty")
+    @RestApiResponseObject(objectIdentifier = "empty")
     def populateProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.populate(abstractImage)
         responseSuccess([:])
     }
 
-    @ApiMethodLight(description="Fill image field (magn, width,...) with all file properties")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The image id")
+    @RestApiMethod(description="Fill image field (magn, width,...) with all file properties")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image id")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "empty")
+    @RestApiResponseObject(objectIdentifier = "empty")
     def extractProperties () {
         AbstractImage abstractImage = abstractImageService.read(params.long('id'))
         imagePropertiesService.extractUseful(abstractImage)
@@ -88,9 +88,9 @@ class RestUploadedFileController extends RestController {
     }
 
 
-    @ApiMethodLight(description="Get an uploaded file")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The uploaded file id")
+    @RestApiMethod(description="Get an uploaded file")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The uploaded file id")
     ])
     def show () {
         UploadedFile up = uploadedFileService.read(params.long('id'))
@@ -106,7 +106,7 @@ class RestUploadedFileController extends RestController {
      * TODO:: how to manage security here?
      *
      */
-    @ApiMethodLight(description="Add a new uploaded file. This DOES NOT upload the file, just create the domain.")
+    @RestApiMethod(description="Add a new uploaded file. This DOES NOT upload the file, just create the domain.")
     def add () {
         add(uploadedFileService, request.JSON)
     }
@@ -115,9 +115,9 @@ class RestUploadedFileController extends RestController {
      * Update a new image
      * TODO:: how to manage security here?
      */
-    @ApiMethodLight(description="Edit an uploaded file domain (usefull to edit its status during upload)")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @RestApiMethod(description="Edit an uploaded file domain (usefull to edit its status during upload)")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The uploaded file id")
     ])
     def update () {
         update(uploadedFileService, request.JSON)
@@ -127,9 +127,9 @@ class RestUploadedFileController extends RestController {
      * Delete a new image
      * TODO:: how to manage security here?
      */
-    @ApiMethodLight(description="Delete an uploaded file domain. This do not delete the file on disk.")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @RestApiMethod(description="Delete an uploaded file domain. This do not delete the file on disk.")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The uploaded file id")
     ])
     def delete () {
         delete(uploadedFileService, JSON.parse("{id : $params.id}"),null)
@@ -139,11 +139,11 @@ class RestUploadedFileController extends RestController {
         redirect(url: "http://localhost:9090/upload")
     }
 
-    @ApiMethodLight(description="Create an image thanks to an uploaded file domain. THis add the image in the good storage and the project (if needed). This send too an email at the end to the uploader and the project admins.")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="uploadedFile", type="long", paramType = ApiParamType.PATH,description = "The uploaded file id")
+    @RestApiMethod(description="Create an image thanks to an uploaded file domain. THis add the image in the good storage and the project (if needed). This send too an email at the end to the uploader and the project admins.")
+    @RestApiParams(params=[
+    @RestApiParam(name="uploadedFile", type="long", paramType = RestApiParamType.PATH,description = "The uploaded file id")
     ])
-    @ApiResponseObjectLight(objectIdentifier = "[abstractimage.|abstract image|]")
+    @RestApiResponseObject(objectIdentifier = "[abstractimage.|abstract image|]")
     def createImage () {
         long timestamp = new Date().getTime()
         def currentUser = cytomineService.currentUser

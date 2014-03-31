@@ -3,25 +3,25 @@ package be.cytomine.processing
 import be.cytomine.CytomineDomain
 import be.cytomine.project.Project
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A link between a software and a project
  * We can add a software to many projects
  */
-@ApiObject(name = "software project", description = "A link between a software and a project. We can add a software to many projects")
+@RestApiObject(name = "software project", description = "A link between a software and a project. We can add a software to many projects")
 class SoftwareProject extends CytomineDomain implements Serializable{
 
-    @ApiObjectFieldLight(description = "The software")
+    @RestApiObjectField(description = "The software")
     Software software
 
-    @ApiObjectFieldLight(description = "The project")
+    @RestApiObjectField(description = "The project")
     Project project
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "name", description = "The name of the software",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "name", description = "The name of the software",allowedType = "string",useForCreation = false)
     ])
     static transients = []
 

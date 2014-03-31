@@ -1,14 +1,14 @@
 package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A file to attach to any Cytomine domain
  */
-@ApiObject(name = "attached file", description = "A file that may be attached to any Cytomine domain. Usefull to include file into description.")
+@RestApiObject(name = "attached file", description = "A file that may be attached to any Cytomine domain. Usefull to include file into description.")
 class AttachedFile extends CytomineDomain {
 
     /**
@@ -16,17 +16,17 @@ class AttachedFile extends CytomineDomain {
      */
     byte[] data
 
-    @ApiObjectFieldLight(description = "Domain class name")
+    @RestApiObjectField(description = "Domain class name")
     String domainClassName
 
-    @ApiObjectFieldLight(description = "Domain id")
+    @RestApiObjectField(description = "Domain id")
     Long domainIdent
 
-    @ApiObjectFieldLight(description = "File name with ext")
+    @RestApiObjectField(description = "File name with ext")
     String filename
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "url", description = "URL to get this file",allowedType = "string",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "url", description = "URL to get this file",allowedType = "string",useForCreation = false)
     ])
     static transients = []
 

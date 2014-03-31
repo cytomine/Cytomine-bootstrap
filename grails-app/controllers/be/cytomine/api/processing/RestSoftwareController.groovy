@@ -5,18 +5,18 @@ import be.cytomine.processing.Job
 import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for software: application that can be launch (job)
  */
-@Api(name = "software services", description = "Methods for managing software, application that can be launch (job)")
+@RestApi(name = "software services", description = "Methods for managing software, application that can be launch (job)")
 class RestSoftwareController extends RestController {
 
     def softwareService
@@ -24,7 +24,7 @@ class RestSoftwareController extends RestController {
     /**
      * List all software available in cytomine
      */
-    @ApiMethodLight(description="Get all software available in cytomine", listing = true)
+    @RestApiMethod(description="Get all software available in cytomine", listing = true)
     def list() {
         responseSuccess(softwareService.list())
     }
@@ -32,9 +32,9 @@ class RestSoftwareController extends RestController {
     /**
      * List all software by project
      */
-    @ApiMethodLight(description="Get all software available in a project", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @RestApiMethod(description="Get all software available in a project", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id")
     ])
     def listByProject() {
         Project project = Project.read(params.long('id'))
@@ -45,9 +45,9 @@ class RestSoftwareController extends RestController {
     /**
      * Get a specific software
      */
-    @ApiMethodLight(description="Get a specific software")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    @RestApiMethod(description="Get a specific software")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The software id")
     ])
     def show() {
         Software software = softwareService.read(params.long('id'))
@@ -62,7 +62,7 @@ class RestSoftwareController extends RestController {
      * Add a new software to cytomine
      * We must add in other request: parameters, software-project link,...
      */
-    @ApiMethodLight(description="Add a new software to cytomine. We must add in other request: software parameters, software project link,...")
+    @RestApiMethod(description="Add a new software to cytomine. We must add in other request: software parameters, software project link,...")
     def add() {
         add(softwareService, request.JSON)
     }
@@ -70,9 +70,9 @@ class RestSoftwareController extends RestController {
     /**
      * Update a software info
      */
-    @ApiMethodLight(description="Update a software.", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    @RestApiMethod(description="Update a software.", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The software id")
     ])
     def update() {
         update(softwareService, request.JSON)
@@ -81,9 +81,9 @@ class RestSoftwareController extends RestController {
     /**
      * Delete software
      */
-    @ApiMethodLight(description="Delete a software.", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH, description = "The software id")
+    @RestApiMethod(description="Delete a software.", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The software id")
     ])
     def delete() {
         delete(softwareService, JSON.parse("{id : $params.id}"),null)
@@ -94,12 +94,12 @@ class RestSoftwareController extends RestController {
      * TODO:: could be improved with a single SQL request
      *
      */
-    @ApiMethodLight(description="For a software and a project, get the stats (number of job, succes,...)", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idProject", type="long", paramType = ApiParamType.PATH, description = "The project id"),
-        @ApiParamLight(name="idSoftware", type="long", paramType = ApiParamType.PATH, description = "The software id"),
+    @RestApiMethod(description="For a software and a project, get the stats (number of job, succes,...)", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
+        @RestApiParam(name="idSoftware", type="long", paramType = RestApiParamType.PATH, description = "The software id"),
     ])
-    @ApiResponseObjectLight(objectIdentifier = "[numberOfJob:x,numberOfNotLaunch:x,numberOfInQueue:x,numberOfRunning:x,numberOfSuccess:x,numberOfFailed:x,numberOfIndeterminate:x,numberOfWait:x]")
+    @RestApiResponseObject(objectIdentifier = "[numberOfJob:x,numberOfNotLaunch:x,numberOfInQueue:x,numberOfRunning:x,numberOfSuccess:x,numberOfFailed:x,numberOfIndeterminate:x,numberOfWait:x]")
     def softwareInfoForProject() {
         Project project = Project.read(params.long('idProject'))
         Software software = Software.read(params.long('idSoftware'))

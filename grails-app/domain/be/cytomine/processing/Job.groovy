@@ -5,15 +5,15 @@ import be.cytomine.command.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A job is a software instance
  * This is the execution of software with some parameters
  */
-@ApiObject(name = "job", description = "A job is a software instance. This is the execution of software with some parameters")
+@RestApiObject(name = "job", description = "A job is a software instance. This is the execution of software with some parameters")
 class Job extends CytomineDomain  {
     /**
      * Job status (enum type are too heavy with GORM)
@@ -30,57 +30,57 @@ class Job extends CytomineDomain  {
     /**
      * Job progression
      */
-    @ApiObjectFieldLight(description = "The algo progression (from 0 to 100)",mandatory = false)
+    @RestApiObjectField(description = "The algo progression (from 0 to 100)",mandatory = false)
     int progress = 0
 
     /**
      * Job status (see static int)
      */
-    @ApiObjectFieldLight(description = "The algo status (NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2,SUCCESS = 3,FAILED = 4,INDETERMINATE = 5,WAIT = 6,PREVIEWED = 7)",mandatory = false)
+    @RestApiObjectField(description = "The algo status (NOTLAUNCH = 0, INQUEUE = 1, RUNNING = 2,SUCCESS = 3,FAILED = 4,INDETERMINATE = 5,WAIT = 6,PREVIEWED = 7)",mandatory = false)
     int status = 0
 
     /**
      * Job Indice for this software in this project
      */
-    @ApiObjectFieldLight(description = "Job Indice for this software in this project",useForCreation = false)
+    @RestApiObjectField(description = "Job Indice for this software in this project",useForCreation = false)
     int number
 
     /**
      * Text comment for the job status
      */
-    @ApiObjectFieldLight(description = "Text comment for the job status", mandatory = false)
+    @RestApiObjectField(description = "Text comment for the job status", mandatory = false)
     String statusComment
 
     /**
      * Job project
      */
-    @ApiObjectFieldLight(description = "The project of the job")
+    @RestApiObjectField(description = "The project of the job")
     Project project
 
     /**
      * Generic field for job rate info
      * The rate is a quality value about the job works
      */
-    @ApiObjectFieldLight(description = "Generic field for job rate info. The rate is a quality value about the job works",mandatory = false)
+    @RestApiObjectField(description = "Generic field for job rate info. The rate is a quality value about the job works",mandatory = false)
     Double rate = null
 
     /**
      * Flag to see if data generate by this job are deleted
      */
-    @ApiObjectFieldLight(description = "Flag to see if data generate by this job are deleted",mandatory = false)
+    @RestApiObjectField(description = "Flag to see if data generate by this job are deleted",mandatory = false)
     boolean dataDeleted = false
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "algoType", description = "The algo type based on the class name",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "softwareName", description = "The software name of the job",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "username", description = "The username of the job",allowedType = "string",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "userJob", description = "The user of the job",allowedType = "long",useForCreation = false),
-        @ApiObjectFieldLight(apiFieldName = "jobParameters", description = "List of job parameters for this job",allowedType = "list",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "algoType", description = "The algo type based on the class name",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "softwareName", description = "The software name of the job",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "username", description = "The username of the job",allowedType = "string",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "userJob", description = "The user of the job",allowedType = "long",useForCreation = false),
+        @RestApiObjectField(apiFieldName = "jobParameters", description = "List of job parameters for this job",allowedType = "list",useForCreation = false)
     ])
     static transients = ["url"]
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "software", description = "The software of the job",allowedType = "long",useForCreation = true)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "software", description = "The software of the job",allowedType = "long",useForCreation = true)
     ])
     static belongsTo = [software: Software]
 

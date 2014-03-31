@@ -11,18 +11,18 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller that handle link between an annotation and a term
  * This controller carry request for (user)annotationterm and algoannotationterm
  */
-@Api(name = "annotation term service", description = "Methods for managing annotation term. Term added to an annotation by user or job.")
+@RestApi(name = "annotation term service", description = "Methods for managing annotation term. Term added to an annotation by user or job.")
 class RestAnnotationTermController extends RestController {
 
     def termService
@@ -40,10 +40,10 @@ class RestAnnotationTermController extends RestController {
     /**
      * List all term map with an annotation
      */
-    @ApiMethodLight(description="Get all annotationterm for an annotation", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParamLight(name="idUser", type="long", paramType = ApiParamType.PATH,description = "(Optional) Only get term from this user id (may be a job)")
+    @RestApiMethod(description="Get all annotationterm for an annotation", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+        @RestApiParam(name="idUser", type="long", paramType = RestApiParamType.PATH,description = "(Optional) Only get term from this user id (may be a job)")
     ])
     def listTermByAnnotation() {
 
@@ -82,10 +82,10 @@ class RestAnnotationTermController extends RestController {
     /**
      * Get all term link with an annotation by all user except  params.idUser
      */
-    @ApiMethodLight(description="Get all annotationterm for an annotation except annotationterm from the user in param", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParamLight(name="idNotUser", type="long", paramType = ApiParamType.PATH,description = "The user id")
+    @RestApiMethod(description="Get all annotationterm for an annotation except annotationterm from the user in param", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="idannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+        @RestApiParam(name="idNotUser", type="long", paramType = RestApiParamType.PATH,description = "The user id")
     ])
     def listAnnotationTermByUserNot() {
         if (params.idannotation == "undefined") {
@@ -103,10 +103,10 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Get an annotation term")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idannotation", type="long", paramType = ApiParamType.PATH, description = "The annotation id"),
-        @ApiParamLight(name="idterm", type="long", paramType = ApiParamType.PATH, description = "The term id")
+    @RestApiMethod(description="Get an annotation term")
+    @RestApiParams(params=[
+        @RestApiParam(name="idannotation", type="long", paramType = RestApiParamType.PATH, description = "The annotation id"),
+        @RestApiParam(name="idterm", type="long", paramType = RestApiParamType.PATH, description = "The term id")
     ])
     def show() {
         AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(params.long('idannotation'))
@@ -145,7 +145,7 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Add an annotation term")
+    @RestApiMethod(description="Add an annotation term")
     def add() {
         def json = request.JSON
         try {
@@ -171,10 +171,10 @@ class RestAnnotationTermController extends RestController {
         }
     }
 
-    @ApiMethodLight(description="Delete an annotation term")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParamLight(name="idterm", type="long", paramType = ApiParamType.PATH,description = "The term id"),
+    @RestApiMethod(description="Delete an annotation term")
+    @RestApiParams(params=[
+        @RestApiParam(name="idannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+        @RestApiParam(name="idterm", type="long", paramType = RestApiParamType.PATH,description = "The term id"),
     ])
     def delete() {
         if(cytomineService.isUserAlgo()) {
@@ -188,11 +188,11 @@ class RestAnnotationTermController extends RestController {
     /**
      * Add annotation-term for an annotation and delete all annotation-term that where already map with this annotation by this user
      */
-    @ApiMethodLight(description="Add an annotation term and delete all other term added to this annotation by this user")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="idannotation", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-        @ApiParamLight(name="idterm", type="long", paramType = ApiParamType.PATH,description = "The term id"),
-        @ApiParamLight(name="clearForAll", type="boolean", paramType = ApiParamType.QUERY,description = "Delete term for all users (no algo)"),
+    @RestApiMethod(description="Add an annotation term and delete all other term added to this annotation by this user")
+    @RestApiParams(params=[
+        @RestApiParam(name="idannotation", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+        @RestApiParam(name="idterm", type="long", paramType = RestApiParamType.PATH,description = "The term id"),
+        @RestApiParam(name="clearForAll", type="boolean", paramType = RestApiParamType.QUERY,description = "Delete term for all users (no algo)"),
     ])
     def addWithDeletingOldTerm() {
         try {

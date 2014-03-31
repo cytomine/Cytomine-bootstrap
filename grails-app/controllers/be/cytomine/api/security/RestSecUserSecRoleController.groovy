@@ -5,17 +5,17 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller to manage user role
  */
-@Api(name = "sec user sec role services", description = "Methods for managing a user role")
+@RestApi(name = "sec user sec role services", description = "Methods for managing a user role")
 class RestSecUserSecRoleController extends RestController {
 
     def secUserService
@@ -26,9 +26,9 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * List all roles for a user
      */
-    @ApiMethodLight(description="List all roles for a user", listing = true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="string", paramType = ApiParamType.PATH, description = "The user id")
+    @RestApiMethod(description="List all roles for a user", listing = true)
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="string", paramType = RestApiParamType.PATH, description = "The user id")
     ])
     def list() {
         User user = secUserService.read(params.long('user'));
@@ -39,10 +39,10 @@ class RestSecUserSecRoleController extends RestController {
      * Check a role for a user
      * If user has not this role, send 404
      */
-    @ApiMethodLight(description="Get a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="string", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="role", type="string", paramType = ApiParamType.PATH, description = "The role id")
+    @RestApiMethod(description="Get a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="string", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="role", type="string", paramType = RestApiParamType.PATH, description = "The role id")
     ])
     def show() {
         User user = secUserService.read(params.long('user'));
@@ -58,10 +58,10 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * Add a new role to a user
      */
-    @ApiMethodLight(description="Get a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="string", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="role", type="string", paramType = ApiParamType.PATH, description = "The role id")
+    @RestApiMethod(description="Get a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="string", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="role", type="string", paramType = RestApiParamType.PATH, description = "The role id")
     ])
     def add() {
         add(secUserSecRoleService, request.JSON)
@@ -70,10 +70,10 @@ class RestSecUserSecRoleController extends RestController {
     /**
      * Delete a role from a user
      */
-    @ApiMethodLight(description="Delete a group")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="user", type="string", paramType = ApiParamType.PATH, description = "The user id"),
-        @ApiParamLight(name="role", type="string", paramType = ApiParamType.PATH, description = "The role id")
+    @RestApiMethod(description="Delete a group")
+    @RestApiParams(params=[
+        @RestApiParam(name="user", type="string", paramType = RestApiParamType.PATH, description = "The user id"),
+        @RestApiParam(name="role", type="string", paramType = RestApiParamType.PATH, description = "The role id")
     ])
     def delete() {
         delete(secUserSecRoleService, JSON.parse("{user : $params.user, role: $params.role}"),null)

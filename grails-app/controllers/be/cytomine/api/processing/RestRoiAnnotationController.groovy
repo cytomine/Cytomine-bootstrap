@@ -6,18 +6,18 @@ import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.RoiAnnotation
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import jsondoc.annotation.ApiResponseObjectLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for annotation created by user
  */
-@Api(name = "roi annotation services", description = "Methods for managing an region of interest annotation")
+@RestApi(name = "roi annotation services", description = "Methods for managing an region of interest annotation")
 class RestRoiAnnotationController extends RestController {
 
     def roiAnnotationService
@@ -32,9 +32,9 @@ class RestRoiAnnotationController extends RestController {
     /**
      * Get a single annotation
      */
-    @ApiMethodLight(description="Get a roi annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Get a roi annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def show() {
         RoiAnnotation annotation = roiAnnotationService.read(params.long('id'))
@@ -47,7 +47,7 @@ class RestRoiAnnotationController extends RestController {
     /**
      * Add annotation created by user
      */
-    @ApiMethodLight(description="Add an annotation created by user")
+    @RestApiMethod(description="Add an annotation created by user")
     def add(){
         add(roiAnnotationService, request.JSON)
     }
@@ -75,9 +75,9 @@ class RestRoiAnnotationController extends RestController {
     /**
      * Update annotation created by user
      */
-    @ApiMethodLight(description="Update an annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Update an annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def update() {
         def json = request.JSON
@@ -94,9 +94,9 @@ class RestRoiAnnotationController extends RestController {
     /**
      * Delete annotation created by user
      */
-    @ApiMethodLight(description="Delete an annotation")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id")
+    @RestApiMethod(description="Delete an annotation")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id")
     ])
     def delete() {
         def json = JSON.parse("{id : $params.id}")
@@ -108,13 +108,13 @@ class RestRoiAnnotationController extends RestController {
      * Get annotation user crop (image area that frame annotation)
      * (Use this service if you know the annotation type)
      */
-    @ApiMethodLight(description="Get annotation user crop (image area that frame annotation)")
-    @ApiResponseObjectLight(objectIdentifier = "file")
-    @ApiParamsLight(params=[
-    @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The annotation id"),
-    @ApiParamLight(name="max_size", type="int", paramType = ApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
-    @ApiParamLight(name="zoom", type="int", paramType = ApiParamType.PATH,description = "Zoom level"),
-    @ApiParamLight(name="draw", type="boolean", paramType = ApiParamType.PATH,description = "Draw annotation form border on the image")
+    @RestApiMethod(description="Get annotation user crop (image area that frame annotation)")
+    @RestApiResponseObject(objectIdentifier = "file")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
+    @RestApiParam(name="max_size", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+    @RestApiParam(name="zoom", type="int", paramType = RestApiParamType.PATH,description = "Zoom level"),
+    @RestApiParam(name="draw", type="boolean", paramType = RestApiParamType.PATH,description = "Draw annotation form border on the image")
     ])
     def crop() {
         RoiAnnotation annotation = RoiAnnotation.read(params.long("id"))

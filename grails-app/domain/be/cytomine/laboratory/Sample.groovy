@@ -3,17 +3,17 @@ package be.cytomine.laboratory
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A sample is a source of image
  * This is a real thing: blood, a mouse lung,...
  */
-@ApiObject(name = "sample", description="A sample is a source of image. This is a real thing: blood, a mouse lung,...")
+@RestApiObject(name = "sample", description="A sample is a source of image. This is a real thing: blood, a mouse lung,...")
 class Sample extends CytomineDomain implements Serializable{
 
-    @ApiObjectFieldLight(description = "Sample name")
+    @RestApiObjectField(description = "Sample name")
     String name
 
     static constraints = {

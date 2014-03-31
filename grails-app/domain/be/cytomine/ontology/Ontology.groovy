@@ -6,21 +6,21 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
-import jsondoc.annotation.ApiObjectFieldsLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObjectFields
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * An ontology is a list of term
  * Each term may be link to other term with a special relation (parent, synonym,...)
  */
-@ApiObject(name = "ontology", description = "An ontology is a list of term. Each term may be link to other term with a special relation (parent, synonym,...)")
+@RestApiObject(name = "ontology", description = "An ontology is a list of term. Each term may be link to other term with a special relation (parent, synonym,...)")
 class Ontology extends CytomineDomain implements Serializable {
 
-    @ApiObjectFieldLight(description = "The name of the ontology")
+    @RestApiObjectField(description = "The name of the ontology")
     String name
 
-    @ApiObjectFieldLight(description = "The author of the ontology")
+    @RestApiObjectField(description = "The author of the ontology")
     User user
 
     //TODO: if perf issue, may be save ontology json in a text field. Load json instead ontology marshaller and update json when ontology is updated
@@ -38,8 +38,8 @@ class Ontology extends CytomineDomain implements Serializable {
 //        returnArray['children'] = []
 //    }
 
-    @ApiObjectFieldsLight(params=[
-        @ApiObjectFieldLight(apiFieldName = "children", description = "Term Tree",allowedType = "tree",useForCreation = false)
+    @RestApiObjectFields(params=[
+        @RestApiObjectField(apiFieldName = "children", description = "Term Tree",allowedType = "tree",useForCreation = false)
     ])
     static transients = []
 

@@ -2,31 +2,31 @@ package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import jsondoc.annotation.ApiObjectFieldLight
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObjectField
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A domain description (text, image,...)
  */
-@ApiObject(name = "description", description = "A domain description (text, image,...).")
+@RestApiObject(name = "description", description = "A domain description (text, image,...).")
 class Description extends CytomineDomain implements Serializable {
 
     /**
      * text data
      */
-    @ApiObjectFieldLight(description = "Description text")
+    @RestApiObjectField(description = "Description text")
     String data
 
     /**
      * Domain class Name
      */
-    @ApiObjectFieldLight(description = "Domain class name")
+    @RestApiObjectField(description = "Domain class name")
     String domainClassName
 
     /**
      * Domain id
      */
-    @ApiObjectFieldLight(description = "Domain id")
+    @RestApiObjectField(description = "Domain id")
     Long domainIdent
 
     static constraints = {

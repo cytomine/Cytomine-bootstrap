@@ -3,17 +3,17 @@ package be.cytomine.api.processing
 import be.cytomine.api.RestController
 import be.cytomine.project.Project
 import grails.converters.JSON
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller that handle the link between a project and a image filter
  */
-@Api(name = "image filter project services", description = "Methods for managing image filter project, a link between an image filter and a project")
+@RestApi(name = "image filter project services", description = "Methods for managing image filter project, a link between an image filter and a project")
 class RestImageFilterProjectController extends RestController {
 
     def imageFilterProjectService
@@ -23,7 +23,7 @@ class RestImageFilterProjectController extends RestController {
     /**
      * List all image filter project
      */
-    @ApiMethodLight(description="List all image filter project", listing = true)
+    @RestApiMethod(description="List all image filter project", listing = true)
     def list() {
  		responseSuccess(imageFilterProjectService.list())
     }
@@ -31,9 +31,9 @@ class RestImageFilterProjectController extends RestController {
     /**
      * List all image filter for a project
      */
-    @ApiMethodLight(description="List all image filter project for a specific project", listing=true)
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="project", type="long", paramType = ApiParamType.PATH, description = "The project id")
+    @RestApiMethod(description="List all image filter project for a specific project", listing=true)
+    @RestApiParams(params=[
+        @RestApiParam(name="project", type="long", paramType = RestApiParamType.PATH, description = "The project id")
     ])
     def listByProject() {
         def project = Project.read(params.project)
@@ -48,7 +48,7 @@ class RestImageFilterProjectController extends RestController {
     /**
      * Add an image filter to a project
      */
-    @ApiMethodLight(description="Add an image filter to a project")
+    @RestApiMethod(description="Add an image filter to a project")
     def add () {
         add(imageFilterProjectService, request.JSON)
     }
@@ -56,9 +56,9 @@ class RestImageFilterProjectController extends RestController {
     /**
      * Delete an image filter from a project
      */
-    @ApiMethodLight(description="Delete an image filter from a project")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The image filter id")
+    @RestApiMethod(description="Delete an image filter from a project")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image filter id")
     ])
     def delete() {
         delete(imageFilterProjectService, JSON.parse("{id : $params.id}"),null)

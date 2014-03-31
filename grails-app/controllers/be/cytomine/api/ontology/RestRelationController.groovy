@@ -2,18 +2,18 @@ package be.cytomine.api.ontology
 
 import be.cytomine.api.RestController
 import be.cytomine.ontology.Relation
-import jsondoc.annotation.ApiMethodLight
-import jsondoc.annotation.ApiParamLight
-import org.jsondoc.core.annotation.Api
+import org.restapidoc.annotation.RestApiMethod
+import org.restapidoc.annotation.RestApiParam
+import org.restapidoc.annotation.RestApi
 
-import jsondoc.annotation.ApiParamsLight
-import org.jsondoc.core.pojo.ApiParamType
+import org.restapidoc.annotation.RestApiParams
+import org.restapidoc.pojo.RestApiParamType
 
 /**
  * Controller for relation between terms (parent, synonym,...)
  * We only use "parent" now, but we could later implement CRUD to support new type of relation
  */
-@Api(name = "relation services", description = "Methods for managing relations")
+@RestApi(name = "relation services", description = "Methods for managing relations")
 class RestRelationController extends RestController {
 
 
@@ -23,7 +23,7 @@ class RestRelationController extends RestController {
     /**
      * List all relation available
      */
-    @ApiMethodLight(description="List all relation available", listing = true)
+    @RestApiMethod(description="List all relation available", listing = true)
     def list () {
         responseSuccess(relationService.list())
     }
@@ -31,9 +31,9 @@ class RestRelationController extends RestController {
     /**
      * Get a single relation with its id
      */
-    @ApiMethodLight(description="Get a relation")
-    @ApiParamsLight(params=[
-        @ApiParamLight(name="id", type="long", paramType = ApiParamType.PATH,description = "The relation id")
+    @RestApiMethod(description="Get a relation")
+    @RestApiParams(params=[
+        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The relation id")
     ])
     def show () {
         Relation relation = relationService.read(params.long('id'))

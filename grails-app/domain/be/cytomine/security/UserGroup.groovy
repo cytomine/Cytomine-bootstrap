@@ -3,21 +3,21 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import jsondoc.annotation.ApiObjectFieldLight
+import org.restapidoc.annotation.RestApiObjectField
 import org.apache.commons.lang.builder.HashCodeBuilder
-import org.jsondoc.core.annotation.ApiObject
+import org.restapidoc.annotation.RestApiObject
 
 /**
  * A group is a set of user
  * UserGroup is the link between a group and a user in database
  */
-@ApiObject(name = "user group", description="Link between a group and a user in database")
+@RestApiObject(name = "user group", description="Link between a group and a user in database")
 class UserGroup extends CytomineDomain {
 
-    @ApiObjectFieldLight(description = "The user id")
+    @RestApiObjectField(description = "The user id")
     User user
 
-    @ApiObjectFieldLight(description = "The group id")
+    @RestApiObjectField(description = "The group id")
     Group group
 
     static belongsTo = [user: User,group: Group]
