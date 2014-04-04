@@ -93,6 +93,18 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
     }
 
+    public beforeUpdate() {
+        super.beforeInsert()
+        if (originalFilename == null || originalFilename == "") {
+            String filename = getFilename()
+            filename = filename.replace(".vips.tiff", "")
+            filename = filename.replace(".vips.tif", "")
+            if (filename.lastIndexOf("/") != -1 && filename.lastIndexOf("/") != filename.size())
+                filename = filename.substring(filename.lastIndexOf("/")+1, filename.size())
+            originalFilename = filename
+        }
+    }
+
 
     /**
      * Insert JSON data into domain in param
@@ -103,6 +115,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
      */
     static AbstractImage insertDataIntoDomain(def json,def domain = new AbstractImage()) throws CytomineException {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
+        domain.originalFilename = JSONUtils.getJSONAttrStr(json,'originalFilename')
         domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
         domain.path = JSONUtils.getJSONAttrStr(json,'path')
         domain.height = JSONUtils.getJSONAttrInteger(json,'height',-1)
@@ -147,8 +160,15 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServersStorage() {
         try {
+            log.info "mime ="+ this.getMime()
+
             def imageServers = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}.findAll{it.available}
+
+            log.info "imageServers ="+ imageServers
+
             def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
+            log.info "storageAbstractImage ="+ storageAbstractImage
+
             if (imageServers.isEmpty() || storageAbstractImage.isEmpty()) return []
             else {
                 return ImageServerStorage.createCriteria().list {
@@ -232,11 +252,15 @@ class AbstractImage extends CytomineDomain implements Serializable {
     def getCropURL(def boundaries) {
         def imageServerStorages = getImageServersStorage()
 
+        log.info "imageServerStorages ="+ imageServerStorages
+
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
             return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
+        log.info "resolver = " + imageServerStorages
+
         if (!resolver) return null
         def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
         Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage

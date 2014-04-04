@@ -78,14 +78,20 @@ var ImageReviewAction = Backbone.View.extend({
             self.validateImage();
             return false;
         });
-        el.find("#unvalidateimage" + self.model.id).on("click", function () {
+        el.find("#unv" +
+                "alidateimage" + self.model.id).on("click", function () {
             self.cancelReviewing();
             return false;
         });
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
         $(self.el).on('click',"a.moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
-            new ImagePropertiesView({model: self.model}).render();
+            if(!window.app.status.currentProjectModel.get('blindMode')) {
+                new ImagePropertiesView({model: self.model}).render();
+            } else {
+                //this protection should be done in server too!
+                window.app.view.message("Blind mode", "The project is in blind mode...you can't see metdata!", "error");
+            }
             return false;
         });
 

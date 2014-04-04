@@ -112,16 +112,18 @@ class AbstractImageService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), image,jsonNewData)
         AbstractImage abstractImage = res.object
-        StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
-            def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
-            sai.delete(flush:true)
-        }
-        jsonNewData.storage.each { storageID ->
-            Storage storage = storageService.read(storageID)
-            StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
-            sai.save(flush:true,failOnError: true)
-        }
 
+        if(jsonNewData.storage) {
+            StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+                def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
+                sai.delete(flush:true)
+            }
+            jsonNewData.storage.each { storageID ->
+                Storage storage = storageService.read(storageID)
+                StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
+                sai.save(flush:true,failOnError: true)
+            }
+        }
         return res
     }
 

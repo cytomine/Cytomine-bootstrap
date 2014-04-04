@@ -49,7 +49,7 @@ class ImageServerTests {
       assert thumb
       assert expected
       assert thumb.width == expected.width
-      assert thumb.height == expected.height
+      assert thumb.height == expected.height-1
   }
 
     void testGetPreview() {

@@ -59,8 +59,11 @@ grails.project.dependency.resolution = {
 
     }
     dependencies {
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
-        test "org.codehaus.geb:geb-spock:0.7.2"
+//        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
+//        test "org.codehaus.geb:geb-spock:0.7.2"
+
+
+
         //runtime "postgresql:postgresql:9.0-801.jdbc4"
                          //   postgresql-9.0-801.jdbc4.jar
 

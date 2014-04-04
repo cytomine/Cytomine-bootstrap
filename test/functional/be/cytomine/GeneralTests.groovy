@@ -269,15 +269,4 @@ class GeneralTests  {
         assert JSON.parse(result.data).name == name
 
     }
-
-
-    void testDocBuilder() {
-        String URL = Infos.CYTOMINEURL + "jsondoc/build.json"
-        def result =DomainAPI.doGET(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assert 200 == result.code
-
-        URL = Infos.CYTOMINEURL + "jsondoc/api.json"
-        result = DomainAPI.doGET(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
-        assert 200 == result.code
-    }
 }

@@ -89,14 +89,14 @@ environments {
         grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
-        grails.resources.adhoc.patterns = []
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     production {
         grails.serverURL = "http://shareview.ecampus.ulg.ac.be" //"http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
-        grails.resources.adhoc.patterns = []
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     development {
         grails.serverURL = "http://localhost:8080"
@@ -104,19 +104,19 @@ environments {
         grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
-        grails.resources.adhoc.patterns = []
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     test {
         grails.serverURL = "http://localhost:8090"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
-        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     perf {
         grails.serverURL = "http://localhost:8080"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
-        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/application/*','/plugins/*']
+        grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
 }
 coverage {
@@ -472,3 +472,36 @@ grails.plugins.restapidoc.customClassName = "be.cytomine.api.doc.CustomResponseD
 grails.plugins.restapidoc.controllerPrefix = "Rest"
 
 grails.plugins.restapidoc.grailsDomainDefaultType = "long"
+
+
+grails.plugins.restapidoc.defaultParamsQueryMultiple = [
+                [name:"max",description:"Pagination: Number of record per page (default 0 = no pagination)",type:"int"],
+                [name:"offset",description:"Pagination: Offset of first record (default 0 = first record)",type:"int"]
+]
+
+grails.plugins.restapidoc.defaultErrorAll = [
+                    "400": "Bad Request: missing parameters or bad message format",
+                    "401": "Unauthorized: must be auth",
+                    "403": "Forbidden: role error",
+                    "404": "Object not found"
+            ]
+
+grails.plugins.restapidoc.defaultErrorGet = [
+                    "400": "Bad Request: missing parameters or bad message format",
+                    "401": "Unauthorized: must be auth",
+                    "403": "Forbidden: role error",
+                    "404": "Object not found"
+            ]
+
+grails.plugins.restapidoc.defaultErrorPost = [
+                    "409": "Object already exist"
+            ]
+
+grails.plugins.restapidoc.defaultErrorPut = [
+                    "409": "Object already exist"
+            ]
+
+
+
+
+

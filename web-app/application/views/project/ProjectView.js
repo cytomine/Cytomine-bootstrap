@@ -28,7 +28,6 @@ var ProjectView = Backbone.View.extend({
     doLayout: function (tpl, newProjectBoxTpl) {
         var self = this;
         $(this.el).find("#projectdiv").html(_.template(tpl, {}));
-
         //clear de list
         $(self.projectListElem).empty();
         $(self.projectListElem).append(_.template(newProjectBoxTpl, {}));
