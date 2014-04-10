@@ -13,7 +13,7 @@ var HotKeys = {
                 }
             }
         );
-        Mousetrap.bind('b',function (evt){
+        Mousetrap.bind('a',function (evt){
                 console.log("***************** ACCEPT *****************");
                 if(self.checkMode("review")) {
                     self.doClick(self.context(),".acceptButton");

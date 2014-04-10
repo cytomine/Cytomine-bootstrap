@@ -216,6 +216,23 @@ abstract class CytomineDomain  implements Comparable{
         }
     }
 
+
+    def get(org.codehaus.groovy.grails.web.json.JSONObject id) {
+        println "GET JSON"
+
+        if(id) {
+            return get(Long.parseLong(id.toString()))
+        } else {
+            return null
+        }
+    }
+
+    def get(org.codehaus.groovy.grails.web.json.JSONObject.Null id) {
+        println "GET JSON2"
+        return null
+    }
+
+
     def read(String id) {
         if(id) {
             return read(Long.parseLong(id))

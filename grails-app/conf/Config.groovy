@@ -112,10 +112,12 @@ environments {
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
-    perf {
-        grails.serverURL = "http://localhost:8080"
-        grails.plugins.springsecurity.useBasicAuth = true
-        grails.plugins.springsecurity.basic.realmName = "Cytomine log"
+    testrun {
+        grails.serverURL = "http://localhost:8090"
+        grails.uploadURL = "http://localhost:9090"
+        grails.imageServerURL = "http://localhost:9080"
+        grails.converters.default.pretty.print = true
+        grails.plugins.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
 }
@@ -335,6 +337,9 @@ environments {
     }
     test {
         grails.plugins.springsecurity.cas.serviceUrl = 'http://localhost:8080/j_spring_cas_security_check'
+    }
+    testrun {
+        grails.plugins.springsecurity.cas.serviceUrl = 'http://localhost:8090/j_spring_cas_security_check'
     }
     production {
         grails.plugins.springsecurity.cas.serviceUrl = 'http://shareview.ecampus.ulg.ac.be/j_spring_cas_security_check'

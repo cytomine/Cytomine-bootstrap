@@ -13,7 +13,7 @@ var ImageReviewAction = Backbone.View.extend({
         el.find("#exploreButton" + self.model.id).click(function () {
             window.location = '#tabs-image-' + self.model.get('project') + '-' + self.model.get('id') + '-';
         });
-
+        console.log(self.model)
         if (self.isNotReviewed()) {
             
             el.find("#explore" + self.model.id).show();
@@ -56,6 +56,7 @@ var ImageReviewAction = Backbone.View.extend({
         }
 
         el.find("#startreview" + self.model.id).on("click", function () {
+            console.log("START REVIEW CLICK");
             self.startReviewing();
             return false;
         });

@@ -156,7 +156,12 @@ abstract class ModelService {
      * @return domain retrieve thanks to json
      */
     def retrieve(Map json) {
-        CytomineDomain domain = currentDomain().get(json.id)
+
+        CytomineDomain domain = null
+        if(json.id && !json.id.toString().equals("null")) {
+            domain = currentDomain().get(json.id)
+        }
+
         if (!domain) {
             throw new ObjectNotFoundException("${currentDomain().class} " + json.id + " not found")
         }

@@ -56,6 +56,8 @@ abstract class AnnotationListing {
     def noAlgoTerm = false
     def multipleTerm = false
 
+    def bboxAnnotation = null
+
 
     def bbox = null
 
@@ -179,6 +181,7 @@ abstract class AnnotationListing {
                 getUsersForTermConst() +
                 getAvoidEmptyCentroidConst() +
                 getIntersectConst() +
+                getIntersectAnnotationConst()+
                 createOrderBy()
 
         return  getSelect(sqlColumns) + getFrom() + whereRequest
@@ -273,6 +276,11 @@ abstract class AnnotationListing {
      def getIntersectConst() {
          return (bbox? "AND ST_Intersects(a.location,ST_GeometryFromText('${bbox.toString()}',0))\n" : "")
      }
+
+    def getIntersectAnnotationConst() {
+        return (bboxAnnotation? "AND ST_Intersects(a.location,ST_GeometryFromText('${bboxAnnotation.toString()}',0))\n" : "")
+    }
+    //
 
      def getAvoidEmptyCentroidConst() {
          return (avoidEmptyCentroid? "AND ST_IsEmpty(st_centroid(a.location))=false\n":"")

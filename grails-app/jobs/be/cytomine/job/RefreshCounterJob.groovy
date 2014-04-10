@@ -7,7 +7,7 @@ class RefreshCounterJob {
     def counterService
 
     static triggers = {
-        simple name: 'generateMissingKeysJob', startDelay: 60000, repeatInterval: 60000*60
+        simple name: 'generateMissingKeysJob', startDelay: 3600000, repeatInterval: 3600000
     }
 
     def execute() {

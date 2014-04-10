@@ -100,7 +100,8 @@ class RestAnnotationDomainController extends RestController {
         @RestApiParam(name="noAlgoTerm", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional) Only get annotation with no term from a job"),
         @RestApiParam(name="multipleTerm", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) Only get annotation with multiple terms"),
         @RestApiParam(name="kmeans", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional) Enable or not kmeans (only for GUI)"),
-        @RestApiParam(name="bbox", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with the bbox (WKT)")
+        @RestApiParam(name="bbox", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with the bbox (WKT)"),
+        @RestApiParam(name="bboxAnnotation", type="Long", paramType = RestApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with this annotation")
     ])
     def search() {
          try {
@@ -326,6 +327,7 @@ class RestAnnotationDomainController extends RestController {
         al.userForTermAlgo = params.getLong('userForTermAlgo')
 
         al.kmeansValue = params.getLong('kmeansValue')
+        al.excludedAnnotation = params.getLong('excludedAnnotation')
 
         def users = params.get('users')
         if(users) {
@@ -366,6 +368,11 @@ class RestAnnotationDomainController extends RestController {
         if(params.get('bbox')) {
             al.bbox = GeometryUtils.createBoundingBox(params.get('bbox')).toText()
         }
+
+        if(params.get('bboxAnnotation')) {
+            al.bboxAnnotation = AnnotationDomain.getAnnotationDomain(params.getLong('bboxAnnotation')).wktLocation
+        }
+
         annotationListingService.listGeneric(al)
     }
 

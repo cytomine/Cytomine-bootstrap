@@ -21,7 +21,7 @@ grails.project.fork = [ test: false, run: false, war: false, console: false ]
 ] */
 //grails.plugin.location."grails-jsondoc" = "/Users/stevben/Cytomine/github/grails-jsondoc"
 
-grails.plugin.location.restapidoc = "../RestApiDoc"
+//grails.plugin.location.restapidoc = "../RestApiDoc"
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -94,7 +94,7 @@ grails.project.dependency.resolution = {
             excludes('hibernate-ehcache')
         }
 
-
+        compile ":rest-api-doc:0.1"
 
 
 //               build ":tomcat:$grailsVersion" //

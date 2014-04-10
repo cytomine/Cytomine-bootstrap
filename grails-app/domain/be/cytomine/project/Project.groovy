@@ -211,7 +211,6 @@ class Project extends CytomineDomain implements Serializable {
         returnArray['isReadOnly'] = domain?.isReadOnly
         returnArray['hideUsersLayers'] = domain?.hideUsersLayers
         returnArray['hideAdminsLayers'] = domain?.hideAdminsLayers
-        returnArray['missingfield'] = null
         return returnArray
     }
 

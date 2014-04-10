@@ -261,7 +261,18 @@ class UserAnnotationListingTests {
         assert json.collection.size()==3 //d is not included!
         //generic way test
         checkUserAnnotationResultNumber("bbox=${e.replace(" ","%20")}&image=${dataSet.image.id}&user=${dataSet.user.id}",3)
+
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(dataSet.image,e,dataSet.user,dataSet.term)
+
+        checkUserAnnotationResultNumber("bboxAnnotation=${annotation.id}&image=${dataSet.image.id}&user=${dataSet.user.id}",4)
+
+        checkUserAnnotationResultNumber("bboxAnnotation=${annotation.id}&image=${dataSet.image.id}&user=${dataSet.user.id}&excludedAnnotation=${annotation.id}",3)
+
     }
+
+
+
+
 
 
 

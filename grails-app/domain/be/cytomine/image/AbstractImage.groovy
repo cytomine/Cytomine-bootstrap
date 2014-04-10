@@ -114,6 +114,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
      * @throws CytomineException Error during properties copy (wrong argument,...)
      */
     static AbstractImage insertDataIntoDomain(def json,def domain = new AbstractImage()) throws CytomineException {
+        println "insertDataIntoDomain"
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.originalFilename = JSONUtils.getJSONAttrStr(json,'originalFilename')
         domain.filename = JSONUtils.getJSONAttrStr(json,'filename')
@@ -125,6 +126,8 @@ class AbstractImage extends CytomineDomain implements Serializable {
         domain.scanner = JSONUtils.getJSONAttrDomain(json,"scanner",new Instrument(),false)
         domain.sample = JSONUtils.getJSONAttrDomain(json,"sample",new Sample(),false)
         domain.mime = JSONUtils.getJSONAttrDomain(json,"mime",new Mime(),'extension','String',true)
+        domain.magnification = JSONUtils.getJSONAttrInteger(json,'magnification',null)
+        domain.resolution = JSONUtils.getJSONAttrDouble(json,'resolution',null)
 
         if (domain.mime.imageServers().size() == 0) {
             throw new WrongArgumentException("Mime with id:${json.mime} has not image server")
@@ -160,14 +163,10 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def getImageServersStorage() {
         try {
-            log.info "mime ="+ this.getMime()
 
             def imageServers = MimeImageServer.findAllByMime(this.getMime())?.collect {it.imageServer}.findAll{it.available}
 
-            log.info "imageServers ="+ imageServers
-
             def storageAbstractImage = StorageAbstractImage.findAllByAbstractImage(this)?.collect { it.storage }
-            log.info "storageAbstractImage ="+ storageAbstractImage
 
             if (imageServers.isEmpty() || storageAbstractImage.isEmpty()) return []
             else {
@@ -252,14 +251,11 @@ class AbstractImage extends CytomineDomain implements Serializable {
     def getCropURL(def boundaries) {
         def imageServerStorages = getImageServersStorage()
 
-        log.info "imageServerStorages ="+ imageServerStorages
-
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
             return null
         }
         def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
         Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
-        log.info "resolver = " + imageServerStorages
 
         if (!resolver) return null
         def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
