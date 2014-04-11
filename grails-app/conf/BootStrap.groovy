@@ -28,7 +28,9 @@ class BootStrap {
 
     def retrieveErrorsService
     def bootstrapTestDataService
+    def bootstrapTestRunDataService
     def bootstrapProdDataService
+
     def bootstrapUtilsService
     def javascriptService
     def dataSource
@@ -42,7 +44,7 @@ class BootStrap {
 
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
-        log.info "GrailsUtil.environment= " + Environment.getCurrent() + " BootStrap.development=" + Environment.DEVELOPMENT
+        log.info "GrailsUtil.environment= " + Environment.getCurrent().name + " BootStrap.development=" + Environment.DEVELOPMENT
 
         //Initialize marshallers and services
         marshallersService.initMarshallers()
@@ -63,10 +65,12 @@ class BootStrap {
         /* Fill data just in test environment*/
         if (Environment.getCurrent() == Environment.TEST) {
             bootstrapTestDataService.initData()
+        } else  if(Environment.getCurrent().name.equals("testrun")) {
+            bootstrapTestRunDataService.initData()
         }
 
         //if database is empty, put minimal data
-        if (SecUser.count() == 0 && Environment.getCurrent() != Environment.TEST) {
+        if (SecUser.count() == 0 && Environment.getCurrent() != Environment.TEST && !Environment.getCurrent().name.equals("testrun")) {
             bootstrapTestDataService.initData()
         }
 

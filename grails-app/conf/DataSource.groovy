@@ -64,7 +64,7 @@ environments {
     testrun {
         dataSource {
             //loggingSql = true
-            dbCreate = "update"
+            dbCreate = "create"
             url="jdbc:postgresql://localhost:5432/cytominetestrun"
             password = "postgres"
         }

@@ -19,15 +19,10 @@ class BootstrapTestDataService {
 
     def initData() {
 
-        new Sql(dataSource).executeUpdate("DROP TABLE IF EXISTS  task_comment")
-        new Sql(dataSource).executeUpdate("DROP TABLE IF EXISTS  task")
-
-        new Sql(dataSource).executeUpdate("CREATE TABLE task (id bigint,progress bigint,project_id bigint,user_id bigint,print_in_activity boolean)")
-        new Sql(dataSource).executeUpdate("CREATE TABLE task_comment (task_id bigint,comment character varying(255),timestamp bigint)")
+        recreateTableFromNotDomainClass()
 
 //        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
-
 
         def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : 'http://localhost:8081', available : true]
         def LociImageServer = [className : 'LociResolver', name : 'Loci', service : '/loci/tile', url : 'http://localhost:9080', available : true]
@@ -72,6 +67,14 @@ class BootstrapTestDataService {
         imageServerUser.setPublicKey("4a5c7004-b6f8-4705-a118-c15d5c90dcdb")
         imageServerUser.save(flush : true)
 
+    }
+
+    public void recreateTableFromNotDomainClass() {
+        new Sql(dataSource).executeUpdate("DROP TABLE IF EXISTS  task_comment")
+        new Sql(dataSource).executeUpdate("DROP TABLE IF EXISTS  task")
+
+        new Sql(dataSource).executeUpdate("CREATE TABLE task (id bigint,progress bigint,project_id bigint,user_id bigint,print_in_activity boolean)")
+        new Sql(dataSource).executeUpdate("CREATE TABLE task_comment (task_id bigint,comment character varying(255),timestamp bigint)")
     }
 
     def initSoftwareAndJobTemplate(Long idProject, Long term) {

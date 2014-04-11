@@ -105,7 +105,7 @@ var MultiDimensionPanel = SideBarPanel.extend({
 
                             buttonContainer.append('<br/><input class="mergeChannel" data-channel="'+i+'" type="checkbox" id="mergeChannel'+i+'"+> Channel' + i + " ");
                             buttonContainer.append('<input type="text" style="width:100px;" class="span1" id="mergeChannelColor'+i+'" value="'+color+'" id="cp1" >')
-                            var colorPicker = buttonContainer.find('#mergeChannelColor'+i).colorpicker();
+                            //var colorPicker = buttonContainer.find('#mergeChannelColor'+i).colorpicker();
                             indice++;
                         }
                         buttonContainer.append('<br/><button class="btn btn-default btn-xs merge">Merge</button>');
