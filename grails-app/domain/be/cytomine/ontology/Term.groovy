@@ -5,6 +5,7 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.utils.JSONUtils
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
 
@@ -12,7 +13,7 @@ import org.restapidoc.annotation.RestApiObjectFields
  * A term is a class that can be link to an annotation
  * A term is a part of ontology (list/tree of terms)
  */
-//@RestApiObject(name = "term", description = "Term description", show = true)
+@RestApiObject(name = "term", description = "Term description")
 class Term extends CytomineDomain implements Serializable, Comparable {
 
     @RestApiObjectField(description = "The term name")
