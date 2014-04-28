@@ -1,5 +1,6 @@
 package be.cytomine.security
 
+import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.SecurityACL
 import be.cytomine.command.AddCommand
@@ -9,6 +10,7 @@ import be.cytomine.command.Transaction
 import be.cytomine.processing.Job
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -56,6 +58,9 @@ class SecUserSecRoleService extends ModelService {
      */
     def delete(SecUserSecRole domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
+        if(domain.secUser.id==currentUser.id) {
+            throw new ForbiddenException("You cannot remove you a role")
+        }
         if(domain.secUser.algo()) {
             Job job = ((UserJob)domain.secUser).job
             SecurityACL.check(job?.container(),READ)
@@ -70,6 +75,52 @@ class SecUserSecRoleService extends ModelService {
     def getStringParamsI18n(def domain) {
         return [domain.secUser.id, domain.secRole.id]
     }
+
+    /**
+     * Define a role for a user. If admin is defined, user will have admin,user,guest. If user is defined, user will have user,guest, etc
+     * @param json New domain data
+     * @return Response structure (created domain data,..)
+     */
+    def define(SecUser user, SecRole role) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        SecurityACL.checkAdmin(currentUser)
+
+        SecRole roleGuest = SecRole.findByAuthority("ROLE_GUEST")
+        SecRole roleUser = SecRole.findByAuthority("ROLE_USER")
+        SecRole roleAdmin = SecRole.findByAuthority("ROLE_ADMIN")
+
+        if(role.authority.equals("ROLE_ADMIN")) {
+            addRole(user,roleGuest)
+            addRole(user,roleUser)
+            addRole(user,roleAdmin)
+        } else if(role.authority.equals("ROLE_USER")) {
+            addRole(user,roleGuest)
+            addRole(user,roleUser)
+            removeRole(user,roleAdmin)
+        }else if(role.authority.equals("ROLE_GUEST")) {
+            addRole(user,roleGuest)
+            removeRole(user,roleUser)
+            removeRole(user,roleAdmin)
+        }
+    }
+
+    private def addRole(SecUser user,SecRole role) {
+        SecUserSecRole linked = SecUserSecRole.findBySecUserAndSecRole(user,role)
+        if(!linked) {
+            SecUserSecRole susr = new SecUserSecRole(secUser: user,secRole:role)
+            super.saveDomain(susr)
+        }
+    }
+    private def removeRole(SecUser user,SecRole role) {
+        SecUserSecRole linked = SecUserSecRole.findBySecUserAndSecRole(user,role)
+        if(linked) {
+            if(user.id==cytomineService.getCurrentUser().id) {
+                throw new ForbiddenException("You cannot remove you a role")
+            }
+            super.removeDomain(linked)
+        }
+    }
+
 
     /**
        * Retrieve domain thanks to a JSON object

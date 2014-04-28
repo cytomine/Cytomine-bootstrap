@@ -4,6 +4,7 @@ import be.cytomine.image.server.ImageServer
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.*
 import be.cytomine.project.Project
+import be.cytomine.security.Group
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
@@ -34,6 +35,9 @@ class BootstrapTestRunDataService {
     static long ID_ONTOLOGY = 301l
 
     static long ID_PROJECT = 401l
+
+    static long ID_GROUP1 = 501l
+    static long ID_GROUP2 = 502l
 
     def initData() {
 
@@ -77,6 +81,11 @@ class BootstrapTestRunDataService {
         Infos.addUserRight(user,project)
         Infos.addUserRight(user,ontology)
 
+
+        Group group1 =new Group(name:"LBTD")
+        group1.save(flush:true)
+        Group group2 =new Group(name:"ANAPATH")
+        group2.save(flush:true)
 
        new Sql(dataSource).execute("ALTER SEQUENCE hibernate_sequence RESTART WITH 100000;")
 

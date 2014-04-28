@@ -15,5 +15,9 @@ class SecUserSecRoleUrlMappings {
         "/api/user/$user/role/$role.$format"(controller: "restSecUserSecRole") {
             action = [GET:"show", DELETE:"delete"]
         }
+
+        "/api/user/$user/role/$role/define.$format"(controller: "restSecUserSecRole") {
+            action = [PUT:"define"]
+        }
     }
 }

@@ -6,6 +6,7 @@ import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
+import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
@@ -32,6 +33,7 @@ class RestUserController extends RestController {
     def projectService
     def ontologyService
     def imageInstanceService
+    def groupService
 
     /**
      * Get all project users
@@ -133,6 +135,15 @@ class RestUserController extends RestController {
         ImageInstance image = imageInstanceService.read(params.long('image'))
         if (project) {
             responseSuccess(secUserService.listLayers(project,image))
+        } else {
+            responseNotFound("User", "Project", params.id)
+        }
+    }
+
+    def listByGroup() {
+        Group group = groupService.read(params.long('id'))
+        if (group) {
+            responseSuccess(secUserService.listByGroup(group))
         } else {
             responseNotFound("User", "Project", params.id)
         }

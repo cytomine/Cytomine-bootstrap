@@ -40,4 +40,9 @@ class UserRoleAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/user/${idUser}/role/${idRole}.json"
         return doDELETE(URL,username,password)
     }
+
+    static def define(Long idUser, Long idRole, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/user/${idUser}/role/${idRole}/define.json"
+        return doPUT(URL,"",username,password)
+    }
 }

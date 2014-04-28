@@ -35,6 +35,11 @@ class UserUrlMappings {
         "/api/userJob/$id.$format"(controller:"restUserJob"){
             action = [GET:"showUserJob"]
         }
+
+        "/api/group/$id/user.$format"(controller: "restUser"){
+            action = [GET:"listByGroup"]
+        }
+
         "/api/project/$id/user.$format"(controller: "restUser"){
             action = [GET:"showByProject",POST:"addUser"]
         }

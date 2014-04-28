@@ -63,6 +63,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
         def returnArray = CytomineDomain.getDataFromDomain(domain)
         returnArray['user'] = domain?.secUser?.id
         returnArray['role'] = domain?.secRole?.id
+        returnArray['authority'] = domain?.secRole?.authority
         returnArray
     }
 

@@ -81,4 +81,50 @@ class UserRoleTests  {
   }
 
 
+    void testDefineUserRole() {
+
+        def roleGuest = SecRole.findByAuthority("ROLE_GUEST")
+        def roleUser = SecRole.findByAuthority("ROLE_USER")
+        def roleAdmin = SecRole.findByAuthority("ROLE_ADMIN")
+
+        def user = BasicInstanceBuilder.getGhestNotExist(true)
+
+        assert hasRole(user.id,roleGuest.id)
+        assert !hasRole(user.id,roleUser.id)
+        assert !hasRole(user.id,roleAdmin.id)
+
+        def result = UserRoleAPI.define(user.id,roleAdmin.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 200
+
+        assert hasRole(user.id,roleGuest.id)
+        assert hasRole(user.id,roleUser.id)
+        assert hasRole(user.id,roleAdmin.id)
+
+        result = UserRoleAPI.define(user.id,roleGuest.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 200
+
+        assert hasRole(user.id,roleGuest.id)
+        assert !hasRole(user.id,roleUser.id)
+        assert !hasRole(user.id,roleAdmin.id)
+
+        result = UserRoleAPI.define(user.id,roleUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 200
+
+        assert hasRole(user.id,roleGuest.id)
+        assert hasRole(user.id,roleUser.id)
+        assert !hasRole(user.id,roleAdmin.id)
+
+        result = UserRoleAPI.define(-99,roleUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 404
+        result = UserRoleAPI.define(user.id,-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 404
+    }
+
+    private boolean hasRole(def idUser,idRole) {
+        def result = UserRoleAPI.show(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code == 200 || result.code == 404
+        return (200 == result.code)
+    }
+
+
 }

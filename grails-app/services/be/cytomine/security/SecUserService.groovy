@@ -130,6 +130,8 @@ class SecUserService extends ModelService {
     }
 
 
+
+
     def listAdmins(Project project) {
         SecurityACL.check(project,READ)
         def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
@@ -146,6 +148,11 @@ class SecUserService extends ModelService {
             users.addAll(listUsers(project))
         }
         users.unique()
+    }
+
+    def listByGroup(Group group) {
+        SecurityACL.checkAdmin(cytomineService.currentUser)
+        UserGroup.findAllByGroup(group).collect{it.user}
     }
 
     /**

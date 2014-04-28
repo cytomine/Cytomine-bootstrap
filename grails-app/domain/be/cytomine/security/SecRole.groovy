@@ -27,6 +27,7 @@ class SecRole {
      */
     static def getDataFromDomain(def domain) {
         def returnArray = [:]
+        returnArray['id'] = domain?.id
         returnArray['authority'] = domain?.authority
         returnArray
     }
