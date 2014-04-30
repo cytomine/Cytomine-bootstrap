@@ -249,6 +249,9 @@ class UnionGeometryService {
          sql.eachRow(request) {
              data << [it[0],it[1]]
          }
+         try {
+             sql.close()
+         }catch (Exception e) {}
          log.info "find intersect annotation... ${data.size()}"
          data
      }
@@ -274,7 +277,9 @@ class UnionGeometryService {
         sql.eachRow(request) {
             log.info it[2] + "\t" + it[0] + "\t" + it[1]  + "\t" + it[3]  + "\t" + it[4]
         }
-
+        try {
+            sql.close()
+        }catch (Exception e) {}
 
     }
 

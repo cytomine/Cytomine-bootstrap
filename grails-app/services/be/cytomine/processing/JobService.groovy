@@ -207,7 +207,11 @@ class JobService extends ModelService {
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         def request = "delete from algo_annotation where user_id in (" + usersId.join(',') +")"
-        new Sql(dataSource).execute(request,[])
+        def sql = new Sql(dataSource)
+         sql.execute(request,[])
+        try {
+            sql.close()
+        }catch (Exception e) {}
     }
 
     /**
@@ -218,7 +222,11 @@ class JobService extends ModelService {
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         def request = "delete from algo_annotation_term where user_job_id in ("+ usersId.join(',')+")"
-        new Sql(dataSource).execute(request,[])
+        def sql = new Sql(dataSource)
+        sql.execute(request,[])
+        try {
+            sql.close()
+        }catch (Exception e) {}
 
     }
 

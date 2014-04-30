@@ -161,10 +161,13 @@ class IndexService {
 
         boolean alreadyExist = false
 
-        new Sql(dataSource).eachRow("select indexname from pg_indexes where indexname like ?",[name]) {
+        def sql = new Sql(dataSource)
+         sql.eachRow("select indexname from pg_indexes where indexname like ?",[name]) {
             alreadyExist = true
         }
-
+        try {
+            sql.close()
+        }catch (Exception e) {}
         //try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}
         try {
             if(alreadyExist) {
@@ -172,7 +175,11 @@ class IndexService {
             } else {
                 String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
                 log.info reqcreate
-                new Sql(dataSource).execute(reqcreate)
+                sql = new Sql(dataSource)
+                 sql.execute(reqcreate)
+                try {
+                    sql.close()
+                }catch (Exception e) {}
             }
 
         } catch(Exception e) {

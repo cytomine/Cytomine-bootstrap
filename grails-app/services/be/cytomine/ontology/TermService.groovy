@@ -81,9 +81,13 @@ class TermService extends ModelService {
         //better perf with sql request
         String request = "SELECT t.id FROM term t WHERE t.ontology_id="+project.ontology.id
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+         sql.eachRow(request) {
             data << it[0]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 

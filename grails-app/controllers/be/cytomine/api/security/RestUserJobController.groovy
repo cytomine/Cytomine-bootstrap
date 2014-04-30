@@ -183,7 +183,8 @@ class RestUserJobController extends RestController {
                                  "AND sec_user.id IN (SELECT DISTINCT user_id FROM algo_annotation WHERE image_id = ${image.id}) "+
                                  "ORDER BY job.created DESC"
                 def data = []
-                new Sql(dataSource).eachRow(request) {
+                def sql = new Sql(dataSource)
+                 sql.eachRow(request) {
                     def item = [:]
                     item.id = it.idUser
                     item.idJob = it.idJob
@@ -194,6 +195,9 @@ class RestUserJobController extends RestController {
                     item.isDeleted = it.deleted
                     data << item
                 }
+                try {
+                    sql.close()
+                }catch (Exception e) {}
                 responseSuccess(data)
             } else {
                 def userJobs = []

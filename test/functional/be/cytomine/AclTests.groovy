@@ -5,6 +5,7 @@ import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AclAPI
+import be.cytomine.test.http.OntologyAPI
 import be.cytomine.test.http.ProjectAPI
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
@@ -59,6 +60,7 @@ class AclTests {
 
         assert (403 == ProjectAPI.show(project.id,user.username,"password").code)
         assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
+        assert (403 == OntologyAPI.show(project.ontology.id,user.username,"password").code)
 
         def result = AclAPI.create(project.class.name, project.id, user.id,"READ",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -66,6 +68,7 @@ class AclTests {
 
         assert (200 == ProjectAPI.show(project.id,user.username,"password").code)
         assert (403 == ProjectAPI.update(project.id,project.encodeAsJSON(),user.username,"password").code)
+        assert (200 == OntologyAPI.show(project.ontology.id,user.username,"password").code)
 
         result = AclAPI.create(project.class.name, project.id, user.id,"ADMINISTRATION",Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert 200 == result.code
@@ -162,4 +165,36 @@ class AclTests {
 
     }
 
+
+    void testListAclAsAdmin() {
+        User user = BasicInstanceBuilder.getUserNotExist(true)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
+
+
+
+        def result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert result.code==200
+
+        assert null==JSON.parse(result.data).collection.find{
+            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 1 && it.idUser==user.id
+        }
+
+
+        //add user to project
+        AclAPI.create(project.class.name, project.id, user.id,"READ",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        assert null!=JSON.parse(result.data).collection.find{
+            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 1 && it.idUser==user.id
+        }
+
+        AclAPI.create(project.class.name, project.id, user.id,"ADMIN",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+
+        assert null!=JSON.parse(result.data).collection.find{
+            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 16 && it.idUser==user.id
+        }
+    }
 }

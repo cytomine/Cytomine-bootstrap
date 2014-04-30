@@ -32,13 +32,16 @@ class CounterService {
              * count_image_reviewed_annotations = (SELECT count(*) FROM reviewed_annotation WHERE image_id = ii.id AND deleted IS NULL);
              *
              */
-            new Sql(dataSource).executeUpdate("UPDATE image_instance ii\n" +
+            def sql = new Sql(dataSource)
+             sql.executeUpdate("UPDATE image_instance ii\n" +
                     "SET\n" +
                     "  count_image_annotations = (SELECT count(*) FROM user_annotation WHERE image_id = ii.id AND deleted IS NULL),\n" +
                     "  count_image_job_annotations = (SELECT count(*) FROM algo_annotation WHERE image_id = ii.id AND deleted IS NULL),\n" +
                     "  count_image_reviewed_annotations = (SELECT count(*) FROM reviewed_annotation WHERE image_id = ii.id AND deleted IS NULL)")
 
-
+            try {
+                sql.close()
+            }catch (Exception e) {}
             /*
             * Refresh counter for each images
             * UPDATE project p
@@ -50,14 +53,17 @@ class CounterService {
             * WHERE p.id IN (SELECT DISTINCT project_id FROM image_instance WHERE deleted IS NULL);
             *
             */
-            new Sql(dataSource).executeUpdate("UPDATE project p\n" +
+             sql = new Sql(dataSource)
+             sql.executeUpdate("UPDATE project p\n" +
                     "  SET \n" +
                     "    count_annotations = (SELECT sum(count_image_annotations) FROM image_instance WHERE project_id = p.id AND deleted IS NULL),\n" +
                     "    count_job_annotations = (SELECT sum(count_image_job_annotations) FROM image_instance WHERE project_id = p.id AND deleted IS NULL),\n" +
                     "    count_reviewed_annotations = (SELECT sum(count_image_reviewed_annotations) FROM image_instance WHERE project_id = p.id AND deleted IS NULL),\n" +
                     "    count_images = (SELECT count(*) FROM image_instance WHERE project_id = p.id AND deleted IS NULL)\n" +
                     "WHERE p.id IN (SELECT DISTINCT project_id FROM image_instance WHERE deleted IS NULL)")
-
+            try {
+                sql.close()
+            }catch (Exception e) {}
 
             /*
            * Refresh counter for each images
@@ -70,14 +76,17 @@ class CounterService {
            * WHERE p.id NOT IN (SELECT DISTINCT project_id FROM image_instance WHERE deleted IS NULL);
            *
            */
-            new Sql(dataSource).executeUpdate("UPDATE project p\n" +
+           sql = new Sql(dataSource)
+            sql.executeUpdate("UPDATE project p\n" +
                     "SET\n" +
                     "  count_annotations = 0,\n" +
                     "  count_job_annotations = 0,\n" +
                     "  count_reviewed_annotations = 0,\n" +
                     "  count_images = 0\n" +
                     "WHERE p.id NOT IN (SELECT DISTINCT project_id FROM image_instance WHERE deleted IS NULL)")
-
+            try {
+                sql.close()
+            }catch (Exception e) {}
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e

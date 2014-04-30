@@ -328,13 +328,17 @@ class UserAnnotationService extends ModelService {
      */
     private def selectUserAnnotationLightForRetrieval(String request) {
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
 
             long idAnnotation = it[0]
             long idContainer = it[1]
             def url = UrlApi.getAnnotationMinCropWithAnnotationId(idAnnotation)
             data << [id: idAnnotation, container: idContainer, url: url]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data
     }
 

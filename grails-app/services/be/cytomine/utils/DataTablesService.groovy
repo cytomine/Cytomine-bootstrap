@@ -94,7 +94,8 @@ class DataTablesService {
 
 
             def data = []
-            new Sql(dataSource).eachRow(request) {
+            def sql = new Sql(dataSource)
+            sql.eachRow(request) {
                 def img = [:]
                 img.id=it[0]
                 img.originalFilename=it[1]
@@ -103,7 +104,9 @@ class DataTablesService {
                 img.inProject = it[3]
                 data << img
             }
-
+            try {
+                sql.close()
+            }catch (Exception e) {}
 
             data.sort {
                 //id, name,....

@@ -9,6 +9,7 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
+import be.cytomine.security.UserGroup
 import be.cytomine.test.Infos
 import groovy.sql.Sql
 
@@ -38,6 +39,10 @@ class BootstrapTestRunDataService {
 
     static long ID_GROUP1 = 501l
     static long ID_GROUP2 = 502l
+
+    static long ID_USER_GROUP11 = 601l
+    static long ID_USER_GROUP12 = 602l
+    static long ID_USER_GROUP21 = 603l
 
     def initData() {
 
@@ -83,9 +88,19 @@ class BootstrapTestRunDataService {
 
 
         Group group1 =new Group(name:"LBTD")
+        group1.setId(ID_GROUP1)
         group1.save(flush:true)
         Group group2 =new Group(name:"ANAPATH")
+        group2.setId(ID_GROUP1)
         group2.save(flush:true)
+
+        UserGroup ug1 = new UserGroup(user:user,group: group1)
+        ug1.setId(ID_USER_GROUP11)
+        ug1.save(flush:true,failOnError: true)
+
+        UserGroup ug2 = new UserGroup(user:user,group: group2)
+        ug2.setId(ID_USER_GROUP12)
+        ug2.save(flush:true,failOnError: true)
 
        new Sql(dataSource).execute("ALTER SEQUENCE hibernate_sequence RESTART WITH 100000;")
 

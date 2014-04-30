@@ -168,9 +168,13 @@ class SecUserService extends ModelService {
                 " AND acl_sid.sid = sec_user.username " +
                 " AND sec_user.class = 'be.cytomine.security.User' "
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             data << it[0]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
@@ -185,7 +189,8 @@ class SecUserService extends ModelService {
                         "AND j.software_id = s.id\n" +
                         "ORDER BY j.created"
                 def data = []
-                new Sql(dataSource).eachRow(request) {
+                def sql = new Sql(dataSource)
+                sql.eachRow(request) {
                     def item = [:]
                     item.id = it.id
                     item.username = it.username
@@ -194,6 +199,9 @@ class SecUserService extends ModelService {
                     item.algo = true
                     data << item
                 }
+                try {
+                    sql.close()
+                }catch (Exception e) {}
         data
     }
 

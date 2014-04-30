@@ -92,9 +92,13 @@ class ProjectService extends ModelService {
             LIMIT $max
         """
 
-        new Sql(dataSource).eachRow(request1,[]) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request1,[]) {
             data << [id:it.id, date:it.date, opened: true]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
 
         if(data.size()<max) {
             //user has open less than max project, so we add last created project
@@ -106,10 +110,13 @@ class ProjectService extends ModelService {
                 ORDER BY date desc
             """
 
-            new Sql(dataSource).eachRow(request2,[]) {
+            sql = new Sql(dataSource)
+            sql.eachRow(request2,[]) {
                 data << [id:it.id, date:it.date, opened: false]
             }
-
+            try {
+                sql.close()
+            }catch (Exception e) {}
         }
         return data
     }
@@ -144,27 +151,39 @@ class ProjectService extends ModelService {
     def listByCreator(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("select * from creator_project where user_id = ?",[user.id]) {
+        def sql = new Sql(dataSource)
+         sql.eachRow("select * from creator_project where user_id = ?",[user.id]) {
             data << [id:it.id, name:it.name]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
     def listByAdmin(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("select * from admin_project where user_id = ?",[user.id]) {
+        def sql = new Sql(dataSource)
+        sql.eachRow("select * from admin_project where user_id = ?",[user.id]) {
             data << [id:it.id, name:it.name]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
     def listByUser(User user) {
         SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
-        new Sql(dataSource).eachRow("select * from user_project where user_id = ?",[user.id]) {
+        def sql = new Sql(dataSource)
+        sql.eachRow("select * from user_project where user_id = ?",[user.id]) {
             data << [id:it.id, name:it.name]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 

@@ -4,7 +4,9 @@ dataSource {
 //    driverClassName = "com.p6spy.engine.spy.P6SpyDriver" // use this driver to enable p6spy logging
   username = "postgres"
   dialect = org.hibernatespatial.postgis.PostgisDialect
-
+    properties {
+        maxActive = 500
+    }
 }
 hibernate {
   cache.use_second_level_cache = true

@@ -4,6 +4,7 @@ import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecUser
 import grails.util.Environment
+import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
@@ -45,6 +46,19 @@ class BootStrap {
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
         log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
         log.info "GrailsUtil.environment= " + Environment.getCurrent().name + " BootStrap.development=" + Environment.DEVELOPMENT
+
+
+        def ctx = servletContext.getAttribute(
+                ApplicationAttributes.APPLICATION_CONTEXT
+        )
+        def dataSource = ctx.dataSourceUnproxied
+
+        println "configuring database connection pool"
+
+        dataSource.properties.each { println it }
+
+
+
 
         //Initialize marshallers and services
         marshallersService.initMarshallers()

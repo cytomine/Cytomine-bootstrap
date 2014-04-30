@@ -15,9 +15,15 @@ class AnnotationIndexService {
                 " FROM annotation_index \n" +
                 " WHERE image_id = "+image.id
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+
+        sql.eachRow(request) {
             data << [user:it[0],image: it[1], countAnnotation: it[2],countReviewedAnnotation: it[3]]
         }
+
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
 
     }
@@ -38,10 +44,14 @@ class AnnotationIndexService {
         }
 
         long value = 0
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             def val = it[0]
             val? value = val : 0
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return value
     }
 

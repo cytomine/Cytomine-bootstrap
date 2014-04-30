@@ -13,9 +13,13 @@ class KeywordsController extends RestController {
 
     def list = {
         def data = []
-        new Sql(dataSource).eachRow("select key from keyword order by key asc",[]) {
+        def sql = new Sql(dataSource)
+        sql.eachRow("select key from keyword order by key asc",[]) {
             data << it.key
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         responseSuccess(data)
     }
 }

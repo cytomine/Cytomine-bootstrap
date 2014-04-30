@@ -54,7 +54,8 @@ class KmeansGeometryService {
 
         double max = 1
 
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
 
             long idK = it[0]
             long count = it[1]
@@ -64,7 +65,9 @@ class KmeansGeometryService {
             String location = it[2]
             data << [id: idK, location: location, term:  [], count: count]
         }
-
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data.each {
             it.ratio = ((double)it.count/max)
         }

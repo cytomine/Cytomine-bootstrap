@@ -125,14 +125,22 @@ class PermissionService {
 
     def executeAclRequest(String request,def params = []) {
         def id = null
-        new Sql(dataSource).eachRow(request,params) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request,params) {
             id = it[0]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return id
     }
 
     def executeAclCUD(String request,def params = []) {
-        new Sql(dataSource).execute(request,params)
+        def sql = new Sql(dataSource)
+         sql.execute(request,params)
+        try {
+            sql.close()
+        }catch (Exception e) {}
     }
 
 

@@ -172,7 +172,8 @@ class SearchService extends ModelService {
         def data = []
         String domain
 
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             def dataTmp = [:]
 
             //SELECT DISTINCT pro.id as id, pro.created as created, '<domain>' as class, pro.name as name, d.data as description, null as user, null as userfullname, pro.name as projectName, null as imageName " +
@@ -209,6 +210,9 @@ class SearchService extends ModelService {
 
             data.add(dataTmp)
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data
     }
 

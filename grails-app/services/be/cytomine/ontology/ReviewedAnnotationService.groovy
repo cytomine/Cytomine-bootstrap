@@ -68,10 +68,14 @@ class ReviewedAnnotationService extends ModelService {
 
         def data = []
 
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
              data << [user : it[0],all : it[1],reviewed : it[2]
             ]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data
     }
 

@@ -80,6 +80,11 @@ class UserUrlMappings {
             action = [GET:"list",POST:"add",DELETE: "delete"]
         }
 
+        //for admin
+        "/api/acl.$format"(controller:"restACL"){
+            action = [GET:"listACL"]
+        }
+
         "/api/user/$id/password.$format"(controller:"restUser"){
             action = [PUT:"resetPassword"]
         }

@@ -93,9 +93,13 @@ class ParamsService {
                     " FROM sec_user \n" +
                     " WHERE id IN ("+users.join(",")+")"
             def data = []
-            new Sql(dataSource).eachRow(request) {
+            def sql = new Sql(dataSource)
+            sql.eachRow(request) {
                 data << it[0]
             }
+            try {
+                sql.close()
+            }catch (Exception e) {}
             return data
         }
 

@@ -2,8 +2,10 @@ package be.cytomine.security
 
 import be.cytomine.CytomineDomain
 import be.cytomine.SecurityACL
+import be.cytomine.project.Project
 import be.cytomine.utils.ModelService
 import org.springframework.security.acls.domain.BasePermission
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class AclAuthService extends ModelService {
 
@@ -25,6 +27,12 @@ class AclAuthService extends ModelService {
         } else {
             if(!oldPerms.contains(permission.mask)) permissionService.addPermission(domain,user.username,permission)
         }
+
+        //if domain is a project, add permission to its ontology too
+        if(domain instanceof Project) {
+            add(((Project)domain).ontology,user,READ)
+        }
+
         return domain.getPermissionInACL(domain,user)
     }
 

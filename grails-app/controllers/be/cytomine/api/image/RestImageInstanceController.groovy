@@ -175,9 +175,13 @@ class RestImageInstanceController extends RestController {
         //better perf with sql request
         String request = "SELECT a.id, a.version,a.deleted FROM image_instance a WHERE id = $id"
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             data << it[0] + ", " + it[1] + ", " + it[2]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 

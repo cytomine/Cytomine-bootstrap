@@ -3,8 +3,14 @@ package be.cytomine.api.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
+import be.cytomine.SecurityACL
 import be.cytomine.api.RestController
+import be.cytomine.image.server.Storage
+import be.cytomine.ontology.Ontology
+import be.cytomine.processing.Software
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import groovy.sql.Sql
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
 import org.restapidoc.annotation.RestApi
@@ -26,6 +32,7 @@ class RestACLController extends RestController {
     def ontologyService
     def imageInstanceService
     def aclAuthService
+    def dataSource
 
     @RestApiMethod(description="Get all ACL for a user and a class.", listing=true)
     @RestApiParams(params=[
@@ -46,6 +53,87 @@ class RestACLController extends RestController {
             response([success: false, errors: e.msg], e.code)
         }
     }
+
+    def listACL() {
+        def currentUser = cytomineService.currentUser
+
+        def domainTableMap = [
+                "project" : Project.class.name,
+                "ontology" : Ontology.class.name,
+                "storage" : Storage.class.name,
+                "software" : Software.class.name
+        ]
+
+        def data = []
+
+
+        domainTableMap.each {
+            String selectOnlyACLWhereCurrentUserIsAdmin = ""
+
+            /*
+               Take a permission set (class,idobject,sid, mask...) that can be view for example as
+                [ {class:"be.cyto...project", name: "project a", id: 10, sid: "johndoe", mask:16 },... ]
+                (Means that johndoe has access admin (16) to "project a"
+             */
+
+            if(!currentUser.isAdmin()) {
+                /*
+                    This sub request select only permission on object on which current user has admin access.
+                    e.g. if "janedoe" execute this request, she must have admin (=16) access to  "project a"
+                    If current user is admin, get all permission
+                 */
+                selectOnlyACLWhereCurrentUserIsAdmin = "AND ${it.key}.id IN (" +
+                        "                SELECT acl_object_identity.object_id_identity as id\n" +
+                                "                FROM acl_object_identity, acl_class, acl_entry, acl_sid, ${it.key}\n" +
+                                "                WHERE acl_object_identity.object_id_class = acl_class.id\n" +
+                                "                AND acl_entry.acl_object_identity = acl_object_identity.id\n" +
+                                "                AND acl_sid.id = acl_entry.sid\n" +
+                                "                AND ${it.key}.id = acl_object_identity.object_id_identity\n" +
+                                "                AND acl_class.class like '${it.value}'\n" +
+                                "                AND acl_sid.sid like '${currentUser.username}'\n" +
+                                "                AND acl_entry.mask = ${ADMINISTRATION.mask}\n" +
+                                "        )"
+            }
+
+
+            String request = "SELECT acl_class.class as domainClassName, ${it.key}.name as name,acl_object_identity.object_id_identity as domainIdent, acl_entry.mask as mask,acl_sid.sid as sid, sec_user.id as idUser\n" +
+                    "      FROM acl_object_identity, acl_class, acl_entry, acl_sid, ${it.key}, sec_user\n" +
+                    "      WHERE acl_object_identity.object_id_class = acl_class.id\n" +
+                    "      AND acl_entry.acl_object_identity = acl_object_identity.id\n" +
+                    "      AND acl_sid.id = acl_entry.sid\n" +
+                    "      AND ${it.key}.id = acl_object_identity.object_id_identity\n" +
+                    "      AND acl_class.class like '${it.value}'\n" +
+                    "      AND sec_user.username = acl_sid.sid\n" +
+                    "      ${selectOnlyACLWhereCurrentUserIsAdmin};"
+
+            log.info request
+
+            def sql = new Sql(dataSource)
+             sql.eachRow(request) {
+                def perm = [:]
+                perm.domainClassName=it.domainClassName
+                perm.name=it.name
+                perm.domainIdent=it.domainIdent
+                perm.sid=it.sid
+                perm.idUser=it.idUser
+                perm.mask=it.mask
+                data << perm
+            }
+            try {
+                sql.close()
+            }catch (Exception e) {}
+
+
+
+        }
+
+
+        responseSuccess(data)
+
+    }
+
+
+
 
     @RestApiMethod(description="Add a new permission for a user on a domain", listing=true)
     @RestApiParams(params=[
@@ -78,7 +166,7 @@ class RestACLController extends RestController {
         @RestApiParam(name="user", type="long", paramType = RestApiParamType.PATH, description = "The user id"),
         @RestApiParam(name="auth", type="string", paramType = RestApiParamType.PATH, description = "(Optional, default READ)  The permission (READ, WRITE, DELETE or PERMISSION)")
     ])
-    @RestApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
+    @RestApiResponseObject(objectIdentifier="Delete a permission")
     def delete() {
         try {
             def user = SecUser.read(params.long('user'))

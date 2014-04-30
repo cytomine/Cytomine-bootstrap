@@ -77,9 +77,13 @@ class ImageInstanceService extends ModelService {
         //better perf with sql request
         String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id  + " AND parent_id IS NULL AND deleted IS NULL"
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             data << it[0]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
@@ -88,9 +92,13 @@ class ImageInstanceService extends ModelService {
         def data = []
 
         //user_image already filter nested image
-        new Sql(dataSource).eachRow("select * from user_image where user_image_id = ? order by original_filename",[user.id]) {
+        def sql = new Sql(dataSource)
+         sql.eachRow("select * from user_image where user_image_id = ? order by original_filename",[user.id]) {
             data << [id:it.id, filename:it.filename, originalFilename: it.original_filename, projectName:it.project_name,  project:it.project_id]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
@@ -107,7 +115,8 @@ class ImageInstanceService extends ModelService {
             offsetString = offsetString + " LIMIT " + max
         }
 
-        new Sql(dataSource).eachRow("SELECT image_id,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
+        def sql = new Sql(dataSource)
+         sql.eachRow("SELECT image_id,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
                 "FROM user_position\n" +
                 "WHERE user_position.user_id = ?\n" + //no join with image instance / abstract img / project...too heavy
                 "GROUP BY image_id \n" +
@@ -119,6 +128,9 @@ class ImageInstanceService extends ModelService {
                //if user has data in user_position but has no access to picture,  ImageInstance.read will throw a forbiddenException
             }
          }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         return data
     }
 
@@ -255,22 +267,31 @@ class ImageInstanceService extends ModelService {
            def adminsMap = [:]
 
            def req1 = getLayersFromAbtrsactImageSQLRequestStr(true,project)
-           new Sql(dataSource).eachRow(req1,[image.id,exclude.id]) {
+           def sql = new Sql(dataSource)
+            sql.eachRow(req1,[image.id,exclude.id]) {
                if(currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
                    layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
                    adminsMap.put(it.image+"_"+it.user,true)
                }
 
            }
+        try {
+            sql.close()
+        }catch (Exception e) {}
 
         def req2 = getLayersFromAbtrsactImageSQLRequestStr(false,project)
 
-            new Sql(dataSource).eachRow(req2,[image.id,exclude.id]) {
+            sql = new Sql(dataSource)
+            sql.eachRow(req2,[image.id,exclude.id]) {
                 if(!adminsMap.get(it.image+"_"+it.user) && currentUsersProject.contains(it.project) && layerFromNewImage.contains(it.user)) {
                     layers << [image:it.image,user:it.user,projectName:it.projectName,project:it.project,lastname:it.lastname,firstname:it.firstname,username:it.username,admin:it.admin]
                 }
 
             }
+        try {
+            sql.close()
+        }catch (Exception e) {}
+
             return layers
 
     }

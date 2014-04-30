@@ -168,22 +168,30 @@ class PropertyService extends ModelService {
 
     private def selectListkey(String request) {
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
             String key = it[0]
             data << key
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data
     }
 
     private def selectsql(String request) {
         def data = []
-        new Sql(dataSource).eachRow(request) {
+        def sql = new Sql(dataSource)
+         sql.eachRow(request) {
 
             long idAnnotation = it[0]
             String value = it[3]
 
             data << [idAnnotation: idAnnotation, x: it[1],y: it[2], value: value]
         }
+        try {
+            sql.close()
+        }catch (Exception e) {}
         data
     }
 }

@@ -20,6 +20,11 @@ class AclAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def list(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/acl.json"
+        return doGET(URL, username, password)
+    }
+
     static def create(String domainClassName, Long domainIdent, Long user, String auth, String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/domain/$domainClassName/$domainIdent/user/${user}.json?" + (auth? "auth=$auth" : "")
         def result = doPOST(URL,"",username,password)
