@@ -33,6 +33,8 @@ class RestACLController extends RestController {
     def imageInstanceService
     def aclAuthService
     def dataSource
+    def softwareService
+    def storageService
 
     @RestApiMethod(description="Get all ACL for a user and a class.", listing=true)
     @RestApiParams(params=[
@@ -54,7 +56,28 @@ class RestACLController extends RestController {
         }
     }
 
+    def listDomain() {
+        List<Project> projects = projectService.list()
+        List<Ontology> ontologies = ontologyService.list()
+        List<Software> softwares = softwareService.list()
+        List<Storage> storages = storageService.list()
+
+        def data = []
+//        data.project = projects.collect{return [id:it.id,name:it.name]}
+//        data.ontology = ontologies.collect{return [id:it.id,name:it.name]}
+//        data.software = softwares.collect{return [id:it.id,name:it.name]}
+//        data.storage = storages.collect{return [id:it.id,name:it.name]}
+        data.addAll(projects.collect{return [id:it.id,name:it.name,className:it.class.name]})
+        data.addAll(ontologies.collect{return [id:it.id,name:it.name,className:it.class.name]})
+        data.addAll(softwares.collect{return [id:it.id,name:it.name,className:it.class.name]})
+        data.addAll(storages.collect{return [id:it.id,name:it.name,className:it.class.name]} )
+        responseSuccess(data)
+    }
+
     def listACL() {
+
+        def idUser = params.long('idUser')
+        def idDomain = params.long('idDomain')
         def currentUser = cytomineService.currentUser
 
         def domainTableMap = [
@@ -103,6 +126,8 @@ class RestACLController extends RestController {
                     "      AND acl_sid.id = acl_entry.sid\n" +
                     "      AND ${it.key}.id = acl_object_identity.object_id_identity\n" +
                     "      AND acl_class.class like '${it.value}'\n" +
+                    (idUser? "AND sec_user.id = ${idUser}\n" : "")+
+                    (idDomain? "AND ${it.key}.id = ${idDomain}\n" : "")+
                     "      AND sec_user.username = acl_sid.sid\n" +
                     "      ${selectOnlyACLWhereCurrentUserIsAdmin};"
 
@@ -170,13 +195,14 @@ class RestACLController extends RestController {
     def delete() {
         try {
             def user = SecUser.read(params.long('user'))
+            log.info "user ${user} with id = ${params.long('user')}"
             if(params.domainClassName && params.domainIdent && user) {
                 def perm = findPermissionName(params.auth)
                 def domain = retrieveCytomineDomain(params.domainClassName,params.long('domainIdent'))
 
                 responseSuccess(aclAuthService.delete(domain,user,perm))
             } else {
-                throw new ObjectNotFoundException("Request not valid: domainClassName=${params.domainClassName}, domainIdent=${params.domainIdent} and user=${params.user}")
+                throw new ObjectNotFoundException("Request not valid: domainClassName=${params.domainClassName}, domainIdent=${params.domainIdent} and user=${params.user} (${user})")
             }
         } catch(CytomineException e) {
              log.error(e)
@@ -202,7 +228,7 @@ class RestACLController extends RestController {
             return WRITE
         } else if(auth=="DELETE") {
             return DELETE
-        } else if(auth=="ADMINISTRATION") {
+        } else if(auth=="ADMINISTRATION" || auth=="ADMIN") {
             return ADMINISTRATION
         } else {
             return READ

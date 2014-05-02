@@ -1,6 +1,7 @@
 package be.cytomine
 
 import be.cytomine.project.Project
+import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
@@ -175,26 +176,45 @@ class AclTests {
         def result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert result.code==200
 
-        assert null==JSON.parse(result.data).collection.find{
-            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 1 && it.idUser==user.id
-        }
+        checkACLPresent(JSON.parse(result.data).collection,project,user,1,true)
+        checkACLPresent(JSON.parse(result.data).collection,project,user,16,true)
 
 
         //add user to project
-        AclAPI.create(project.class.name, project.id, user.id,"READ",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert AclAPI.create(project.class.name, project.id, user.id,"READ",Infos.GOODLOGIN, Infos.GOODPASSWORD).code ==200
 
         result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
 
-        assert null!=JSON.parse(result.data).collection.find{
-            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 1 && it.idUser==user.id
-        }
+        checkACLPresent(JSON.parse(result.data).collection,project,user,1,false)
 
-        AclAPI.create(project.class.name, project.id, user.id,"ADMIN",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert AclAPI.create(project.class.name, project.id, user.id,"ADMINISTRATION",Infos.GOODLOGIN, Infos.GOODPASSWORD).code ==200
 
         result = AclAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
 
-        assert null!=JSON.parse(result.data).collection.find{
-            it.domainClassName == project.class.name && it.domainIdent == project.id && it.mask == 16 && it.idUser==user.id
+        checkACLPresent(JSON.parse(result.data).collection,project,user,16,false)
+    }
+
+
+    private static void checkACLPresent(def json, CytomineDomain domain, SecUser user, int mask, boolean notPresent = false) {
+        json.each {
+            println it
         }
+
+        println "Check for:"
+        println "domainClassName = ${domain.class.name}"
+        println "domainIdent = ${domain.id}"
+        println "user = ${user.id}"
+        println "mask = $mask"
+
+        if(notPresent) {
+            assert !json.find{
+                it.domainClassName == domain.class.name && it.domainIdent == domain.id && it.mask == mask && it.idUser==user.id
+            }
+        } else {
+            assert json.find{
+                it.domainClassName == domain.class.name && it.domainIdent == domain.id && it.mask == mask && it.idUser==user.id
+            }
+        }
+
     }
 }

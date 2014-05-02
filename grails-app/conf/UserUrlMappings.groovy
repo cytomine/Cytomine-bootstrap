@@ -84,6 +84,9 @@ class UserUrlMappings {
         "/api/acl.$format"(controller:"restACL"){
             action = [GET:"listACL"]
         }
+        "/api/acl/domain.$format"(controller:"restACL"){
+            action = [GET:"listDomain"]
+        }
 
         "/api/user/$id/password.$format"(controller:"restUser"){
             action = [PUT:"resetPassword"]

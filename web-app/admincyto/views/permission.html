@@ -1,0 +1,138 @@
+
+<div ng-controller="permissionCtrl">
+    <div>
+        <button class="btn-lg btn" ng-click="changeMode('byUser')" ng-class="getClassNameMode('byUser')">By User</button>
+        <button class="btn-lg btn" ng-click="changeMode('byDomain')" ng-class="getClassNameMode('byDomain')">By Domain</button>
+        {{mode}}
+    </div>
+
+
+    <div class="container-fluid" ng-show="mode=='byUser'">
+        <div class="row">
+            <div class="col-sm-8 main">
+                <h3>Retrieve User</h3>
+                <div class="well">
+                    <select ng-model="selectedUserForPermission" ng-options="u as u.username for u in permission.users | orderBy:'username'">
+                        <option value="">(Select a user)</option>
+                    </select>
+                </div>
+
+                <div ng-if="selectedUserForPermission">
+
+                    <div>
+                        <h5>User {{selectedUserForPermission.username}} ({{selectedUserForPermission.lastname | uppercase}} {{selectedUserForPermission.firstname}})</h5>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Domain name</th>
+                                <th>Domain id</th>
+                                <th>Permission</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="permission in permissionForSelectedUser">
+                                <td><span class="label" ng-class="getDomainLabel(permission.domainClassName)">{{permission.domainClassName | removePackage}}</span></td>
+                                <td>{{permission.name}}</td>
+                                <td>{{permission.domainIdent}}</td>
+                                <td>{{permission.mask | formatMask}}</td>
+                                <td><button ng-click="deletePermissionFromUser(permission.domainClassName,permission.domainIdent,selectedUserForPermission.id,permission.mask)" class="btn btn-danger">Remove permission</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select ng-model="idAddPermissionDomainClass" ng-options="domain.name as domain.name for domain in domainsType">
+                                        <option value="">(Select a domain)</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select ng-show="idAddPermissionDomainClass" ng-model="idAddPermissionDomainIdent" ng-options="domain.id as domain.name for domain in domains | filterByClass:idAddPermissionDomainClass">
+                                        <option value="">(Select a domain)</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <span>{{idAddPermissionDomainIdent}}</span>
+                                </td>
+                                <td>
+                                    <select ng-show="idAddPermissionDomainIdent" ng-model="idAddPermissionMask" ng-options="permission.mask as permission.name for permission in permissions">
+                                        <option value="">(Select a permission)</option>
+                                    </select>
+                                </td>
+                                <td><button ng-click="addPermissionToUser(idAddPermissionDomainClass,idAddPermissionDomainIdent,selectedUserForPermission.id,idAddPermissionMask)" class="btn btn-primary">Add permission</button></td>
+                            </tr>
+                            <tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-sm-3 main"  ng-controller="roleCtrl">
+                <h3>User info</h3>
+                <user-table roles="getRoles()" user="getCurrentUser()"></user-table>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" ng-show="mode=='byDomain'">
+        <div class="row">
+            <div class="col-sm-8 main">
+                <h3>Retrieve Domain</h3>
+                <div class="well">
+                    <select ng-model="idAddPermissionDomainClass" ng-options="domain.name as domain.name for domain in domainsType">
+                        <option value="">(Select a domain)</option>
+                    </select>
+                    <select ng-show="idAddPermissionDomainClass" ng-model="idAddPermissionDomainIdentByDomain" ng-options="domain.id as domain.name for domain in domains | filterByClass:idAddPermissionDomainClass">
+                        <option value="">(Select a domain)</option>
+                    </select>
+                </div>
+
+                <div ng-if="idAddPermissionDomainIdentByDomain">
+
+                    <div>
+                        <h5>Domain {{idAddPermissionDomainClass}} ({{idAddPermissionDomainIdentByDomain}})</h5>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Permission</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="permission in permissionForSelectedDomain">
+                                <td>{{getUserFullname(permission.idUser)}}</td>
+                                <td>{{permission.mask | formatMask}}</td>
+                                <td><button ng-click="deletePermissionFromUser(idAddPermissionDomainClass,idAddPermissionDomainIdentByDomain,permission.idUser,permission.mask)" class="btn btn-danger">Remove permission</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select ng-model="selectedUserForPermissionByDomain" ng-options="u as u.username for u in permission.users | orderBy:'username'">
+                                        <option value="">(Select a user)</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select ng-show="idAddPermissionDomainIdentByDomain" ng-model="idAddPermissionMask" ng-options="permission.mask as permission.name for permission in permissions">
+                                        <option value="">(Select a permission)</option>
+                                    </select>
+                                </td>
+                                <td><button ng-click="addPermissionToUser(idAddPermissionDomainClass,idAddPermissionDomainIdentByDomain,selectedUserForPermissionByDomain.id,idAddPermissionMask)" class="btn btn-primary">Add permission</button></td>
+                            </tr>
+                            <tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-sm-3 main"  ng-controller="roleCtrl">
+                <h3>User info</h3>
+                <user-table roles="getRoles()" user="getCurrentUser()"></user-table>
+            </div>
+        </div>
+    </div>
+</div>
