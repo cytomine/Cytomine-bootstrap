@@ -236,12 +236,13 @@ abstract class ModelService {
     def edit(CytomineDomain domain, boolean printMessage) {
         //Build response message
         log.info "edit"
-        def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
+
         log.info "beforeUpdate"
         beforeUpdate(domain)
         log.info "saveDomain"
         saveDomain(domain)
         log.info "afterUpdate"
+        def response = responseService.createResponseMessage(domain, getStringParamsI18n(domain), printMessage, "Edit", domain.getCallBack())
         afterUpdate(domain,response)
         log.info "response"
         return response

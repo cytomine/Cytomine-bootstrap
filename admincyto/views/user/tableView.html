@@ -1,0 +1,103 @@
+<div class="panel-body" ng-controller="userCtrl">
+    <div ng-controller="roleCtrl">
+        <!--<span>Last refresh {{lastRefresh | date:"dd/MM/yyyy hh:mm:ss"}}</span>-->
+        <!--<button class="btn btn-primary" ng-click="getAllUsers()">Refresh</button>-->
+        <!--<button class="btn btn-primary" ng-click="editOrCreateUser()">New</button>-->
+
+       <!--<a class="btn btn-primary" href="#/user-table/">Refresh</a>-->
+
+
+        <!--<div ng-controller="DemoCtrl">-->
+
+        <!--</div>-->
+
+
+
+
+        <a class="btn  btn-primary" href="#/user-editor/">Add new user</a>
+
+        <br/><br/>
+        <!--<button ng-click="tableParams.sorting({})" class="btn btn-default pull-right">Clear sorting</button>-->
+        <!--<p><strong>Sorting:</strong> {{tableParams.sorting()|json}}-->
+        <!--<strong>Filter:</strong> {{tableParams.filter()|json}}-->
+        <!--<strong>Page:</strong> {{tableParams.page()}}-->
+        <!--<strong>Count per page:</strong> {{tableParams.count()}}</p>-->
+
+        <!--<table ng-table="tableParams" class="table">-->
+            <!--<tr ng-repeat="user in $data">-->
+                <!--<td data-title="'Name'">{{user.name}}</td>-->
+                <!--<td data-title="'Age'">{{user.age}}</td>-->
+            <!--</tr>-->
+        <!--</table>        -->
+
+        <div ng-show="loading">Loading...</div>
+
+        <table ng-hide="loading"  ng-table="tableParams"  show-filter="true" class="table table-striped table-bordered">
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>ID</th>-->
+                <!--<th>Username</th>-->
+                <!--<th>Fullname</th>-->
+                <!--<th>Created</th>-->
+                <!--<th>Updated</th>-->
+                <!--<th></th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+
+
+            <tr ng-repeat="item in $data">
+                <td data-title="'id'" sortable="'id'">{{item.id}}</td>
+                <td data-title="'username'" sortable="'username'" filter="{ 'username': 'text' }">{{item.username}}</td>
+                <td data-title="'lastname'" sortable="'lastname'" filter="{ 'lastname': 'text' }">{{item.lastname | uppercase}}</td>
+                <td data-title="'firstname'" sortable="'firstname'" filter="{ 'firstname': 'text' }">{{item.lastname}}</td>
+                <td data-title="'created'" sortable="'created'">{{item.created | longToDate | dateToFuzzyTime}}</td>
+                <td data-title="'updated'" sortable="'updated'">{{item.updated | longToDate | dateToFuzzyTime}}</td>
+                <td data-title="'action'"  class="text-center">
+                    <a class="btn btn-xs btn-primary" href="#/user-info/{{item.id}}">Info</a>
+                    <a class="btn btn-xs btn-primary" href="#/user-editor/{{item.id}}">Edit</a>
+                </td>
+            </tr>
+            <!--</tbody>-->
+        </table>
+
+        <!--<table ng-table="tableParams"  class="table table-striped table-bordered">-->
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>ID</th>-->
+                <!--<th>Username</th>-->
+                <!--<th>Fullname</th>-->
+                <!--<th>Created</th>-->
+                <!--<th>Updated</th>-->
+                <!--<th></th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--<tr ng-repeat="item in user.users| startFrom:currentPage*pageSize | limitTo:pageSize">-->
+                <!--<td>{{item.id}}</td>-->
+                <!--<td>{{item.username}}</td>-->
+                <!--<td>{{item.lastname | uppercase}} {{item.firstname}}</td>-->
+                <!--<td>{{item.created | longToDate | dateToFuzzyTime}}</td>-->
+                <!--<td>{{item.updated | longToDate | dateToFuzzyTime}}</td>-->
+                <!--<td class="text-center">-->
+                    <!--<a class="btn btn-xs btn-primary" href="#/user-info/{{item.id}}">Info</a>-->
+                    <!--<a class="btn btn-xs btn-primary" href="#/user-editor/{{item.id}}">Edit</a>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>        -->
+
+
+        <!--<div>-->
+
+            <!--<button class="btn btn-primary" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">-->
+                <!--Previous-->
+            <!--</button>-->
+            <!--<span class="">{{currentPage+1}}/{{numberOfPages()}}</span>-->
+            <!--<button class="btn btn-primary" ng-disabled="currentPage >= user.users.length/pageSize - 1" ng-click="currentPage=currentPage+1">-->
+                <!--Next-->
+            <!--</button>-->
+        <!--</div>-->
+    </div>
+
+</div>

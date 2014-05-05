@@ -1,0 +1,102 @@
+<div class="panel-body" ng-controller="userCtrl">
+    <form ng-controller="roleCtrl" role="form"  name="editUserForm"  ng-submit="saveEdit(currentEditedUser,editUserForm)" ng-class="showValidationUserForm ? 'validate' : ''" novalidate>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>{{currentEditedUser.id || ""}}</td>
+                </tr>
+                <tr>
+                    <td>Firstname</td>
+                    <td>
+                        <input name="firstname" ng-model="currentEditedUser.firstname" type="text" class="form-control" id="editinputFirstname" required>
+                        <div class="error" ng-show="showValidationUserForm">
+                            {{getError(editUserForm.firstname.$error)}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lastname</td>
+                    <td>
+                        <input name="lastname" ng-model="currentEditedUser.lastname" type="text" class="form-control" id="editinputLastname" required>
+                        <div class="error" ng-show="showValidationUserForm">
+                            {{getError(editUserForm.lastname.$error)}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Username</td>
+                    <td>
+                        <input name="username" ng-model="currentEditedUser.username" type="text" class="form-control" id="editinputUsername" required>
+                        <div class="error" ng-show="showValidationUserForm">
+                            {{getError(editUserForm.username.$error)}}
+                        </div>
+                    </td>
+                </tr>
+
+                <tr ng-if="!currentEditedUser.id">
+                    <td>Password</td>
+                    <td>
+                        <input name="password" ng-model="currentEditedUser.password" type="password" class="form-control" id="editinputPassword" required>
+                        <div class="error" ng-show="showValidationUserForm">
+                            {{getError(editUserForm.password.$error)}}
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Email</td>
+                    <td>
+                        <input name="email"  ng-model="currentEditedUser.email" type="email" class="form-control" id="editinputEmail" required>
+                        <div class="error" ng-show="showValidationUserForm">
+                            {{getError(editUserForm.email.$error)}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Created</td>
+                    <td>{{currentEditedUser.created | longToDate | date:"dd/MM/yyyy hh:mm:ss" || ""}}</td>
+                </tr>
+
+                <tbody>
+            </table>
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-primary" type="button" ng-click="cancelEdit(editUserForm)">Cancel</button>
+
+            <br/>
+        </form>
+
+    <div class="alert alert-danger" ng-show="user.error.editOrAdd">
+        Error. The user cannot be modify. {{user.error.editOrAdd.message}} ({{user.error.editOrAdd.status}}).
+    </div>
+    <br/>
+
+    <form  ng-if="currentEditedUser.id" role="form"  name="editRoleForm"  ng-submit="editUserRole(idSelectRoleValue,editRoleForm)" ng-class="showValidation ? 'validate' : ''" novalidate>
+
+        <table class="table table-striped">
+            <tbody>
+            <tr>
+                <td>role</td>
+                <td>
+                    <select ng-model="idSelectRoleValue"
+                            ng-options="roleItem.id as roleItem.authority for roleItem in allRoles() | orderBy:roleSorter">
+                    </select>
+                </td>
+            </tr>
+            <tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Change role</button>
+
+        <div class="alert alert-danger" ng-show="role.error.edit">
+            Error. The role cannot be edit. {{role.error.edit.message}} ({{role.error.edit.status}}).
+        </div>
+    </form>
+
+</div>

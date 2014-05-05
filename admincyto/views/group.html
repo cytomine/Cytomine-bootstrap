@@ -1,0 +1,97 @@
+<div ng-controller="groupCtrl">
+
+
+<div class="container-fluid">
+<div class="row">
+<div class="col-sm-8 main">
+    <h3>Retrieve Group</h3>
+    <div class="well">
+        <select ng-model="idSelected" ng-options="u.id as u.name for u in group.groups | orderBy:'name' ">
+            <option value="">(Select a group)</option>
+        </select>
+    </div>
+
+    <div class="alert alert-danger" ng-show="group.error.retrieve">
+        Error. The group list was not loaded {{group.error.retrieve.message}}.
+    </div>
+
+    <div ng-if="idSelected">
+
+
+        <div>
+            <form class="form-inline" role="form"  name="editGroupForm"  ng-submit="updateGroup(selectedCopy,editGroupForm)" ng-class="showValidationEditGroupForm ? 'validate' : ''" novalidate>
+                <div class="form-group">
+                    <input name="name" ng-model="selectedCopy.name" type="text" class="form-control" id="editinputGroupname" required>
+                    <button type="submit" class="btn btn-primary">Change name</button>
+
+                 </div>
+            </form>
+
+            <div class="alert alert-danger" ng-show="group.error.edit">
+                Error. The group cannot be edit. {{group.error.edit.message}} ({{group.error.edit.status}}).
+            </div>
+
+        </div>
+
+
+        <div>
+            <h5>User in group</h5>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in group.usersFromGroup">
+                    <td>{{user.username}}</td>
+                    <td><button ng-click="deleteUserFromGroup(selected,user)" class="btn btn-danger">Remove user</button></td>
+                </tr>
+                <tr>
+                    <td>
+                        {{user.users}}
+                        <select ng-model="idUserForGroupSelected" ng-options="u.id as u.username for u in group.users | filter:selectOnlyUserNotInGroup | orderBy:'username'">
+                            <option value="">(Select a user)</option>
+                        </select>
+                    </td>
+                    <td><button ng-click="addUserToGroup(selected,idUserForGroupSelected)" class="btn btn-primary">Add user</button></td>
+                </tr>
+                <tbody>
+            </table>
+        </div>
+
+        <div class="pull-right">
+            <button type="submit" ng-click="deleteGroup(selected)" class="btn btn-danger">Delete Group</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="col-sm-3 main">
+    <h3>Add Group</h3>
+    <form role="form"  name="addGroupForm" ng-submit="createGroup(newGroup,addGroupForm)" ng-class="showValidationAddGroupForm ? 'validate' : ''" novalidate>
+
+        <div class="form-group">
+            <label for="inputFirstname">Name</label>
+            <input name="name" ng-model="newGroup.name" type="text" class="form-control" id="inputFirstname" placeholder="Enter name" required>
+            <div class="error" ng-show="showValidationAddGroupForm">
+                {{getError(addGroupForm.name.$error)}}
+            </div>
+        </div>
+        <!--<button ng-disabled="addUserForm.$invalid" type="submit" class="btn btn-default">Submit</button>-->
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <!--<div>{{addUserForm.$error}}</div>-->
+    </form>
+    <br/>
+    <div class="alert alert-danger" ng-show="group.error.add">
+        Error. The group cannot be create. {{group.error.add.message}} ({{group.error.add.status}}).
+    </div>
+</div>
+</div>
+</div>
+
+
+</div>

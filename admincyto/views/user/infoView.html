@@ -1,0 +1,8 @@
+<div class="panel-body" ng-controller="userCtrl">
+    <div ng-controller="roleCtrl">
+        <user-table  roles="getRoles()" user="getSelectedUser()"></user-table>
+        <a class="btn btn-primary" href="#/user-table">Back</a>
+        <a class="btn btn-primary" href="#/user-editor/{{getSelectedUser().id}}">Edit</a>
+    </div>
+
+</div>
