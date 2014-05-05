@@ -2,6 +2,11 @@
  * Created by lrollus on 05/05/14.
  */
 angular.module("cytomineUserArea")
+    .filter('camelcase', function() {
+        return function(input) {
+            return input.charAt(0).toUpperCase() + input.substr(1).toLowerCase();
+        }
+    })
     .filter("longToDate", function () {
         return function (value) {
             if(value==null || value==undefined) {

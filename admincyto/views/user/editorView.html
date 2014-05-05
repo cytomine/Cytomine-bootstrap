@@ -1,12 +1,7 @@
 <div class="panel-body" ng-controller="userCtrl">
-    <form ng-controller="roleCtrl" role="form"  name="editUserForm"  ng-submit="saveEdit(currentEditedUser,editUserForm)" ng-class="showValidationUserForm ? 'validate' : ''" novalidate>
+    <h3>Edit user</h3>
+    <form  role="form"  name="editUserForm"  ng-submit="saveEdit(currentEditedUser,editUserForm)" ng-class="showValidationUserForm ? 'validate' : ''" novalidate>
             <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-                </thead>
                 <tbody>
                 <tr>
                     <td>id</td>
@@ -77,26 +72,45 @@
     </div>
     <br/>
 
-    <form  ng-if="currentEditedUser.id" role="form"  name="editRoleForm"  ng-submit="editUserRole(idSelectRoleValue,editRoleForm)" ng-class="showValidation ? 'validate' : ''" novalidate>
+    <h3>Change role</h3>
+    <form lass="form-inline" ng-controller="roleCtrl" ng-if="currentEditedUser.id" role="form"  name="editRoleForm"  ng-submit="editUserRole(idSelectRoleValue,editRoleForm)" ng-class="showValidation ? 'validate' : ''" novalidate>
 
-        <table class="table table-striped">
-            <tbody>
-            <tr>
-                <td>role</td>
-                <td>
-                    <select ng-model="idSelectRoleValue"
-                            ng-options="roleItem.id as roleItem.authority for roleItem in allRoles() | orderBy:roleSorter">
-                    </select>
-                </td>
-            </tr>
-            <tbody>
-        </table>
-
-        <button type="submit" class="btn btn-primary">Change role</button>
+        Role:
+            <select ng-model="idSelectRoleValue"
+                      ng-options="roleItem.id as roleItem.authority for roleItem in allRoles() | orderBy:roleSorter">
+            </select>
+            <button type="submit" class="btn btn-primary btn-xs">Change role</button>
 
         <div class="alert alert-danger" ng-show="role.error.edit">
             Error. The role cannot be edit. {{role.error.edit.message}} ({{role.error.edit.status}}).
         </div>
     </form>
+
+    <h3>Reset password</h3>
+    <form class="form-inline" ng-if="currentEditedUser.id" role="form"  name="resetPasswordForm"  ng-submit="resetPassword(currentEditedUser.id,password,passwordConfirm,resetPasswordForm)" ng-class="showValidation ? 'validate' : ''" novalidate>
+
+        New password: <input name="password" ng-model="password" type="password" class="form-control" id="editinputResetPassword" required>
+        Confirm password: <input name="passwordConfirm" ng-model="passwordConfirm" type="password" class="form-control" id="editinputResetPasswordConfirm" required>
+        <button type="submit" class="btn btn-primary">Change password</button>
+        <!--<table class="table table-striped">-->
+            <!--<tbody>-->
+            <!--<tr>-->
+                <!--<td>Reset Password</td>-->
+                <!--<td>-->
+                    <!--New password: <input name="password" type="password" class="form-control" id="editinputResetPassword" required>-->
+                    <!--Confirm password: <input name="passwordConfirm" type="password" class="form-control" id="editinputResetPasswordConfirm" required>-->
+                <!--</td>-->
+                <!--<td></td>-->
+            <!--</tr>-->
+            <!--<tbody>-->
+        <!--</table>-->
+
+
+        <div class="alert alert-danger" ng-show="user.error.resetPassword">
+            {{user.error.resetPassword.message}} ({{user.error.resetPassword.status}}).
+        </div>
+    </form>
+
+
 
 </div>

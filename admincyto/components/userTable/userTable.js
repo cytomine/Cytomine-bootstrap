@@ -2,27 +2,11 @@
  * Created by lrollus on 22/04/14.
  */
 
-angular.module("selectedUser",[])
-.constant("currentUser", "100036")
-.factory("selectedUser",function(currentUser) {
-    var selectedUser={};
-
-    return {
-        getSelectedUser : function() {
-            return selectedUser;
-        },
-        getSelectedUserId : function() {
-            return this.getSelectedUser()? this.getSelectedUser().id : undefined;
-        },
-        setSelectedUser : function(user) {
-            selectedUser = user;
-        }
-    }
-})
+angular.module("cytomineUserArea")
     .directive('userTable', function () {
         return {
             restrict:'E',
-            templateUrl: "components/userTable.html",
+            templateUrl: "components/userTable/userTable.html",
             scope: {
                 rolesFn: "&roles",
                 userFn: "&user"
@@ -57,7 +41,7 @@ angular.module("selectedUser",[])
     .directive('userJson', function () {
         return {
             restrict:'E',
-            templateUrl: "components/userJson.html",
+            templateUrl: "components/userTable/userJson.html",
             scope: {
                 userFn: "&user"
             }

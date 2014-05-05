@@ -1,61 +1,38 @@
 angular.module("cytomineUserArea")
-//    .controller('DemoCtrl', function($scope, ngTableParams) {
-//    var data = [{name: "Moroni", age: 50},
-//        {name: "Tiancum", age: 43},
-//        {name: "Jacob", age: 27},
-//        {name: "Nephi", age: 29},
-//        {name: "Enos", age: 34},
-//        {name: "Tiancum", age: 43},
-//        {name: "Jacob", age: 27},
-//        {name: "Nephi", age: 29},
-//        {name: "Enos", age: 34},
-//        {name: "Tiancum", age: 43},
-//        {name: "Jacob", age: 27},
-//        {name: "Nephi", age: 29},
-//        {name: "Enos", age: 34},
-//        {name: "Tiancum", age: 43},
-//        {name: "Jacob", age: 27},
-//        {name: "Nephi", age: 29},
-//        {name: "Enos", age: 34}];
-//
-//    $scope.tableParams = new ngTableParams({
-//        page: 1,            // show first page
-//        count: 10           // count per page
-//    }, {
-//        total: data.length, // length of data
-//        getData: function($defer, params) {
-//            $defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-//        }
-//    });
-//})
-    .controller("userCtrl", function ($scope,$location,$routeParams,$filter,allUsers,formValidation,selectedUser,ngTableParams) {
+    .controller("userCtrl", function ($scope,$log,$location,$routeParams,$filter,userService,validationService,selectedUserService,ngTableParams) {
 
         $scope.user = {error:{}};
-
+        $scope.selected;
 
         $scope.$on("$routeChangeSuccess", function () {
             if ($location.path().indexOf("/user-info/") == 0) {
                 $scope.getAllUsers(function(data) {
                     $scope.user.users = data;
-                    var id = $routeParams["id"];
-                    selectedUser.setSelectedUser(allUsers.getUser(id,$scope.user.users));
+                    $scope.setSelectedUser($routeParams["id"]);
                 });
 
             }
             if ($location.path().indexOf("/user-editor/") == 0) {
                 $scope.getAllUsers(function(data) {
                     $scope.user.users = data;
-                    var id = $routeParams["id"];
-                    selectedUser.setSelectedUser(allUsers.getUser(id,$scope.user.users));
-                    var user = selectedUser.getSelectedUser();
+                    var user = $scope.setSelectedUser($routeParams["id"]);
                     $scope.currentEditedUser = user ? angular.copy(user) : {};
                 });
             }
 
         });
 
+        $scope.setSelectedUser = function(id) {
+            var user = userService.getUser(id,$scope.user.users);
+            selectedUserService.setSelectedUser(user);
+            console.log("selectedUserChange.broadcast");
+            $scope.$broadcast('selectedUserChange', [user.id]);
+            $scope.selected = user;
+            return user;
+        }
+
         $scope.getAllUsers = function(callbackSuccess) {
-            allUsers.getAllUsers(
+            userService.getAllUsers(
                 function(data) {
                     callbackSuccess(data);
                 },
@@ -98,7 +75,7 @@ angular.module("cytomineUserArea")
         });
 
         $scope.getSelectedUser = function() {
-            return selectedUser.getSelectedUser();
+            return selectedUserService.getSelectedUser();
         };
 
         $scope.cancelEdit = function (form) {
@@ -108,7 +85,6 @@ angular.module("cytomineUserArea")
             }
             $scope.user.error.editOrAdd = null;
             $scope.showValidationUserForm = false;
-            //$scope.displayMode = "list";
             $location.url("/user-list");
         };
 
@@ -124,7 +100,7 @@ angular.module("cytomineUserArea")
             $scope.addUserForm = form;
             if($scope.addUserForm.$valid) {
 
-                allUsers.addUser(
+                userService.addUser(
                     newUser,
                 function(data) {
                     $scope.user.error.editOrAdd = null;
@@ -144,15 +120,15 @@ angular.module("cytomineUserArea")
             $scope.editUserForm = form;
             if($scope.editUserForm.$valid) {
 
-                allUsers.editUser(
+                userService.editUser(
                     newUser,
                     function(data) {
                         $scope.user.error.editOrAdd = null;
                         $scope.editUserForm.$dirty = false;
                         //$scope.displayMode = "list";
-                        $location.url("/user-list");
-                    },function() {
-                        $scope.user.error.edit = {status:status,message:data.errors};
+                        $location.url("/user-info/"+data.user.id);
+                    },function(data,status) {
+                        $scope.user.error.editOrAdd = {status:status,message:data.errors};
                     });
             }else {
                 alert('edit error');
@@ -161,21 +137,30 @@ angular.module("cytomineUserArea")
 
         };
 
-        $scope.getError = function (error) {
-            return formValidation.getError(error);
-        };
+        $scope.resetPassword = function(idUser,password,passwordConfirm,form) {
+            $log.info("idUser="+idUser +" password=" + password + " passwordConfirm="+passwordConfirm + " form="+form + " defin="+angular.isDefined(password));
+            $scope.resetPasswordForm = form;
 
-
-        //TODO: move this to a directive
-        $scope.currentPage = 0;
-        $scope.pageSize = 10;
-        $scope.numberOfPages=function(){
-            if(angular.isDefined($scope.user.users)) {
-                return Math.ceil($scope.user.users.length/$scope.pageSize);
+            if(!angular.isDefined(password) || password<5) {
+                $scope.user.error.resetPassword = {status:status,message:"Password is too short!"};
+            }else if(password!=passwordConfirm) {
+                $scope.user.error.resetPassword = {status:status,message:"Confirm password is invalid!"};
+            }else {
+                userService.resetPassword(
+                    idUser,
+                    password,
+                    function(data) {
+                        $scope.user.error.resetPassword = null;
+                        $scope.editUserForm.$dirty = false;
+                        //$scope.displayMode = "list";
+                        $location.url("/user-info/"+idUser);
+                    },function(data,status) {
+                        $scope.user.error.resetPassword = {status:status,message:data.errors};
+                    });
             }
-            return 1;
         };
 
-
-
+        $scope.getError = function (error) {
+            return validationService.getError(error);
+        };
     });

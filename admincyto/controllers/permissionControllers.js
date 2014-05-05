@@ -22,7 +22,7 @@ angular.module("cytomineUserArea")
         };
 
     })
-    .controller("permissionCtrl", function ($scope,$location, $http, $resource,allUsers,permissionUrl,domainUrl,aclUrl,domainPermissionService,maskPermissionService) {
+    .controller("permissionCtrl", function ($scope,$location, $http, $resource,userService,permissionUrl,domainUrl,aclUrl,domainPermissionService,maskPermissionService) {
 
         $scope.idUserForPermissionSelected=null;
         $scope.permission = {error:{}};
@@ -49,7 +49,7 @@ angular.module("cytomineUserArea")
 
         $scope.getAllUsers = function() {
 
-            allUsers.getAllUsers(
+            userService.getAllUsers(
                 function(data) {
                     $scope.permission.users = data;
                     if($scope.selectedUserForPermission==null) {
@@ -175,7 +175,7 @@ angular.module("cytomineUserArea")
         };
 
         $scope.getUserFullname = function(idUser) {
-            var user = allUsers.getUser(idUser);
+            var user = userService.getUser(idUser);
             return user.lastname.toUpperCase() + " " + user.firstname + " (" + user.username + ")";
         };
 

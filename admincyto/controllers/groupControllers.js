@@ -15,7 +15,7 @@ angular.module("cytomineUserArea")
             }
         });
     })
-    .controller("groupCtrl", function ($scope,$location, $http, $resource,groupUrl,allUsers) {
+    .controller("groupCtrl", function ($scope,$location, $http, $resource,groupUrl,userService) {
 
         $scope.displayMode = "list";
         $scope.currentGroup = null;
@@ -76,7 +76,7 @@ angular.module("cytomineUserArea")
         }
 
         $scope.getAllUsers = function() {
-            allUsers.getAllUsers(
+            userService.getAllUsers(
                 function(data) {
                     $scope.group.users = data;
                 }

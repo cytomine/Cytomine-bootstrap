@@ -19,7 +19,7 @@ angular.module("cytomineUserArea")
 //        };
 //    })
     .controller("mainCtrl", function ($scope, $http, currentUserUrl) {
-
+        console.log("mainCtrl");
         $scope.main = {error:{}};
 
         $scope.getCurrentUser = function() {

@@ -1,6 +1,5 @@
 angular.module("cytomineUserArea")
-.factory("formValidation",function() {
-
+.factory("validationService",function() {
     return {
         //move to service
         getError : function (error) {

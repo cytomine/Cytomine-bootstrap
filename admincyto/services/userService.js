@@ -1,13 +1,12 @@
 angular.module("cytomineUserArea")
 .constant("userUrl", "http://localhost:8090/api/user.json")
 .constant("userEditUrl", "http://localhost:8090/api/user/{id}.json")
-.factory("allUsers",function($http,userUrl,userEditUrl) {
+.constant("resetPasswordUrl","http://localhost:8090/api/user/{idUser}/password.json?password={password}")
+.factory("userService",function($http,userUrl,userEditUrl,resetPasswordUrl) {
 
     var users=[];
 
     return {
-
-
 
         allUsers : function() {
             return users;
@@ -85,7 +84,24 @@ angular.module("cytomineUserArea")
                         callbackError(data,status);
                     }
                 })
+        },
+
+
+        resetPassword : function(idUser,password,callbackSuccess,callbackError) {
+            var self = this;
+            $http.put(resetPasswordUrl.replace("{idUser}", idUser).replace("{password}", password),"")
+                .success(function (data) {
+                    if(callbackSuccess) {
+                        callbackSuccess(data);
+                    }
+                })
+                .error(function (data, status, headers, config) {
+                    if(callbackError) {
+                        callbackError(data,status);
+                    }
+                })
         }
+
 
 
     };
