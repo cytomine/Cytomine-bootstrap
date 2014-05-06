@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="cytomineUserArea">
+    <head>
+        <title>Cytomine User Area</title>
+        <script src="angular.js"></script>
+        <script src="ngmodules/angular-route.js"></script>
+        <script src="ngmodules/angular-sanitize.js"></script>
+        <script src="ngmodules/angular-resource.js"></script>
+        <script src="ngmodules/ng-table.js"></script>
+        <!--<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>-->
+        <!--<script src="bootstrap/js/bootstrap.min.js"></script>-->
+        <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="bootstrap/css/bootstrap-theme.css" rel="stylesheet" />
+        <link href="ngmodules/ng-table.css" rel="stylesheet" />
+
+        <style>
+            form.validate .ng-invalid-required.ng-dirty { background-color: lightpink; }
+            form.validate .ng-invalid-email.ng-dirty {background-color: lightgoldenrodyellow; }
+            div.error { color: red; font-weight: bold; }
+            .navbar-right { float: right !important; margin-right: 5px;}
+            .navbar-text { margin-right: 10px; }
+            .align-right { float: right !important; margin-right: 5px;}
+            body {
+                padding: 10px !important;
+            }
+        </style>
+        <script src="main.js"></script>
+        <script src="controllers/userControllers.js"></script>
+        <script src="controllers/permissionControllers.js"></script>
+        <script src="controllers/roleControllers.js"></script>
+        <script src="controllers/groupControllers.js"></script>
+        <script src="controllers/mainControllers.js"></script>
+        <script src="services/selectedUserService.js"></script>
+        <script src="services/userService.js"></script>
+        <script src="services/groupService.js"></script>
+        <script src="services/roleService.js"></script>
+        <script src="services/validationService.js"></script>
+        <script src="filters/stringFilters.js"></script>
+        <script src="components/userTable/userTable.js"></script>
+
+    </head>
+    <body>
+    <div class="navbar navbar-inverse" ng-controller="mainCtrl">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Cytomine Admin Area</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a id="user-nav-button" href="#/user"><i class="glyphicon glyphicon-user"></i> User</a></li>
+                <li><a id="group-nav-button" href="#/group"><i class="glyphicon glyphicon-folder-open"></i> Group</a></li>
+                <li><a id="permission-nav-button" href="#/permission"><i class="glyphicon glyphicon-check"></i> Permission</a></li>
+
+            </ul>
+            <div class="navbar-right">
+                <div ng-click="throwEx()" class="navbar-text">
+                    <b>Logged as:</b>
+                    {{main.currentUserFullname}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="container-fluid">
+             <ng-view></ng-view>
+        </div>
+    </body>
+</html>
