@@ -69,7 +69,7 @@ describe("Controller Test", function () {
     beforeEach(angular.mock.module("cytomineUserArea"));
     beforeEach(angular.mock.inject(function ($httpBackend) {
         backend = $httpBackend;
-        backend.expect("GET", "http://localhost:8090/api/user.json").respond(
+        backend.expect("GET", "/api/user.json").respond(
             {"collection":[ {"id": 100001,"created": "1399360892193","updated": null,"deleted": null,"username": "admin", "firstname": "Admin","lastname": "Master", "email": "lrollus@ulg.ac.be"},
                             {"id": 101,"created": "1399360891655","updated": "1399360891723","deleted": null,"username": "lrollus","firstname": "Loïc","lastname": "Rollus","email": "lrollus@ulg.ac.be"}],
                 "offset": 0,

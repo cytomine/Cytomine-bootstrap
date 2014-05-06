@@ -1,5 +1,5 @@
 angular.module("cytomineUserArea")
-    .constant("groupUrl", "http://localhost:8090/api/group/")
+    .constant("groupUrl", "/api/group/")
     .config(function ($httpProvider) {
         $httpProvider.interceptors.push(function ($log) {
             return {
@@ -77,7 +77,7 @@ angular.module("cytomineUserArea")
         };
 
         $scope.getUserFromGroup = function(idGroup) {
-            $http.get("http://localhost:8090/api/group/{id}/user.json".replace("{id}",idGroup))
+            $http.get("/api/group/{id}/user.json".replace("{id}",idGroup))
                 .success(function (data) {
                     $scope.group.usersFromGroup = data;
                 })
@@ -85,7 +85,7 @@ angular.module("cytomineUserArea")
 
         $scope.addUserToGroup = function(group,idUser) {
             console.log("add " + idUser + " from " + group.name);
-            $http.post("http://localhost:8090/api/user/{id}/group.json".replace("{id}",idUser), {user:idUser,group:group.id})
+            $http.post("/api/user/{id}/group.json".replace("{id}",idUser), {user:idUser,group:group.id})
                 .success(function (data) {
                     $scope.getUserFromGroup(group.id);
                 })
@@ -96,7 +96,7 @@ angular.module("cytomineUserArea")
 
         $scope.deleteUserFromGroup = function(group,user) {
             console.log("delete " + user.username + " from " + group.name);
-            $http.delete("http://localhost:8090/api/user/{idUser}/group/{idGroup}.json".replace("{idUser}",user.id).replace("{idGroup}",group.id))
+            $http.delete("/api/user/{idUser}/group/{idGroup}.json".replace("{idUser}",user.id).replace("{idGroup}",group.id))
                 .success(function (data) {
                     $scope.getUserFromGroup(group.id);
                 })

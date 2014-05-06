@@ -101,8 +101,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="permission in permissionForSelectedDomain">
-                                <td>{{getUserFullname(permission.idUser)}}</td>
+                            <tr ng-repeat="permission in permissionForSelectedDomain | orderBy:getUserFullname">
+                                <td>{{getUserFullname(permission)}}</td>
                                 <td>{{permission.mask | formatMask}}</td>
                                 <td><button ng-click="deletePermissionFromUser(idAddPermissionDomainClass,idAddPermissionDomainIdentByDomain,permission.idUser,permission.mask)" class="btn btn-danger">Remove permission</button></td>
                             </tr>

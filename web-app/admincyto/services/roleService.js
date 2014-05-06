@@ -1,8 +1,8 @@
 angular.module("cytomineUserArea")
-    .constant("roleUrl", "http://localhost:8090/api/role.json")
-    .constant("userRoleUrl", "http://localhost:8090/api/user/{id}/role.json")
-    .constant("userRoleUrlLong", "http://localhost:8090/api/user/{idUser}/role/{idRole}.json")
-    .constant("userRoleDefineUrl", "http://localhost:8090/api/user/{idUser}/role/{idRole}/define.json")
+    .constant("roleUrl", "/api/role.json")
+    .constant("userRoleUrl", "/api/user/{id}/role.json")
+    .constant("userRoleUrlLong", "/api/user/{idUser}/role/{idRole}.json")
+    .constant("userRoleDefineUrl", "/api/user/{idUser}/role/{idRole}/define.json")
 .factory("roleService",function($http, roleUrl,userRoleUrl,userRoleDefineUrl) {
 
     var roles=[];

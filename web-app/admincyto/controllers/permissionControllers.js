@@ -1,7 +1,7 @@
 angular.module("cytomineUserArea")
-    .constant("permissionUrl", "http://localhost:8090/api/acl.json")
-    .constant("domainUrl", "http://localhost:8090/api/acl/domain.json")
-    .constant("aclUrl","http://localhost:8090/api/domain/{domainClassName}/{domainIdent}/user/{idUser}.json?auth={auth}") //"api/domain/$domainClassName/$domainIdent/user/${user}.json?" + (auth? "auth=$auth" : "")
+    .constant("permissionUrl", "/api/acl.json")
+    .constant("domainUrl", "/api/acl/domain.json")
+    .constant("aclUrl","/api/domain/{domainClassName}/{domainIdent}/user/{idUser}.json?auth={auth}") //"api/domain/$domainClassName/$domainIdent/user/${user}.json?" + (auth? "auth=$auth" : "")
 
     .filter("removePackage", function () {
         return function (item) {
@@ -23,6 +23,9 @@ angular.module("cytomineUserArea")
 
     })
     .controller("permissionCtrl", function ($scope,$location, $http, $resource,userService,permissionUrl,domainUrl,aclUrl,domainPermissionService,maskPermissionService) {
+
+        //a lot of code should be in a permissionService
+        //permisision pearams should be in URL
 
         $scope.idUserForPermissionSelected=null;
         $scope.permission = {error:{}};
@@ -174,8 +177,8 @@ angular.module("cytomineUserArea")
                 });
         };
 
-        $scope.getUserFullname = function(idUser) {
-            var user = userService.getUser(idUser,$scope.permission.users);
+        $scope.getUserFullname = function(permission) {
+            var user = userService.getUser(permission.idUser,$scope.permission.users);
             return user.lastname.toUpperCase() + " " + user.firstname + " (" + user.username + ")";
         };
 
@@ -251,12 +254,14 @@ angular.module("cytomineUserArea")
                 return mask;
             },
             getPermissionFromMask : function(mask) {
+                console.log("getPermissionFromMask="+mask);
                 var permission = null;
                 angular.forEach(masks, function(entry) {
                     if(entry.mask==mask) {
                         permission = entry.name;
                     }
                 });
+                console.log("permission="+permission);
                 return permission;
             }
         };

@@ -1,7 +1,7 @@
 angular.module("cytomineUserArea")
-.constant("userUrl", "http://localhost:8090/api/user.json")
-.constant("userEditUrl", "http://localhost:8090/api/user/{id}.json")
-.constant("resetPasswordUrl","http://localhost:8090/api/user/{idUser}/password.json?password={password}")
+.constant("userUrl", "/api/user.json")
+.constant("userEditUrl", "/api/user/{id}.json")
+.constant("resetPasswordUrl","/api/user/{idUser}/password.json?password={password}")
 .factory("userService",function($http,userUrl,userEditUrl,resetPasswordUrl) {
 
     var users=[];

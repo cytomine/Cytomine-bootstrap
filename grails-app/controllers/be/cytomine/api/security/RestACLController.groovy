@@ -119,7 +119,7 @@ class RestACLController extends RestController {
             }
 
 
-            String request = "SELECT acl_class.class as domainClassName, ${it.key}.name as name,acl_object_identity.object_id_identity as domainIdent, acl_entry.mask as mask,acl_sid.sid as sid, sec_user.id as idUser\n" +
+            String request = "SELECT DISTINCT acl_class.class as domainClassName, ${it.key}.name as name,acl_object_identity.object_id_identity as domainIdent, acl_entry.mask as mask,acl_sid.sid as sid, sec_user.id as idUser\n" +
                     "      FROM acl_object_identity, acl_class, acl_entry, acl_sid, ${it.key}, sec_user\n" +
                     "      WHERE acl_object_identity.object_id_class = acl_class.id\n" +
                     "      AND acl_entry.acl_object_identity = acl_object_identity.id\n" +

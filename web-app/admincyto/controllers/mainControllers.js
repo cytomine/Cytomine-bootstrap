@@ -1,5 +1,5 @@
 angular.module("cytomineUserArea")
-    .constant("currentUserUrl", "http://localhost:8090/api/user/current.json")
+    .constant("currentUserUrl", "/api/user/current.json")
     .config(function ($logProvider) {
         $logProvider.debugEnabled(true);
     })
