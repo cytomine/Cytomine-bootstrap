@@ -25,6 +25,7 @@ angular.module("cytomineUserArea")
                  * JavaScript Pretty Date
                  * Copyright (c) 2011 John Resig (ejohn.org)
                  * Licensed under the MIT and GPL licenses.
+                 * 20140506: updated by lrollus
                  */
 
                 // Takes an ISO time and returns a string representing how
@@ -33,10 +34,16 @@ angular.module("cytomineUserArea")
                     diff = (((new Date()).getTime() - date.getTime()) / 1000),
                         day_diff = Math.floor(diff / 86400);
 
-                    if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
+                    if ( isNaN(day_diff) || day_diff < 0) {
                         return;
+                    }
 
-                    return day_diff == 0 && (
+//                    if(day_diff>100) {
+//
+//                    }
+
+
+                    var result = day_diff == 0 && (
                         diff < 60 && "just now" ||
                         diff < 120 && "1 minute ago" ||
                         diff < 3600 && Math.floor( diff / 60 ) + " minutes ago" ||
@@ -45,6 +52,21 @@ angular.module("cytomineUserArea")
                         day_diff == 1 && "Yesterday" ||
                         day_diff < 7 && day_diff + " days ago" ||
                         day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago";
+
+                    if(!result) {
+                        var printFullDate = function (longDate) {
+                            var createdDate = new Date();
+                            createdDate.setTime(longDate);
+
+                            //date format
+                            var year = createdDate.getFullYear();
+                            var month = (createdDate.getMonth() + 1) < 10 ? "0" + (createdDate.getMonth() + 1) : (createdDate.getMonth() + 1);
+                            var day = (createdDate.getDate()) < 10 ? "0" + (createdDate.getDate()) : (createdDate.getDate());
+                            return year + "-" + month + "-" + day;
+                        }
+                        result = printFullDate(date);
+                    }
+                    return result;
                 }
                 return prettyDate(date)
             } else {

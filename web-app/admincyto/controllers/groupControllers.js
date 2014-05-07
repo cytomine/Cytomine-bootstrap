@@ -15,7 +15,7 @@ angular.module("cytomineUserArea")
             }
         });
     })
-    .controller("groupCtrl", function ($scope,$location, $http, $resource,groupUrl,userService, groupService, validationService) {
+    .controller("groupCtrl", function ($scope,$location, $routeParams,$http, $resource,groupUrl,userService, groupService, validationService) {
 
         //a lot of method here should be move to group service
 
@@ -29,10 +29,23 @@ angular.module("cytomineUserArea")
 
         $scope.groupsResource = $resource(groupUrl + ":id" + ".json", { id: "@id" },{ create: { method: "POST" }, save: { method: "PUT"}});
 
+        $scope.$on("$routeChangeSuccess", function () {
+            if ($location.path().indexOf("/group/") == 0) {
+                if($routeParams["id"]) {
+                    $scope.idSelected = $routeParams["id"];
+                }
+            }
+        });
+
         $scope.listGroups = function () {
             $scope.group.groups = $scope.groupsResource.query();
             $scope.group.groups.$promise.then(function (data) {
-                $scope.setSelectedGroup($scope.group.groups[0].id);
+                if($scope.idSelected) {
+                    $scope.setSelectedGroup($scope.idSelected);
+                } else {
+                    $scope.setSelectedGroup($scope.group.groups[0].id);
+                }
+
             });
         };
 

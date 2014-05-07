@@ -22,14 +22,43 @@ angular.module("cytomineUserArea")
         };
 
     })
-    .controller("permissionCtrl", function ($scope,$location, $http, $resource,userService,permissionUrl,domainUrl,aclUrl,domainPermissionService,maskPermissionService) {
+    .controller("permissionCtrl", function ($scope,$location, $routeParams,$http, $resource,userService,permissionUrl,domainUrl,aclUrl,domainPermissionService,maskPermissionService) {
 
         //a lot of code should be in a permissionService
         //permisision pearams should be in URL
 
-        $scope.idUserForPermissionSelected=null;
-        $scope.permission = {error:{}};
+        //$scope.idUserForPermissionSelected=null;
+        $scope.permission = {error:{},success:{}};
         $scope.mode="byUser";
+
+        $scope.$on("$routeChangeSuccess", function () {
+            $scope.permission.error = {};
+            $scope.permission.success = {};
+            if ($location.path().indexOf("/permission/user") == 0) {
+                $scope.mode="byUser";
+//                if($routeParams["id"]) {
+                    userService.getAllUsers(
+                        function(data) {
+                            $scope.permission.users = data;
+                            $scope.selectedUserForPermission = userService.getUser($location.search().user,$scope.permission.users);
+                        }
+                    );
+//                }
+            }
+            if ($location.path().indexOf("/permission/domain") == 0) {
+                $scope.mode="byDomain";
+
+                userService.getAllUsers(
+                    function(data) {
+                        $scope.permission.users = data;
+                        $scope.idAddPermissionDomainClass = $location.search().domainClassName
+                        $scope.idAddPermissionDomainIdentByDomain = $location.search().domainIdent
+                        //$scope.selectedUserForPermission = userService.getUser($location.search().user,$scope.permission.users);
+                    }
+                );
+
+            }
+        });
 
         $scope.changeMode = function(mode) {
             console.log("changeMode0 => "+$scope.mode + " vs " + mode);
@@ -55,13 +84,6 @@ angular.module("cytomineUserArea")
             userService.getAllUsers(
                 function(data) {
                     $scope.permission.users = data;
-                    if($scope.selectedUserForPermission==null) {
-                        angular.forEach($scope.permission.users,function(user) {
-                            if(user.id==101) {
-                                $scope.selectedUserForPermission = user;
-                            }
-                        });
-                    }
                 }
             );
         };
@@ -77,8 +99,9 @@ angular.module("cytomineUserArea")
         };
 
         $scope.$watch("selectedUserForPermission", function() {
+
             if($scope.selectedUserForPermission!=null) {
-                //$scope.$broadcast('selectedUserChange', [$scope.selectedUserForPermission.id]);
+                $location.search('user', $scope.selectedUserForPermission.id);
                 $scope.getPermissionByUser($scope.selectedUserForPermission.id);
             }
         });
@@ -88,6 +111,8 @@ angular.module("cytomineUserArea")
             if($scope.idAddPermissionDomainIdentByDomain!=null) {
                 //$scope.$broadcast('selectedUserChange', [$scope.selectedUserForPermission.id]);
                 $scope.getPermissionByDomain($scope.idAddPermissionDomainIdentByDomain);
+                $location.search('domainIdent', $scope.idAddPermissionDomainIdentByDomain);
+                $location.search('domainClassName', $scope.idAddPermissionDomainClass);
             }
         });
 
@@ -153,10 +178,21 @@ angular.module("cytomineUserArea")
 
             $http.post(customACLUrl,{})
                 .success(function (data) {
-                    $scope.getPermissionByUser($scope.selectedUserForPermission.id);
+                    $scope.permission.error.addForUser = null;
+                    $scope.permission.error.addForDomain = null;
+                    if($scope.selectedUserForPermission!=null) {
+                        $scope.getPermissionByUser($scope.selectedUserForPermission.id);
+                    }
+
                     $scope.getPermissionByDomain($scope.idAddPermissionDomainIdentByDomain);
+                    $scope.permission.success.addForUser = true;
+                    $scope.permission.success.addForDomain = true;
                 })
                 .error(function (data, status, headers, config) {
+                    $scope.permission.success.addForUser = false;
+                    $scope.permission.error.addForUser = {status:status,message:data.errors};
+                    $scope.permission.success.addForDomain = false;
+                    $scope.permission.error.addForDomain = {status:status,message:data.errors};
                 });
         };
 

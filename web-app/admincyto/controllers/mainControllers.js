@@ -18,15 +18,18 @@ angular.module("cytomineUserArea")
 //            alert(exception.message +" " + cause);
 //        };
 //    })
-    .controller("mainCtrl", function ($scope, $http, currentUserUrl) {
+    .controller("mainCtrl", function ($scope, $http, $location,currentUserUrl) {
         console.log("mainCtrl");
         $scope.main = {error:{}};
+
+        $scope.isCurrentUserAdmin = false;
 
         $scope.getCurrentUser = function() {
             $http.get(currentUserUrl)
                 .success(function (data) {
                     console.log(data);
                     $scope.main.currentUserFullname = data.lastname + " " + data.firstname;
+                    $scope.isCurrentUserAdmin = data.admin;
 
                 })
                 .error(function (data, status, headers, config) {

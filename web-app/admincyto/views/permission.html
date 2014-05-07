@@ -1,8 +1,8 @@
 
 <div ng-controller="permissionCtrl">
     <div>
-        <button class="btn-lg btn" ng-click="changeMode('byUser')" ng-class="getClassNameMode('byUser')">By User</button>
-        <button class="btn-lg btn" ng-click="changeMode('byDomain')" ng-class="getClassNameMode('byDomain')">By Domain</button>
+        <a class="btn-lg btn" href="#/permission/user" ng-class="getClassNameMode('byUser')">By User</a>
+        <a class="btn-lg btn" href="#/permission/domain" ng-class="getClassNameMode('byDomain')">By Domain</a>
     </div>
 
 
@@ -60,9 +60,17 @@
                                 <td><button ng-click="addPermissionToUser(idAddPermissionDomainClass,idAddPermissionDomainIdent,selectedUserForPermission.id,idAddPermissionMask)" class="btn btn-primary">Add permission</button></td>
                             </tr>
                             <tbody>
-                        </table>
-                    </div>
 
+
+                        </table>
+
+                    </div>
+                    <div class="alert alert-danger" ng-show="permission.error.addForUser">
+                        Error. Permission cannot be add {{permission.error.addForUser.message}} ({{permission.error.addForUser.status}}).
+                    </div>
+                    <div class="alert alert-success" ng-show="permission.success.addForUser">
+                        Permission has been added.
+                    </div>
                 </div>
 
             </div>
@@ -91,7 +99,7 @@
                 <div ng-if="idAddPermissionDomainIdentByDomain">
 
                     <div>
-                        <h5>Domain {{idAddPermissionDomainClass}} ({{idAddPermissionDomainIdentByDomain}})</h5>
+                        <h5>Domain {{idAddPermissionDomainClass}} ({{idAddPermissionDomainIdentByDomain}}) {{permission.success}}</h5>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -122,8 +130,16 @@
                             <tbody>
                         </table>
                     </div>
-
+                    {{permission.success.addForDomain}}
+                    <div class="alert alert-danger" ng-show="permission.error.addForDomain">
+                        Error. Permission cannot be add {{permission.error.addForDomain.message}} ({{permission.error.addForDomain.status}}).
+                    </div>
+                    <div class="alert alert-success" ng-show="permission.success.addForDomain">
+                        Permission has been added.
+                    </div>
                 </div>
+
+
 
             </div>
         </div>

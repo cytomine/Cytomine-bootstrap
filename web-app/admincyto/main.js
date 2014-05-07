@@ -16,10 +16,16 @@ angular.module("cytomineUserArea", ["ngRoute","ngSanitize","ngResource","ngTable
         $routeProvider.when("/user-info/:id", {
             templateUrl: "views/user/infoView.html"
         });
-        $routeProvider.when("/group", {
+        $routeProvider.when("/group/:id?", {
             templateUrl: "views/group.html"
         });
         $routeProvider.when("/permission", {
+            redirectTo : "/permission/user"
+        });
+        $routeProvider.when("/permission/user", {
+            templateUrl: "views/permission.html"
+        });
+        $routeProvider.when("/permission/domain", {
             templateUrl: "views/permission.html"
         });
         $routeProvider.otherwise({
