@@ -40,7 +40,8 @@ class SecurityACL {
             def atLeastOne = containerObjects.find {
                 it.checkPermission(permission)
             }
-            if (!atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className}")
+            if (!atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className} ${id}")
+
         } else {
             throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
         }
@@ -53,7 +54,7 @@ class SecurityACL {
             def atLeastOne = containerObjects.find {
                 !it.checkPermission(permission)
             }
-            if (atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className}")
+            if (atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className} ${id}")
         } else {
             throw new ObjectNotFoundException("ACL error: ${className} with id ${id} was not found! Unable to process auth checking")
         }
@@ -87,7 +88,7 @@ class SecurityACL {
     static void check(CytomineDomain domain, Permission permission) {
           if (domain) {
               if (!domain.container().checkPermission(permission)) {
-                  throw new ForbiddenException("You don't have the right to read or modity this resource! ${domain.class.getName()}")
+                  throw new ForbiddenException("You don't have the right to read or modity this resource! ${domain.class.getName()} ${domain.id}")
               }
 
           } else {

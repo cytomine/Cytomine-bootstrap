@@ -170,7 +170,7 @@ class RestACLController extends RestController {
     @RestApiResponseObject(objectIdentifier="List of all permission name (empty if user has no permission)")
     def add (){
         try {
-            if(params.domainClassName && params.domainIdent && params.user) {
+            if(params.domainClassName && params.domainIdent && params.user && params.user!="undefined") {
                 def perm = findPermissionName(params.auth)
                 def domain = retrieveCytomineDomain(params.domainClassName,params.long('domainIdent'))
                 def user = SecUser.read(params.long('user'))

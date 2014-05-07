@@ -11,6 +11,7 @@ class RefreshCounterJob {
     }
 
     def execute() {
-        counterService.refreshCounter()
+        //temp disable this heavy request
+        //counterService.refreshCounter()
     }
 }

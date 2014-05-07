@@ -261,8 +261,15 @@ class RestUserController extends RestController {
      */
     @RestApiMethod(description="Get current user info")
     def showCurrent() {
-        responseSuccess(secUserService.readCurrentUser())
+        SecUser user = secUserService.readCurrentUser()
+        def  maps = JSON.parse(user.encodeAsJSON())
+        def  authMaps = secUserService.getAuth(user)
+        maps.admin = authMaps.get("admin")
+        maps.user = authMaps.get("user")
+        maps.guest = authMaps.get("guest")
+        responseSuccess(maps)
     }
+
 
 
     /**
