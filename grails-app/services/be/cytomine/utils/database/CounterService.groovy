@@ -65,6 +65,8 @@ class CounterService {
                 sql.close()
             }catch (Exception e) {}
 
+
+
             /*
            * Refresh counter for each images
            * UPDATE project p

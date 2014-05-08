@@ -41,16 +41,29 @@
 
 <script type="text/javascript" src="lib/mousetrap.min.js"></script>
 
-<!-- JQuery & JQuery UI -->
-<script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+<wthr:isMsie>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-
+    <script src="/lib/r2d3/r2d3.js" charset="utf-8"></script>
+    <script src="lib/html5.js"></script>
+    <script src="lib/Respond/src/respond.js"></script>
+</wthr:isMsie>
+<wthr:isNotMsie>
+    <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
+    <script src="lib/nvd3/lib/d3.v2.min.js"></script>
+    <script src="lib/nvd3/nv.d3.min.js"></script>
+</wthr:isNotMsie>
+
 <script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
 <link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
 <link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
 <link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
 
-<!--[if lt IE 9]>
-    <script src="lib/html5.js"></script>
-<![endif]-->
+
+<script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
+
+
+<link rel="stylesheet" href="lib/nvd3/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
 <script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
 
@@ -64,9 +77,7 @@
 
 <script type="text/javascript" src="lib/cookie/jquery.cookie.js"></script>
 
-<link rel="stylesheet" href="lib/nvd3/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
-<script src="lib/nvd3/lib/d3.v2.min.js"></script>
-<script src="lib/nvd3/nv.d3.min.js"></script>
+
 
 <!-- Datatables -->
 <script src="lib/DataTables-1.9.4/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
@@ -315,6 +326,19 @@
             }
 
         }, 1000);
+
+        //disable console for not supported by browser (ie <= 8)
+        var alertFallback = false;
+        if (typeof console === "undefined" || typeof console.log === "undefined") {
+            console = {};
+            if (alertFallback) {
+                console.log = function(msg) {
+                    alert(msg);
+                };
+            } else {
+                console.log = function() {};
+            }
+        }
     </script>
 </g:if>
 </head>

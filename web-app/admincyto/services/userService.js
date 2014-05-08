@@ -72,6 +72,7 @@ angular.module("cytomineUserArea")
 
         editUser : function(editedUser,callbackSuccess,callbackError) {
             var self = this;
+            //TODO: we should use angular params object instead of adding params in url
             $http.put(userEditUrl.replace("{id}", editedUser.id),editedUser)
                 .success(function (data) {
                     users[users.indexOf(self.getUser(data.user.id,users))] = data.user;
@@ -89,6 +90,7 @@ angular.module("cytomineUserArea")
 
         resetPassword : function(idUser,password,callbackSuccess,callbackError) {
             var self = this;
+            //TODO: we should use angular params object instead of adding params in url
             $http.put(resetPasswordUrl.replace("{idUser}", idUser).replace("{password}", password),"")
                 .success(function (data) {
                     if(callbackSuccess) {

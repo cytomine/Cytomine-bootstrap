@@ -120,6 +120,7 @@ angular.module("cytomineUserArea")
         $scope.permissionForSelectedDomain = null;
 
         $scope.getPermissionByUser = function(idUser) {
+            //TODO: we should use angular params object instead of adding params in url
             $http.get(permissionUrl+"?idUser="+idUser)
                 .success(function (data) {
                     $scope.permissionForSelectedUser = data;
@@ -129,6 +130,7 @@ angular.module("cytomineUserArea")
         }
 
         $scope.getPermissionByDomain = function(idDomain) {
+            //TODO: we should use angular params object instead of adding params in url
             $http.get(permissionUrl+"?idDomain="+idDomain)
                 .success(function (data) {
                     $scope.permissionForSelectedDomain = data;
@@ -175,7 +177,7 @@ angular.module("cytomineUserArea")
             customACLUrl = customACLUrl.replace("{idUser}",idUser);
             customACLUrl = customACLUrl.replace("{auth}",maskPermissionService.getPermissionFromMask(permission));
 
-
+            //TODO: we should use angular params object instead of adding params in url
             $http.post(customACLUrl,{})
                 .success(function (data) {
                     $scope.permission.error.addForUser = null;
@@ -203,7 +205,7 @@ angular.module("cytomineUserArea")
             customACLUrl = customACLUrl.replace("{domainIdent}",domainIdent);
             customACLUrl = customACLUrl.replace("{idUser}",idUser);
             customACLUrl = customACLUrl.replace("{auth}",maskPermissionService.getPermissionFromMask(permission));
-
+            //TODO: we should use angular params object instead of adding params in url
             $http.delete(customACLUrl)
                 .success(function (data) {
                     $scope.getPermissionByUser($scope.selectedUserForPermission.id);

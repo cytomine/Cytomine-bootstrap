@@ -90,6 +90,7 @@ angular.module("cytomineUserArea")
         };
 
         $scope.getUserFromGroup = function(idGroup) {
+            //TODO: we should use angular params object instead of adding params in url
             $http.get("/api/group/{id}/user.json".replace("{id}",idGroup))
                 .success(function (data) {
                     $scope.group.usersFromGroup = data;
@@ -98,6 +99,7 @@ angular.module("cytomineUserArea")
 
         $scope.addUserToGroup = function(group,idUser) {
             console.log("add " + idUser + " from " + group.name);
+            //TODO: we should use angular params object instead of adding params in url
             $http.post("/api/user/{id}/group.json".replace("{id}",idUser), {user:idUser,group:group.id})
                 .success(function (data) {
                     $scope.getUserFromGroup(group.id);
@@ -109,6 +111,7 @@ angular.module("cytomineUserArea")
 
         $scope.deleteUserFromGroup = function(group,user) {
             console.log("delete " + user.username + " from " + group.name);
+            //TODO: we should use angular params object instead of adding params in url
             $http.delete("/api/user/{idUser}/group/{idGroup}.json".replace("{idUser}",user.id).replace("{idGroup}",group.id))
                 .success(function (data) {
                     $scope.getUserFromGroup(group.id);

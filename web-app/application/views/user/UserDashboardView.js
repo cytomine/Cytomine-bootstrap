@@ -36,11 +36,11 @@ var UserDashboardView = Backbone.View.extend({
 
         self.initStats(tpStat);
         self.initLastAction();
-//      //self.initLastNews();
+////      //self.initLastNews();
         self.initGotoProject();
         self.initGotoImage();
-        self.initLastOpenedImage(tplImg);
-        self.initLastOpenProject(tplProj);
+//        self.initLastOpenedImage(tplImg);
+//        self.initLastOpenProject(tplProj);
 
         return this;
     },
@@ -161,41 +161,41 @@ var UserDashboardView = Backbone.View.extend({
 
             var chart;
 
-            nv.addGraph(function() {
-                chart = nv.models.linePlusBarChart()
-                    .margin({top: 30, right: 60, bottom: 50, left: 70})
-                    .x(function(d,i) { return i })
-                    .color(d3.scale.category10().range());
-
-                chart.xAxis.tickFormat(function(d) {
-                    var dx = chartData[0].values[d] && chartData[0].values[d].x || 0;
-                    return dx;// ? d3.time.format('%x')(new Date(dx)) : '';
-                })
-                    .showMaxMin(false);
-
-                chart.y1Axis
-                    .tickFormat(d3.format(',f'));
-
-                chart.y2Axis
-                    .tickFormat(function(d) {
-                        if (d == minValue) return "low";
-                        else if (d == maxValue) return "high";
-                        else return "";
-                    });
-
-                chart.bars.forceY([0]).padData(false);
-                //chart.lines.forceY([0]);
-
-                d3.select('#chartActivity svg')
-                    .datum(chartData)
-                    .transition().duration(500).call(chart);
-
-                nv.utils.windowResize(chart.update);
-
-                chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
-
-                return chart;
-            });
+//            nv.addGraph(function() {
+//                chart = nv.models.linePlusBarChart()
+//                    .margin({top: 30, right: 60, bottom: 50, left: 70})
+//                    .x(function(d,i) { return i })
+//                    .color(d3.scale.category10().range());
+//
+//                chart.xAxis.tickFormat(function(d) {
+//                    var dx = chartData[0].values[d] && chartData[0].values[d].x || 0;
+//                    return dx;// ? d3.time.format('%x')(new Date(dx)) : '';
+//                })
+//                    .showMaxMin(false);
+//
+//                chart.y1Axis
+//                    .tickFormat(d3.format(',f'));
+//
+//                chart.y2Axis
+//                    .tickFormat(function(d) {
+//                        if (d == minValue) return "low";
+//                        else if (d == maxValue) return "high";
+//                        else return "";
+//                    });
+//
+//                chart.bars.forceY([0]).padData(false);
+//                //chart.lines.forceY([0]);
+//
+//                d3.select('#chartActivity svg')
+//                    .datum(chartData)
+//                    .transition().duration(500).call(chart);
+//
+//                nv.utils.windowResize(chart.update);
+//
+//                chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+//
+//                return chart;
+//            });
         });
     },
     initLastNews : function() {
@@ -242,28 +242,33 @@ var UserDashboardView = Backbone.View.extend({
         var self = this;
         var maggicImage = [];
 
+        console.log(bowser);
+        if(bowser.msie && bowser.version <= 8) {
+            $("#goToImagePanel").empty();
+        }
+        else {
+            $.get("/api/user/"+window.app.status.user.id+"/imageinstance/light.json", function(data) {
 
-
-        $.get("/api/user/"+window.app.status.user.id+"/imageinstance/light.json", function(data) {
-
-            var selectImage = $("#goToImageUser");
-            self.images = data.collection;
-            _.each (self.images, function (item){
-                maggicImage.push(item.originalFilename + " in " + item.projectName);
-            });
-
-            selectImage.typeahead({
-                local:maggicImage,
-                minLength:0
-            });
-            selectImage.bind('typeahead:selected', function(obj, datum, name) {
+                var selectImage = $("#goToImageUser");
+                self.images = data.collection;
                 _.each (self.images, function (item){
-                    if(item.originalFilename + " in " + item.projectName==datum.value) {
-                        window.location = "#tabs-image-"+item.project+"-"+item.id+"-"
-                    }
-                })
+                    maggicImage.push(item.originalFilename + " in " + item.projectName);
+                });
+
+                selectImage.typeahead({
+                    local:maggicImage,
+                    minLength:0
+                });
+                selectImage.bind('typeahead:selected', function(obj, datum, name) {
+                    _.each (self.images, function (item){
+                        if(item.originalFilename + " in " + item.projectName==datum.value) {
+                            window.location = "#tabs-image-"+item.project+"-"+item.id+"-"
+                        }
+                    })
+                });
             });
-        });
+        }
+
     },
 
     initLastOpenedImage : function(tpl) {
