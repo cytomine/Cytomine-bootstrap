@@ -15,6 +15,11 @@ class TestController {
         bootstrapTestDataService.initSoftwareAndJobTemplate(params.long('project'),params.long('term'))
     }
 
+    def test() {
+        println "redirect"
+        redirect uri: "http://localhost:8080/api/project/57.json"
+    }
+
 
 
 //    def attack1() {

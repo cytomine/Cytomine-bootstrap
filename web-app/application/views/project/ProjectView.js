@@ -162,6 +162,8 @@ var ProjectView = Backbone.View.extend({
             $(self.projectListElem).append(panel.el);
 
         });
+
+
         if(window.app.status.user.model.get('guest')) {
             $("#newProjectListing").hide();
             $(".editProject").hide();

@@ -116,15 +116,18 @@ var ProjectPanelView = Backbone.View.extend({
         var html = _.template(tpl, json);
 
 
-        if (replace) {
+        if(replace) {
             $("#projectlist" + json.id).replaceWith(html);
         }
         else {
             $(self.el).append(html);
         }
-
+        console.log("doLayout.html:" + html.length);
+        console.log("doLayout.el.l:" + $(self.el).length);
+        console.log("doLayout.el.html.l:" + $(self.el).html().length);
         self.renderCurrentProjectButton();
-        self.renderShowImageButton(json.numberOfImages)
+        self.renderShowImageButton(json.numberOfImages);
+
 
     },
     infoProject: function () {

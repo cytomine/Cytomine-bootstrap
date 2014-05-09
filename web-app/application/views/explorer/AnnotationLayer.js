@@ -834,7 +834,7 @@ AnnotationLayer.prototype = {
         }
         if (this.rotate || this.drag) {
             this.controls.modify.mode &= ~OpenLayers.Control.ModifyFeature.RESHAPE;
-        }
+        }0
         this.controls.regular.handler.sides = this.sides;
         this.controls.regular.handler.irregular = this.irregular;
     },
@@ -845,8 +845,7 @@ AnnotationLayer.prototype = {
         for (var i in this.vectorsLayer.features) {
             var feature = this.vectorsLayer.features[i];
 
-
-            if (feature.attributes.measure == undefined || feature.attributes.measure == 'YES') {
+            if (feature.attributes == undefined || feature.attributes.measure == undefined || feature.attributes.measure == 'YES') {
                 self.vectorsLayer.removeFeatures(feature);
                 if (feature.popup) {
                     self.popup.feature = null;
