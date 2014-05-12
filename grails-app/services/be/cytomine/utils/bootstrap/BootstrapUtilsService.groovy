@@ -1,5 +1,7 @@
 package be.cytomine.utils.bootstrap
 
+import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.Mime
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
@@ -158,6 +160,17 @@ class BootstrapUtilsService {
                     }
                 }
             }
+        }
+    }
+
+    def saveDomain(def newObject, boolean flush = true) {
+        if (!newObject.validate()) {
+            log.error newObject.errors
+            log.error newObject.retrieveErrors().toString()
+            throw new WrongArgumentException(newObject.retrieveErrors().toString())
+        }
+        if (!newObject.save(flush: flush)) {
+            throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
     }
 }

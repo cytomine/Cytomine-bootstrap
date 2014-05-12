@@ -1,4 +1,10 @@
 <div class="panel-body" ng-controller="userCtrl">
+
+
+    <form action='/j_spring_security_switch_user' method='POST' class="pull-right">
+        <input type="hidden"  name="j_username"  value="{{getSelectedUser().username}}"><input class="btn btn-danger" type='submit' value='Connect as user {{getSelectedUser().username}}'/>
+    </form>
+
     <div ng-controller="roleCtrl">
         <user-table  roles="getRoles()" user="getSelectedUser()"></user-table>
         <a class="btn btn-primary" href="#/user-table">Back</a>

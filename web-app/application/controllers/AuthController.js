@@ -65,7 +65,7 @@ var AuthController = Backbone.Router.extend({
             data: data,
             success: function (data) {
                 app.message("Welcome", "You are logged as " + data.fullname, "", "success");
-                new UserModel({id: data.id}).fetch({
+                new UserModel({id: "current"}).fetch({
                     success: function (model, response) {
                         window.app.status.user = {
                             authenticated: true,

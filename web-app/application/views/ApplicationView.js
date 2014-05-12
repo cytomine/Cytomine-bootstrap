@@ -107,6 +107,15 @@ var ApplicationView = Backbone.View.extend({
             return false;
         });
         $("#loggedUser").html(window.app.status.user.model.prettyName());
+        if(window.app.status.user.model.get("isSwitched")) {
+            $("#loggedUser").css("color","#ff0000");
+            $("#li-cancel-switch-user").show();
+            $("#a-cancel-switch-user").append(" Go back to " + window.app.status.user.model.get("realUser"));
+            $("#a-cancel-switch-user").css("color","#ff0000");
+        } else {
+            $("#li-cancel-switch-user").hide();
+        }
+
 
         if(window.app.status.user.model.get('guest'))  {
             $("#feedback").hide();

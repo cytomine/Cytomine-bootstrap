@@ -2,7 +2,9 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
+import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
+import be.cytomine.security.SecUserSecRole
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
@@ -96,23 +98,12 @@ class BootStrap {
             Relation relation = new Relation(name: RelationTerm.names.PARENT)
             relation.save(flush:true,failOnError: true)
         }
+
+        //2014 05 12
+//        bootstrapUtilsService.createSwitcherRole()
+
+
+
+
     }
-
-    def saveDomain(def newObject, boolean flush = true) {
-        newObject.checkAlreadyExist()
-        if (!newObject.validate()) {
-            log.error newObject.errors
-            log.error newObject.retrieveErrors().toString()
-            throw new WrongArgumentException(newObject.retrieveErrors().toString())
-        }
-        if (!newObject.save(flush: flush)) {
-            throw new InvalidRequestException(newObject.retrieveErrors().toString())
-        }
-    }
-
-
-
-
-
-
 }

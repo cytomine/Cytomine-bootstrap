@@ -45,7 +45,8 @@ class SecUserSecRoleService extends ModelService {
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
         SecurityACL.checkAdmin(currentUser)
-        return executeCommand(new AddCommand(user: currentUser),null,json)
+        def command = executeCommand(new AddCommand(user: currentUser),null,json)
+        return command
     }
 
     /**
@@ -67,6 +68,7 @@ class SecUserSecRoleService extends ModelService {
         } else {
             SecurityACL.checkAdmin(currentUser)
         }
+
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         def result = executeCommand(c,domain,null)
         result
@@ -88,6 +90,7 @@ class SecUserSecRoleService extends ModelService {
         SecRole roleGuest = SecRole.findByAuthority("ROLE_GUEST")
         SecRole roleUser = SecRole.findByAuthority("ROLE_USER")
         SecRole roleAdmin = SecRole.findByAuthority("ROLE_ADMIN")
+
 
         if(role.authority.equals("ROLE_ADMIN")) {
             addRole(user,roleGuest)

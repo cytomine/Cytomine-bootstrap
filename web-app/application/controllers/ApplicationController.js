@@ -138,7 +138,7 @@ var ApplicationController = Backbone.Router.extend({
                 self.status.version = data.get('version');
                 self.status.serverURL = data.get('serverURL');
                 if (data.get('authenticated')) {
-                    new UserModel({id: data.get('user')}).fetch({
+                    new UserModel({id: "current"}).fetch({
                         success: function (model, response) {
                             self.status.user = {
                                 id: data.get('user'),

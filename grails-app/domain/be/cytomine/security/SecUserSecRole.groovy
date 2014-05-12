@@ -23,6 +23,7 @@ class SecUserSecRole extends CytomineDomain implements Serializable {
     static mapping = {
         id generator: "assigned"
         sort "id"
+        secRole lazy: false
     }
 
 

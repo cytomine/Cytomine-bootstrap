@@ -1,5 +1,6 @@
 package be.cytomine.security
 
+import groovy.sql.Sql
 import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -12,6 +13,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsService
 
 class CASLdapUserDetailsService extends GormUserDetailsService {
 
+    def dataSource
 
     /**
      * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least
@@ -32,8 +34,16 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
     throws UsernameNotFoundException, DataAccessException {
 
+        println "username=$username"
         SecUser user = SecUser.findByUsername(username)
+        println "user=$user"
         boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
+
+        def authorities = []
+        if(user) {
+            def auth = SecUserSecRole.findAllBySecUser(user).collect{new GrantedAuthorityImpl(it.secRole.authority)}
+            authorities.addAll(auth)
+        }
 
         if(user==null && casDisabled)  {
             log.info "return null"
@@ -79,6 +89,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
                     secUsersecRole.secUser = user
                     secUsersecRole.secRole = userRole
                     secUsersecRole.save(flush: true)
+                    authorities << new GrantedAuthorityImpl(userRole.authority)
 
                 } else {
                     user.errors.each {
@@ -88,10 +99,8 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
             }
         }
 
-        //def authorities = user.getAuthorities().collect {new GrantedAuthorityImpl(it.authority)}
-
         return new GrailsUser(user.username, user.password, user.enabled, !user.accountExpired,
                 !user.passwordExpired, !user.accountLocked,
-                 NO_ROLES, user.id)
+                authorities, user.id)
     }
 }

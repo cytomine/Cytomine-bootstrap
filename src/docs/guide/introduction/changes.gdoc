@@ -1,3 +1,16 @@
+h3. 201405XX Version
+
+"Run as" mode
+
+h3. 20140506 Version
+
+Optimisation pour sharview (principalement SQL)
+Cacher les activités du projet en mode blind
+
+h3. 20140503 Version
+
+Admin area (see admincyto/)
+
 h3. 20140220 Version
 
 *SQL Changes*

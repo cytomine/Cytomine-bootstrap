@@ -99,9 +99,9 @@ environments {
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     development {
-        //grails.serverURL = "http://localhost:8080"
+        grails.serverURL = "http://localhost:8080"
         //if test with VM windows 7
-        grails.serverURL = "http://10.0.2.2:8080"
+        //grails.serverURL = "http://10.0.2.2:8080"
 
         grails.uploadURL = "http://localhost:9090"
         grails.imageServerURL = "http://localhost:9080"
@@ -238,7 +238,7 @@ log4j = {
             'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
     error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
-
+    debug 'org.springframework.security'
 
 
 
@@ -288,10 +288,11 @@ log4j = {
 //    debug 'org.hibernate.SQL'
 //    trace 'org.hibernate.type'
 }
-
+grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugins.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN'],
-//        '/monitoring/**':    ['ROLE_ADMIN'],
+        '/monitoring/**':    ['ROLE_ADMIN'],
+        '/j_spring_security_switch_user': ['ROLE_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
@@ -299,7 +300,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/images/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
         '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
+        '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
 ]
 /* Read CAS/LDAP config. A bad thing with Grails external config is that all config data from config properties file
    is set AFTER ldap/cas config. So we read config data from file directly and we force flag (active)
@@ -326,11 +327,13 @@ if(props.getProperty("grails.plugins.springsecurity.cas.active").toString()=="tr
     grails.plugins.springsecurity.cas.useSingleSignout = false
     grails.plugins.springsecurity.cas.active = false
     grails.plugins.springsecurity.ldap.active = false
-    grails.plugins.springsecurity.interceptUrlMap.remove('/*')
+    //grails.plugins.springsecurity.interceptUrlMap.remove('/*')
 }
 grails.plugins.springsecurity.cas.loginUri = '/login'
 grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'
 
+//allow an admin to connect as a other user
+grails.plugins.springsecurity.useSwitchUserFilter = true
 
 environments {
     development {
@@ -398,13 +401,18 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'be.cytomine.secu
 grails.plugins.springsecurity.userLookup.passwordPropertyName = 'password'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'be.cytomine.security.SecUserSecRole'
 grails.plugins.springsecurity.authority.className = 'be.cytomine.security.SecRole'
+grails.plugins.springsecurity.authority.nameField = 'authority'
 grails.plugins.springsecurity.projectClass = 'be.cytomine.project.Project'
 grails.plugins.springsecurity.rememberMe.parameter = 'remember_me'
-grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
-grails.plugins.springsecurity.controllerAnnotations.staticRules = [
-        '/securityInfo/**': ['ROLE_ADMIN'],
-        '/monitoring/**': ['ROLE_ADMIN']       //do not work...
-]
+
+
+
+//
+//grails.plugins.springsecurity.controllerAnnotations.staticRules = [
+//        '/securityInfo/**': ['ROLE_ADMIN'],
+//       // '/monitoring/**': ['ROLE_ADMIN'],       //do not work...
+//        //'/j_spring_security_switch_user': ['ROLE_SWITCH_USER', 'IS_AUTHENTICATED_FULLY'] //do not work...
+//]
 
 
 //grails.resources.debug=true

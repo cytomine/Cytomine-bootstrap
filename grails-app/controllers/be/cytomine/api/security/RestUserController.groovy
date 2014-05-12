@@ -12,6 +12,7 @@ import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import be.cytomine.utils.Utils
 import grails.converters.JSON
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
 import org.restapidoc.annotation.RestApi
@@ -267,6 +268,10 @@ class RestUserController extends RestController {
         maps.admin = authMaps.get("admin")
         maps.user = authMaps.get("user")
         maps.guest = authMaps.get("guest")
+        maps.isSwitched = SpringSecurityUtils.isSwitched()
+        if(maps.isSwitched) {
+            maps.realUser = SpringSecurityUtils.switchedUserOriginalUsername
+        }
         responseSuccess(maps)
     }
 

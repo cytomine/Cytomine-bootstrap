@@ -44,7 +44,7 @@ class UserRoleTests  {
     }
 
 
-  void testAddUseRoleCorrect() {
+  void testAddUserRoleCorrect() {
       def idUser = BasicInstanceBuilder.saveDomain(BasicInstanceBuilder.getUserNotExist(false)).id
       def idRole = SecRole.findByAuthority("ROLE_USER").id
       def json = "{user : $idUser, role: $idRole}"
@@ -52,6 +52,20 @@ class UserRoleTests  {
       def result = UserRoleAPI.create(idUser,idRole,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
       assert 200 == result.code
   }
+
+    void testAddAdminRoleCorrect() {
+        def idUser = BasicInstanceBuilder.saveDomain(BasicInstanceBuilder.getUserNotExist(false)).id
+        def idRole = SecRole.findByAuthority("ROLE_ADMIN").id
+
+        assert !hasRole(idUser,idRole)
+
+        def json = "{user : $idUser, role: $idRole}"
+
+        def result = UserRoleAPI.create(idUser,idRole,json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        assert hasRole(idUser,idRole)
+    }
 
     void testAddUseRoleAlreadyExist() {
         def idUser = BasicInstanceBuilder.saveDomain(BasicInstanceBuilder.getUserNotExist(false)).id
@@ -80,6 +94,25 @@ class UserRoleTests  {
 
   }
 
+    void testDeleteAdminRole() {
+        def user = BasicInstanceBuilder.getAdmin("testDeleteAdminRole","password")
+        def role = SecRole.findByAuthority("ROLE_ADMIN")
+
+        def idUser = user.id
+        def idRole = role.id
+
+        def result = UserRoleAPI.show(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+
+        result = UserRoleAPI.delete(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 200 == result.code
+
+        result = UserRoleAPI.show(idUser,idRole,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        assert 404 == result.code
+    }
+
+
 
     void testDefineUserRole() {
 
@@ -93,12 +126,14 @@ class UserRoleTests  {
         assert !hasRole(user.id,roleUser.id)
         assert !hasRole(user.id,roleAdmin.id)
 
+
         def result = UserRoleAPI.define(user.id,roleAdmin.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert result.code == 200
 
         assert hasRole(user.id,roleGuest.id)
         assert hasRole(user.id,roleUser.id)
         assert hasRole(user.id,roleAdmin.id)
+
 
         result = UserRoleAPI.define(user.id,roleGuest.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert result.code == 200
@@ -107,12 +142,14 @@ class UserRoleTests  {
         assert !hasRole(user.id,roleUser.id)
         assert !hasRole(user.id,roleAdmin.id)
 
+
         result = UserRoleAPI.define(user.id,roleUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert result.code == 200
 
         assert hasRole(user.id,roleGuest.id)
         assert hasRole(user.id,roleUser.id)
         assert !hasRole(user.id,roleAdmin.id)
+
 
         result = UserRoleAPI.define(-99,roleUser.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
         assert result.code == 404

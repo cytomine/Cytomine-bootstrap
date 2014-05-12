@@ -67,7 +67,13 @@
         </div>
 
         <div ng-show="!isCurrentUserAdmin" class="container-fluid">
-            Ooops! You are not an admin!
+            Ooops! You are not an admin!<br/>
+            <br/>
+            Your are logged as {{main.currentUserFullname}}<br/>
+            If you are an admin and you are "logged as", try to catch your role<br/>
+            <a href='${request.contextPath}/j_spring_security_exit_user'>
+                Retrieve my real role
+            </a>
         </div>
     </body>
 </html>
