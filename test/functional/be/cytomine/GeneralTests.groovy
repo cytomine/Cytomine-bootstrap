@@ -16,7 +16,6 @@ import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.News
 import grails.converters.JSON
 import grails.util.Environment
-import grails.util.Holders
 import org.apache.commons.io.FileUtils
 import org.codehaus.groovy.grails.web.json.JSONArray
 
@@ -54,7 +53,7 @@ class GeneralTests  {
         log.info("post with data size:" + jsonImage.size())
         String URL = Infos.CYTOMINEURL + "api/image.json"
         HttpClient client = new HttpClient()
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        client.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         client.post(jsonImage)
         int code = client.getResponseCode()
         String response = client.getResponseData()
@@ -69,23 +68,23 @@ class GeneralTests  {
     void testLastAction() {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
 
-        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = UserAnnotationAPI.undo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = UserAnnotationAPI.redo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         /*
@@ -95,7 +94,7 @@ class GeneralTests  {
         Integer max = 3
         HttpClient client = new HttpClient();
         String url = Infos.CYTOMINEURL + "api/project/" + idProject + "/last/" + max + ".json"
-        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.connect(url, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
@@ -109,7 +108,7 @@ class GeneralTests  {
     void testLastActionProjectNotExist() {
         HttpClient client = new HttpClient();
         String url = Infos.CYTOMINEURL + "api/project/-99/last/10.json"
-        client.connect(url, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.connect(url, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
         client.get()
         int code = client.getResponseCode()
         client.disconnect();
@@ -119,30 +118,31 @@ class GeneralTests  {
     void testMultipleAuthConnexion() {
         BasicInstanceBuilder.getUserAnnotation()
         UserAnnotation annotation = UserAnnotation.list().first()
+        User user = BasicInstanceBuilder.getUser1()
 
         log.info "show userannotation " + annotation.id
         String URL = Infos.CYTOMINEURL + "api/userannotation/" + annotation.id + ".json"
         HttpClient client1 = new HttpClient();
-        client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client1.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
         client1.get()
         int code = client1.getResponseCode()
         String response = client1.getResponseData()
         assert code == 200
 
         HttpClient client2 = new HttpClient();
-        client2.connect(URL, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD);
+        client2.connect(URL, user.username, "password");
         client2.get()
         code = client2.getResponseCode()
         assert code == 200
         client1.disconnect()
 
-        client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        client1.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         client1.get()
         code = client1.getResponseCode()
         assert code == 200
 
         client2.disconnect();
-        client2.connect(URL, Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD);
+        client2.connect(URL, user.username,  "password");
         client2.get()
         code = client2.getResponseCode()
         assert code == 200
@@ -153,7 +153,7 @@ class GeneralTests  {
 
     void testPing() {
 
-        def result = ProjectAPI.doPing(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.doPing(BasicInstanceBuilder.getProject().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -182,7 +182,7 @@ class GeneralTests  {
 
          HttpClient client1 = new HttpClient();
          String URL = Infos.CYTOMINEURL + "api/news.json"
-         client1.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+         client1.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
          client1.get()
          int code = client1.getResponseCode()
          String response = client1.getResponseData()
@@ -204,9 +204,9 @@ class GeneralTests  {
          }
 
          def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+         result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
          assert Command.list().size()==3
          def histories = CommandHistory.list()
@@ -233,7 +233,7 @@ class GeneralTests  {
 
  //        ArchiveCommandService archive = new ArchiveCommandService()
  //        archive.archiveOldCommand()
-         DomainAPI.doGET(Infos.CYTOMINEURL+"archive/archive.json",Infos.GOODLOGIN,Infos.GOODPASSWORD)
+         DomainAPI.doGET(Infos.CYTOMINEURL+"archive/archive.json",Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
 
 
 
@@ -260,11 +260,11 @@ class GeneralTests  {
         assert JSON.parse(project.encodeAsJSON()).name == name
 
         String URL = Infos.CYTOMINEURL + "api/project.json"
-        def result = ProjectAPI.doPOST(URL,project.encodeAsJSON(),Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = ProjectAPI.doPOST(URL,project.encodeAsJSON(),Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert JSON.parse(result.data).project.name == name
 
-        result = ProjectAPI.show(JSON.parse(result.data).project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        result = ProjectAPI.show(JSON.parse(result.data).project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert JSON.parse(result.data).name == name
 

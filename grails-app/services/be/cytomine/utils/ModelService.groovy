@@ -5,7 +5,7 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import grails.util.GrailsNameUtils
@@ -24,6 +24,7 @@ abstract class ModelService {
     def cytomineService
     def grailsApplication
     def taskService
+    //def securityACLService
     boolean saveOnUndoRedoStack = true
 
     /**
@@ -168,7 +169,7 @@ abstract class ModelService {
         def container = domain.container()
         if (container) {
             //we only check security if container is defined
-            SecurityACL.check(container,READ)
+            securityACLService.check(container,READ)
         }
         return domain
     }

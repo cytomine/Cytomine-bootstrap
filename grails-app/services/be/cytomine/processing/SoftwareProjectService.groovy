@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -20,6 +20,7 @@ class SoftwareProjectService extends ModelService{
     def cytomineService
     def transactionService
     def modelService
+    def securityACLService
 
     def currentDomain() {
         return SoftwareProject
@@ -28,18 +29,18 @@ class SoftwareProjectService extends ModelService{
     def read(def id) {
         def sp = SoftwareProject.get(id)
         if(sp) {
-            SecurityACL.check(sp.container(),READ)
+            securityACLService.check(sp.container(),READ)
         }
         sp
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         SoftwareProject.list()
     }
 
     def list(Project project) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         SoftwareProject.findAllByProject(project)
     }
 
@@ -49,7 +50,7 @@ class SoftwareProjectService extends ModelService{
      * @return Response structure (created domain data,..)
      */
    def add(def json) throws CytomineException {
-        SecurityACL.check(json.project,Project, READ)
+        securityACLService.check(json.project,Project, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser),null,json)
@@ -65,7 +66,7 @@ class SoftwareProjectService extends ModelService{
      */
     def delete(SoftwareProject domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

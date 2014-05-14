@@ -130,10 +130,12 @@ class UserAnnotationAPI extends DomainAPI {
     }
 
     static def buildBasicUserAnnotation(String username, String password) {
+        def project = BasicInstanceBuilder.getProjectNotExist()
+        Infos.addUserRight(username,project.ontology)
         //Create project with user 1
-        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), username, password)
+        def result = ProjectAPI.create(project.encodeAsJSON(), username, password)
         assert 200==result.code
-        Project project = result.data
+        project = result.data
 
         //Add image with user 1
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist()

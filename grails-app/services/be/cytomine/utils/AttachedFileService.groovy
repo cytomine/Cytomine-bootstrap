@@ -1,6 +1,6 @@
 package be.cytomine.utils
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
@@ -16,6 +16,7 @@ class AttachedFileService extends ModelService {
     def transactionService
     def commandService
     def cytomineService
+    def securityACLService
 
     def currentDomain() {
         return AttachedFile
@@ -25,12 +26,12 @@ class AttachedFileService extends ModelService {
      * List all description, Only for admin
      */
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         return AttachedFile.list()
     }
 
     def list(Long domainIdent,String domainClassName) {
-        SecurityACL.check(domainIdent,domainClassName,"container",READ)
+        securityACLService.check(domainIdent,domainClassName,"container",READ)
         return AttachedFile.findAllByDomainIdentAndDomainClassName(domainIdent,domainClassName)
     }
 
@@ -40,13 +41,13 @@ class AttachedFileService extends ModelService {
         if(file) {
             //TODO: TEMPORARY disable security. There is an issue:
             //if we copy layers from image x - project 1 to image x - project 2, users may not have the right to download the file
-            //SecurityACL.check(file.domainIdent,file.domainClassName,"container",READ)
+            //securityACLService.check(file.domainIdent,file.domainClassName,"container",READ)
         }
         file
     }
 
     def add(String filename,byte[] data,Long domainIdent,String domainClassName) {
-        SecurityACL.checkAtLeastOne(domainIdent,domainClassName,"containers",READ)
+        securityACLService.checkAtLeastOne(domainIdent,domainClassName,"containers",READ)
         AttachedFile file = new AttachedFile()
         file.domainIdent =  domainIdent
         file.domainClassName = domainClassName
@@ -65,7 +66,7 @@ class AttachedFileService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(AttachedFile domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.checkAtLeastOne(domain.domainIdent, domain.domainClassName, "containers", WRITE)
+        securityACLService.checkAtLeastOne(domain.domainIdent, domain.domainClassName, "containers", WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

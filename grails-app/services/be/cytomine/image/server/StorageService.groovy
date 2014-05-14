@@ -1,13 +1,15 @@
 package be.cytomine.image.server
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.acls.domain.BasePermission
 
+import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.READ
 import static org.springframework.security.acls.domain.BasePermission.WRITE
 
@@ -16,6 +18,8 @@ class StorageService extends ModelService {
     def cytomineService
     def transactionService
     def permissionService
+    def securityACLService
+    def springSecurityService
 
     static transactional = true
 
@@ -24,14 +28,14 @@ class StorageService extends ModelService {
     }
 
     def list() {
-        def list = SecurityACL.getStorageList(cytomineService.currentUser)
+        def list = securityACLService.getStorageList(cytomineService.currentUser)
         list.sort{it.name}
     }
 
     def read(def id) {
         def storage =  Storage.read((Long) id)
         if(storage) {
-            SecurityACL.check(storage,READ)
+            securityACLService.check(storage,READ)
         }
         storage
     }
@@ -43,7 +47,7 @@ class StorageService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
         Command c = new AddCommand(user: currentUser)
         executeCommand(c,null,json)
     }
@@ -55,7 +59,7 @@ class StorageService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Storage storage,def jsonNewData) {
-        SecurityACL.check(storage,WRITE)
+        securityACLService.check(storage,WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
         executeCommand(c,storage,jsonNewData)
@@ -68,10 +72,22 @@ class StorageService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def delete(Storage storage, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(storage.container(),WRITE)
+        securityACLService.check(storage.container(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,storage,null)
+    }
+
+    def afterAdd(Storage domain, def response) {
+        log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)
+        if(!domain.hasACLPermission(READ)) {
+            log.info("force to put it in list")
+            permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.READ)
+        }
+        if(!domain.hasACLPermission(ADMINISTRATION)) {
+            log.info("force to put it in list")
+            permissionService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+        }
     }
 
     def getStringParamsI18n(def domain) {

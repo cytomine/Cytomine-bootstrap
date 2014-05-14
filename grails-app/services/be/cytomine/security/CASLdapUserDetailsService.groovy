@@ -34,9 +34,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
     throws UsernameNotFoundException, DataAccessException {
 
-        println "username=$username"
         SecUser user = SecUser.findByUsername(username)
-        println "user=$user"
         boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
 
         def authorities = []

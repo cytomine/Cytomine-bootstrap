@@ -2,7 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
@@ -21,26 +21,27 @@ class PropertyService extends ModelService {
     def cytomineService
     def transactionService
     def dataSource
+    def securityACLService
 
     def currentDomain() {
         return Property;
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         return Property.list()
     }
 
     def list(CytomineDomain cytomineDomain) {
-        SecurityACL.check(cytomineDomain.container(),READ)
+        securityACLService.check(cytomineDomain.container(),READ)
         Property.findAllByDomainIdent(cytomineDomain.id)
     }
 
     List<String> listKeysForAnnotation(Project project, ImageInstance image) {
         if (project != null)
-            SecurityACL.check(project,READ)
+            securityACLService.check(project,READ)
         else
-            SecurityACL.check(image.container(),READ)
+            securityACLService.check(image.container(),READ)
 
         String request = "SELECT DISTINCT p.key " +
                 "FROM property as p, user_annotation as ua " +
@@ -65,7 +66,7 @@ class PropertyService extends ModelService {
 
      List<String> listKeysForImageInstance(Project project) {
         if (project != null)
-            SecurityACL.check(project,READ)
+            securityACLService.check(project,READ)
 
         String request = "SELECT DISTINCT p.key " +
                 "FROM property as p, image_instance as ii " +
@@ -76,7 +77,7 @@ class PropertyService extends ModelService {
     }
 
     def listAnnotationCenterPosition(SecUser user, ImageInstance image, Geometry boundingbox, String key) {
-        SecurityACL.check(image.container(),READ)
+        securityACLService.check(image.container(),READ)
         String request = "SELECT DISTINCT ua.id, ST_X(ST_CENTROID(ua.location)) as x,ST_Y(ST_CENTROID(ua.location)) as y, p.value " +
                 "FROM user_annotation ua, property as p " +
                 "WHERE p.domain_ident = ua.id " +
@@ -99,7 +100,7 @@ class PropertyService extends ModelService {
     def read(def id) {
         def property = Property.read(id)
         if (property) {
-            SecurityACL.check(property.container(),READ)
+            securityACLService.check(property.container(),READ)
         }
         property
     }
@@ -107,7 +108,7 @@ class PropertyService extends ModelService {
     def read(CytomineDomain domain, String key) {
         def cytomineDomain = Property.findAllByDomainIdentAndKey(domain.id,key)
         if (cytomineDomain && !cytomineDomain.isEmpty()) {
-            SecurityACL.check(cytomineDomain.first().container(),READ)
+            securityACLService.check(cytomineDomain.first().container(),READ)
         }
         cytomineDomain
     }
@@ -123,8 +124,8 @@ class PropertyService extends ModelService {
         }
 
         if (domain != null) {
-            SecurityACL.check(domain.container(),READ)
-            SecurityACL.checkReadOnly(domain.container())
+            securityACLService.check(domain.container(),READ)
+            securityACLService.checkReadOnly(domain.container())
         }
 
         SecUser currentUser = cytomineService.getCurrentUser()
@@ -139,8 +140,8 @@ class PropertyService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Property ap, def jsonNewData) {
-        SecurityACL.check(ap.container(),READ)
-        SecurityACL.checkReadOnly(ap.container())
+        securityACLService.check(ap.container(),READ)
+        securityACLService.checkReadOnly(ap.container())
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new EditCommand(user: currentUser)
         return executeCommand(command,ap,jsonNewData)
@@ -156,8 +157,8 @@ class PropertyService extends ModelService {
      */
     def delete(Property domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
-        SecurityACL.checkReadOnly(domain.container())
+        securityACLService.check(domain.container(),READ)
+        securityACLService.checkReadOnly(domain.container())
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

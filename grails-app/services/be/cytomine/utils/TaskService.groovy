@@ -1,6 +1,6 @@
 package be.cytomine.utils
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 
@@ -9,6 +9,7 @@ import static org.springframework.security.acls.domain.BasePermission.READ
 class TaskService  {
 
     def cytomineService
+    def securityACLService
 
     static transactional = true
 
@@ -23,7 +24,7 @@ class TaskService  {
     }
 
     def listLastComments(Project project) {
-       SecurityACL.check(project,READ)
+       securityACLService.check(project,READ)
        def comments = new Task().listFromDatabase(project.id)
        return comments
     }
@@ -35,7 +36,7 @@ class TaskService  {
      * @return Task created
      */
     def createNewTask(Project project, SecUser user, boolean printInActivity) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         Task task = new Task(projectIdent: project?.id, userIdent: user.id,printInActivity:printInActivity)
         //task.addToComments("Task started...")
         task = task.saveOnDatabase()
@@ -49,7 +50,7 @@ class TaskService  {
      */
     def updateTask(Task task, String comment) {
         if (task) {
-            SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+            securityACLService.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
         }
         updateTask(task,(task? task.progress : -1),comment)
     }
@@ -64,7 +65,7 @@ class TaskService  {
             if(!task) {
                 return
             }
-            SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+            securityACLService.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
             task.progress = progress
             task.addComment(progress+"%:" + comment)
             task = task.saveOnDatabase()
@@ -80,7 +81,7 @@ class TaskService  {
         if(!task) {
             return
         }
-        SecurityACL.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
+        securityACLService.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
         task.progress = 100
         updateTask(task,100,"Task completed...")
         task = get(task.id)

@@ -24,14 +24,13 @@ class UserJobSecurityTests extends SecurityTestsAbstract {
     void testUserJobWorkflow() {
         //create basic user
         User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
-        assert !user1.isAdmin()
         //create project
-        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(BasicInstanceBuilder.getProjectNotExist().encodeAsJSON(), Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
 
         //add user in project
-        def resAddUser = ProjectAPI.addUserProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addUserProject(project.id,user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         Infos.printRight(project)
         assert 200 == resAddUser.code
 
@@ -43,7 +42,7 @@ class UserJobSecurityTests extends SecurityTestsAbstract {
          log.info("post user child")
          String URL = Infos.CYTOMINEURL+"api/userJob.json"
          HttpClient client = new HttpClient()
-         client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+         client.connect(URL,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
          client.post(json.toString())
          int code  = client.getResponseCode()
          String response = client.getResponseData()
@@ -70,14 +69,14 @@ class UserJobSecurityTests extends SecurityTestsAbstract {
         println "enabled="+userJob.enabled
 
         println "db="+UserJob.read(json.userJob.id)
-        User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
+        SecUserSecRole.findAllBySecUser(User.findByUsername(Infos.SUPERADMINLOGIN)).collect { it.secRole }.each { secRole ->
             SecUserSecRole.create(userJob, secRole)
         }
 
-//        UserJob userJob2 = new UserJob(username: "BasicUserJob",password: "PasswordUserJob",enabled: true,user : User.findByUsername(Infos.GOODLOGIN),job: BasicInstanceBuilder.getJob())
+//        UserJob userJob2 = new UserJob(username: "BasicUserJob",password: "PasswordUserJob",enabled: true,user : User.findByUsername(Infos.SUPERADMINLOGIN),job: BasicInstanceBuilder.getJob())
 //        userJob2.generateKeys()
 //        BasicInstanceBuilder.saveDomain(userJob2)
-//        User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
+//        User.findByUsername(Infos.SUPERADMINLOGIN).getAuthorities().each { secRole ->
 //            SecUserSecRole.create(userJob2, secRole)
 //        }
 //

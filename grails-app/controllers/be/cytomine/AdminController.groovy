@@ -3,7 +3,7 @@ package be.cytomine
 import be.cytomine.api.RestController
 import grails.plugins.springsecurity.Secured
 
-@Secured(['ROLE_ADMIN'])
+@Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
 class AdminController extends RestController {
 
 
@@ -12,12 +12,12 @@ class AdminController extends RestController {
     def springSecurityService
     def archiveCommandService
 
-    @Secured(['ROLE_ADMIN'])
+    @Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
     def index() {
       //don't remove this, it calls admin/index.gsp layout !
     }
 
-    @Secured(['ROLE_ADMIN'])
+    @Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
     def archive() {
         archiveCommandService.archiveOldCommand()
         responseSuccess([])

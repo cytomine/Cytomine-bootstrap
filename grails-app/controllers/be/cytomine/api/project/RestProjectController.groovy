@@ -35,6 +35,7 @@ class RestProjectController extends RestController {
     def taskService
     def secUserService
     def dataSource
+    def currentRoleServiceProxy
 
     /**
      * List all project available for the current user
@@ -42,7 +43,7 @@ class RestProjectController extends RestController {
     @RestApiMethod(description="Get project listing, according to your access", listing=true)
     def list() {
         SecUser user = cytomineService.currentUser
-        if(user.isAdmin()) {
+        if(currentRoleServiceProxy.isAdminByNow(user)) {
             //if user is admin, we print all available project
             responseSuccess(projectService.list())
         } else {

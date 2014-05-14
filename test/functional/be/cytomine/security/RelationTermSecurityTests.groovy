@@ -26,7 +26,7 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new relationterm (user1)
       def rel = BasicInstanceBuilder.getRelationTermNotExist()
@@ -92,9 +92,9 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       BasicInstanceBuilder.saveDomain(project)
 
       //TODO: try with USERNAME1 & PASSWORD1
-      def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == resAddUser.code
-      resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == resAddUser.code
       Infos.printRight(relationterm)
       //check if user 2 can access/update/delete
@@ -103,7 +103,7 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
 
 
       //remove right to user2
-      resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      resAddUser = ProjectAPI.deleteUserProject(project.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == resAddUser.code
 
       Infos.printRight(relationterm)
@@ -111,7 +111,7 @@ class RelationTermSecurityTests extends SecurityTestsAbstract {
       assert (403 == RelationTermAPI.show(relationterm.relation.id, relationterm.term1.id, relationterm.term2.id,USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete relationterm
-      def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def resDelProj = ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert (200 == resDelProj.code)
 
 

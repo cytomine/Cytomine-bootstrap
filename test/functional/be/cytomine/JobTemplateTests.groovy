@@ -4,7 +4,6 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.processing.JobParameter
 import be.cytomine.processing.JobTemplate
 import be.cytomine.processing.JobTemplateAnnotation
@@ -36,12 +35,12 @@ class JobTemplateTests {
 
     void testGetJobTemplateWithCredential() {
         def template = BasicInstanceBuilder.getJobTemplate()
-        def result = JobTemplateAPI.show(template.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.show(template.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.id.toString()== template.id.toString()
 
-        result = JobAPI.show(template.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobAPI.show(template.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.id.toString()== template.id.toString()
@@ -49,26 +48,26 @@ class JobTemplateTests {
 
     void testListTemplateByProjectAndSoftware() {
         def template = BasicInstanceBuilder.getJobTemplate()
-        def result = JobTemplateAPI.list(template.project.id, template.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.list(template.project.id, template.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert JobTemplateAPI.containsInJSONList(template.id,json)
 
-        result = JobTemplateAPI.list(null, template.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.list(null, template.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
-        result = JobTemplateAPI.list(template.project.id, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.list(template.project.id, null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert JobTemplateAPI.containsInJSONList(template.id,json)
 
-        result = JobTemplateAPI.list(null, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.list(null, null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
-        result = JobTemplateAPI.list(-99,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.list(-99,null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
-        result = JobTemplateAPI.list(null,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.list(null,-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code        
     }
 
@@ -76,24 +75,24 @@ class JobTemplateTests {
 
     void testAddJobTemplateCorrect() {
         def template = BasicInstanceBuilder.getJobTemplateNotExist()
-        def result = JobTemplateAPI.create(template.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.create(template.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         template = result.data
         Long idTemplate = template.id
 
-        result = JobTemplateAPI.show(idTemplate, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = JobTemplateAPI.undo()
         assert 200 == result.code
 
-        result = JobTemplateAPI.show(idTemplate, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = JobTemplateAPI.redo()
         assert 200 == result.code
 
-        result = JobTemplateAPI.show(idTemplate, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
@@ -102,7 +101,7 @@ class JobTemplateTests {
     void testAddJobTemplateAlreadyExist() {
         def jobTemplate = BasicInstanceBuilder.getJobTemplateNotExist(true)
         log.info jobTemplate.encodeAsJSON()
-        def result = JobTemplateAPI.create(jobTemplate.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.create(jobTemplate.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -111,12 +110,12 @@ class JobTemplateTests {
         def template = BasicInstanceBuilder.getJobTemplate()
         def data = UpdateData.createUpdateSet(template,[project: [BasicInstanceBuilder.getProject(),BasicInstanceBuilder.getProjectNotExist(true)]])
 
-        def result = JobTemplateAPI.update(template.id,data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.update(template.id,data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idJobTemplate = json.jobtemplate.id
-        def showResult = JobTemplateAPI.show(idJobTemplate,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = JobTemplateAPI.show(idJobTemplate,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
@@ -126,40 +125,40 @@ class JobTemplateTests {
         assert jobTemplateToDelete.save(flush: true) != null
         def idTemplate = jobTemplateToDelete.id
 
-        def result = JobTemplateAPI.delete(jobTemplateToDelete.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.delete(jobTemplateToDelete.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def showResult = JobTemplateAPI.show(jobTemplateToDelete.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = JobTemplateAPI.show(jobTemplateToDelete.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = JobTemplateAPI.undo()
         assert 200 == result.code
 
-        result = JobTemplateAPI.show(idTemplate,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = JobTemplateAPI.redo()
         assert 200 == result.code
 
-        result = JobTemplateAPI.show(idTemplate,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteJobTemplateNoExist() {
         def jobTemplateToDelete = BasicInstanceBuilder.getJobTemplateNotExist()
-        def result = JobTemplateAPI.delete(jobTemplateToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.delete(jobTemplateToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
     void testAddJobTemplateCorrectWorkflow() {
         def template = BasicInstanceBuilder.getJobTemplateNotExist()
-        def result = JobTemplateAPI.create(template.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAPI.create(template.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         template = result.data
         Long idTemplate = template.id
 
-        result = JobTemplateAPI.show(idTemplate, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         def parameter = BasicInstanceBuilder.getJobParameterNotExist()
@@ -168,10 +167,10 @@ class JobTemplateTests {
         jsonUpdate.job = idTemplate
         json = jsonUpdate.toString()
         log.info json
-        result = JobParameterAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobParameterAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = JobTemplateAPI.show(idTemplate, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobTemplateAPI.show(idTemplate, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.jobParameters.size()==1
@@ -242,11 +241,11 @@ class JobTemplateTests {
 
         //add job template annotation link
         def JobTemplateAnnotationToAdd = new JobTemplateAnnotation(jobTemplate: jobTemplate, annotationIdent: roi.id, annotationClassName: roi.class.name)
-        def result = JobTemplateAnnotationAPI.create(JobTemplateAnnotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobTemplateAnnotationAPI.create(JobTemplateAnnotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idJob = result.job.id
 
-        result = JobAPI.execute(idJob, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobAPI.execute(idJob, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //wait

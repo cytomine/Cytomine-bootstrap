@@ -100,7 +100,10 @@ class BootStrap {
         }
 
         //2014 05 12
-//        bootstrapUtilsService.createSwitcherRole()
+        if(!SecRole.findByAuthority("ROLE_SUPER_ADMIN")) {
+            SecRole role = new SecRole(authority:"ROLE_SUPER_ADMIN")
+            role.save(flush:true,failOnError: true)
+        }
 
 
 

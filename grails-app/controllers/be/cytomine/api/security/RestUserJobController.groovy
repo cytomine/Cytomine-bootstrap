@@ -34,6 +34,7 @@ class RestUserJobController extends RestController {
     def imageInstanceService
     def jobService
     def dataSource
+    def currentRoleServiceProxy
 
     /**
      * Get a user job
@@ -270,7 +271,7 @@ class RestUserJobController extends RestController {
         jobService.saveDomain(userJob)
 
         //add the same role to user job
-        user.getAuthorities().each { secRole ->
+        currentRoleServiceProxy.findCurrentRole(user).each { secRole ->
             SecUserSecRole.create(userJob, secRole)
         }
         return userJob

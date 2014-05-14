@@ -19,7 +19,7 @@ class SearchSecurityTests extends SecurityTestsAbstract {
         User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
         //Get admin user
-        User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+        User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
         //Create project with user 1
         ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)

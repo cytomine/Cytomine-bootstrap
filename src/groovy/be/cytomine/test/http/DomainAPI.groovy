@@ -69,7 +69,7 @@ class DomainAPI {
         log.info("test undo")
         HttpClient client = new HttpClient()
         String URL = Infos.CYTOMINEURL + Infos.UNDOURL
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        client.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
@@ -84,7 +84,7 @@ class DomainAPI {
         log.info("test redo")
         HttpClient client = new HttpClient()
         String URL = Infos.CYTOMINEURL + Infos.REDOURL
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        client.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
@@ -124,17 +124,23 @@ class DomainAPI {
     }
 
 
-    static def doGET(String URL,String username,String password) {
+    static def doGET(String URL,String username,String password, HttpClient clientParam =null) {
         log.info("GET:"+URL)
-        HttpClient client = new HttpClient();
-        log.info("Connect")
-        client.connect(URL, username, password);
+        HttpClient client
+        if(clientParam) {
+            client = clientParam;
+        } else {
+            client = new HttpClient()
+            log.info("Connect")
+            client.connect(URL, username, password);
+        }
         log.info("Get")
+        client.printCookies();
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()
         client.disconnect();
-        return [data: response, code: code]
+        return [data: response, code: code,client:client]
     }
 
     static def doPOST(String URL,JSONObject json,String username,String password) {

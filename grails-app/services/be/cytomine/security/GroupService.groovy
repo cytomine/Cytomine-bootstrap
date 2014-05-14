@@ -1,6 +1,6 @@
 package be.cytomine.security
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -12,28 +12,29 @@ class GroupService extends ModelService {
     def commandService
     def userGroupService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         Group
     }
 
     def list() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         return Group.list(sort: "name", order: "asc")
     }
 
     def list(User user) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         UserGroup.findByUser(user).collect{it.group}
     }
 
     def read(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         return Group.read(id)
     }
 
     def get(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         return Group.get(id)
     }
 
@@ -44,7 +45,7 @@ class GroupService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkGuest(currentUser)
+        securityACLService.checkGuest(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
@@ -56,7 +57,7 @@ class GroupService extends ModelService {
      */
     def update(Group group, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIfUserIsMemberGroup(currentUser,group)
+        securityACLService.checkIfUserIsMemberGroup(currentUser,group)
         return executeCommand(new EditCommand(user: currentUser),group, jsonNewData)
     }
 
@@ -70,7 +71,7 @@ class GroupService extends ModelService {
      */
     def delete(Group domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

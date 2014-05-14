@@ -1,7 +1,7 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
@@ -39,6 +39,7 @@ class ImageInstanceService extends ModelService {
     def imageSequenceService
     def propertyService
     def annotationIndexService
+    def securityACLService
 
     def currentDomain() {
         return ImageInstance
@@ -47,7 +48,7 @@ class ImageInstanceService extends ModelService {
     def read(def id) {
         def image = ImageInstance.read(id)
         if(image) {
-            SecurityACL.check(image.container(),READ)
+            securityACLService.check(image.container(),READ)
             checkDeleted(image)
         }
         image
@@ -55,7 +56,7 @@ class ImageInstanceService extends ModelService {
 
 
     def list(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
 
         def images = ImageInstance.createCriteria().list {
             createAlias("baseImage", "i")
@@ -72,7 +73,7 @@ class ImageInstanceService extends ModelService {
      * Get all image id from project
      */
     public List<Long> getAllImageId(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
 
         //better perf with sql request
         String request = "SELECT a.id FROM image_instance a WHERE project_id="+project.id  + " AND parent_id IS NULL AND deleted IS NULL"
@@ -88,7 +89,7 @@ class ImageInstanceService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
 
         //user_image already filter nested image
@@ -104,7 +105,7 @@ class ImageInstanceService extends ModelService {
 
     def listLastOpened(User user, Long offset = null, Long max = null) {
         //get id of last open image
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
 
         String offsetString = ""
@@ -139,7 +140,7 @@ class ImageInstanceService extends ModelService {
 
 
     def listTree(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
 
         def children = []
         list(project).each { image->
@@ -157,7 +158,7 @@ class ImageInstanceService extends ModelService {
     }
 
     def list(Project project, String sortColumn, String sortDirection, String search) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
 
         String abstractImageAlias = "ai"
         String _sortColumn = ImageInstance.hasProperty(sortColumn) ? sortColumn : "created"
@@ -323,8 +324,8 @@ class ImageInstanceService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.project,Project,READ)
-        SecurityACL.checkReadOnly(json.project,Project)
+        securityACLService.check(json.project,Project,READ)
+        securityACLService.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         log.info "json=$json"
@@ -336,8 +337,8 @@ class ImageInstanceService extends ModelService {
         log.info "alreadyExist=${alreadyExist}"
         if(alreadyExist && alreadyExist.checkDeleted()) {
             //Image was previously deleted, restore it
-            SecurityACL.check(alreadyExist.container(),ADMINISTRATION)
-            SecurityACL.checkReadOnly(alreadyExist.container())
+            securityACLService.check(alreadyExist.container(),ADMINISTRATION)
+            securityACLService.checkReadOnly(alreadyExist.container())
             def jsonNewData = JSON.parse(alreadyExist.encodeAsJSON())
             jsonNewData.deleted = null
             Command c = new EditCommand(user: currentUser)
@@ -360,10 +361,10 @@ class ImageInstanceService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(ImageInstance domain, def jsonNewData) {
-        SecurityACL.check(domain.container(),READ)
-        SecurityACL.check(jsonNewData.project,Project,READ)
-        SecurityACL.checkReadOnly(domain.container())
-        SecurityACL.checkReadOnly(jsonNewData.project,Project)
+        securityACLService.check(domain.container(),READ)
+        securityACLService.check(jsonNewData.project,Project,READ)
+        securityACLService.checkReadOnly(domain.container())
+        securityACLService.checkReadOnly(jsonNewData.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
         executeCommand(c,domain,jsonNewData)
@@ -378,15 +379,15 @@ class ImageInstanceService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(ImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-//        SecurityACL.check(domain.container(),READ)
-//        SecurityACL.checkReadOnly(domain.container())
+//        securityACLService.check(domain.container(),READ)
+//        securityACLService.checkReadOnly(domain.container())
 //        SecUser currentUser = cytomineService.getCurrentUser()
 //        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
 //        return executeCommand(c,domain,null)
 
         //We don't delete domain, we juste change a flag
-        SecurityACL.check(domain.container(),ADMINISTRATION)
-        SecurityACL.checkReadOnly(domain.container())
+        securityACLService.check(domain.container(),ADMINISTRATION)
+        securityACLService.checkReadOnly(domain.container())
         def jsonNewData = JSON.parse(domain.encodeAsJSON())
         jsonNewData.deleted = new Date().time
         SecUser currentUser = cytomineService.getCurrentUser()

@@ -1,7 +1,7 @@
 package be.cytomine.utils
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 
@@ -14,6 +14,7 @@ class DescriptionService extends ModelService {
     def transactionService
     def commandService
     def cytomineService
+    def securityACLService
 
     def currentDomain() {
         return Description
@@ -23,12 +24,12 @@ class DescriptionService extends ModelService {
      * List all description, Only for admin
      */
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         return Description.list()
     }
 
     def get(def domain) {
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         Description.findByDomainIdentAndDomainClassName(domain.id,domain.class.name)
     }
 
@@ -36,7 +37,7 @@ class DescriptionService extends ModelService {
      * Get a description thanks to its domain info (id and class)
      */
     def get(def domainIdent, def domainClassName) {
-        SecurityACL.check(domainIdent,domainClassName,READ)
+        securityACLService.check(domainIdent,domainClassName,READ)
         Description.findByDomainIdentAndDomainClassName(domainIdent,domainClassName)
     }
 
@@ -46,8 +47,8 @@ class DescriptionService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.domainIdent,json.domainClassName,READ)
-        SecurityACL.checkReadOnly(json.domainIdent,json.domainClassName)
+        securityACLService.check(json.domainIdent,json.domainClassName,READ)
+        securityACLService.checkReadOnly(json.domainIdent,json.domainClassName)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -59,8 +60,8 @@ class DescriptionService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Description description, def jsonNewData) {
-        SecurityACL.check(description.container(),READ)
-        SecurityACL.checkReadOnly(description.container())
+        securityACLService.check(description.container(),READ)
+        securityACLService.checkReadOnly(description.container())
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser), description,jsonNewData)
     }
@@ -75,8 +76,8 @@ class DescriptionService extends ModelService {
      */
     def delete(Description domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
-        SecurityACL.checkReadOnly(domain.container())
+        securityACLService.check(domain.container(),READ)
+        securityACLService.checkReadOnly(domain.container())
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

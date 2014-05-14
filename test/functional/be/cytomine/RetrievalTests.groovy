@@ -27,7 +27,7 @@ class RetrievalTests  {
 //            return "[$a1,$a2,$a3]"
 //        }
 //
-//        def result = RetrievalAPI.getResults(annotation1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = RetrievalAPI.getResults(annotation1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //        println result.data
 //        def json = JSON.parse(result.data)
@@ -41,7 +41,7 @@ class RetrievalTests  {
 //            return "[]"
 //        }
 //        def annotation = BasicInstanceBuilder.getUserAnnotation()
-//        def result = RetrievalAPI.getResults(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = RetrievalAPI.getResults(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //        println result.data
 //        def json = JSON.parse(result.data)
@@ -49,7 +49,7 @@ class RetrievalTests  {
 //    }
 
     void testRetrievalWithAnnotationNotExist() {
-        def result = RetrievalAPI.getResults(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RetrievalAPI.getResults(-99,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 }

@@ -25,7 +25,7 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 class AlgoAnnotationListingTests {
     void testListAlgoAnnotationWithCredential() {
         BasicInstanceBuilder.getAlgoAnnotation()
-        def result = AlgoAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -33,12 +33,12 @@ class AlgoAnnotationListingTests {
 
     void testListAlgoAnnotationByProjecImageAndUsertWithCredential() {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
-        def result = AlgoAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = AlgoAnnotationAPI.listByProject(-99, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByProject(-99, annotation.user.id, annotation.image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -48,7 +48,7 @@ class AlgoAnnotationListingTests {
         AlgoAnnotationTerm aat = BasicInstanceBuilder.getAlgoAnnotationTerm(annotationWith2Term.user.job,annotationWith2Term,annotationWith2Term.user)
 
 
-        def result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -57,26 +57,26 @@ class AlgoAnnotationListingTests {
         //very small bbox, hight annotation number
         //force for each kmeans level (1,2,3)
         String bbox = "1,1,100,100"
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -84,11 +84,11 @@ class AlgoAnnotationListingTests {
 
     void testListAlgoAnnotationByProjectAndTermAndUserWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(false)
-        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray
-        result = AlgoAnnotationAPI.listByProjectAndTerm(-99, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByProjectAndTerm(-99, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
         json = JSON.parse(result.data)
     }
@@ -100,8 +100,8 @@ class AlgoAnnotationListingTests {
                 annotationTerm.term.id,
                 ImageInstance.findAllByProject(annotationTerm.retrieveAnnotationDomain().project),
                 annotationTerm.retrieveAnnotationDomain().user.id,
-                Infos.GOODLOGIN,
-                Infos.GOODPASSWORD
+                Infos.SUPERADMINLOGIN,
+                Infos.SUPERADMINPASSWORD
         )
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -109,16 +109,16 @@ class AlgoAnnotationListingTests {
 
     void testListAlgoAnnotationByProjectAndTermWithUserNullWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
-        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, -1, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, -99, -1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, -99, -1, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 404 == result.code
     }
 
     void testListAlgoAnnotationByProjectAndTermAndUserAndImageWithCredential() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(false)
-        Infos.addUserRight(Infos.GOODLOGIN,annotationTerm.retrieveAnnotationDomain().project)
-        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id,annotationTerm.retrieveAnnotationDomain().user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        Infos.addUserRight(Infos.SUPERADMINLOGIN,annotationTerm.retrieveAnnotationDomain().project)
+        def result = AlgoAnnotationAPI.listByProjectAndTerm(annotationTerm.retrieveAnnotationDomain().project.id, annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id,annotationTerm.retrieveAnnotationDomain().user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray
@@ -126,7 +126,7 @@ class AlgoAnnotationListingTests {
 
     void testListAlgoAnnotationyProjectAndUsersWithCredential() {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotation()
-        def result = AlgoAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
     }
@@ -134,8 +134,8 @@ class AlgoAnnotationListingTests {
     void testListingAlgoAnnotationWithoutTermAlgo() {
         //create annotation without term
         UserJob userJob = BasicInstanceBuilder.getUserJob()
-        User user = User.findByUsername(Infos.GOODLOGIN)
-        Project project = BasicInstanceBuilder.getProjectNotExist()
+        User user = User.findByUsername(Infos.SUPERADMINLOGIN)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
@@ -168,7 +168,7 @@ class AlgoAnnotationListingTests {
         assert annotationWithTerm.save(flush: true)
 
         //list annotation without term with this user
-        def result = AlgoAnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -177,7 +177,7 @@ class AlgoAnnotationListingTests {
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -186,7 +186,7 @@ class AlgoAnnotationListingTests {
         assert !DomainAPI.containsInJSONList(annotationWithTerm.id,json)
 
         //all images
-        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersWithoutTerm(project.id, userJob.id, null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -198,8 +198,8 @@ class AlgoAnnotationListingTests {
     void testListingAlgoAnnotationWithSeveralTermAlgo() {
         //create annotation without term
         UserJob userJob = BasicInstanceBuilder.getUserJob()
-        User user = User.findByUsername(Infos.GOODLOGIN)
-        Project project = BasicInstanceBuilder.getProjectNotExist()
+        User user = User.findByUsername(Infos.SUPERADMINLOGIN)
+        Project project = BasicInstanceBuilder.getProjectNotExist(true)
         Ontology ontology = BasicInstanceBuilder.getOntology()
         project.ontology = ontology
         project.save(flush: true)
@@ -237,7 +237,7 @@ class AlgoAnnotationListingTests {
         at2.save(flush: true)
 
         //list annotation without term with this user
-        def result = AlgoAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -246,7 +246,7 @@ class AlgoAnnotationListingTests {
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
 
         //list annotation without term with this user
-        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -255,7 +255,7 @@ class AlgoAnnotationListingTests {
         assert DomainAPI.containsInJSONList(annotationWithMultipleTerm.id,json)
 
         //all images
-        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.listByProjectAndUsersSeveralTerm(project.id, userJob.id, null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray

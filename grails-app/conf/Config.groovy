@@ -290,10 +290,10 @@ log4j = {
 }
 grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugins.springsecurity.interceptUrlMap = [
-        '/admin/**':    ['ROLE_ADMIN'],
-        '/monitoring/**':    ['ROLE_ADMIN'],
-        '/j_spring_security_switch_user': ['ROLE_ADMIN'],
-        '/securityInfo/**': ['ROLE_ADMIN'],
+        '/admin/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
+        '/monitoring/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
+        '/j_spring_security_switch_user': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
+        '/securityInfo/**': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
         '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/css/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
@@ -327,7 +327,7 @@ if(props.getProperty("grails.plugins.springsecurity.cas.active").toString()=="tr
     grails.plugins.springsecurity.cas.useSingleSignout = false
     grails.plugins.springsecurity.cas.active = false
     grails.plugins.springsecurity.ldap.active = false
-    //grails.plugins.springsecurity.interceptUrlMap.remove('/*')
+    grails.plugins.springsecurity.interceptUrlMap.remove('/*')
 }
 grails.plugins.springsecurity.cas.loginUri = '/login'
 grails.plugins.springsecurity.cas.serverUrlPrefix = 'https://www.intranet.ulg.ac.be/cas'

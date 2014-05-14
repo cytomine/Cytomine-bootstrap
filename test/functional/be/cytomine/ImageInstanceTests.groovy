@@ -25,20 +25,20 @@ class ImageInstanceTests  {
 
     void testListImagesInstanceByProject() {
         BasicInstanceBuilder.getImageInstance()
-        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = ImageInstanceAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listByProject(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListImagesInstanceByProjectDatatables() {
         BasicInstanceBuilder.getImageInstance()
-        def result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,"test",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,"test",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listByProjectDatatables(BasicInstanceBuilder.getProject().id, 1,2,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -49,7 +49,7 @@ class ImageInstanceTests  {
         BasicInstanceBuilder.getImageInstanceNotExist(project,true)
 
 
-        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id,1,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id,1,2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -58,7 +58,7 @@ class ImageInstanceTests  {
 
     void testListImagesInstanceByProjectWithBorder() {
         BasicInstanceBuilder.getImageInstance()
-        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProject(BasicInstanceBuilder.getProject().id, 0,1,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -67,7 +67,7 @@ class ImageInstanceTests  {
 
     void testListImagesInstanceByUserLigh() {
         BasicInstanceBuilder.getImageInstance()
-        def result = ImageInstanceAPI.listByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByUser(BasicInstanceBuilder.getUser1().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -77,7 +77,7 @@ class ImageInstanceTests  {
 
     void testListImagesInstanceWithTreeStructure() {
         BasicInstanceBuilder.getImageInstance()
-        def result = ImageInstanceAPI.listByProjectTree(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProjectTree(BasicInstanceBuilder.getProject().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
     }
@@ -90,7 +90,7 @@ class ImageInstanceTests  {
 
 
     void testGetImageInstanceWithCredential() {
-        def result = ImageInstanceAPI.show(BasicInstanceBuilder.getImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.show(BasicInstanceBuilder.getImageInstance().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -98,32 +98,32 @@ class ImageInstanceTests  {
 
     void testAddImageInstanceCorrect() {
 
-        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist().encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist().encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         ImageInstance image = result.data
         Long idImage = image.id
 
-        result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ImageInstanceAPI.undo()
         assert 200 == result.code
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = ImageInstanceAPI.redo()
         assert 200 == result.code
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
 
     void testAddImageInstanceAlreadyExist() {
         def imageToAdd = BasicInstanceBuilder.getImageInstanceNotExist()
-        def result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ImageInstanceAPI.create(imageToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -133,7 +133,7 @@ class ImageInstanceTests  {
         def updateImage = JSON.parse(jsonImage)
         updateImage.baseImage = -99
         jsonImage = updateImage.toString()
-        def result = ImageInstanceAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -143,7 +143,7 @@ class ImageInstanceTests  {
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
         jsonImage = updateImage.toString()
-        def result = ImageInstanceAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -153,19 +153,19 @@ class ImageInstanceTests  {
         def image = BasicInstanceBuilder.getImageInstance()
         def data = UpdateData.createUpdateSet(image,[project: [BasicInstanceBuilder.getProject(),BasicInstanceBuilder.getProjectNotExist(true)]])
 
-        def result = ImageInstanceAPI.update(image.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(image.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idImageInstance = json.imageinstance.id
-        def showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ImageInstanceAPI.show(idImageInstance, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = ImageInstanceAPI.undo()
         assert 200==showResult.code
 
-        showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ImageInstanceAPI.show(idImageInstance, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
 
         BasicInstanceBuilder.compare(data.mapOld, json)
@@ -173,7 +173,7 @@ class ImageInstanceTests  {
         showResult = ImageInstanceAPI.redo()
         assert 200==showResult.code
 
-        showResult = ImageInstanceAPI.show(idImageInstance, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ImageInstanceAPI.show(idImageInstance, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
@@ -182,7 +182,7 @@ class ImageInstanceTests  {
         ImageInstance imageToEdit = BasicInstanceBuilder.getImageInstance()
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -191,7 +191,7 @@ class ImageInstanceTests  {
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.user = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -200,7 +200,7 @@ class ImageInstanceTests  {
         def jsonImage = imageToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonImage)
         jsonUpdate.baseImage = -99
-        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
 
     }
@@ -211,30 +211,30 @@ class ImageInstanceTests  {
         def idImage = imageInstanceToDelete.id
         println "Image=${imageInstanceToDelete.id} ${imageInstanceToDelete.deleted}"
 
-        def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         imageInstanceToDelete.refresh()
         println "Image=${imageInstanceToDelete.id} ${imageInstanceToDelete.deleted}"
-        def showResult = ImageInstanceAPI.show(imageInstanceToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ImageInstanceAPI.show(imageInstanceToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = ImageInstanceAPI.undo()
         assert 200 == result.code
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ImageInstanceAPI.redo()
         assert 200 == result.code
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteImageInstanceNoExist() {
         def imageInstanceToDelete = BasicInstanceBuilder.getImageInstanceNotExist()
-        def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.delete(imageInstanceToDelete, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -250,13 +250,13 @@ class ImageInstanceTests  {
         image2.project = project
         BasicInstanceBuilder.saveDomain(image2)
 
-        def result = ImageInstanceAPI.next(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.next(image2.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.id+"") == image1.id
 
-        result = ImageInstanceAPI.next(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.next(image1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -272,13 +272,13 @@ class ImageInstanceTests  {
         image2.project = project
         BasicInstanceBuilder.saveDomain(image2)
 
-        def result = ImageInstanceAPI.previous(image1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.previous(image1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         assert Long.parseLong(json.id+"") == image2.id
 
-        result = ImageInstanceAPI.previous(image2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.previous(image2.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -288,51 +288,51 @@ class ImageInstanceTests  {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,image,true)
 
-        assert 200 == ImageInstanceAPI.show(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+        assert 200 == ImageInstanceAPI.show(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).code
 
-        def response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = ImageInstanceAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = ImageInstanceAPI.listByProject(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = UserAnnotationAPI.listByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = UserAnnotationAPI.listByImage(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
 
-        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
 
         //now delete image and check if correctloy removed from listing
-        def result = ImageInstanceAPI.delete(image, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.delete(image, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        assert 404 == ImageInstanceAPI.show(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD).code
+        assert 404 == ImageInstanceAPI.show(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).code
 
-        response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = ImageInstanceAPI.listByProjectDatatables(project.id,0,0,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = ImageInstanceAPI.listByProject(project.id,0,0,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = ImageInstanceAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = ImageInstanceAPI.listByProject(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         assert !DomainAPI.containsInJSONList(image.id,JSON.parse(response.data))
 
-        response = UserAnnotationAPI.listByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        response = UserAnnotationAPI.listByImage(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == response.code
         assert !DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
 
-//        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        response = UserAnnotationAPI.listByImages(project.id,[image.id],Infos.GOODLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert !DomainAPI.containsInJSONList(annotation.id,JSON.parse(response.data))
 
 
@@ -343,7 +343,7 @@ class ImageInstanceTests  {
     void testDeleteImageInstanceAndRestoreIt() {
 
         Project project = BasicInstanceBuilder.getProjectNotExist(true)
-        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist(project).encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(BasicInstanceBuilder.getImageInstanceNotExist(project).encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         ImageInstance image = result.data
         Long idImage = image.id
@@ -351,10 +351,10 @@ class ImageInstanceTests  {
         project.refresh()
         assert project.countImages == 1
 
-        result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ImageInstanceAPI.delete(image, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.delete(image, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         println result.data
 
@@ -368,17 +368,17 @@ class ImageInstanceTests  {
         project.refresh()
         assert project.countImages == 0
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
 
-        result = ImageInstanceAPI.create(image.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.create(image.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         project.refresh()
         assert project.countImages == 1
 
-        result = ImageInstanceAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }

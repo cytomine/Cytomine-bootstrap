@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class DisciplineTests  {
 
   void testListDisciplineWithCredential() {
-      def result = DisciplineAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -31,7 +31,7 @@ class DisciplineTests  {
   }
 
   void testShowDisciplineWithCredential() {
-      def result = DisciplineAPI.show(BasicInstanceBuilder.getDiscipline().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.show(BasicInstanceBuilder.getDiscipline().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -39,53 +39,53 @@ class DisciplineTests  {
 
   void testAddDisciplineCorrect() {
       def disciplineToAdd = BasicInstanceBuilder.getDisciplineNotExist()
-      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       int idDiscipline = result.data.id
 
-      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = DisciplineAPI.undo()
       assert 200 == result.code
 
-      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
       result = DisciplineAPI.redo()
       assert 200 == result.code
 
-      result = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
 
   void testAddDisciplineAlreadyExist() {
       def disciplineToAdd = BasicInstanceBuilder.getDiscipline()
-      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.create(disciplineToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 409 == result.code
   }
 
   void testUpdateDisciplineCorrect() {
       def discipline = BasicInstanceBuilder.getDiscipline()
       def data = UpdateData.createUpdateSet(discipline,[name: ["OLDNAME","NEWNAME"]])
-      def result = DisciplineAPI.update(discipline.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.update(discipline.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idDiscipline = json.discipline.id
 
-      def showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       json = JSON.parse(showResult.data)
       BasicInstanceBuilder.compare(data.mapNew, json)
 
       showResult = DisciplineAPI.undo()
       assert 200 == result.code
-      showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      showResult = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = DisciplineAPI.redo()
       assert 200 == result.code
-      showResult = DisciplineAPI.show(idDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      showResult = DisciplineAPI.show(idDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
@@ -99,7 +99,7 @@ class DisciplineTests  {
       jsonUpdate.name = disciplineWithOldName.name
       jsonUpdate.id = -99
       jsonDiscipline = jsonUpdate.toString()
-      def result = DisciplineAPI.update(-99, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.update(-99, jsonDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -112,7 +112,7 @@ class DisciplineTests  {
       def jsonUpdate = JSON.parse(jsonDiscipline)
       jsonUpdate.name = disciplineWithOldName.name
       jsonDiscipline = jsonUpdate.toString()
-      def result = DisciplineAPI.update(disciplineToEdit.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.update(disciplineToEdit.id, jsonDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 409 == result.code
   }
     
@@ -123,7 +123,7 @@ class DisciplineTests  {
         def jsonUpdate = JSON.parse(jsonDiscipline)
         jsonUpdate.name = null
         jsonDiscipline = jsonUpdate.toString()
-        def result = DisciplineAPI.update(disciplineToAdd.id, jsonDiscipline, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = DisciplineAPI.update(disciplineToAdd.id, jsonDiscipline, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -131,34 +131,34 @@ class DisciplineTests  {
       def disciplineToDelete = BasicInstanceBuilder.getDisciplineNotExist()
       assert disciplineToDelete.save(flush: true)!= null
       def id = disciplineToDelete.id
-      def result = DisciplineAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = DisciplineAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
 
       result = DisciplineAPI.undo()
       assert 200 == result.code
 
-      result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = DisciplineAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = DisciplineAPI.redo()
       assert 200 == result.code
 
-      result = DisciplineAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = DisciplineAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
   void testDeleteDisciplineNotExist() {
-      def result = DisciplineAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
   void testDeleteDisciplineWithProject() {
       def project = BasicInstanceBuilder.getProject()
       def disciplineToDelete = project.discipline
-      def result = DisciplineAPI.delete(disciplineToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = DisciplineAPI.delete(disciplineToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 400 == result.code
   }
 

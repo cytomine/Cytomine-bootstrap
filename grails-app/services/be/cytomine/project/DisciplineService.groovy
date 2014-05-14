@@ -1,7 +1,7 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.ConstraintException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
@@ -14,23 +14,24 @@ class DisciplineService extends ModelService {
     def commandService
     def modelService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         Discipline
     }
 
     def list() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         Discipline.list()
     }
 
     def read(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         Discipline.read(id)
     }
 
     def get(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         Discipline.get(id)
     }
 
@@ -41,7 +42,7 @@ class DisciplineService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
@@ -53,7 +54,7 @@ class DisciplineService extends ModelService {
      */
     def update(Discipline discipline, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         return executeCommand(new EditCommand(user: currentUser),discipline, jsonNewData)
     }
 
@@ -67,7 +68,7 @@ class DisciplineService extends ModelService {
      */
     def delete(Discipline domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -17,10 +17,7 @@ class SimpleAuthentificationTests {
 
 
 
-       def result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
-       println result
-       assert result.code==200
-       result = ProjectAPI.list("johndoe", "test")
+       def result = ProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        println result
        assert result.code==200
        def user = BasicInstanceBuilder.getUser("usertoto","password")

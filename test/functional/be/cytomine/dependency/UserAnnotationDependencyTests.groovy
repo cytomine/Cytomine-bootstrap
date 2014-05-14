@@ -27,20 +27,20 @@ class UserAnnotationDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == UserAnnotationAPI.delete(annotation.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.delete(annotation.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assert (200 == UserAnnotationAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.undo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
 
         //check if all dependency are aivalable
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assert (200 == UserAnnotationAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == UserAnnotationAPI.redo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)

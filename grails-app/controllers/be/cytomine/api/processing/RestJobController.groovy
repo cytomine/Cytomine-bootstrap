@@ -3,7 +3,7 @@ package be.cytomine.api.processing
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.CytomineMethodNotYetImplementedException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.processing.Job
@@ -40,6 +40,7 @@ class RestJobController extends RestController {
     def jobDataService
     def taskService
     def cytomineService
+    def securityACLService
 
     /**
      * List all job
@@ -134,7 +135,7 @@ class RestJobController extends RestController {
     def execute() {
         long idJob = params.long("id")
         Job job = Job.read(idJob)
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         UserJob userJob = UserJob.findByJob(job)
         job.software.service.init(job, userJob)
         job.software.service.execute(job, userJob, false)
@@ -148,7 +149,7 @@ class RestJobController extends RestController {
         if (!job.software.service.previewAvailable()) {
             throw new CytomineMethodNotYetImplementedException("Preview is not available for $job.software" )
         }
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         UserJob userJob = UserJob.findByJob(job)
         job.software.service.init(job, userJob)
         job.software.service.execute(job, userJob, true)
@@ -199,8 +200,8 @@ class RestJobController extends RestController {
         if (!job) {
             responseNotFound("Job",params.id)
         } else {
-            SecurityACL.checkReadOnly(job.container())
-            SecurityACL.checkIsAdminContainer(job.project,cytomineService.currentUser)
+            securityACLService.checkReadOnly(job.container())
+            securityACLService.checkIsAdminContainer(job.project,cytomineService.currentUser)
             Task task = taskService.read(params.long('task'))
             log.info "load all annotations..."
             //TODO:: Optim instead of loading all annotations to check if there are reviewed annotation => make a single SQL request to see if there are reviewed annotation
@@ -272,9 +273,9 @@ class RestJobController extends RestController {
         //retrieve project
         Project  project = projectService.read(params.long('id'))
         try {
-            SecurityACL.checkIsAdminContainer(project,cytomineService.currentUser)
+            securityACLService.checkIsAdminContainer(project,cytomineService.currentUser)
 
-            SecurityACL.checkIsAdminContainer(project,cytomineService.currentUser)
+            securityACLService.checkIsAdminContainer(project,cytomineService.currentUser)
                if (!project)
                    responseNotFound("Project",params.id)
                else {

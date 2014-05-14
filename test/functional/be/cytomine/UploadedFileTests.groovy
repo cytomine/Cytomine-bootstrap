@@ -22,14 +22,14 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class UploadedFileTests {
 
   void testListUploadedFil() {
-      def result = UploadedFileAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
   }
 
   void testShowUploadedFileWithCredential() {
-      def result = UploadedFileAPI.show(BasicInstanceBuilder.getUploadedFile().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.show(BasicInstanceBuilder.getUploadedFile().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -37,11 +37,11 @@ class UploadedFileTests {
 
   void testAddUploadedFileCorrect() {
       def uploadedfileToAdd = BasicInstanceBuilder.getUploadedFileNotExist()
-      def result = UploadedFileAPI.create(uploadedfileToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.create(uploadedfileToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       int idUploadedFile = result.data.id
 
-      result = UploadedFileAPI.show(idUploadedFile, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = UploadedFileAPI.show(idUploadedFile, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
 
@@ -49,13 +49,13 @@ class UploadedFileTests {
   void testUpdateUploadedFileCorrect() {
       def uploadedfile = BasicInstanceBuilder.getUploadedFile()
       def data = UpdateData.createUpdateSet(uploadedfile,[status: [0,4]])
-      def result = UploadedFileAPI.update(uploadedfile.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.update(uploadedfile.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idUploadedFile = json.uploadedfile.id
 
-      def showResult = UploadedFileAPI.show(idUploadedFile, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = UploadedFileAPI.show(idUploadedFile, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       json = JSON.parse(showResult.data)
       BasicInstanceBuilder.compare(data.mapNew, json)
   }
@@ -64,16 +64,16 @@ class UploadedFileTests {
       def uploadedfileToDelete = BasicInstanceBuilder.getUploadedFileNotExist()
       assert uploadedfileToDelete.save(flush: true)!= null
       def id = uploadedfileToDelete.id
-      def result = UploadedFileAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = UploadedFileAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = UploadedFileAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
 
   }
 
   void testDeleteUploadedFileNotExist() {
-      def result = UploadedFileAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = UploadedFileAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -94,17 +94,17 @@ class UploadedFileTests {
        uploadedFile.status = UploadedFile.TO_DEPLOY
        BasicInstanceBuilder.saveDomain(uploadedFile)
 
-       def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
        def image = AbstractImage.findByFilename("/data/test.cytomine.be/1/1383567901007/test.tif")
        assert image
 
 
-       result = UploadedFileAPI.clearAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = UploadedFileAPI.clearAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
-       result = UploadedFileAPI.populateAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = UploadedFileAPI.populateAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
-       result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
 
    }

@@ -24,52 +24,52 @@ class TermTests  {
 
   void testListOntologyTermByOntologyWithCredential() {
       Ontology ontology = BasicInstanceBuilder.getOntology()
-      def result = TermAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.listByOntology(ontology.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
   }
 
   void testListTermOntologyByOntologyWithOntologyNotExist() {
-      def result = TermAPI.listByOntology(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.listByOntology(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
     void testListOntologyTermByProjectWithCredential() {
         Project project = BasicInstanceBuilder.getProject()
-        def result = TermAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.listByProject(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListTermOntologyByProjectWithProjectNotExist() {
-        def result = TermAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.listByProject(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testStatTerm() {
-        def result = TermAPI.statsTerm(BasicInstanceBuilder.getTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.statsTerm(BasicInstanceBuilder.getTerm().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testStatTermNotExist() {
-        def result = TermAPI.statsTerm(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.statsTerm(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
   void testListTermWithCredential() {
-      def result = TermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
   }
 
   void testShowTermWithCredential() {
-      def result = TermAPI.show(BasicInstanceBuilder.getTerm().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.show(BasicInstanceBuilder.getTerm().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -77,23 +77,23 @@ class TermTests  {
 
   void testAddTermCorrect() {
       def termToAdd = BasicInstanceBuilder.getTermNotExist()
-      def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = TermAPI.create(termToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       int idTerm = result.data.id
 
-      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = TermAPI.undo()
       assert 200 == result.code
 
-      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
       result = TermAPI.redo()
       assert 200 == result.code
 
-      result = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
     
@@ -103,7 +103,7 @@ class TermTests  {
         def terms = []
         terms << JSON.parse(termToAdd1.encodeAsJSON())
         terms << JSON.parse(termToAdd2.encodeAsJSON())
-        def result = TermAPI.create(JSONUtils.toJSONString(terms) , Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = TermAPI.create(JSONUtils.toJSONString(terms) , Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }    
 
@@ -114,7 +114,7 @@ class TermTests  {
         def data = (termToAdd as JSON).toString()
         println data
         println data.class
-       def result = TermAPI.create((termToAdd as JSON).toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.create((termToAdd as JSON).toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
 
        assert 409 == result.code
@@ -123,24 +123,24 @@ class TermTests  {
    void testUpdateTermCorrect() {
        Term term = BasicInstanceBuilder.getTerm()
        def data = UpdateData.createUpdateSet(term,[name: ["OLDNAME","NEWNAME"]])
-       def result = TermAPI.update(term.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.update(term.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject
        int idTerm = json.term.id
  
-       def showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def showResult = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        json = JSON.parse(showResult.data)
        BasicInstanceBuilder.compare(data.mapNew, json)
  
        showResult = TermAPI.undo()
        assert 200 == result.code
-       showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       showResult = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
  
        showResult = TermAPI.redo()
        assert 200 == result.code
-       showResult = TermAPI.show(idTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       showResult = TermAPI.show(idTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
@@ -154,7 +154,7 @@ class TermTests  {
        jsonUpdate.name = termWithOldName.name
        jsonUpdate.id = -99
        jsonTerm = jsonUpdate.toString()
-       def result = TermAPI.update(-99, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.update(-99, jsonTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 404 == result.code
     }
  
@@ -168,7 +168,7 @@ class TermTests  {
        def jsonUpdate = JSON.parse(jsonTerm)
        jsonUpdate.name = termWithOldName.name
        jsonTerm = jsonUpdate.toString()
-       def result = TermAPI.update(termToEdit.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.update(termToEdit.id, jsonTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 409 == result.code
    }
      
@@ -179,7 +179,7 @@ class TermTests  {
          def jsonUpdate = JSON.parse(jsonTerm)
          jsonUpdate.name = null
          jsonTerm = jsonUpdate.toString()
-         def result = TermAPI.update(termToAdd.id, jsonTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = TermAPI.update(termToAdd.id, jsonTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 400 == result.code
      }
  
@@ -187,27 +187,27 @@ class TermTests  {
        def termToDelete = BasicInstanceBuilder.getTermNotExist()
        assert termToDelete.save(flush: true)!= null
        def id = termToDelete.id
-       def result = TermAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
  
-       def showResult = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def showResult = TermAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 404 == showResult.code
  
        result = TermAPI.undo()
        assert 200 == result.code
  
-       result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = TermAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
  
        result = TermAPI.redo()
        assert 200 == result.code
  
-       result = TermAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = TermAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 404 == result.code
    }
  
    void testDeleteTermNotExist() {
-       def result = TermAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = TermAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 404 == result.code
    }
 }

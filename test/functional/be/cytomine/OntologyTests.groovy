@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class OntologyTests  {
 
     void testListOntologyWithCredential() {
-        def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -31,14 +31,14 @@ class OntologyTests  {
     }
 
     void testListOntologyLightWithCredential() {
-        def result = OntologyAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD,true)
+        def result = OntologyAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,true)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
   
     void testShowOntologyWithCredential() {
-        def result = OntologyAPI.show(BasicInstanceBuilder.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.show(BasicInstanceBuilder.getOntology().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -46,53 +46,53 @@ class OntologyTests  {
   
     void testAddOntologyCorrect() {
         def ontologyToAdd = BasicInstanceBuilder.getOntologyNotExist()
-        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idOntology = result.data.id
   
-        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
   
         result = OntologyAPI.undo()
         assert 200 == result.code
   
-        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
   
         result = OntologyAPI.redo()
         assert 200 == result.code
   
-        result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
   
     void testAddOntologyAlreadyExist() {
         def ontologyToAdd = BasicInstanceBuilder.getOntology()
-        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
   
     void testUpdateOntologyCorrect() {
         Ontology ontologyToAdd = BasicInstanceBuilder.getOntology()
         def data = UpdateData.createUpdateSet(ontologyToAdd,[name: ["OLDNAME","NEWNAME"], user:[BasicInstanceBuilder.user1,BasicInstanceBuilder.user2]])
-        def result = OntologyAPI.update(ontologyToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.update(ontologyToAdd.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idOntology = json.ontology.id
   
-        def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
   
         showResult = OntologyAPI.undo()
         assert 200 == result.code
-        showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
   
         showResult = OntologyAPI.redo()
         assert 200 == result.code
-        showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
   
@@ -106,7 +106,7 @@ class OntologyTests  {
         jsonUpdate.name = ontologyWithOldName.name
         jsonUpdate.id = -99
         jsonOntology = jsonUpdate.toString()
-        def result = OntologyAPI.update(-99, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.update(-99, jsonOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
   
@@ -119,7 +119,7 @@ class OntologyTests  {
         def jsonUpdate = JSON.parse(jsonOntology)
         jsonUpdate.name = ontologyWithOldName.name
         jsonOntology = jsonUpdate.toString()
-        def result = OntologyAPI.update(ontologyToEdit.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.update(ontologyToEdit.id, jsonOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
       
@@ -130,7 +130,7 @@ class OntologyTests  {
           def jsonUpdate = JSON.parse(jsonOntology)
           jsonUpdate.name = null
           jsonOntology = jsonUpdate.toString()
-          def result = OntologyAPI.update(ontologyToAdd.id, jsonOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = OntologyAPI.update(ontologyToAdd.id, jsonOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 400 == result.code
       }
   
@@ -138,34 +138,34 @@ class OntologyTests  {
         def ontologyToDelete = BasicInstanceBuilder.getOntologyNotExist()
         assert ontologyToDelete.save(flush: true)!= null
         def id = ontologyToDelete.id
-        def result = OntologyAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
   
-        def showResult = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = OntologyAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
   
         result = OntologyAPI.undo()
         assert 200 == result.code
   
-        result = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = OntologyAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
   
         result = OntologyAPI.redo()
         assert 200 == result.code
   
-        result = OntologyAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = OntologyAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
   
     void testDeleteOntologyNotExist() {
-        def result = OntologyAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
   
     void testDeleteOntologyWithProject() {
         def project = BasicInstanceBuilder.getProject()
         def ontologyToDelete = project.ontology
-        def result = OntologyAPI.delete(ontologyToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = OntologyAPI.delete(ontologyToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -178,22 +178,22 @@ class OntologyTests  {
     def ontologyToDelete = relationTerm.term1.ontology
     assert ontologyToDelete.save(flush:true)!=null
     int idOntology = ontologyToDelete.id
-      def result = OntologyAPI.delete(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = OntologyAPI.delete(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
 
       result = OntologyAPI.undo()
       assert 200 == result.code
 
-      result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = OntologyAPI.redo()
       assert 200 == result.code
 
-      result = OntologyAPI.show(idOntology, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = OntologyAPI.show(idOntology, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
   }

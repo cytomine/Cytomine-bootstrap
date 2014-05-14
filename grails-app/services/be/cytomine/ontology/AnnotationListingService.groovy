@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.UrlApi
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.utils.GisUtils
@@ -18,10 +18,11 @@ class AnnotationListingService extends ModelService {
     def transactionService
     def dataSource
     def kmeansGeometryService
+    def securityACLService
 
 
     def listGeneric(AnnotationListing al) {
-        SecurityACL.check(al.container(),READ)
+        securityACLService.check(al.container(),READ)
         if(al.kmeans && !al.kmeansValue) {
             if(!al.image || !al.bbox) {
                 throw new WrongArgumentException("If you want to use kmeans, you must provide image (=${al.image}, bbox (=${al.bbox})")

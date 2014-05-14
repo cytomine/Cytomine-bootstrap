@@ -30,14 +30,14 @@ class ProjectDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //TODO: uncomment this after implementing full softdelete
 //        //check if all dependency are not aivalable
 //        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 //
 //        //undo op (re create) => CANNOT UNDO DELETE PROJECT!
-//        assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+//        assert (404 == ProjectAPI.undo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
     }
 
     void testProjectDependencyWithImage() {
@@ -49,7 +49,7 @@ class ProjectDependencyTests  {
         BasicInstanceBuilder.checkIfDomainExist(image)
 
         //try to delete term
-        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         BasicInstanceBuilder.checkIfDomainExist(project,false)
         BasicInstanceBuilder.checkIfDomainExist(image,false)
@@ -63,20 +63,20 @@ class ProjectDependencyTests  {
         //create a term and all its dependence domain
         def dependentDomain = createProjectWithDependency()
         def project = dependentDomain.first()
-        Task task = new Task(userIdent: User.findByUsername(Infos.GOODLOGIN).id,projectIdent: project.id)
+        Task task = new Task(userIdent: User.findByUsername(Infos.SUPERADMINLOGIN).id,projectIdent: project.id)
         task = task.saveOnDatabase()
 
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD,task).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD,task).code)
 
         //TODO: uncomment this after implementing full softdelete
 //        //check if all dependency are not aivalable
 //        BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 //
 //        //undo op (re create) => CANNOT UNDO DELETE PROJECT!
-//        assert (404 == ProjectAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+//        assert (404 == ProjectAPI.undo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 //
 //        task = task.getFromDatabase(task.id)
 //        println "###############################################"
@@ -92,13 +92,13 @@ class ProjectDependencyTests  {
 //        def project = dependentDomain.first()
 //        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 //
-//        UploadedFile file = new UploadedFile(user:User.findByUsername(Infos.GOODLOGIN), project: project,filename:"x",originalFilename:"y",convertedFilename:"z",convertedExt:"a",ext:"b",path:"c",contentType:"d")
+//        UploadedFile file = new UploadedFile(user:User.findByUsername(Infos.SUPERADMINLOGIN), project: project,filename:"x",originalFilename:"y",convertedFilename:"z",convertedExt:"a",ext:"b",path:"c",contentType:"d")
 //        BasicInstanceBuilder.saveDomain(file)
 //
 //        BasicInstanceBuilder.checkIfDomainsExist([file])
 //
 //        //try to delete term
-//        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+//        assert (ConstraintException.CODE==ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 //
 //        //check if all dependency are not aivalable
 //        BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
@@ -176,10 +176,10 @@ class ProjectDependencyTests  {
         project.addToRetrievalProjects(BasicInstanceBuilder.getProjectNotExist())
 
         //Not recoverable domain (cannot retrieve it with undo delete)
-        LastConnection lc = new LastConnection(project: project, user:  User.findByUsername(Infos.GOODLOGIN))
+        LastConnection lc = new LastConnection(project: project, user:  User.findByUsername(Infos.SUPERADMINLOGIN))
         BasicInstanceBuilder.saveDomain(lc)
 
-        UserPosition up = new UserPosition(project: project, user: User.findByUsername(Infos.GOODLOGIN), image: ia)
+        UserPosition up = new UserPosition(project: project, user: User.findByUsername(Infos.SUPERADMINLOGIN), image: ia)
         BasicInstanceBuilder.saveDomain(up)
 
         return [project, algoAnnotation, algoAnnotationTerm1,annotationTerm.userAnnotation,annotationTerm,af,ifp,ia,job,ra,sp]

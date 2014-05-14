@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -17,23 +17,24 @@ class ImageFilterProjectService extends ModelService {
 
     static transactional = true
     def springSecurityService
+    def securityACLService
 
     def currentDomain() {
         return ImageFilterProject
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         return ImageFilterProject.list()
     }
 
     def get(Project project, ImageFilter image) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         return ImageFilterProject.findByImageFilterAndProject(image, project)
     }
 
     def list(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         return ImageFilterProject.findAllByProject(project)
     }
 
@@ -43,7 +44,7 @@ class ImageFilterProjectService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) throws CytomineException {
-        SecurityACL.check(json.project, Project,READ)
+        securityACLService.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser),null,json)
@@ -59,7 +60,7 @@ class ImageFilterProjectService extends ModelService {
      */
     def delete(ImageFilterProject domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

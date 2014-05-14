@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -21,6 +21,7 @@ class SoftwareService extends ModelService {
     def softwareParameterService
     def jobService
     def softwareProjectService
+    def securityACLService
 
     def currentDomain() {
         Software
@@ -37,12 +38,12 @@ class SoftwareService extends ModelService {
     }
 
     def list() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         Software.list()
     }
 
     def list(Project project) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         SoftwareProject.findAllByProject(project).collect {it.software}
     }
 
@@ -53,7 +54,7 @@ class SoftwareService extends ModelService {
      */
     def add(def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkGuest(currentUser)
+        securityACLService.checkGuest(currentUser)
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -65,7 +66,7 @@ class SoftwareService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Software software, def jsonNewData) {
-        SecurityACL.check(software.container(),WRITE)
+        securityACLService.check(software.container(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),software, jsonNewData)
     }
@@ -80,7 +81,7 @@ class SoftwareService extends ModelService {
      */
     def delete(Software domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),DELETE)
+        securityACLService.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.processing.Job
@@ -30,6 +30,7 @@ class AlgoAnnotationService extends ModelService {
     def reviewedAnnotationService
     def kmeansGeometryService
     def annotationListingService
+    def securityACLService
 
     def currentDomain() {
         return AlgoAnnotation
@@ -38,19 +39,19 @@ class AlgoAnnotationService extends ModelService {
     AlgoAnnotation read(def id) {
         def annotation = AlgoAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
+            securityACLService.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(Project project,def propertiesToShow = null) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         AnnotationListing al = new AlgoAnnotationListing(columnToPrint: propertiesToShow,project : project.id)
         annotationListingService.executeRequest(al)
     }
 
     def list(Job job,def propertiesToShow = null) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         List<UserJob> users = UserJob.findAllByJob(job);
         List algoAnnotations = []
         users.each { user ->
@@ -61,7 +62,7 @@ class AlgoAnnotationService extends ModelService {
     }
 
     def listIncluded(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
+        securityACLService.check(image.container(),READ)
 
         def annotations = []
         AnnotationListing al = new AlgoAnnotationListing(
@@ -84,7 +85,7 @@ class AlgoAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json, def minPoint = null, def maxPoint = null) {
-        SecurityACL.check(json.project, Project, READ)
+        securityACLService.check(json.project, Project, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
@@ -117,7 +118,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def update(AlgoAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(annotation,currentUser)
+        securityACLService.checkIsCreator(annotation,currentUser)
         //simplify annotation
         try {
             def data = simplifyGeometryService.simplifyPolygon(jsonNewData.location, annotation?.geometryCompression)
@@ -141,7 +142,7 @@ class AlgoAnnotationService extends ModelService {
      */
     def delete(AlgoAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(domain,currentUser)
+        securityACLService.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

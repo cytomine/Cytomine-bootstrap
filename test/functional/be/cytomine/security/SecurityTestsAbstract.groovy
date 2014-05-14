@@ -43,7 +43,7 @@ class SecurityTestsAbstract  {
     }
 
     User getUserAdmin() {
-         BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+         BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
     }
 
     User getUserBad() {

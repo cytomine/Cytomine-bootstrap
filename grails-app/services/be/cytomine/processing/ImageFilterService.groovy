@@ -1,19 +1,20 @@
 package be.cytomine.processing
 
-import be.cytomine.SecurityACL
+
 
 class ImageFilterService {
 
     static transactional = true
     def cytomineService
+    def securityACLService
 
     def list() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         ImageFilter.list()
     }
 
     def read(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         ImageFilter.read(id)
     }
 }

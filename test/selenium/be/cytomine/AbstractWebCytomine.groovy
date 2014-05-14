@@ -7,7 +7,7 @@ import grails.plugins.selenium.SeleniumAware
 public class AbstractWebCytomine extends GroovyTestCase{
 
     void logIn() {
-        logIn(Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        logIn(Infos.ADMINLOGIN,Infos.ADMINPASSWORD)
     }
 
     void logIn(String login, String password) {

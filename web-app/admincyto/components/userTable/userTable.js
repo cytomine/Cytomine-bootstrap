@@ -12,8 +12,10 @@ angular.module("cytomineUserArea")
             },
             controller : function($scope) {
                 $scope.getLabel = function(item) {
-                    var label = "label-default";
-                    if(item.authority=="ROLE_ADMIN") {
+                    var label = "label-info";
+                    if(item.authority=="ROLE_SUPER_ADMIN") {
+                        label = "label-default";
+                    } else if(item.authority=="ROLE_ADMIN") {
                         label = "label-danger";
                     } else if(item.authority=="ROLE_USER") {
                         label = "label-success";
@@ -24,13 +26,15 @@ angular.module("cytomineUserArea")
                 };
 
                 $scope.roleSorter = function(item) {
-                    var index = 3;
-                    if(item.authority=="ROLE_ADMIN") {
+                    var index = 4;
+                    if(item.authority=="ROLE_SUPER_ADMIN") {
                         index = 0;
-                    } else if(item.authority=="ROLE_USER") {
+                    } else if(item.authority=="ROLE_ADMIN") {
                         index = 1;
-                    } else if(item.authority=="ROLE_GUEST") {
+                    } else if(item.authority=="ROLE_USER") {
                         index = 2;
+                    } else if(item.authority=="ROLE_GUEST") {
+                        index = 3;
                     }
                     return index
                 }

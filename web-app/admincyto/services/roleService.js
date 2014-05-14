@@ -81,6 +81,7 @@ angular.module("cytomineUserArea")
             var isGuest = false;
             var isUser = false;
             var isAdmin = false;
+            var isSuperAdmin = false;
             angular.forEach(userRoles,function(userRole) {
                 if(userRole.authority=="ROLE_GUEST") {
                     isGuest = true;
@@ -91,7 +92,13 @@ angular.module("cytomineUserArea")
                 if(userRole.authority=="ROLE_ADMIN") {
                     isAdmin = true;
                 }
+                if(userRole.authority=="ROLE_SUPER_ADMIN") {
+                    isSuperAdmin = true;
+                }
             });
+            if(isSuperAdmin) {
+                return "ROLE_SUPER_ADMIN";
+            }
             if(isAdmin) {
                 return "ROLE_ADMIN";
             }

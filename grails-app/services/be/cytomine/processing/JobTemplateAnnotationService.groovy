@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -25,6 +25,7 @@ class JobTemplateAnnotationService extends ModelService {
      def propertyService
      def jobService
      def jobParameterService
+    def securityACLService
 
      def currentDomain() {
          return JobTemplateAnnotation
@@ -33,20 +34,20 @@ class JobTemplateAnnotationService extends ModelService {
      def read(def id) {
          def domain = JobTemplateAnnotation.read(id)
          if(domain) {
-             SecurityACL.check(domain.container(),READ)
+             securityACLService.check(domain.container(),READ)
          }
          domain
      }
 
      def list(JobTemplate jobTemplate, Long idAnnotation) {
          if(jobTemplate && idAnnotation) {
-             SecurityACL.check(jobTemplate.container(),READ)
+             securityACLService.check(jobTemplate.container(),READ)
              return JobTemplateAnnotation.findAllByJobTemplateAndAnnotationIdent(jobTemplate,idAnnotation)
          } else if(idAnnotation){
-             SecurityACL.check(AnnotationDomain.getAnnotationDomain(idAnnotation).container(),READ)
+             securityACLService.check(AnnotationDomain.getAnnotationDomain(idAnnotation).container(),READ)
              return JobTemplateAnnotation.findAllByAnnotationIdent(idAnnotation)
          } else {
-             SecurityACL.check(jobTemplate.container(),READ)
+             securityACLService.check(jobTemplate.container(),READ)
              return JobTemplateAnnotation.findAllByJobTemplate(jobTemplate)
          }
      }
@@ -58,7 +59,7 @@ class JobTemplateAnnotationService extends ModelService {
       */
      def add(def json) {
          AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(json.annotationIdent)
-         SecurityACL.check(annotation.project,READ)
+         securityACLService.check(annotation.project,READ)
          SecUser currentUser = cytomineService.getCurrentUser()
          json.user = currentUser.id
          Command c = new AddCommand(user: currentUser)
@@ -76,8 +77,8 @@ class JobTemplateAnnotationService extends ModelService {
       * @return Response structure (code, old domain,..)
       */
      def delete(JobTemplateAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-         SecurityACL.check(domain.container(),READ)
-         SecurityACL.checkReadOnly(domain.container())
+         securityACLService.check(domain.container(),READ)
+         securityACLService.checkReadOnly(domain.container())
          SecUser currentUser = cytomineService.getCurrentUser()
          Command c = new DeleteCommand(user: currentUser,transaction:transaction)
          return executeCommand(c,domain,null)

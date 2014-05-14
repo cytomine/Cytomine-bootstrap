@@ -23,17 +23,21 @@
                     <li><a id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
                     <li><a id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Feedback</a></li>
                     <li class="divider-vertical"></li>
+
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"/> <span
-                                id="loggedUser"></span><b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i id="userIcon" class=""/><span id="loggedUser"></span><b class="caret"></b>&nbsp;<span id="warning-user-logged-as-admin" style="display:none;" class="label label-danger">Logged as admin!</span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#account"><i class="glyphicon glyphicon-user"/> Account</a></li>
+                                <li><a href="#account"><i class="glyphicon glyphicon-user"/> Account</a></li>
+                            <li class="divider"></li>
+                                <li id="li-open-admin-session" style="display: none;"><a id="a-open-admin-session" href="#"> <i class="glyphicon glyphicon glyphicon-chevron-up"/> Open admin session</a></li>
+                                <li id="li-close-admin-session" style="display: none;"><a id="a-close-admin-session" href="#" > <i class="glyphicon glyphicon glyphicon-chevron-down"/> Close admin session</a></li>
                             <li class="divider"></li>
                             <li id="li-cancel-switch-user"><a id="a-cancel-switch-user" href="/j_spring_security_exit_user"><i class="glyphicon glyphicon-transfer"/></a></li>
-                            <li><a id="logout" href="#"><i class="glyphicon glyphicon-off "/> Logout</a></li>
+                                <li><a id="logout" href="#"><i class="glyphicon glyphicon-off "/> Logout</a></li>
                         </ul>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>

@@ -28,21 +28,21 @@ class ReviewedAnnotationTests  {
 
     void testGetReviewedAnnotation() {
         def annotation = BasicInstanceBuilder.getReviewedAnnotation()
-        def result = ReviewedAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.show(annotation.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
 
     void testGetReviewedAnnotationNotExist() {
-        def result = ReviewedAnnotationAPI.show(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.show(-99, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
 
     void testCountReviewedAnnotationWithCredential() {
-        def result = ReviewedAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -53,23 +53,23 @@ class ReviewedAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getReviewedAnnotationNotExist()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.term = BasicInstanceBuilder.getTerm().id
-        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
-        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ReviewedAnnotationAPI.undo()
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = ReviewedAnnotationAPI.redo()
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -79,7 +79,7 @@ class ReviewedAnnotationTests  {
 //        def json = JSON.parse(annotationToAdd.encodeAsJSON())
 //        json.term = []
 //
-//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 400 == result.code
 //    }
 
@@ -88,7 +88,7 @@ class ReviewedAnnotationTests  {
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.project = null
 
-        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -97,7 +97,7 @@ class ReviewedAnnotationTests  {
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.image = null
 
-        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -106,7 +106,7 @@ class ReviewedAnnotationTests  {
 //        def json = JSON.parse(annotationToAdd.encodeAsJSON())
 //        json.annotationIdent = null
 //
-//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = ReviewedAnnotationAPI.create(json.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 400 == result.code
 //    }
 
@@ -118,24 +118,24 @@ class ReviewedAnnotationTests  {
                 [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
         )
 
-        def result = ReviewedAnnotationAPI.update(reviewed.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.update(reviewed.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idAnnotation = json.reviewedannotation.id
 
-        def showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = ReviewedAnnotationAPI.undo()
         assert 200==showResult.code
-        showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = ReviewedAnnotationAPI.redo()
         assert 200==showResult.code
-        showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ReviewedAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
@@ -152,22 +152,22 @@ class ReviewedAnnotationTests  {
 //
 //
 //
-//        def result = ReviewedAnnotationAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = ReviewedAnnotationAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //
-//        def showResult = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def showResult = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 404 == showResult.code
 //
 //        result = ReviewedAnnotationAPI.undo()
 //        assert 200 == result.code
 //
-//        result = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        result = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //
 //        result = ReviewedAnnotationAPI.redo()
 //        assert 200 == result.code
 //
-//        result = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        result = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 404 == result.code
 //    }
 //
@@ -178,27 +178,27 @@ class ReviewedAnnotationTests  {
 //        //annotationToDelete.save(flush: true)
 //        def id = annotationToDelete.id
 //        println annotationToDelete.encodeAsJSON()
-//        def result = ReviewedAnnotationAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = ReviewedAnnotationAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //
-//        def showResult = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def showResult = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 404 == showResult.code
 //
 //        result = ReviewedAnnotationAPI.undo()
 //        assert 200 == result.code
 //
-//        result = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        result = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //
 //        result = ReviewedAnnotationAPI.redo()
 //        assert 200 == result.code
 //
-//        result = ReviewedAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        result = ReviewedAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 404 == result.code
 //    }
 
     void testDeleteReviewedAnnotationNotExist() {
-        def result = ReviewedAnnotationAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -239,7 +239,7 @@ class ReviewedAnnotationTests  {
 //        assert ReviewedAnnotation.findAllByParentIdent(a2.id).size() == 0
 //        assert ReviewedAnnotation.findAllByParentIdent(a3.id).size() == 0
 //
-//        def result = ReviewedAnnotationAPI.addForJob(job.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//        def result = ReviewedAnnotationAPI.addForJob(job.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //        assert 200 == result.code
 //        def json = JSON.parse(result.data)
 //        assert json.collection instanceof JSONArray
@@ -269,7 +269,7 @@ class ReviewedAnnotationTests  {
           ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
 
           //check image attributes
-          def result = ImageInstanceAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = ImageInstanceAPI.show(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
@@ -279,7 +279,7 @@ class ReviewedAnnotationTests  {
           assert json.isNull('reviewUser')
 
           //mark start review + check attr
-          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           json = JSON.parse(result.data)
           assert json instanceof JSONObject
@@ -289,7 +289,7 @@ class ReviewedAnnotationTests  {
           assert !json.imageinstance.isNull('reviewUser')
 
           //mark stop review + check attr
-          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           json = JSON.parse(result.data)
           assert json instanceof JSONObject
@@ -302,7 +302,7 @@ class ReviewedAnnotationTests  {
       }
 
     void testStartReviewNotExist() {
-        def result = ReviewedAnnotationAPI.markStartReview(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -314,54 +314,54 @@ class ReviewedAnnotationTests  {
           //add review
           UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
-          def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert ConstraintException.CODE==result.code
 
           //mark start review + check attr
-          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
           //add review
-          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
           //mark stop review + check attr
-          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
           //create image
           ImageInstance image2 = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
           UserAnnotation annotation2 = BasicInstanceBuilder.getUserAnnotationNotExist(image2.project,image2,true)
-          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert ConstraintException.CODE==result.code
 
       }
 
     void testStopReviewCancel() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = ReviewedAnnotationAPI.markStopReview(image.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.markStopReview(image.id, true,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testStopReviewValidate() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = ReviewedAnnotationAPI.markStopReview(image.id, false,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.markStopReview(image.id, false,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testStopReviewInvalid() {
-        def result = ReviewedAnnotationAPI.markStopReview(-99, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStopReview(-99, true,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         ImageInstance image
 
         //validate image review by other user
         image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
-        result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.markStopReview(image.id, false,Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
         assert 400 == result.code
@@ -372,7 +372,7 @@ class ReviewedAnnotationTests  {
           ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
 
           //mark start review + check attr
-          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
           //add review with another login/user
@@ -389,30 +389,30 @@ class ReviewedAnnotationTests  {
           UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
           //mark start review + check attr
-          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
-          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStopReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
-          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
 
-          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
       }
 
     void testAddReviewForImageNotReviewed() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
-        def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testAddReviewForUserNotReviewer() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
-        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
         assert 400 == result.code
@@ -424,10 +424,10 @@ class ReviewedAnnotationTests  {
 
         AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -436,7 +436,7 @@ class ReviewedAnnotationTests  {
         assert json.reviewedannotation.terms.size()==1
 
         def idReviewAnnotation = json.reviewedannotation.id
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         annotation.refresh()
@@ -446,7 +446,7 @@ class ReviewedAnnotationTests  {
 
         annotation.refresh()
         assert annotation.countReviewedAnnotations == 0
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
 
@@ -455,7 +455,7 @@ class ReviewedAnnotationTests  {
 
         annotation.refresh()
         assert annotation.countReviewedAnnotations == 1
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -467,10 +467,10 @@ class ReviewedAnnotationTests  {
          AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
          Term term =  BasicInstanceBuilder.getTermNotExist(at.term.ontology,true)
 
-         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
-         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [term.id], Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [term.id], Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
          def json = JSON.parse(result.data)
          assert json instanceof JSONObject
@@ -480,7 +480,7 @@ class ReviewedAnnotationTests  {
          assert json.reviewedannotation.terms.contains(term.id.intValue())
          assert !json.reviewedannotation.terms.contains(at.term.id.intValue())
          def idReviewAnnotation = json.reviewedannotation.id
-         result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
      }
@@ -492,10 +492,10 @@ class ReviewedAnnotationTests  {
          AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
          Term term =  BasicInstanceBuilder.getTermNotExist(at.term.ontology,true)
 
-         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
-         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [BasicInstanceBuilder.getTermNotExist(true).id], Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, [BasicInstanceBuilder.getTermNotExist(true).id], Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 400 == result.code
 
 
@@ -510,10 +510,10 @@ class ReviewedAnnotationTests  {
         BasicInstanceBuilder.getAlgoAnnotationTerm(user.job,annotation,user)
 
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -525,16 +525,16 @@ class ReviewedAnnotationTests  {
     void testRemoveReviewForAnnotationNotReviewed() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
-        def result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testRemoveReviewForUserNotReviewed() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
-        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
         assert 400 == result.code
@@ -549,15 +549,15 @@ class ReviewedAnnotationTests  {
         BasicInstanceBuilder.getAlgoAnnotationTerm(user.job,annotation,user)
 
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 //        def json = JSON.parse(result.data)
 //        def idReviewAnnotation = json.reviewedannotation.i
 
-        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -566,19 +566,19 @@ class ReviewedAnnotationTests  {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, annotation.termsId(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         def json = JSON.parse(result.data)
         def idReviewAnnotation = json.reviewedannotation.id
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
 
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         annotation.refresh()
@@ -588,7 +588,7 @@ class ReviewedAnnotationTests  {
 
         annotation.refresh()
         assert annotation.countReviewedAnnotations == 1
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
 
@@ -597,7 +597,7 @@ class ReviewedAnnotationTests  {
 
         annotation.refresh()
         assert annotation.countReviewedAnnotations == 0
-        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.show(idReviewAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -605,17 +605,17 @@ class ReviewedAnnotationTests  {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         String newLocation = "POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))"
         json.reviewedannotation.location = newLocation
 
-        result = ReviewedAnnotationAPI.update(json.reviewedannotation.id,json.reviewedannotation.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.update(json.reviewedannotation.id,json.reviewedannotation.toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         println result.data
         assert JSON.parse(result.data).reviewedannotation.location.trim().equals("POLYGON ((19830 21680, 21070 21600, 20470 20740, 19830 21680))")
@@ -625,18 +625,18 @@ class ReviewedAnnotationTests  {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
-        result = UserAnnotationAPI.delete(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.delete(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.removeReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -647,31 +647,31 @@ class ReviewedAnnotationTests  {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ReviewedAnnotationAPI.addReviewAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert AlreadyExistException.CODE==result.code
     }
 
 
     void testReviewAllUserLayerImageNotFound() {
-        def result =  ReviewedAnnotationAPI.addReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  ReviewedAnnotationAPI.addReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testReviewAllUserLayerImageNotReviewMode() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
-        def result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstanceBuilder.user1.id],Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testReviewAllUserLayerUserNotReviewer() {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         result =  ReviewedAnnotationAPI.addReviewAll(image.id,[BasicInstanceBuilder.user1.id],Infos.ANOTHERLOGIN, Infos.ANOTHERPASSWORD)
         assert 400 == result.code
     }
@@ -682,9 +682,9 @@ class ReviewedAnnotationTests  {
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
-        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -700,9 +700,9 @@ class ReviewedAnnotationTests  {
         BasicInstanceBuilder.saveDomain(annotation)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
-        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -715,16 +715,16 @@ class ReviewedAnnotationTests  {
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(image.project,image,true)
         List<Long> users = [annotation.user.id, SecUser.findByUsername(Infos.ANOTHERLOGIN).id]
 
-        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ReviewedAnnotationAPI.markStartReview(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result =  ReviewedAnnotationAPI.addReviewAll(image.id,users,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result =  ReviewedAnnotationAPI.deleteReviewAll(image.id,users,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result =  ReviewedAnnotationAPI.deleteReviewAll(image.id,users,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testUnReviewAllUserLayerImageNotFound() {
-        def result =  ReviewedAnnotationAPI.deleteReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  ReviewedAnnotationAPI.deleteReviewAll(-99,[BasicInstanceBuilder.user1.id],Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 

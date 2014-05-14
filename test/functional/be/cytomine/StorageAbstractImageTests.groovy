@@ -19,14 +19,14 @@ class StorageAbstractImageTests {
         def abstractImage = BasicInstanceBuilder.getAbstractImage()
         String json = JSONUtils.toJSONString([ abstractimage : abstractImage.id, storage : storage.id])
 
-        def result =  StorageAbstractImageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  StorageAbstractImageAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testDeleteStorageAbstractImage() {
         def storageAbstractImage = BasicInstanceBuilder.getStorageAbstractImage()
 
-        def result =  StorageAbstractImageAPI.delete(storageAbstractImage.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result =  StorageAbstractImageAPI.delete(storageAbstractImage.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 

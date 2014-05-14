@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class SoftwareParameterTests  {
 
     void testListSoftwareParameterWithCredential() {
-          def result = SoftwareParameterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json.collection instanceof JSONArray
@@ -27,16 +27,16 @@ class SoftwareParameterTests  {
   
       void testListSoftwareParameterBySoftware() {
           SoftwareParameter softwareparameter = BasicInstanceBuilder.getSoftwareParameter()
-          def result = SoftwareParameterAPI.listBySoftware(softwareparameter.software.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.listBySoftware(softwareparameter.software.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json.collection instanceof JSONArray
-          result = SoftwareParameterAPI.listBySoftware(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = SoftwareParameterAPI.listBySoftware(-99,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 404 == result.code
       }
   
       void testShowSoftwareParameterWithCredential() {
-          def result = SoftwareParameterAPI.show(BasicInstanceBuilder.getSoftwareParameter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.show(BasicInstanceBuilder.getSoftwareParameter().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
@@ -44,18 +44,18 @@ class SoftwareParameterTests  {
   
       void testAddSoftwareParameterCorrect() {
           def softwareparameterToAdd = BasicInstanceBuilder.getSoftwareParameterNotExist()
-          def result = SoftwareParameterAPI.create(softwareparameterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.create(softwareparameterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           int idSoftwareParameter = result.data.id
     
-          result = SoftwareParameterAPI.show(idSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          result = SoftwareParameterAPI.show(idSoftwareParameter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
       }
 
       void testUpdateSoftwareParameterCorrect() {
           def sp = BasicInstanceBuilder.getSoftwareParameter()
           def data = UpdateData.createUpdateSet(sp,[name: ["OLDVALUE","NEWVALUE"]])
-          def result = SoftwareParameterAPI.update(sp.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.update(sp.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
           def json = JSON.parse(result.data)
           assert json instanceof JSONObject
@@ -69,7 +69,7 @@ class SoftwareParameterTests  {
           def jsonUpdate = JSON.parse(jsonSoftwareParameter)
           jsonUpdate.id = -99
           jsonSoftwareParameter = jsonUpdate.toString()
-          def result = SoftwareParameterAPI.update(-99, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.update(-99, jsonSoftwareParameter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 404 == result.code
       }
   
@@ -80,7 +80,7 @@ class SoftwareParameterTests  {
           def jsonUpdate = JSON.parse(jsonSoftwareParameter)
           jsonUpdate.software = -99
           jsonSoftwareParameter = jsonUpdate.toString()
-          def result = SoftwareParameterAPI.update(softwareparameterToAdd.id, jsonSoftwareParameter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.update(softwareparameterToAdd.id, jsonSoftwareParameter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 400 == result.code
       }
   
@@ -88,15 +88,15 @@ class SoftwareParameterTests  {
           def softwareparameterToDelete = BasicInstanceBuilder.getSoftwareParameterNotExist()
           assert softwareparameterToDelete.save(flush: true)!= null
           def id = softwareparameterToDelete.id
-          def result = SoftwareParameterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 200 == result.code
   
-          def showResult = SoftwareParameterAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def showResult = SoftwareParameterAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 404 == showResult.code
       }
   
       void testDeleteSoftwareParameterNotExist() {
-          def result = SoftwareParameterAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+          def result = SoftwareParameterAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
           assert 404 == result.code
       }
 }

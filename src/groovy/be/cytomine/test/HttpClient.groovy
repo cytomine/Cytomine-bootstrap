@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.protocol.ClientContext
+import org.apache.http.cookie.Cookie
 import org.apache.http.entity.*
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.impl.auth.BasicScheme
@@ -41,6 +42,8 @@ class HttpClient {
     URL URL
     HttpResponse response
     int timeout = 300000;
+
+    public List<Cookie> cookies
 
     private Log log = LogFactory.getLog(HttpClient.class)
 
@@ -72,6 +75,56 @@ class HttpClient {
         HttpConnectionParams.setConnectionTimeout(params, timeout)
         HttpConnectionParams.setSoTimeout(params, timeout)
         client.getCredentialsProvider().setCredentials(AuthScope.ANY, creds)
+    }
+
+    public List<Cookie> getCookies() {
+        List<Cookie> cookies = client.getCookieStore().getCookies();
+        return cookies;
+    }
+
+    public void putCookies() {
+        if(cookies!=null) {
+            for(int i=0;i<cookies.size();i++) {
+                client.getCookieStore().addCookie(cookies.get(i));
+            }
+        }
+    }
+
+    public void printCookies() {
+        System.out.println("############# PRINT COOKIE #############");
+        List<Cookie> cookies = client.getCookieStore().getCookies();
+        System.out.println(cookies);
+        if(cookies != null)
+        {
+            for(Cookie cookie : cookies)
+            {
+                String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
+                System.out.println(cookieString);
+            }
+        }
+    }
+
+    public static HttpClient getClientWithCookie(String host,String username, String password) throws Exception {
+        HttpClient client = null;
+        String suburl = "/j_spring_security_check";
+        client = new HttpClient();
+        client.connect(host + suburl, username, password);
+        client.post("j_username=lrollus&j_email=&j_password=lR%242011&remember_me=on");
+        client.cookies = client.client.getCookieStore().getCookies();
+        if( client.response!=null && client.response.getEntity() != null ) {
+            client.response.getEntity().consumeContent();
+        }//if
+//        cookies
+//
+//        String response = client.getResponseData();
+//        if(cookies!=null) {
+//            for(int i=0;i<cookies.size();i++) {
+//                client.getCookieStore().addCookie(cookies.get(i));
+//            }
+//        }
+//        client.disconnect();
+//        cookies = client.getCookies();
+        return client;
     }
 
     /**

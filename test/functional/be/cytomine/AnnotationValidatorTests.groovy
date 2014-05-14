@@ -32,7 +32,7 @@ class AnnotationValidatorTests {
     public void testAnnotationValid() {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = annotationToAdd.encodeAsJSON()
-        def result = UserAnnotationAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -40,7 +40,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = SELF_INTERSECT
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -48,7 +48,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = SELF_INTERSECT_CANNOT_MAKE_VALID
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -56,7 +56,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = GEOMETRY_COLLECTION
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -64,7 +64,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = EMPTY_COLLECTION
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -72,7 +72,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = EMPTY_POLYGON
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -80,7 +80,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = LINE_STRING
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -88,7 +88,7 @@ class AnnotationValidatorTests {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def json = JSON.parse(annotationToAdd.encodeAsJSON())
         json.location = MULTI_LINE_STRING
-        def result = UserAnnotationAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 }

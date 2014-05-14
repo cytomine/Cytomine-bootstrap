@@ -2,7 +2,7 @@ package be.cytomine.security
 
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -20,6 +20,7 @@ class SecUserSecRoleService extends ModelService {
     def cytomineService
     def commandService
     def modelService
+    def securityACLService
 
     def transactionService
 
@@ -28,12 +29,12 @@ class SecUserSecRoleService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         SecUserSecRole.findAllBySecUser(user)
     }
 
     def get(User user, SecRole role) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         SecUserSecRole.findBySecUserAndSecRole(user, role)
     }
 
@@ -44,7 +45,7 @@ class SecUserSecRoleService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         def command = executeCommand(new AddCommand(user: currentUser),null,json)
         return command
     }
@@ -59,14 +60,14 @@ class SecUserSecRoleService extends ModelService {
      */
     def delete(SecUserSecRole domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        if(domain.secUser.id==currentUser.id) {
+        if(domain.secUser.id==currentUser.id && !domain.secRole.authority.equals("ROLE_SUPER_ADMIN")) {
             throw new ForbiddenException("You cannot remove you a role")
         }
         if(domain.secUser.algo()) {
             Job job = ((UserJob)domain.secUser).job
-            SecurityACL.check(job?.container(),READ)
+            securityACLService.check(job?.container(),READ)
         } else {
-            SecurityACL.checkAdmin(currentUser)
+            securityACLService.checkAdmin(currentUser)
         }
 
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
@@ -85,25 +86,33 @@ class SecUserSecRoleService extends ModelService {
      */
     def define(SecUser user, SecRole role) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
 
         SecRole roleGuest = SecRole.findByAuthority("ROLE_GUEST")
         SecRole roleUser = SecRole.findByAuthority("ROLE_USER")
         SecRole roleAdmin = SecRole.findByAuthority("ROLE_ADMIN")
+        SecRole roleSuperAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
 
-
-        if(role.authority.equals("ROLE_ADMIN")) {
+        if(role.authority.equals("ROLE_SUPER_ADMIN")) {
             addRole(user,roleGuest)
             addRole(user,roleUser)
             addRole(user,roleAdmin)
+            addRole(user,roleSuperAdmin)
+        } else if(role.authority.equals("ROLE_ADMIN")) {
+            addRole(user,roleGuest)
+            addRole(user,roleUser)
+            addRole(user,roleAdmin)
+            removeRole(user,roleSuperAdmin)
         } else if(role.authority.equals("ROLE_USER")) {
             addRole(user,roleGuest)
             addRole(user,roleUser)
             removeRole(user,roleAdmin)
+            removeRole(user,roleSuperAdmin)
         }else if(role.authority.equals("ROLE_GUEST")) {
             addRole(user,roleGuest)
             removeRole(user,roleUser)
             removeRole(user,roleAdmin)
+            removeRole(user,roleSuperAdmin)
         }
     }
 
@@ -117,7 +126,7 @@ class SecUserSecRoleService extends ModelService {
     private def removeRole(SecUser user,SecRole role) {
         SecUserSecRole linked = SecUserSecRole.findBySecUserAndSecRole(user,role)
         if(linked) {
-            if(user.id==cytomineService.getCurrentUser().id) {
+            if(user.id==cytomineService.getCurrentUser().id && !role.authority.equals("ROLE_SUPER_ADMIN")) {
                 throw new ForbiddenException("You cannot remove you a role")
             }
             super.removeDomain(linked)

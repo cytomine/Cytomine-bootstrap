@@ -19,7 +19,7 @@ class GroupSecurityTests extends SecurityTestsAbstract {
         User user1 = BasicInstanceBuilder.getUser(USERNAMEWITHOUTDATA,PASSWORDWITHOUTDATA)
 
         //Get user admin
-        User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+        User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
         def group = BasicInstanceBuilder.getGroupNotExist()
         BasicInstanceBuilder.saveDomain(group)

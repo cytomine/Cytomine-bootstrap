@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.project.Project
@@ -27,6 +27,7 @@ class ReviewedAnnotationService extends ModelService {
     def dataSource
     def kmeansGeometryService
     def annotationListingService
+    def securityACLService
 
     def currentDomain() {
         return ReviewedAnnotation
@@ -35,7 +36,7 @@ class ReviewedAnnotationService extends ModelService {
     ReviewedAnnotation read(def id) {
         def annotation = ReviewedAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
+            securityACLService.check(annotation.container(),READ)
         }
         annotation
     }
@@ -45,7 +46,7 @@ class ReviewedAnnotationService extends ModelService {
     }
 
     def list(Project project, def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(
                 columnToPrint: propertiesToShow,
                 project: project.id
@@ -81,7 +82,7 @@ class ReviewedAnnotationService extends ModelService {
 
 
     def listIncluded(ImageInstance image, String geometry, List<Long> terms, AnnotationDomain annotation = null, def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
+        securityACLService.check(image.container(),READ)
 
         ReviewedAnnotationListing al = new ReviewedAnnotationListing(
                 columnToPrint: propertiesToShow,
@@ -112,7 +113,7 @@ class ReviewedAnnotationService extends ModelService {
      * @return Reviewed Annotation list
      */
     def list(ImageInstance image, Geometry bbox, def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
+        securityACLService.check(image.container(),READ)
 
 
             def rule = kmeansGeometryService.mustBeReduce(image,null,bbox)
@@ -271,8 +272,8 @@ class ReviewedAnnotationService extends ModelService {
      */
     def add(def json) {
         //read annotation (annotation or annotationIdent)
-        SecurityACL.check(json.project,Project,READ)
-        SecurityACL.checkReadOnly(json.project,Project)
+        securityACLService.check(json.project,Project,READ)
+        securityACLService.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
         Transaction transaction = transactionService.start()
         //Synchronzed this part of code, prevent two annotation to be add at the same time
@@ -292,7 +293,7 @@ class ReviewedAnnotationService extends ModelService {
      */
     def update(ReviewedAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(annotation,currentUser)
+        securityACLService.checkIsCreator(annotation,currentUser)
         def result = executeCommand(new EditCommand(user: currentUser),annotation,jsonNewData)
         return result
     }
@@ -307,7 +308,7 @@ class ReviewedAnnotationService extends ModelService {
      */
     def delete(ReviewedAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(domain,currentUser)
+        securityACLService.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

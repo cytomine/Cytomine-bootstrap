@@ -83,13 +83,15 @@ angular.module("cytomineUserArea")
         };
 
         $scope.roleSorter = function(item) {
-            var index = 3;
-            if(item.authority=="ROLE_ADMIN") {
+            var index = 4;
+            if(item.authority=="ROLE_SUPER_ADMIN") {
                 index = 0;
-            } else if(item.authority=="ROLE_USER") {
+            } else if(item.authority=="ROLE_ADMIN") {
                 index = 1;
-            } else if(item.authority=="ROLE_GUEST") {
+            } else if(item.authority=="ROLE_USER") {
                 index = 2;
+            } else if(item.authority=="ROLE_GUEST") {
+                index = 3;
             }
             return index
         }

@@ -1,5 +1,6 @@
 package be.cytomine.test.http
 
+import be.cytomine.test.HttpClient
 import be.cytomine.test.Infos
 
 /**
@@ -45,4 +46,21 @@ class UserRoleAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/user/${idUser}/role/${idRole}/define.json"
         return doPUT(URL,"",username,password)
     }
+
+
+    static def openAdminSession(String username, String password, HttpClient client = null) {
+        String URL = Infos.CYTOMINEURL + "session/admin/open.json"
+        return doGET(URL, username, password,client)
+    }
+
+    static def closeAdminSession(String username, String password, HttpClient client = null) {
+        String URL = Infos.CYTOMINEURL + "session/admin/close.json"
+        return doGET(URL, username, password,client)
+    }
+
+    static def infoAdminSession(String username, String password, HttpClient client = null) {
+        String URL = Infos.CYTOMINEURL + "session/admin/info.json"
+        return doGET(URL, username, password,client)
+    }
+
 }

@@ -24,7 +24,7 @@ class AlgoAnnotationTests  {
 
     void testGetAlgoAnnotationWithCredential() {
         def annotation = BasicInstanceBuilder.getAlgoAnnotation()
-        def result = AlgoAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.show(annotation.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -33,7 +33,7 @@ class AlgoAnnotationTests  {
     
     void testDownloadAlgoAnnotationDocument() {
         AlgoAnnotationTerm annotationTerm = BasicInstanceBuilder.getAlgoAnnotationTerm(true)
-        def result = AlgoAnnotationAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.downloadDocumentByProject(annotationTerm.retrieveAnnotationDomain().project.id,annotationTerm.retrieveAnnotationDomain().user.id,annotationTerm.term.id, annotationTerm.retrieveAnnotationDomain().image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -249,7 +249,7 @@ class AlgoAnnotationTests  {
     }
 
     void testDeleteAlgoAnnotationNotExist() {
-        def result = AlgoAnnotationAPI.delete(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.delete(-99, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -267,11 +267,11 @@ class AlgoAnnotationTests  {
     void testUnionAlgoAnnotationWithNotFound() {
         def a1 = BasicInstanceBuilder.getAlgoAnnotationTermNotExist()
         def result
-        result = AlgoAnnotationAPI.union(-99,a1.retrieveAnnotationDomain().user.id,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.union(-99,a1.retrieveAnnotationDomain().user.id,a1.term.id,10,20, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,-99,a1.term.id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,-99,a1.term.id,10,20, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,a1.retrieveAnnotationDomain().user.id,-99,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AlgoAnnotationAPI.union(a1.retrieveAnnotationDomain().image.id,a1.retrieveAnnotationDomain().user.id,-99,10,20, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -300,7 +300,7 @@ class AlgoAnnotationTests  {
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
-        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
@@ -331,7 +331,7 @@ class AlgoAnnotationTests  {
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
-        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert AlgoAnnotation.findAllByImage(a1.image).size()==1
@@ -363,7 +363,7 @@ class AlgoAnnotationTests  {
 
          assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
-         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
          assert AlgoAnnotation.findAllByImage(a1.image).size()==1
@@ -400,7 +400,7 @@ class AlgoAnnotationTests  {
 
          assert AlgoAnnotation.findAllByImage(a1.image).size()==2
 
-         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,100, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
          assert AlgoAnnotation.findAllByImage(a1.image).size()==1

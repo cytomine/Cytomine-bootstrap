@@ -10,7 +10,7 @@ import be.cytomine.utils.AttachedFile
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
-import static org.springframework.security.acls.domain.BasePermission.*
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -21,7 +21,7 @@ import static org.springframework.security.acls.domain.BasePermission.*
 class AttachedFileTests {
 
   void testListAttachedFile() {
-      def result = AttachedFileAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AttachedFileAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -34,21 +34,21 @@ class AttachedFileTests {
 
       Project.list().each{println it.id}
 
-      def result = AttachedFileAPI.show(domain.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AttachedFileAPI.show(domain.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
   }
 
     void testShowAttachedFileNotExist() {
-        def result = AttachedFileAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AttachedFileAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
     void testListAttachedFileByDomain() {
         def domain = BasicInstanceBuilder.getAttachedFileNotExist(true)
-        def result = AttachedFileAPI.listByDomain(domain.domainClassName,domain.domainIdent,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AttachedFileAPI.listByDomain(domain.domainClassName,domain.domainIdent,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -56,13 +56,13 @@ class AttachedFileTests {
     }
 
     void testDownloadAttachedFile() {
-        def result = AttachedFileAPI.download(BasicInstanceBuilder.getAttachedFileNotExist("test/functional/be/cytomine/utils/images/preview.png",true).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AttachedFileAPI.download(BasicInstanceBuilder.getAttachedFileNotExist("test/functional/be/cytomine/utils/images/preview.png",true).id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
   void testAddAttachedFileCorrect() {
       def attachedFileToAdd = BasicInstanceBuilder.getAttachedFileNotExist(false)
-      def result = AttachedFileAPI.upload(attachedFileToAdd.domainClassName,attachedFileToAdd.domainIdent,new File("test/functional/be/cytomine/utils/simpleFile.txt"),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AttachedFileAPI.upload(attachedFileToAdd.domainClassName,attachedFileToAdd.domainIdent,new File("test/functional/be/cytomine/utils/simpleFile.txt"),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
 

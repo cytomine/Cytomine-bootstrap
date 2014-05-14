@@ -20,38 +20,38 @@ class RelationTermTests {
 
     void testShowRelationTerm() {
         RelationTerm relationTerm = BasicInstanceBuilder.getRelationTerm()
-        def result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,relationTerm.term2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
 
-        result = RelationTermAPI.show(-99,relationTerm.term1.id,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RelationTermAPI.show(-99,relationTerm.term1.id,relationTerm.term2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = RelationTermAPI.show(relationTerm.relation.id,-99,relationTerm.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RelationTermAPI.show(relationTerm.relation.id,-99,relationTerm.term2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RelationTermAPI.show(relationTerm.relation.id,relationTerm.term1.id,-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListRelation() {
-        def result = RelationTermAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
     
   void testListRelationTermByTerm1() {
-      def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,1, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,1, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
 
-      result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,3, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,3, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
     void testListRelationTermByTerm2() {
-        def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.listByTerm(BasicInstanceBuilder.getTerm().id,2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -59,12 +59,12 @@ class RelationTermTests {
 
 
     void testListRelationTermByTerm() {
-        def result = RelationTermAPI.listByTermAll(BasicInstanceBuilder.getTerm().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.listByTermAll(BasicInstanceBuilder.getTerm().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = RelationTermAPI.listByTermAll(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RelationTermAPI.listByTermAll(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -82,23 +82,23 @@ class RelationTermTests {
       int idTerm2 = relationTermToAdd.term2.id
       jsonRelationTerm = json.toString()
 
-      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       //int idRelationTerm = result.data.id
 
-      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = RelationTermAPI.undo()
       assert 200 == result.code
 
-      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
       result = RelationTermAPI.redo()
       assert 200 == result.code
 
-      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
   }
@@ -114,7 +114,7 @@ class RelationTermTests {
         json.term2 = relationTermToAdd.term2.id
         jsonRelationTerm = json.toString()
 
-        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         //int idRelationTerm = result.data.id
 
@@ -130,7 +130,7 @@ class RelationTermTests {
       json.term2 = relationTermToAdd.term2.id
       jsonRelationTerm = json.toString()
 
-      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 409 == result.code
   }
 
@@ -143,7 +143,7 @@ class RelationTermTests {
     json.term2 = relationTermToAdd.term2.id
     jsonRelationTerm = json.toString()
 
-      def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 400 == result.code
   }
 
@@ -156,7 +156,7 @@ class RelationTermTests {
       json.term2 = relationTermToAdd.term2.id
       jsonRelationTerm = json.toString()
   
-        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
   }
 
@@ -169,7 +169,7 @@ class RelationTermTests {
       json.term2 = -99
       jsonRelationTerm = json.toString()
   
-        def result = RelationTermAPI.create(jsonRelationTerm, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.create(jsonRelationTerm, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
   }
 
@@ -180,22 +180,22 @@ class RelationTermTests {
       int idRelation = relationtermToDelete.relation.id
       int idTerm1 = relationtermToDelete.term1.id
       int idTerm2 = relationtermToDelete.term2.id
-      def result = RelationTermAPI.delete(relationtermToDelete.relation.id,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.delete(relationtermToDelete.relation.id,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
 
       result = RelationTermAPI.undo()
       assert 200 == result.code
 
-      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = RelationTermAPI.redo()
       assert 200 == result.code
 
-      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RelationTermAPI.show(idRelation,idTerm1,idTerm2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -203,13 +203,13 @@ class RelationTermTests {
         def relationtermToDelete = BasicInstanceBuilder.getRelationTermNotExist()
         relationtermToDelete.relation = Relation.findByName(RelationTerm.names.PARENT)
         assert relationtermToDelete.save(flush: true)  != null
-        def result = RelationTermAPI.delete(null,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RelationTermAPI.delete(null,relationtermToDelete.term1.id,relationtermToDelete.term2.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
 
   void testDeleteRelationTermNotExist() {
-      def result = RelationTermAPI.delete(-99,-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RelationTermAPI.delete(-99,-99,-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 

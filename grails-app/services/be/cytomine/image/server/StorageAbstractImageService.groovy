@@ -1,6 +1,6 @@
 package be.cytomine.image.server
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -13,19 +13,20 @@ import static org.springframework.security.acls.domain.BasePermission.WRITE
 class StorageAbstractImageService extends ModelService {
 
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         return StorageAbstractImage
     }
 
     def add(def json) {
-        SecurityACL.check(json.storage,Storage,WRITE)
+        securityACLService.check(json.storage,Storage,WRITE)
         Command c = new AddCommand(user: cytomineService.getCurrentUser())
         executeCommand(c,null,json)
     }
 
     def delete(StorageAbstractImage sai, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(sai.container(),WRITE)
+        securityACLService.check(sai.container(),WRITE)
         Command c = new DeleteCommand(user: cytomineService.getCurrentUser(),transaction:transaction)
         return executeCommand(c,sai,null)
     }

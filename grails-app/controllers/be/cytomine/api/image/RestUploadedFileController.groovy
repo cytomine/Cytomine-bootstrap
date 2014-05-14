@@ -1,6 +1,6 @@
 package be.cytomine.api.image
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -39,6 +39,7 @@ class RestUploadedFileController extends RestController {
     def imageInstanceService
     def abstractImageService
     def notificationService
+    def securityACLService
 
     static allowedMethods = [image: 'POST']
 
@@ -147,7 +148,7 @@ class RestUploadedFileController extends RestController {
     def createImage () {
         long timestamp = new Date().getTime()
         def currentUser = cytomineService.currentUser
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
         UploadedFile uploadedFile = UploadedFile.read(params.long('uploadedFile'))
         Collection<Storage> storages = []
         uploadedFile.getStorages()?.each {

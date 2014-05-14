@@ -121,12 +121,12 @@ class BasicInstanceBuilder {
 
 
     static User getUser1() {
-        return User.findByUsername("lrollus")
+       return getUser("user1","password")
     }
 
 
     static User getUser2() {
-        return User.findByUsername("stevben")
+        return getUser("user2","password")
     }
 
     static UserJob getUserJob(Project project) {
@@ -136,18 +136,18 @@ class BasicInstanceBuilder {
         getSoftwareProjectNotExist(job.software,job.project,true)
         UserJob userJob = getUserJobNotExist()
         userJob.job = job
-        userJob.user = getUser1()
+        userJob.user = User.findByUsername(Infos.SUPERADMINLOGIN)
         saveDomain(userJob)
     }
 
     static UserJob getUserJob(String username, String password) {
         UserJob user = UserJob.findByUsername(username)
         if (!user) {
-            user = new UserJob(username: username, user:User.findByUsername(Infos.GOODLOGIN),password: password,enabled: true,job: getJob())
+            user = new UserJob(username: username, user:User.findByUsername(Infos.SUPERADMINLOGIN),password: password,enabled: true,job: getJob())
             user.generateKeys()
             saveDomain(user)
             try {
-                User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
+                SecUserSecRole.findAllBySecUser(User.findByUsername(Infos.SUPERADMINLOGIN)).collect { it.secRole }.each { secRole ->
                     SecUserSecRole.create(userJob, secRole)
                 }
             } catch(Exception e) {
@@ -161,10 +161,10 @@ class BasicInstanceBuilder {
     static UserJob getUserJob() {
         UserJob userJob = UserJob.findByUsername("BasicUserJob")
         if (!userJob) {
-            userJob = new UserJob(username: "BasicUserJob",password: "PasswordUserJob",enabled: true,user : User.findByUsername(Infos.GOODLOGIN),job: getJob())
+            userJob = new UserJob(username: "BasicUserJob",password: "PasswordUserJob",enabled: true,user : User.findByUsername(Infos.SUPERADMINLOGIN),job: getJob())
             userJob.generateKeys()
             saveDomain(userJob)
-            User.findByUsername(Infos.GOODLOGIN).getAuthorities().each { secRole ->
+            SecUserSecRole.findAllBySecUser(User.findByUsername(Infos.SUPERADMINLOGIN)).collect { it.secRole }.each { secRole ->
                 SecUserSecRole.create(userJob, secRole)
             }
         }
@@ -177,7 +177,7 @@ class BasicInstanceBuilder {
     }
 
     static UserJob getUserJobNotExist(boolean save = false) {
-        def user = getUser1()
+        def user = User.findByUsername(Infos.SUPERADMINLOGIN)
         def job = getJobNotExist(true)
 
         UserJob userJob = new UserJob(username:getRandomString(),password: "PasswordUserJob",enabled: true,user : user,job: job)
@@ -185,7 +185,7 @@ class BasicInstanceBuilder {
 
         if(save) {
             saveDomain(userJob)
-            userJob.user.getAuthorities().each { secRole ->
+            SecUserSecRole.findAllBySecUser(userJob.user).collect { it.secRole }.each { secRole ->
                 SecUserSecRole.create(user, secRole)
             }
         } else{
@@ -203,9 +203,19 @@ class BasicInstanceBuilder {
             }
         user
     }
+    static User getSuperAdmin(String username, String password) {
+        User user = getUser(username,password)
+        try {
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_ADMIN"))
+            SecUserSecRole.create(user,SecRole.findByAuthority("ROLE_SUPER_ADMIN"))
+        } catch(Exception e) {
+            log.warn(e)
+        }
+        user
+    }
 
     static ImageInstance getImageInstance() {
-        saveDomain(getImageInstanceNotExist())
+        getImageInstanceNotExist(BasicInstanceBuilder.getProject(),true)
     }
 
     static ImageInstance getImageInstanceNotExist(Project project = BasicInstanceBuilder.getProject(), boolean save = false) {
@@ -213,7 +223,7 @@ class BasicInstanceBuilder {
                 baseImage: saveDomain(BasicInstanceBuilder.getAbstractImageNotExist()),
                 project: project,
                 //slide: BasicInstanceBuilder.getSlide(),
-                user: getUser1())
+                user: User.findByUsername(Infos.SUPERADMINLOGIN))
         save ? BasicInstanceBuilder.saveDomain(image) : BasicInstanceBuilder.checkDomain(image)
     }
 
@@ -358,10 +368,10 @@ class BasicInstanceBuilder {
         def annotation = new ReviewedAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: image,
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:image.project,
                 status : 0,
-                reviewUser: getUser1()
+                reviewUser: User.findByUsername(Infos.SUPERADMINLOGIN)
         )
         annotation.putParentAnnotation(basedAnnotation)
         save ? saveDomain(annotation) : checkDomain(annotation)
@@ -381,10 +391,10 @@ class BasicInstanceBuilder {
          def annotation = ReviewedAnnotation.findOrCreateWhere(
                  location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                  image: image,
-                 user: getUser1(),
+                 user: User.findByUsername(Infos.SUPERADMINLOGIN),
                  project:image.project,
                  status : 0,
-                 reviewUser: getUser1()
+                 reviewUser: User.findByUsername(Infos.SUPERADMINLOGIN)
          )
          annotation.putParentAnnotation(basedAnnotation)
          saveDomain(annotation)
@@ -406,10 +416,10 @@ class BasicInstanceBuilder {
         def annotation = new ReviewedAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: image,
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:image.project,
                 status : 0,
-                reviewUser: getUser1()
+                reviewUser: User.findByUsername(Infos.SUPERADMINLOGIN)
         )
         annotation.putParentAnnotation(basedAnnotation)
         save ? saveDomain(annotation) : checkDomain(annotation)
@@ -421,10 +431,10 @@ class BasicInstanceBuilder {
          def annotation = ReviewedAnnotation.findOrCreateWhere(
                  location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                  image: getImageInstance(),
-                 user: getUser1(),
+                 user: User.findByUsername(Infos.SUPERADMINLOGIN),
                  project:getImageInstance().project,
                  status : 0,
-                 reviewUser: getUser1()
+                 reviewUser: User.findByUsername(Infos.SUPERADMINLOGIN)
          )
          annotation.putParentAnnotation(basedAnnotation)
          checkDomain(annotation)
@@ -435,7 +445,7 @@ class BasicInstanceBuilder {
         def term = getTermNotExist()
         term.ontology = annotation.project.ontology
         term = saveDomain(term)
-        def user = getUser1()
+        def user = User.findByUsername(Infos.SUPERADMINLOGIN)
         saveDomain(new AnnotationTerm(userAnnotation: annotation, term: term,user: user))
     }
 
@@ -443,7 +453,7 @@ class BasicInstanceBuilder {
         def term = getTermNotExist()
         term.ontology = annotation.project.ontology
         saveDomain(term)
-        def user = getUser1()
+        def user = User.findByUsername(Infos.SUPERADMINLOGIN)
         def annotationTerm = new AnnotationTerm(userAnnotation:annotation,term:term,user:user)
         save ? saveDomain(annotationTerm) : checkDomain(annotationTerm)
     }
@@ -452,7 +462,7 @@ class BasicInstanceBuilder {
         def annotation = UserAnnotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: getImageInstance(),
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:getImageInstance().project
         )
         saveDomain(annotation)
@@ -467,7 +477,7 @@ class BasicInstanceBuilder {
         UserAnnotation annotation = new UserAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image:image,
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:project
         )
         save ? saveDomain(annotation) : checkDomain(annotation)
@@ -478,7 +488,7 @@ class BasicInstanceBuilder {
         def annotation = RoiAnnotation.findOrCreateWhere(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image: getImageInstance(),
-                user: getUser1(),
+                user:User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:getImageInstance().project
         )
         saveDomain(annotation)
@@ -488,7 +498,7 @@ class BasicInstanceBuilder {
         RoiAnnotation annotation = new RoiAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
                 image:image,
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 project:image.project
         )
         save ? saveDomain(annotation) : checkDomain(annotation)
@@ -559,7 +569,7 @@ class BasicInstanceBuilder {
 
     static SharedAnnotation getSharedAnnotation() {
         def sharedannotation = SharedAnnotation.findOrCreateWhere(
-                sender: User.findByUsername(Infos.GOODLOGIN),
+                sender: User.findByUsername(Infos.SUPERADMINLOGIN),
                 comment: "This is a test",
                 userAnnotation: getUserAnnotation()
         )
@@ -568,7 +578,7 @@ class BasicInstanceBuilder {
 
     static SharedAnnotation getSharedAnnotationNotExist(boolean save = false) {
         def sharedannotation = new SharedAnnotation(
-                sender: User.findByUsername(Infos.GOODLOGIN),
+                sender: User.findByUsername(Infos.SUPERADMINLOGIN),
                 comment: "This is a test",
                 userAnnotation: getUserAnnotation()
         )
@@ -677,7 +687,7 @@ class BasicInstanceBuilder {
         def uploadedFile = UploadedFile.findByFilename("BASICFILENAME")
         if (!uploadedFile) {
             uploadedFile = new UploadedFile(
-                    user: getUser1(),
+                    user: User.findByUsername(Infos.SUPERADMINLOGIN),
                     projects:[getProject().id],
                     storages: [getStorage().id],
                     filename: "BASICFILENAME",
@@ -696,7 +706,7 @@ class BasicInstanceBuilder {
 
     static UploadedFile getUploadedFileNotExist(boolean save = false) {
         UploadedFile uploadedFile = new UploadedFile(
-                user: getUser1(),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
                 projects:[getProject().id],
                 storages: [getStorage().id],
                 filename: getRandomString(),
@@ -716,19 +726,19 @@ class BasicInstanceBuilder {
     static AnnotationFilter getAnnotationFilter() {
         def filter = AnnotationFilter.findByName("BASICFILTER")
         if (!filter) {
-            filter = new AnnotationFilter(name:"BASICFILTER",project:getProject(),user:getUser1())
+            filter = new AnnotationFilter(name:"BASICFILTER",project:getProject(),user:User.findByUsername(Infos.SUPERADMINLOGIN))
             saveDomain(filter)
             filter.addToTerms(getTerm())
-            filter.addToUsers(getUser1())
+            filter.addToUsers(User.findByUsername(Infos.SUPERADMINLOGIN))
             saveDomain(filter)
         }
         filter
     }
 
     static AnnotationFilter getAnnotationFilterNotExist() {
-        def annotationFilter = new AnnotationFilter(name:getRandomString(),project:getProject(),user: getUser1())
+        def annotationFilter = new AnnotationFilter(name:getRandomString(),project:getProject(),user: User.findByUsername(Infos.SUPERADMINLOGIN))
         annotationFilter.addToTerms(getTerm())
-        annotationFilter.addToUsers(getUser1())
+        annotationFilter.addToUsers(User.findByUsername(Infos.SUPERADMINLOGIN))
         checkDomain(annotationFilter)
     }
 
@@ -793,12 +803,10 @@ class BasicInstanceBuilder {
         save ? saveDomain(jobTemplateAnnotation) : checkDomain(jobTemplateAnnotation)
     }
 
-
     static JobData getJobDataNotExist() {
         JobData jobData =  new JobData(job:saveDomain(getJobNotExist()), key : "TESTKEY", filename: "filename.jpg")
         checkDomain(jobData)
     }
-
 
     static JobData getJobData() {
         saveDomain(getJobDataNotExist())
@@ -816,8 +824,8 @@ class BasicInstanceBuilder {
      }
 
      static JobParameter getJobParameterNotExist() {
-         def job = saveDomain(getJobNotExist())
-         def softwareParam = saveDomain(getSoftwareParameterNotExist() )
+         def job = getJobNotExist(true)
+         def softwareParam = getSoftwareParameterNotExist(true)
          def jobParameter = new JobParameter(value: "toto", job:job,softwareParameter:softwareParam)
          checkDomain(jobParameter)
      }
@@ -825,22 +833,24 @@ class BasicInstanceBuilder {
     static Ontology getOntology() {
         def ontology = Ontology.findByName("BasicOntology")
         if (!ontology) {
-            ontology = new Ontology(name: "BasicOntology", user: getUser1())
+            ontology = new Ontology(name: "BasicOntology", user: User.findByUsername(Infos.SUPERADMINLOGIN))
             saveDomain(ontology)
             def term = getTermNotExist()
             term.ontology = ontology
             saveDomain(term)
+            Infos.addUserRight(User.findByUsername(Infos.SUPERADMINLOGIN),ontology)
         }
         ontology
     }
 
     static Ontology getOntologyNotExist(boolean save = false) {
-        Ontology ontology = new Ontology(name: getRandomString() + "", user: getUser1())
+        Ontology ontology = new Ontology(name: getRandomString() + "", user: User.findByUsername(Infos.SUPERADMINLOGIN))
         save ? saveDomain(ontology) : checkDomain(ontology)
         if (save) {
             Term term = getTermNotExist(true)
             term.ontology = ontology
             saveDomain(ontology)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,ontology)
         }
         ontology
     }
@@ -851,9 +861,7 @@ class BasicInstanceBuilder {
         if (!project) {
             project = new Project(name: name, ontology: getOntology(), discipline: getDiscipline())
             saveDomain(project)
-            try {
-                Infos.addUserRight(Infos.GOODLOGIN,project)
-            } catch(Exception e) {}
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,project)
         }
         project
     }
@@ -862,7 +870,7 @@ class BasicInstanceBuilder {
         Project project = new Project(name: getRandomString(), ontology: ontology, discipline: getDiscipline()  )
         if(save) {
             saveDomain(project)
-            Infos.addUserRight(Infos.GOODLOGIN,project)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,project)
         } else{
             checkDomain(project)
         }
@@ -870,7 +878,7 @@ class BasicInstanceBuilder {
     }
 
     static Project getProjectNotExist(boolean save = false) {
-        getProjectNotExist(saveDomain(getOntologyNotExist()),save)
+        getProjectNotExist(getOntologyNotExist(true),save)
     }
 
 
@@ -1077,16 +1085,22 @@ class BasicInstanceBuilder {
     static Storage getStorage() {
         def storage = Storage.findByName("bidon")
         if(!storage) {
-            storage = new Storage(name:"bidon",basePath:"storagepath",ip:"192.168.0.0",user: getUser1(),port: 123)
+            storage = new Storage(name:"bidon",basePath:"storagepath",ip:"192.168.0.0",user: User.findByUsername(Infos.SUPERADMINLOGIN),port: 123)
             saveDomain(storage)
-            Infos.addUserRight(User.findByUsername(Infos.GOODLOGIN),storage)
+            Infos.addUserRight(User.findByUsername(Infos.SUPERADMINLOGIN),storage)
         }
         return storage
     }
 
-    static Storage getStorageNotExist() {
-        Storage storage = new Storage(name: getRandomString(), basePath: getRandomString(), ip: getRandomString(), port: 22, user: getUser1())
-        checkDomain(storage)
+    static Storage getStorageNotExist(boolean save = false) {
+        Storage storage = new Storage(name: getRandomString(), basePath: getRandomString(), ip: getRandomString(), port: 22, user: User.findByUsername(Infos.SUPERADMINLOGIN))
+
+        if(save) {
+            saveDomain(storage)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,storage)
+        } else {
+            checkDomain(storage)
+        }
         storage
     }
 
@@ -1122,13 +1136,20 @@ class BasicInstanceBuilder {
         if (!software) {
             software = new Software(name: "AnotherBasicSoftware", serviceName:"helloWorldJobService")
             saveDomain(software)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,software)
         }
         software
     }
 
-    static Software getSoftwareNotExist() {
+    static Software getSoftwareNotExist(boolean save = false) {
         def software = new Software(name: getRandomString(),serviceName:"helloWorldJobService")
-        software.validate()
+        if(save) {
+            saveDomain(software)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,software)
+        } else {
+            checkDomain(software)
+        }
+
         software
     }
 
@@ -1142,17 +1163,21 @@ class BasicInstanceBuilder {
         parameter
     }
 
-    static SoftwareParameter getSoftwareParameterNotExist() {
+    static SoftwareParameter getSoftwareParameterNotExist(boolean save = false) {
         Software software = getSoftware()
         def parameter =   new SoftwareParameter(name: getRandomString(),software:software,type:"String")
-        checkDomain(parameter)
+        if(save) {
+            saveDomain(parameter)
+        } else {
+            checkDomain(parameter)
+        }
+
     }
 
     static Description getDescriptionNotExist(CytomineDomain domain,boolean save = false) {
         Description description = new Description(domainClassName: domain.class.name, domainIdent: domain.id, data: "A description for this domain!")
         save ? saveDomain(description) : checkDomain(description)
     }
-
 
     static ImageServer getImageServer() {
 
@@ -1177,7 +1202,7 @@ class BasicInstanceBuilder {
         saveDomain(softproj)
     }
 
-    static SoftwareProject getSoftwareProjectNotExist(Software software = saveDomain(getSoftwareNotExist()), Project project = saveDomain(getProjectNotExist()), boolean save = false) {
+    static SoftwareProject getSoftwareProjectNotExist(Software software = getSoftwareNotExist(true), Project project = getProjectNotExist(true), boolean save = false) {
         SoftwareProject softproj = new SoftwareProject(software:software,project:project)
         save ? saveDomain(softproj) : checkDomain(softproj)
     }
@@ -1207,7 +1232,6 @@ class BasicInstanceBuilder {
          saveDomain(algoAnnotationBad)
          return job
      }
-
 
     static ImageSequence getImageSequence() {
         ImageSequence imageSequence = ImageSequence.findByImageGroup(getImageGroup())
@@ -1279,7 +1303,6 @@ class BasicInstanceBuilder {
         return data
     }
 
-
     public static ImageInstance initImage() {
 
         String urlImageServer = "http://is31.cytomine.be"
@@ -1320,7 +1343,7 @@ class BasicInstanceBuilder {
             storage.password = "toto"
             storage.port = 22
             storage.username = "username"
-            storage.user = BasicInstanceBuilder.getUser1()
+            storage.user = User.findByUsername(Infos.SUPERADMINLOGIN)
             BasicInstanceBuilder.saveDomain(storage)
         }
 
@@ -1367,7 +1390,7 @@ class BasicInstanceBuilder {
             imageInstance = new ImageInstance()
             imageInstance.baseImage = abstractImage
             imageInstance.project = project
-            imageInstance.user = BasicInstanceBuilder.getUser1()
+            imageInstance.user = User.findByUsername(Infos.SUPERADMINLOGIN)
             BasicInstanceBuilder.saveDomain(imageInstance)
         }
 

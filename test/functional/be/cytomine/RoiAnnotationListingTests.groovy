@@ -1,16 +1,11 @@
 package be.cytomine
 
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.*
-import be.cytomine.processing.Job
 import be.cytomine.processing.RoiAnnotation
 import be.cytomine.project.Project
-import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AnnotationDomainAPI
 import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.RoiAnnotationAPI
 import com.vividsolutions.jts.io.WKTReader
@@ -32,7 +27,7 @@ class RoiAnnotationListingTests {
 
         def dataSet = createAnnotationSet()
 
-        def result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,null)
+        def result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,null)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         println json
@@ -41,7 +36,7 @@ class RoiAnnotationListingTests {
 
         def expectedProp = ['showBasic', 'showWKT']
         println "expectedProp=$expectedProp"
-        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,expectedProp)
+        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,expectedProp)
         json = (JSON.parse(result.data))
         println "x=" + json
         println "x=" + json.collection
@@ -50,17 +45,17 @@ class RoiAnnotationListingTests {
         checkForProperties(json.collection.get(0),['id',"location"],['created','area','project'])
 
         expectedProp = ['showDefault', 'hideMeta']
-        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,expectedProp)
+        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,expectedProp)
         json = (JSON.parse(result.data))
         checkForProperties(json.collection.get(0),['id'],['location','created','project'])
 
         expectedProp = ['showBasic', 'showImage']
-        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,expectedProp)
+        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,expectedProp)
         json = (JSON.parse(result.data))
         checkForProperties(json.collection.get(0),['id','originalfilename'],['location'])
 
         expectedProp = ['showWKT', 'hideWKT','hideBasic','hideMeta']
-        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD,expectedProp)
+        result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,expectedProp)
         assert 404 == result.code
     }
 
@@ -71,7 +66,7 @@ class RoiAnnotationListingTests {
 
       def dataSet = createAnnotationSet()
 
-      def result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -82,7 +77,7 @@ class RoiAnnotationListingTests {
       dataSet.annotations[2].image = BasicInstanceBuilder.getImageInstanceNotExist( dataSet.project,true)
       BasicInstanceBuilder.saveDomain(dataSet.annotations[2])
 
-      result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = RoiAnnotationAPI.listByImage(dataSet.image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert JSON.parse(result.data).collection instanceof JSONArray
       assert JSON.parse(result.data).collection.size()==dataSet.annotations.size() -1
        //generic way test
@@ -93,7 +88,7 @@ class RoiAnnotationListingTests {
 
         def dataSet = createAnnotationSet()
 
-        def result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id,dataSet.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id,dataSet.user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -105,7 +100,7 @@ class RoiAnnotationListingTests {
         dataSet.annotations[3].user = BasicInstanceBuilder.getUserNotExist(true)
         BasicInstanceBuilder.saveDomain(dataSet.annotations[3])
 
-        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id,dataSet.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id,dataSet.user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert JSON.parse(result.data).collection instanceof JSONArray
         assert JSON.parse(result.data).collection.size()==dataSet.annotations.size() - 2 //we change 1 for image and 1 for user
 
@@ -133,7 +128,7 @@ class RoiAnnotationListingTests {
             BasicInstanceBuilder.saveDomain(it)
         }
 
-        def result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -141,15 +136,15 @@ class RoiAnnotationListingTests {
          //generic way test
         checkRoiAnnotationResultNumber("notReviewedOnly=true&user=${dataSet.user.id}&image=${dataSet.image.id}&bbox=${e.replace(" ","%20")}",3)
 
-        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,1,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,2,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,2,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,3,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(dataSet.image.id, dataSet.user.id, e, true,3,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -194,7 +189,7 @@ class RoiAnnotationListingTests {
 
     private static void checkRoiAnnotationResultNumber(String url,int expectedResult) {
         String URL = Infos.CYTOMINEURL+"api/annotation.json?roi=true&$url"
-        def result = DomainAPI.doGET(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = DomainAPI.doGET(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection.size()==expectedResult
@@ -216,7 +211,7 @@ class RoiAnnotationListingTests {
     def createAnnotationSet() {
         Project project = BasicInstanceBuilder.getProjectNotExist(true)
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project, true)
-        User me = User.findByUsername(Infos.GOODLOGIN)
+        User me = User.findByUsername(Infos.SUPERADMINLOGIN)
 
         RoiAnnotation a1 =  BasicInstanceBuilder.getRoiAnnotationNotExist(image, me, true)
         RoiAnnotation a2 =  BasicInstanceBuilder.getRoiAnnotationNotExist(image, me,true)
@@ -231,37 +226,37 @@ class RoiAnnotationListingTests {
 
     void testListRoiAnnotationByImageWithCredential() {
         RoiAnnotation annotation = BasicInstanceBuilder.getRoiAnnotation()
-        def result = RoiAnnotationAPI.listByImage(annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByImage(annotation.image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListRoiAnnotationByImageNotExistWithCredential() {
-        def result = RoiAnnotationAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByImage(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListRoiAnnotationByProjectWithCredential() {
         RoiAnnotation annotation = BasicInstanceBuilder.getRoiAnnotation()
-        def result = RoiAnnotationAPI.listByProject(annotation.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByProject(annotation.project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = RoiAnnotationAPI.listByProject(annotation.project.id, true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByProject(annotation.project.id, true,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
        json = JSON.parse(result.data)
     }
 
     void testListRoiAnnotationByProjectNotExistWithCredential() {
-        def result = RoiAnnotationAPI.listByProject(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByProject(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListRoiAnnotationByProjecImageAndUsertWithCredential() {
         RoiAnnotation annotation = BasicInstanceBuilder.getRoiAnnotation()
-        def result = RoiAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByProject(annotation.project.id, annotation.user.id, annotation.image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -270,20 +265,20 @@ class RoiAnnotationListingTests {
 
     void testListRoiAnnotationByImageAndUserWithCredential() {
         RoiAnnotation annotation = BasicInstanceBuilder.getRoiAnnotation()
-        def result = RoiAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = RoiAnnotationAPI.listByImageAndUser(-99, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(-99, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = RoiAnnotationAPI.listByImageAndUser(annotation.image.id, -99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = RoiAnnotationAPI.listByImageAndUser(annotation.image.id, -99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListRoiAnnotationyProjectAndUsersWithCredential() {
         RoiAnnotation annotation = BasicInstanceBuilder.getRoiAnnotation()
-        def result = RoiAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = RoiAnnotationAPI.listByProjectAndUsers(annotation.project.id, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         //assert json.collection instanceof JSONArray

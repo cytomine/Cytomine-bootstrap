@@ -118,7 +118,7 @@ class ImageInstanceCopyDataTests {
        }
 
     void testGetLayersImageNotExist() {
-        def response = ImageInstanceAPI.sameImageData(-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def response = ImageInstanceAPI.sameImageData(-99,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 404 == response.code
     }
 
@@ -141,7 +141,7 @@ class ImageInstanceCopyDataTests {
 
 
         //Copy image 1 - user1, image 2 - user 1 (not in layers for this project), iamge 2 - user 2
-        def response = ImageInstanceAPI.copyImageData(data.image3.id,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def response = ImageInstanceAPI.copyImageData(data.image3.id,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],null,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
 
         //check if there are 2 annotations on image3 (1 from image1-user1 and 1 from image 2 - user 1)
@@ -197,12 +197,12 @@ class ImageInstanceCopyDataTests {
         //Annotation 2: project 1 (image1) and term  from user 2
         //Annotation 3: project 2 (image2) term  that must be skipped (not same ontology) from user 2
 
-        def result = TaskAPI.create(data.image3.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(data.image3.project.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def jsonTask = JSON.parse(result.data)
 
         //Copy image 1 - user1, image 2 - user 1 (not in layers for this project), iamge 2 - user 2
-        def response = ImageInstanceAPI.copyImageData(data.image3.id,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],jsonTask.task.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def response = ImageInstanceAPI.copyImageData(data.image3.id,[[user:data.user1,image:data.image1],[user:data.user1,image:data.image2],[user:data.user2,image:data.image2]],jsonTask.task.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
 
         //check if there are 2 annotations on image3 (1 from image1-user1 and 1 from image 2 - user 1)
@@ -223,7 +223,7 @@ class ImageInstanceCopyDataTests {
         assert Description.countByDomainIdent(image2.id)==0
         assert Property.countByDomainIdent(image2.id)==0
 
-        def response = ImageInstanceAPI.copyMetaData(image2.id,image.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def response = ImageInstanceAPI.copyMetaData(image2.id,image.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
 
 

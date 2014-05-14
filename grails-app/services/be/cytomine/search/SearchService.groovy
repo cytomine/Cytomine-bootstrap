@@ -25,6 +25,7 @@ class SearchService extends ModelService {
 
     def dataSource
     def cytomineService
+    def currentRoleServiceProxy
 
     //Security is made ​​in sql query thanks to currentUser
     //"getSecurityTable" and "getSecurityJoin" manage the security
@@ -148,7 +149,7 @@ class SearchService extends ModelService {
     private String getSecurityTable (SecUser currentUser) {
         String request = " "
 
-        if (!currentUser.isAdmin()) {
+        if (!currentRoleServiceProxy.isAdminByNow()) {
             request = ", acl_object_identity as aoi, acl_sid as sid, acl_entry as ae "
         }
         return request
@@ -158,7 +159,7 @@ class SearchService extends ModelService {
     private String getSecurityJoin (String params, SecUser currentUser) {
         String request = ""
 
-        if (!currentUser.isAdmin()) {
+        if (!currentRoleServiceProxy.isAdminByNow(currentUser)) {
             request = "AND aoi.object_id_identity = " + params + " " +
                     "AND sid.sid = '${currentUser.humanUsername()}' " +
                     "AND ae.acl_object_identity = aoi.id " +

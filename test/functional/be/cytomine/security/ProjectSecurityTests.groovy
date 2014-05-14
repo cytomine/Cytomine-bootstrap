@@ -26,7 +26,7 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
       User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
 
       //Create new project (user1)
@@ -190,11 +190,11 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
         //Add a simple project user
         User simpleUser = BasicInstanceBuilder.getUser(simpleUsername,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Create an annotation
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
@@ -312,11 +312,11 @@ class ProjectSecurityTests extends SecurityTestsAbstract {
 
         //Add a simple project user
         User simpleUser = BasicInstanceBuilder.getUser(simpleUsername,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Create an annotation
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)

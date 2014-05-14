@@ -1,5 +1,6 @@
 package be.cytomine.test.http
 
+import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
 import be.cytomine.utils.Task
@@ -54,6 +55,10 @@ class ProjectAPI extends DomainAPI {
     }
 
     static def create(String jsonProject, String username, String password) {
+        def json = JSON.parse(jsonProject)
+        if(json.ontology && Ontology.read(json.ontology)) {
+            Infos.addUserRight(username,Ontology.read(json.ontology))
+        }
         String URL = Infos.CYTOMINEURL + "api/project.json"
         def result = doPOST(URL,jsonProject,username,password)
         result.data = Project.get(JSON.parse(result.data)?.project?.id)

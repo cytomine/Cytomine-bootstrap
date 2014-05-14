@@ -37,7 +37,7 @@ class SearchTests {
         project2Property2.domain = project2
         BasicInstanceBuilder.saveDomain(project2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.PROJECT, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -46,7 +46,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(project1.id, json)
         assert DomainAPI.containsInJSONList(project2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.PROJECT, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -56,7 +56,7 @@ class SearchTests {
         assert !DomainAPI.containsInJSONList(project2.id, json)
 
 
-        result = SearchAPI.listDomain(null, SearchOperator.OR, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain(null, SearchOperator.OR, SearchFilter.PROJECT, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -86,7 +86,7 @@ class SearchTests {
         project1Property3.domain = project2
         BasicInstanceBuilder.saveDomain(project1Property3)
 
-         def result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.OR, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.OR, SearchFilter.PROJECT, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
          def json = JSON.parse(result.data)
@@ -95,7 +95,7 @@ class SearchTests {
          assert DomainAPI.containsInJSONList(project1.id, json)
          assert DomainAPI.containsInJSONList(project2.id, json)
 
-         result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.AND, SearchFilter.PROJECT, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         result = SearchAPI.listDomain("Ponêy,Chéval", SearchOperator.AND, SearchFilter.PROJECT, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
          assert 200 == result.code
 
          json = JSON.parse(result.data)
@@ -127,7 +127,7 @@ class SearchTests {
         annotation2Property2.domain = userAnnotation2
         BasicInstanceBuilder.saveDomain(annotation2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.ANNOTATION, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.ANNOTATION, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -136,7 +136,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(userAnnotation1.id, json)
         assert DomainAPI.containsInJSONList(userAnnotation2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.ANNOTATION, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.ANNOTATION, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -168,7 +168,7 @@ class SearchTests {
         image2Property2.domain = imageInstance2
         BasicInstanceBuilder.saveDomain(image2Property2)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.IMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         def json = JSON.parse(result.data)
@@ -177,7 +177,7 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(imageInstance1.id, json)
         assert DomainAPI.containsInJSONList(imageInstance2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.IMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         json = JSON.parse(result.data)
@@ -202,7 +202,7 @@ class SearchTests {
         image2Description1.data = "Blablbla Cheval Poney Blablabla"
         BasicInstanceBuilder.saveDomain(image2Description1)
 
-        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.IMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -210,13 +210,13 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(imageInstance1.id, json)
         assert DomainAPI.containsInJSONList(imageInstance2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.IMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert DomainAPI.containsInJSONList(imageInstance2.id, json)
 
-        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -226,9 +226,9 @@ class SearchTests {
 
     //Test LISTIMAGE
     void testListBadRequest () {
-        def result = SearchAPI.listDomain("Poney,Cheval", "BAD", SearchFilter.IMAGE, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SearchAPI.listDomain("Poney,Cheval", "BAD", SearchFilter.IMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
-        result = SearchAPI.listDomain("Poney,Cheval", "OR", "BAD", Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = SearchAPI.listDomain("Poney,Cheval", "OR", "BAD", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 }

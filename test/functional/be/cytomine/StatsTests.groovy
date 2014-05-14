@@ -18,7 +18,7 @@ class StatsTests  {
 
     private void doGET(String URL, int expect) {
         HttpClient client = new HttpClient();
-        client.connect(URL, Infos.GOODLOGIN, Infos.GOODPASSWORD);
+        client.connect(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
         client.get()
         int code = client.getResponseCode()
         String response = client.getResponseData()

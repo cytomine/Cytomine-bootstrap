@@ -25,7 +25,7 @@ class TermSecurityTests extends SecurityTestsAbstract {
       User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new term (user1)
       def result = OntologyAPI.create(BasicInstanceBuilder.getOntologyNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)
@@ -86,9 +86,9 @@ class TermSecurityTests extends SecurityTestsAbstract {
       BasicInstanceBuilder.saveDomain(project)
 
       //TODO: try with USERNAME1 & PASSWORD1
-      def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == resAddUser.code
-      resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == resAddUser.code
       //check if user 2 can access/update/delete
       assert (200 == TermAPI.show(term.id,USERNAME2,PASSWORD2).code)
@@ -105,7 +105,7 @@ class TermSecurityTests extends SecurityTestsAbstract {
       assert (403 == TermAPI.update(term.id,term.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
       //delete project because we will try to delete term
-      def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def resDelProj = ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert (200 == resDelProj.code)
 
 

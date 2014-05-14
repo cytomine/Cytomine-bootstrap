@@ -19,7 +19,7 @@ class SharedAnnotationTests  {
 
     void testGetAnnotationCommentWithCredential() {
         def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotation()
-        def result = AnnotationCommentAPI.show(sharedAnnotation.userAnnotation.id, sharedAnnotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.show(sharedAnnotation.userAnnotation.id, sharedAnnotation.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -27,12 +27,12 @@ class SharedAnnotationTests  {
 
     void testListAnnotationCommentsByAnnotationWithCredential() {
         def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotation()
-        def result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationCommentAPI.list(sharedAnnotation.userAnnotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = AnnotationCommentAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationCommentAPI.list(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -41,8 +41,8 @@ class SharedAnnotationTests  {
         def json = JSON.parse((String)sharedAnnotation.encodeAsJSON())
         json.subject = "subject for test mail"
         json.message = "message for test mail"
-        json.users = [User.findByUsername('rmaree').id]
-        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        json.users = [BasicInstanceBuilder.getUser1().id]
+        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 }

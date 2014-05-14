@@ -48,14 +48,10 @@ class BootstrapTestDataService {
         bootstrapUtilsService.createMimes(LociMimeSamples)
         bootstrapUtilsService.createMimeImageServers([LociImageServer], LociMimeSamples)
         def usersSamples = [
-                [username : 'rmaree', firstname : 'Raphaël', lastname : 'Marée', email : 'rmaree@ulg.ac.be', group : [[name : "GIGA"]], password : 'rM$2011', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'lrollus', firstname : 'Loïc', lastname : 'Rollus', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'lR$2011', color : "#00FF00", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'stevben', firstname : 'Benjamin', lastname : 'Stévens', email : 'b.stevens@ulg.ac.be', group : [[name : "GIGA"]], password : 'sB$2011', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'botta', firstname : 'Vincent', lastname : 'Botta', email : 'vincent.botta@ulg.ac.be', group : [[name : "GIGA"]], password : 'vB$2013', color : "#0000FF",roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'johndoe', firstname : 'John', lastname : 'Doe', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'test', color : "#FF0000", roles : ["ROLE_USER"]],
-                [username : 'guest', firstname : 'Simply', lastname : 'guest', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'guest', color : "#FF0000", roles : ["ROLE_GUEST"]],
-                [username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : 'admin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'passwordIS', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]
+                [username : 'anotheruser', firstname : 'Another', lastname : 'User', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
+                [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'passwordIS', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
+                [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'superadmin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
+                [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'admin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]
         ]
 
         bootstrapUtilsService.createUsers(usersSamples)

@@ -1,7 +1,7 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
@@ -39,6 +39,7 @@ class ProjectService extends ModelService {
     def propertyService
     def secUserService
     def permissionService
+    def securityACLService
 
     def currentDomain() {
         Project
@@ -47,7 +48,7 @@ class ProjectService extends ModelService {
     def read(def id) {
         def project = Project.read(id)
         if(project) {
-            SecurityACL.check(project,READ)
+            securityACLService.check(project,READ)
             checkDeleted(project)
         }
         project
@@ -57,7 +58,7 @@ class ProjectService extends ModelService {
         def projects = Project.findAllByIdInList(ids)
         if(projects) {
             projects.each { project ->
-                SecurityACL.check(project,READ)
+                securityACLService.check(project,READ)
                 checkDeleted(project)
             }
         }
@@ -122,34 +123,34 @@ class ProjectService extends ModelService {
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         //list ALL projects,
         Project.findAllByDeletedIsNull([sort: "name"])
     }
 
     def list(SecUser user) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         //faster to get it from database table (getProjectList) than PostFilter
-        SecurityACL.getProjectList(user)
+        securityACLService.getProjectList(user)
     }
 
     def list(Ontology ontology) {
         //very slow method because it check right access for each project ontology
-        SecurityACL.getProjectList(cytomineService.currentUser,ontology)
+        securityACLService.getProjectList(cytomineService.currentUser,ontology)
     }
 
     def list(Software software) {
-        SecurityACL.getProjectList(cytomineService.currentUser,software)
+        securityACLService.getProjectList(cytomineService.currentUser,software)
     }
 
     def lastAction(Project project, def max) {
-        SecurityACL.check(project, READ)
+        securityACLService.check(project, READ)
         return CommandHistory.findAllByProject(project, [sort: "created", order: "desc", max: max])
     }
 
 
     def listByCreator(User user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
         def sql = new Sql(dataSource)
          sql.eachRow("select * from creator_project where user_id = ?",[user.id]) {
@@ -162,7 +163,7 @@ class ProjectService extends ModelService {
     }
 
     def listByAdmin(User user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
         def sql = new Sql(dataSource)
         sql.eachRow("select * from admin_project where user_id = ?",[user.id]) {
@@ -175,7 +176,7 @@ class ProjectService extends ModelService {
     }
 
     def listByUser(User user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
         def sql = new Sql(dataSource)
         sql.eachRow("select * from user_project where user_id = ?",[user.id]) {
@@ -196,7 +197,8 @@ class ProjectService extends ModelService {
         taskService.updateTask(task,5,"Start creating project ${json.name}")
         SecUser currentUser = cytomineService.getCurrentUser()
 
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
+        securityACLService.check(json.ontology,Ontology, READ)
         taskService.updateTask(task,10,"Check retrieval consistency")
         checkRetrievalConsistency(json)
         def result = executeCommand(new AddCommand(user: currentUser),null,json)
@@ -249,7 +251,7 @@ class ProjectService extends ModelService {
     def update(Project project, def jsonNewData,task = null) {
         taskService.updateTask(task,5,"Start editing project ${project.name}")
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(project.container(),WRITE)
+        securityACLService.check(project.container(),WRITE)
         def result = executeCommand(new EditCommand(user: currentUser),project, jsonNewData)
 
         project = Project.read(result?.data?.project?.id)
@@ -316,13 +318,13 @@ class ProjectService extends ModelService {
      */
     def delete(Project domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
 //        SecUser currentUser = cytomineService.getCurrentUser()
-//        SecurityACL.check(domain,DELETE)
+//        securityACLService.check(domain,DELETE)
 //        Command c = new DeleteCommand(user: currentUser,transaction:transaction,linkProject: false,refuseUndo:true)
 //        return executeCommand(c,domain,null)
 
         //We don't delete domain, we juste change a flag
-        SecurityACL.check(domain.container(),ADMINISTRATION)
-        SecurityACL.checkReadOnly(domain.container())
+        securityACLService.check(domain.container(),ADMINISTRATION)
+        securityACLService.checkReadOnly(domain.container())
         def jsonNewData = JSON.parse(domain.encodeAsJSON())
         jsonNewData.deleted = new Date().time
         SecUser currentUser = cytomineService.getCurrentUser()

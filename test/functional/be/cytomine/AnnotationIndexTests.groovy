@@ -31,7 +31,7 @@ class AnnotationIndexTests {
     static String USERJOB2 = "AnnotationIndexTestsUSERJOB2"
 
     def testIndexWithImageNotExist() {
-        def result = AnnotationIndexAPI.listByImage(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationIndexAPI.listByImage(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -105,7 +105,7 @@ class AnnotationIndexTests {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
 
         //list index, check if 0
-        def result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data).collection
         assert json.size()==0
@@ -121,7 +121,7 @@ class AnnotationIndexTests {
         int idAnnotation = result.data.id
 
         //list index, check if 1 for user and 0 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==1
@@ -134,7 +134,7 @@ class AnnotationIndexTests {
         annotation.user = user2
         BasicInstanceBuilder.saveDomain(annotation)
 
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert getCountAnnotationValue(json,user1.id, false)==0
@@ -151,7 +151,7 @@ class AnnotationIndexTests {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
 
         //list index, check if 0
-        def result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data).collection
         assert json.size()==0
@@ -167,7 +167,7 @@ class AnnotationIndexTests {
         int idAnnotation = result.data.id
 
         //list index, check if 1 for user and 0 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==1
@@ -188,7 +188,7 @@ class AnnotationIndexTests {
         assert 200 == result.code
 
         //list index, check if 2 for user and 1 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==2
@@ -203,7 +203,7 @@ class AnnotationIndexTests {
 
 
         //list index, check if 1 for user and 1 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==2
@@ -221,7 +221,7 @@ class AnnotationIndexTests {
         assert 200 == result.code
 
         //list index, check if 0
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data).collection
         assert json.size()==0
@@ -237,7 +237,7 @@ class AnnotationIndexTests {
         assert 200 == result.code
 
         //list index, check if 1 for user and 0 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
 
@@ -261,7 +261,7 @@ class AnnotationIndexTests {
 
 
         //list index, check if 2 for user and 1 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==1
@@ -273,7 +273,7 @@ class AnnotationIndexTests {
         assert 200 == result.code
 
         //list index, check if 1 for user and 1 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
         assert json.size()==1
@@ -289,7 +289,7 @@ class AnnotationIndexTests {
         assert 200 == result.code
 
         //list index, check if 0
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data).collection
         assert json.size()==0
@@ -298,14 +298,14 @@ class AnnotationIndexTests {
 
         //add annotation by user 1
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotationNotExist(project,image)
-        result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationDomainAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
         result = ReviewedAnnotationAPI.addReviewAnnotation(idAnnotation,user1.username, PASSWORD)
         assert 200 == result.code
 
         //list index, check if 1 for user and 0 for other
-        result = AnnotationIndexAPI.listByImage(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationIndexAPI.listByImage(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data).collection
 
@@ -313,8 +313,8 @@ class AnnotationIndexTests {
         assert json.size()==2
         assert getCountAnnotationValue(json,user1.id, false)==0
         assert getCountAnnotationValue(json,user1.id, true)==1
-        assert getCountAnnotationValue(json,User.findByUsername(Infos.GOODLOGIN).id, false)==1
-        assert getCountAnnotationValue(json,User.findByUsername(Infos.GOODLOGIN).id, true)==0
+        assert getCountAnnotationValue(json,User.findByUsername(Infos.SUPERADMINLOGIN).id, false)==1
+        assert getCountAnnotationValue(json,User.findByUsername(Infos.SUPERADMINLOGIN).id, true)==0
 
     }
 

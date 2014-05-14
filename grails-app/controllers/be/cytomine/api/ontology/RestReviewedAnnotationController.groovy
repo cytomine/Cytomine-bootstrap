@@ -4,7 +4,7 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
@@ -41,6 +41,7 @@ class RestReviewedAnnotationController extends RestController {
     def taskService
     def reportService
     def imageProcessingService
+    def securityACLService
 
     /**
      * List all reviewed annotation available for the user
@@ -138,7 +139,7 @@ class RestReviewedAnnotationController extends RestController {
             def response = [:]
 
             if (image) {
-                SecurityACL.checkReadOnly(image.container())
+                securityACLService.checkReadOnly(image.container())
                 image.reviewStart = new Date()
                 image.reviewUser = cytomineService.currentUser
                 reviewedAnnotationService.saveDomain(image)

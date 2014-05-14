@@ -1,6 +1,6 @@
 package be.cytomine.processing
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -16,6 +16,7 @@ class JobParameterService extends ModelService {
     def cytomineService
     def commandService
     def modelService
+    def securityACLService
 
     def currentDomain() {
         return JobParameter
@@ -24,18 +25,18 @@ class JobParameterService extends ModelService {
     def read(def id) {
         def jobParam = JobParameter.read(id)
         if(jobParam) {
-            SecurityACL.check(jobParam.container(),READ)
+            securityACLService.check(jobParam.container(),READ)
         }
         jobParam
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         JobParameter.list()
     }
 
     def list(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         JobParameter.findAllByJob(job)
     }
 
@@ -45,7 +46,7 @@ class JobParameterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.job,Job,"container", READ)
+        securityACLService.check(json.job,Job,"container", READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -57,7 +58,7 @@ class JobParameterService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(JobParameter jp, def jsonNewData) {
-        SecurityACL.check(jp.container(),READ)
+        securityACLService.check(jp.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),jp, jsonNewData)
     }
@@ -72,7 +73,7 @@ class JobParameterService extends ModelService {
      */
     def delete(JobParameter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -2,7 +2,7 @@ package be.cytomine.api.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.TooLongRequestException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -53,6 +53,7 @@ class RestImageInstanceController extends RestController {
     def annotationIndexService
     def descriptionService
     def propertyService
+    def securityACLService
 
     final static int MAX_SIZE_WINDOW_REQUEST = 5000 * 5000 //5k by 5k pixels
 
@@ -324,7 +325,7 @@ class RestImageInstanceController extends RestController {
             ImageInstance based = imageInstanceService.read(params.long('based'))
             ImageInstance image = imageInstanceService.read(params.long('id'))
             if(image && based) {
-                SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+                securityACLService.checkIsAdminContainer(image.project,cytomineService.currentUser)
 
                 Description.findAllByDomainIdent(based.id).each { description ->
                     def json = JSON.parse(description.encodeAsJSON())
@@ -366,7 +367,7 @@ class RestImageInstanceController extends RestController {
             ImageInstance image = imageInstanceService.read(params.long('id'))
             Project project = projectService.read(params.long('project'))
             if(image) {
-                SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+                securityACLService.checkIsAdminContainer(image.project,cytomineService.currentUser)
                 def layers =  imageInstanceService.getLayersFromAbstractImage(image.baseImage,image, projectService.list(cytomineService.currentUser).collect{it.id},secUserService.listUsers(image.project).collect{it.id},project)
                 responseSuccess(layers)
             } else {
@@ -395,7 +396,7 @@ class RestImageInstanceController extends RestController {
     def copyAnnotationFromSameAbstractImage() {
         try {
             ImageInstance image = imageInstanceService.read(params.long('id'))
-            SecurityACL.checkIsAdminContainer(image.project,cytomineService.currentUser)
+            securityACLService.checkIsAdminContainer(image.project,cytomineService.currentUser)
             Task task = taskService.read(params.getLong("task"))
             Boolean giveMe = params.boolean("giveMe")
             log.info "task ${task} is find for id = ${params.getLong("task")}"

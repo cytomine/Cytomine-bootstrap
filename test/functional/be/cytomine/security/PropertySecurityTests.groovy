@@ -16,7 +16,7 @@ class PropertySecurityTests extends SecurityTestsAbstract {
         User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
         //Get admin user
-        User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+        User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
         //Create project with user 1
         ImageInstance image = ImageInstanceAPI.buildBasicImage(SecurityTestsAbstract.USERNAME1, SecurityTestsAbstract.PASSWORD1)
@@ -78,9 +78,9 @@ class PropertySecurityTests extends SecurityTestsAbstract {
         BasicInstanceBuilder.saveDomain(annotationProperty)
 
         //TODO: try with USERNAME1 & PASSWORD1
-        def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addAdminProject(project.id,user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
-        resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        resAddUser = ProjectAPI.addUserProject(project.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
         //check if user 2 can access/update/delete
         assert (200 == PropertyAPI.show(annotationProperty.id, annotationProperty.domainIdent, "annotation" , USERNAME2, PASSWORD2).code)
@@ -97,7 +97,7 @@ class PropertySecurityTests extends SecurityTestsAbstract {
         assert (403 == PropertyAPI.update(annotationProperty.id, annotationProperty.domainIdent, "annotation", annotationProperty.encodeAsJSON(),USERNAME2,PASSWORD2).code)
 
 //        //delete project because we will try to delete term
-//        def resDelProj = ProjectAPI.delete(project.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+//        def resDelProj = ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
 //        assert (403 == resDelProj.code)
 
 //        assert (404 == PropertyAPI.delete(annotationProperty.id, annotationProperty.domainIdent, "annotation", USERNAME2,PASSWORD2).code)

@@ -19,8 +19,8 @@ class WebIndexTests extends GroovyTestCase{
 //
 //    void testCytomineLogAuth() {
 //        selenium.open("/");
-//        selenium.type("id=j_username", Infos.GOODLOGIN)
-//        selenium.type("id=j_password", Infos.GOODPASSWORD)
+//        selenium.type("id=j_username", Infos.ADMINLOGIN)
+//        selenium.type("id=j_password", Infos.ADMINPASSWORD)
 //        selenium.click("id=submit-login");
 //        selenium.waitForTextPresent("Filters");
 //    }

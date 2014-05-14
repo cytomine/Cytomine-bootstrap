@@ -3,7 +3,7 @@ package be.cytomine.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.NestedImageInstance
@@ -49,43 +49,49 @@ class SecUserService extends ModelService {
     def reviewedAnnotationService
     def secUserSecRoleService
     def userAnnotationService
+    def currentRoleServiceProxy
+    def securityACLService
 
     def currentDomain() {
         User
     }
 
     def get(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         SecUser.get(id)
     }
 
     def findByUsername(def username) {
         if(!username) return null
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         SecUser.findByUsername(username)
     }
 
     def findByEmail(def email) {
         if(!email) return null
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         User.findByEmail(email)
     }
 
     SecUser getByPublicKey(String key) {
-        //SecurityACL.checkGuest(cytomineService.currentUser)
+        //securityACLService.checkGuest(cytomineService.currentUser)
         SecUser.findByPublicKey(key)
     }
 
     def read(def id) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         SecUser.read(id)
     }
 
     def getAuth(SecUser user) {
         def data = [:]
-        data['admin'] = user.isAdminAuth()
-        data['user'] = !data['admin'] && user.isUserAuth()
-        data['guest'] = !data['admin'] && !data['user'] && user.isGuestAuth()
+        data['admin'] = currentRoleServiceProxy.isAdmin(user)
+        data['user'] = !data['admin'] && currentRoleServiceProxy.isUser(user)
+        data['guest'] = !data['admin'] && !data['user'] && currentRoleServiceProxy.isGuest(user)
+
+        data['adminByNow'] = currentRoleServiceProxy.isAdminByNow(user)
+        data['userByNow'] = !data['adminByNow'] && currentRoleServiceProxy.isUserByNow(user)
+        data['guestByNow'] = !data['adminByNow'] && !data['userByNow'] && currentRoleServiceProxy.isGuestByNow(user)
 //        data['admin'] = false
 //        data['user'] = false
 //        data['ghest'] = true
@@ -93,17 +99,17 @@ class SecUserService extends ModelService {
     }
 
     def readCurrentUser() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         cytomineService.getCurrentUser()
     }
 
     def list() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         User.list(sort: "username", order: "asc")
     }
 
     def list(Project project, List ids) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         SecUser.findAllByIdInList(ids)
     }
 
@@ -116,14 +122,14 @@ class SecUserService extends ModelService {
     }
 
     def listUsers(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
     def listCreator(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         List<User> users = SecUser.executeQuery("select secUser from AclObjectIdentity as aclObjectId, AclSid as aclSid, SecUser as secUser where aclObjectId.objectId = "+project.id+" and aclObjectId.owner = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         User user = users.isEmpty() ? null : users.first()
         return user
@@ -133,14 +139,14 @@ class SecUserService extends ModelService {
 
 
     def listAdmins(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         def users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.mask = 16 and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
         return users
     }
 
     def listUsers(Ontology ontology) {
-        SecurityACL.check(ontology,READ)
+        securityACLService.check(ontology,READ)
         //TODO:: Not optim code a single SQL request will be very faster
         def users = []
         def projects = Project.findAllByOntology(ontology)
@@ -151,7 +157,7 @@ class SecUserService extends ModelService {
     }
 
     def listByGroup(Group group) {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         UserGroup.findAllByGroup(group).collect{it.user}
     }
 
@@ -212,7 +218,7 @@ class SecUserService extends ModelService {
      * If project has private layer, just get current user layer
      */
     def listLayers(Project project, ImageInstance image = null) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         def users = []
         def humans = listUsers(project)
@@ -227,7 +233,7 @@ class SecUserService extends ModelService {
 
 
 
-        if(project.checkPermission(ADMINISTRATION)) {
+        if(project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())) {
             return users
         } else if(project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
             return [currentUser]
@@ -258,7 +264,7 @@ class SecUserService extends ModelService {
      * Get all online user
      */
     List<SecUser> getAllOnlineUsers() {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         //get date with -X secondes
         def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {
@@ -274,7 +280,7 @@ class SecUserService extends ModelService {
      * Get all online user for a project
      */
     List<SecUser> getAllOnlineUsers(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         if(!project) return getAllOnlineUsers()
         def xSecondAgo = Utils.getDatePlusSecond(-20)
         def results = LastConnection.withCriteria {
@@ -291,7 +297,7 @@ class SecUserService extends ModelService {
      * Get all user that share at least a same project as user from argument
      */
     List<SecUser> getAllFriendsUsers(SecUser user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         AclSid sid = AclSid.findBySid(user.username)
         List<SecUser> users = SecUser.executeQuery(
                 "select distinct secUser from AclSid as aclSid, AclEntry as aclEntry, SecUser as secUser "+
@@ -304,7 +310,7 @@ class SecUserService extends ModelService {
      * Get all online user that share at least a same project as user from argument
      */
     List<SecUser> getAllFriendsUsersOnline(SecUser user) {
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         return ListUtils.intersection(getAllFriendsUsers(user),getAllOnlineUsers())
     }
 
@@ -312,7 +318,7 @@ class SecUserService extends ModelService {
      * Get all user that share at least a same project as user from argument and
      */
     List<SecUser> getAllFriendsUsersOnline(SecUser user, Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         //no need to make insterect because getAllOnlineUsers(project) contains only friends users
         return getAllOnlineUsers(project)
     }
@@ -324,7 +330,7 @@ class SecUserService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
@@ -336,7 +342,7 @@ class SecUserService extends ModelService {
      */
     def update(SecUser user, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(user,currentUser)
+        securityACLService.checkIsCreator(user,currentUser)
         return executeCommand(new EditCommand(user: currentUser),user, jsonNewData)
     }
 
@@ -352,10 +358,10 @@ class SecUserService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         if(domain.algo()) {
             Job job = ((UserJob)domain).job
-            SecurityACL.check(job?.container(),READ)
+            securityACLService.check(job?.container(),READ)
         } else {
-            SecurityACL.checkAdmin(currentUser)
-            SecurityACL.checkIsNotSameUser(domain,currentUser)
+            securityACLService.checkAdmin(currentUser)
+            securityACLService.checkIsNotSameUser(domain,currentUser)
         }
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
@@ -369,7 +375,7 @@ class SecUserService extends ModelService {
      * @return Response structure
      */
     def addUserToProject(SecUser user, Project project, boolean admin) {
-        SecurityACL.check(project,ADMINISTRATION)
+        securityACLService.check(project,ADMINISTRATION)
         log.info "service.addUserToProject"
         if (project) {
             log.info "addUserToProject project=" + project + " username=" + user?.username + " ADMIN=" + admin
@@ -402,7 +408,7 @@ class SecUserService extends ModelService {
      */
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {
         if (cytomineService.currentUser.id!=user.id) {
-            SecurityACL.check(project,ADMINISTRATION)
+            securityACLService.check(project,ADMINISTRATION)
         }
         if (project) {
             log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin

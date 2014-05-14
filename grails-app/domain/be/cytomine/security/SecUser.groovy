@@ -101,29 +101,26 @@ class SecUser extends CytomineDomain implements Serializable {
     /**
      * Get user roles
      */
-    Set<SecRole> getAuthorities() {
-        SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
-    }
+//    Set<SecRole> getAuthorities() {
+//        SecUserSecRole.findAllBySecUser(this).collect { it.secRole } as Set
+//    }
 
     /**
      * Check if user is a cytomine admin
      * Rem: a project admin is not a cytomine admin
      */
-    boolean isAdmin() {
-        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id) != null)
-    }
 
-    boolean isAdminAuth() {
-        return isAdmin()
-    }
-
-    boolean isUserAuth() {
-        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_USER").id) != null)
-    }
-
-    boolean isGuestAuth() {
-        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_GUEST").id) != null)
-    }
+//    boolean isAdminAuth() {
+//        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_ADMIN").id) != null)
+//    }
+//
+//    boolean isUserAuth() {
+//        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_USER").id) != null)
+//    }
+//
+//    boolean isGuestAuth() {
+//        return (SecUserSecRole.get(id,SecRole.findByAuthority("ROLE_GUEST").id) != null)
+//    }
 
     /**
      * Username of the human user back to this user

@@ -10,7 +10,7 @@ public class AbstractWebProject extends AbstractWebCytomine{
 
     void openProjectPageAndWait() {
         Project project = getProject()
-        Infos.addUserRight(Infos.GOODLOGIN,project)
+        Infos.addUserRight(Infos.ADMINLOGIN,project)
         selenium.open("/")
         selenium.waitForTextPresent(project.name.toUpperCase());
         selenium.waitForElementPresent("id=project-button");
@@ -68,7 +68,7 @@ public class AbstractWebProject extends AbstractWebCytomine{
     Project getProjectNotExist(true) {
         Project project = BasicInstanceBuilder.getProjectNotExist()
         project.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project)
+        Infos.addUserRight(Infos.ADMINLOGIN,project)
         return project
     }
 
@@ -76,7 +76,7 @@ public class AbstractWebProject extends AbstractWebCytomine{
         Project project = BasicInstanceBuilder.getProjectNotExist()
         project.name = name
         project.save(flush: true)
-        Infos.addUserRight(Infos.GOODLOGIN,project)
+        Infos.addUserRight(Infos.ADMINLOGIN,project)
         return project
     }
 

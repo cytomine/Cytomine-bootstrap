@@ -2,7 +2,7 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
@@ -41,7 +41,7 @@ class UserAnnotationService extends ModelService {
     def propertyService
     def kmeansGeometryService
     def annotationListingService
-
+    def securityACLService
 
     def currentDomain() {
         return UserAnnotation
@@ -50,18 +50,18 @@ class UserAnnotationService extends ModelService {
     UserAnnotation read(def id) {
         def annotation = UserAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
+            securityACLService.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(Project project,def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         annotationListingService.executeRequest(new UserAnnotationListing(project: project.id, columnToPrint: propertiesToShow))
     }
 
     def listIncluded(ImageInstance image, String geometry, SecUser user,  List<Long> terms, AnnotationDomain annotation = null,def propertiesToShow = null) {
-        SecurityACL.check(image.container(),READ)
+        securityACLService.check(image.container(),READ)
         AnnotationListing al = new UserAnnotationListing(
                 columnToPrint: propertiesToShow,
                 image : image.id,
@@ -82,7 +82,7 @@ class UserAnnotationService extends ModelService {
      * Use for retrieval server (suggest term)
      */
     def listLightForRetrieval() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         String request = "SELECT a.id as id, a.project_id as project FROM user_annotation a WHERE GeometryType(a.location) != 'POINT' ORDER BY id desc"
         selectUserAnnotationLightForRetrieval(request)
     }
@@ -97,7 +97,7 @@ class UserAnnotationService extends ModelService {
      * @return
      */
     def list(Project project, List<Long> userList, Term realTerm, Term suggestedTerm, Job job,def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         log.info "list with suggestedTerm"
         if (userList.isEmpty()) {
             return []
@@ -160,7 +160,7 @@ class UserAnnotationService extends ModelService {
     def add(def json,def minPoint = null, def maxPoint = null) {
         log.info "log.addannotation1"
 
-        SecurityACL.check(json.project, Project,READ)
+        securityACLService.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
@@ -223,7 +223,7 @@ class UserAnnotationService extends ModelService {
      */
     def update(UserAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsSameUserOrAdminContainer(annotation,annotation.user,currentUser)
+        securityACLService.checkIsSameUserOrAdminContainer(annotation,annotation.user,currentUser)
         //simplify annotation
         try {
             def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
@@ -255,7 +255,7 @@ class UserAnnotationService extends ModelService {
      */
     def delete(UserAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsSameUserOrAdminContainer(domain,domain.user,currentUser)
+        securityACLService.checkIsSameUserOrAdminContainer(domain,domain.user,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
 //        new Sql(dataSource).execute("delete from annotation_term where user_annotation_id=${domain.id}",[])

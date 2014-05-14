@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
@@ -17,13 +17,14 @@ class SoftwareParameterService extends ModelService{
     def transactionService
     def modelService
     def jobParameterService
+    def securityACLService
 
     def currentDomain() {
         return SoftwareParameter
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         SoftwareParameter.list()
     }
 
@@ -34,7 +35,7 @@ class SoftwareParameterService extends ModelService{
     }
 
     def list(Software software, Boolean includeSetByServer = false) {
-        SecurityACL.check(software,READ)
+        securityACLService.check(software,READ)
         SoftwareParameter.findAllBySoftwareAndSetByServer(software, includeSetByServer)
     }
 
@@ -44,7 +45,7 @@ class SoftwareParameterService extends ModelService{
      * @return Response structure (created domain data,..)
      */
    def add(def json) throws CytomineException {
-        SecurityACL.check(json.software,Software, READ)
+        securityACLService.check(json.software,Software, READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         return executeCommand(new AddCommand(user: currentUser),null,json)
@@ -57,7 +58,7 @@ class SoftwareParameterService extends ModelService{
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(SoftwareParameter softwareParam, def jsonNewData) {
-        SecurityACL.check(softwareParam.container(),WRITE)
+        securityACLService.check(softwareParam.container(),WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),softwareParam, jsonNewData)
     }
@@ -72,7 +73,7 @@ class SoftwareParameterService extends ModelService{
      */
     def delete(SoftwareParameter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),DELETE)
+        securityACLService.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

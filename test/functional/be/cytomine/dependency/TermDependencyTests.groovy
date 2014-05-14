@@ -35,20 +35,20 @@ class TermDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.delete(term.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        assert (200 == TermAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.undo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
 
         //check if all dependency are aivalable
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assert (200 == TermAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == TermAPI.redo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
@@ -61,7 +61,7 @@ class TermDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (400 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (400 == TermAPI.delete(term.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
     }
 
     void testTermDependencyWithReviewedAnnotation() {
@@ -81,7 +81,7 @@ class TermDependencyTests  {
 
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
-        assert(400 == TermAPI.delete(term.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert(400 == TermAPI.delete(term.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
     }
@@ -98,13 +98,13 @@ class TermDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == OntologyAPI.delete(ontology.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == OntologyAPI.delete(ontology.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)
 
         //undo op (re create)
-        def res = OntologyAPI.undo(Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def res = OntologyAPI.undo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert (200 == res.code)
         println "*************** coco"
         println res.data
@@ -114,7 +114,7 @@ class TermDependencyTests  {
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //redo op (re-delete)
-        assert (200 == OntologyAPI.redo(Infos.GOODLOGIN,Infos.GOODPASSWORD).code)
+        assert (200 == OntologyAPI.redo(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code)
 
         //check if all dependency are not aivalable
         BasicInstanceBuilder.checkIfDomainsNotExist(dependentDomain)

@@ -21,7 +21,7 @@ class SoftwareParameterSecurityTests extends SecurityTestsAbstract {
       User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //create software
       Software software = BasicInstanceBuilder.getSoftwareNotExist()

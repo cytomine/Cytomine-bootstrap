@@ -23,6 +23,7 @@ angular.module("cytomineUserArea")
         $scope.main = {error:{}};
 
         $scope.isCurrentUserAdmin = false;
+        $scope.isLoading = true;
 
         $scope.getCurrentUser = function() {
             $http.get(currentUserUrl)
@@ -30,6 +31,7 @@ angular.module("cytomineUserArea")
                     console.log(data);
                     $scope.main.currentUserFullname = data.lastname + " " + data.firstname;
                     $scope.isCurrentUserAdmin = data.admin;
+                    $scope.isLoading = false;
 
                 })
                 .error(function (data, status, headers, config) {

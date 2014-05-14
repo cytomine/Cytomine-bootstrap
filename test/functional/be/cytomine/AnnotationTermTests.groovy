@@ -19,41 +19,41 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class AnnotationTermTests  {
 
   void testGetAnnotationTermWithCredential() {
-    User currentUser = User.findByUsername(Infos.GOODLOGIN)
+    User currentUser = User.findByUsername(Infos.SUPERADMINLOGIN)
     def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTerm()
-    def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.userAnnotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.showAnnotationTerm(annotationTermToAdd.userAnnotation.id,annotationTermToAdd.term.id,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json instanceof JSONObject
   }
 
   void testListAnnotationTermByAnnotationWithCredential() {
-    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,null,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
     def json = JSON.parse(result.data)
     assert json.collection instanceof JSONArray
   }
 
     void testListAnnotationTermByAnnotationWithCredentialWithUser() {
-      def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def result = AnnotationTermAPI.listAnnotationTermByAnnotation(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
     }
 
     void testListAnnotationTermByUserNotWithCredential() {
-      def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      def result = AnnotationTermAPI.listAnnotationTermByUserNot(BasicInstanceBuilder.getUserAnnotation().id,BasicInstanceBuilder.user1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
     }
 
   void testAddAnnotationTermCorrect() {
-     User currentUser = User.findByUsername(Infos.GOODLOGIN)
+     User currentUser = User.findByUsername(Infos.SUPERADMINLOGIN)
     def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
     annotationTermToAdd.discard()
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
 
     AnnotationTerm annotationTerm = result.data
@@ -61,40 +61,40 @@ class AnnotationTermTests  {
     Long idTerm = annotationTerm.term.id
     log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
 
     result = AnnotationTermAPI.undo()
     assert 200 == result.code
 
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 404 == result.code
 
     result = AnnotationTermAPI.redo()
     assert 200 == result.code
 
     log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
 
   }
 
     void testAddAnnotationTermWithTermFromOtherOntology() {
-         User currentUser = User.findByUsername(Infos.GOODLOGIN)
+         User currentUser = User.findByUsername(Infos.SUPERADMINLOGIN)
         def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
         annotationTermToAdd.discard()
         annotationTermToAdd.term = BasicInstanceBuilder.getTermNotExist(true)
         String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-        def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testAddAnnotationTermCorrectDeletingOldTerm() {
-       User currentUser = User.findByUsername(Infos.GOODLOGIN)
+       User currentUser = User.findByUsername(Infos.SUPERADMINLOGIN)
       def annotationTermToAdd = BasicInstanceBuilder.getAnnotationTermNotExist()
       annotationTermToAdd.discard()
       String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-      def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD,true)
+      def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD,true)
       assert 200 == result.code
 
       AnnotationTerm annotationTerm = result.data
@@ -102,20 +102,20 @@ class AnnotationTermTests  {
       Long idTerm = annotationTerm.term.id
       log.info("check if object "+ annotationTerm.userAnnotation.id +"/"+ annotationTerm.term.id +"exist in DB")
 
-      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = AnnotationTermAPI.undo()
       assert 200 == result.code
 
-      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
       result = AnnotationTermAPI.redo()
       assert 200 == result.code
 
       log.info("check if object "+ idAnnotation +"/"+ idTerm +" exist in DB")
-      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+      result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
     }
@@ -125,7 +125,7 @@ class AnnotationTermTests  {
     annotationTermToAdd.save(flush:true)
     //annotationTermToAdd is in database, we will try to add it twice
     String jsonAnnotationTerm = annotationTermToAdd.encodeAsJSON()
-    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 409 == result.code
   }
 
@@ -135,7 +135,7 @@ class AnnotationTermTests  {
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.userannotation = -99
     jsonAnnotationTerm = jsonUpdate.toString()
-    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 400 == result.code
   }
 
@@ -145,12 +145,12 @@ class AnnotationTermTests  {
     def jsonUpdate = JSON.parse(jsonAnnotationTerm)
     jsonUpdate.term = -99
     jsonAnnotationTerm = jsonUpdate.toString()
-    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.createAnnotationTerm(jsonAnnotationTerm,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 400 == result.code
   }
 
   void testDeleteAnnotationTerm() {
-    User currentUser = User.findByUsername(Infos.GOODLOGIN)
+    User currentUser = User.findByUsername(Infos.SUPERADMINLOGIN)
 
     def annotationTermToDelete = BasicInstanceBuilder.getAnnotationTerm()
     int idAnnotation = annotationTermToDelete.userAnnotation.id
@@ -158,28 +158,28 @@ class AnnotationTermTests  {
     int idUser = currentUser.id
     assert annotationTermToDelete.userAnnotation.project.ontology==annotationTermToDelete.term.ontology
 
-    def result = AnnotationTermAPI.deleteAnnotationTerm(idAnnotation,idTerm,idUser,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.deleteAnnotationTerm(idAnnotation,idTerm,idUser,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
 
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,idUser,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,idUser,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 404 == result.code
 
     result = AnnotationTermAPI.undo()
     assert 200 == result.code
 
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 200 == result.code
 
     result = AnnotationTermAPI.redo()
     assert 200 == result.code
 
-    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    result = AnnotationTermAPI.showAnnotationTerm(idAnnotation,idTerm,currentUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 404 == result.code
 
   }
 
   void testDeleteAnnotationTermNotExist() {
-    def result = AnnotationTermAPI.deleteAnnotationTerm(-99,-99,-99,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+    def result = AnnotationTermAPI.deleteAnnotationTerm(-99,-99,-99,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
     assert 404 == result.code
   }
 }

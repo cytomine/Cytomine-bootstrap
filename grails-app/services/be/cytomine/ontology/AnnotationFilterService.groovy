@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -16,20 +16,21 @@ class AnnotationFilterService extends ModelService {
 
     def cytomineService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         return AnnotationFilter
     }
 
     def listByProject(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         return AnnotationFilter.findAllByProject(project)
     }
 
     AnnotationFilter read(def id) {
         def filter = AnnotationFilter.read(id)
         if (filter) {
-            SecurityACL.check(filter.container(),READ)
+            securityACLService.check(filter.container(),READ)
         }
         filter
     }
@@ -40,7 +41,7 @@ class AnnotationFilterService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) throws CytomineException {
-        SecurityACL.check(json.project,Project,READ)
+        securityACLService.check(json.project,Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -53,7 +54,7 @@ class AnnotationFilterService extends ModelService {
      */
     def update(be.cytomine.ontology.AnnotationFilter af, def jsonNewData) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(af,currentUser)
+        securityACLService.checkIsCreator(af,currentUser)
         return executeCommand(new EditCommand(user: currentUser), af, jsonNewData)
     }
 
@@ -67,7 +68,7 @@ class AnnotationFilterService extends ModelService {
      */
     def delete(AnnotationFilter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsCreator(domain,currentUser)
+        securityACLService.checkIsCreator(domain,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

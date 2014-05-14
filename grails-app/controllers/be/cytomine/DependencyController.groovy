@@ -3,7 +3,7 @@ package be.cytomine
 import grails.plugins.springsecurity.Secured
 import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 
-@Secured(['ROLE_ADMIN'])
+@Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
 class DependencyController {
 
 

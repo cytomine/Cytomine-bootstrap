@@ -18,7 +18,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 public class StorageTests {
 
     void testListStorageWithCredential() {
-        def result = StorageAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -30,7 +30,7 @@ public class StorageTests {
     }
 
     void testShowStorageWithCredential() {
-        def result = StorageAPI.show(BasicInstanceBuilder.getStorage().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.show(BasicInstanceBuilder.getStorage().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -40,24 +40,24 @@ public class StorageTests {
         def storageToAdd = BasicInstanceBuilder.getStorageNotExist()
         def json = storageToAdd.encodeAsJSON()
 
-        def result = StorageAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
         assert 200 == result.code
         int idStorage = result.data.id
 
-        result = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = StorageAPI.undo()
         assert 200 == result.code
 
-        result = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = StorageAPI.redo()
         assert 200 == result.code
 
-        result = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -65,25 +65,25 @@ public class StorageTests {
         Storage storage = BasicInstanceBuilder.getStorage()
 
         def data = UpdateData.createUpdateSet(storage,[name: ["OLDNAME","NEWNAME"]])
-        def result = StorageAPI.update(storage.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.update(storage.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         println "result : $result"
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idStorage = json.storage.id
 
-        def showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = StorageAPI.undo()
         assert 200 == result.code
-        showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = StorageAPI.redo()
         assert 200 == result.code
-        showResult = StorageAPI.show(idStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = StorageAPI.show(idStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
@@ -97,35 +97,34 @@ public class StorageTests {
         jsonUpdate.name = storageWithOldName.name
         jsonUpdate.id = -99
         jsonStorage = jsonUpdate.toString()
-        def result = StorageAPI.update(-99, jsonStorage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.update(-99, jsonStorage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteStorage() {
-        def storageToDelete = BasicInstanceBuilder.getStorageNotExist()
-        assert storageToDelete.save(flush: true)!= null
+        def storageToDelete = BasicInstanceBuilder.getStorageNotExist(true)
         def id = storageToDelete.id
-        def result = StorageAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def showResult = StorageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = StorageAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = StorageAPI.undo()
         assert 200 == result.code
 
-        result = StorageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = StorageAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = StorageAPI.redo()
         assert 200 == result.code
 
-        result = StorageAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = StorageAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testStorageNotExist() {
-        def result = StorageAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = StorageAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 }

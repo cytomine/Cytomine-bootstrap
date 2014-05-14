@@ -21,7 +21,7 @@ class SoftwareSecurityTests extends SecurityTestsAbstract {
       User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
 
       //Get admin user
-      User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+      User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
       //Create new software (user1)
       def result = SoftwareAPI.create(BasicInstanceBuilder.getSoftwareNotExist().encodeAsJSON(),USERNAME1,PASSWORD1)

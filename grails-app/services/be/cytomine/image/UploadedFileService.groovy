@@ -1,6 +1,6 @@
 package be.cytomine.image
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -11,6 +11,7 @@ class UploadedFileService extends ModelService {
 
     static transactional = true
     def cytomineService
+    def securityACLService
 
 
     def dataSource
@@ -20,7 +21,7 @@ class UploadedFileService extends ModelService {
     }
 
     def list(User user) {
-        SecurityACL.checkIsSameUser(user, cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user, cytomineService.currentUser)
         def uploadedFiles = UploadedFile.createCriteria().list(sort : "created", order : "desc") {
             eq("user.id", user.id)
         }

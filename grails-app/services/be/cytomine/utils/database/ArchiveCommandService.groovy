@@ -1,6 +1,6 @@
 package be.cytomine.utils.database
 
-import be.cytomine.SecurityACL
+
 import grails.util.Environment
 import groovy.sql.Sql
 
@@ -18,15 +18,16 @@ class ArchiveCommandService {
     def commandService
     static transactional = false
     def dataSource
+    def securityACLService
 
     public def archiveOldCommand() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         Date before = getMonthBefore(new Date(), 1)
         archive(before)
     }
 
     public def archive(Date before) {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         Date today = new Date()
         File directory = new File("oldcommand/${Environment.getCurrent()}")
         def subdirectory = new File(directory.absolutePath)

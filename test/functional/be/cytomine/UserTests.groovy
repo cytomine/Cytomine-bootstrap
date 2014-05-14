@@ -22,14 +22,14 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class UserTests  {
 
     void testListUserWithCredential() {
-        def result = UserAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListUserWithKey() {
-        def result = UserAPI.list(BasicInstanceBuilder.user1.publicKey,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(BasicInstanceBuilder.user1.publicKey,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -46,34 +46,35 @@ class UserTests  {
     void testListFriends() {
         def user = BasicInstanceBuilder.user1
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.listFriends(user.id,false,project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        Infos.addUserRight(user.username,project)
+        def result = UserAPI.listFriends(user.id,false,project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = UserAPI.listFriends(user.id,true,project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.listFriends(user.id,true,project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = UserAPI.listFriends(user.id,false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.listFriends(user.id,false,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = UserAPI.listFriends(user.id,true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.listFriends(user.id,true,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testListOnlineFriendsWithOpenedImages() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.listOnline(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.listOnline(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testShowUserWithId() {
-        def result = UserAPI.show(BasicInstanceBuilder.getUser().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.show(BasicInstanceBuilder.getUser().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
 
     void testShowUserWithUsername() {
-        def result = UserAPI.show(BasicInstanceBuilder.getUser().username, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.show(BasicInstanceBuilder.getUser().username, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -81,7 +82,7 @@ class UserTests  {
 
     void testShowKeysWithUsername() {
         def user = BasicInstanceBuilder.getUser()
-        def result = UserAPI.keys(user.username, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.keys(user.username, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -98,7 +99,7 @@ class UserTests  {
 
     void testShowKeysWithId() {
         def user = BasicInstanceBuilder.getUser()
-        def result = UserAPI.keys(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.keys(user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -115,7 +116,7 @@ class UserTests  {
 
 
     void testShowCurrentUser() {
-        def result = UserAPI.showCurrent(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.showCurrent(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -125,72 +126,72 @@ class UserTests  {
 
     void testListProjectUser() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.id,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.id,"project","user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(project.id,"project","user",true,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(project.id,"project","user",true,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"project","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"project","user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListProjectAdmin() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.id,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.id,"project","admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"project","admin",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"project","admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListProjectCreator() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.id,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.id,"project","creator",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"project","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"project","creator",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListOntologyUser() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.ontology.id,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.ontology.id,"ontology","user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"ontology","user",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"ontology","user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListOntologyCreator() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.ontology.id,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.ontology.id,"ontology","creator",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"ontology","creator",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"ontology","creator",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListProjectLayer() {
         def project = BasicInstanceBuilder.getProject()
-        def result = UserAPI.list(project.id,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.list(project.id,"project","userlayer",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = UserAPI.list(-99,"project","userlayer",Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.list(-99,"project","userlayer",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -198,17 +199,17 @@ class UserTests  {
         User userToAdd = BasicInstanceBuilder.getUserNotExist()
         def jsonUser = new JSONObject(userToAdd.encodeAsJSON()).put("password", "password").toString()
         println "jsonUser =" + jsonUser
-        def result = UserAPI.create(jsonUser.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.create(jsonUser.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idUser = result.data.id
   
-        result = UserAPI.show(idUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.show(idUser, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
   
     void testAddUserAlreadyExist() {
         def userToAdd = BasicInstanceBuilder.getUser()
-        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -216,7 +217,7 @@ class UserTests  {
         def user = BasicInstanceBuilder.getUser()
         def userToAdd = BasicInstanceBuilder.getUserNotExist()
         userToAdd.username = user.username
-        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -225,7 +226,7 @@ class UserTests  {
         def user = BasicInstanceBuilder.getUser()
         def userToAdd = BasicInstanceBuilder.getUserNotExist()
         userToAdd.email = "invalid@email"
-        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.create(userToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -233,13 +234,13 @@ class UserTests  {
         def user = BasicInstanceBuilder.getUserNotExist(true)
         def data = UpdateData.createUpdateSet(user,[firstname: ["OLDNAME","NEWNAME"], email:["old@email.com","new@email.com"]])
 
-        def result = UserAPI.update(user.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.update(user.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idUser = json.user.id
   
-        def showResult = UserAPI.show(idUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = UserAPI.show(idUser, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
@@ -254,7 +255,7 @@ class UserTests  {
         jsonUpdate.username = "-99"
         jsonUpdate.id = -99
         jsonUser = jsonUpdate.toString()
-        def result = UserAPI.update(-99, jsonUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.update(-99, jsonUser, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
   
@@ -267,7 +268,7 @@ class UserTests  {
         def jsonUpdate = JSON.parse(jsonUser)
         jsonUpdate.username = userWithOldName.username
         jsonUser = jsonUpdate.toString()
-        def result = UserAPI.update(userToEdit.id, jsonUser, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.update(userToEdit.id, jsonUser, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -275,20 +276,20 @@ class UserTests  {
         def userToDelete = BasicInstanceBuilder.getUserNotExist()
         assert userToDelete.save(flush: true)!= null
         def id = userToDelete.id
-        def result = UserAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
   
-        def showResult = UserAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = UserAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
     }
   
     void testDeleteUserNotExist() {
-        def result = UserAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
     
     void testDeleteMe() {
-        def result = UserAPI.delete(User.findByUsername(Infos.GOODLOGIN).id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.delete(User.findByUsername(Infos.SUPERADMINLOGIN).id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 403==result.code
     }
 
@@ -297,10 +298,10 @@ class UserTests  {
         BasicInstanceBuilder.saveDomain(project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
 
-        resAddUser = ProjectAPI.deleteUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        resAddUser = ProjectAPI.deleteUserProject(project.id, BasicInstanceBuilder.user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
     }
 
@@ -309,10 +310,10 @@ class UserTests  {
         BasicInstanceBuilder.saveDomain(project)
 
         //Add project right for user 2
-        def resAddUser = ProjectAPI.addAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def resAddUser = ProjectAPI.addAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
 
-        resAddUser = ProjectAPI.deleteAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        resAddUser = ProjectAPI.deleteAdminProject(project.id, BasicInstanceBuilder.user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == resAddUser.code
     }
 
@@ -322,25 +323,25 @@ class UserTests  {
 
     void testShowUserJob() {
         def userJob = BasicInstanceBuilder.getUserJob()
-        def result = UserAPI.showUserJob(userJob.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.showUserJob(userJob.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = UserAPI.showUserJob(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAPI.showUserJob(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListUserJob() {
         def userJob = BasicInstanceBuilder.getUserJob()
-        def result = UserAPI.listUserJob(userJob.job.project.id,false,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.listUserJob(userJob.job.project.id,false,null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
     void testListUserJobTree() {
         def userJob = BasicInstanceBuilder.getUserJob()
-        def result = UserAPI.listUserJob(userJob.job.project.id,true,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.listUserJob(userJob.job.project.id,true,null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
     void testListUserJobByImages() {
         def userJob = BasicInstanceBuilder.getUserJob()
-        def result = UserAPI.listUserJob(userJob.job.project.id,false,BasicInstanceBuilder.getImageInstance().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAPI.listUserJob(userJob.job.project.id,false,BasicInstanceBuilder.getImageInstance().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -348,13 +349,13 @@ class UserTests  {
 
     void testAddUserChildCorrect() {
        log.info("create user")
-       def parent = User.findByUsername(Infos.GOODLOGIN);
+       def parent = User.findByUsername(Infos.SUPERADMINLOGIN);
        def json = "{parent:"+ parent.id +", username:"+ Math.random()+", software: ${BasicInstanceBuilder.getSoftware().id}}";
 
        log.info("post user child")
        String URL = Infos.CYTOMINEURL+"api/userJob.json"
        HttpClient client = new HttpClient()
-       client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+       client.connect(URL,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
        client.post(json.toString())
        int code  = client.getResponseCode()
        String response = client.getResponseData()
@@ -399,15 +400,15 @@ class UserTests  {
 
         //Add a simple project user
         User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a simple project user
         User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //a admin must see all layers
         assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
@@ -431,15 +432,15 @@ class UserTests  {
 
         //Add a simple project user
         User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a simple project user
         User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //a admin must see all layers
         assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
@@ -463,15 +464,15 @@ class UserTests  {
 
         //Add a simple project user
         User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a simple project user
         User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //a admin must see all layers
         assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
@@ -496,15 +497,15 @@ class UserTests  {
 
         //Add a simple project user
         User simpleUser1 = BasicInstanceBuilder.getUser(simpleUsername1,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a simple project user
         User simpleUser2 = BasicInstanceBuilder.getUser(simpleUsername2,password)
-        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addUserProject(project.id,simpleUser2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //Add a project admin
         User admin = BasicInstanceBuilder.getUser(adminUsername,password)
-        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 200 == ProjectAPI.addAdminProject(project.id,admin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
 
         //a admin must see all layers
         assert checkIfContains(UserAPI.listLayers(project.id,adminUsername,password),simpleUser1.id)
@@ -525,7 +526,7 @@ class UserTests  {
 
     void testAPIGetSignature() {
          ///api/signature
-         assert 200 == UserAPI.signature(Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+         assert 200 == UserAPI.signature(Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
      }
 
 
@@ -536,7 +537,7 @@ class UserTests  {
         assert 200 == UserAPI.signature(user.username,"password").code
 
         //change password
-        def response = UserAPI.resetPassword(user.id,"newpassword",Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def response = UserAPI.resetPassword(user.id,"newpassword",Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == response.code
         println response
         //just call a simple service to check if password  has changed
@@ -547,13 +548,13 @@ class UserTests  {
 
     void testResetPasswordWithBadUser() {
         //change password
-        assert 404 == UserAPI.resetPassword(-99,"newpassword",Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 404 == UserAPI.resetPassword(-99,"newpassword",Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
     }
 
     void testResetPasswordWithBadPassword() {
         User user = BasicInstanceBuilder.getUserNotExist(true)
-        assert 404 == UserAPI.resetPassword(user.id,null,Infos.GOODLOGIN,Infos.GOODPASSWORD).code
-        assert 400 == UserAPI.resetPassword(user.id,"bad",Infos.GOODLOGIN,Infos.GOODPASSWORD).code
+        assert 404 == UserAPI.resetPassword(user.id,null,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
+        assert 400 == UserAPI.resetPassword(user.id,"bad",Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
     }
 
 

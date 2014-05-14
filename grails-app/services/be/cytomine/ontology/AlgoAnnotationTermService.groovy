@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -21,18 +21,19 @@ class AlgoAnnotationTermService extends ModelService {
     static transactional = true
     def cytomineService
     def commandService
+    def securityACLService
 
     def currentDomain() {
         return AlgoAnnotationTerm
     }
 
     def list(AnnotationDomain annotation) {
-        SecurityACL.check(annotation.container(),READ)
+        securityACLService.check(annotation.container(),READ)
         AlgoAnnotationTerm.findAllByAnnotationIdent(annotation.id)
     }
 
     def count(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         long total = 0
         List<UserJob> users = UserJob.findAllByJob(job)
         users.each {
@@ -42,7 +43,7 @@ class AlgoAnnotationTermService extends ModelService {
     }
 
     def read(AnnotationDomain annotation, Term term, UserJob userJob) {
-        SecurityACL.check(annotation.container(),READ)
+        securityACLService.check(annotation.container(),READ)
         if (userJob) {
             AlgoAnnotationTerm.findWhere(annotationIdent: annotation.id, term: term, userJob: userJob)
         } else {
@@ -63,7 +64,7 @@ class AlgoAnnotationTermService extends ModelService {
         } catch(Exception e) {
             annotation = AnnotationDomain.getAnnotationDomain(json.annotationIdent)
         }
-        SecurityACL.check(annotation.project,READ)
+        securityACLService.check(annotation.project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         SecUser creator = SecUser.read(json.user)
         if (!creator)

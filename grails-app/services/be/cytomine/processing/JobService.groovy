@@ -1,6 +1,6 @@
 package be.cytomine.processing
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -28,6 +28,8 @@ class JobService extends ModelService {
     def secUserService
     def annotationListingService
     def dataSource
+    def currentRoleServiceProxy
+    def securityACLService
     //def softwareService
 
     def currentDomain() {
@@ -37,7 +39,7 @@ class JobService extends ModelService {
     def read(def id) {
         def job = Job.read(id)
         if(job) {
-            SecurityACL.check(job.container(),READ)
+            securityACLService.check(job.container(),READ)
         }
         job
     }
@@ -71,8 +73,8 @@ class JobService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.project,Project, READ)
-        SecurityACL.checkReadOnly(json.project,Project)
+        securityACLService.check(json.project,Project, READ)
+        securityACLService.checkReadOnly(json.project,Project)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //Start transaction
@@ -106,9 +108,9 @@ class JobService extends ModelService {
      */
     def update(Job job, def jsonNewData) {
         log.info "update"
-        SecurityACL.check(job.container(),READ)
-        SecurityACL.checkReadOnly(job.container())
-        log.info "SecurityACL.check"
+        securityACLService.check(job.container(),READ)
+        securityACLService.checkReadOnly(job.container())
+        log.info "securityACLService.check"
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),job, jsonNewData)
     }
@@ -123,8 +125,8 @@ class JobService extends ModelService {
      */
     def delete(Job domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
-        SecurityACL.checkReadOnly(domain.container())
+        securityACLService.check(domain.container(),READ)
+        securityACLService.checkReadOnly(domain.container())
 
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
@@ -135,7 +137,7 @@ class JobService extends ModelService {
     }
 
     List<UserJob> getAllLastUserJob(Project project, Software software) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         //TODO: inlist bad performance
         List<Job> jobs = Job.findAllWhere('software':software,'status':Job.SUCCESS, 'project':project)
         List<UserJob>  userJob = UserJob.findAllByJobInList(jobs,[sort:'created', order:"desc"])
@@ -203,7 +205,7 @@ class JobService extends ModelService {
      * Delete all annotation created by a user job from argument
      */
     public void deleteAllAlgoAnnotations(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         def request = "delete from algo_annotation where user_id in (" + usersId.join(',') +")"
@@ -218,7 +220,7 @@ class JobService extends ModelService {
      * Delete all algo-annotation-term created by a user job from argument
      */
     public void deleteAllAlgoAnnotationsTerm(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         List<Long> usersId = UserJob.findAllByJob(job).collect{ it.id }
         if (usersId.isEmpty()) return
         def request = "delete from algo_annotation_term where user_job_id in ("+ usersId.join(',')+")"
@@ -234,7 +236,7 @@ class JobService extends ModelService {
      * Delete all data filescreated by a user job from argument
      */
     public void deleteAllJobData(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         List<JobData> jobDatas = JobData.findAllByJob(job)
         List<Long> jobDatasId = jobDatas.collect{ it.id }
         if (jobDatasId.isEmpty()) return
@@ -242,7 +244,7 @@ class JobService extends ModelService {
     }
 
     public UserJob createUserJob(User user, Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         UserJob userJob = new UserJob()
         userJob.job = job
         userJob.username = "JOB[" + user.username + " ], " + new Date().toString()
@@ -254,9 +256,11 @@ class JobService extends ModelService {
         userJob.passwordExpired = user.passwordExpired
         userJob.user = user
         userJob = userJob.save(flush: true)
-        user.getAuthorities().each { secRole ->
+
+        currentRoleServiceProxy.findCurrentRole(user).each { secRole ->
             SecUserSecRole.create(userJob, secRole)
         }
+
         return userJob
     }
 

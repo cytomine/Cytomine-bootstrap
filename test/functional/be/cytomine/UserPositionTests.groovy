@@ -23,19 +23,19 @@ class UserPositionTests  {
 
     void testListByUser() {
         def image = BasicInstanceBuilder.getImageInstance()
-       def result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
    }
 
     void testListByProject() {
         def image = BasicInstanceBuilder.getImageInstance()
-       def result = UserPositionAPI.listLastByProject(image.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = UserPositionAPI.listLastByProject(image.project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
    }
 
     void testListByImage() {
         def image = BasicInstanceBuilder.getImageInstance()
-       def result = UserPositionAPI.listLastByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       def result = UserPositionAPI.listLastByImage(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
    }
 
@@ -43,16 +43,16 @@ class UserPositionTests  {
         def image = BasicInstanceBuilder.getImageInstance()
         def json = JSON.parse("{image:${image.id},lon:100,lat:100, zoom: 1}")
 
-        def result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserPositionAPI.create(image.id, json.toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserPositionAPI.listLastByUser(image.id,BasicInstanceBuilder.user1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = UserPositionAPI.listLastByProject(image.project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserPositionAPI.listLastByProject(image.project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = UserPositionAPI.listLastByImage(image.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserPositionAPI.listLastByImage(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
          //same position, user don't move
-        result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserPositionAPI.create(image.id, json.toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -61,10 +61,10 @@ class UserPositionTests  {
         def image = BasicInstanceBuilder.getImageInstance()
         def json = JSON.parse("{image:${image.id},lon:100,lat:100,zoom:1}")
 
-        def result = UserPositionAPI.create(image.id, json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserPositionAPI.create(image.id, json.toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ImageInstanceAPI.listLastOpened(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listLastOpened(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert ImageInstanceAPI.containsInJSONList(image.id,json)

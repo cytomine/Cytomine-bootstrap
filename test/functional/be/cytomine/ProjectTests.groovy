@@ -30,7 +30,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class ProjectTests  {
 
     void testListProjectWithCredential() {
-        def result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -43,7 +43,7 @@ class ProjectTests  {
 
     void testShowProjectWithCredential() {
         Project project = BasicInstanceBuilder.getProject()
-        def result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -53,7 +53,7 @@ class ProjectTests  {
     void testListProjectByUser() {
         Project project = BasicInstanceBuilder.getProject()
         User user = BasicInstanceBuilder.getUser()
-        def result = ProjectAPI.listByUser(user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listByUser(user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -62,23 +62,23 @@ class ProjectTests  {
     void testListProjectByUserLight() {
 
         def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
-        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def user1 = User.findByUsername(Infos.GOODLOGIN)
+        def user1 = User.findByUsername(Infos.SUPERADMINLOGIN)
         def user2 = BasicInstanceBuilder.getUser2()
 
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'creator',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'admin',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user2.id,'user',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
     }
 
@@ -88,47 +88,47 @@ class ProjectTests  {
 
 
     void testListProjectByUserNotExist() {
-        def result = ProjectAPI.listByUser(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listByUser(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
     void testListProjectByOntology() {
         Ontology ontology = BasicInstanceBuilder.getOntology()
-        def result = ProjectAPI.listByOntology(ontology.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listByOntology(ontology.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListProjectByOntologyNotExist() {
-        def result = ProjectAPI.listByOntology(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listByOntology(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListProjectBySoftware() {
         Software software = BasicInstanceBuilder.getSoftware()
         User user = BasicInstanceBuilder.getUser()
-        def result = ProjectAPI.listBySoftware(software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listBySoftware(software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListProjectBySoftwareNotExist() {
-        def result = ProjectAPI.listBySoftware(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listBySoftware(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testAddProjectCorrect() {
         def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
-        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.GOODLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.SUPERADMINLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data))
     }
 
     void testAddProjectWithUser() {
@@ -137,14 +137,14 @@ class ProjectTests  {
         def json = JSON.parse(projectToAdd.encodeAsJSON())
         json.users = [user.id]
         json.admins = [user.id]
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.GOODLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
-        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
-        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(User.findByUsername(Infos.SUPERADMINLOGIN).id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data))
+        assert ProjectAPI.containsInJSONList(user.id,JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data))
     }
 
 
@@ -153,7 +153,7 @@ class ProjectTests  {
         def projectToAdd = BasicInstanceBuilder.getProject()
         String jsonProject = projectToAdd.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
-        def result = ProjectAPI.create(jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -162,18 +162,18 @@ class ProjectTests  {
         def project = BasicInstanceBuilder.getProject()
         def data = UpdateData.createUpdateSet(project,[name: ["OLDNAME","NEWNAME"]])
 
-        def result = ProjectAPI.update(project.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(project.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idProject = json.project.id
-        def showResult = ProjectAPI.show(idProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ProjectAPI.show(idProject, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
 
     void testEditProjectCorrectWithUser() {
-        def creator = User.findByUsername(Infos.GOODLOGIN)
+        def creator = User.findByUsername(Infos.SUPERADMINLOGIN)
         def user1 =  BasicInstanceBuilder.getUserNotExist(true)
         def user2 =  BasicInstanceBuilder.getUserNotExist(true)
         def user3 =  BasicInstanceBuilder.getUserNotExist(true)
@@ -190,12 +190,12 @@ class ProjectTests  {
         json.users = [creator.id,user2.id,user4.id]
         json.admins = [creator.id,user1.id]
 
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         project = result.data
         Infos.printRight(project)
-        def usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        def adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        def usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        def adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
         assert ProjectAPI.containsInJSONList(creator.id,usersList)
         assert ProjectAPI.containsInJSONList(creator.id,adminsList)
@@ -210,11 +210,11 @@ class ProjectTests  {
         json.users = [creator.id,user3.id,user4.id,user1.id]
         json.admins = [creator.id,user3.id]
 
-        result = ProjectAPI.update(project.id,json.toString(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.update(project.id,json.toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        usersList = JSON.parse(ProjectAPI.listUser(project.id,"user",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        adminsList = JSON.parse(ProjectAPI.listUser(project.id,"admin",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
         assert ProjectAPI.containsInJSONList(creator.id,usersList)
         assert ProjectAPI.containsInJSONList(creator.id,adminsList)
@@ -229,15 +229,15 @@ class ProjectTests  {
 
     void testEditProjectWithNameAlreadyExist() {
         Project projectWithOldName = BasicInstanceBuilder.getProject()
-        Project projectWithNewName = BasicInstanceBuilder.getProjectNotExist()
-        projectWithNewName.save(flush: true)
+        Project projectWithNewName = BasicInstanceBuilder.getProjectNotExist(true)
+//        projectWithNewName.save(flush: true)
 
         Project projectToEdit = Project.get(projectWithNewName.id)
         def jsonProject = projectToEdit.encodeAsJSON()
         def jsonUpdate = JSON.parse(jsonProject)
         jsonUpdate.name = projectWithOldName.name
         jsonProject = jsonUpdate.toString()
-        def result = ProjectAPI.update(projectToEdit.id, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(projectToEdit.id, jsonProject, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -251,37 +251,35 @@ class ProjectTests  {
         jsonUpdate.name = projectWithOldName.name
         jsonUpdate.id = -99
         jsonProject = jsonUpdate.toString()
-        def result = ProjectAPI.update(-99, jsonProject, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(-99, jsonProject, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteProject() {
-        def projectToDelete = BasicInstanceBuilder.getProjectNotExist()
-        assert projectToDelete.save(flush: true) != null
+        def projectToDelete = BasicInstanceBuilder.getProjectNotExist(true)
 
-        def result = TaskAPI.create(projectToDelete.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(projectToDelete.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def jsonTask = JSON.parse(result.data)
 
         //delete all job data
-        result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD,new Task().getFromDatabase(jsonTask.task.id))
+        result = ProjectAPI.delete(projectToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,new Task().getFromDatabase(jsonTask.task.id))
         assert 200 == result.code
 
 
     }
 
     void testDeleteProjectWithTask() {
-        def projectToDelete = BasicInstanceBuilder.getProjectNotExist()
-        assert projectToDelete.save(flush: true) != null
+        def projectToDelete = BasicInstanceBuilder.getProjectNotExist(true)
 
-        def result = ProjectAPI.delete(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.delete(projectToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        def showResult = ProjectAPI.show(projectToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ProjectAPI.show(projectToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
     }
 
     void testDeleteProjectNotExist() {
-        def result = ProjectAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -447,17 +445,17 @@ class ProjectTests  {
         Project project2 = BasicInstanceBuilder.getProjectNotExist(true)
         Project project3 = BasicInstanceBuilder.getProjectNotExist(true)
 
-        def result = ProjectAPI.doPing(project1.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.doPing(project1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        result = ProjectAPI.doPing(project2.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.doPing(project2.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ProjectAPI.listLastOpened(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listLastOpened(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = ProjectAPI.listLastOpened(20,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listLastOpened(20,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -467,13 +465,13 @@ class ProjectTests  {
     void testListCommandHistoryByProject() {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         annotationToAdd.project = BasicInstanceBuilder.getProjectNotExist(true)
-        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ProjectAPI.listCommandHistory(annotationToAdd.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listCommandHistory(annotationToAdd.project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ProjectAPI.listCommandHistory(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listCommandHistory(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
@@ -482,41 +480,41 @@ class ProjectTests  {
 
         //Create a project
         def projectToAdd = BasicInstanceBuilder.getProjectNotExist()
-        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(projectToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
 
-        def user1 = User.findByUsername(Infos.GOODLOGIN)
+        def user1 = User.findByUsername(Infos.SUPERADMINLOGIN)
 
         //check if project is there
-       result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = ProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ProjectAPI.listByUser(user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listByUser(user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
-        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
         SoftwareProject softproj = BasicInstanceBuilder.getSoftwareProjectNotExist(BasicInstanceBuilder.getSoftware(),project, true)
-        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
 
         //delete project
         Date start = new Date()
-        result = ProjectAPI.delete(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.delete(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Date stop = new Date()
 
@@ -525,26 +523,26 @@ class ProjectTests  {
         assert project.deleted < stop
 
         //check if project is not there
-        result = ProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
-        result = ProjectAPI.listByUser(user1.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listByUser(user1.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
-        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.GOODLOGIN, Infos.GOODPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'creator',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'admin',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
+        assert !ProjectAPI.containsInJSONList(project.id,ProjectAPI.listByUserLight(user1.id,'user',Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data)
 
-        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listByOntology(projectToAdd.getOntology().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
 
-        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listBySoftware(softproj.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         assert !DomainAPI.containsInJSONList(project.id,JSON.parse(result.data))
     }

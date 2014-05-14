@@ -63,5 +63,8 @@ beans = {
         grailsApplication = ref('grailsApplication')
     }
 
-
+    currentRoleServiceProxy(org.springframework.aop.scope.ScopedProxyFactoryBean) {
+        targetBeanName = 'currentRoleService'
+        proxyTargetClass = true
+    }
 }

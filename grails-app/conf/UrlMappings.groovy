@@ -72,5 +72,16 @@ class UrlMappings {
         "/login/loginWithToken" (controller: "login") {
             action = [GET:"loginWithToken"]
         }
+
+
+        "/session/admin/open.$format" (controller: "grantRole") {
+            action = [GET:"openAdminSession"]
+        }
+        "/session/admin/close.$format" (controller: "grantRole") {
+            action = [GET:"closeAdminSession"]
+        }
+        "/session/admin/info.$format" (controller: "grantRole") {
+            action = [GET:"infoAdminSession"]
+        }
     }
 }

@@ -20,7 +20,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class JobDataTests  {
 
     void testListJobDataWithCredential() {
-        def result = JobDataAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -33,7 +33,7 @@ class JobDataTests  {
 
     void testShowJobDataWithCredential() {
         JobData jobdata = BasicInstanceBuilder.getJobData()
-        def result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.show(jobdata.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -41,36 +41,36 @@ class JobDataTests  {
 
     void testListJobDataByJob() {
         JobData jobdata = BasicInstanceBuilder.getJobData()
-        def result = JobDataAPI.listByJob(jobdata.job.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.listByJob(jobdata.job.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListJobDataByJobNotExist() {
-        def result = JobDataAPI.listByJob(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.listByJob(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
     void testAddJobDataCorrect() {
         def jobdataToAdd = BasicInstanceBuilder.getJobDataNotExist()
-        def result = JobDataAPI.create(jobdataToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.create(jobdataToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         JobData jobdata = result.data
-        result = JobDataAPI.show(jobdata.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobDataAPI.show(jobdata.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testEditJobDataCorrect() {
         def jobData = BasicInstanceBuilder.getJobData()
         def data = UpdateData.createUpdateSet(jobData,[key: ["123","456"]])
-        def result = JobDataAPI.update(jobData.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.update(jobData.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idJobData = json.jobdata.id
-        def showResult = JobDataAPI.show(idJobData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = JobDataAPI.show(idJobData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         println "data.mapNew="+data.mapNew
         println "json="+json
@@ -84,21 +84,21 @@ class JobDataTests  {
         def jsonUpdate = JSON.parse(jsonJobData)
         jsonUpdate.key = null
         jsonJobData = jsonUpdate.toString()
-        def result = JobDataAPI.update(jobdataToAdd.id, jsonJobData, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.update(jobdataToAdd.id, jsonJobData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
     void testDeleteJobData() {
         def jobdataToDelete = BasicInstanceBuilder.getJobDataNotExist()
         assert jobdataToDelete.save(flush: true) != null
-        def result = JobDataAPI.delete(jobdataToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.delete(jobdataToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        def showResult = JobDataAPI.show(jobdataToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = JobDataAPI.show(jobdataToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
     }
 
     void testDeleteJobDataNotExist() {
-        def result = JobDataAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = JobDataAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -113,14 +113,14 @@ class JobDataTests  {
         byte[] testData = "HelloWorld!".bytes
 
         //upload file
-         def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = JobDataAPI.upload(jobData.id,testData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //download file
-        result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobDataAPI.download(jobData.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = JobDataAPI.view(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobDataAPI.view(jobData.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //check if byte[] are equals
@@ -138,14 +138,14 @@ class JobDataTests  {
         byte[] testData = "HelloWorld!".bytes
 
         //upload file
-         def result = JobDataAPI.upload(jobData.id,testData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+         def result = JobDataAPI.upload(jobData.id,testData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //download file
-        result = JobDataAPI.download(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobDataAPI.download(jobData.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = JobDataAPI.view(jobData.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobDataAPI.view(jobData.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //check if byte[] are equals

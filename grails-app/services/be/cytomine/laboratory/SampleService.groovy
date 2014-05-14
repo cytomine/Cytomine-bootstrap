@@ -1,7 +1,7 @@
 package be.cytomine.laboratory
 
 import be.cytomine.Exception.ConstraintException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.SecUser
@@ -16,6 +16,7 @@ class SampleService extends ModelService {
     def cytomineService
     def abstractImageService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         return Sample
@@ -23,7 +24,7 @@ class SampleService extends ModelService {
 
     //@Secured(['ROLE_ADMIN'])
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         Sample.list()
     }
 
@@ -50,7 +51,7 @@ class SampleService extends ModelService {
     //TODO:: secure ACL (who can add/update/delete a sample?)
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
         Command c = new AddCommand(user: currentUser)
         return executeCommand(c,null,json)
     }
@@ -64,7 +65,7 @@ class SampleService extends ModelService {
      */
     def update(Sample sample, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
         return executeCommand(new EditCommand(user: currentUser),sample,jsonNewData)
     }
 
@@ -78,7 +79,7 @@ class SampleService extends ModelService {
      */
     def delete(Sample domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkUser(currentUser)
+        securityACLService.checkUser(currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

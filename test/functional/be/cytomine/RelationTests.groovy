@@ -22,7 +22,7 @@ class RelationTests {
     log.info("get relation")
     String URL = Infos.CYTOMINEURL+"api/relation.json"
     HttpClient client = new HttpClient();
-    client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+    client.connect(URL,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD);
     client.get()
     int code  = client.getResponseCode()
     String response = client.getResponseData()
@@ -41,7 +41,7 @@ class RelationTests {
         Relation relation = BasicInstanceBuilder.getRelation()
       String URL = Infos.CYTOMINEURL+"api/relation/${relation.id}.json"
       HttpClient client = new HttpClient();
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+      client.connect(URL,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD);
       client.get()
       int code  = client.getResponseCode()
       String response = client.getResponseData()
@@ -58,7 +58,7 @@ class RelationTests {
       log.info("show relation")
       String URL = Infos.CYTOMINEURL+"api/relation/-99.json"
       HttpClient client = new HttpClient();
-      client.connect(URL,Infos.GOODLOGIN,Infos.GOODPASSWORD);
+      client.connect(URL,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD);
       client.get()
       int code  = client.getResponseCode()
       String response = client.getResponseData()

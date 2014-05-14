@@ -1,7 +1,7 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -20,6 +20,7 @@ class RelationTermService extends ModelService {
     def commandService
     def cytomineService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         return RelationTerm
@@ -29,8 +30,8 @@ class RelationTermService extends ModelService {
      * Get a relation term
      */
     def get(Relation relation, Term term1, Term term2) {
-        SecurityACL.check(term1.container(),READ)
-        SecurityACL.check(term2.container(),READ)
+        securityACLService.check(term1.container(),READ)
+        securityACLService.check(term2.container(),READ)
         RelationTerm.findWhere('relation': relation, 'term1': term1, 'term2': term2)
     }
 
@@ -41,7 +42,7 @@ class RelationTermService extends ModelService {
      * @return Relation term list
      */
     def list(Term term, def position) {
-        SecurityACL.check(term.container(),READ)
+        securityACLService.check(term.container(),READ)
         position == "1" ? RelationTerm.findAllByTerm1(term) : RelationTerm.findAllByTerm2(term)
     }
 
@@ -51,7 +52,7 @@ class RelationTermService extends ModelService {
      * @return Relation term list
      */
     def list(Term term) {
-        SecurityACL.check(term.container(),READ)
+        securityACLService.check(term.container(),READ)
         def relation1 = RelationTerm.findAllByTerm1(term);
         def relation2 = RelationTerm.findAllByTerm2(term);
         def all = (relation1 << relation2).flatten();
@@ -64,8 +65,8 @@ class RelationTermService extends ModelService {
      * @return Response structure (new domain data, old domain data..)
      */
     def add(def json) {
-        SecurityACL.check(json.term1,Term,"getOntology",WRITE)
-        SecurityACL.check(json.term2,Term,"getOntology",WRITE)
+        securityACLService.check(json.term1,Term,"getOntology",WRITE)
+        securityACLService.check(json.term2,Term,"getOntology",WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -80,7 +81,7 @@ class RelationTermService extends ModelService {
      */
     def delete(RelationTerm domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),DELETE)
+        securityACLService.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

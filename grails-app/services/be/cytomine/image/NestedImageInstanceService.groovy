@@ -1,6 +1,6 @@
 package be.cytomine.image
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -26,6 +26,7 @@ class NestedImageInstanceService extends ModelService {
      def imageSequenceService
      def propertyService
      def annotationIndexService
+     def securityACLService
 
      def currentDomain() {
          return NestedImageInstance
@@ -34,14 +35,14 @@ class NestedImageInstanceService extends ModelService {
      def read(def id) {
          def image = NestedImageInstance.read(id)
          if(image) {
-             SecurityACL.check(image.container(),READ)
+             securityACLService.check(image.container(),READ)
          }
          image
      }
 
 
      def list(ImageInstance image) {
-         SecurityACL.check(image.container(),READ)
+         securityACLService.check(image.container(),READ)
 
          def images = NestedImageInstance.createCriteria().list {
              createAlias("baseImage", "i")
@@ -58,8 +59,8 @@ class NestedImageInstanceService extends ModelService {
       * @return Response structure (created domain data,..)
       */
      def add(def json) {
-         SecurityACL.check(json.project,Project,READ)
-         SecurityACL.checkReadOnly(json.project,Project)
+         securityACLService.check(json.project,Project,READ)
+         securityACLService.checkReadOnly(json.project,Project)
          SecUser currentUser = cytomineService.getCurrentUser()
          json.user = currentUser.id
          synchronized (this.getClass()) {
@@ -75,10 +76,10 @@ class NestedImageInstanceService extends ModelService {
       * @return  Response structure (new domain data, old domain data..)
       */
      def update(NestedImageInstance domain, def jsonNewData) {
-         SecurityACL.check(domain.container(),READ)
-         SecurityACL.check(jsonNewData.project,Project,READ)
-         SecurityACL.checkReadOnly(domain.container())
-         SecurityACL.checkReadOnly(jsonNewData.project,Project)
+         securityACLService.check(domain.container(),READ)
+         securityACLService.check(jsonNewData.project,Project,READ)
+         securityACLService.checkReadOnly(domain.container())
+         securityACLService.checkReadOnly(jsonNewData.project,Project)
          SecUser currentUser = cytomineService.getCurrentUser()
          Command c = new EditCommand(user: currentUser)
          executeCommand(c,domain,jsonNewData)
@@ -93,8 +94,8 @@ class NestedImageInstanceService extends ModelService {
       * @return Response structure (code, old domain,..)
       */
      def delete(NestedImageInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-         SecurityACL.check(domain.container(),READ)
-         SecurityACL.checkReadOnly(domain.container())
+         securityACLService.check(domain.container(),READ)
+         securityACLService.checkReadOnly(domain.container())
          SecUser currentUser = cytomineService.getCurrentUser()
          Command c = new DeleteCommand(user: currentUser,transaction:transaction)
          return executeCommand(c,domain,null)

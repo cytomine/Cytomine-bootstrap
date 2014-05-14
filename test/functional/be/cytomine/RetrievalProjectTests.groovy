@@ -19,14 +19,14 @@ class RetrievalProjectTests  {
 
     void testListRetrievalProjectWithCredential() {
         Project project = BasicInstanceBuilder.getProject()
-        def result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listRetrieval(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListRetrievalProjecNotExist() {
-        def result = ProjectAPI.listRetrieval(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.listRetrieval(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -37,10 +37,10 @@ class RetrievalProjectTests  {
         json.retrievalAllOntology = null
         json.retrievalProjects = null
 
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert true==project.retrievalAllOntology
@@ -54,10 +54,10 @@ class RetrievalProjectTests  {
         json.retrievalAllOntology = false
         json.retrievalProjects = null
 
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert false==project.retrievalAllOntology
@@ -71,10 +71,10 @@ class RetrievalProjectTests  {
         json.retrievalAllOntology = true
         json.retrievalProjects = null
 
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert true==project.retrievalAllOntology
@@ -89,13 +89,13 @@ class RetrievalProjectTests  {
         //json.retrievalProjects = new JSONArray([BasicInstanceBuilder.getProject().id])
         json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
 
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
-        result = ProjectAPI.show(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.show(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listRetrieval(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -109,7 +109,7 @@ class RetrievalProjectTests  {
         json.retrievalDisable = true
         json.retrievalAllOntology = true
         json.retrievalProjects = null
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
 
         projectToAdd = BasicInstanceBuilder.getProjectNotExist()
@@ -117,7 +117,7 @@ class RetrievalProjectTests  {
         json.retrievalDisable = true
         json.retrievalAllOntology = false
         json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
-        result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
 
         projectToAdd = BasicInstanceBuilder.getProjectNotExist()
@@ -125,7 +125,7 @@ class RetrievalProjectTests  {
         json.retrievalDisable = false
         json.retrievalAllOntology = true
         json.retrievalProjects = new JSONArray("["+BasicInstanceBuilder.getProject().id+"]")
-        result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
 
     }
@@ -141,23 +141,23 @@ class RetrievalProjectTests  {
         json.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
 
         //create project
-        def result = ProjectAPI.create(json.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.create(json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         Project project = result.data
 
         //list retrieval project and check that project is there
-        result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listRetrieval(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert ProjectAPI.containsInJSONList(projectRetrieval.id,json)
 
         //delete 1 retrieval project
-        result = ProjectAPI.delete(projectRetrieval.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.delete(projectRetrieval.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //list retrieval project and check that project is not there
-        result = ProjectAPI.listRetrieval(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ProjectAPI.listRetrieval(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -181,7 +181,7 @@ class RetrievalProjectTests  {
 
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval.id+"]")
 
-        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -216,7 +216,7 @@ class RetrievalProjectTests  {
 
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"," + projectRetrieval2.id +"]")
 
-        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -254,7 +254,7 @@ class RetrievalProjectTests  {
         jsonProject.retrievalAllOntology = false
         jsonProject.retrievalProjects = new JSONArray("["+projectRetrieval1.id+"]")
 
-        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -292,7 +292,7 @@ class RetrievalProjectTests  {
         jsonProject.retrievalAllOntology = false
         jsonProject.retrievalProjects = new JSONArray("[]")
 
-        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.update(projectToAdd.id,jsonProject.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -318,7 +318,7 @@ class RetrievalProjectTests  {
         assert projectToAdd.save(flush: true)
 
         //delete 1 retrieval project
-        def result = ProjectAPI.delete(projectToAdd.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ProjectAPI.delete(projectToAdd.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 }

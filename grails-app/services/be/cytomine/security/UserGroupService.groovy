@@ -1,7 +1,7 @@
 package be.cytomine.security
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
@@ -16,18 +16,19 @@ class UserGroupService extends ModelService {
     def cytomineService
     def commandService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         UserGroup
     }
 
     def list(User user) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         UserGroup.findAllByUser(user)
     }
 
     def get(User user, Group group) {
-        SecurityACL.checkGuest(cytomineService.currentUser)
+        securityACLService.checkGuest(cytomineService.currentUser)
         UserGroup.findByUserAndGroup(user, group)
     }
 
@@ -39,7 +40,7 @@ class UserGroupService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
@@ -53,7 +54,7 @@ class UserGroupService extends ModelService {
      */
     def delete(UserGroup domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkAdmin(currentUser)
+        securityACLService.checkAdmin(currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

@@ -18,19 +18,19 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class ImageFilterTests  {
 
   void testListImageFilterWithCredential() {
-      def result = ImageFilterAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = ImageFilterAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
   }
 
   void testShowImageFilterWithCredential() {
-      def result = ImageFilterAPI.show(BasicInstanceBuilder.getImageFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = ImageFilterAPI.show(BasicInstanceBuilder.getImageFilter().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
 
-      result = ImageFilterAPI.show(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = ImageFilterAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -38,7 +38,7 @@ class ImageFilterTests  {
     Image filter project
   */
     void testListImageFilterProject() {
-        def result = ImageFilterProjectAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageFilterProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -46,27 +46,27 @@ class ImageFilterTests  {
 
     void testListImageFilterProjectByProject() {
         def project = BasicInstanceBuilder.getProject()
-        def result = ImageFilterProjectAPI.listByProject(project.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageFilterProjectAPI.listByProject(project.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testListImageFilterProjectByProjectNotExist() {
-        def result = ImageFilterProjectAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageFilterProjectAPI.listByProject(-99,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testAddImageFilterProject() {
         def ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
-        def result = ImageFilterProjectAPI.create(ifp.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageFilterProjectAPI.create(ifp.encodeAsJSON(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testDeleteImageFilterProject() {
        def ifp = BasicInstanceBuilder.getImageFilterProjectNotExist()
        ifp.save(flush: true)
-        def result = ImageFilterProjectAPI.delete(ifp.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageFilterProjectAPI.delete(ifp.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 

@@ -21,12 +21,12 @@ class NestedImageInstanceTests {
 
     void testGetNestedImageInstanceWithCredential() {
         def nested = BasicInstanceBuilder.getNestedImageInstance()
-        def result = NestedImageInstanceAPI.show(nested.id,nested.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.show(nested.id,nested.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.id.toString()== nested.id.toString()
 
-        result = ImageInstanceAPI.show(nested.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.show(nested.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.id.toString()== nested.id.toString()
@@ -34,13 +34,13 @@ class NestedImageInstanceTests {
 
     void testListNestedImagesInstanceByImage() {
         def nested = BasicInstanceBuilder.getNestedImageInstance()
-        def result = NestedImageInstanceAPI.listByImageInstance(nested.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.listByImageInstance(nested.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert NestedImageInstanceAPI.containsInJSONList(nested.id,json)
 
-        result = NestedImageInstanceAPI.listByImageInstance(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.listByImageInstance(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -48,22 +48,22 @@ class NestedImageInstanceTests {
     void testListImageCheckIfNoNestedImageInstance() {
         def nested = BasicInstanceBuilder.getNestedImageInstanceNotExist( BasicInstanceBuilder.getImageInstance(),true)
 
-        def result = ImageInstanceAPI.listByProject(nested.project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.listByProject(nested.project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         def json = JSON.parse(result.data)
         assert NestedImageInstanceAPI.containsInJSONList(nested.parent.id,json)
         assert !NestedImageInstanceAPI.containsInJSONList(nested.id,json)
 
-        result = ImageInstanceAPI.listByProject(nested.project.id,1,2, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listByProject(nested.project.id,1,2, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(result.data)
         assert NestedImageInstanceAPI.containsInJSONList(nested.parent.id,json)
         assert !NestedImageInstanceAPI.containsInJSONList(nested.id,json)
 
-        result = ImageInstanceAPI.listByProject(nested.project.id, 0,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listByProject(nested.project.id, 0,1,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(result.data)
         assert NestedImageInstanceAPI.containsInJSONList(nested.parent.id,json)
         assert !NestedImageInstanceAPI.containsInJSONList(nested.id,json)
 
-        result = ImageInstanceAPI.listByUser(nested.user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageInstanceAPI.listByUser(nested.user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(result.data)
         assert NestedImageInstanceAPI.containsInJSONList(nested.parent.id,json)
         assert !NestedImageInstanceAPI.containsInJSONList(nested.id,json)
@@ -74,24 +74,24 @@ class NestedImageInstanceTests {
     void testAddNestedImageInstanceCorrect() {
         def nested = BasicInstanceBuilder.getNestedImageInstanceNotExist()
         println nested.encodeAsJSON()
-        def result = NestedImageInstanceAPI.create(nested.parent.id,nested.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.create(nested.parent.id,nested.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         NestedImageInstance image = result.data
         Long idImage = image.id
 
-        result = NestedImageInstanceAPI.show(image.id,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.show(image.id,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = NestedImageInstanceAPI.undo()
         assert 200 == result.code
 
-        result = NestedImageInstanceAPI.show(idImage,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.show(idImage,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = NestedImageInstanceAPI.redo()
         assert 200 == result.code
 
-        result = NestedImageInstanceAPI.show(idImage,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.show(idImage,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
@@ -99,8 +99,8 @@ class NestedImageInstanceTests {
 
     void testAddNestedImageInstanceAlreadyExist() {
         def imageToAdd = BasicInstanceBuilder.getNestedImageInstanceNotExist()
-        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
-        result = NestedImageInstanceAPI.create(imageToAdd.parent.id,imageToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,imageToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = NestedImageInstanceAPI.create(imageToAdd.parent.id,imageToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 
@@ -110,7 +110,7 @@ class NestedImageInstanceTests {
         def updateImage = JSON.parse(jsonImage)
         updateImage.baseImage = -99
         jsonImage = updateImage.toString()
-        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -120,7 +120,7 @@ class NestedImageInstanceTests {
         def updateImage = JSON.parse(jsonImage)
         updateImage.parent = -99
         jsonImage = updateImage.toString()
-        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -132,7 +132,7 @@ class NestedImageInstanceTests {
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
         jsonImage = updateImage.toString()
-        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.create(imageToAdd.parent.id,jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -141,19 +141,19 @@ class NestedImageInstanceTests {
         def image = BasicInstanceBuilder.getNestedImageInstance()
         def data = UpdateData.createUpdateSet(image,[project: [BasicInstanceBuilder.getProject(),BasicInstanceBuilder.getProjectNotExist(true)]])
 
-        def result = NestedImageInstanceAPI.update(image.id,image.parent.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.update(image.id,image.parent.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idNestedImageInstance = json.nestedimageinstance.id
-        def showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = NestedImageInstanceAPI.undo()
         assert 200==showResult.code
 
-        showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
 
         BasicInstanceBuilder.compare(data.mapOld, json)
@@ -161,7 +161,7 @@ class NestedImageInstanceTests {
         showResult = NestedImageInstanceAPI.redo()
         assert 200==showResult.code
 
-        showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = NestedImageInstanceAPI.show(idNestedImageInstance,image.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
@@ -171,28 +171,28 @@ class NestedImageInstanceTests {
         assert NestedImageInstanceToDelete.save(flush: true) != null
         def idImage = NestedImageInstanceToDelete.id
 
-        def result = NestedImageInstanceAPI.delete(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.delete(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def showResult = NestedImageInstanceAPI.show(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = NestedImageInstanceAPI.show(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = NestedImageInstanceAPI.undo()
         assert 200 == result.code
 
-        result = NestedImageInstanceAPI.show(idImage,NestedImageInstanceToDelete.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.show(idImage,NestedImageInstanceToDelete.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = NestedImageInstanceAPI.redo()
         assert 200 == result.code
 
-        result = NestedImageInstanceAPI.show(idImage,NestedImageInstanceToDelete.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = NestedImageInstanceAPI.show(idImage,NestedImageInstanceToDelete.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteNestedImageInstanceNoExist() {
         def NestedImageInstanceToDelete = BasicInstanceBuilder.getNestedImageInstanceNotExist()
-        def result = NestedImageInstanceAPI.delete(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = NestedImageInstanceAPI.delete(NestedImageInstanceToDelete.id,NestedImageInstanceToDelete.parent.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 

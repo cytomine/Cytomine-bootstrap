@@ -148,8 +148,8 @@ abstract class CytomineDomain  implements Comparable{
      * @param permission Permission to check (READ,...)
      * @return true if user has this permission on current domain
      */
-    boolean checkPermission(Permission permission) {
-        boolean right = hasACLPermission(permission) || cytomineService.currentUser.admin
+    boolean checkPermission(Permission permission, boolean isAdmin) {
+        boolean right = hasACLPermission(permission) || isAdmin
         return right
     }
 

@@ -91,7 +91,7 @@ class AnnotationAddConcurrent extends Thread {
     public void run() {
         log.info("start thread")
         log.info("create userannotation")
-        def result = UserAnnotationAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")
@@ -114,7 +114,7 @@ class ImageInstanceAddConcurrent extends Thread {
     public void run() {
         log.info("start thread")
         log.info("create image instance")
-        def result = ImageInstanceAPI.create(json, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageInstanceAPI.create(json, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")
@@ -138,7 +138,7 @@ class AnnotationTermAddConcurrent extends Thread {
     public void run() {
         log.info("start thread")
         log.info("create image instance")
-        def result = AnnotationTermAPI.createAnnotationTerm(json,Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = AnnotationTermAPI.createAnnotationTerm(json,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         log.info("check response")
         code = result.code
         log.info("end thread")

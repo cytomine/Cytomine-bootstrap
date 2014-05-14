@@ -34,7 +34,7 @@ class TaskTests  {
         println "task.comments="+task.getMap()
 
 
-        def result = TaskAPI.show(task.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.show(task.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -49,7 +49,7 @@ class TaskTests  {
     }
 
     void testShowTaskNotExist() {
-        def result = TaskAPI.show(-99, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.show(-99, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -64,7 +64,7 @@ class TaskTests  {
 
     void testAddTask() {
         Project project = BasicInstanceBuilder.getProject()
-        def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(project.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
 
@@ -91,13 +91,13 @@ class TaskTests  {
         //add algo-annotation-term for this job
         AlgoAnnotationTerm at1 = BasicInstanceBuilder.getAlgoAnnotationTerm(job,a1,userJob)
 
-        def result = TaskAPI.create(job.project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(job.project.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def jsonTask = JSON.parse(result.data)
 
 
         //delete all job data
-        result = JobAPI.deleteAllJobData(job.id, jsonTask.task.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = JobAPI.deleteAllJobData(job.id, jsonTask.task.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         def task = new Task().getFromDatabase(jsonTask.task.id)
@@ -106,14 +106,14 @@ class TaskTests  {
 
     void testListTaskCommentForProject() {
         Project project = BasicInstanceBuilder.getProject()
-        def result = TaskAPI.create(project.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = TaskAPI.create(project.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def idtask = JSON.parse(result.data).task.id
         Task task = new Task()
         task = task.getFromDatabase(idtask)
         task.addComment("test")
 
-       result = TaskAPI.listByProject(project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+       result = TaskAPI.listByProject(project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
        def json = JSON.parse(result.data)
        assert json instanceof JSONObject

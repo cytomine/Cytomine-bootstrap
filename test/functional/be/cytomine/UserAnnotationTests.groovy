@@ -25,7 +25,7 @@ class UserAnnotationTests  {
 
     void testGetUserAnnotationWithCredential() {
         def annotation = BasicInstanceBuilder.getUserAnnotation()
-        def result = UserAnnotationAPI.show(annotation.id, Infos.GOODLOGIN,Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.show(annotation.id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -33,14 +33,14 @@ class UserAnnotationTests  {
 
     void testListUserAnnotationWithCredential() {
         BasicInstanceBuilder.getUserAnnotation()
-        def result = UserAnnotationAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
     }
 
     void testCountAnnotationWithCredential() {
-        def result = UserAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.countByUser(BasicInstanceBuilder.getUser1().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -50,29 +50,29 @@ class UserAnnotationTests  {
     
     void testDownloadUserAnnotationDocument() {
         AnnotationTerm annotationTerm = BasicInstanceBuilder.getAnnotationTerm()
-        def result = UserAnnotationAPI.downloadDocumentByProject(annotationTerm.userAnnotation.project.id,annotationTerm.userAnnotation.user.id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.downloadDocumentByProject(annotationTerm.userAnnotation.project.id,annotationTerm.userAnnotation.user.id,annotationTerm.term.id, annotationTerm.userAnnotation.image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
     void testAddUserAnnotationCorrect() {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(annotationToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = UserAnnotationAPI.undo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = UserAnnotationAPI.redo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -82,7 +82,7 @@ class UserAnnotationTests  {
         def annotations = []
         annotations << JSON.parse(annotationToAdd1.encodeAsJSON())
         annotations << JSON.parse(annotationToAdd2.encodeAsJSON())
-        def result = UserAnnotationAPI.create(JSONUtils.toJSONString(annotations), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(JSONUtils.toJSONString(annotations), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -90,7 +90,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.project = null
-        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -106,23 +106,23 @@ class UserAnnotationTests  {
         log.info idTerm1
         log.info idTerm2
 
-        def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idAnnotation = result.data.id
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = UserAnnotationAPI.undo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = UserAnnotationAPI.redo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -135,7 +135,7 @@ class UserAnnotationTests  {
         Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
         updateAnnotation.term = [idTerm1, idTerm2]
 
-        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -143,7 +143,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = 'POLYGON EMPTY'
-        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -151,7 +151,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.location = null
-        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -159,7 +159,7 @@ class UserAnnotationTests  {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def updateAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         updateAnnotation.image = -99
-        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.create(updateAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -170,24 +170,24 @@ class UserAnnotationTests  {
                 [location: [new WKTReader().read("POLYGON ((2107 2160, 2047 2074, 1983 2168, 1983 2168, 2107 2160))"),new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168, 1983 2168))")]]
         )
 
-        def result = UserAnnotationAPI.update(annotationToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.update(annotationToAdd.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idAnnotation = json.annotation.id
 
-        def showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = UserAnnotationAPI.undo()
         assert 200 == result.code
-        showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
         showResult = UserAnnotationAPI.redo()
         assert 200 == result.code
-        showResult = UserAnnotationAPI.show(idAnnotation, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = UserAnnotationAPI.show(idAnnotation, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
     }
 
@@ -196,7 +196,7 @@ class UserAnnotationTests  {
         UserAnnotation annotationToEdit = UserAnnotation.get(annotationToAdd.id)
         def jsonAnnotation = JSON.parse((String)annotationToEdit.encodeAsJSON())
         jsonAnnotation.id = "-99"
-        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -204,7 +204,7 @@ class UserAnnotationTests  {
         UserAnnotation annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
         def jsonAnnotation = JSON.parse((String)annotationToAdd.encodeAsJSON())
         jsonAnnotation.location = "POINT (BAD GEOMETRY)"
-        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.update(annotationToAdd.id, jsonAnnotation.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -212,34 +212,34 @@ class UserAnnotationTests  {
         def annotationToDelete = BasicInstanceBuilder.getUserAnnotationNotExist()
         assert annotationToDelete.save(flush: true)  != null
         def id = annotationToDelete.id
-        def result = UserAnnotationAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def showResult = UserAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = UserAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = UserAnnotationAPI.undo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = UserAnnotationAPI.redo()
         assert 200 == result.code
 
-        result = UserAnnotationAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteUserAnnotationNotExist() {
-        def result = UserAnnotationAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteUserAnnotationWithData() {
         def annotTerm = BasicInstanceBuilder.getAnnotationTerm()
         def annotationToDelete = annotTerm.userAnnotation
-        def result = UserAnnotationAPI.delete(annotationToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.delete(annotationToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -252,7 +252,7 @@ class UserAnnotationTests  {
         AnnotationTerm aat = BasicInstanceBuilder.getAnnotationTermNotExist(annotationWith2Term,true)
 
 
-        def result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
@@ -260,27 +260,27 @@ class UserAnnotationTests  {
 
         //very small bbox, hight annotation number
         String bbox = "1,1,100,100"
-        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,1,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,2,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, annotation.user.id, bbox, true,3,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
 
-        result = UserAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(-99, annotation.user.id, bbox, false,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
-        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserAnnotationAPI.listByImageAndUser(annotation.image.id, -99, bbox, false,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -310,7 +310,7 @@ class UserAnnotationTests  {
 
         assert UserAnnotation.findAllByImage(a1.image).size()==2
 
-        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,20, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert UserAnnotation.findAllByImage(a1.image).size()==1
@@ -341,7 +341,7 @@ class UserAnnotationTests  {
 
         assert UserAnnotation.findAllByImage(a1.image).size()==2
 
-        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,10,null, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         assert UserAnnotation.findAllByImage(a1.image).size()==1
@@ -492,7 +492,7 @@ class UserAnnotationTests  {
 //
 //         assert UserAnnotation.findAllByImage(a1.image).size()==11
 //
-//         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,2,25, 9999999,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+//         def result = AlgoAnnotationAPI.union(a1.image.id,a1.user.id,a1.terms().first().id,2,25, 9999999,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 //         assert 200 == result.code
 //
 //        println UserAnnotation.findAllByImage(a1.image).size()

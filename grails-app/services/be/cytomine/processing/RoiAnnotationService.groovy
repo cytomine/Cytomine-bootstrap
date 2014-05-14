@@ -1,6 +1,6 @@
 package be.cytomine.processing
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -25,6 +25,7 @@ class RoiAnnotationService extends ModelService {
     def reviewedAnnotationService
     def propertyService
     def annotationListingService
+    def securityACLService
 
 
     def currentDomain() {
@@ -34,13 +35,13 @@ class RoiAnnotationService extends ModelService {
     RoiAnnotation read(def id) {
         def annotation = RoiAnnotation.read(id)
         if (annotation) {
-            SecurityACL.check(annotation.container(),READ)
+            securityACLService.check(annotation.container(),READ)
         }
         annotation
     }
 
     def list(Project project,def propertiesToShow = null) {
-        SecurityACL.check(project.container(),READ)
+        securityACLService.check(project.container(),READ)
         annotationListingService.executeRequest(new RoiAnnotationListing(project: project.id, columnToPrint: propertiesToShow))
     }
 
@@ -50,7 +51,7 @@ class RoiAnnotationService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json,def minPoint = null, def maxPoint = null) {
-        SecurityACL.check(json.project, Project,READ)
+        securityACLService.check(json.project, Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
 
         //simplify annotation
@@ -76,7 +77,7 @@ class RoiAnnotationService extends ModelService {
      */
     def update(RoiAnnotation annotation, def jsonNewData) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsSameUserOrAdminContainer(annotation,annotation.user,currentUser)
+        securityACLService.checkIsSameUserOrAdminContainer(annotation,annotation.user,currentUser)
         //simplify annotation
         try {
             def data = simplifyGeometryService.simplifyPolygon(json.location, annotation?.geometryCompression)
@@ -98,7 +99,7 @@ class RoiAnnotationService extends ModelService {
      */
     def delete(RoiAnnotation domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.checkIsSameUserOrAdminContainer(domain,domain.user,currentUser)
+        securityACLService.checkIsSameUserOrAdminContainer(domain,domain.user,currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

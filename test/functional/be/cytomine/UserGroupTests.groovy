@@ -21,17 +21,17 @@ class UserGroupTests  {
         UserGroup userGroup =  new UserGroup(user: user,group : group)
         BasicInstanceBuilder.saveDomain(userGroup)
 
-        def result = UserGroupAPI.showUserGroupCurrent(user.id,group.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserGroupAPI.showUserGroupCurrent(user.id,group.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        result = UserGroupAPI.showUserGroupCurrent(-99,-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = UserGroupAPI.showUserGroupCurrent(-99,-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testListUserGroup() {
         def user = BasicInstanceBuilder.user1
 
-        def result = UserGroupAPI.list(user.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserGroupAPI.list(user.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -41,7 +41,7 @@ class UserGroupTests  {
         BasicInstanceBuilder.saveDomain(group)
         UserGroup userGroup =  new UserGroup(user: user,group : group)
 
-        def result = UserGroupAPI.create(user.id,userGroup.encodeAsJSON(),Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserGroupAPI.create(user.id,userGroup.encodeAsJSON(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -52,7 +52,7 @@ class UserGroupTests  {
         UserGroup userGroup =  new UserGroup(user: user,group : group)
         BasicInstanceBuilder.saveDomain(userGroup)
 
-        def result = UserGroupAPI.delete(user.id,group.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = UserGroupAPI.delete(user.id,group.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 

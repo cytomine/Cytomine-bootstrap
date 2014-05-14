@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class SampleTests  {
 
   void testListSampleWithCredential() {
-      def result = SampleAPI.list(Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
@@ -31,7 +31,7 @@ class SampleTests  {
   }
 
   void testShowSampleWithCredential() {
-      def result = SampleAPI.show(BasicInstanceBuilder.getSample().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.show(BasicInstanceBuilder.getSample().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -39,53 +39,53 @@ class SampleTests  {
 
   void testAddSampleCorrect() {
       def sampleToAdd = BasicInstanceBuilder.getSampleNotExist()
-      def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       int idSample = result.data.id
 
-      result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = SampleAPI.undo()
       assert 200 == result.code
 
-      result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
 
       result = SampleAPI.redo()
       assert 200 == result.code
 
-      result = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
 
   void testAddSampleAlreadyExist() {
       def sampleToAdd = BasicInstanceBuilder.getSample()
-      def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.create(sampleToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 409 == result.code
   }
 
   void testUpdateSampleCorrect() {
       Sample sampleToAdd = BasicInstanceBuilder.getSample()
       def data = UpdateData.createUpdateSet(sampleToAdd,[name: ["OLDNAME","NEWNAME"]])
-      def result = SampleAPI.update(sampleToAdd.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.update(sampleToAdd.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idSample = json.sample.id
 
-      def showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       json = JSON.parse(showResult.data)
       BasicInstanceBuilder.compare(data.mapNew, json)
 
       showResult = SampleAPI.undo()
       assert 200 == result.code
-      showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      showResult = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
 
       showResult = SampleAPI.redo()
       assert 200 == result.code
-      showResult = SampleAPI.show(idSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      showResult = SampleAPI.show(idSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
   }
 
@@ -99,7 +99,7 @@ class SampleTests  {
       jsonUpdate.name = sampleWithOldName.name
       jsonUpdate.id = -99
       jsonSample = jsonUpdate.toString()
-      def result = SampleAPI.update(-99, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.update(-99, jsonSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -112,7 +112,7 @@ class SampleTests  {
       def jsonUpdate = JSON.parse(jsonSample)
       jsonUpdate.name = sampleWithOldName.name
       jsonSample = jsonUpdate.toString()
-      def result = SampleAPI.update(sampleToEdit.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.update(sampleToEdit.id, jsonSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 409 == result.code
   }
     
@@ -123,7 +123,7 @@ class SampleTests  {
         def jsonUpdate = JSON.parse(jsonSample)
         jsonUpdate.name = null
         jsonSample = jsonUpdate.toString()
-        def result = SampleAPI.update(sampleToAdd.id, jsonSample, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = SampleAPI.update(sampleToAdd.id, jsonSample, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -131,27 +131,27 @@ class SampleTests  {
       def sampleToDelete = BasicInstanceBuilder.getSampleNotExist()
       assert sampleToDelete.save(flush: true)!= null
       def id = sampleToDelete.id
-      def result = SampleAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = SampleAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
 
       result = SampleAPI.undo()
       assert 200 == result.code
 
-      result = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = SampleAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
       result = SampleAPI.redo()
       assert 200 == result.code
 
-      result = SampleAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = SampleAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
   void testDeleteSampleNotExist() {
-      def result = SampleAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = SampleAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 }

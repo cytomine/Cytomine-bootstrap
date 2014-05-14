@@ -3,7 +3,7 @@ package be.cytomine.api.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
@@ -35,6 +35,8 @@ class RestACLController extends RestController {
     def dataSource
     def softwareService
     def storageService
+    def securityACLService
+    def currentRoleServiceProxy
 
     @RestApiMethod(description="Get all ACL for a user and a class.", listing=true)
     @RestApiParams(params=[
@@ -99,7 +101,7 @@ class RestACLController extends RestController {
                 (Means that johndoe has access admin (16) to "project a"
              */
 
-            if(!currentUser.isAdmin()) {
+            if(!currentRoleServiceProxy.isAdminByNow(currentUser)) {
                 /*
                     This sub request select only permission on object on which current user has admin access.
                     e.g. if "janedoe" execute this request, she must have admin (=16) access to  "project a"

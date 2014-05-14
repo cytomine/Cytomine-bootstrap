@@ -21,7 +21,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         User user1 = BasicInstanceBuilder.getUser(USERNAMEWITHOUTDATA,PASSWORDWITHOUTDATA)
 
         //Get user admin
-        User admin = BasicInstanceBuilder.getAdmin(USERNAMEADMIN,PASSWORDADMIN)
+        User admin = BasicInstanceBuilder.getSuperAdmin(USERNAMEADMIN,PASSWORDADMIN)
 
         //Check if admin can read/add/update/del
         assert (200 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAMEADMIN,PASSWORDADMIN).code)

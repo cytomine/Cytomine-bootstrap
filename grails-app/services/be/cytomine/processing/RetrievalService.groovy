@@ -28,6 +28,7 @@ class RetrievalService {
     static transactional = true
     def grailsApplication
     def dataSource
+    def currentRoleServiceProxy
 
     /**
      * Search similar annotation and best term for an annotation
@@ -58,7 +59,8 @@ class RetrievalService {
         }
 
         //Only keep projects available for the current user
-        projectSearch = projectSearch.findAll{ Project.read(it).checkPermission(READ)}
+        boolean isAdmin = currentRoleServiceProxy.isAdminByNow()
+        projectSearch = projectSearch.findAll{ Project.read(it).checkPermission(READ,isAdmin)}
 
         log.info "search ${annotation.id} on projects ${projectSearch}"
         log.info "log.addannotation2"

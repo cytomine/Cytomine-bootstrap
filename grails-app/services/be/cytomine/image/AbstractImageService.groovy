@@ -31,6 +31,7 @@ class AbstractImageService extends ModelService {
     def groupService
     def imageInstanceService
     def attachedFileService
+    def currentRoleServiceProxy
 
     def currentDomain() {
         return AbstractImage
@@ -59,7 +60,7 @@ class AbstractImageService extends ModelService {
 
     //TODO: secure! ACL
     def list(User user) {
-        if(user.admin) {
+        if(currentRoleServiceProxy.isAdminByNow(user)) {
             return AbstractImage.list()
         } else {
             def allImages = []

@@ -20,28 +20,28 @@ class AnnotationFilterTests  {
     
 
   void testListAnnotationFilterByProject() {
-      def result = AnnotationFilterAPI.listByProject(BasicInstanceBuilder.getProject().id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.listByProject(BasicInstanceBuilder.getProject().id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json.collection instanceof JSONArray
 
-      result = AnnotationFilterAPI.listByProject(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = AnnotationFilterAPI.listByProject(-99,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
     void testListAnnotationFilterByOntology() {
-        def result = AnnotationFilterAPI.listByOntology(BasicInstanceBuilder.getProject().ontology.id,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationFilterAPI.listByOntology(BasicInstanceBuilder.getProject().ontology.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
 
-        result = AnnotationFilterAPI.listByOntology(-99,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = AnnotationFilterAPI.listByOntology(-99,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
   void testShowAnnotationFilterWithCredential() {
-      def result = AnnotationFilterAPI.show(BasicInstanceBuilder.getAnnotationFilter().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.show(BasicInstanceBuilder.getAnnotationFilter().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
@@ -49,24 +49,24 @@ class AnnotationFilterTests  {
 
   void testAddAnnotationFilterCorrect() {
       def annotationfilterToAdd = BasicInstanceBuilder.getAnnotationFilterNotExist()
-      def result = AnnotationFilterAPI.create(annotationfilterToAdd.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.create(annotationfilterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       int idAnnotationFilter = result.data.id
 
-      result = AnnotationFilterAPI.show(idAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      result = AnnotationFilterAPI.show(idAnnotationFilter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
   }
 
   void testUpdateAnnotationFilterCorrect() {
       def af =  BasicInstanceBuilder.getAnnotationFilter()
       def data = UpdateData.createUpdateSet(af,[name: ["OLDNAME","NEWNAME"]])
-      def result = AnnotationFilterAPI.update(af.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.update(af.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
       def json = JSON.parse(result.data)
       assert json instanceof JSONObject
       int idAnnotationFilter = json.annotationfilter.id
 
-      def showResult = AnnotationFilterAPI.show(idAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = AnnotationFilterAPI.show(idAnnotationFilter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       json = JSON.parse(showResult.data)
       BasicInstanceBuilder.compare(data.mapNew, json)
   }
@@ -81,7 +81,7 @@ class AnnotationFilterTests  {
       jsonUpdate.name = annotationfilterWithOldName.name
       jsonUpdate.id = -99
       jsonAnnotationFilter = jsonUpdate.toString()
-      def result = AnnotationFilterAPI.update(-99, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.update(-99, jsonAnnotationFilter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 
@@ -92,7 +92,7 @@ class AnnotationFilterTests  {
         def jsonUpdate = JSON.parse(jsonAnnotationFilter)
         jsonUpdate.name = null
         jsonAnnotationFilter = jsonUpdate.toString()
-        def result = AnnotationFilterAPI.update(annotationfilterToAdd.id, jsonAnnotationFilter, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = AnnotationFilterAPI.update(annotationfilterToAdd.id, jsonAnnotationFilter, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code
     }
 
@@ -100,15 +100,15 @@ class AnnotationFilterTests  {
       def annotationfilterToDelete = BasicInstanceBuilder.getAnnotationFilterNotExist()
       assert annotationfilterToDelete.save(flush: true)!= null
       def id = annotationfilterToDelete.id
-      def result = AnnotationFilterAPI.delete(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 200 == result.code
 
-      def showResult = AnnotationFilterAPI.show(id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def showResult = AnnotationFilterAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == showResult.code
   }
 
   void testDeleteAnnotationFilterNotExist() {
-      def result = AnnotationFilterAPI.delete(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+      def result = AnnotationFilterAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
 }

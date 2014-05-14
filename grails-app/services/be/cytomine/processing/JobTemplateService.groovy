@@ -1,6 +1,6 @@
 package be.cytomine.processing
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -20,6 +20,7 @@ class JobTemplateService extends ModelService {
      def dataSource
      def reviewedAnnotationService
      def propertyService
+    def securityACLService
 
      def currentDomain() {
          return JobTemplate
@@ -28,13 +29,13 @@ class JobTemplateService extends ModelService {
      def read(def id) {
          def job = JobTemplate.read(id)
          if(job) {
-             SecurityACL.check(job.container(),READ)
+             securityACLService.check(job.container(),READ)
          }
          job
      }
 
      def list(Project project, Software software = null) {
-         SecurityACL.check(project.container(),READ)
+         securityACLService.check(project.container(),READ)
          if(software) {
              return JobTemplate.findAllByProject(project,software)
          } else {
@@ -48,8 +49,8 @@ class JobTemplateService extends ModelService {
       * @return Response structure (created domain data,..)
       */
      def add(def json) {
-         SecurityACL.check(json.project,Project,READ)
-         SecurityACL.checkReadOnly(json.project,Project)
+         securityACLService.check(json.project,Project,READ)
+         securityACLService.checkReadOnly(json.project,Project)
          SecUser currentUser = cytomineService.getCurrentUser()
          json.user = currentUser.id
          Command c = new AddCommand(user: currentUser)
@@ -63,10 +64,10 @@ class JobTemplateService extends ModelService {
       * @return  Response structure (new domain data, old domain data..)
       */
      def update(JobTemplate domain, def jsonNewData) {
-         SecurityACL.check(domain.container(),READ)
-         SecurityACL.check(jsonNewData.project,Project,READ)
-         SecurityACL.checkReadOnly(domain.container())
-         SecurityACL.checkReadOnly(jsonNewData.project,Project)
+         securityACLService.check(domain.container(),READ)
+         securityACLService.check(jsonNewData.project,Project,READ)
+         securityACLService.checkReadOnly(domain.container())
+         securityACLService.checkReadOnly(jsonNewData.project,Project)
          SecUser currentUser = cytomineService.getCurrentUser()
          Command c = new EditCommand(user: currentUser)
          executeCommand(c,domain,jsonNewData)
@@ -81,8 +82,8 @@ class JobTemplateService extends ModelService {
       * @return Response structure (code, old domain,..)
       */
      def delete(JobTemplate domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-         SecurityACL.check(domain.container(),READ)
-         SecurityACL.checkReadOnly(domain.container())
+         securityACLService.check(domain.container(),READ)
+         securityACLService.checkReadOnly(domain.container())
          SecUser currentUser = cytomineService.getCurrentUser()
          Command c = new DeleteCommand(user: currentUser,transaction:transaction)
          return executeCommand(c,domain,null)

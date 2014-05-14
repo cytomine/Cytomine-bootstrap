@@ -1,7 +1,7 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ServerException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
@@ -20,6 +20,7 @@ class JobDataService extends ModelService {
     def userGroupService
     def springSecurityService
     def transactionService
+    def securityACLService
 
     def currentDomain() {
         return JobData
@@ -28,23 +29,23 @@ class JobDataService extends ModelService {
     def read(def id) {
         def jobData = JobData.read(id)
         if(jobData) {
-            SecurityACL.check(jobData.container(),READ)
+            securityACLService.check(jobData.container(),READ)
         }
         jobData
     }
 
     def list() {
-        SecurityACL.checkAdmin(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         JobData.list(sort: "id")
     }
 
     def list(Job job) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         JobData.findAllByJob(job)
     }
 
     def list(Job job, String key) {
-        SecurityACL.check(job.container(),READ)
+        securityACLService.check(job.container(),READ)
         JobData.findAllByJobAndKey(job, key)
     }
 
@@ -158,7 +159,7 @@ class JobDataService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.job, Job,"container",READ)
+        securityACLService.check(json.job, Job,"container",READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
@@ -170,7 +171,7 @@ class JobDataService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(JobData jd, def jsonNewData) {
-        SecurityACL.check(jd.container(),READ)
+        securityACLService.check(jd.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         return executeCommand(new EditCommand(user: currentUser),jd,jsonNewData)
     }
@@ -185,7 +186,7 @@ class JobDataService extends ModelService {
      */
     def delete(JobData domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }

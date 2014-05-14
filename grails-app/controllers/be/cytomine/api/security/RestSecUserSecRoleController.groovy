@@ -26,6 +26,7 @@ class RestSecUserSecRoleController extends RestController {
     def secRoleService
     def secUserSecRoleService
     def cytomineService
+    def currentRoleServiceProxy
 
     /**
      * List all roles for a user
@@ -101,7 +102,7 @@ class RestSecUserSecRoleController extends RestController {
             }
             secUserSecRoleService.define(user,role)
 
-            responseSuccess(user.authorities)
+            responseSuccess(currentRoleServiceProxy.findCurrentRole(user))
 
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)

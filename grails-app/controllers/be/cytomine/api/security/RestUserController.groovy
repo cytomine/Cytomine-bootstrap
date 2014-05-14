@@ -1,7 +1,7 @@
 package be.cytomine.api.security
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
@@ -35,6 +35,7 @@ class RestUserController extends RestController {
     def ontologyService
     def imageInstanceService
     def groupService
+    def securityACLService
 
     /**
      * Get all project users
@@ -215,7 +216,7 @@ class RestUserController extends RestController {
         } else {
             user = secUserService.findByUsername(params.id)
         }
-        SecurityACL.checkIsSameUser(user,cytomineService.currentUser)
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         if (user) {
             responseSuccess([publicKey:user.publicKey,privateKey:user.privateKey])
         } else {
@@ -268,6 +269,9 @@ class RestUserController extends RestController {
         maps.admin = authMaps.get("admin")
         maps.user = authMaps.get("user")
         maps.guest = authMaps.get("guest")
+        maps.adminByNow = authMaps.get("adminByNow")
+        maps.userByNow = authMaps.get("userByNow")
+        maps.guestByNow = authMaps.get("guestByNow")
         maps.isSwitched = SpringSecurityUtils.isSwitched()
         if(maps.isSwitched) {
             maps.realUser = SpringSecurityUtils.switchedUserOriginalUsername
@@ -400,7 +404,7 @@ class RestUserController extends RestController {
         String newPassword = params.get('password')
         log.info "change password for user $user with new password $newPassword"
         if(user && newPassword) {
-            SecurityACL.checkIsCreator(user,cytomineService.currentUser)
+            securityACLService.checkIsCreator(user,cytomineService.currentUser)
             user.newPassword = newPassword
             //force to reset password (newPassword is transient => beforeupdate is not called):
             user.password = "bad"

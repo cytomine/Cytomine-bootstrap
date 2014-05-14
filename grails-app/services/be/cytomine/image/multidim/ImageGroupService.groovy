@@ -1,6 +1,6 @@
 package be.cytomine.image.multidim
 
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -20,6 +20,7 @@ class ImageGroupService extends ModelService {
     def dataSource
     def reviewedAnnotationService
     def imageSequenceService
+    def securityACLService
 
     def currentDomain() {
         return ImageGroup
@@ -28,13 +29,13 @@ class ImageGroupService extends ModelService {
     def read(def id) {
         def image = ImageGroup.read(id)
         if(image) {
-            SecurityACL.check(image.container(),READ)
+            securityACLService.check(image.container(),READ)
         }
         image
     }
 
     def list(Project project) {
-        SecurityACL.check(project,READ)
+        securityACLService.check(project,READ)
         return ImageGroup.findAllByProject(project)
     }
 
@@ -45,7 +46,7 @@ class ImageGroupService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.project,Project,READ)
+        securityACLService.check(json.project,Project,READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         synchronized (this.getClass()) {
@@ -61,8 +62,8 @@ class ImageGroupService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(ImageGroup domain, def jsonNewData) {
-        SecurityACL.check(domain.container(),READ)
-        SecurityACL.check(jsonNewData.project,Project,READ)
+        securityACLService.check(domain.container(),READ)
+        securityACLService.check(jsonNewData.project,Project,READ)
 
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
@@ -78,7 +79,7 @@ class ImageGroupService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(ImageGroup domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

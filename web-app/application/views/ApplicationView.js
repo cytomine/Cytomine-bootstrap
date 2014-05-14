@@ -111,10 +111,42 @@ var ApplicationView = Backbone.View.extend({
             $("#loggedUser").css("color","#ff0000");
             $("#li-cancel-switch-user").show();
             $("#a-cancel-switch-user").append(" Go back to " + window.app.status.user.model.get("realUser"));
-            $("#a-cancel-switch-user").css("color","#ff0000");
+            $("#a-cancel-switch-user").css("color","#d2322d");
         } else {
             $("#li-cancel-switch-user").hide();
         }
+
+
+        if(window.app.status.user.model.get("adminByNow")) {
+            //user is admin and an admin session is open
+            $("#userIcon").addClass("glyphicon");
+            $("#userIcon").addClass("glyphicon-star");
+        } else {
+            $("#userIcon").addClass("glyphicon");
+            $("#userIcon").addClass("glyphicon-user");
+        }
+
+        if(window.app.status.user.model.get("adminByNow")) {
+            //user is admin and an admin session is open
+            $("#warning-user-logged-as-admin").show();
+            $("#li-close-admin-session").show();
+            $("#li-close-admin-session").on("click", function (e) {
+                e.preventDefault();
+                $.get( "grantRole/closeAdminSession.json", function( data ) {
+                    location.reload(true);
+                });
+            });
+        } else if (window.app.status.user.model.get("admin")){
+            $("#li-open-admin-session").show();
+            $("#li-open-admin-session").on("click", function (e) {
+                e.preventDefault();
+                $.get( "grantRole/openAdminSession.json", function( data ) {
+                    location.reload(true);
+                });
+            });
+        }
+
+
 
 
         if(window.app.status.user.model.get('guest'))  {

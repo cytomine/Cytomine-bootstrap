@@ -7,6 +7,7 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.PermissionService
 import be.cytomine.security.SecUser
+import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.util.Holders
 import groovy.util.logging.Log
@@ -34,16 +35,21 @@ class Infos {
 
     public static String CYTOMINEURL = Holders.getGrailsApplication().config.grails.serverURL + "/"
 
-    public static String GOODLOGIN = "lrollus"
-    public static String GOODPASSWORD = 'lR$2011'
+    public static String ADMINLOGIN = "admin"
+    public static String ADMINPASSWORD = 'admin'
 
-    public static String ANOTHERLOGIN = "rmaree"
-    public static String ANOTHERPASSWORD = 'rM$2011'
+    public static String SUPERADMINLOGIN = "superadmin"
+    public static String SUPERADMINPASSWORD = 'superadmin'
+
+    public static String ANOTHERLOGIN = "anotheruser"
+    public static String ANOTHERPASSWORD = 'password'
 
     public static String GOODPASSWORDUSERJOB = 'PasswordUserJob'
 
     public static String BADLOGIN = 'badlogin'
     public static String BADPASSWORD = 'badpassword'
+
+
 
     public static String UNDOURL = "command/undo.json"
     public static String REDOURL = "command/redo.json"
@@ -64,41 +70,54 @@ class Infos {
      * @param project Project
      */
     static void addUserRight(User user, Project project) {
-        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
         PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
-        service.addPermission(project,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(project,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(project.ontology,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(project,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(project,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(project.ontology,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+    }
+
+    static void addUserRight(String username, Ontology ontology) {
+        addUserRight(User.findByUsername(username), ontology)
     }
 
     static void addUserRight(User user, Ontology ontology) {
-        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
-        service.addPermission(ontology,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(ontology,user.username,WRITE,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(ontology,user.username,DELETE,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(ontology,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(ontology,user.username,WRITE,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(ontology,user.username,DELETE,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(ontology,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+    }
+
+    static void addUserRight(String username, Software software) {
+        addUserRight(User.findByUsername(username), software)
     }
 
     static void addUserRight(User user, Software software) {
-        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
-        service.addPermission(software,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(software,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(software,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(software,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+    }
+
+    static void addUserRight(String username, Storage storage) {
+        addUserRight(User.findByUsername(username), storage)
     }
 
     static void addUserRight(User user, Storage storage) {
-        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
-        service.addPermission(storage,user.username,READ,SecUser.findByUsername(Infos.GOODLOGIN))
-        service.addPermission(storage,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.GOODLOGIN))
+        service.addPermission(storage,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
+        service.addPermission(storage,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
     }
 
     static void addUserRight(User user, CytomineDomain domain, def perms) {
-        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.GOODLOGIN, Infos.GOODPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
+        SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
         perms.each {
-            service.addPermission(domain,user.username,it,SecUser.findByUsername(Infos.GOODLOGIN))
+            service.addPermission(domain,user.username,it,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         }
     }
     /**
@@ -114,7 +133,7 @@ class Infos {
      * @param user User to check
      */
     static void printUserRight(User user) {
-        def roles = user.getAuthorities()
+        def roles = SecUserSecRole.findAllBySecUser(user).collect { it.secRole }
         roles.each { role ->
             log.info role.authority
         }

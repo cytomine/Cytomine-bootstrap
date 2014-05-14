@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class ImageGroupTests {
     
     void testGetImageGroup() {
-        def result = ImageGroupAPI.show(BasicInstanceBuilder.getImageGroup().id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.show(BasicInstanceBuilder.getImageGroup().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
@@ -27,37 +27,37 @@ class ImageGroupTests {
 
     void testListImageGroupByProject() {
         BasicInstanceBuilder.getImageGroup()
-        def result = ImageGroupAPI.list(BasicInstanceBuilder.getImageGroup().project.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.list(BasicInstanceBuilder.getImageGroup().project.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert json.collection.size()>=1
 
-        result = ImageGroupAPI.list(-99, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.list(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
 
     void testAddImageGroupCorrect() {
 
-        def result = ImageGroupAPI.create(BasicInstanceBuilder.getImageGroupNotExist(BasicInstanceBuilder.getProject(),false).encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.create(BasicInstanceBuilder.getImageGroupNotExist(BasicInstanceBuilder.getProject(),false).encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         ImageGroup image = result.data
         Long idImage = image.id
 
-        result = ImageGroupAPI.show(image.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.show(image.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ImageGroupAPI.undo()
         assert 200 == result.code
 
-        result = ImageGroupAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = ImageGroupAPI.redo()
         assert 200 == result.code
 
-        result = ImageGroupAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
     }
@@ -68,13 +68,13 @@ class ImageGroupTests {
         def updateImage = JSON.parse(jsonImage)
         updateImage.project = -99
         jsonImage = updateImage.toString()
-        def result = ImageGroupAPI.create(jsonImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.create(jsonImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testaddImageGroupAlreadyExist() {
         def imageGroup = BasicInstanceBuilder.getImageGroupNotExist(BasicInstanceBuilder.getProject(),false)
-        def result = ImageGroupAPI.create(imageGroup.encodeAsJSON(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.create(imageGroup.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -83,19 +83,19 @@ class ImageGroupTests {
         def image = BasicInstanceBuilder.getImageGroup()
         def data = UpdateData.createUpdateSet(image,[project: [BasicInstanceBuilder.getProject(),BasicInstanceBuilder.getProjectNotExist(true)]])
 
-        def result = ImageGroupAPI.update(image.id, data.postData,Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.update(image.id, data.postData,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
         int idImageGroup = json.imagegroup.id
-        def showResult = ImageGroupAPI.show(idImageGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ImageGroupAPI.show(idImageGroup, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
 
         showResult = ImageGroupAPI.undo()
         assert 200==showResult.code
 
-        showResult = ImageGroupAPI.show(idImageGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ImageGroupAPI.show(idImageGroup, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
 
         BasicInstanceBuilder.compare(data.mapOld, json)
@@ -103,7 +103,7 @@ class ImageGroupTests {
         showResult = ImageGroupAPI.redo()
         assert 200==showResult.code
 
-        showResult = ImageGroupAPI.show(idImageGroup, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        showResult = ImageGroupAPI.show(idImageGroup, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         json = JSON.parse(showResult.data)
         BasicInstanceBuilder.compare(data.mapNew, json)
     }
@@ -112,7 +112,7 @@ class ImageGroupTests {
         ImageGroup imageToEdit = BasicInstanceBuilder.getImageGroup()
         def jsonUpdate = JSON.parse(imageToEdit.encodeAsJSON())
         jsonUpdate.project = -99
-        def result = ImageGroupAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.update(imageToEdit.id, jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -122,28 +122,28 @@ class ImageGroupTests {
         assert imageGroupToDelete.save(flush: true) != null
         def idImage = imageGroupToDelete.id
 
-        def result = ImageGroupAPI.delete(imageGroupToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.delete(imageGroupToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
-        def showResult = ImageGroupAPI.show(imageGroupToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def showResult = ImageGroupAPI.show(imageGroupToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == showResult.code
 
         result = ImageGroupAPI.undo()
         assert 200 == result.code
 
-        result = ImageGroupAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ImageGroupAPI.redo()
         assert 200 == result.code
 
-        result = ImageGroupAPI.show(idImage, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        result = ImageGroupAPI.show(idImage, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
     void testDeleteImageGroupNoExist() {
         def imageGroupToDelete = BasicInstanceBuilder.getImageGroupNotExist()
-        def result = ImageGroupAPI.delete(imageGroupToDelete.id, Infos.GOODLOGIN, Infos.GOODPASSWORD)
+        def result = ImageGroupAPI.delete(imageGroupToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 }

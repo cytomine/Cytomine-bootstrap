@@ -2,7 +2,7 @@ package be.cytomine.api.ontology
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.SecurityACL
+
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
@@ -43,6 +43,7 @@ class RestUserAnnotationController extends RestController {
     def annotationListingService
     def reportService
     def imageProcessingService
+    def securityACLService
 
     /**
      * List all annotation with light format
@@ -91,7 +92,7 @@ class RestUserAnnotationController extends RestController {
     def addComment() {
 
         User sender = User.read(springSecurityService.principal.id)
-        SecurityACL.checkUser(sender)
+        securityACLService.checkUser(sender)
         UserAnnotation annotation = userAnnotationService.read(params.getLong('userannotation'))
         String cid = UUID.randomUUID().toString()
 

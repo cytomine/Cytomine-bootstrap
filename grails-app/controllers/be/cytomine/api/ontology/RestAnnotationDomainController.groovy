@@ -55,6 +55,7 @@ class RestAnnotationDomainController extends RestController {
     def annotationListingService
     def simplifyGeometryService
     def imageProcessingService
+    def currentRoleServiceProxy
 
     def currentDomainName() {
         return "generic annotation" //needed because not RestAbstractImageController...
@@ -844,7 +845,7 @@ class RestAnnotationDomainController extends RestController {
      */
     def findAnnotationIdThatTouch(String location, def layers, long idImage, String table) {
         ImageInstance image = ImageInstance.read(idImage)
-        boolean projectAdmin = image.project.checkPermission(ADMINISTRATION)
+        boolean projectAdmin = image.project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())
         if(!projectAdmin) {
             layers = layers.findAll{(it+"")==(cytomineService.currentUser.id+"")}
         }

@@ -1,7 +1,7 @@
 package be.cytomine.image.multidim
 
 import be.cytomine.Exception.ObjectNotFoundException
-import be.cytomine.SecurityACL
+
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
@@ -20,6 +20,7 @@ class ImageSequenceService extends ModelService {
     def algoAnnotationService
     def dataSource
     def reviewedAnnotationService
+    def securityACLService
 
     def currentDomain() {
         return ImageSequence
@@ -28,7 +29,7 @@ class ImageSequenceService extends ModelService {
     def read(def id) {
         def image = ImageSequence.read(id)
         if(image) {
-            SecurityACL.check(image.container(),READ)
+            securityACLService.check(image.container(),READ)
         }
         image
     }
@@ -36,7 +37,7 @@ class ImageSequenceService extends ModelService {
     def get(def id) {
         def image = ImageSequence.get(id)
         if(image) {
-            SecurityACL.check(image.container(),READ)
+            securityACLService.check(image.container(),READ)
         }
         image
     }
@@ -92,7 +93,7 @@ class ImageSequenceService extends ModelService {
      * @return Response structure (created domain data,..)
      */
     def add(def json) {
-        SecurityACL.check(json.imageGroup,ImageGroup,"container",READ)
+        securityACLService.check(json.imageGroup,ImageGroup,"container",READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         json.user = currentUser.id
         synchronized (this.getClass()) {
@@ -108,7 +109,7 @@ class ImageSequenceService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(ImageSequence domain, def jsonNewData) {
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
 
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new EditCommand(user: currentUser)
@@ -124,7 +125,7 @@ class ImageSequenceService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(ImageSequence domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        SecurityACL.check(domain.container(),READ)
+        securityACLService.check(domain.container(),READ)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
