@@ -1,4 +1,4 @@
-FROM cytomine_base
+FROM cytomine/base
 
 MAINTAINER BS "b.stevens@ulg.ac.be"
 

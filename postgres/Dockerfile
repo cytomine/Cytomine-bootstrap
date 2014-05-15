@@ -1,7 +1,7 @@
-FROM cytomine_base
-MAINTAINER Helmi <helmi@tuxuri.com>
+FROM cytomine/base
 
-ENV USERNAME cytomine
+MAINTAINER Benjamin Stevens <b.stevens@ulg.ac.be>
+
 RUN apt-get -y update
 RUN apt-get -y install ca-certificates
 RUN apt-get -y install wget
