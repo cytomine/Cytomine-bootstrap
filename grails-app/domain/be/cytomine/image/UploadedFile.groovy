@@ -17,9 +17,6 @@ import org.restapidoc.annotation.RestApiObject
 @RestApiObject(name = "uploaded file", description = "A file uploaded on the server, when finished, we create an 'abstract image' from this uploaded file")
 class UploadedFile extends CytomineDomain implements Serializable{
 
-//    public static allowedMime = ["svs", "opt", "jp2", "scn"]
-//    public static zipMime = ["zip"]
-//    public static mimeToConvert = ["jpg", "jpeg", "png", "tiff", "tif","pgm"]//, "ndpi"]
     public static int UPLOADED = 0
     public static int CONVERTED = 1
     public static int DEPLOYED = 2

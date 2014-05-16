@@ -355,22 +355,22 @@
 <div id="alerts"></div>
 <div id="phono-messages"></div>
 
-<!-- UserVoice JavaScript SDK (only needed once on a page) -->
-<script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/cZml7cQ5dV9V01diPSalCQ.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
 
-<!-- A function to launch the Classic Widget -->
-<script>
-    UserVoice = window.UserVoice || [];
+<script type="text/javascript">	
     function showClassicWidget() {
-        UserVoice.push(['showLightbox', 'classic_widget', {
-            mode: 'full',
-            primary_color: '#cc6d00',
-            link_color: '#007dbf',
-            default_mode: 'support',
-            forum_id: 181698
-        }]);
-    }
+/*		FreshWidget.show(); 
+		return false;*/
+		alert("what?");
+	}	
 </script>
+
+<script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+<script type="text/javascript">
+
+	FreshWidget.init("", {"queryString": "&widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+</script>
+
 
 </body>
 <g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">

@@ -155,7 +155,7 @@ var ApplicationView = Backbone.View.extend({
 
         $("#feedback").on("click", function (e) {
             e.preventDefault();
-            showClassicWidget();
+			FreshWidget.show();
         });
     },
     printTaskEvolution: function (task, divToFill, timeout) {
