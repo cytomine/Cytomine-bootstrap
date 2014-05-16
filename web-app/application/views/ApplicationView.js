@@ -101,6 +101,7 @@ var ApplicationView = Backbone.View.extend({
     },
     initUserMenu: function () {
         var self = this;
+        self.showHideMenuAction();
         //Init user menu
         $("#logout").click(function () {
             window.app.controllers.auth.logout();
@@ -158,6 +159,30 @@ var ApplicationView = Backbone.View.extend({
             showClassicWidget();
         });
     },
+    showHideMenuAction : function() {
+        _.each(window.app.status.customUI.global,function(val,key) {
+            if(val) {
+                $("#custom-ui-"+key).show();
+            } else {
+                $("#custom-ui-"+key).hide();
+            }
+        });
+    },
+//<li><a style="display:none;" id="userdashboard-button" href="#userdashboard"><i class="glyphicon glyphicon-dashboard" /> Dashboard</a></li>
+//    <li><a style="display:none;" id="project-button" href="#project"><i class="glyphicon glyphicon-list-alt" /> Projects</a></li>
+//    <li><a style="display:none;" id="ontology-button" href="#ontology"><i class="glyphicon glyphicon-book" /> Ontologies</a></li>
+//    <li><a style="display:none;" id="explorer-button" href="#explorer"><i class="glyphicon glyphicon-eye-open" /> Explore</a></li>
+//    <li><a style="display:none;" id="upload-button" href="#upload"><span class="glyphicon glyphicon-hdd"></span> Storage</a></li>
+//    <li><a style="display:none;" id="activity-button" href="#activity-"><span class="glyphicon glyphicon-fire"></span> Activity</a></li>
+//    <li><a style="display:none;" id="admin-button" href="admincyto"><span class="glyphicon glyphicon-wrench"></span> Admin</a></li>
+//
+//</ul>
+//<div class="navbar-header  navbar-right">
+//    <ul class="nav navbar-nav navbar-left">
+//        <li class="divider-vertical"></li>
+//        <li><a style="display:none;" id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
+//            <li><a style="display:none;" id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Feedback</a></li>
+//
     printTaskEvolution: function (task, divToFill, timeout) {
         this.printTaskEvolution(task, divToFill, timeout, false);
     },

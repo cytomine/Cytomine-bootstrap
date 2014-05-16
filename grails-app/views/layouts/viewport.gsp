@@ -301,7 +301,7 @@
 <script type="text/javascript" src="application/views/ApplicationView.js" ></script>
 <script type="text/javascript" src="application/views/ConfirmDialogView.js" ></script>
 
-
+<script type="text/javascript" src="application/utils/CustomUI.js" ></script>
 <script type="text/javascript" src="application/utils/CustomModal.js" ></script>
 <script type="text/javascript" src="application/utils/HotKeys.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Utils.js" ></script>

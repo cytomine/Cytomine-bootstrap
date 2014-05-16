@@ -1,12 +1,19 @@
 package be.cytomine
 
 import groovy.sql.Sql
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.GrantedAuthorityImpl
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 class TestController {
 
     def bootstrapTestDataService
     def dataSource
     def attachedFileService
+    def springSecurityService
 
     def index() {}
 
@@ -16,8 +23,24 @@ class TestController {
     }
 
     def test() {
-        println "redirect"
-        redirect uri: "http://localhost:8080/api/project/57.json"
+
+//        println springSecurityService.principal
+//        println springSecurityService.principal.authorities
+//
+//        springSecurityService.principal.authorities = springSecurityService.principal.authorities.findAll{it.authority!="ROLE_ADMIN"}
+//
+//        println springSecurityService.principal.authorities
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(auth.getAuthorities());
+        println "x="+authorities
+        authorities.add(new GrantedAuthorityImpl('ROLE_SUPERADMIN'));
+        println "y="+authorities
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(),auth.getCredentials(),authorities)
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+
+        println "z="+authorities
     }
 
 

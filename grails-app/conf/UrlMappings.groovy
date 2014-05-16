@@ -83,5 +83,23 @@ class UrlMappings {
         "/session/admin/info.$format" (controller: "grantRole") {
             action = [GET:"infoAdminSession"]
         }
+
+        "/custom-ui/global.$format" (controller: "customUI") {
+            action = [GET:"retrieveGlobalUIConfig"]
+        }
+
+        "/custom-ui/roles.$format" (controller: "customUI") {
+            action = [GET:"retrieveUIRoles"]
+        }
+
+        "/custom-ui/project/$project.$format" (controller: "customUI") {
+            action = [GET:"showCustomUIForProject",POST:"addCustomUIForProject"]
+        }
+
+        "/custom-ui/project/$project/flag.$format" (controller: "customUI") {
+            action = [GET:"retrieveProjectUIConfig"]
+        }
+
+
     }
 }

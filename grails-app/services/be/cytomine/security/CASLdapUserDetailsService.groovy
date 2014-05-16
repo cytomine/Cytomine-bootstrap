@@ -40,7 +40,8 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         def authorities = []
         if(user) {
             def auth = SecUserSecRole.findAllBySecUser(user).collect{new GrantedAuthorityImpl(it.secRole.authority)}
-            authorities.addAll(auth)
+            //by default, we remove the role_admin for the current session
+            authorities.addAll(auth.findAll{it.authority!="ROLE_ADMIN"})
         }
 
         if(user==null && casDisabled)  {

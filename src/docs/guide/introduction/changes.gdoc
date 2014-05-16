@@ -1,7 +1,14 @@
 h3. 201405XX Version
 
 "Run as" mode
-Admin session désactivé par défaut. Il est possible de l'activer par défaut.
+Admin session désactivé par défaut
+
+*SQL Changes*
+Ajouter le role SUPER_ADMIN_ROLE pour les utilisateurs qui doivent toujours rester en ADMIN (ifres, retrieval, imageserver?,...)
+alter table property alter column value type character varying
+
+*Other Changes*
+Rename cytomineconfig.properties to cytomineconfig.groovy
 
 h3. 20140506 Version
 

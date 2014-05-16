@@ -14,7 +14,7 @@ import grails.converters.JSON
 
 grails.databinding.convertEmptyStringsToNull = false
 JSON.use('default')
-grails.config.locations = ["file:${userHome}/.grails/cytomineconfig.properties"]
+grails.config.locations = ["file:${userHome}/.grails/cytomineconfig.groovy"]
 println "###########################################################################"
 println "###########################################################################"
 println grails.config.locations
@@ -238,7 +238,7 @@ log4j = {
             'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
     error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
-    debug 'org.springframework.security'
+   // debug 'org.springframework.security'
 
 
 
@@ -291,6 +291,7 @@ log4j = {
 grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugins.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
+        '/admincyto/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/monitoring/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/j_spring_security_switch_user': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
@@ -519,5 +520,21 @@ grails.plugins.restapidoc.defaultErrorPut = [
 
 
 
+cytomine.customUI.global = [
+        dashboard: ["ALL"],
+        project: ["ALL"],
+        ontology: ["ROLE_USER","ROLE_ADMIN"],
+        storage : ["ROLE_USER","ROLE_ADMIN"],
+        activity : ["ROLE_USER","ROLE_ADMIN"],
+        feedback : ["ROLE_USER","ROLE_ADMIN"],
+        explore : ["ALL"],
+        admin : ["ROLE_ADMIN"],
+        help : ["ALL"]
+]
 
-
+cytomine.customUI.project = [
+        "project-annotations-tab":["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":true],
+        "project-properties-tab":["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":true],
+        "project-jobs-tab":["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":false],
+        "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false],
+]

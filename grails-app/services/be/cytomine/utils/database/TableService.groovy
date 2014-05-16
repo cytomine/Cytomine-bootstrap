@@ -40,6 +40,10 @@ class TableService {
                 new Sql(dataSource).executeUpdate("alter table shared_annotation alter column comment type character varying")
             }
 
+            if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'property' and column_name = 'value'")!=null) {
+                log.info "Change type property table..."
+                new Sql(dataSource).executeUpdate("alter table property alter column value type character varying")
+            }
 
             String reqcreate
 

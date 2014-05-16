@@ -66,8 +66,14 @@ var ApplicationController = Backbone.Router.extend({
     },
 
     modelFetched: function (cpt, expected) {
+        var self  = this;
         if (cpt == expected) {
-            this.view.render(this.start);
+            var callback = function() {
+                self.view.render(self.start);
+            };
+
+            CustomUI.retrieveGlobalConfig(callback);
+
         }
     },
 

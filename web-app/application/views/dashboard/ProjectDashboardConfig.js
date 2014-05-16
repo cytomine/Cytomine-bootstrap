@@ -14,6 +14,8 @@ var ProjectDashboardConfig = Backbone.View.extend({
         }).render();
         new MagicWandConfig({}).render();
         this.rendered = true;
+
+        new CutomUIPanel({}).render();
     },
     refresh: function () {
         if (!this.rendered) {
@@ -215,4 +217,91 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
         return this;
 
     }
+});
+
+
+var CutomUIPanel = Backbone.View.extend({
+    obj : null,
+
+    refresh : function() {
+        var self = this;
+        var el = $("#customUIConfigMain");
+
+        var fn = function() {
+            require(["text!application/templates/dashboard/config/CustomUIItem.tpl.html"], function (customUIItemTpl) {
+                $("#customUIConfigMain").empty();
+                _.each(CustomUI.components,function(component) {
+                    var customUI = _.template(customUIItemTpl,component);
+                    $(el).append(customUI);
+                    var ul = $(el).find("#customUI-"+component.componentId+"-roles");
+
+                    if(!self.obj[component.componentId]) {
+                        //component is not define in the project config, active by default
+                        self.obj[component.componentId] = {}
+                        _.each(CustomUI.roles,function(role) {
+                            var active = true;
+                            self.obj[component.componentId][role.authority] = active;
+                            ul.append(self.createButton(role,component,active));
+                        });
+                    } else {
+                        _.each(CustomUI.roles,function(role) {
+                            var active = true;
+                            if( !self.obj[component.componentId][role.authority]) {
+                                active = false;
+                            }
+                            ul.append(self.createButton(role,component,active));
+                        });
+
+                    }
+
+                });
+                $("#btn-project-configuration-tab-ADMIN_PROJECT").attr("disabled", "disabled");
+
+                $(el).find("button").click(function(eventData,ui) {
+                    var currentButton = $("#"+eventData.toElement.id);
+                    var isActiveNow = self.obj[currentButton.data("component")][currentButton.data("role")]==true;
+                    currentButton.removeClass(isActiveNow? "btn-success" : "btn-danger");
+                    currentButton.addClass(isActiveNow? "btn-danger" : "btn-success");
+                    self.obj[currentButton.data("component")][currentButton.data("role")]=!self.obj[currentButton.data("component")][currentButton.data("role")];
+                    self.addConfig();
+                })
+
+            });
+        }
+        self.retrieveConfig(fn);
+    },
+
+    render: function () {
+        var self = this;
+
+        self.refresh();
+        return this;
+    },
+    addConfig : function() {
+        var self = this;
+        $.ajax({
+            type: "POST",
+            url: "custom-ui/project/"+window.app.status.currentProject+".json",
+            data: JSON.stringify(self.obj),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function() {
+                self.refresh();
+                window.app.view.message("Project", "Configuration save!", "success");
+                CustomUI.hideOrShowProjectComponents();
+            }
+        });
+    },
+    retrieveConfig : function(callback) {
+        var self = this;
+        $.get( "custom-ui/project/"+window.app.status.currentProject+".json", function( data ) {
+            self.obj = data;
+            callback();
+        });
+    },
+    createButton : function(role,component, active) {
+        var classBtn = active? "btn-success" : "btn-danger";
+        return '<li><button type="radio" data-component="'+component.componentId+'" data-role="'+role.authority+'" id="btn-' + component.componentId +'-'+role.authority+'" class="btn  btn-large btn-block '+classBtn+'">'+role.name+'</button></li>';
+    }
+
 });

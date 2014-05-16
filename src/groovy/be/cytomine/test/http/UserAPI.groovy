@@ -116,4 +116,25 @@ class UserAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "j_spring_security_switch_user"
         return doPOST(URL, 'j_username: '+usernameToSwitch,username, password)
     }
+
+    static def retrieveCustomUIGlobal(String username, String password) {
+        String URL = Infos.CYTOMINEURL + "custom-ui/global.json"
+        return doGET(URL, username, password)
+    }
+
+    static def retrieveCustomUIProject(Long idProject, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}.json"
+        return doGET(URL,username, password)
+    }
+
+    static def setCustomUIProject(Long idProject, String json,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}.json"
+        return doPOST(URL, json,username, password)
+    }
+
+    static def retrieveCustomUIProjectFlag(Long idProject, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}/flag.json"
+        return doGET(URL,username, password)
+    }
+
 }
