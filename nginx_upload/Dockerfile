@@ -28,5 +28,7 @@ RUN cd /tmp && rm -rf
 
 EXPOSE 80
 
-CMD ["/usr/local/nginx/sbin/nginx"]
+ADD start.sh /tmp/start.sh
+RUN chmod +x /tmp/start.sh
+ENTRYPOINT ["/tmp/start.sh"]
 
