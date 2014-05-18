@@ -6,7 +6,7 @@ This Dockerfile creates a container running tomcat7
 
 ## Install
 
-- `docker build -t cytomine/tomcat7 .`
+`docker build -t cytomine/tomcat7 .`
 
 ## Usage
 

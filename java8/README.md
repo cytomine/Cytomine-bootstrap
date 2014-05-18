@@ -6,7 +6,11 @@ This Dockerfile creates a container running Oracke Java SDK 8
 
 ## Install
 
-- `docker build -t cytomine/java8 .`
+`docker build -t cytomine/java8 .`
+
+## Usage
+
+`docker run -d cytomine/java7`
 
 ## Meta
 
