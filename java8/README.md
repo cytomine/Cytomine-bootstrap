@@ -10,7 +10,7 @@ This Dockerfile creates a container running Oracke Java SDK 8
 
 ## Usage
 
-`docker run -d cytomine/java7`
+`docker run -d cytomine/java8`
 
 ## Meta
 

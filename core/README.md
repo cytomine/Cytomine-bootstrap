@@ -1,12 +1,12 @@
-# Dockerfile Tomcat7
+# Dockerfile Core
 
 ## Info
 
-This Dockerfile creates a container running tomcat7
+This Dockerfile creates a container running tomcat7 with a specified WAR in URL
 
 ## Install
 
-`docker build -t cytomine/tomcat7 .`
+`docker build -t cytomine/core .`
 
 ## Usage
 
