@@ -70,10 +70,9 @@ var ApplicationController = Backbone.Router.extend({
         if (cpt == expected) {
             var callback = function() {
                 self.view.render(self.start);
+                CustomUI.hideOrShowComponents();
             };
-
-            CustomUI.retrieveGlobalConfig(callback);
-
+            CustomUI.customizeUI(callback);
         }
     },
 

@@ -288,7 +288,7 @@ var CutomUIPanel = Backbone.View.extend({
             success: function() {
                 self.refresh();
                 window.app.view.message("Project", "Configuration save!", "success");
-                CustomUI.hideOrShowProjectComponents();
+                CustomUI.customizeUI(function() {CustomUI.hideOrShowComponents();});
             }
         });
     },

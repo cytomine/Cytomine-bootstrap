@@ -1,39 +1,32 @@
 var CustomUI = {
-    retrieveGlobalConfig : function(callback) {
-        $.get("custom-ui/global.json", function(data){
-            window.app.status.customUI = {global:data};
-            callback();
+    customizeUI : function(callback) {
+        var self = this;
+        var project = "";
+        if(window.app.status.currentProject) {
+            project = "?project="+window.app.status.currentProject;
+        }
+
+        $.get("custom-ui/config.json"+project, function(data){
+            window.app.status.customUI = data;
+            if(callback) callback();
         });
     },
     mustBeShow : function(id) {
-        return window.app.status.customUI.global[id];
+        return window.app.status.customUI[id];
     },
-    retrieveProjectConfig : function(callback) {
-        $.get( "custom-ui/project/"+window.app.status.currentProject+"/flag.json", function(data){
-            window.app.status.customUI.project = data;
-            callback();
-        });
-    },
-    projectComponentMustBeShow : function(id) {
-        console.log(id + "=>" + window.app.status.customUI.project[id]);
-        if(window.app.status.customUI.project[id]==undefined || window.app.status.customUI.project[id]==null) {
-            return true
-        } else return window.app.status.customUI.project[id];
-    },
-    hideOrShowProjectComponents : function() {
+    hideOrShowComponents : function() {
         var self = this;
         console.log("hideOrShowProjectComponents");
-        var fn = function() {
-            console.log(self.components);
-            _.each(self.components,function(item) {
-                if(!self.projectComponentMustBeShow(item.componentId)) {
-                    $("#"+item.componentId).hide();
-                } else {
-                    $("#"+item.componentId).show();
-                }
-            });
-        }
-        this.retrieveProjectConfig(fn);
+        _.each(window.app.status.customUI,function(value,key) {
+            console.log(key);
+            console.log(".custom-ui-"+key);
+            console.log($(".custom-ui-"+key).length);
+            if(!self.mustBeShow(key)) {
+                $(".custom-ui-"+key).hide();
+            } else {
+                $(".custom-ui-"+key).show();
+            }
+        });
     },
     components: [
         //  {componentId: "project-images-tab", componentName: "Image tab"},

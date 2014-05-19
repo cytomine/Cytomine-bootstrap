@@ -156,7 +156,7 @@ var ApplicationView = Backbone.View.extend({
 
         $("#feedback").on("click", function (e) {
             e.preventDefault();
-            showClassicWidget();
+			FreshWidget.show();
         });
     },
     showHideMenuAction : function() {

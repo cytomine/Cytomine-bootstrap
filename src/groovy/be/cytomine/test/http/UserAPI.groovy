@@ -117,10 +117,12 @@ class UserAPI extends DomainAPI {
         return doPOST(URL, 'j_username: '+usernameToSwitch,username, password)
     }
 
-    static def retrieveCustomUIGlobal(String username, String password) {
-        String URL = Infos.CYTOMINEURL + "custom-ui/global.json"
+    static def retrieveCustomUI(Long idProject,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "custom-ui/config.json" + (idProject? "?project=$idProject" : "")
         return doGET(URL, username, password)
     }
+
+
 
     static def retrieveCustomUIProject(Long idProject, String username, String password) {
         String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}.json"
@@ -132,9 +134,9 @@ class UserAPI extends DomainAPI {
         return doPOST(URL, json,username, password)
     }
 
-    static def retrieveCustomUIProjectFlag(Long idProject, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}/flag.json"
-        return doGET(URL,username, password)
-    }
+//    static def retrieveCustomUIProjectFlag(Long idProject, String username, String password) {
+//        String URL = Infos.CYTOMINEURL + "custom-ui/project/${idProject}/flag.json"
+//        return doGET(URL,username, password)
+//    }
 
 }

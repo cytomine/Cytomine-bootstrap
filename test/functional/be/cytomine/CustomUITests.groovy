@@ -55,7 +55,7 @@ class CustomUITests {
 
         def json
         def result
-        result = UserAPI.retrieveCustomUIGlobal(guest.username,"password")
+        result = UserAPI.retrieveCustomUI(null,guest.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json.dashboard
@@ -68,7 +68,7 @@ class CustomUITests {
         assert false == json.admin
         assert true == json.help
 
-        result = UserAPI.retrieveCustomUIGlobal(user.username,"password")
+        result = UserAPI.retrieveCustomUI(null,user.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json.dashboard
@@ -81,7 +81,7 @@ class CustomUITests {
         assert false == json.admin
         assert true == json.help
 
-        result = UserAPI.retrieveCustomUIGlobal(admin.username,"password")
+        result = UserAPI.retrieveCustomUI(null,admin.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json.dashboard
@@ -175,7 +175,7 @@ class CustomUITests {
         //no config by now, check if default config is ok
         def json
         def result
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectAdmin.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectAdmin.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
@@ -183,7 +183,7 @@ class CustomUITests {
         assert true == json["project-jobs-tab"]
         assert true == json["project-configuration-tab"]
 
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectUser.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectUser.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
@@ -191,7 +191,7 @@ class CustomUITests {
         assert true == json["project-jobs-tab"]
         assert false == json["project-configuration-tab"]
 
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectGuest.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectGuest.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
@@ -209,10 +209,10 @@ class CustomUITests {
                 "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false]
         ]
 
-        result = UserAPI.setCustomUIProject(project.id,(jsonConfig as JSON).t,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = UserAPI.setCustomUIProject(project.id,(jsonConfig as JSON).toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200==result.code
 
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectAdmin.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectAdmin.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
@@ -220,7 +220,7 @@ class CustomUITests {
         assert true == json["project-jobs-tab"]
         assert true == json["project-configuration-tab"]
 
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectUser.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectUser.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
@@ -228,7 +228,7 @@ class CustomUITests {
         assert true == json["project-jobs-tab"]
         assert false == json["project-configuration-tab"]
 
-        result = UserAPI.retrieveCustomUIProjectFlag(project.id,projectGuest.username,"password")
+        result = UserAPI.retrieveCustomUI(project.id,projectGuest.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json["project-annotations-tab"]
