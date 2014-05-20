@@ -60,6 +60,8 @@ BrowseImageView = Backbone.View.extend({
         templateData.project = window.app.status.currentProject;
         templateData.type = self.divPrefixId;
         $(this.el).append(_.template(tpl, templateData));
+        CustomUI.customizeUI(function() {CustomUI.hideOrShowComponents();});
+
         var shortOriginalFilename = this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
         if (shortOriginalFilename.length > 25) {
             shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";

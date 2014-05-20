@@ -1,7 +1,7 @@
 <div class="sidebar-map-head">
     <label>Current selection <i class="toggle-content-info glyphicon glyphicon-plus"></i></label>
 </div>
-<div class="annotation-info-panel sidebar-map-content">
+<div class="annotation-info-panel sidebar-map-content custom-ui-project-explore-annotation-info">
     <ul style="padding-left: 0px;">
         <li><b>Area </b> : <%= area %> <%= areaUnit %></li>
         <li><b>Perimeter</b> : <%= perimeter %> <%= perimeterUnit %></li>
@@ -10,35 +10,36 @@
         <% } %>
         <li><b>User</b> : <%= username %></li>
         <li id="messageAnnotationCreator"></li>
-        <li><a class="btn btn-info btn-xs" href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a></li>
+        <li class="custom-ui-project-explore-annotation-comments"><a class="btn btn-info btn-xs" href="#share-annotation/<%= id %>">Comment (<%= nbComments %>)</a></li>
     </ul>
 </div>
-<div class="sidebar-map-head">
+<div class="sidebar-map-head custom-ui-project-explore-annotation-preview">
     <label>Annotation preview <i class="toggle-content-preview glyphicon glyphicon-plus btn-xs"></i></label>
 </div>
-<div class="annotation-preview-panel" style="text-align: center;">
+<div class="annotation-preview-panel custom-ui-project-explore-annotation-preview" style="text-align: center;">
     <img src="<%= smallCropURL %>" style="max-width: 298px;max-height: 298px;"/>
 </div>
-<div class="sidebar-map-head">
+<div class="sidebar-map-head custom-ui-project-explore-annotation-similarities">
     <label>Similarities <i class="toggle-content-suggested glyphicon glyphicon-plus btn-sm"></i> </label>
 </div>
-<div class="popupPanel-suggest annotation-suggested-panel  sidebar-map-content">
+<div class="popupPanel-suggest annotation-suggested-panel  sidebar-map-content custom-ui-project-explore-annotation-similarities" >
     <div id="suggTerm<%= id %>"></div>
     <div id="loadSimilarAnnotation<%= id %>">Computing similar annotations...</div>
 </div>
-<div class="sidebar-map-head">
+<div class="sidebar-map-head custom-ui-project-explore-annotation-properties">
     <label>Properties <i class="toggle-content-property glyphicon glyphicon-plus btn-xs"></i> </label>
 </div>
-<div class="annotation-property-panel  sidebar-map-content">
+<div class="annotation-property-panel  sidebar-map-content custom-ui-project-explore-annotation-properties">
     <ul style="padding-left: 0px;">
         <li><a href="#tabs-annotationproperties-<%= project %>-<%= id %>">Add a property</a></li>
     </ul>
 </div>
-<div class="sidebar-map-head">
-    <label>Description <i class="toggle-content-description glyphicon glyphicon-plus btn-xs"></i> </label>
+<div class="sidebar-map-head custom-ui-project-explore-annotation-description">
+    <label>Description <i class="toggle-content-description glyphicon glyphicon-plus btn-xs "></i> </label>
 </div>
-<div class="annotation-description-panel  sidebar-map-content">
+<div class="annotation-description-panel  sidebar-map-content custom-ui-project-explore-annotation-description">
     <ul style="padding-left: 0px;">
         <li><div class="textcontent<%= id %>"><div class="alert alert-info"><i class="icon-refresh"/> Loading...</div></div> </li>
     </ul>
 </div>
+

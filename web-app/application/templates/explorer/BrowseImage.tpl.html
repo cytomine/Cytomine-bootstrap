@@ -2,50 +2,50 @@
     <div class="map" id="map<%= type %><%= id %>"></div>
 
 
-    <div class="sidebar-map sidebar-map-left">
+    <div class="sidebar-map sidebar-map-left custom-ui-project-explore-annotation-main">
         <div class="sidebar-content" id="annotationDetailPanel<%= id %>"></div>
     </div>
-    <div class="sidebar-map sidebar-map-top">
+    <div class="sidebar-map sidebar-map-top custom-ui-project-tools-main">
         <div class="sidebar-toolbar">
             <div class="controlPanels" id="controlsPanels<%= id %>">
                 <div class="toolbar toolbarPanel" id="toolbar<%= id %>" style="text-align: left;">
                     <div class="btn-group">
-                        <button data-toggle="tooltip" title="Select annotation" class="btn btn-default btn-xs  selectButton" id="select<%= id %>" ><i class="glyphicon glyphicon-move"/>Select</button>
-                        <button data-toggle="tooltip" title="Draw a point"  class="btn btn-default btn-xs" id="point<%= id %>" ><i class="glyphicon glyphicon-map-marker"/>Point</button>
-                        <button data-toggle="tooltip" title="Draw an arrow"  class="btn btn-default btn-xs" id="arrow<%= id %>" ><i class="glyphicon glyphicon-arrow-up"/>Arrow</button>
+                        <button class="custom-ui-project-tools-select btn btn-default btn-xs  selectButton" data-toggle="tooltip" title="Select annotation"  id="select<%= id %>" ><i class="glyphicon glyphicon-move"/>Select</button>
+                        <button class="custom-ui-project-tools-point btn btn-default btn-xs" data-toggle="tooltip" title="Draw a point"  id="point<%= id %>" ><i class="glyphicon glyphicon-map-marker"/>Point</button>
+                        <button class="custom-ui-project-tools-arrow btn btn-default btn-xs" data-toggle="tooltip" title="Draw an arrow"  id="arrow<%= id %>" ><i class="glyphicon glyphicon-arrow-up"/>Arrow</button>
                         <!--<button data-toggle="tooltip" title="Draw a ROI"  class="btn btn-default btn-xs" id="roi<%= id %>" ><i class="glyphicon glyphicon-asterisk"/>ROI</button>-->
-                        <button data-toggle="tooltip" title="Draw a rectangle"  class="btn btn-default btn-xs" id="irregular4<%= id %>" ><i class="glyphicon glyphicon-vector-path-square"/>Rectangle</button>
-                        <button data-toggle="tooltip" title="Draw a diamond"  class="btn btn-default btn-xs" id="irregular30<%= id %>" ><i class="glyphicon glyphicon-irregular-circle"/>Ellipse</button>
-                        <button data-toggle="tooltip" title="Draw a circle" class="btn btn-default btn-xs" id="regular30<%= id %>" ><i class="glyphicon glyphicon-vector-path-circle"/>Cercle</button>
-                        <button data-toggle="tooltip" title="Draw a polygon (with points)" class="btn btn-default btn-xs" id="polygon<%= id %>" ><i class="glyphicon glyphicon-vector-path-polygon"/>Polygon</button>
-                        <button data-toggle="tooltip" title="Use magic wand to create annotation" class="btn btn-default btn-xs magicWandButton" id="magic<%= id %>" ><i class="glyphicon glyphicon-magic"/>MagicWand</button>
-                        <button data-toggle="tooltip" title="Draw a polygon (with freehand)"  class="btn btn-default btn-xs freehandButton" id="freehand<%= id %>"  alt="Freehand"><i class="glyphicon glyphicon-pencil"/></button>
-                        <button data-toggle="tooltip" title="Add a new polygon to an existing annotation"class="btn btn-default btn-xs joinButton" id="freeAdd<%= id %>" ><i class="glyphicon glyphicon-plus"/><i class="glyphicon glyphicon-pencil"/></button>
-                        <button data-toggle="tooltip" title="Remove a polygon from an existing annotation"  class="btn btn-default btn-xs cutButton" id="freeRem<%= id %>" ><i class="glyphicon glyphicon-minus"/><i class="glyphicon glyphicon-pencil"/></button>
-                        <button data-toggle="tooltip" title="Fill a polygon with holes"  class="btn btn-default btn-xs" id="fill<%= id %>" >Fill</button>
-                        <button data-toggle="tooltip" title="Draw a ruler on the screen"  class="btn btn-default btn-xs" id="ruler<%= id %>" ><i class="glyphicon glyphicon-ruller"/>Ruler</button>
-                        <button data-toggle="tooltip" title="Edit an annotation by moving points"  class="btn btn-default btn-xs editButton" id="modify<%= id %>" >Edit</button>
-                        <button data-toggle="tooltip" title="Rotate an annotation"  class="btn btn-default btn-xs" id="rotate<%= id %>" >Rotate</button>
-                        <button data-toggle="tooltip" title="Resize an annotation" t class="btn btn-default btn-xs" id="resize<%= id %>" >Resize</button>
-                        <button data-toggle="tooltip" title="Move an annotation"  class="btn btn-default btn-xs" id="drag<%= id %>" >Drag</button>
-                        <button data-toggle="tooltip" title="Delete an annotation" class="btn btn-default btn-xs deleteButton" id="delete<%= id %>" ><i class="glyphicon glyphicon-trash"/></button>
-                        <button data-toggle="tooltip" title="Take a picture of the screen" class="btn btn-default btn-xs" id="camera<%= id %>" ><i class="glyphicon glyphicon-screenshot"/></button>
+                        <button class="custom-ui-project-tools-rectangle btn btn-default btn-xs" data-toggle="tooltip" title="Draw a rectangle"   id="irregular4<%= id %>" ><i class="glyphicon glyphicon-vector-path-square"/>Rectangle</button>
+                        <button class="custom-ui-project-tools-diamond btn btn-default btn-xs" data-toggle="tooltip" title="Draw a diamond"  id="irregular30<%= id %>" ><i class="glyphicon glyphicon-irregular-circle"/>Ellipse</button>
+                        <button class="custom-ui-project-tools-circle btn btn-default btn-xs" data-toggle="tooltip" title="Draw a circle" id="regular30<%= id %>" ><i class="glyphicon glyphicon-vector-path-circle"/>Cercle</button>
+                        <button class="custom-ui-project-tools-polygon btn btn-default btn-xs" data-toggle="tooltip" title="Draw a polygon (with points)" id="polygon<%= id %>" ><i class="glyphicon glyphicon-vector-path-polygon"/>Polygon</button>
+                        <button class="custom-ui-project-tools-magic btn btn-default btn-xs magicWandButton" data-toggle="tooltip" title="Use magic wand to create annotation"  id="magic<%= id %>" ><i class="glyphicon glyphicon-magic"/>MagicWand</button>
+                        <button class="custom-ui-project-tools-freehand btn btn-default btn-xs freehandButton" data-toggle="tooltip" title="Draw a polygon (with freehand)"   id="freehand<%= id %>"  alt="Freehand"><i class="glyphicon glyphicon-pencil"/></button>
+                        <button class="custom-ui-project-tools-union btn btn-default btn-xs joinButton" data-toggle="tooltip" title="Add a new polygon to an existing annotation"id="freeAdd<%= id %>" ><i class="glyphicon glyphicon-plus"/><i class="glyphicon glyphicon-pencil"/></button>
+                        <button class="custom-ui-project-tools-diff btn btn-default btn-xs cutButton" data-toggle="tooltip" title="Remove a polygon from an existing annotation"   id="freeRem<%= id %>" ><i class="glyphicon glyphicon-minus"/><i class="glyphicon glyphicon-pencil"/></button>
+                        <button class="custom-ui-project-tools-fill btn btn-default btn-xs" data-toggle="tooltip" title="Fill a polygon with holes"  id="fill<%= id %>" >Fill</button>
+                        <button class="custom-ui-project-tools-rule btn btn-default btn-xs" data-toggle="tooltip" title="Draw a ruler on the screen" id="ruler<%= id %>" ><i class="glyphicon glyphicon-ruller"/>Ruler</button>
+                        <button class="custom-ui-project-tools-edit btn btn-default btn-xs editButton" data-toggle="tooltip" title="Edit an annotation by moving points"  id="modify<%= id %>" >Edit</button>
+                        <button class="custom-ui-project-tools-rotate btn btn-default btn-xs" data-toggle="tooltip" title="Rotate an annotation"  id="rotate<%= id %>" >Rotate</button>
+                        <button class="custom-ui-project-tools-resize btn btn-default btn-xs" data-toggle="tooltip" title="Resize an annotation"  id="resize<%= id %>" >Resize</button>
+                        <button class="custom-ui-project-tools-move btn btn-default btn-xs" data-toggle="tooltip" title="Move an annotation"  id="drag<%= id %>" >Drag</button>
+                        <button class="custom-ui-project-tools-delete btn btn-default btn-xs deleteButton" data-toggle="tooltip" title="Delete an annotation" id="delete<%= id %>" ><i class="glyphicon glyphicon-trash"/></button>
+                        <button class="custom-ui-project-tools-screenshot btn btn-default btn-xs" data-toggle="tooltip" title="Take a picture of the screen" id="camera<%= id %>" ><i class="glyphicon glyphicon-screenshot"/></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="sidebar-map sidebar-map-right sidebar-map-right-big">
+    <div class="custom-ui-project-explore-hide-tools sidebar-map sidebar-map-right sidebar-map-right-big">
         <div class="row" style="margin: 0px;">
             <div id="hide-sidebar-map-right" class="sidebar-map-head"><i class="glyphicon glyphicon-collapse-up"></i> Hide tools</div>
-            <div id="overviewMap<%= id %>"></div>
-            <div id="informationsPanel<%= id %>"></div>
-            <div id="layerSwitcher<%= id %>"></div>
-            <div id="ontologyTree<%= id %>" style="padding: 0px;"></div>
-            <div id="reviewPanel<%= id %>"></div>
-            <div id="jobTemplatePanel<%= id %>"></div>
-            <div id="multidimensionPanel<%= id %>"></div>
-            <div id="annotationPropertyPanel<%= id %>"></div>
+            <div class="custom-ui-project-explore-overview" id="overviewMap<%= id %>"></div>
+            <div class="custom-ui-project-explore-info" id="informationsPanel<%= id %>"></div>
+            <div class="custom-ui-project-explore-image-layers" id="layerSwitcher<%= id %>"></div>
+            <div class="custom-ui-project-explore-ontology" id="ontologyTree<%= id %>" style="padding: 0px;"></div>
+            <div class="custom-ui-project-explore-review" id="reviewPanel<%= id %>"></div>
+            <div class="custom-ui-project-explore-job" id="jobTemplatePanel<%= id %>"></div>
+            <div class="custom-ui-project-explore-multidim" id="multidimensionPanel<%= id %>"></div>
+            <div class="custom-ui-project-explore-property" id="annotationPropertyPanel<%= id %>"></div>
         </div>
     </div>
     <div class="sidebar-map sidebar-map-right sidebar-map-right-mini" style="display: none;">

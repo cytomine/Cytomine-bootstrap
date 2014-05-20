@@ -105,6 +105,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
         var content = _.template(tpl, annotation.toJSON());
         var elem = $("#" + self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
         elem.html(content);
+        CustomUI.hideOrShowComponents();
         elem.show();
 
         var isProjectAdmin = self.browseImageView.isCurrentUserProjectAdmin();

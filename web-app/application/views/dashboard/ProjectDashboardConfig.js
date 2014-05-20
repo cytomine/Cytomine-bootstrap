@@ -225,39 +225,29 @@ var CutomUIPanel = Backbone.View.extend({
 
     refresh : function() {
         var self = this;
-        var el = $("#customUIConfigMain");
+        var elTabs = $("#custom-ui-table-tabs");
+        var elPanels = $("#custom-ui-table-panels");
+        var elTools = $("#custom-ui-table-tools");
 
         var fn = function() {
             require(["text!application/templates/dashboard/config/CustomUIItem.tpl.html"], function (customUIItemTpl) {
-                $("#customUIConfigMain").empty();
+                elTabs.empty();
+                elPanels.empty();
+                elTools.empty();
+
                 _.each(CustomUI.components,function(component) {
-                    var customUI = _.template(customUIItemTpl,component);
-                    $(el).append(customUI);
-                    var ul = $(el).find("#customUI-"+component.componentId+"-roles");
-
-                    if(!self.obj[component.componentId]) {
-                        //component is not define in the project config, active by default
-                        self.obj[component.componentId] = {}
-                        _.each(CustomUI.roles,function(role) {
-                            var active = true;
-                            self.obj[component.componentId][role.authority] = active;
-                            ul.append(self.createButton(role,component,active));
-                        });
-                    } else {
-                        _.each(CustomUI.roles,function(role) {
-                            var active = true;
-                            if( !self.obj[component.componentId][role.authority]) {
-                                active = false;
-                            }
-                            ul.append(self.createButton(role,component,active));
-                        });
-
-                    }
-
+                    self.createComponentConfig(component,customUIItemTpl,elTabs);
                 });
+                _.each(CustomUI.componentsPanels,function(component) {
+                    self.createComponentConfig(component,customUIItemTpl,elPanels);
+                });
+                _.each(CustomUI.componentsTools,function(component) {
+                    self.createComponentConfig(component,customUIItemTpl,elTools);
+                });
+
                 $("#btn-project-configuration-tab-ADMIN_PROJECT").attr("disabled", "disabled");
 
-                $(el).find("button").click(function(eventData,ui) {
+                $("#custom-ui-table").find("button").click(function(eventData,ui) {
                     var currentButton = $("#"+eventData.toElement.id);
                     var isActiveNow = self.obj[currentButton.data("component")][currentButton.data("role")]==true;
                     currentButton.removeClass(isActiveNow? "btn-success" : "btn-danger");
@@ -270,7 +260,31 @@ var CutomUIPanel = Backbone.View.extend({
         }
         self.retrieveConfig(fn);
     },
+    createComponentConfig : function(component, template,mainElement) {
+        var self = this;
+        var customUI = _.template(template,component);
+        $(mainElement).append(customUI);
+        var tr = $(mainElement).find("#customUI-"+component.componentId+"-roles");
+        tr.append("<td>"+component.componentName+"</td>");
+        if(!self.obj[component.componentId]) {
+            //component is not define in the project config, active by default
+            self.obj[component.componentId] = {};
+            _.each(CustomUI.roles,function(role) {
+                var active = true;
+                self.obj[component.componentId][role.authority] = active;
+                tr.append(self.createButton(role,component,active));
+            });
+        } else {
+            _.each(CustomUI.roles,function(role) {
+                var active = true;
+                if( !self.obj[component.componentId][role.authority]) {
+                    active = false;
+                }
+                tr.append(self.createButton(role,component,active));
+            });
 
+        }
+    },
     render: function () {
         var self = this;
 
@@ -301,7 +315,7 @@ var CutomUIPanel = Backbone.View.extend({
     },
     createButton : function(role,component, active) {
         var classBtn = active? "btn-success" : "btn-danger";
-        return '<li><button type="radio" data-component="'+component.componentId+'" data-role="'+role.authority+'" id="btn-' + component.componentId +'-'+role.authority+'" class="btn  btn-large btn-block '+classBtn+'">'+role.name+'</button></li>';
+        return '<td><button type="radio" data-component="'+component.componentId+'" data-role="'+role.authority+'" id="btn-' + component.componentId +'-'+role.authority+'" class="btn  btn-large btn-block '+classBtn+'">'+role.name+'</button></td>';
     }
 
 });

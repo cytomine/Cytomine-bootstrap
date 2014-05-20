@@ -35,7 +35,53 @@ var CustomUI = {
         {componentId: "project-properties-tab", componentName: "Properties tab"},
         {componentId: "project-jobs-tab", componentName: "Jobs tab"},
         {componentId: "project-configuration-tab", componentName: "Config tab"} //TODO: cannot be hide by project-admin
+
     ],
+    componentsPanels: [
+        //  {componentId: "project-images-tab", componentName: "Image tab"},
+        {componentId: "project-explore-hide-tools", componentName: "All panels"},
+        {componentId: "project-explore-overview", componentName: "Overview panel"}, //TODO: if you need to add a new panel
+        {componentId: "project-explore-info", componentName: "Info panel"},
+        {componentId: "project-explore-image-layers", componentName: "Layer panel"},
+        {componentId: "project-explore-ontology", componentName: "Ontology panel"}, //TODO: cannot be hide by project-admin
+        {componentId: "project-explore-review", componentName: "Review panel"},
+        {componentId: "project-explore-job", componentName: "Job panel"},
+        {componentId: "project-explore-multidim", componentName: "Multidim panel"},
+        {componentId: "project-explore-property", componentName: "Property panel"},
+        {componentId: "project-explore-annotation-main", componentName: "Current annotation - main panel"},
+        {componentId: "project-explore-annotation-info", componentName: "Current annotation - info panel"},
+        {componentId: "project-explore-annotation-comments", componentName: "Current annotation - comments panel"},
+        {componentId: "project-explore-annotation-preview", componentName: "Current annotation - preview panel"},
+        {componentId: "project-explore-annotation-properties", componentName: "Current annotation - properties panel"},
+        {componentId: "project-explore-annotation-description", componentName: "Current annotation - description panel"},
+        {componentId: "project-explore-annotation-similarities", componentName: "Current annotation - similarities panel"}
+    ],
+    componentsTools: [
+        //  {componentId: "project-images-tab", componentName: "Image tab"},
+        {componentId: "project-tools-main", componentName: "All tools  <i class='glyphicon glyphicon-th'/>"},
+        {componentId: "project-tools-select", componentName: "Select tool  <i class='glyphicon glyphicon-move'/>"},
+        {componentId: "project-tools-point", componentName: "Draw point tool  <i class='glyphicon glyphicon-map-marker/>"},
+        {componentId: "project-tools-arrow", componentName: "Draw arrow tool  <i class='glyphicon glyphicon-arrow-up'/>"},
+        {componentId: "project-tools-rectangle", componentName: "Draw rectangle tool  <i class='glyphicon glyphicon-vector-path-square'/>"},
+        {componentId: "project-tools-diamond", componentName: "Draw diamond tool  <i class='glyphicon glyphicon-irregular-circle'/>"},
+        {componentId: "project-tools-circle", componentName: "Draw circle tool  <i class='glyphicon glyphicon-vector-path-circle'/>"},
+        {componentId: "project-tools-polygon", componentName: "Draw polygon tool  <i class='glyphicon glyphicon-vector-path-polygon'/>"},
+        {componentId: "project-tools-magic", componentName: "Magic wand tool  <i class='glyphicon glyphicon-magic'/>"},
+        {componentId: "project-tools-freehand", componentName: "Draw freehand tool  <i class='glyphicon glyphicon-pencil'/>"},
+        {componentId: "project-tools-union", componentName: "Union tool <i class='glyphicon glyphicon-plus'/>"},
+        {componentId: "project-tools-diff", componentName: "Difference tool  <i class='glyphicon glyphicon-minus'/>"},
+        {componentId: "project-tools-fill", componentName: "Fill tool "},
+        {componentId: "project-tools-rule", componentName: "Rule tool  <i class='glyphicon glyphicon-ruller'/>"},
+        {componentId: "project-tools-edit", componentName: "Edit tool "},
+        {componentId: "project-tools-resize", componentName: "Resize tool"},
+        {componentId: "project-tools-rotate", componentName: "Rotate tool"},
+        {componentId: "project-tools-move", componentName: "Move tool"},
+        {componentId: "project-tools-delete", componentName: "Delete tool  <i class='glyphicon glyphicon-trash'/>"},
+        {componentId: "project-tools-screenshot", componentName: "Screenshot tool  <i class='glyphicon glyphicon-screenshot'/>"}
+
+
+    ],
+
     roles:[
         { "authority": "ADMIN_PROJECT","name": "project admin"},
         { "authority": "USER_PROJECT", "name": "project user" },
