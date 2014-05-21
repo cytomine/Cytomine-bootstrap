@@ -303,6 +303,7 @@
 
 <script type="text/javascript" src="application/utils/CustomUI.js" ></script>
 <script type="text/javascript" src="application/utils/CustomModal.js" ></script>
+<script type="text/javascript" src="application/utils/BrowserSupport.js" ></script>
 <script type="text/javascript" src="application/utils/HotKeys.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Utils.js" ></script>
 <script type="text/javascript" src="application/utils/processing/image/Invert.js" ></script>
@@ -316,6 +317,8 @@
 
 <g:if test="${Environment.getCurrent() != Environment.PRODUCTION}">
     <script type="text/javascript">
+        //Prevent IE to cache AJAX request
+        $.ajaxSetup({ cache: false });
         setTimeout(function(){
             if (navigator.appVersion.indexOf("Linux")!=-1) {
                 $("#j_username").val("lrollus");

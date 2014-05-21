@@ -249,6 +249,9 @@ var OntologyPanelView = Backbone.View.extend({
 
         self.$tree.empty();
         $("#treeontology-" + self.model.id).dynatree({
+            ajaxDefaults: { // Used by initAjax option
+                cache: false // false: Append random '_' argument to the request url to prevent caching.
+            },
             children: self.model.toJSON(),
             onExpand: function () {
             },

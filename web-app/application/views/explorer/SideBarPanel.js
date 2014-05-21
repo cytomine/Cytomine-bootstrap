@@ -18,8 +18,8 @@ var SideBarPanel = Backbone.View.extend({
             }
         });
 
-        if (storageKey && localStorage.getObject(storageKey)) {
-            var pref = localStorage.getObject(storageKey);
+        if (storageKey && window.localStorage.getItem(storageKey)) {
+            var pref = window.localStorage.getItem(storageKey);
             if (pref.visible) {
                 this.show(sourceEvent, elContent, storageKey);
             } else {
@@ -30,7 +30,7 @@ var SideBarPanel = Backbone.View.extend({
 
     show: function (link, elContent, storageKey) {
         if (storageKey) {
-            localStorage.setObject(storageKey, { visible: true});
+            window.localStorage.setItem(storageKey, { visible: true});
         }
         link.removeClass("glyphicon-plus");
         link.addClass("glyphicon-minus");
@@ -39,7 +39,7 @@ var SideBarPanel = Backbone.View.extend({
 
     hide: function (link, elContent, storageKey) {
         if (storageKey) {
-            localStorage.setObject(storageKey, { visible: false});
+            window.localStorage.setItem(storageKey, { visible: false});
         }
         link.addClass("glyphicon-plus");
         link.removeClass("glyphicon-minus");

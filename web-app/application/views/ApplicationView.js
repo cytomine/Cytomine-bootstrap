@@ -87,10 +87,10 @@ var ApplicationView = Backbone.View.extend({
     },
     initPreferences: function () {
         _.each(this.panelsConfiguration, function (item) {
-            if (localStorage.getObject(item.key)) {
+            if (window.localStorage.getItem(item.key)) {
                 return;
             }
-            localStorage.setObject(item.key, item.value);
+            window.localStorage.setItem(item.key, item.value);
         });
     },
     applyPreferences: function () {

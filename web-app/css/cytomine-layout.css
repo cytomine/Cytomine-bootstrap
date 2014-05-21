@@ -139,7 +139,7 @@ div .sidebar-map {
     z-index: 800;
     background-color: rgb(38, 38, 38);
     padding-left: 0px;
-    color : rgba(255, 255, 255, 0.701961);
+    color : rgb(255, 255, 255);
     list-style-position: outside;
     list-style-type: none;
 }

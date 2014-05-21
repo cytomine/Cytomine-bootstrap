@@ -92,22 +92,27 @@ var SoftwareDetailsView = Backbone.View.extend({
             ]
         }];
 
-        nv.addGraph(function() {
-            var chart = nv.models.discreteBarChart()
-                .x(function(d) { return d.label })
-                .y(function(d) { return d.value })
-                .color(["#434141", "#65d7f8", "#005ccc", "#52a652", "#c43c35", "#434343", "#faaa38"]);
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($("#softwareInfoChart"),BrowserSupport.CHARTS);
+        }
+        else {
+            nv.addGraph(function() {
+                var chart = nv.models.discreteBarChart()
+                    .x(function(d) { return d.label })
+                    .y(function(d) { return d.value })
+                    .color(["#434141", "#65d7f8", "#005ccc", "#52a652", "#c43c35", "#434343", "#faaa38"]);
 
 
-            d3.select("#softwareInfoChart svg")
-                .datum(chartData)
-                .transition().duration(1200)
-                .call(chart);
+                d3.select("#softwareInfoChart svg")
+                    .datum(chartData)
+                    .transition().duration(1200)
+                    .call(chart);
 
-            nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-            return chart;
-        });
+                return chart;
+            });
+        }
 
     }
 });

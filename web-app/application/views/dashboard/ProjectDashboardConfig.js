@@ -30,12 +30,12 @@ var MagicWandConfig = Backbone.View.extend({
     toleranceKey: null,
     initialize: function () {
         this.toleranceKey = "mw_tolerance" + window.app.status.currentProject;
-        if (localStorage.getObject(this.toleranceKey) == null) {
-            localStorage.setObject(this.toleranceKey, Processing.MagicWand.defaultTolerance);
+        if (window.localStorage.getItem(this.toleranceKey) == null) {
+            window.localStorage.setItem(this.toleranceKey, Processing.MagicWand.defaultTolerance);
         }
         this.thresholdKey = "th_threshold" + window.app.status.currentProject;
-        if (localStorage.getObject(this.thresholdKey) == null) {
-            localStorage.setObject(this.thresholdKey, Processing.Threshold.defaultTheshold);
+        if (window.localStorage.getItem(this.thresholdKey) == null) {
+            window.localStorage.setItem(this.thresholdKey, Processing.Threshold.defaultTheshold);
         }
         return this;
     },
@@ -54,7 +54,7 @@ var MagicWandConfig = Backbone.View.extend({
             //tolerance
             var toleranceValue = parseInt($("#input_tolerance").val());
             if (_.isNumber(toleranceValue) && toleranceValue >= 0 && toleranceValue < max_euclidian_distance) {
-                localStorage.setObject(self.toleranceKey, Math.round(toleranceValue));
+                window.localStorage.setItem(self.toleranceKey, Math.round(toleranceValue));
                 var successMessage = _.template("Tolerance value for project <%= name %> is now <%= tolerance %>", {
                     name: window.app.status.currentProjectModel.get('name'),
                     tolerance: toleranceValue
@@ -66,7 +66,7 @@ var MagicWandConfig = Backbone.View.extend({
 
             var thresholdValue = parseInt($("#input_threshold").val());
             if (_.isNumber(thresholdValue) && thresholdValue >= 0 && thresholdValue < 255) {
-                localStorage.setObject(self.thresholdKey, Math.round(thresholdValue));
+                window.localStorage.setItem(self.thresholdKey, Math.round(thresholdValue));
                 successMessage = _.template("Threshold value for project <%= name %> is now <%= threshold %>", {
                     name: window.app.status.currentProjectModel.get('name'),
                     threshold: thresholdValue
@@ -79,8 +79,8 @@ var MagicWandConfig = Backbone.View.extend({
     },
 
     fillForm: function () {
-        $("#input_tolerance").val(localStorage.getObject(this.toleranceKey));
-        $("#input_threshold").val(localStorage.getObject(this.thresholdKey));
+        $("#input_tolerance").val(window.localStorage.getItem(this.toleranceKey));
+        $("#input_threshold").val(window.localStorage.getItem(this.thresholdKey));
     }
 });
 
@@ -248,7 +248,9 @@ var CutomUIPanel = Backbone.View.extend({
                 $("#btn-project-configuration-tab-ADMIN_PROJECT").attr("disabled", "disabled");
 
                 $("#custom-ui-table").find("button").click(function(eventData,ui) {
-                    var currentButton = $("#"+eventData.toElement.id);
+
+                    console.log(eventData.target.id);
+                    var currentButton = $("#"+eventData.target.id);
                     var isActiveNow = self.obj[currentButton.data("component")][currentButton.data("role")]==true;
                     currentButton.removeClass(isActiveNow? "btn-success" : "btn-danger");
                     currentButton.addClass(isActiveNow? "btn-danger" : "btn-success");

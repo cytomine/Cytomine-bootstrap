@@ -66,21 +66,26 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         });
 
-        nv.addGraph(function() {
-            var chart = nv.models.discreteBarChart()
-                .x(function(d) { return d.label })
-                .y(function(d) { return d.value });
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($("#userNbAnnotationsChart"),BrowserSupport.CHARTS);
+        }
+        else {
+            nv.addGraph(function() {
+                var chart = nv.models.discreteBarChart()
+                    .x(function(d) { return d.label })
+                    .y(function(d) { return d.value });
 
 
-            d3.select("#userNbAnnotationsChart svg")
-                .datum(chartData)
-                .transition().duration(1200)
-                .call(chart);
+                d3.select("#userNbAnnotationsChart svg")
+                    .datum(chartData)
+                    .transition().duration(1200)
+                    .call(chart);
 
-            nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-            return chart;
-        });
+                return chart;
+            });
+        }
     },
     drawPieChart: function (collection, response, el) {
         if (this.model.get('numberOfAnnotations') == 0) {
@@ -101,22 +106,27 @@ var ProjectDashboardStats = Backbone.View.extend({
             }
         });
 
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.label })
-                .y(function(d) { return d.value })
-                .showLabels(true)
-                .color(colors);
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($("#projectPieChart"),BrowserSupport.CHARTS);
+        }
+        else {
+                nv.addGraph(function() {
+                var chart = nv.models.pieChart()
+                    .x(function(d) { return d.label })
+                    .y(function(d) { return d.value })
+                    .showLabels(true)
+                    .color(colors);
 
-            d3.select(el + " svg")
-                .datum(chartData)
-                .transition().duration(1200)
-                .call(chart);
+                d3.select(el + " svg")
+                    .datum(chartData)
+                    .transition().duration(1200)
+                    .call(chart);
 
-            nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-            return chart;
-        });
+                return chart;
+            });
+        }
     },
     drawColumnChart: function (collection, response, el) {
         $(el).html("<svg></svg>");
@@ -132,6 +142,10 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         });
 
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($(el),BrowserSupport.CHARTS);
+        }
+        else {
         nv.addGraph(function() {
             var chart = nv.models.discreteBarChart()
                 .x(function(d) { return d.label })
@@ -151,6 +165,7 @@ var ProjectDashboardStats = Backbone.View.extend({
 
             return chart;
         });
+        }
     },
     drawAnnotationNumberEvolutionByTermAction: function () {
 
@@ -195,36 +210,41 @@ var ProjectDashboardStats = Backbone.View.extend({
 
         var chart;
 
-        nv.addGraph(function() {
-            chart = nv.models.linePlusBarChart()
-                .margin({top: 30, right: 60, bottom: 50, left: 70})
-                .x(function(d,i) { return i })
-                .color(d3.scale.category10().range());
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($(el),BrowserSupport.CHARTS);
+        }
+        else {
+            nv.addGraph(function() {
+                chart = nv.models.linePlusBarChart()
+                    .margin({top: 30, right: 60, bottom: 50, left: 70})
+                    .x(function(d,i) { return i })
+                    .color(d3.scale.category10().range());
 
-            chart.xAxis.tickFormat(function(d) {
-                var dx = chartData[0].values[d] && chartData[0].values[d].x || 0;
-                 return dx ? d3.time.format('%x')(new Date(dx)) : '';
-            })
-                .showMaxMin(false);
+                chart.xAxis.tickFormat(function(d) {
+                    var dx = chartData[0].values[d] && chartData[0].values[d].x || 0;
+                     return dx ? d3.time.format('%x')(new Date(dx)) : '';
+                })
+                    .showMaxMin(false);
 
-            chart.y1Axis
-                .tickFormat(d3.format(',f'));
+                chart.y1Axis
+                    .tickFormat(d3.format(',f'));
 
-            chart.y2Axis
-                .tickFormat(function(d) {
-                    return d;
-                });
+                chart.y2Axis
+                    .tickFormat(function(d) {
+                        return d;
+                    });
 
-            chart.bars.forceY([0]).padData(false);
+                chart.bars.forceY([0]).padData(false);
 
-            d3.select(el + ' svg')
-                .datum(chartData)
-                .transition().duration(500).call(chart);
+                d3.select(el + ' svg')
+                    .datum(chartData)
+                    .transition().duration(500).call(chart);
 
-            nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-            return chart;
-        });
+                return chart;
+            });
+        }
     }
 
 });

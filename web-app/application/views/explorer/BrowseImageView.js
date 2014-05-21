@@ -1006,8 +1006,8 @@ BrowseImageView = Backbone.View.extend({
             //TMP HACK in order to decide if we use the GREEN Channel or not
             var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
             var thresholdKey = "th_threshold" + window.app.status.currentProject;
-            var tolerance = localStorage.getObject(toleranceKey) || Processing.MagicWand.defaultTolerance;
-            var threshold = localStorage.getObject(thresholdKey) || Processing.Threshold.defaultTheshold;
+            var tolerance = window.localStorage.getItem(toleranceKey) || Processing.MagicWand.defaultTolerance;
+            var threshold = window.localStorage.getItem(thresholdKey) || Processing.Threshold.defaultTheshold;
             console.log("threshold=" + threshold);
             console.log("tolerance=" + tolerance);
             if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {

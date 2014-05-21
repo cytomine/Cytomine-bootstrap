@@ -60,7 +60,8 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
         $.get( "api/keywords.json", function( data ) {
             $("#waitForKeywords").replaceWith('<input type="text" title="Value" class="input-xlarge" id="input_value_keywords" required />');
-            $("#input_value_keywords").typeahead({source:data.collection,minLength:0});
+            console.log(data.collection);
+            $("#input_value_keywords").typeahead({local:data.collection,minLength:0});
         })
 
 

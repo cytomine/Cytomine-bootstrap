@@ -100,23 +100,27 @@ var AnnotationRetrievalView = Backbone.View.extend({
                 colors.push(term.get('color'));
             }
         }
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($(el),BrowserSupport.CHARTS);
+        }
+        else {
+            nv.addGraph(function() {
+                var chart = nv.models.pieChart()
+                    .x(function(d) { return d.label })
+                    .y(function(d) { return d.value })
+                    .showLabels(true)
+                    .color(colors);
 
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.label })
-                .y(function(d) { return d.value })
-                .showLabels(true)
-                .color(colors);
+                d3.select(el + " svg")
+                    .datum(chartData)
+                    .transition().duration(1200)
+                    .call(chart);
 
-            d3.select(el + " svg")
-                .datum(chartData)
-                .transition().duration(1200)
-                .call(chart);
+                nv.utils.windowResize(chart.update);
 
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        });
+                return chart;
+            });
+        }
     },
 
 
@@ -139,21 +143,27 @@ var AnnotationRetrievalView = Backbone.View.extend({
             }
         }
 
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.label })
-                .y(function(d) { return d.value })
-                .showLabels(true);
+        if(BrowserSupport.isTooOld()) {
+            BrowserSupport.addMessage($(el),BrowserSupport.CHARTS);
+        }
+        else {
+            nv.addGraph(function() {
+                var chart = nv.models.pieChart()
+                    .x(function(d) { return d.label })
+                    .y(function(d) { return d.value })
+                    .showLabels(true);
 
-            d3.select(el + " svg")
-                .datum(chartData)
-                .transition().duration(1200)
-                .call(chart);
+                d3.select(el + " svg")
+                    .datum(chartData)
+                    .transition().duration(1200)
+                    .call(chart);
 
-            nv.utils.windowResize(chart.update);
+                nv.utils.windowResize(chart.update);
 
-            return chart;
-        });
+                return chart;
+            });
+        }
+
     },
 
     appendThumbs: function (page) {
