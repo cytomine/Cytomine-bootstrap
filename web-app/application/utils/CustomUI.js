@@ -18,9 +18,6 @@ var CustomUI = {
         var self = this;
         console.log("hideOrShowProjectComponents");
         _.each(window.app.status.customUI,function(value,key) {
-            console.log(key);
-            console.log(".custom-ui-"+key);
-            console.log($(".custom-ui-"+key).length);
             if(!self.mustBeShow(key)) {
                 $(".custom-ui-"+key).hide();
             } else {

@@ -5,6 +5,19 @@ class GlobalTagLib {
 
     static namespace = "wthr"
     def userAgentIdentService
+
+    def isOldMsie = { attrs, body ->
+        if (userAgentIdentService.isMsie() && userAgentIdentService.getBrowserVersionNumber()<=8) {
+            out << body()
+        }
+    }
+
+    def isNotOldMsie = { attrs, body ->
+        if (!userAgentIdentService.isMsie() || (userAgentIdentService.isMsie() && userAgentIdentService.getBrowserVersionNumber()>8)) {
+            out << body()
+        }
+    }
+
     def isMsie = { attrs, body ->
         if (userAgentIdentService.isMsie()) {
             out << body()

@@ -20,19 +20,9 @@ class CurrentRoleService {
 
     def cytomineService
 
-
     static transactional = false
 
     public isAdmin = false
-
-//    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//    List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(auth.getAuthorities());
-//    println "x="+authorities
-//    authorities.add(new GrantedAuthorityImpl('ROLE_SUPERADMIN'));
-//    println "y="+authorities
-//    Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(),auth.getCredentials(),authorities)
-//    SecurityContextHolder.getContext().setAuthentication(newAuth);
-
 
     def activeAdminSession() {
         if(findRealRole().find{it.authority=="ROLE_ADMIN"}) {

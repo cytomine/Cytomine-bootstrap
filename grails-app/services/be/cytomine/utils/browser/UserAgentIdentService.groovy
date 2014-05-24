@@ -117,6 +117,7 @@ class UserAgentIdentService extends WebTierService {
         }
         println "**********************"
         println "userAgent=$userAgent"
+        println "browserVersion=$browserVersion"
 //
 //        if (userAgent.indexOf("(") > 0) {
 //            String osInfo = userAgent.substring(userAgent.indexOf("(") + 1);
@@ -197,6 +198,17 @@ class UserAgentIdentService extends WebTierService {
     public String getBrowserVersion()
     {
         return getUserAgentInfo().browserVersion;
+    }
+
+
+    public Double getBrowserVersionNumber()
+    {
+        try {
+            return Double.parseDouble(getUserAgentInfo().browserVersion);
+        }
+        catch(Exception e) {
+            return Double.MAX_VALUE
+        }
     }
 
     public String getOperatingSystem()

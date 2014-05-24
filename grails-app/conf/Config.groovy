@@ -85,7 +85,8 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 environments {
     scratch {
         grails.serverURL = "http://localhost:8080"
-        grails.uploadURL = "http://localhost:9090"
+       grails.uploadURL = "http://localhost:9090"
+
         grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
@@ -102,8 +103,8 @@ environments {
         //grails.serverURL = "http://localhost:8080"
         //if test with VM windows 7
         grails.serverURL = "http://10.0.2.2:8080"
-
-        grails.uploadURL = "http://localhost:9090"
+        grails.uploadURL = "http://upload.cytomine.be"
+        //grails.uploadURL = "http://localhost:9090"
         grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false

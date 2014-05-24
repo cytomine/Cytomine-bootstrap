@@ -39,32 +39,6 @@ class CustomUIController extends RestController {
         responseSuccess(config)
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    def retrieveUIRoles() {
-//        def data = [:]
-//        data.main = [[authority:"ALL", name: "All"],[authority:"NONE", name: "Nobody"]]
-//        data.global = SecRole.list().collect{[authority:it.authority, name:it.authority.toLowerCase().replace("ROLE","").replace("_"," ")]}
-//        data.project = [[authority:"ADMIN_PROJECT", name: "project admin"],[authority:"USER_PROJECT", name: "project user"]]
-//        responseSuccess(data)
-//    }
-
-
-    //7. Tester en rajoutant des panneaux dans avec un vieux json( par défaut mettre vert)
-
-    //8. tester la sécrutié ACL POUR LA MODIF projet
-
     def addCustomUIForProject() {
         Project project = projectService.read(params.long('project'))
         def json = request.JSON
@@ -103,17 +77,9 @@ class CustomUIController extends RestController {
         }
     }
 
-
-    //1. créer un service UNIQUE qui renvoie une map [custom-ui-ID : boolean]. Si pas du current project, ne renvoyer que la partie globale
-
-    //2. Dans le JS, créer un seule classe dans laquelle on gère les éléments du DOM à a cacher ou montrer
-
-
-
     public def getGlobalConfig(Set<SecRole> roles) {
         def globalConfig = [:]
         grailsApplication.config.cytomine.customUI.global.each {
-            log.info "${it.key}=${it.value}=>${it.value.contains("ALL")}"
             boolean print
             def mandatoryRoles = it.value
             if (mandatoryRoles.contains("ALL")) {
@@ -133,7 +99,6 @@ class CustomUIController extends RestController {
         def result = [:]
 
         configProject.each{
-            println it.value
             result[it.key] = shouldBeShow(roles,isProjectAdmin,it.value)
         }
 
@@ -142,14 +107,12 @@ class CustomUIController extends RestController {
             configProject = JSON.parse(properties.first().value)
         }
         configProject.each{
-            println it.value
             result[it.key] = shouldBeShow(roles,isProjectAdmin,it.value)
         }
 
         return result
     }
 
-    //config = ["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":true]
     boolean shouldBeShow(Set<SecRole> roles, boolean isProjectAdmin, def config) {
         boolean mustBeShow = false
         if(isProjectAdmin) {
@@ -164,63 +127,4 @@ class CustomUIController extends RestController {
         return mustBeShow
     }
 
-
-//    /**
-//     * Retrieve de custom UI config PROJECT
-//     */
-//    def retrieveProjectUIConfig() {
-//        Project project = projectService.read(params.long('project'))
-//        Set<SecRole> roles = currentRoleServiceProxy.findCurrentRole()
-//        def result = [:]
-//
-//       def configProject =
-//        configProject.each{
-//            println it.value
-//            result[it.key] = shouldBeShow(roles,isProjectAdmin,it.value)
-//        }
-//
-//        if(project) {
-//
-//            if(!properties.isEmpty()) {
-//                configProject = JSON.parse(properties.first().value)
-//
-//                /**  "project-annotations-tab": {
-//                 "USER_PROJECT": true,
-//                 "ADMIN_PROJECT": true,
-//                 "GUEST_PROJECT": true
-//                 },
-//                 "project-images-tab": {
-//                 "USER_PROJECT": true,
-//                 "ADMIN_PROJECT": true,
-//                 "GUEST_PROJECT": true
-//                 },
-//                 "project-configuration-tab": {
-//                 "USER_PROJECT": false,
-//                 "ADMIN_PROJECT": true,
-//                 "GUEST_PROJECT": false
-//                 },
-//                 "project-jobs-tab": {
-//                 "USER_PROJECT": true,
-//                 "ADMIN_PROJECT": true,
-//                 "GUEST_PROJECT": false
-//                 },
-//                 "project-properties-tab": {
-//                 "USER_PROJECT": true,
-//                 "ADMIN_PROJECT": true,
-//                 "GUEST_PROJECT": true
-//                 }**/
-//
-//
-//            }
-//
-//            configProject.each{
-//                println it.value
-//                result[it.key] = shouldBeShow(roles,isProjectAdmin,it.value)
-//            }
-//            responseSuccess(result)
-//        } else {
-//            responseNotFound("Project", params.project)
-//        }
-//
-//    }
 }

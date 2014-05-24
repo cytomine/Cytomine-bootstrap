@@ -41,17 +41,17 @@
 
 <script type="text/javascript" src="lib/mousetrap.min.js"></script>
 
-<wthr:isMsie>
+<wthr:isOldMsie>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-
     <script src="/lib/r2d3/r2d3.js" charset="utf-8"></script>
     <script src="lib/html5.js"></script>
     <script src="lib/Respond/src/respond.js"></script>
-</wthr:isMsie>
-<wthr:isNotMsie>
+</wthr:isOldMsie>
+<wthr:isNotOldMsie>
     <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
     <script src="lib/nvd3/lib/d3.v2.min.js"></script>
     <script src="lib/nvd3/nv.d3.min.js"></script>
-</wthr:isNotMsie>
+</wthr:isNotOldMsie>
 
 <script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
 <link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
