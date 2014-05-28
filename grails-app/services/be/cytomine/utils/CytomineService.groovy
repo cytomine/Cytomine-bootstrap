@@ -2,7 +2,7 @@ package be.cytomine.utils
 
 import be.cytomine.security.SecUser
 
-class CytomineService {
+class CytomineService implements Serializable {
 
     static transactional = false
     def springSecurityService

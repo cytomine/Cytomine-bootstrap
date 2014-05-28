@@ -1,4 +1,5 @@
 import grails.converters.JSON
+import grails.util.Environment
 
 // locations to search for config files that get merged into the main config
 // config files can either be Java properties files or ConfigSlurper scripts
@@ -252,6 +253,12 @@ log4j = {
             }
         }
         development {
+            root {
+                info 'appLog',"logfile", 'stdout'
+                additivity = true
+            }
+        }
+        cluster {
             root {
                 info 'appLog',"logfile", 'stdout'
                 additivity = true
@@ -539,3 +546,27 @@ cytomine.customUI.project = [
         "project-jobs-tab":["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":false],
         "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false],
 ]
+
+
+
+environments {
+    cluster {
+            grails {
+                cache {
+                    enabled = true
+                    ehcache {
+                        ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
+                        reloadable = false
+                }
+            }
+        }
+
+    }
+}
+//
+//if (Environment.getCurrent().name.equals("cluster"))  {
+//    test "org.gebish:geb-junit4:0.9.2"
+//    test "org.seleniumhq.selenium:selenium-support:2.39.0"
+//    test "org.seleniumhq.selenium:selenium-firefox-driver:2.39.0"
+//    test "org.seleniumhq.selenium:selenium-chrome-driver:2.39.0"
+//}

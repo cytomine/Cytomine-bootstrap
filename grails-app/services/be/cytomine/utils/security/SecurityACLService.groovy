@@ -37,7 +37,7 @@ class SecurityACLService {
         if (simpleObject) {
             def containerObjects = simpleObject."$method"()
             def atLeastOne = containerObjects.find {
-                it.checkPermission(permission,currentRoleServiceProxy.isAdminByNow())
+                it.checkPermission(permission,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))
             }
             if (!atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className} ${id}")
 
@@ -51,7 +51,7 @@ class SecurityACLService {
         if (simpleObject) {
             def containerObjects = simpleObject."$method"()
             def atLeastOne = containerObjects.find {
-                !it.checkPermission(permission,currentRoleServiceProxy.isAdminByNow())
+                !it.checkPermission(permission,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))
             }
             if (atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className} ${id}")
         } else {
@@ -86,7 +86,7 @@ class SecurityACLService {
 
     void check(CytomineDomain domain, Permission permission) {
         if (domain) {
-            if (!domain.container().checkPermission(permission,currentRoleServiceProxy.isAdminByNow())) {
+            if (!domain.container().checkPermission(permission,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))) {
                 throw new ForbiddenException("You don't have the right to read or modity this resource! ${domain.class.getName()} ${domain.id}")
             }
 
@@ -233,7 +233,7 @@ class SecurityACLService {
 
     public def checkIsAdminContainer(CytomineDomain domain,SecUser currentUser) {
         if (domain) {
-            if (!domain.container().checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())) {
+            if (!domain.container().checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))) {
                 throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
             }
         } else {
@@ -246,7 +246,7 @@ class SecurityACLService {
         boolean isNotSameUser = (!currentRoleServiceProxy.isAdminByNow(currentUser) && (user.id!=currentUser.id))
         if (isNotSameUser) {
             if (domain) {
-                if (!domain.container().checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())) {
+                if (!domain.container().checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))) {
                     throw new ForbiddenException("You don't have the right to do this. You must be the creator or the container admin")
                 }
             } else {

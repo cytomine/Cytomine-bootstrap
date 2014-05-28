@@ -149,7 +149,7 @@ class SearchService extends ModelService {
     private String getSecurityTable (SecUser currentUser) {
         String request = " "
 
-        if (!currentRoleServiceProxy.isAdminByNow()) {
+        if (!currentRoleServiceProxy.isAdminByNow(currentUser)) {
             request = ", acl_object_identity as aoi, acl_sid as sid, acl_entry as ae "
         }
         return request

@@ -1,3 +1,5 @@
+import grails.util.Environment
+
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -57,6 +59,7 @@ grails.project.dependency.resolution = {
         mavenRepo "http://www.hibernatespatial.org/repository"
 		//mavenRepo "http://repo.spring.io/milestone/"
 
+        mavenRepo "http://www.terracotta.org/download/reflector/releases"
     }
     dependencies {
 //        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
@@ -79,6 +82,21 @@ grails.project.dependency.resolution = {
 //        runtime 'org.postgis:postgis-jdbc:1.5.2'
 
 
+
+//        environments {
+//            cluster {
+
+//
+//            }
+//        }
+//        if (Environment.getCurrent().name.equals("cluster"))  {
+                //for cache
+                runtime 'net.sf.ehcache:ehcache-core:2.4.6'
+                runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
+                //for session
+                runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
+                runtime "org.terracotta.session:terracotta-session:1.3.5"
+//        }
     }
     plugins {
         // Uncomment these (or add new ones) to enable additional resources capabilities

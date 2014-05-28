@@ -233,7 +233,7 @@ class SecUserService extends ModelService {
 
 
 
-        if(project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())) {
+        if(project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow(currentUser))) {
             return users
         } else if(project.hideAdminsLayers && project.hideUsersLayers && users.contains(currentUser)) {
             return [currentUser]

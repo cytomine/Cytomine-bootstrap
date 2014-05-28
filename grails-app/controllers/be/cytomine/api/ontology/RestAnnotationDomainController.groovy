@@ -845,7 +845,7 @@ class RestAnnotationDomainController extends RestController {
      */
     def findAnnotationIdThatTouch(String location, def layers, long idImage, String table) {
         ImageInstance image = ImageInstance.read(idImage)
-        boolean projectAdmin = image.project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow())
+        boolean projectAdmin = image.project.checkPermission(ADMINISTRATION,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))
         if(!projectAdmin) {
             layers = layers.findAll{(it+"")==(cytomineService.currentUser.id+"")}
         }

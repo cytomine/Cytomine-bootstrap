@@ -59,7 +59,7 @@ class RetrievalService {
         }
 
         //Only keep projects available for the current user
-        boolean isAdmin = currentRoleServiceProxy.isAdminByNow()
+        boolean isAdmin = currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)
         projectSearch = projectSearch.findAll{ Project.read(it).checkPermission(READ,isAdmin)}
 
         log.info "search ${annotation.id} on projects ${projectSearch}"

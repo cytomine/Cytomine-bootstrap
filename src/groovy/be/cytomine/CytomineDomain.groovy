@@ -14,7 +14,7 @@ import org.springframework.security.acls.model.Permission
  * It allow to give an id to each instance of a domain, to get a created date,...
  */
 @Log
-abstract class CytomineDomain  implements Comparable{
+abstract class CytomineDomain  implements Comparable,Serializable{
 
     def springSecurityService
     def cytomineService

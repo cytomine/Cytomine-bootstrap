@@ -14,18 +14,16 @@ import org.springframework.security.core.context.SecurityContextHolder
 
 //method "byNow" get current roles. An admin is by default connected as USER (isAdmin=true, isAdminByNow=false).
 //when he ask to open an admin session, he becomes admin (isAdmin=true, isAdminByNow=true)
-class CurrentRoleService {
+class CurrentRoleService implements Serializable {
 
     static scope = 'session'
-
-    def cytomineService
 
     static transactional = false
 
     public isAdmin = false
 
-    def activeAdminSession() {
-        if(findRealRole().find{it.authority=="ROLE_ADMIN"}) {
+    def activeAdminSession(SecUser user) {
+        if(findRealRole(user).find{it.authority=="ROLE_ADMIN"}) {
             isAdmin = true
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -37,8 +35,8 @@ class CurrentRoleService {
             throw new ForbiddenException("You are not an admin!")
         }
     }
-    def closeAdminSession() {
-        if(findRealRole().find{it.authority=="ROLE_ADMIN"}) {
+    def closeAdminSession(SecUser user) {
+        if(findRealRole(user).find{it.authority=="ROLE_ADMIN"}) {
             isAdmin = false
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(auth.getAuthorities());
@@ -50,14 +48,14 @@ class CurrentRoleService {
         }
     }
 
-    Set<SecRole> findRealRole(SecUser user = cytomineService.currentUser) {
+    Set<SecRole> findRealRole(SecUser user) {
         //log.info "Look for role for ${user.username}"
         Set<SecRole> roles = SecUserSecRole.findAllBySecUser(user).collect { it.secRole }
         //log.info "Roles found ${roles.collect{it.authority}}"
         return roles
     }
 
-    Set<SecRole> findCurrentRole(SecUser user = cytomineService.currentUser) {
+    Set<SecRole> findCurrentRole(SecUser user) {
         Set<SecRole> roles = findRealRole(user)
         boolean isSuperAdmin =  (roles.find {it.authority=="ROLE_SUPER_ADMIN"}!=null)
         //role super admin don't need to open a admin session, so we don't remove the role admin from the current role
@@ -65,28 +63,26 @@ class CurrentRoleService {
         if(!isAdmin && !isSuperAdmin) {
             roles = roles.findAll {it.authority!="ROLE_ADMIN"}
         }
-        //println "roles=${roles.collect{it.authority}}"
         return roles
     }
 
-    boolean isAdminByNow(SecUser user = cytomineService.currentUser) {
+    boolean isAdminByNow(SecUser user) {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_ADMIN")
     }
-    boolean isUserByNow(SecUser user = cytomineService.currentUser) {
-        println findCurrentRole(user).collect{it.authority}.contains("ROLE_USER")
+    boolean isUserByNow(SecUser user) {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_USER")
     }
-    boolean isGuestByNow(SecUser user = cytomineService.currentUser) {
+    boolean isGuestByNow(SecUser user) {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_GUEST")
     }
 
-    boolean isAdmin(SecUser user = cytomineService.currentUser) {
+    boolean isAdmin(SecUser user) {
         return findRealRole(user).collect{it.authority}.contains("ROLE_ADMIN")
     }
-    boolean isUser(SecUser user = cytomineService.currentUser) {
+    boolean isUser(SecUser user) {
         return findRealRole(user).collect{it.authority}.contains("ROLE_USER")
     }
-    boolean isGuest(SecUser user = cytomineService.currentUser) {
+    boolean isGuest(SecUser user) {
         return findRealRole(user).collect{it.authority}.contains("ROLE_GUEST")
     }
 }

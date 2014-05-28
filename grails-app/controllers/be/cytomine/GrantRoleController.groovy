@@ -9,12 +9,12 @@ class GrantRoleController extends RestController {
     def cytomineService
 
     def openAdminSession() {
-        currentRoleServiceProxy.activeAdminSession()
+        currentRoleServiceProxy.activeAdminSession(cytomineService.currentUser)
         responseSuccess(getCurrentRole())
     }
 
     def closeAdminSession() {
-        currentRoleServiceProxy.closeAdminSession()
+        currentRoleServiceProxy.closeAdminSession(cytomineService.currentUser)
         responseSuccess(getCurrentRole())
     }
 

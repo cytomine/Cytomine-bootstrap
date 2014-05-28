@@ -1,6 +1,7 @@
 import be.cytomine.security.CASLdapUserDetailsService
 import be.cytomine.web.CytomineMultipartHttpServletRequest
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.springframework.cache.ehcache.EhCacheFactoryBean
 import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper
 
 
@@ -61,6 +62,12 @@ beans = {
     userDetailsService(CASLdapUserDetailsService) {
         ldapUserDetailsService=ref('ldapUserDetailsService')
         grailsApplication = ref('grailsApplication')
+    }
+
+    ehcacheAclCache(EhCacheFactoryBean) {
+        cacheManager = ref('aclCacheManager')
+        cacheName = 'aclCache'
+        overflowToDisk = false
     }
 
     currentRoleServiceProxy(org.springframework.aop.scope.ScopedProxyFactoryBean) {
