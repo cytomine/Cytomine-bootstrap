@@ -10,7 +10,7 @@ This Dockerfile creates a container running postgresql & postgis
 
 ## Usage
 
-`docker run -d cytomine/postgis`
+`docker run -d -name db cytomine/postgis`
 
 ## Meta
 

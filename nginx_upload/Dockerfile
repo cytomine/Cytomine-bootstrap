@@ -26,7 +26,7 @@ RUN cat /tmp/nginx.conf > /usr/local/nginx/conf/nginx.conf
 #clean tmp files
 RUN cd /tmp && rm -rf
 
-EXPOSE 80
+EXPOSE 8080
 
 ADD start.sh /tmp/start.sh
 RUN chmod +x /tmp/start.sh
