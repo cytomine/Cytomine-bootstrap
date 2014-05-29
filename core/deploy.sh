@@ -19,6 +19,7 @@ echo "storage_buffer='/tmp/cytomine_buffer/'" >> cytomineconfig.groovy
 echo "storage_path='/var/docker_vol'" >> cytomineconfig.groovy
 echo "grails.imageServerURL='http://aurora_ims.cytomine.be:81'" >> cytomineconfig.groovy
 echo "grails.uploadURL='http://aurora_upload.cytomine.be:81'" >> cytomineconfig.groovy
+echo "iipImageServer='http://aurora_iip.cytomine.be:81'" >> cytomineconfig.groovy
 fi
 
 service tomcat7 start
