@@ -13,6 +13,7 @@ import groovy.sql.Sql
  */
 class BootstrapTestDataService {
 
+    def grailsApplication
     def bootstrapUtilsService
     def dataSource
 
@@ -24,7 +25,7 @@ class BootstrapTestDataService {
 //        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
 
-        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : 'http://localhost:8081', available : true]
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : grailsApplication.config.iipImageServer, available : true]
         def LociImageServer = [className : 'LociResolver', name : 'Loci', service : '/loci/tile', url : 'http://localhost:9080', available : true]
 
         bootstrapUtilsService.createImageServers([IIPImageServer])
@@ -58,7 +59,7 @@ class BootstrapTestDataService {
         bootstrapUtilsService.createRelation()
 
         //set public/private keys for special image server user
-        SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
+        SecUser imageServerUser = SecUser.findByUsername("anotheruser")
         imageServerUser.setPrivateKey("70f35a45-c317-405a-8056-353db3d2bf56")
         imageServerUser.setPublicKey("4a5c7004-b6f8-4705-a118-c15d5c90dcdb")
         imageServerUser.save(flush : true)
