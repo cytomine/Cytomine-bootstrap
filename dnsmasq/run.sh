@@ -12,4 +12,4 @@ sudo docker run \
 -v="$(pwd)/dnsmasq.hosts:/dnsmasq.hosts" \
 --name=$name \
 -p=$MY_IP:53:5353/udp \
--d sroegner/dnsmasq
+-d cytomine/dnsmasq
