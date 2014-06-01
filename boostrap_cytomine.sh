@@ -1,5 +1,6 @@
 #!/bin/bash
 cd base && docker build -t="cytomine/base" .
+cd ../dnsmasq && docker build -t="cytomine/dnsmasq" .
 cd ../rabbitmq && docker build -t="cytomine/rabbitmq" .
 cd ../java7 && docker build -t="cytomine/java7" .
 cd ../tomcat7 && docker build -t="cytomine/tomcat7" .
