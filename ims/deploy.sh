@@ -2,7 +2,9 @@
 
 /etc/init.d/ssh start
 
-chown -R tomcat7.tomcat7 /var/docker_vol
+sed "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
+sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp1 > /usr/local/nginx/conf/nginx.conf
+rm /tmp/out.tmp1
 
 export LD_LIBRARY_PATH=/usr/local/lib/openslide-java
 

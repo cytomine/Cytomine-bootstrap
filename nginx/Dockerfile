@@ -16,15 +16,19 @@ RUN \
 # Define mountable directories.
 #VOLUME ["/data", "/etc/nginx/sites-enabled", "/var/log/nginx"]
 
-ADD nginx.conf /tmp/nginx.conf
-RUN cat /tmp/nginx.conf > /etc/nginx/nginx.conf
+ADD nginx.conf.sample /tmp/nginx.conf.sample
 
 # Define working directory.
 WORKDIR /etc/nginx
 
 # Define default command.
-CMD ["nginx"]
+#CMD ["nginx"]
 
 # Expose ports.
 EXPOSE 80
 EXPOSE 443
+
+ADD deploy.sh /tmp/deploy.sh
+RUN chmod +x /tmp/deploy.sh
+
+ENTRYPOINT ["/tmp/deploy.sh"]

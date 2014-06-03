@@ -1,22 +1,12 @@
 #!/bin/bash
 
-CORE_URL=aurora.cytomine.be
-IMS_URL=aurora-ims.cytomine.be
-IIP_URL=aurora-iip.cytomine.be
-UPLOAD_URL=aurora-upload.cytomine.be
-IMS_STORAGE_PATH=/mnt/aurora
-IMS_BUFFER_PATH=/mnt/aurora/_buffer
+CORE_URL=aurora_core.cytmine.be #aurora.cytomine.be
+IMS_URL=aurora_ims.cytomine.be #aurora-ims.cytomine.be
+IIP_URL=aurora_iip.cytomine.be #aurora-iip.cytomine.be
+UPLOAD_URL=aurora_upload.cytomine.be #aurora-upload.cytomine.be
+IMS_STORAGE_PATH=/var/docker_vol #/mnt/aurora
+IMS_BUFFER_PATH=/tmp/imageserver_buffer #/mnt/aurora/_buffer
 RABBITMQ_PASS="mypass" 
-
-#nginx configs
-sed "s/CORE_URL/$CORE_URL/g" ./nginx/nginx.conf.sample  > /tmp/out.tmp1 
-sed "s/IMS_URL/$IMS_URL/g" /tmp/out.tmp1 > ./nginx/nginx.conf 
-rm /tmp/out.tmp1
-
-sed "s/IIP_URL/$IIP_URL/g" ./ims/nginx.conf.sample  > /tmp/out.tmp2
-sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp2 > ./ims/nginx.conf
-rm /tmp/out.tmp2
-exit
 
 # create rabbitmq docker
 docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq -e RABBITMQ_PASS=$RABBITMQ_PASS cytomine/rabbitmq
@@ -25,10 +15,10 @@ docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq -e RABBITMQ_PASS=$RABB
 docker run -p 22 -m 512m -d --name db cytomine/postgis
 
 # create IMS docker
-docker run -p 81:80 -v /var/docker_vol -p 22 -m 512m -d --name ims -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH -e WAR_URL="http://192.168.1.8:8888/ims/root.war" cytomine/ims
+docker run -p 81:80 -v /var/docker_vol -p 22 -m 512m -d --name ims  -e IIP_URL=$IIP_URL -e UPLOAD_URL=$UPLOAD_URL -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH -e WAR_URL="http://192.168.1.2:8888/ims/root.war" cytomine/ims
 
 # create CORE docker
-docker run -m 2g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:ims -e CORE_URL=$CORE_URL -e IMS_URL=$IMS_URL -e IIP_URL=IIP_URL -e UPLOAD_URL=$UPLOAD_URL -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH -e IMS_BUFFER_PATH=IMS_BUFFER_PATH -e WAR_URL="http://192.168.1.8:8888/core/root.war" cytomine/core
+docker run -m 2g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:ims -e CORE_URL=$CORE_URL -e IMS_URL=$IMS_URL -e IIP_URL=$IIP_URL -e UPLOAD_URL=$UPLOAD_URL -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH -e IMS_BUFFER_PATH=IMS_BUFFER_PATH -e WAR_URL="http://192.168.1.2:8888/core/root.war" cytomine/core
 
 # create nginx docker
 docker run -m 256m -d -p 80:80 --link ims:ims -e CORE_URL=$CORE_URL -e IMS_URL=$IMS_URL --link core:core cytomine/nginx

@@ -21,10 +21,9 @@ RUN cd /tmp && wget https://gist.github.com/adamchal/6457039/download -O nginx_u
 RUN cp /tmp/nginx_upload-patch/ngx_http_upload_module.c /tmp/nginx_upload/nginx-upload-module-2.2/nginx-upload-module-2.2
 RUN cd /tmp/nginx-1.4.4 && ./configure --add-module=/tmp/nginx_upload/nginx-upload-module-2.2 && make && make install
 
-ADD nginx.conf /tmp/nginx.conf
-RUN cat /tmp/nginx.conf > /usr/local/nginx/conf/nginx.conf
+ADD nginx.conf.sample /tmp/nginx.conf.sample
 
-CMD ["/usr/local/nginx/sbin/nginx"]
+#CMD ["/usr/local/nginx/sbin/nginx"]
 
 # prepare openslide + iip + vips installation 
 RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcached-dev 
