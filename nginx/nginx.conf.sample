@@ -34,7 +34,7 @@ http {
     server {
 	        client_max_body_size 0;
 	        listen       80;
-	        server_name  $CORE_URL;
+	        server_name  CORE_URL;
 
 	        #charset koi8-r;
 
@@ -90,7 +90,7 @@ http {
    server {
                 client_max_body_size 0;
                 listen       80;
-                server_name  $IMS_URL;
+                server_name  IMS_URL;
 
                 #charset koi8-r;
 

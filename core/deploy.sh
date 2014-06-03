@@ -18,8 +18,8 @@ echo "dataSource.password='docker'" >> cytomineconfig.groovy
 echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
 echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 echo "grails.imageServerURL='http://$IMS_URL'" >> cytomineconfig.groovy
-echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
-echo "iipImageServer='http://$IIP_URL'" >> cytomineconfig.groovy
+echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
+echo "iipImageServer='http://$IIP_URL:81'" >> cytomineconfig.groovy
 fi
 
 service tomcat7 start

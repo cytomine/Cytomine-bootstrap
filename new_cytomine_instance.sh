@@ -8,6 +8,16 @@ IMS_STORAGE_PATH=/mnt/aurora
 IMS_BUFFER_PATH=/mnt/aurora/_buffer
 RABBITMQ_PASS="mypass" 
 
+#nginx configs
+sed "s/CORE_URL/$CORE_URL/g" ./nginx/nginx.conf.sample  > /tmp/out.tmp1 
+sed "s/IMS_URL/$IMS_URL/g" /tmp/out.tmp1 > ./nginx/nginx.conf 
+rm /tmp/out.tmp1
+
+sed "s/IIP_URL/$IIP_URL/g" ./ims/nginx.conf.sample  > /tmp/out.tmp2
+sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp2 > ./ims/nginx.conf
+rm /tmp/out.tmp2
+exit
+
 # create rabbitmq docker
 docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq -e RABBITMQ_PASS=$RABBITMQ_PASS cytomine/rabbitmq
 
