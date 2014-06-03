@@ -11,15 +11,15 @@ cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
 mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
 touch cytomineconfig.groovy
-echo "grails.serverURL='http://aurora_core.cytomine.be'" >> cytomineconfig.groovy
+echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
 echo "dataSource.url='jdbc:postgresql://db:5432/docker'" >> cytomineconfig.groovy
 echo "dataSource.username='docker'" >> cytomineconfig.groovy
 echo "dataSource.password='docker'" >> cytomineconfig.groovy
-echo "storage_buffer='/tmp/cytomine_buffer/'" >> cytomineconfig.groovy
-echo "storage_path='/var/docker_vol'" >> cytomineconfig.groovy
-echo "grails.imageServerURL='http://aurora_ims.cytomine.be:81'" >> cytomineconfig.groovy
-echo "grails.uploadURL='http://aurora_upload.cytomine.be:81'" >> cytomineconfig.groovy
-echo "iipImageServer='http://aurora_iip.cytomine.be:81'" >> cytomineconfig.groovy
+echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
+echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
+echo "grails.imageServerURL='http://$IMS_URL'" >> cytomineconfig.groovy
+echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
+echo "iipImageServer='http://$IIP_URL'" >> cytomineconfig.groovy
 fi
 
 service tomcat7 start

@@ -16,7 +16,7 @@ mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
 touch imageserverconfig.properties
 echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imageserverconfig.properties
-echo "grails.storageBufferPath=/tmp/imageserver_buffer" >> imageserverconfig.properties
+echo "grails.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
 echo "grails.imageServerPublicKey=4a5c7004-b6f8-4705-a118-c15d5c90dcdb" >> imageserverconfig.properties
 echo "grails.imageServerPrivateKey=70f35a45-c317-405a-8056-353db3d2bf56" >> imageserverconfig.properties
 fi
