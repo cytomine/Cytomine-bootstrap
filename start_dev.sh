@@ -28,7 +28,7 @@ docker run -p 22 -p 81:80 -v /val/docker_vol -m 1g -d --name ims --link memcache
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
--e WAR_URL="http://148.251.125.200:8888/ims/ROOT.war" \
+-e WAR_URL="http://192.168.1.8:8888/ims/ROOT.war" \
 cytomine/ims
 
 # create CORE docker
@@ -39,7 +39,7 @@ docker run -m 1g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
--e WAR_URL="http://148.251.125.200:8888/core/ROOT.war" cytomine/core
+-e WAR_URL="http://192.168.1.8:8888/core/ROOT.war" cytomine/core
 
 # create nginx docker
 docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \

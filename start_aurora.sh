@@ -22,7 +22,7 @@ cytomine/rabbitmq
 docker run -p 22 -m 8g -d --name db cytomine/postgis
 
 # create IMS docker
-docker run -p 22 -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 1g -d --name ims --link memcached:memcached \
+docker run -p 22 -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 8g -d --name ims --link memcached:memcached \
 -e IIP_URL=$IIP_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e UPLOAD_URL=$UPLOAD_URL \
@@ -31,7 +31,7 @@ docker run -p 22 -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 1g -d --name ims -
 cytomine/ims
 
 # create CORE docker
-docker run -m 1g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:ims \
+docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:ims \
 -e CORE_URL=$CORE_URL \
 -e IMS_URL=$IMS_URL \
 -e IIP_URL=$IIP_URL \
