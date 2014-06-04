@@ -5,8 +5,8 @@ CORE_URL=aurora_core.cytomine.be #aurora.cytomine.be
 IMS_URL=aurora_ims.cytomine.be #aurora-ims.cytomine.be
 IIP_URL=aurora_iip.cytomine.be #aurora-iip.cytomine.be
 UPLOAD_URL=aurora_upload.cytomine.be #aurora-upload.cytomine.be
-IMS_STORAGE_PATH=/var/docker_vol
-MOUNT_IMS_STORAGE_PATH=/val/docker_vol
+IMS_STORAGE_PATH=/opt/docker_vol
+MOUNT_IMS_STORAGE_PATH=/opt/docker_vol
 IMS_BUFFER_PATH=/tmp/imageserver_buffer
 RABBITMQ_PASS="mypass"
 MEMCACHED_PASS="mypass"
@@ -23,7 +23,7 @@ cytomine/rabbitmq
 docker run -p 22 -m 8g -d --name db cytomine/postgis
 
 # create IMS docker
-docker run -p 22 -p 81:80 -v /val/docker_vol -m 1g -d --name ims --link memcached:memcached \
+docker run -p 22 -p 81:80 -v /opt/docker_vol:/opt/docker_vol -m 1g -d --name ims --link memcached:memcached \
 -e IIP_URL=$IIP_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e UPLOAD_URL=$UPLOAD_URL \
