@@ -4,6 +4,7 @@ MAINTAINER Benjamin Stevens "b.stevens@ulg.ac.be"
 
 VOLUME [ "/dnsmasq.hosts" ]
 
+RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes dnsmasq-base dnsutils
 ADD dnsmasq.conf /etc/dnsmasq.conf
 ADD resolv.dnsmasq.conf /etc/resolv.dnsmasq.conf
