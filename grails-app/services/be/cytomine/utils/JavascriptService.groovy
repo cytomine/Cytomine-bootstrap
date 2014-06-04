@@ -12,7 +12,7 @@ class JavascriptService {
 
     def compile() {
         log.info("========= C O M P I L E == J S ========= ")
-        ViewPortToBuildXML.process()
+        //ViewPortToBuildXML.process()
         def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
         proc.in.eachLine { line -> log.info line }
         proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()

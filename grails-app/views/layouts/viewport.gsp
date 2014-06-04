@@ -330,7 +330,7 @@
 
         }, 1000);
 
-        //disable console for not supported by browser (ie <= 8)
+        //disable console for not supported by browser (ie lesser than 8)
         var alertFallback = false;
         if (typeof console === "undefined" || typeof console.log === "undefined") {
             console = {};
@@ -370,7 +370,7 @@
 <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
 
-	FreshWidget.init("", {"queryString": "&widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+	FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
 
 </script>
 

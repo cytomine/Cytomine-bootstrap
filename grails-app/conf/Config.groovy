@@ -43,6 +43,8 @@ grails.mime.types = [
 ]
 cytomine.maxRequestSize = 10485760
 storage_path="/Users/stevben/cytomine_storage" //default path for image locations
+iipImageServer="http://localhost:8081" //default path for iip image server
+
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
@@ -86,7 +88,7 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 environments {
     scratch {
         grails.serverURL = "http://localhost:8080"
-       grails.uploadURL = "http://localhost:9090"
+        grails.uploadURL = "http://localhost:9090"
 
         grails.imageServerURL = "http://localhost:9080"
         grails.converters.default.pretty.print = true
@@ -240,7 +242,7 @@ log4j = {
             'org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog'
 
     error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
-   // debug 'org.springframework.security'
+    // debug 'org.springframework.security'
 
 
 
@@ -317,7 +319,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
    if(flag) grails.config.flag = true
  */
 Properties props = new Properties()
-File propsFile = new File("${userHome}/.grails/cytomineconfig.properties")
+File propsFile = new File("${userHome}/.grails/cytomineconfig.groovy")
 
 if(propsFile.exists()) {
     props.load(propsFile.newDataInputStream())
@@ -500,31 +502,31 @@ grails.plugins.restapidoc.grailsDomainDefaultType = "long"
 
 
 grails.plugins.restapidoc.defaultParamsQueryMultiple = [
-                [name:"max",description:"Pagination: Number of record per page (default 0 = no pagination)",type:"int"],
-                [name:"offset",description:"Pagination: Offset of first record (default 0 = first record)",type:"int"]
+        [name:"max",description:"Pagination: Number of record per page (default 0 = no pagination)",type:"int"],
+        [name:"offset",description:"Pagination: Offset of first record (default 0 = first record)",type:"int"]
 ]
 
 grails.plugins.restapidoc.defaultErrorAll = [
-                    "400": "Bad Request: missing parameters or bad message format",
-                    "401": "Unauthorized: must be auth",
-                    "403": "Forbidden: role error",
-                    "404": "Object not found"
-            ]
+        "400": "Bad Request: missing parameters or bad message format",
+        "401": "Unauthorized: must be auth",
+        "403": "Forbidden: role error",
+        "404": "Object not found"
+]
 
 grails.plugins.restapidoc.defaultErrorGet = [
-                    "400": "Bad Request: missing parameters or bad message format",
-                    "401": "Unauthorized: must be auth",
-                    "403": "Forbidden: role error",
-                    "404": "Object not found"
-            ]
+        "400": "Bad Request: missing parameters or bad message format",
+        "401": "Unauthorized: must be auth",
+        "403": "Forbidden: role error",
+        "404": "Object not found"
+]
 
 grails.plugins.restapidoc.defaultErrorPost = [
-                    "409": "Object already exist"
-            ]
+        "409": "Object already exist"
+]
 
 grails.plugins.restapidoc.defaultErrorPut = [
-                    "409": "Object already exist"
-            ]
+        "409": "Object already exist"
+]
 
 
 
@@ -551,12 +553,12 @@ cytomine.customUI.project = [
 
 environments {
     cluster {
-            grails {
-                cache {
-                    enabled = true
-                    ehcache {
-                        ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
-                        reloadable = false
+        grails {
+            cache {
+                enabled = true
+                ehcache {
+                    ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
+                    reloadable = false
                 }
             }
         }
