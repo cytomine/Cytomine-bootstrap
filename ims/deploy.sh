@@ -28,7 +28,7 @@ service tomcat7 start
 
 export VERBOSITY=1
 export MAX_CVT=5000
-#export MEMCACHED_SERVERS=127.0.0.1:11211
+export MEMCACHED_SERVERS=memcached:11211
 export MEMCACHED_TIMEOUT=604800
 export LOGFILE=/tmp/iip-openslide.out
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9000 &

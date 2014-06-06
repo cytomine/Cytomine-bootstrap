@@ -9,9 +9,13 @@ IMS_STORAGE_PATH=/var/aurora
 IMS_BUFFER_PATH=/var/aurora/_buffer
 
 RABBITMQ_PASS="mypass" 
+MEMCACHED_PASS="mypass"
+
+# create memcached docker
+docker run -d -p 11211:11211 -e MEMCACHED_PASS="mypass" --name memcached cytomine/memcached
 
 # create rabbitmq docker
-docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq \
+docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq
 
@@ -19,7 +23,7 @@ cytomine/rabbitmq
 docker run -p 22 -m 8g -d --name db cytomine/postgis
 
 # create IMS docker
-docker run -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -p 22 -m 2g -d --name ims \
+docker run -p 22 -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 2g -d --name ims --link memcached:memcached \
 -e IIP_URL=$IIP_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e UPLOAD_URL=$UPLOAD_URL \
