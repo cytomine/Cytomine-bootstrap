@@ -23,6 +23,9 @@ echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imagese
 echo "grails.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
 echo "grails.imageServerPublicKey=4a5c7004-b6f8-4705-a118-c15d5c90dcdb" >> imageserverconfig.properties
 echo "grails.imageServerPrivateKey=70f35a45-c317-405a-8056-353db3d2bf56" >> imageserverconfig.properties
+echo "grails.vips=/usr/local/bin/vips"
+echo "grails.identify=identify"
+echo "grails.tiffinfo=tiffinfo"
 fi
 service tomcat7 start
 
