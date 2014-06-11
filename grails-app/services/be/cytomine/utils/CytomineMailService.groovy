@@ -4,6 +4,7 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.mail.javamail.MimeMessageHelper
 
+import javax.mail.AuthenticationFailedException
 import javax.mail.internet.MimeMessage
 
 
@@ -45,6 +46,12 @@ class CytomineMailService {
         }
 
         log.info "send $mail"
-        sender.send(mail);
+        try {
+            sender.send(mail)
+        } catch (AuthenticationFailedException e) {
+            log.error "can't send email $mail (AuthenticationFailedException)"
+        } catch (Exception e) {
+            log.error "can't send email $mail (Exception)"
+        }
     }
 }

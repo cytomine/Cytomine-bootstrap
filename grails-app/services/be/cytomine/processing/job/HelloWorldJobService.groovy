@@ -13,6 +13,7 @@ class HelloWorldJobService extends AbstractJobService {
 
     static transactional = false
 
+    def grailsApplication
     def cytomineService
     def commandService
     def modelService
@@ -22,7 +23,8 @@ class HelloWorldJobService extends AbstractJobService {
 
 
     def init(Job job, UserJob userJob) {
-        jobParameterService.add(JSON.parse(createJobParameter("cytomine_host",job,"localhost:8080").encodeAsJSON()))
+        def serverUrl = grailsApplication.config.grails.serverURL.replace("http://", "").replace("https://", "")
+        jobParameterService.add(JSON.parse(createJobParameter("cytomine_host",job, serverUrl).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_base_path",job,"/api/").encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_public_key",job,userJob.publicKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_private_key",job,userJob.privateKey).encodeAsJSON()))
@@ -33,7 +35,7 @@ class HelloWorldJobService extends AbstractJobService {
 
     def execute(Job job, UserJob userJob, boolean preview) {
         log.info "Hello world"
-        HelloWorldJob.triggerNow([ job : job, userJob: userJob, preview : preview])
+        HelloWorldJob.triggerNow([ job : job, userJob: userJob, preview : preview, jobParameters : jobParameterService.list(job)])
     }
 
 
