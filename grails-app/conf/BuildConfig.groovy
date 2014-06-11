@@ -89,14 +89,14 @@ grails.project.dependency.resolution = {
 //
 //            }
 //        }
-//        if (Environment.getCurrent().name.equals("cluster"))  {
+//       if (Environment.getCurrent().name.equals("cluster"))  {
                 //for cache
                 runtime 'net.sf.ehcache:ehcache-core:2.4.6'
                 runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
                 //for session
                 runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
                 runtime "org.terracotta.session:terracotta-session:1.3.5"
-//        }
+//      }
     }
     plugins {
         // Uncomment these (or add new ones) to enable additional resources capabilities

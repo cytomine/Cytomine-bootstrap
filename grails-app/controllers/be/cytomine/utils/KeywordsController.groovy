@@ -13,6 +13,8 @@ class KeywordsController extends RestController {
 
     def list = {
         def data = []
+        def keyword = Keyword.get(1);
+        println keyword
         def sql = new Sql(dataSource)
         sql.eachRow("select key from keyword order by key asc",[]) {
             data << it.key

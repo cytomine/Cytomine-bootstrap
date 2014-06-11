@@ -71,7 +71,6 @@ var ReviewAnnotationListing = Backbone.View.extend({
     },
     refresh: function () {
         var self = this;
-        console.log("REFRESH ANNOTATION ||||||||||||||||||||||||||||||||||||||||||||||||");
         console.log(self.project) ;
         console.log([self.image]) ;
         console.log(self.term) ;
@@ -208,7 +207,7 @@ var ReviewAnnotationListing = Backbone.View.extend({
             terms : window.app.status.currentTermsCollection,
             term: "all",
             reviewMode : true,
-            size : 200
+            size : 150
         }).render();
 
         $(thumb.el).draggable({
