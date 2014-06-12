@@ -45,6 +45,9 @@ cytomine.maxRequestSize = 10485760
 storage_path="/Users/stevben/cytomine_storage" //default path for image locations
 iipImageServer="http://localhost:8081" //default path for iip image server
 
+rabbitmq.username = 'admin'
+rabbitmq.password = 'mypass'
+rabbitmq.hostname = 'rabbitmq'
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
@@ -452,9 +455,9 @@ grails.plugins.dynamicController.mixins = [
 /** RABBITMQ */
 rabbitmq {
     connectionfactory {
-        username = 'guest'
-        password = 'guest'
-        hostname = 'localhost'
+        username = rabbitmq.username
+        password = rabbitmq.password
+        hostname = rabbitmq.hostname
         consumers = 5
     }
     queues = {

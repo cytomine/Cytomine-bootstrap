@@ -3,6 +3,7 @@ package be.cytomine.processing
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.springframework.security.core.context.SecurityContextHolder
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +13,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
  * To change this template use File | Settings | File Templates.
  */
 class HelloWorldJob {
-    def sessionRequired = true
+    //def sessionRequired = true
     def concurrent = true
 
     def jobParameterService
@@ -27,20 +28,20 @@ class HelloWorldJob {
         Boolean preview = (Boolean) context.mergedJobDataMap.get('preview')
         Job job = (Job) context.mergedJobDataMap.get('job')
         UserJob userJob = (UserJob) context.mergedJobDataMap.get('userJob')
-
+        def jobParameters = context.mergedJobDataMap.get('jobParameters')
         SpringSecurityUtils.reauthenticate userJob.getUser().getUsername(), null
 
-        def jobParameters = []
-        jobParameterService.list(job).each {
-            jobParameters << [ name : "--"+it.getSoftwareParameter().getName(), value : it.getValue()]
+        def args = []
+        jobParameters.each {
+            args << [ name : "--"+it.getSoftwareParameter().getName(), value : it.getValue()]
         }
 
         if (preview) {
-            jobParameters << [ name : "--preview", value : ""]
+            args << [ name : "--preview", value : ""]
         }
         // execute job
-        log.info "execute $job with $jobParameters"
+        log.info "execute $job with $args"
 
-        rabbitSend('helloWorldQueue', (jobParameters as JSON).toString())
+        rabbitSend('helloWorldQueue', (args as JSON).toString())
     }
 }
