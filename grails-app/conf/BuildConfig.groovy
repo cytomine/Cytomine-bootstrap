@@ -57,7 +57,7 @@ grails.project.dependency.resolution = {
         mavenRepo 'https://noams.artifactoryonline.com/noams/grails-jaxrs-plugin-snapshots'
         mavenRepo 'http://maven.restlet.org'
         mavenRepo "http://www.hibernatespatial.org/repository"
-		//mavenRepo "http://repo.spring.io/milestone/"
+        //mavenRepo "http://repo.spring.io/milestone/"
 
         mavenRepo "http://www.terracotta.org/download/reflector/releases"
     }
@@ -68,7 +68,7 @@ grails.project.dependency.resolution = {
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 
         //runtime "postgresql:postgresql:9.0-801.jdbc4"
-                         //   postgresql-9.0-801.jdbc4.jar
+        //   postgresql-9.0-801.jdbc4.jar
 
         //for cluster
 //        runtime 'net.sf.ehcache:ehcache-core:2.6.6'
@@ -90,12 +90,12 @@ grails.project.dependency.resolution = {
 //            }
 //        }
 //       if (Environment.getCurrent().name.equals("cluster"))  {
-                //for cache
-                runtime 'net.sf.ehcache:ehcache-core:2.4.6'
-                runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
-                //for session
-                runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
-                runtime "org.terracotta.session:terracotta-session:1.3.5"
+        //for cache
+        runtime 'net.sf.ehcache:ehcache-core:2.4.6'
+        runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
+        //for session
+        runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
+        runtime "org.terracotta.session:terracotta-session:1.3.5"
 //      }
     }
     plugins {
@@ -112,7 +112,7 @@ grails.project.dependency.resolution = {
             excludes('hibernate-ehcache')
         }
 
-        compile ":rest-api-doc:0.1"
+        compile ":rest-api-doc:0.1.2"
 
 
 //               build ":tomcat:$grailsVersion" //
@@ -120,6 +120,7 @@ grails.project.dependency.resolution = {
 //        runtime ":hibernate:3.6.10.1"
 
 //        build ':tomcat:7.0.47'
+
 //        runtime ':hibernate:3.6.10.6'
 
 //        compile ':spring-security-core:2.0-RC2'
@@ -147,14 +148,14 @@ grails.project.dependency.resolution = {
         test ':code-coverage:1.2.7'
         compile ":mail:1.0.1"
         test(":spock:0.7") {
-          exclude "spock-grails-support"
+            exclude "spock-grails-support"
         }
         test ":geb:0.9.0"
 
     }
 }
 coverage {
-	exclusions = [
+    exclusions = [
             "**/be/cytomine/data/**",
             "**/be/cytomine/processing/job/**",
             "**/be/cytomine/processing/image/filters/**",
@@ -162,4 +163,3 @@ coverage {
             "**/twitter/bootstrap**"
     ]
 }
-

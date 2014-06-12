@@ -96,7 +96,9 @@ environments {
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     production {
-        grails.serverURL = "http://shareview.ecampus.ulg.ac.be" //"http://localhost:8080"
+        //grails.serverURL = "http://shareview.ecampus.ulg.ac.be"
+        grails.serverURL = "http://localhost:8086"
+        // "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 //        grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
@@ -312,6 +314,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
         '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/status/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]
 /* Read CAS/LDAP config. A bad thing with Grails external config is that all config data from config properties file
    is set AFTER ldap/cas config. So we read config data from file directly and we force flag (active)
@@ -555,7 +558,7 @@ environments {
     cluster {
         grails {
             cache {
-                enabled = true
+                enabled = false
                 ehcache {
                     ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
                     reloadable = false

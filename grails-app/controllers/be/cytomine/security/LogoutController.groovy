@@ -2,6 +2,8 @@ package be.cytomine.security
 
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
+//import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+
 class LogoutController {
 
     /**

@@ -11,7 +11,7 @@ import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.util.Holders
 import groovy.util.logging.Log
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+//import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder as SCH
@@ -72,7 +72,7 @@ class Infos {
     static void addUserRight(User user, Project project) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
         def aclUtilService = Holders.getGrailsApplication().getMainContext().getBean("aclUtilService")
-        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        PermissionService service = grails.util.Holders.getGrailsApplication().mainContext.getBean('permissionService')
         service.addPermission(project,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(project,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(project.ontology,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
@@ -84,7 +84,7 @@ class Infos {
 
     static void addUserRight(User user, Ontology ontology) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        PermissionService service = grails.util.Holders.getGrailsApplication().mainContext.getBean('permissionService')
         service.addPermission(ontology,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(ontology,user.username,WRITE,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(ontology,user.username,DELETE,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
@@ -97,7 +97,7 @@ class Infos {
 
     static void addUserRight(User user, Software software) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        PermissionService service = grails.util.Holders.getGrailsApplication().mainContext.getBean('permissionService')
         service.addPermission(software,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(software,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
     }
@@ -108,14 +108,14 @@ class Infos {
 
     static void addUserRight(User user, Storage storage) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        PermissionService service = grails.util.Holders.getGrailsApplication().mainContext.getBean('permissionService')
         service.addPermission(storage,user.username,READ,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         service.addPermission(storage,user.username,ADMINISTRATION,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
     }
 
     static void addUserRight(User user, CytomineDomain domain, def perms) {
         SCH.context.authentication = new UsernamePasswordAuthenticationToken(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, AuthorityUtils.createAuthorityList('ROLE_ADMIN'))
-        PermissionService service = ApplicationHolder.application.mainContext.getBean('permissionService')
+        PermissionService service = grails.util.Holders.getGrailsApplication().mainContext.getBean('permissionService')
         perms.each {
             service.addPermission(domain,user.username,it,SecUser.findByUsername(Infos.SUPERADMINLOGIN))
         }

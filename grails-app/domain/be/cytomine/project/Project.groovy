@@ -122,6 +122,7 @@ class Project extends CytomineDomain implements Serializable {
         ontology fetch: 'join'
         discipline fetch: 'join'
         sort "id"
+        cache true
     }
 
     String toString() {

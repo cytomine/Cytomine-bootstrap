@@ -1,5 +1,6 @@
 package be.cytomine.security
 
+
 import groovy.sql.Sql
 import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser

@@ -134,6 +134,8 @@ class IndexService {
             createIndex("user_position", "created","btree", "user_position_created");
             createIndex("user_position", "updated","btree", "user_position_updated");
 
+            createIndex("last_connection", "user_id");
+
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
         }

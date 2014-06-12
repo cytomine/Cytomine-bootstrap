@@ -13,7 +13,6 @@ class WrongService {
      * SERVICE MUST BE DELETE AFTER THE SERVICENAME HAS BEEN SET FOR EACH SOFTWARE
      */
 
-    @Override
     Double computeRate(Job job) {
         return null;
     }

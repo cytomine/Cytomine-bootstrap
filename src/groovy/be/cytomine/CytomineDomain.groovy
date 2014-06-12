@@ -44,6 +44,7 @@ abstract class CytomineDomain  implements Comparable,Serializable{
         tablePerHierarchy false
         id generator: "assigned"
         sort "id"
+
     }
 
     static constraints = {

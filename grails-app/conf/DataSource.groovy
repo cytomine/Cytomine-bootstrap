@@ -9,15 +9,21 @@ dataSource {
     }
 }
 hibernate {
-  cache.use_second_level_cache = true
-  cache.use_query_cache = true
-
+//  cache.use_second_level_cache = true
+//  cache.use_query_cache = true
+//    cache.use_second_level_cache = false
+//    cache.use_query_cache = false   // Changed to false to be enable the distributed cache
+//    cache.provider_class = 'net.sf.ehcache.hibernate.SingletonEhCacheProvider'
 
     //CLUSTER
-    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
+//    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
 //    cache.provider_class = 'net.sf.ehcache.hibernate.SingletonEhCacheProvider'
-//    hibernate.cache.region.factory_class = 'net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory'
-
+   // hibernate.cache.region.factory_class = 'net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory'
+    cache.use_second_level_cache = true
+    cache.use_query_cache = false
+    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
+//    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
+    singleSession = true // configure OSIV singleSession mode
 }
 // environment specific settings
 environments {

@@ -100,6 +100,8 @@ class UrlMappings {
 //            action = [GET:"retrieveProjectUIConfig"]
 //        }
 
-
+        "/status.json" (controller: "server") {
+            action = [GET:"status"]
+        }
     }
 }

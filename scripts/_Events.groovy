@@ -31,21 +31,21 @@ eventGenerateWebXmlEnd = {
 }
 
 
-//eventConfigureTomcat = { tomcat ->
-//    String contextFile = "web-app/WEB-INF/context.xml"
-//    if (Environment.getCurrent().name.equals("cluster")) {
-//        if (new File(contextFile).exists()) {
-//            println "----- CONFIGURING TOMCAT REALM ----------"
-//            this.buildSettings = grails.util.BuildSettingsHolder.getSettings()
-//            def workDir = buildSettings.projectWorkDir
-//            def tomcatDir = new File("${workDir}/tomcat").absolutePath
-//            println tomcatDir
-//            ant.copy(file:"${contextFile}", todir:"${tomcatDir}/conf")
-//        } else {
-//            println "----- NO CONTEXT FILE in" + new File(contextFile)
-//        }
-//    }
-//}
+eventConfigureTomcat = { tomcat ->
+    String contextFile = "web-app/WEB-INF/context.xml"
+    if (Environment.getCurrent().name.equals("cluster")) {
+        if (new File(contextFile).exists()) {
+            println "----- CONFIGURING TOMCAT REALM ----------"
+            this.buildSettings = grails.util.BuildSettingsHolder.getSettings()
+            def workDir = buildSettings.projectWorkDir
+            def tomcatDir = new File("${workDir}/tomcat").absolutePath
+            println tomcatDir
+            ant.copy(file:"${contextFile}", todir:"${tomcatDir}/conf")
+        } else {
+            println "----- NO CONTEXT FILE in" + new File(contextFile)
+        }
+    }
+}
 
 
 

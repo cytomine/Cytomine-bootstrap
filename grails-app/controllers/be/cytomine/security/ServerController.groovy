@@ -3,6 +3,8 @@ package be.cytomine.security
 import grails.converters.JSON
 import grails.converters.XML
 import grails.plugins.springsecurity.Secured
+
+//import grails.plugins.springsecurity.Secured
 import groovy.sql.Sql
 
 class ServerController {
@@ -14,7 +16,6 @@ class ServerController {
 
     @Secured(['IS_AUTHENTICATED_REMEMBERED'])
     def ping () {
-
         def jsonContent = request.JSON
         def data = [:]
         data.alive = true
@@ -30,6 +31,17 @@ class ServerController {
             }
             addLastConnection(idUser,idProject)
         }
+        withFormat {
+            json { render data as JSON }
+            xml { render data as XML}
+        }
+    }
+
+    def status() {
+        def data = [:]
+        data.alive = true
+        data.version = grailsApplication.metadata['app.version']
+        data.serverURL = grailsApplication.config.grails.serverURL
         withFormat {
             json { render data as JSON }
             xml { render data as XML}
