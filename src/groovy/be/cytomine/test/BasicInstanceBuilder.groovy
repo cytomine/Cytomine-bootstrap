@@ -981,9 +981,24 @@ class BasicInstanceBuilder {
         imageInstanceProperty
     }
 
+    static Property getAbstractImageProperty() {
+        def abstractImage = getAbstractImage()
+        def abstractImageProperty = Property.findByDomainIdentAndKey(abstractImage.id,'MyKeyBasic')
+        if (!abstractImageProperty) {
+            abstractImageProperty = new Property(domain: abstractImage, key: 'MyKeyBasic', value:"MyValueBasic")
+            saveDomain(abstractImageProperty)
+        }
+        abstractImageProperty
+    }
+
     static Property getImageInstancePropertyNotExist(ImageInstance imageInstance = getImageInstance(), boolean save = false) {
         def imageInstanceProperty = new Property(domain: imageInstance, key: getRandomString(),value: "MyValueBasic")
         save? saveDomain(imageInstanceProperty) : checkDomain(imageInstanceProperty)
+    }
+
+    static Property getAbstractImagePropertyNotExist(AbstractImage abstractImage = getAbstractImage(), boolean save = false) {
+        def abstractImageProperty = new Property(domain: abstractImage, key: getRandomString(),value: "MyValueBasic")
+        save? saveDomain(abstractImageProperty) : checkDomain(abstractImageProperty)
     }
 
     static Instrument getScanner() {

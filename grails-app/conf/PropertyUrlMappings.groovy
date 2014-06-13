@@ -46,6 +46,17 @@ class PropertyUrlMappings
             action = [GET:"listKeyForImageInstance"]
         }
 
+        //generic domain
+        "/api/domain/$domainClassName/$domainIdent/property.$format"(controller:"restProperty"){
+            action = [GET:"listByDomain",POST: "addPropertyDomain"]
+        }
+        "/api/domain/$domainClassName/$domainIdent/key/$key/property.$format"(controller:"restProperty"){
+            action = [GET:"showDomain"]
+        }
+        "/api/domain/$domainClassName/$domainIdent/property/$id.$format"(controller:"restProperty"){
+            action = [GET:"showDomain",PUT:"update", DELETE:"delete"]
+        }
+
         "/api/keywords.$format"(controller:"keywords"){
             action = [GET:"list"]
         }

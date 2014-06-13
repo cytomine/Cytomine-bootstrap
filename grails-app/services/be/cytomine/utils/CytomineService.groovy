@@ -1,5 +1,6 @@
 package be.cytomine.utils
 
+import be.cytomine.CytomineDomain
 import be.cytomine.security.SecUser
 
 class CytomineService implements Serializable {
@@ -14,4 +15,9 @@ class CytomineService implements Serializable {
     boolean isUserAlgo() {
         return getCurrentUser().algo()
     }
+
+    public CytomineDomain getDomain(Long id,String className) {
+        Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
+    }
+
 }

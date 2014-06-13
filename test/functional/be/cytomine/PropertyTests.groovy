@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
@@ -32,6 +33,14 @@ class PropertyTests {
         assert json instanceof JSONObject
         assert json.id == projectProperty.id
     }
+    void testShowAbstractImageProperty() {
+        def abstractImageProperty = BasicInstanceBuilder.getAbstractImageProperty()
+        def result = PropertyAPI.show(abstractImageProperty.id, abstractImageProperty.domainIdent, abstractImageProperty.domainClassName, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+        assert json.id == abstractImageProperty.id
+    }
     void testShowImageInstanceProperty() {
         def imageInstanceProperty = BasicInstanceBuilder.getImageInstanceProperty()
         def result = PropertyAPI.show(imageInstanceProperty.id, imageInstanceProperty.domainIdent, "imageinstance", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
@@ -49,6 +58,11 @@ class PropertyTests {
     void testShowProjectPropertyNotExist() {
         def project = BasicInstanceBuilder.getProject()
         def result = PropertyAPI.show(-99, project.id, "project", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
+    void testShowAbstractImagePropertyNotExist() {
+        def image = BasicInstanceBuilder.getAbstractImage()
+        def result = PropertyAPI.show(-99, image.id, BasicInstanceBuilder.getAbstractImage().class.name, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
     void testShowPropertyPropertyNotExist() {
@@ -70,6 +84,12 @@ class PropertyTests {
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
     }
+    void testListByAbstractImage() {
+        def result = PropertyAPI.listByDomain(BasicInstanceBuilder.getAbstractImage().id,BasicInstanceBuilder.getAbstractImage().class.name, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+    }
     void testListByImageInstance() {
         def result = PropertyAPI.listByDomain(BasicInstanceBuilder.getImageInstance().id, "imageinstance", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
@@ -83,6 +103,10 @@ class PropertyTests {
     }
     void testListByProjectNotExist() {
         def result = PropertyAPI.listByDomain(-99, "project", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
+    void testListByAbstractImageNotExist() {
+        def result = PropertyAPI.listByDomain(-99, BasicInstanceBuilder.getAbstractImage().class.name, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
     void testListByImageInstanceNotExist() {
@@ -197,6 +221,32 @@ class PropertyTests {
         result = PropertyAPI.show(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
+    void testDeleteAbstractImageProperty() {
+        def abstractImagePropertyToDelete = BasicInstanceBuilder.getAbstractImagePropertyNotExist()
+        assert abstractImagePropertyToDelete.save(flush: true) != null
+
+        def id = abstractImagePropertyToDelete.id
+        def idDomain = abstractImagePropertyToDelete.domainIdent
+        def key = abstractImagePropertyToDelete.key
+        def result = PropertyAPI.delete(id, idDomain, abstractImagePropertyToDelete.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        //UNDO & REDO
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToDelete.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+
+        result = PropertyAPI.undo()
+        assert 200 == result.code
+
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToDelete.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        result = PropertyAPI.redo()
+        assert 200 == result.code
+
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToDelete.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
     void testDeleteImageInstanceProperty() {
         def imageInstancePropertyToDelete = BasicInstanceBuilder.getImageInstancePropertyNotExist()
         assert imageInstancePropertyToDelete.save(flush: true) != null
@@ -204,23 +254,23 @@ class PropertyTests {
         def id = imageInstancePropertyToDelete.id
         def idDomain = imageInstancePropertyToDelete.domainIdent
         def key = imageInstancePropertyToDelete.key
-        def result = PropertyAPI.delete(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = PropertyAPI.delete(id, idDomain, "imageinstance" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //UNDO & REDO
-        result = PropertyAPI.show(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = PropertyAPI.show(id, idDomain, "imageinstance" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = PropertyAPI.undo()
         assert 200 == result.code
 
-        result = PropertyAPI.show(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = PropertyAPI.show(id, idDomain, "imageinstance" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = PropertyAPI.redo()
         assert 200 == result.code
 
-        result = PropertyAPI.show(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = PropertyAPI.show(id, idDomain, "imageinstance" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -232,6 +282,11 @@ class PropertyTests {
     void testDeleteProjectPropertyNotExist() {
         def project = BasicInstanceBuilder.getProjectNotExist()
         def result = PropertyAPI.delete(-99, project.id, "project", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
+    void testDeleteAbstractImagePropertyNotExist() {
+        def image = BasicInstanceBuilder.getAbstractImageNotExist()
+        def result = PropertyAPI.delete(-99, image.id, image.class.name, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
     void testDeleteImageInstancePropertyNotExist() {
@@ -289,6 +344,30 @@ class PropertyTests {
         result = PropertyAPI.show(id, idDomain, "project" ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
+    void testAddAbstractImagePropertyCorrect() {
+        def abstractImagePropertyToAdd = BasicInstanceBuilder.getAbstractImagePropertyNotExist()
+        def idDomain = abstractImagePropertyToAdd.domainIdent
+
+        def result = PropertyAPI.create(idDomain, abstractImagePropertyToAdd.domainClassName ,abstractImagePropertyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def id =  result.data.id
+
+        //UNDO & REDO
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToAdd.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        result = PropertyAPI.undo()
+        assert 200 == result.code
+
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToAdd.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+
+        result = PropertyAPI.redo()
+        assert 200 == result.code
+
+        result = PropertyAPI.show(id, idDomain, abstractImagePropertyToAdd.domainClassName ,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+    }
     void testAddImageInstancePropertyCorrect() {
         def imageInstancePropertyToAdd = BasicInstanceBuilder.getImageInstancePropertyNotExist()
         def idDomain = imageInstancePropertyToAdd.domainIdent
@@ -324,6 +403,11 @@ class PropertyTests {
         def result = PropertyAPI.create(projectPropertyToAdd.domainIdent, "project", projectPropertyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
+    void testAddAbstractImagePropertyAlreadyExist() {
+        def abstractImagePropertyToAdd = BasicInstanceBuilder.getAbstractImageProperty()
+        def result = PropertyAPI.create(abstractImagePropertyToAdd.domainIdent, abstractImagePropertyToAdd.domainClassName, abstractImagePropertyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 409 == result.code
+    }
     void testAddImageInstancePropertyAlreadyExist() {
         def imageInstancePropertyToAdd = BasicInstanceBuilder.getImageInstanceProperty()
         def result = PropertyAPI.create(imageInstancePropertyToAdd.domainIdent, "imageinstance", imageInstancePropertyToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
@@ -351,6 +435,19 @@ class PropertyTests {
         println  projectPropertyToAdd.domainIdent + "-" +  projectPropertyToAdd.key
 
         def result = PropertyAPI.update(projectPropertyToAdd.id, projectPropertyToAdd.domainIdent, "project", data.postData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
+
+        BasicInstanceBuilder.compare(data.mapNew,json.property)
+    }
+    void testUpdateAbstractImagePropertyCorrect() {
+        Property abstractImagePropertyToAdd = BasicInstanceBuilder.getAbstractImageProperty()
+        def data = UpdateData.createUpdateSet( abstractImagePropertyToAdd,[key: ["OLDKEY","NEWKEY"],value: ["OLDVALUE","NEWVALUE"]])
+
+        println  abstractImagePropertyToAdd.domainIdent + "-" +  abstractImagePropertyToAdd.key
+
+        def result = PropertyAPI.update(abstractImagePropertyToAdd.id, abstractImagePropertyToAdd.domainIdent, abstractImagePropertyToAdd.domainClassName, data.postData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

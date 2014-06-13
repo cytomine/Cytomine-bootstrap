@@ -63,6 +63,8 @@ class RestController {
      */
     public Object update(def service, def json) {
         try {
+            println "json=$json"
+            println "json=${service.retrieve(json)}"
             def domain =  service.retrieve(json)
             def result = service.update(domain,json)
             responseResult(result)

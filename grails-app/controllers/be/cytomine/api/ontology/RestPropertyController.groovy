@@ -1,6 +1,7 @@
 package be.cytomine.api.ontology
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
@@ -24,6 +25,7 @@ class RestPropertyController extends RestController {
     def projectService
     def imageInstanceService
     def secUserService
+    def DomainService
 
     /**
      * List all Property visible for the current user by Project, AnnotationDomain and ImageInstance
@@ -70,6 +72,19 @@ class RestPropertyController extends RestController {
         ImageInstance imageInstance = imageInstanceService.read(imageInstanceId)
         if(imageInstance) {
             responseSuccess(propertyService.list(imageInstance))
+        } else {
+            responseNotFound("ImageInstance",params.idImageInstance)
+        }
+    }
+
+    @RestApiMethod(description="Get all properties for an abstract image", listing=true)
+    @RestApiParams(params=[
+    @RestApiParam(name="idDomain", type="long", paramType = RestApiParamType.PATH,description = "The abstract image id")
+    ])
+    def listByDomain() {
+        CytomineDomain domain = cytomineService.getDomain(params.long('domainIdent'),params.get("domainClassName"))
+        if(domain) {
+            responseSuccess(propertyService.list(domain))
         } else {
             responseNotFound("ImageInstance",params.idImageInstance)
         }
@@ -148,6 +163,30 @@ class RestPropertyController extends RestController {
             property = propertyService.read(params.id)
         } else if (params.key != null) {
             property = propertyService.read(project, params.key)
+        }
+
+        if (property) {
+            responseSuccess(property)
+        } else {
+            responseNotFound("Property", params.id)
+        }
+    }
+
+    @RestApiMethod(description="Get an abstract image property with its id or its key")
+    @RestApiParams(params=[
+    @RestApiParam(name="domainIdent", type="string", paramType = RestApiParamType.PATH, description = "The domain id"),
+    @RestApiParam(name="domainClassName", type="string", paramType = RestApiParamType.PATH, description = "The domain type"),
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null key must be set) The property id"),
+    @RestApiParam(name="key", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null id must be set) The property key")
+    ])
+    def showDomain() {
+        CytomineDomain domain = cytomineService.getDomain(params.long('domainIdent'),(String)params.get('domainClassName'))
+
+        Property property
+        if(params.id != null) {
+            property = propertyService.read(params.id)
+        } else if (params.key != null) {
+            property = propertyService.read(domain, params.key)
         }
 
         if (property) {
@@ -237,6 +276,16 @@ class RestPropertyController extends RestController {
     def addPropertyImageInstance()  {
         def json = request.JSON
         json.domainClassName = ImageInstance.getName()
+        add(propertyService, request.JSON)
+    }
+
+    @RestApiMethod(description="Add a property to an abstract image")
+    @RestApiParams(params=[
+    @RestApiParam(name="idDomain", type="long", paramType = RestApiParamType.PATH, description = "The abstract image id"),
+    ])
+    def addPropertyDomain()  {
+        def json = request.JSON
+        json.domainClassName = params.get("domainClassName")
         add(propertyService, request.JSON)
     }
 

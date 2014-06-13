@@ -8,13 +8,15 @@ class PropertyAPI extends DomainAPI {
 
     //SHOW
     static def show(Long id, Long idDomain, String type, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property/${id}.json"
+        String typeCorrection = (type.contains(".")? "domain/$type" : type )
+        String URL = Infos.CYTOMINEURL + "api/$typeCorrection/$idDomain/property/${id}.json"
         return doGET(URL, username, password)
     }
 
     //LISTBY...
     static def listByDomain(Long id, String type, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/$type/$id/property.json"
+        String typeCorrection = (type.contains(".")? "domain/$type" : type )
+        String URL = Infos.CYTOMINEURL + "api/$typeCorrection/$id/property.json"
         return doGET(URL, username, password)
     }
 
@@ -41,7 +43,8 @@ class PropertyAPI extends DomainAPI {
 
     //ADD
     static def create(Long idDomain, String type, String json, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property.json"
+        String typeCorrection = (type.contains(".")? "domain/$type" : type )
+        String URL = Infos.CYTOMINEURL + "api/$typeCorrection/$idDomain/property.json"
         def result = doPOST(URL,json,username,password)
         result.data = Property.get(JSON.parse(result.data)?.property?.id)
         return result
@@ -49,13 +52,15 @@ class PropertyAPI extends DomainAPI {
 
     //UPDATE
     static def update(def id, Long idDomain, String type, def jsonAnnotationProperty, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property/${id}.json"
+        String typeCorrection = (type.contains(".")? "domain/$type" : type )
+        String URL = Infos.CYTOMINEURL + "api/$typeCorrection/$idDomain/property/${id}.json"
         return doPUT(URL,jsonAnnotationProperty,username,password)
     }
 
     //DELETE
     static def delete(def id, Long idDomain, String type, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/$type/$idDomain/property/${id}.json"
+        String typeCorrection = (type.contains(".")? "domain/$type" : type )
+        String URL = Infos.CYTOMINEURL + "api/$typeCorrection/$idDomain/property/${id}.json"
         return doDELETE(URL,username,password)
     }
 

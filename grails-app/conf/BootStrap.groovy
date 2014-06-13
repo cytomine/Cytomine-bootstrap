@@ -103,14 +103,28 @@ class BootStrap {
             relation.save(flush:true,failOnError: true)
         }
 
-        //2014 05 12
+        //version>2014 05 12
         if(!SecRole.findByAuthority("ROLE_SUPER_ADMIN")) {
             SecRole role = new SecRole(authority:"ROLE_SUPER_ADMIN")
             role.save(flush:true,failOnError: true)
         }
 
+        //version>2014 05 12  OTOD: DO THIS FOR IFRES,...
+        if(SecUser.findByUsername("ImageServer1")) {
+            def imageUser = SecUser.findByUsername("ImageServer1")
+            def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
+            if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
+                new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+            }
 
+        }
 
-
+        if(SecUser.findByUsername("vmartin")) {
+            def imageUser = SecUser.findByUsername("vmartin")
+            def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
+            if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
+                new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+            }
+        }
     }
 }
