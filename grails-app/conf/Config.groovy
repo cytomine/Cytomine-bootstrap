@@ -572,6 +572,8 @@ environments {
     }
 }
 
+grails.client = "AURORA"
+
 //cytomine.client = "NO"
 
 //

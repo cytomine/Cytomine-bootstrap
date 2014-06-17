@@ -1,5 +1,5 @@
 import grails.util.Environment
-grails.client = "be.cytomine.aurora"
+//grails.client = "be.cytomine.aurora"
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -28,7 +28,7 @@ grails.project.fork = [ test: false, run: false, war: false, console: false ]
 println "********************************************"
 println grails
 println grailsApplication
-//
+
 //if(grails.client=="be.cytomine.aurora") {
 //    grails.plugin.location.aurora = "../Core-plugins/be.cytomine.aurora"
 //}

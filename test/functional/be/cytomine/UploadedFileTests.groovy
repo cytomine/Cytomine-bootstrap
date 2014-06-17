@@ -107,6 +107,11 @@ class UploadedFileTests {
        result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
 
+       uploadedFile.refresh()
+
+       assert uploadedFile.image
+       assert uploadedFile.image.id == image.id
+
    }
 
 

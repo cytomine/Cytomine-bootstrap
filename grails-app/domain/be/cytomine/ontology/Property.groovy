@@ -109,7 +109,7 @@ class Property extends CytomineDomain implements Serializable{
     }
 
     public CytomineDomain container() {
-        return retrieveCytomineDomain().container();
+        return retrieveCytomineDomain()?.container();
     }
 
 }

@@ -1,5 +1,6 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.aurora.NotifyAuroraUploadJob
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
@@ -125,6 +126,19 @@ class BootStrap {
             if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
                 new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
             }
+        }
+
+        //NotifyAuroraUploadJob.schedule(1000, 1000, [:])
+
+
+        println "********************************************"
+        println grailsApplication
+        println grailsApplication.properties
+        println grailsApplication.config.grails
+        println grailsApplication.config.grails.client
+
+        if(grailsApplication.config.grails.client=="AURORA") {
+            //NotifyAuroraUploadJob.schedule(5000, 5000, [:])
         }
     }
 }

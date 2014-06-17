@@ -195,12 +195,17 @@ class RestUploadedFileController extends RestController {
             imagePropertiesService.extractUseful(abstractImage)
             abstractImage.save(flush: true,failOnError: true)
 
+            uploadedFile.image = abstractImage
+            uploadedFile.save(flush:true,failOnError: true)
+
             uploadedFile.getProjects()?.each { project_id ->
                 Project project = projectService.read(project_id)
                 projects << project
                 ImageInstance imageInstance = new ImageInstance( baseImage : abstractImage, project:  project, user :currentUser)
                 imageInstanceService.add(JSON.parse(imageInstance.encodeAsJSON()))
             }
+
+
 
         } else {
             sample.errors?.each {

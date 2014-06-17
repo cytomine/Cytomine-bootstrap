@@ -55,6 +55,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
     @RestApiObjectField(description = "File content type", presentInResponse = false)
     String contentType
 
+    @RestApiObjectField(description = "Mime type", presentInResponse = false)
+    String mimeType
 
     UploadedFile parent
 
@@ -63,6 +65,9 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
     @RestApiObjectField(description = "File status (UPLOADED = 0,CONVERTED = 1,DEPLOYED = 2,ERROR_FORMAT = 3,ERROR_CONVERT = 4,UNCOMPRESSED = 5,TO_DEPLOY = 6)", mandatory = false)
     int status = 0
+
+    @RestApiObjectField(description = "The image created by this file")
+    AbstractImage image
 
     /**
      * Indicates whether or not a conversion was done
@@ -88,6 +93,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
         convertedFilename (nullable: true)
         convertedExt (nullable: true)
         parent(nullable : true)
+        image(nullable : true)
+        mimeType(nullable : true)
     }
 
     static def getDataFromDomain(def uploaded) {
@@ -99,6 +106,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['originalFilename'] = uploaded?.originalFilename
         returnArray['ext'] = uploaded?.ext
         returnArray['contentType'] = uploaded?.contentType
+        returnArray['mimeType'] = uploaded?.mimeType
         returnArray['size'] = uploaded?.size
         returnArray['path'] = uploaded?.path
         returnArray['status'] = uploaded?.status
@@ -109,6 +117,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['error_convert'] = (uploaded?.status == UploadedFile.ERROR_CONVERT)
         returnArray['uncompressed'] = (uploaded?.status == UploadedFile.UNCOMPRESSED)
         returnArray['to_deploy'] = (uploaded?.status == UploadedFile.TO_DEPLOY)
+        returnArray['image'] = uploaded?.image?.id
         returnArray
     }
 
@@ -138,6 +147,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         domain.ext = JSONUtils.getJSONAttrStr(json,'ext')
         domain.path = JSONUtils.getJSONAttrStr(json,'path')
         domain.contentType = JSONUtils.getJSONAttrStr(json,'contentType')
+        domain.mimeType = JSONUtils.getJSONAttrStr(json,'mimeType')
 
         domain.parent = JSONUtils.getJSONAttrDomain(json, "parent", new UploadedFile(), false)
 
@@ -146,6 +156,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
         domain.status = JSONUtils.getJSONAttrInteger(json,'status',0)
 
         domain.converted = JSONUtils.getJSONAttrBoolean(json,'converted',false)
+
+        domain.image = JSONUtils.getJSONAttrDomain(json, "image", new AbstractImage(), false)
 
         return domain;
     }
