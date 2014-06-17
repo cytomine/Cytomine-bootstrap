@@ -227,6 +227,7 @@ BrowseImageView = Backbone.View.extend({
                                 layer.selectFeature(feature);
                             }
                         }, 1000);//select feature once layer is readed. Should be triggered by event...
+                        options.goToAnnotation = undefined;
                     }
 //                    } else {
 //                        new UserModel({id: annotation.get('user')}).fetch({

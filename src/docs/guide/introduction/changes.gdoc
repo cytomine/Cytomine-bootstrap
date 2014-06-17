@@ -2,7 +2,6 @@ h3. 201406XX Version
 
 "Run as" mode
 Admin session disabled (by default)
-Move to Grails 2.4
 
 *SQL Changes*
 Ajouter le role SUPER_ADMIN_ROLE pour les utilisateurs qui doivent toujours rester en ADMIN (ifres, retrieval, imageserver?,...)

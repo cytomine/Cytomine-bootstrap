@@ -108,9 +108,9 @@ environments {
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
     }
     development {
-        //grails.serverURL = "http://localhost:8080"
+        grails.serverURL = "http://localhost:8080"
         //if test with VM windows 7
-        grails.serverURL = "http://10.0.2.2:8080"
+        //grails.serverURL = "http://10.0.2.2:8080"
         grails.uploadURL = "http://upload.cytomine.be"
         //grails.uploadURL = "http://localhost:9090"
         grails.imageServerURL = "http://localhost:9080"
@@ -571,6 +571,9 @@ environments {
 
     }
 }
+
+//cytomine.client = "NO"
+
 //
 //if (Environment.getCurrent().name.equals("cluster"))  {
 //    test "org.gebish:geb-junit4:0.9.2"

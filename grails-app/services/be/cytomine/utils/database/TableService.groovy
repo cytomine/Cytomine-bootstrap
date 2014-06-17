@@ -24,11 +24,16 @@ class TableService {
         sessionFactory.getCurrentSession().clear();
         def connection = sessionFactory.currentSession.connection()
 
+        //drop constraint (for perf)
+        dropForeignKeys()
+//        dropConstraint("user_position","fk2f95f31d86f383d")
+//        dropConstraint("user_position","fk2f95f31d94b673c6")
+//        dropConstraint("user_position","fk2f95f31dfb4af27c")
+//        dropConstraint("last_connection","fk3197e82794b673c6")
+//        dropConstraint("last_connection","fk3197e827fb4af27c")
 
 
         try {
-            def statement = connection.createStatement()
-
 
             if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'command' and column_name = 'data'")!=null) {
                 log.info "Change type..."
@@ -131,5 +136,43 @@ class TableService {
         } catch(Exception e) {
             log.error e
         }
+    }
+
+//    def dropConstraint(String table, String constraint) {
+//
+//    }
+
+
+
+    def dropForeignKeys() {
+        def response = null
+        String request = """
+            SELECT
+                tc.constraint_name, tc.table_name, kcu.column_name,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name
+            FROM
+                information_schema.table_constraints AS tc
+                JOIN information_schema.key_column_usage AS kcu
+                  ON tc.constraint_name = kcu.constraint_name
+                JOIN information_schema.constraint_column_usage AS ccu
+                  ON ccu.constraint_name = tc.constraint_name
+            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='user_position' OR tc.table_name='last_connection');
+
+        """
+        log.info "request = $request"
+        new Sql(dataSource).eachRow(request) {
+            def sql = new Sql(dataSource)
+            try {
+                String table = it[1]
+                String constraint = it[0]
+                String req = "ALTER TABLE $table DROP CONSTRAINT $constraint"
+                log.info "drop constraint $constraint => $req"
+                sql.executeUpdate(req)
+                sql.close()
+            }catch (Exception e) {}
+        }
+        log.info "response = $response"
+        response
     }
 }

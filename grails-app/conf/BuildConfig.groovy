@@ -1,5 +1,5 @@
 import grails.util.Environment
-
+grails.client = "be.cytomine.aurora"
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -24,6 +24,16 @@ grails.project.fork = [ test: false, run: false, war: false, console: false ]
 //grails.plugin.location."grails-jsondoc" = "/Users/stevben/Cytomine/github/grails-jsondoc"
 
 //grails.plugin.location.restapidoc = "../RestApiDoc"
+
+println "********************************************"
+println grails
+println grailsApplication
+//
+//if(grails.client=="be.cytomine.aurora") {
+//    grails.plugin.location.aurora = "../Core-plugins/be.cytomine.aurora"
+//}
+
+
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -112,6 +122,11 @@ grails.project.dependency.resolution = {
             excludes('hibernate-ehcache')
         }
 
+
+
+
+        //cytomine.client
+
         compile ":rest-api-doc:0.1.2"
 
 
@@ -140,7 +155,7 @@ grails.project.dependency.resolution = {
         runtime ":rabbitmq:1.0.0"
         compile ":quartz:1.0.1"
         runtime ":quartz-monitor:0.3-RC3"
-        runtime ':cache:1.0.1'
+        runtime ':cache:1.1.1'
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.RC2"
         runtime ':jquery:1.8.3'
