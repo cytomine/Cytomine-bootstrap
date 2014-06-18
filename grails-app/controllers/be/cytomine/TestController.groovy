@@ -14,6 +14,7 @@ class TestController {
     def dataSource
     def attachedFileService
     def springSecurityService
+    def auroraService
 
     def index() {}
 
@@ -43,6 +44,10 @@ class TestController {
         println "z="+authorities
     }
 
+
+    def aurora() {
+        auroraService.notifyImage()
+    }
 
 
 //    def attack1() {

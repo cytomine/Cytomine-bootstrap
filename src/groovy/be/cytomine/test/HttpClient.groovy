@@ -1,5 +1,6 @@
 package be.cytomine.test
 
+import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -197,11 +198,19 @@ class HttpClient {
 //        response = client.execute(targetHost, httpPost, localcontext);
 //    }
 
-    public void post(String data) throws Exception {
+    public void post(String data, String contentType = null) throws Exception {
         HttpPost httpPost = new HttpPost(URL.toString());
+        println URL.toString()
+//        println "###"+data
 //        httpPost.addHeader("Content-Type","application/json")
 //        httpPost.addHeader("host",this.host)
         log.debug("Post send :" + data.replace("\n", ""));
+
+        if(contentType) {
+            httpPost.setHeader("Content-type",contentType);
+        }
+
+
         //write data
         BasicHttpEntity entity = new BasicHttpEntity();
         entity.setContent(new ByteArrayInputStream(data.getBytes()));
@@ -211,6 +220,7 @@ class HttpClient {
         httpPost.setEntity(ent);
         response = client.execute(targetHost, httpPost, localcontext);
     }
+
 
     /**
      * Do put action

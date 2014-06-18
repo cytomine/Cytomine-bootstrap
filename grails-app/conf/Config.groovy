@@ -573,7 +573,10 @@ environments {
 }
 
 grails.client = "AURORA"
-
+grails.integration.aurora.url = "http://localhost:8000/api/image/notify.json?test=true"
+grails.integration.aurora.username = "xxx"
+grails.integration.aurora.password = "xxx"
+grails.integration.aurora.interval = 60000
 //cytomine.client = "NO"
 
 //

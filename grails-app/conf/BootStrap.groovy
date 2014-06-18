@@ -1,6 +1,6 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.aurora.NotifyAuroraUploadJob
+import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
@@ -94,6 +94,9 @@ class BootStrap {
         if(!SecUser.findByUsername("admin")) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
         }
+        if(!SecUser.findByUsername("superadmin")) {
+            bootstrapUtilsService.createUsers([[username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]]])
+        }
 
         if(!SecUser.findByUsername("monitoring")) {
             bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
@@ -137,8 +140,10 @@ class BootStrap {
         println grailsApplication.config.grails
         println grailsApplication.config.grails.client
 
-        if(grailsApplication.config.grails.client=="AURORA") {
-            //NotifyAuroraUploadJob.schedule(5000, 5000, [:])
+        if(Environment.getCurrent() != Environment.TEST) {
+            if(grailsApplication.config.grails.client=="AURORA") {
+                NotifyAuroraUploadJob.schedule(grailsApplication.config.grails.integration.aurora.interval, grailsApplication.config.grails.integration.aurora.interval, [:])
+            }
         }
     }
 }

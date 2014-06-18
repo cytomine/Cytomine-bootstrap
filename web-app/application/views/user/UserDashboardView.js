@@ -39,8 +39,8 @@ var UserDashboardView = Backbone.View.extend({
 ////      //self.initLastNews();
         self.initGotoProject();
         self.initGotoImage();
-//        self.initLastOpenedImage(tplImg);
-//        self.initLastOpenProject(tplProj);
+        self.initLastOpenedImage(tplImg);
+        self.initLastOpenProject(tplProj);
 
         return this;
     },

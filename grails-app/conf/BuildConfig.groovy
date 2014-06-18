@@ -1,5 +1,5 @@
 import grails.util.Environment
-//grails.client = "be.cytomine.aurora"
+//grails.client = "be.cytomine.integration"
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -29,8 +29,8 @@ println "********************************************"
 println grails
 println grailsApplication
 
-//if(grails.client=="be.cytomine.aurora") {
-//    grails.plugin.location.aurora = "../Core-plugins/be.cytomine.aurora"
+//if(grails.client=="be.cytomine.integration") {
+//    grails.plugin.location.integration = "../Core-plugins/be.cytomine.integration"
 //}
 
 
@@ -127,7 +127,7 @@ grails.project.dependency.resolution = {
 
         //cytomine.client
 
-        compile ":rest-api-doc:0.1.2"
+        compile ":rest-api-doc:0.1.3"
 
 
 //               build ":tomcat:$grailsVersion" //
