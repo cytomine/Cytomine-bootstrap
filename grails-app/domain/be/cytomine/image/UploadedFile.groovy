@@ -118,10 +118,9 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['uncompressed'] = (uploaded?.status == UploadedFile.UNCOMPRESSED)
         returnArray['to_deploy'] = (uploaded?.status == UploadedFile.TO_DEPLOY)
         returnArray['image'] = uploaded?.image?.id
+        returnArray['parent'] = uploaded?.parent?.id
         returnArray
     }
-
-
 
 
     /**
@@ -161,9 +160,6 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
         return domain;
     }
-
-
-
 
     def getAbsolutePath() {
         return [ this.path, this.filename].join(File.separator)

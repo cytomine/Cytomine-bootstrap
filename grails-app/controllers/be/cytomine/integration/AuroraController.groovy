@@ -1,8 +1,11 @@
 package be.cytomine.integration
 
 import be.cytomine.api.RestController
+import be.cytomine.image.AbstractImage
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 
+@Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
 class AuroraController extends RestController {
 
     def dataSource
@@ -12,7 +15,8 @@ class AuroraController extends RestController {
     def index() {}
 
     def retrieveAurora() {
-        String request = auroraService.doRequestContent()
+        List<AbstractImage> imagesToNotify = auroraService.getAuroraImageNotYetNotificated()
+        String request = auroraService.doRequestContent(imagesToNotify)
         responseSuccess(JSON.parse(request))
     }
 

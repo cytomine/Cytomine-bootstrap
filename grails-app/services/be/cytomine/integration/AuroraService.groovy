@@ -24,16 +24,16 @@ class AuroraService {
 
     public void notifyImage() {
         println "notify Aurora!"
-
         //Get all images with PATIENT_ID, SAMPLE_ID, IMAGE_TYPE and VERSION and with NO NOTIFICATION
-
 
         //SEND HTTP POST TO AURORA
         //REQUEST: [ {PATIENT_ID: xxx, SAMPLE_ID: xxx, ..., image: {xxx}}, {....}   ]
         try {
-
-            def json = doHTTPRequestToAurora()
-            processResponse(json)
+            List<AbstractImage> imagesToNotify = getAuroraImageNotYetNotificated()
+            if(!imagesToNotify.isEmpty()) {
+                def json = doHTTPRequestToAurora(imagesToNotify)
+                processResponse(json)
+            }
         } catch(Exception e) {
             log.error "Aurora cannot be notify!"
             log.error e
@@ -41,18 +41,11 @@ class AuroraService {
         }
     }
 
-    public String doRequestContent() {
-        List<AbstractImage> imagesToNotify = getAuroraImageNotYetNotificated()
-        String req = (buildRequest(imagesToNotify) as JSON).toString(true)
-        return req
-    }
-
-    public def doHTTPRequestToAurora() {
-
+    public def doHTTPRequestToAurora(List<AbstractImage> imagesToNotify) {
         HttpClient client = new HttpClient()
         client.connect(grailsApplication.config.grails.integration.aurora.url,grailsApplication.config.grails.integration.aurora.username,grailsApplication.config.grails.integration.aurora.password)
 
-        client.post(doRequestContent(), "application/json")
+        client.post(doRequestContent(imagesToNotify), "application/json")
         int code = client.getResponseCode()
         log.info "Aurora code = $code"
         String response = client.getResponseData()
@@ -61,6 +54,11 @@ class AuroraService {
         //RESPONSE: [ {image_id: image, notification: now()} ]
         def json = JSON.parse(response)
         return json
+    }
+
+    public String doRequestContent(List<AbstractImage> imagesToNotify) {
+        String req = (buildRequest(imagesToNotify) as JSON).toString(true)
+        return req
     }
 
     public def processResponse(def json) {
@@ -91,9 +89,8 @@ class AuroraService {
         data
     }
 
-    private List<AbstractImage> getAuroraImageNotYetNotificated() {
+    public List<AbstractImage> getAuroraImageNotYetNotificated() {
         List<AbstractImage> images = AbstractImage.findAllByIdInList(getAuroraImageIdNotYetNotificated())
-        log.info "getAuroraImageNotYetNotificated=$images"
         return images
     }
 

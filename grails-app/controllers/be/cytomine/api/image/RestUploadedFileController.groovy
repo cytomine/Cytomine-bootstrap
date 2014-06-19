@@ -195,8 +195,10 @@ class RestUploadedFileController extends RestController {
             imagePropertiesService.extractUseful(abstractImage)
             abstractImage.save(flush: true,failOnError: true)
 
+            log.info "Map image ${abstractImage.id} to uploaded file ${uploadedFile.id}"
             uploadedFile.image = abstractImage
             uploadedFile.save(flush:true,failOnError: true)
+            log.info "Image = ${uploadedFile.image?.id}"
 
             uploadedFile.getProjects()?.each { project_id ->
                 Project project = projectService.read(project_id)

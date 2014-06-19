@@ -1,5 +1,6 @@
 package be.cytomine.integration
 
+import be.cytomine.image.AbstractImage
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class NotifyAuroraUploadJob {
