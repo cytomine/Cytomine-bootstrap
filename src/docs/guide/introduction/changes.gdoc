@@ -10,9 +10,14 @@ alter table property alter column value type character varying
 *Other Changes*
 Rename cytomineconfig.properties to cytomineconfig.groovy
 
+*SQL Changes*
+{code}
+alter table mime drop constraint "mime_extension_key";
+{code}
+
 h3. 20140506 Version
 
-Optimisation pour sharview (principalement SQL)
+Optimisation pour shareview (principalement SQL)
 Cacher les activités du projet en mode blind
 
 h3. 20140503 Version

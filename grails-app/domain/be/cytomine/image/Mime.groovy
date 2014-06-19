@@ -12,8 +12,8 @@ class Mime extends CytomineDomain implements Serializable {
     String mimeType
 
     static constraints = {
-        extension(maxSize: 5, blank: false, unique: true)
-        mimeType(blank: false, unique: false)
+        extension(maxSize: 5, blank: false, unique: false)
+        mimeType(blank: false, unique: true)
     }
 
     static mapping = {

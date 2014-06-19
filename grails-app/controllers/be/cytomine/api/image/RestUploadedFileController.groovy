@@ -159,11 +159,11 @@ class RestUploadedFileController extends RestController {
 
         def projects = []
         //create domains instance
-        def ext = uploadedFile.getExt()
-        Mime mime = Mime.findByExtension(ext)
+        def mimeType = uploadedFile.getMimeType()
+        Mime mime = Mime.findByMimeType(mimeType)
         if (!mime) {
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-            String mimeType = mimeTypesMap.getContentType(uploadedFile.getAbsolutePath())
+            mimeType = mimeTypesMap.getContentType(uploadedFile.getAbsolutePath())
             mime = new Mime(extension: ext, mimeType : mimeType)
             mime.save(failOnError: true)
         }
@@ -190,10 +190,14 @@ class RestUploadedFileController extends RestController {
                 storageAbstractImageService.add(JSON.parse(JSONUtils.toJSONString([storage : storage.id, abstractimage : abstractImage.id])))
             }
 
+            uploadedFile.image = abstractImage
+            uploadedFile.save(flush:true,failOnError: true)
+
             imagePropertiesService.clear(abstractImage)
             imagePropertiesService.populate(abstractImage)
             imagePropertiesService.extractUseful(abstractImage)
             abstractImage.save(flush: true,failOnError: true)
+
 
             log.info "Map image ${abstractImage.id} to uploaded file ${uploadedFile.id}"
             uploadedFile.image = abstractImage

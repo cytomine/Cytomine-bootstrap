@@ -27,7 +27,7 @@ class DataTablesService {
 
         //assert ["hi","hey","hello"] == ["hello","hi","hey"].sort { a, b -> a.length() <=> b.length() }
 
-        println "********************"
+
         def col = params.get("iSortCol_0");
         def sort = params.get("sSortDir_0")
         def sortProperty = "mDataProp_"+col

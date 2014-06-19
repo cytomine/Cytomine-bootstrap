@@ -17,6 +17,16 @@ class BootstrapTestDataService {
     def bootstrapUtilsService
     def dataSource
 
+    def initVentana() {
+        //def ventanaImageServer = [className : 'VentanaResolver', name : 'Ventana', service : '/ventana', url : grailsApplication.config.grails.imageServerURL, available : true]
+        def ventanaImageServer = [className : 'VentanaResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : grailsApplication.config.iipImageServer, available : true]
+        def mimeSamples = [
+                [extension : 'tif', mimeType : 'ventana/tif']
+        ]
+        bootstrapUtilsService.createMimes(mimeSamples)
+        bootstrapUtilsService.createImageServers([ventanaImageServer])
+        bootstrapUtilsService.createMimeImageServers([ventanaImageServer], mimeSamples)
+    }
 
     def initData() {
 
@@ -33,7 +43,7 @@ class BootstrapTestDataService {
         def IIPMimeSamples = [
                 [extension : 'mrxs', mimeType : 'openslide/mrxs'],
                 [extension : 'vms', mimeType : 'openslide/vms'],
-                [extension : 'tif', mimeType : 'image/tiff'],
+                [extension : 'tif', mimeType : 'image/tif'],
                 [extension : 'tiff', mimeType : 'image/tiff'],
                 [extension : 'svs', mimeType : 'openslide/svs'],
                 [extension : 'jp2', mimeType : 'image/jp2'],

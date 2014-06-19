@@ -152,7 +152,7 @@ class BootstrapUtilsService {
             ImageServer imageServer = ImageServer.findByName(it.name)
             if (imageServer) {
                 mimeCollection.each {
-                    Mime mime = Mime.findByExtension(it.extension)
+                    Mime mime = Mime.findByMimeType(it.mimeType)
                     if (mime) {
                         new MimeImageServer(
                                 mime : mime,

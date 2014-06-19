@@ -134,13 +134,14 @@ class RestAbstractImageController extends RestController {
     def metadata() {
         def idImage = params.long('id')
         def extract = params.boolean('extract')
-        if (extract) {
-            AbstractImage image = abstractImageService.read(idImage)
+        AbstractImage image = abstractImageService.read(idImage)
+        /*if (extract) {
+            imagePropertiesService.clear(image)
             imagePropertiesService.extractUseful(image)
             image.save(flush : true)
-        }
+        }*/
         def responseData = [:]
-        responseData.metadata = abstractImageService.metadata(idImage)
+        responseData.metadata = abstractImageService.metadata(image)
         response(responseData)
     }
 
@@ -153,7 +154,8 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier = "image property")
     def imageProperties() {
-        responseSuccess(abstractImageService.imageProperties(params.long('id')))
+        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
+        responseSuccess(abstractImageService.imageProperties(abstractImage))
     }
 
     /**
@@ -182,9 +184,9 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier = "image (bytes)")
     def thumb() {
-        String url = abstractImageService.thumb(params.long('id'))
-        log.info  "url=$url"
-        responseImage(url)
+        response.setHeader("max-age", "86400")
+        int maxSize = params.int('maxSize',  256)
+        responseBufferedImage(abstractImageService.thumb(params.long('id'), maxSize))
     }
 
     @RestApiMethod(description="Get available associated images", listing = true)
@@ -207,7 +209,9 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier = "image (bytes)")
     def label() {
-        def associatedImage = abstractImageService.getAssociatedImage(params.long("id"), params.label, params.maxWidth)
+        response.setHeader("Max-Age", "86400")
+        AbstractImage abstractImage = abstractImageService.read(params.long("id"))
+        def associatedImage = abstractImageService.getAssociatedImage(abstractImage, params.label, params.maxWidth)
         responseBufferedImage(associatedImage)
     }
 
@@ -220,7 +224,9 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier ="image (bytes)")
     def preview() {
-        responseImage(abstractImageService.preview(params.long('id')))
+        response.setHeader("max-age", "86400")
+        int maxSize = params.int('maxSize',  1024)
+        responseBufferedImage(abstractImageService.thumb(params.long('id'), maxSize))
     }
 
     //TODO:APIDOC
@@ -237,7 +243,7 @@ class RestAbstractImageController extends RestController {
     }
 
     def download() {
-        redirect (uri : abstractImageService.downloadURI(params.long("id")))
+        redirect (uri : abstractImageService.downloadURI(abstractImageService.read(params.long("id"))))
     }
 
 

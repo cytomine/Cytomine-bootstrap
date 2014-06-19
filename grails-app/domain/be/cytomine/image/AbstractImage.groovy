@@ -63,9 +63,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         @RestApiObjectField(apiFieldName = "metadataUrl", description = "URL to get image file metadata",allowedType = "string",useForCreation = false),
         @RestApiObjectField(apiFieldName = "thumb", description = "URL to get abstract image short view (htumb)",allowedType = "string",useForCreation = false)
     ])
-    static transients = ["zoomLevels", "thumbURL", MIME_WITH_MACRO_IMAGES]
-
-    private static MIME_WITH_MACRO_IMAGES = ["scn", "mrxs", "ndpi", "vms", "svs"]
+    static transients = ["zoomLevels", "thumbURL"]
 
     static constraints = {
         originalFilename(nullable: true, blank: false, unique: false)
@@ -153,9 +151,10 @@ class AbstractImage extends CytomineDomain implements Serializable {
         returnArray['depth'] = image?.getZoomLevels()?.max
         returnArray['resolution'] = image?.resolution
         returnArray['magnification'] = image?.magnification
-        returnArray['thumb'] = image?.getThumbURL()
+        returnArray['thumb'] = UrlApi.getThumbImage(image?.id, 256)
+        returnArray['preview'] = UrlApi.getThumbImage(image?.id, 1024)
         returnArray['fullPath'] = image?.getFullPath()
-        returnArray['macroURL'] = image?.getMacroURL()
+        returnArray['macroURL'] = UrlApi.getAssociatedImage(image?.id, "macro", 256)
         returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(image?.id)
         returnArray
     }
@@ -183,43 +182,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
             return null
         }
 
-
-
-    }
-
-    def getPreviewURL() {
-        if (this.width != null && this.height != null)   {
-            def boundaries = [:]
-            boundaries.topLeftX = 0
-            boundaries.topLeftY = this.height
-            boundaries.width = this.width
-            boundaries.height = this.height
-            boundaries.scale = 512
-            return getCropURL(boundaries)
-        } else {
-            return null
-        }
-    }
-
-    def getMacroURL() {
-        if (MIME_WITH_MACRO_IMAGES.contains(mime.extension))
-            return UrlApi.getAssociatedImage(id, "macro", 256);
-        else
-            return getThumbURL()
-    }
-
-    def getThumbURL() {
-        if (this.width != null && this.height != null)   {
-            def boundaries = [:]
-            boundaries.topLeftX = 0
-            boundaries.topLeftY = this.height
-            boundaries.width = this.width
-            boundaries.height = this.height
-            boundaries.scale = 256
-            return getCropURL(boundaries)
-        } else {
-            return null
-        }
     }
 
     def getMetadataURL() {
@@ -240,11 +202,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
             def imageServersStorage = getImageServersStorage()
             if (imageServersStorage && imageServersStorage.size() > 0)
                 return [imageServersStorage.first().storage.getBasePath(), getPath()].join(File.separator)
-            else
-                return null
-        }
-         else {
-            return null
         }
     }
 

@@ -77,6 +77,10 @@ class UrlApi {
         return "${serverUrl()}/api/abstractimage/$idAbstractImage/associated/$label" + ".png?maxWidth=$maxSize"
     }
 
+    static def getThumbImage(Long idAbstractImage, def maxSize) {
+        return "${serverUrl()}/api/abstractimage/$idAbstractImage/thumb.png?maxWidth=$maxSize"
+    }
+
     /**
      * Return cytomine url to get a small crop annotation
      * @param url Cytomine base url

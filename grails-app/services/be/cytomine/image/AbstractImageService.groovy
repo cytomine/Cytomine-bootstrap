@@ -146,11 +146,12 @@ class AbstractImageService extends ModelService {
     /**
      * Get Image metadata
      */
-    def metadata(def id) {
-        AbstractImage image = read(id)
-        def url = image.getMetadataURL()
-        url = new URL(url)
-        return url.text
+    def metadata(AbstractImage abstractImage) {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String fif = UploadedFile.findByImage(abstractImage).absolutePath
+        String uri = "$imageServerURL/image/metadata.json?fif=$fif"
+        println uri
+        return JSON.parse( new URL(uri).text )
     }
 
     def tile(params) {
@@ -171,12 +172,11 @@ class AbstractImageService extends ModelService {
     /**
      * Extract image properties from file for a specific image
      */
-    def imageProperties(def id) {
-        AbstractImage image = read(id)
-        if (!ImageProperty.findByImage(image)) {
-            imagePropertiesService.populate(image)
+    def imageProperties(AbstractImage abstractImage) {
+        if (!ImageProperty.findByImage(abstractImage)) {
+            imagePropertiesService.populate(abstractImage)
         }
-        return ImageProperty.findAllByImage(image)
+        return ImageProperty.findAllByImage(abstractImage)
     }
 
     /**
@@ -201,13 +201,22 @@ class AbstractImageService extends ModelService {
     /**
      * Get thumb image URL
      */
-    def thumb(def id) {
-        AbstractImage image = AbstractImage.read(id)
-        try {
-            return image.getThumbURL()
-        } catch (Exception e) {
-            log.error("GetThumb:" + e);
+    def thumb(def id, int maxSize) {
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, "thumb")
+
+        if (attachedFile) {
+            return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
+        } else {
+            AbstractImage abstractImage = AbstractImage.read(id)
+            String imageServerURL = grailsApplication.config.grails.imageServerURL
+            String fif = getMainUploadedFile(abstractImage).absolutePath
+            String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&maxSize=$maxSize"
+            println uri
+            byte[] imageData = new URL(uri).getBytes()
+            BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData))
+            return bufferedImage
         }
+
     }
 
     /**
@@ -224,32 +233,37 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    def downloadURI(def id) {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        return "$imageServerURL/api/abstractimage/$id/download?cytomineUrl=$grailsApplication.config.grails.serverURL"
+    def getMainUploadedFile(AbstractImage abstractImage) {
+        UploadedFile uploadedfile = UploadedFile.findByImage(abstractImage)
+        if (uploadedfile && uploadedfile.parent) return uploadedfile.parent
+        else return uploadedfile
     }
 
-    def getAvailableAssociatedImages(def id) {
+    def downloadURI(AbstractImage abstractImage) {
+        String fif = getMainUploadedFile(abstractImage).absolutePath
         String imageServerURL = grailsApplication.config.grails.imageServerURL
-        String uri = "$imageServerURL/api/abstractimage/$id/associated?cytomineUrl=$grailsApplication.config.grails.serverURL"
+        return "$imageServerURL/image/download?fif=$fif"
+    }
+
+    def getAvailableAssociatedImages(AbstractImage abstractImage) {
+        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String fif = getMainUploadedFile(abstractImage).absolutePath
+        String uri = "$imageServerURL/image/associated?fif=$fif"
         return JSON.parse( new URL(uri).text )
     }
 
-    def getAssociatedImage(Long id, String label, def maxWidth) {
-        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, label)
+    def getAssociatedImage(AbstractImage abstractImage, String label, def maxWidth) {
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, label)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
             String imageServerURL = grailsApplication.config.grails.imageServerURL
-            def queryString = "cytomineUrl=$grailsApplication.config.grails.serverURL"
-            if (maxWidth) {
-                queryString += "&maxWidth=$maxWidth"
-            }
-            def uri = "$imageServerURL/api/abstractimage/$id/associated/$label?$queryString"
-            log.info uri
+            String fif = getMainUploadedFile(abstractImage).absolutePath
+            String uri = "$imageServerURL/image/nested?fif=$fif&label=$label"
+            println uri
             byte[] imageData = new URL(uri).getBytes()
             BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
-            attachedFileService.add(label, imageData, id, AbstractImage.class.getName())
+            attachedFileService.add(label, imageData, abstractImage.id, AbstractImage.class.getName())
             return bufferedImage
         }
 

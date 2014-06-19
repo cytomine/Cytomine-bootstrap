@@ -115,7 +115,7 @@ class UserAgentIdentService extends WebTierService {
             log.debug("Browser type: MSIE " + browserVersion);
 
         }
-        println "**********************"
+
         println "userAgent=$userAgent"
         println "browserVersion=$browserVersion"
 //

@@ -6,6 +6,7 @@ import be.cytomine.Exception.TooLongRequestException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.UploadedFile
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -415,35 +416,41 @@ class RestImageInstanceController extends RestController {
     def download() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
-        redirect (uri : abstractImageService.downloadURI(imageInstance.baseImage.id))
+        redirect (uri : abstractImageService.downloadURI(imageInstance.baseImage))
     }
 
     def metadata() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
         def responseData = [:]
-        responseData.metadata = abstractImageService.metadata(imageInstance.baseImage.id)
+        responseData.metadata = abstractImageService.metadata(imageInstance.baseImage)
         response(responseData)
     }
 
     def associated() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
-        def associated = abstractImageService.getAvailableAssociatedImages(imageInstance.baseImage.id)
+        def associated = abstractImageService.getAvailableAssociatedImages(imageInstance.baseImage)
         responseSuccess(associated)
     }
 
     def label() {
         Long id = params.long("id")
+        String label = params.label
+        def maxWidth = 1000
+        if (params.maxWidth) {
+            maxWidth = params.int("maxWidth")
+        }
         ImageInstance imageInstance = imageInstanceService.read(id)
-        def associatedImage = abstractImageService.getAssociatedImage(imageInstance.baseImage.id, params.label, params.maxWidth)
-        responseBufferedImage(associatedImage)
+        def associatedImage = abstractImageService.getAssociatedImage(imageInstance.baseImage, label, maxWidth)
+        if (associatedImage)
+            responseBufferedImage(associatedImage)
     }
 
     def imageProperties() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
-        responseSuccess(abstractImageService.imageProperties(imageInstance.baseImage.id))
+        responseSuccess(abstractImageService.imageProperties(imageInstance.baseImage))
     }
 
 

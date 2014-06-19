@@ -41,7 +41,7 @@ class NotificationService {
 
         def attachments = []
 
-        String thumbURL = abstractImage.getThumbURL()
+        String thumbURL = UrlApi.getThumbImage(abstractImage.id, 256)
         if (thumbURL) {
             macroCID = UUID.randomUUID().toString()
             BufferedImage bufferedImage = imageProcessingService.getImageFromURL(thumbURL)

@@ -1,6 +1,7 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.integration.NotifyAuroraUploadJob
+import be.cytomine.image.Mime
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
@@ -89,6 +90,11 @@ class BootStrap {
         //if database is empty, put minimal data
         if (SecUser.count() == 0 && Environment.getCurrent() != Environment.TEST && !Environment.getCurrent().name.equals("testrun")) {
             bootstrapTestDataService.initData()
+        }
+
+        //ventana
+        if (!Mime.findByMimeType("ventana/tiff")) {
+            bootstrapTestDataService.initVentana()
         }
 
         if(!SecUser.findByUsername("admin")) {
