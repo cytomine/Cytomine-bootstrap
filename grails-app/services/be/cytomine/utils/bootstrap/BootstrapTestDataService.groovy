@@ -35,7 +35,7 @@ class BootstrapTestDataService {
 //        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
 
-        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : grailsApplication.config.iipImageServer, available : true]
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : 'http://localhost:9080', available : true]
         def LociImageServer = [className : 'LociResolver', name : 'Loci', service : '/loci/tile', url : 'http://localhost:9080', available : true]
 
         bootstrapUtilsService.createImageServers([IIPImageServer])

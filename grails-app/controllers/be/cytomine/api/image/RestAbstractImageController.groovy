@@ -122,30 +122,6 @@ class RestAbstractImageController extends RestController {
     }
 
     /**
-     * Get metadata URL for an images
-     * If extract, populate data from metadata table into image object
-     */
-    @RestApiMethod(description="Get metadata URL for an images")
-    @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image id"),
-        @RestApiParam(name="extract", type="boolean", paramType = RestApiParamType.QUERY,description = "(Optional) If true, populate data from metadata table into image object")
-    ])
-    @RestApiResponseObject(objectIdentifier = "[metadata:x]")
-    def metadata() {
-        def idImage = params.long('id')
-        def extract = params.boolean('extract')
-        AbstractImage image = abstractImageService.read(idImage)
-        /*if (extract) {
-            imagePropertiesService.clear(image)
-            imagePropertiesService.extractUseful(image)
-            image.save(flush : true)
-        }*/
-        def responseData = [:]
-        responseData.metadata = abstractImageService.metadata(image)
-        response(responseData)
-    }
-
-    /**
      * Extract image properties from file
      */
     @RestApiMethod(description="Get all image file properties for a specific image.", listing = true)
@@ -209,9 +185,11 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier = "image (bytes)")
     def label() {
+        String label = params.label
+        int maxWidth = params.int('maxWidth', 256)
         response.setHeader("Max-Age", "86400")
         AbstractImage abstractImage = abstractImageService.read(params.long("id"))
-        def associatedImage = abstractImageService.getAssociatedImage(abstractImage, params.label, params.maxWidth)
+        def associatedImage = abstractImageService.getAssociatedImage(abstractImage, label , maxWidth)
         responseBufferedImage(associatedImage)
     }
 
@@ -253,9 +231,11 @@ class RestAbstractImageController extends RestController {
      * @param params
      */
     def tile() {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        String tileURL = abstractImageService.tile(params)
-        redirect (url : "$imageServerURL/proxy?url=$tileURL")
+        redirect (url : abstractImageService.tile(params, request.queryString))
+    }
+
+    def crop() {
+        redirect (url : abstractImageService.crop(params, request.queryString))
     }
 
     /**

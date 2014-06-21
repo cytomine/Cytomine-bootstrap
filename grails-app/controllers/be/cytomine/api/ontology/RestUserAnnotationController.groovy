@@ -263,7 +263,7 @@ class RestUserAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("Annotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.crop(annotation, params))
+            redirect (url : imageProcessingService.crop(annotation, params))
         }
 
     }

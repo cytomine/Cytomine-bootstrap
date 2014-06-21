@@ -43,7 +43,7 @@ grails.mime.types = [
 ]
 cytomine.maxRequestSize = 10485760
 storage_path="/Users/stevben/cytomine_storage" //default path for image locations
-iipImageServer="http://localhost:8081" //default path for iip image server
+
 
 rabbitmq.username = 'admin'
 rabbitmq.password = 'mypass'

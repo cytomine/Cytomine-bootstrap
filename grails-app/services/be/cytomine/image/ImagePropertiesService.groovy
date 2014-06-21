@@ -29,7 +29,7 @@ class ImagePropertiesService implements Serializable{
     }
 
     def populate(AbstractImage abstractImage) {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String imageServerURL = abstractImage.getRandomImageServerURL()
         String fif = abstractImageService.getMainUploadedFile(abstractImage).absolutePath
         String uri = "$imageServerURL/image/properties?fif=$fif"
         println uri

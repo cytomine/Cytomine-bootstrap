@@ -143,30 +143,24 @@ class AbstractImageService extends ModelService {
     }
 
 
-    /**
-     * Get Image metadata
-     */
-    def metadata(AbstractImage abstractImage) {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
-        String fif = UploadedFile.findByImage(abstractImage).absolutePath
-        String uri = "$imageServerURL/image/metadata.json?fif=$fif"
-        println uri
-        return JSON.parse( new URL(uri).text )
+    def crop(params, queryString) {
+        queryString = queryString.replace("?", "")
+        AbstractImage abstractImage = read(params.id)
+        String imageServerURL = abstractImage.getRandomImageServerURL()
+        String imagePath = abstractImage.getFullPath()
+        return "$imageServerURL/image/crop?fif=$imagePath&$queryString" //&scale=$scale
     }
 
-    def tile(params) {
+    def tile(params, queryString) {
         AbstractImage abstractImage = read(params.id)
-
-        def imageServerStorages = abstractImage.getImageServersStorage()
-        if (imageServerStorages == null || imageServerStorages.size() == 0) {
-            return "error_tile.jpg"
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
-        Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
-        if (!resolver) return null
-        def baseUrl = imageServerStorages[index].imageServer.getBaseUrl()
-
-        resolver.tileURL(baseUrl, abstractImage.getFullPath(), params)
+        int tileGroup = params.int("TileGroup")
+        int x = params.int("x")
+        int y = params.int("y")
+        int z = params.int("z")
+        String imageServerURL = abstractImage.getRandomImageServerURL()
+        String imagePath = abstractImage.getFullPath()
+        def zoomifyQuery = "zoomify=$imagePath/TileGroup$tileGroup/$z-$x-$y\\.jpg"
+        return "$imageServerURL/image/tile?$zoomifyQuery"
     }
 
     /**
@@ -198,22 +192,26 @@ class AbstractImageService extends ModelService {
         return [imageServersURLs : urls]
     }
 
+    def getCropURL(AbstractImage abstractImage, def boundaries) {
+
+    }
+
     /**
      * Get thumb image URL
      */
     def thumb(def id, int maxSize) {
-        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, "thumb")
-
+        AbstractImage abstractImage = AbstractImage.read(id)
+        String imageServerURL = abstractImage.getRandomImageServerURL()
+        String fif = getMainUploadedFile(abstractImage).absolutePath
+        String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&maxSize=$maxSize"
+        println uri
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, uri)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
-            AbstractImage abstractImage = AbstractImage.read(id)
-            String imageServerURL = grailsApplication.config.grails.imageServerURL
-            String fif = getMainUploadedFile(abstractImage).absolutePath
-            String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&maxSize=$maxSize"
-            println uri
             byte[] imageData = new URL(uri).getBytes()
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData))
+            attachedFileService.add(uri, imageData, abstractImage.id, AbstractImage.class.getName())
             return bufferedImage
         }
 
@@ -223,14 +221,7 @@ class AbstractImageService extends ModelService {
      * Get Preview image URL
      */
     def preview(def id) {
-        AbstractImage image = AbstractImage.read(id)
-        try {
-            String previewURL = image.getPreviewURL()
-            if (previewURL == null) previewURL = grailsApplication.config.grails.serverURL + "/images/cytomine.jpg"
-            return previewURL
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
+        thumb(id, 1024)
     }
 
     def getMainUploadedFile(AbstractImage abstractImage) {
@@ -241,29 +232,29 @@ class AbstractImageService extends ModelService {
 
     def downloadURI(AbstractImage abstractImage) {
         String fif = getMainUploadedFile(abstractImage).absolutePath
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String imageServerURL = abstractImage.getRandomImageServerURL()
         return "$imageServerURL/image/download?fif=$fif"
     }
 
     def getAvailableAssociatedImages(AbstractImage abstractImage) {
-        String imageServerURL = grailsApplication.config.grails.imageServerURL
+        String imageServerURL = abstractImage.getRandomImageServerURL()
         String fif = getMainUploadedFile(abstractImage).absolutePath
         String uri = "$imageServerURL/image/associated?fif=$fif"
         return JSON.parse( new URL(uri).text )
     }
 
     def getAssociatedImage(AbstractImage abstractImage, String label, def maxWidth) {
-        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, label)
+        String imageServerURL = abstractImage.getRandomImageServerURL()
+        String fif = getMainUploadedFile(abstractImage).absolutePath
+        String uri = "$imageServerURL/image/nested?fif=$fif&label=$label"
+        println uri
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, uri)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
-            String imageServerURL = grailsApplication.config.grails.imageServerURL
-            String fif = getMainUploadedFile(abstractImage).absolutePath
-            String uri = "$imageServerURL/image/nested?fif=$fif&label=$label"
-            println uri
             byte[] imageData = new URL(uri).getBytes()
             BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
-            attachedFileService.add(label, imageData, abstractImage.id, AbstractImage.class.getName())
+            attachedFileService.add(uri, imageData, abstractImage.id, AbstractImage.class.getName())
             return bufferedImage
         }
 

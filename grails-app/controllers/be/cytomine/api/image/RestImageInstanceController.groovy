@@ -197,7 +197,7 @@ class RestImageInstanceController extends RestController {
         boundaries.topLeftY = abstractImage.getHeight() - params.int("y")
         boundaries.width = params.int("w")
         boundaries.height = params.int("h")
-        responseSuccess([url : abstractImage.getCropURL(boundaries)])
+        responseSuccess([url : abstractImageService.getCropURL(abstractImage, boundaries)])
     }
 
     //TODO:APIDOC
@@ -216,7 +216,7 @@ class RestImageInstanceController extends RestController {
             responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
         }
         try {
-            String url = abstractImage.getCropURL(boundaries)
+            String url = abstractImageService.getCropURL(abstractImage, boundaries)
             BufferedImage bufferedImage = ImageIO.read(new URL(url))
             if (params.zoom) {
                 int maxZoom = abstractImage.getZoomLevels().max
@@ -238,7 +238,8 @@ class RestImageInstanceController extends RestController {
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.long("id"))
-        responseBufferedImage(imageProcessingService.crop(annotation, params))
+
+        redirect (url : imageProcessingService.crop(annotation, params))
     }
 
     //TODO:APIDOC

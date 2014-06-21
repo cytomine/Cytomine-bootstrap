@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -250,25 +251,32 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
    def getBoundaries() {
        //get num points
+       int imageWidth = image.baseImage.getWidth()
+       int imageHeight = image.baseImage.getHeight()
        if (location.getNumPoints()>3) {
          Envelope env = location.getEnvelopeInternal();
          Integer maxY = env.getMaxY();
          Integer minX = env.getMinX();
          Integer width = env.getWidth();
          Integer height = env.getHeight();
-         return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
+         return [topLeftX: minX, topLeftY: maxY, width: width, height: height, imageWidth: imageWidth, imageHeight : imageHeight]
        } else if (location.getNumPoints() == 1) {
            Envelope env = location.getEnvelopeInternal();
            Integer maxY = env.getMaxY()+50;
            Integer minX = env.getMinX()-50;
            Integer width = 100;
            Integer height = 100;
-           return [topLeftX: minX, topLeftY: maxY, width: width, height: height]
+           return [topLeftX: minX, topLeftY: maxY, width: width, height: height, imageWidth: imageWidth, imageHeight : imageHeight]
        }
     }
 
-    def toCropURL() {
-        return image.baseImage.getCropURL(getBoundaries())
+    def toCropURL(params) {
+        def boundaries = getBoundaries()
+        if (params.zoom) boundaries.zoom = params.zoom
+        if (params.max_size) boundaries.max_size = params.max_size
+        if (params.draw) boundaries.max_size = params.max_size
+        return UrlApi.getCropURL(image.baseImage.id, boundaries)
+        //return image.baseImage.getCropURL(getBoundaries())
     }
 
     def getCallBack() {

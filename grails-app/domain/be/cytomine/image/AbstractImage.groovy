@@ -155,7 +155,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
         returnArray['preview'] = UrlApi.getThumbImage(image?.id, 1024)
         returnArray['fullPath'] = image?.getFullPath()
         returnArray['macroURL'] = UrlApi.getAssociatedImage(image?.id, "macro", 256)
-        returnArray['metadataUrl'] = UrlApi.getMetadataURLWithImageId(image?.id)
         returnArray
     }
 
@@ -184,19 +183,6 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     }
 
-    def getMetadataURL() {
-        def imageServerStorages = getImageServersStorage()
-        if (imageServerStorages == null || imageServerStorages.size() == 0) {
-            null
-        }
-        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
-        Resolver resolver = Resolver.getResolver(imageServerStorages[index].imageServer.className)
-        if (!resolver) return null
-        Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
-        String url = resolver.getMetaDataURL(imageServerStorages[index].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator))
-        return url
-    }
-
     def getFullPath() {
         if(this.version) {
             def imageServersStorage = getImageServersStorage()
@@ -205,7 +191,16 @@ class AbstractImage extends CytomineDomain implements Serializable {
         }
     }
 
-    def getCropURL(def boundaries) {
+    def getRandomImageServerURL() {
+        def imageServerStorages = getImageServersStorage()
+        if (imageServerStorages == null || imageServerStorages.size() == 0) {
+            return null
+        }
+        def index = (Integer) Math.round(Math.random() * (imageServerStorages.size() - 1)) //select an url randomly
+        return imageServerStorages[index].imageServer.url
+    }
+
+    /*def getCropURL(def boundaries) {
         def imageServerStorages = getImageServersStorage()
 
         if (imageServerStorages == null || imageServerStorages.size() == 0) {
@@ -224,15 +219,19 @@ class AbstractImage extends CytomineDomain implements Serializable {
         boundaries.baseImageWidth =this.getWidth()
         boundaries.baseImageHeight =this.getHeight()
         resolver.getCropURL(baseUrl, [basePath, path].join(File.separator), boundaries)
-    }
+    }*/
 
     def getZoomLevels() {
-        def imageServerStorages = getImageServersStorage()
-        if (imageServerStorages == null || imageServerStorages.size() == 0 || width == null || height == null) return null
-        Resolver resolver = Resolver.getResolver(imageServerStorages[0].imageServer.className)
-        if (!resolver) return null
-        Storage storage = StorageAbstractImage.findAllByAbstractImage(this).first().storage
-        return resolver?.getZoomLevels(imageServerStorages[0].imageServer.getBaseUrl(), [storage.getBasePath(), getPath()].join(File.separator), width, height)
+        double tmpWidth = width
+        double tmpHeight = height
+        def nbZoom = 0
+        while (tmpWidth > 256 || tmpHeight > 256) {
+            nbZoom++
+            tmpWidth = tmpWidth / 2
+            tmpHeight = tmpHeight / 2
+        }
+        return [min : 0, max : nbZoom, middle : (nbZoom / 2), overviewWidth : Math.round(tmpWidth), overviewHeight : Math.round(tmpHeight), width : width, height : height]
+
     }
 
     /**
