@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 CORE_WAR_URL="http://148.251.125.200:8888/ims/ROOT.war"
 IMS_WAR_URL="http://148.251.125.200:8888/core/ROOT.war"
 CORE_URL=aurora.cytomine.be #aurora.cytomine.be

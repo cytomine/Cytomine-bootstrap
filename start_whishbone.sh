@@ -2,9 +2,9 @@
 CORE_WAR_URL="http://148.251.125.200:8888/ims/ROOT.war"
 IMS_WAR_URL="http://148.251.125.200:8888/core/ROOT.war"
 CORE_URL=cytomine.wishbonecompany.be #aurora.cytomine.be
-IMS_URL=cytomine.wishbonecompany.be #aurora-ims.cytomine.be
-IIP_URL=cytomine.wishbonecompany.be #aurora-iip.cytomine.be
-UPLOAD_URL=cytomine.wishbonecompany.be #aurora-upload.cytomine.be
+IMS_URL=cytomine-ims.wishbonecompany.be #aurora-ims.cytomine.be
+IIP_URL=cytomine-iip.wishbonecompany.be #aurora-iip.cytomine.be
+UPLOAD_URL=cytomine-upload.wishbonecompany.be #aurora-upload.cytomine.be
 IMS_STORAGE_PATH=/var/wishbone
 IMS_BUFFER_PATH=/var/wishbone/_buffer
 RABBITMQ_PASS="mypass"
