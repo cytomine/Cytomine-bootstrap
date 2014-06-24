@@ -1,5 +1,6 @@
 package be.cytomine
 
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
@@ -186,6 +187,57 @@ class SearchTests {
         assert DomainAPI.containsInJSONList(imageInstance1.id, json)
         assert !DomainAPI.containsInJSONList(imageInstance2.id, json)
     }
+
+
+    //Test LISTPROJECT
+    void testListAbstractImage () {
+        AbstractImage abstractImage1 = BasicInstanceBuilder.getAbstractImageNotExist(true)
+        AbstractImage abstractImage2 = BasicInstanceBuilder.getAbstractImageNotExist(true)
+
+        Property abstractImage1Property1 = BasicInstanceBuilder.getAbstractImagePropertyNotExist()
+        abstractImage1Property1.value = "Poney"
+        abstractImage1Property1.domain = abstractImage1
+        BasicInstanceBuilder.saveDomain(abstractImage1Property1)
+
+        Property abstractImage1Property2 = BasicInstanceBuilder.getAbstractImagePropertyNotExist()
+        abstractImage1Property2.value = "Cheval"
+        abstractImage1Property2.domain = abstractImage1
+        BasicInstanceBuilder.saveDomain(abstractImage1Property2)
+
+        Property abstractImage2Property2 = BasicInstanceBuilder.getAbstractImagePropertyNotExist()
+        abstractImage2Property2.value = "Cheval"
+        abstractImage2Property2.domain = abstractImage2
+        BasicInstanceBuilder.saveDomain(abstractImage2Property2)
+
+        def result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.OR, SearchFilter.ABSTRACTIMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(abstractImage1.id, json)
+        assert DomainAPI.containsInJSONList(abstractImage2.id, json)
+
+        result = SearchAPI.listDomain("Poney,Cheval", SearchOperator.AND, SearchFilter.ABSTRACTIMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(abstractImage1.id, json)
+        assert !DomainAPI.containsInJSONList(abstractImage2.id, json)
+
+
+        result = SearchAPI.listDomain(null, SearchOperator.OR, SearchFilter.ABSTRACTIMAGE, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+
+        assert DomainAPI.containsInJSONList(abstractImage1.id, json)
+        assert DomainAPI.containsInJSONList(abstractImage2.id, json)
+
+    }    
 
 
     void testListWithDescription() {

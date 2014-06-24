@@ -86,6 +86,9 @@ class SearchController extends RestController {
         if (filter.equals(SearchFilter.ANNOTATION) || filter.equals(SearchFilter.ALL)) {
             all.addAll(searchService.list(listKeyword, operator, SearchFilter.ANNOTATION,idsProject))
         }
+        if (filter.equals(SearchFilter.ABSTRACTIMAGE) || filter.equals(SearchFilter.ALL)) {
+            all.addAll(searchService.list(listKeyword, operator, SearchFilter.ABSTRACTIMAGE,idsProject))
+        }
         all.sort{-it.id}
         responseSuccess(all)
     }

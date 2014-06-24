@@ -1,6 +1,7 @@
 package be.cytomine.search
 
 import be.cytomine.api.UrlApi
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
@@ -49,6 +50,16 @@ class SearchService extends ModelService {
                     (idsProject? "AND pro.id IN (${idsProject.join(",")}) " : "")
             //Add Security
             blocSelect += getSecurityJoin("pro.id", currentUser)
+        } else if (filter.equals(SearchFilter.ABSTRACTIMAGE)) {
+            listTable.add("abstract_image")
+            listType.add(AbstractImage.class.getName())
+
+            //TODO: add SECURITY TABLE (ACL!!!!!)
+            blocSelect = "SELECT DISTINCT ai.id as id, extract(epoch from ai.created)*1000 as created, '<domain>' as class, ai.original_filename as name, d.data as description, ai.user_id as user, null as userfullname, null as projectName, ai.filename as imageName, ai.id as baseImage, null as project   " +
+                    "FROM <table> as ai LEFT OUTER JOIN description as d ON d.domain_ident = ai.id LEFT OUTER JOIN property as p ON ai.id = p.domain_ident" + "" + " " +
+                    "WHERE true "
+            //Add Security
+            //blocSelect += getSecurityJoin("ii.project_id", currentUser)
         } else if (filter.equals(SearchFilter.IMAGE)) {
             listTable.add("image_instance")
             listType.add(ImageInstance.class.getName())
@@ -109,6 +120,7 @@ class SearchService extends ModelService {
                     request += ") "
                 }
             }
+            log.info request
             data = select(request)
         } else if (operator.equals(SearchOperator.AND)) {
             for (int a = 0; a < listTable.size(); a++) {
@@ -140,6 +152,7 @@ class SearchService extends ModelService {
                 }
                 request += ") "
             }
+            log.info request
             data = select(request)
         }
         data

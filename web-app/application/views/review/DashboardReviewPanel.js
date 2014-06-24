@@ -152,11 +152,12 @@ var DashboardReviewPanel = Backbone.View.extend({
             el: $("#annotationReviewListing")
         }).render(self.model.id,image,user,term);
 
+
         $("#annotationReviewListing").find(".thumb-wrap").draggable( {
               containment: self.el,
               stack: "#annotationReviewListing .thumb-wrap",
               cursor: 'move',
-              revert: true
+              revert: true,
         });
     },
     initTermListing: function() {

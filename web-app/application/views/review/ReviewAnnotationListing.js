@@ -210,6 +210,9 @@ var ReviewAnnotationListing = Backbone.View.extend({
             size : 150
         }).render();
 
+        $(thumb.el).css("margin","0px auto");
+        $(thumb.el).css("float","none");
+
         $(thumb.el).draggable({
             scroll: true,
             //scrollSpeed : 00,

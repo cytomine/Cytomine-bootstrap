@@ -22,8 +22,9 @@ class SearchFilter {
     public static final String PROJECT = "PROJECT"
     public static final String ANNOTATION = "ANNOTATION"
     public static final String IMAGE = "IMAGE"
+    public static final String ABSTRACTIMAGE = "ABSTRACTIMAGE"
 
     public static String[] getPossibleValues() {
-        [ALL, PROJECT,ANNOTATION,IMAGE]
+        [ALL, PROJECT,ANNOTATION,IMAGE,ABSTRACTIMAGE]
     }
 }
