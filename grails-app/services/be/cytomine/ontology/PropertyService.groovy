@@ -124,7 +124,6 @@ class PropertyService extends ModelService {
         } else {
             domain = Class.forName(domainClass, false, Thread.currentThread().contextClassLoader).read(JSONUtils.getJSONAttrLong(json,'domainIdent',0))
         }
-        try {
         if (domain != null && !domain.class.name.contains("AbstractImage")) {
             securityACLService.check(domain.container(),READ)
             securityACLService.checkReadOnly(domain.container())
@@ -133,9 +132,6 @@ class PropertyService extends ModelService {
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new AddCommand(user: currentUser)
         return executeCommand(command,null,json)
-        }catch(Exception e) {
-            e.printStackTrace()
-        }
     }
 
     /**
