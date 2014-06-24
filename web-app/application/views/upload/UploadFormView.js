@@ -680,7 +680,7 @@ var UploadFormView = Backbone.View.extend({
         var uploadedFileCollectionUrl = new UploadedFileCollection({ dataTables: true}).url();
         uploadTable.hide();
         loadingDiv.show();
-        //this.injectFnReloadAjax();
+        this.injectFnReloadAjax();
         self.uploadDataTables = uploadTable.dataTable({
             "sDom": "<'row'<'col-md-5'l><'col-md-5'f>r>t<'row'<'col-md-5'i><'col-md-5'p>>",
             "sPaginationType": "bootstrap",
@@ -698,9 +698,14 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
             "aoColumns": [
-                { "mDataProp": "filename" },
-                { "mDataProp": "created" },
-                { "mDataProp": "size" },
+                { "mDataProp": "originalFilename" },
+                { "mDataProp": "created", fnRender : function (o, created) {
+                    return window.app.convertLongToDate(created);
+                }},
+                { "mDataProp": "size", fnRender : function (o, size) {
+                    var mbSize = (size / (1024 * 1024)).toFixed(2);
+                    return mbSize + "Mo";
+                } },
                 { "mDataProp": "contentType" },
                 { "mDataProp": "uploaded" }
             ],
@@ -713,6 +718,7 @@ var UploadFormView = Backbone.View.extend({
                 }
 
             ],
+            "aaSorting": [[ 1, "desc" ]],
             "sAjaxSource": uploadedFileCollectionUrl
         });
         uploadTable.show();

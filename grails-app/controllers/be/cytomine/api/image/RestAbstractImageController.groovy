@@ -230,12 +230,24 @@ class RestAbstractImageController extends RestController {
      * @param id
      * @param params
      */
+    //TODO:APIDOC
     def tile() {
         redirect (url : abstractImageService.tile(params, request.queryString))
     }
 
+    //TODO:APIDOC
     def crop() {
         redirect (url : abstractImageService.crop(params, request.queryString))
+    }
+
+    //TODO:APIDOC
+    def windowUrl() {
+        responseSuccess([url : abstractImageService.window(params, request.queryString)])
+    }
+
+    //TODO:APIDOC
+    def window() {
+        redirect(url : abstractImageService.window(params, request.queryString))
     }
 
     /**

@@ -60,8 +60,8 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Get an image instance")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image instance id")
-    ])    
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image instance id")
+    ])
     def show() {
         ImageInstance image = imageInstanceService.read(params.long('id'))
         if (image) {
@@ -73,7 +73,7 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Get all image instance available for the current user", listing = true)
     def listByUser() {
-         responseSuccess(imageInstanceService.list(cytomineService.currentUser))
+        responseSuccess(imageInstanceService.list(cytomineService.currentUser))
     }
 
     @RestApiMethod(description="Get the last opened image for the current user", listing = true)
@@ -87,11 +87,11 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Get all image instance for a specific project", listing = true)
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
-        @RestApiParam(name="tree", type="boolean", paramType = RestApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
-        @RestApiParam(name="sortColumn", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
-        @RestApiParam(name="sortDirection", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
-        @RestApiParam(name="search", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
+    @RestApiParam(name="tree", type="boolean", paramType = RestApiParamType.QUERY, description = "(optional) Get a tree (with parent image as node)"),
+    @RestApiParam(name="sortColumn", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Column sort (created by default)"),
+    @RestApiParam(name="sortDirection", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Sort direction (desc by default)"),
+    @RestApiParam(name="search", type="string", paramType = RestApiParamType.QUERY, description = "(optional) Original filename sreach filter (all by default)")
     ])
     def listByProject() {
         Project project = projectService.read(params.long('id'))
@@ -116,7 +116,7 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Get the next project image (first image created before)", listing = true)
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
     ])
     def next() {
         def image = imageInstanceService.read(params.long('id'))
@@ -130,7 +130,7 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Get the previous project image (first image created after)", listing = true)
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The current image instance id"),
     ])
     def previous() {
         def image = imageInstanceService.read(params.long('id'))
@@ -154,7 +154,7 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Update an image instance")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
     ])
     def update() {
         update(imageInstanceService, request.JSON)
@@ -162,7 +162,7 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Delete an image from a project)")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image instance id")
     ])
     def delete() {
         delete(imageInstanceService, JSON.parse("{id : $params.id}"),null)
@@ -190,45 +190,16 @@ class RestImageInstanceController extends RestController {
 
     //TODO:APIDOC
     def windowUrl() {
-        ImageInstance image = ImageInstance.read(params.long('id'))
-        AbstractImage abstractImage = image.getBaseImage()
-        def boundaries = [:]
-        boundaries.topLeftX = params.int("x")
-        boundaries.topLeftY = abstractImage.getHeight() - params.int("y")
-        boundaries.width = params.int("w")
-        boundaries.height = params.int("h")
-        responseSuccess([url : abstractImageService.getCropURL(abstractImage, boundaries)])
+        ImageInstance imageInstance = imageInstanceService.read(params.id)
+        params.id = imageInstance.baseImage.id
+        responseSuccess([url : abstractImageService.window(params, request.queryString)])
     }
 
     //TODO:APIDOC
     def window() {
-        //TODO:: document this method
-        ImageInstance image = ImageInstance.read(params.long('id'))
-        AbstractImage abstractImage = image.getBaseImage()
-
-        def boundaries = [:]
-        boundaries.topLeftX = params.int("x")
-        boundaries.topLeftY = abstractImage.getHeight() - params.int("y")
-        boundaries.width = params.int("w")
-        boundaries.height = params.int("h")
-
-        if (boundaries.width  * boundaries.height > MAX_SIZE_WINDOW_REQUEST) {
-            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
-        }
-        try {
-            String url = abstractImageService.getCropURL(abstractImage, boundaries)
-            BufferedImage bufferedImage = ImageIO.read(new URL(url))
-            if (params.zoom) {
-                int maxZoom = abstractImage.getZoomLevels().max
-                int zoom = (params.zoom != null && params.zoom != "") ? Math.max(Math.min(params.int("zoom"), maxZoom), 0) : 0
-                int resizeWidth = boundaries.width / Math.pow(2, zoom)
-                int resizeHeight = boundaries.height / Math.pow(2, zoom)
-                bufferedImage = imageProcessingService.scaleImage(bufferedImage, resizeWidth, resizeHeight)
-            }
-            responseBufferedImage(bufferedImage)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e);
-        }
+        ImageInstance imageInstance = imageInstanceService.read(params.id)
+        params.id = imageInstance.baseImage.id
+        redirect(url : abstractImageService.window(params, request.queryString))
     }
 
     //TODO:APIDOC
@@ -238,8 +209,7 @@ class RestImageInstanceController extends RestController {
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.long("id"))
-
-        redirect (url : imageProcessingService.crop(annotation, params))
+        redirect (url : annotation.toCropURL(params))
     }
 
     //TODO:APIDOC
@@ -260,21 +230,21 @@ class RestImageInstanceController extends RestController {
             responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
         }
 
-        java.util.List<Long> termsIDS = params.terms?.split(",")?.collect {
+        List<Long> termsIDS = params.terms?.split(',')?.collect {
             Long.parseLong(it)
         }
         if (!termsIDS) { //don't filter by term, take everything
             termsIDS = termService.getAllTermId(image.getProject())
         }
 
-        java.util.List<Long> userIDS = params.users?.split(",")?.collect {
+        List<Long> userIDS = params.users?.split(",")?.collect {
             Long.parseLong(it)
         }
         if (!userIDS) { //don't filter by users, take everything
             userIDS = secUserService.listLayers(image.getProject()).collect { it.id}
         }
 
-        java.util.List<Long> imageIDS = [image.id]
+        List<Long> imageIDS = [image.id]
 
 
         try {
@@ -318,8 +288,8 @@ class RestImageInstanceController extends RestController {
 
     @RestApiMethod(description="Copy image metadata (description, properties...) from an image to another one")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
-        @RestApiParam(name="based", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+    @RestApiParam(name="based", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
     ])
     @RestApiResponseObject(objectIdentifier = "empty")
     def copyMetadata() {
@@ -332,7 +302,7 @@ class RestImageInstanceController extends RestController {
                 Description.findAllByDomainIdent(based.id).each { description ->
                     def json = JSON.parse(description.encodeAsJSON())
                     json.domainIdent = image.id
-                     descriptionService.add(json)
+                    descriptionService.add(json)
                 }
 
                 Property.findAllByDomainIdent(based.id).each { property ->
@@ -361,8 +331,8 @@ class RestImageInstanceController extends RestController {
     @RestApiMethod(description="Get, for an image instance, all the project having the same abstract image with the same layer (user)", listing = true)
     @RestApiResponseObject(objectIdentifier =  "[project_sharing_same_image]")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
-        @RestApiParam(name="project", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+    @RestApiParam(name="project", type="long", paramType = RestApiParamType.QUERY, description = "The image source for the data")
     ])
     def retrieveSameImageOtherProject() {
         try {
@@ -390,10 +360,10 @@ class RestImageInstanceController extends RestController {
     @RestApiMethod(description="Copy all annotation (and term, desc, property,...) from an image to another image", listing = true)
     @RestApiResponseObject(objectIdentifier = "[copy_annotation_image]")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
-        @RestApiParam(name="task", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
-        @RestApiParam(name="giveMe", type="boolean", paramType = RestApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
-        @RestApiParam(name="layers", type="list (x1_y1,x2_y2,...)", paramType = RestApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
+    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The image that get the data"),
+    @RestApiParam(name="task", type="long", paramType = RestApiParamType.QUERY, description = "(Optional) The id of task that will be update during the request processing"),
+    @RestApiParam(name="giveMe", type="boolean", paramType = RestApiParamType.QUERY, description = "If true, copy all annotation on the current user layer. If false or not mentioned, copy all anotation on the same layer as the source image"),
+    @RestApiParam(name="layers", type="list (x1_y1,x2_y2,...)", paramType = RestApiParamType.QUERY, description = "List of couple 'idimage_iduser'")
     ])
     def copyAnnotationFromSameAbstractImage() {
         try {
@@ -420,13 +390,13 @@ class RestImageInstanceController extends RestController {
         redirect (uri : abstractImageService.downloadURI(imageInstance.baseImage))
     }
 
-    def metadata() {
+    /*def metadata() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
         def responseData = [:]
         responseData.metadata = abstractImageService.metadata(imageInstance.baseImage)
         response(responseData)
-    }
+    }*/
 
     def associated() {
         Long id = params.long("id")

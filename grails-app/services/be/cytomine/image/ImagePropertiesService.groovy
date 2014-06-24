@@ -1,14 +1,7 @@
 package be.cytomine.image
 
 import be.cytomine.image.server.ImageProperty
-import be.cytomine.image.server.ImageServerStorage
-import be.cytomine.image.server.Storage
-import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.server.resolvers.Resolver
 import grails.converters.JSON
-import org.apache.http.HttpEntity
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.DefaultHttpClient
 
 /**
  * Cytomine @ GIGA-ULG
@@ -30,17 +23,25 @@ class ImagePropertiesService implements Serializable{
 
     def populate(AbstractImage abstractImage) {
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String fif = abstractImageService.getMainUploadedFile(abstractImage).absolutePath
-        String uri = "$imageServerURL/image/properties?fif=$fif"
+        UploadedFile uploadedFile = abstractImageService.getMainUploadedFile(abstractImage)
+        String fif = uploadedFile.absolutePath
+        fif = fif.replace(" ","%20")
+        String mimeType = uploadedFile.mimeType
+        String uri = "$imageServerURL/image/properties?fif=$fif&mimeType=$mimeType"
         println uri
         def properties = JSON.parse(new URL(uri).text)
+        println properties
         properties.each {
-            println properties
-            def property = new ImageProperty(key: it.key, value: it.value, image: abstractImage)
-            log.info("new property, $it.key => $it.value")
-            property.save()
+            String key = it.key
+            String value = it.value
+            if (value.size() < 256) {
+                def property = new ImageProperty(key: it.key, value: it.value, image: abstractImage)
+                log.info("new property, $it.key => $it.value")
+                property.save()
+            }
+
         }
-        abstractImage.save(flush:true, failOnError: true)
+        abstractImage.save()
     }
 
 

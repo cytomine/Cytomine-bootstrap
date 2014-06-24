@@ -24,6 +24,8 @@ class UploadedFileService extends ModelService {
         securityACLService.checkIsSameUser(user, cytomineService.currentUser)
         def uploadedFiles = UploadedFile.createCriteria().list(sort : "created", order : "desc") {
             eq("user.id", user.id)
+            isNull("parent.id")
+            isNull("downloadParent.id")
         }
         return uploadedFiles
     }

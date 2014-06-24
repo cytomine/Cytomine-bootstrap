@@ -19,12 +19,10 @@ class UrlApi {
     }
 
     static def getCropURL(Long idImage, def boundaries) {
-        String url = "${serverUrl()}/api/abstractimage/$idImage/crop.jpg?"
+        String url = "${serverUrl()}/api/abstractimage/$idImage/crop.jpg"
         String query = boundaries.collect { key, value ->
             "$key=$value"
         }.join("&")
-        println query
-
         return "$url?$query"
     }
 

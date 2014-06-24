@@ -32,6 +32,12 @@ class AbstractImageUrlMappings {
         "/api/abstractimage/$id/crop.$format"(controller: "restAbstractImage"){
             action = [GET:"crop"]
         }
+        "/api/imageinstance/$id/window-$x-$y-$w-$h.$format"(controller: "restImageInstance"){
+            action = [GET:"window"]
+        }
+        "/api/imageinstance/$id/window_url-$x-$y-$w-$h.$format"(controller: "restImageInstance"){
+            action = [GET:"windowUrl"]
+        }
         "/api/abstractimage/$id/associated.$format"(controller: "restAbstractImage"){
             action = [GET:"associated"]
         }

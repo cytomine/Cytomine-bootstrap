@@ -121,7 +121,7 @@ class RestRoiAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("Annotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.crop(annotation, params))
+            redirect (url : annotation.toCropURL(params))
         }
 
     }
@@ -132,7 +132,8 @@ class RestRoiAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("RoiAnnotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, false))
+            params.mask = true
+            redirect (url : annotation.toCropURL(params))
         }
 
     }
@@ -143,7 +144,8 @@ class RestRoiAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("RoiAnnotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, true))
+            params.alphaMask = true
+            redirect (url : annotation.toCropURL(params))
         }
 
     }

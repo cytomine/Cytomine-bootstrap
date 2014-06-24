@@ -53,37 +53,50 @@ var ImageTabsView = Backbone.View.extend({
             }}
             ,
             { "mDataProp": "width", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
-                return o.aData["width"] + " px";
+                return o.aData["width"];
             }},
             { "mDataProp": "height", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
-                return o.aData["height"] + " px";
+                return o.aData["height"];
             } },
             { "mDataProp": "magnification", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
-                return o.aData["magnification"] + " X";
+                var magnification = o.aData["magnification"];
+                if (magnification) {
+                    try {
+                        return o.aData["magnification"] + " X";
+                    }catch(e) {return "";}
+                } else {
+                    return '<span class="label label-default">Undefined</span>'
+                }
+
             }},
             { "mDataProp": "resolution", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
                 var resolution = o.aData["resolution"];
-                try {
-                    return resolution.toFixed(3) + " µm/pixel";
-                }catch(e) {return "";}
+                if (resolution) {
+                    try {
+                        return resolution.toFixed(3);
+                    }catch(e) {return "";}
+                } else {
+                    return '<span class="label label-default">Undefined</span>'
+                }
+
             }},
             { "mDataProp": "numberOfAnnotations", "bSearchable": false,"bSortable": true },
             { "mDataProp": "numberOfJobAnnotations", "bSearchable": false,"bSortable": true },
             { "mDataProp": "numberOfReviewedAnnotations", "bSearchable": false,"bSortable": true },
-            { "mDataProp": "extension", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
-                var extension = o.aData["extension"];
-                if (extension == "ndpi" || extension == "vms") {
+            { "mDataProp": "originalMimeType", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
+                var originalMimeType = o.aData["originalMimeType"];
+                if (originalMimeType == "openslide/ndpi" || originalMimeType == "openslide/vms") {
                     return '<img src="images/brands/hamamatsu.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
-                } else if (extension == "mrxs") {
+                } else if (originalMimeType == "openslide/mrxs") {
                     return '<img src="images/brands/3dh.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
-                } else if (extension == "svs") {
+                } else if (originalMimeType == "openslide/svs") {
                     return '<img src="images/brands/aperio.jpg" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
-                } else if (extension == "scn") {
+                } else if (originalMimeType == "openslide/scn") {
                     return '<img src="images/brands/leica.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
-                } else if (extension == "bif") {
+                } else if (originalMimeType == "ventana/tif" || originalMimeType == "ventana/bif") {
                     return '<img src="images/brands/roche.gif" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 }
-                else return o.aData["extension"];
+                else return '<span class="label label-default">Undefined</span>';
             } },
             { "mDataProp": "created", sDefaultContent: "", "bSearchable": false,"bSortable": true, "fnRender" : function (o, created) {
                 return window.app.convertLongToDate(created);
@@ -122,8 +135,10 @@ var ImageTabsView = Backbone.View.extend({
 
                 self.images = [];
             },
-            "aoColumns" : columns
-        });
+            "aoColumns" : columns,
+            "aaSorting": [[ 0, "desc" ]]
+
+    });
 //        $('#projectImageListing' + self.idProject).hide();
 //        $('#projectImageTable' + self.idProject).show();
     }

@@ -512,7 +512,7 @@ class RestReviewedAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("ReviewedAnnotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.crop(annotation, params))
+            redirect (url : annotation.toCropURL(params))
         }
 
     }
@@ -523,7 +523,8 @@ class RestReviewedAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("ReviewedAnnotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, false))
+            params.mask = true
+            redirect (url : annotation.toCropURL(params))
         }
 
     }
@@ -534,7 +535,8 @@ class RestReviewedAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("ReviewedAnnotation", params.id)
         } else {
-            responseBufferedImage(imageProcessingService.getMaskImage(annotation, params, true))
+            params.alphaMask = true
+            redirect (url : annotation.toCropURL(params))
         }
 
     }

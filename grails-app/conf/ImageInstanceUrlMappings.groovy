@@ -30,7 +30,7 @@ class ImageInstanceUrlMappings {
             action = [GET:"windowUrl"]
         }
         "/api/imageinstance/$id/mask.$format"(controller: "restImageInstance"){
-            action = [GET:"mask", POST : "putMask"]
+            action = [GET:"mask"]
         }
         "/api/imageinstance/$id/download"(controller: "restImageInstance"){
             action = [GET:"download"]

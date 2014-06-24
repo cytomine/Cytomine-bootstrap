@@ -221,7 +221,7 @@ class RestUploadedFileController extends RestController {
                 log.info "Sample error : " + it
             }
         }
-        notificationService.notifyNewImageAvailable(currentUser,abstractImage,projects)
+        //notificationService.notifyNewImageAvailable(currentUser,abstractImage,projects)
         responseSuccess([abstractimage: abstractImage])
     }
 

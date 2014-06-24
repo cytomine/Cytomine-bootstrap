@@ -7,11 +7,9 @@ import be.cytomine.api.UrlApi
 import be.cytomine.image.acquisition.Instrument
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
-import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
 import be.cytomine.security.SecUser
-import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.JSONUtils
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
@@ -151,10 +149,10 @@ class AbstractImage extends CytomineDomain implements Serializable {
         returnArray['depth'] = image?.getZoomLevels()?.max
         returnArray['resolution'] = image?.resolution
         returnArray['magnification'] = image?.magnification
-        returnArray['thumb'] = UrlApi.getThumbImage(image?.id, 256)
-        returnArray['preview'] = UrlApi.getThumbImage(image?.id, 1024)
+        returnArray['thumb'] = UrlApi.getThumbImage((long)image?.id, 256)
+        returnArray['preview'] = UrlApi.getThumbImage((long)image?.id, 1024)
         returnArray['fullPath'] = image?.getFullPath()
-        returnArray['macroURL'] = UrlApi.getAssociatedImage(image?.id, "macro", 256)
+        returnArray['macroURL'] = UrlApi.getAssociatedImage((long)image?.id, "macro", 256)
         returnArray
     }
 
@@ -181,6 +179,12 @@ class AbstractImage extends CytomineDomain implements Serializable {
             return null
         }
 
+    }
+
+    def originalMimeType() {
+        UploadedFile uploadedFile = UploadedFile.findByImage(this)
+        if (uploadedFile.parent) return uploadedFile.parent.mimeType
+        else return uploadedFile.mimeType
     }
 
     def getFullPath() {
@@ -222,6 +226,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
     }*/
 
     def getZoomLevels() {
+        if (!width || !height) return [min : 0, max : 9, middle : 0]
         double tmpWidth = width
         double tmpHeight = height
         def nbZoom = 0

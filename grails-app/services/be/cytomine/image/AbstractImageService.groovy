@@ -2,17 +2,23 @@ package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.server.resolvers.Resolver
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.LinearRing
+import com.vividsolutions.jts.geom.Polygon
+import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import grails.orm.PagedResultList
 
@@ -148,10 +154,10 @@ class AbstractImageService extends ModelService {
         AbstractImage abstractImage = read(params.id)
         String imageServerURL = abstractImage.getRandomImageServerURL()
         String imagePath = abstractImage.getFullPath()
-        return "$imageServerURL/image/crop?fif=$imagePath&$queryString" //&scale=$scale
+        return "$imageServerURL/image/crop.png?fif=$imagePath&$queryString" //&scale=$scale
     }
 
-    def tile(params, queryString) {
+    def tile(def params, String queryString) {
         AbstractImage abstractImage = read(params.id)
         int tileGroup = params.int("TileGroup")
         int x = params.int("x")
@@ -160,8 +166,29 @@ class AbstractImageService extends ModelService {
         String imageServerURL = abstractImage.getRandomImageServerURL()
         String imagePath = abstractImage.getFullPath()
         def zoomifyQuery = "zoomify=$imagePath/TileGroup$tileGroup/$z-$x-$y\\.jpg"
-        return "$imageServerURL/image/tile?$zoomifyQuery"
+        return "$imageServerURL/image/tile.jpg?$zoomifyQuery"
     }
+
+    def window(def params, String queryString) {
+        Long id = params.long('id')
+        AbstractImage abstractImage = read(id)
+        int x = params.int('x')
+        int y = params.int('y')
+        int w = params.int('w')
+        int h = params.int('h')
+        def boundaries = [:]
+        boundaries.topLeftX = x
+        boundaries.topLeftY = abstractImage.getHeight() - h
+        boundaries.width = w
+        boundaries.height = h
+        boundaries.imageWidth = abstractImage.getWidth()
+        boundaries.imageHeight = abstractImage.getHeight()
+        if (params.zoom) boundaries.zoom = params.zoom
+        if (params.maxSize) boundaries.maxSize = params.maxSize
+        return UrlApi.getCropURL(id, boundaries)
+    }
+
+
 
     /**
      * Extract image properties from file for a specific image
@@ -176,7 +203,7 @@ class AbstractImageService extends ModelService {
     /**
      * Get a single property thx to its id
      */
-    def imageProperty(def imageProperty) {
+    def imageProperty(long imageProperty) {
         return ImageProperty.findById(imageProperty)
     }
 
@@ -199,11 +226,14 @@ class AbstractImageService extends ModelService {
     /**
      * Get thumb image URL
      */
-    def thumb(def id, int maxSize) {
+    def thumb(long id, int maxSize) {
         AbstractImage abstractImage = AbstractImage.read(id)
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String fif = getMainUploadedFile(abstractImage).absolutePath
-        String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&maxSize=$maxSize"
+        UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
+        String fif = uploadedFile.absolutePath
+        fif = fif.replace(" ", "%20")
+        String mimeType = uploadedFile.mimeType
+        String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&mimeType=$mimeType&maxSize=$maxSize"
         println uri
         AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, uri)
         if (attachedFile) {
@@ -226,28 +256,38 @@ class AbstractImageService extends ModelService {
 
     def getMainUploadedFile(AbstractImage abstractImage) {
         UploadedFile uploadedfile = UploadedFile.findByImage(abstractImage)
-        if (uploadedfile && uploadedfile.parent) return uploadedfile.parent
+        if (uploadedfile && uploadedfile.parent && uploadedfile.ext != "zip") return uploadedfile.parent
         else return uploadedfile
     }
 
     def downloadURI(AbstractImage abstractImage) {
-        String fif = getMainUploadedFile(abstractImage).absolutePath
-        String imageServerURL = abstractImage.getRandomImageServerURL()
-        return "$imageServerURL/image/download?fif=$fif"
+        String fif = UploadedFile.findByImage(abstractImage)?.downloadParent?.absolutePath
+        if (fif) {
+            String imageServerURL = abstractImage.getRandomImageServerURL()
+            return "$imageServerURL/image/download?fif=$fif"
+        } else {
+            //return 404
+        }
+
     }
 
     def getAvailableAssociatedImages(AbstractImage abstractImage) {
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String fif = getMainUploadedFile(abstractImage).absolutePath
-        String uri = "$imageServerURL/image/associated?fif=$fif"
+        UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
+        String fif = uploadedFile.absolutePath
+        fif = fif.replace(" ", "%20")
+        String mimeType = uploadedFile.mimeType
+        String uri = "$imageServerURL/image/associated?fif=$fif&mimeType=$mimeType"
         return JSON.parse( new URL(uri).text )
     }
 
     def getAssociatedImage(AbstractImage abstractImage, String label, def maxWidth) {
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String fif = getMainUploadedFile(abstractImage).absolutePath
-        String uri = "$imageServerURL/image/nested?fif=$fif&label=$label"
-        println uri
+        UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
+        String fif = uploadedFile.absolutePath
+        fif = fif.replace(" ", "%20")
+        String mimeType = uploadedFile.mimeType
+        String uri = "$imageServerURL/image/nested?fif=$fif&mimeType=$mimeType&label=$label"
         AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, uri)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
@@ -261,7 +301,7 @@ class AbstractImageService extends ModelService {
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.id, domain.filename]
+        return [domain.id, domain.originalFilename]
     }
 
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {

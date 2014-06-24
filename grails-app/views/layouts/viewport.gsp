@@ -30,9 +30,9 @@
 
 
 <style type="text/css">
-    body {
-        padding-top: 50px;
-    }
+body {
+    padding-top: 50px;
+}
 </style>
 
 <link rel='stylesheet' href='css/cytomine-layout.css' type='text/css'/>
@@ -359,52 +359,52 @@
 <div id="phono-messages"></div>
 
 
-<script type="text/javascript">	
-    function showClassicWidget() {
-/*		FreshWidget.show(); 
-		return false;*/
-		alert("what?");
-	}	
-</script>
-
-<script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
-
-	FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
-
+    function showClassicWidget() {
+        /*		FreshWidget.show();
+         return false;*/
+        alert("what?");
+    }
 </script>
-
 
 </body>
+
 <g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">
+    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript">
+
+        FreshWidget.init("", {"queryString": "&amp;widgetType=popup", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#0064eb", "alignment": "4", "offset": "-1500px", "formHeight": "500px", "url": "https://cytomine.freshdesk.com"} );
+
+    </script>
+
     <script type="text/javascript" src="lib.js?version=${grailsApplication.metadata.'app.version'}" ></script>
     <script type="text/javascript" src="application.js?version=${grailsApplication.metadata.'app.version'}" ></script>
 
 </g:if>
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM }">
-<script type="text/javascript">
-    $(function() {
-        require(
-                { urlArgs: "bust=" + (new Date()).getTime() }
-        );
-        window.app = new ApplicationController();
-        window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
-    });
-</script>
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=" + (new Date()).getTime() }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
+        });
+    </script>
 </g:if>
 
 <g:if test="${Environment.getCurrent() == Environment.PRODUCTION}">
-<script type="text/javascript">
-    $(function() {
-        require(
-                { urlArgs: "bust=${grailsApplication.metadata.'app.version'}" }
-        );
-        window.app = new ApplicationController();
-        window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
+    <script type="text/javascript">
+        $(function() {
+            require(
+                    { urlArgs: "bust=${grailsApplication.metadata.'app.version'}" }
+            );
+            window.app = new ApplicationController();
+            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
 
-    });
-</script>
+        });
+    </script>
 
 
 

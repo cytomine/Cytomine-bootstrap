@@ -25,7 +25,7 @@ class GenerateMissingStoragesJob {
     }
 
     def execute() {
-        SpringSecurityUtils.reauthenticate "admin", null
+        SpringSecurityUtils.reauthenticate "superadmin", null
         for (user in User.findAll()) {
             if (!Storage.findByUser(user)) {
                 log.info "generate missing storage for $user"

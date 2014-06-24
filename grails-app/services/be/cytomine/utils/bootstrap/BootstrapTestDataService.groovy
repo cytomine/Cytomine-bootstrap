@@ -1,5 +1,6 @@
 package be.cytomine.utils.bootstrap
 
+import be.cytomine.image.server.ImageServer
 import be.cytomine.processing.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -18,14 +19,11 @@ class BootstrapTestDataService {
     def dataSource
 
     def initVentana() {
-        //def ventanaImageServer = [className : 'VentanaResolver', name : 'Ventana', service : '/ventana', url : grailsApplication.config.grails.imageServerURL, available : true]
-        def ventanaImageServer = [className : 'VentanaResolver', name : 'IIP', service : '/fcgi-bin/iipsrv.fcgi', url : grailsApplication.config.iipImageServer, available : true]
         def mimeSamples = [
                 [extension : 'tif', mimeType : 'ventana/tif']
         ]
         bootstrapUtilsService.createMimes(mimeSamples)
-        bootstrapUtilsService.createImageServers([ventanaImageServer])
-        bootstrapUtilsService.createMimeImageServers([ventanaImageServer], mimeSamples)
+        bootstrapUtilsService.createMimeImageServers([ImageServer.findByName('IIP')], mimeSamples)
     }
 
     def initData() {
@@ -59,10 +57,10 @@ class BootstrapTestDataService {
         bootstrapUtilsService.createMimes(LociMimeSamples)
         bootstrapUtilsService.createMimeImageServers([LociImageServer], LociMimeSamples)
         def usersSamples = [
-                [username : 'anotheruser', firstname : 'Another', lastname : 'User', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
-                [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'passwordIS', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'superadmin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
-                [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : 'info@cytomine.be', group : [[name : "GIGA"]], password : 'admin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]
+                [username : 'anotheruser', firstname : 'Another', lastname : 'User', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
+                [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'passwordIS', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
+                [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'superadmin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
+                [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'admin', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]
         ]
 
         bootstrapUtilsService.createUsers(usersSamples)

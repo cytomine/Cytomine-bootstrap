@@ -6,10 +6,16 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.Term
 import com.vividsolutions.jts.geom.Geometry
 import ij.ImagePlus
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.DefaultHttpClient
 
 import javax.imageio.ImageIO
-import java.awt.*
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.RenderingHints
+import java.awt.Toolkit
 import java.awt.image.BufferedImage
+
 
 /**
  *  TODOSTEVBEN:: doc + clean
@@ -36,29 +42,10 @@ class ImageProcessingService {
         return annotation.toCropURL()
     }
 
-    String crop(AnnotationDomain annotation, params) {
-        return annotation.toCropURL(params)
-
-        /*eprintln image
-        if(params.zoom) {
-            int zoom = params.int("zoom")
-            def zoomLevels = annotation.getImage().getBaseImage().getZoomLevels()
-            if (zoom < zoomLevels.min || zoom > zoomLevels.max) {
-                throw new ObjectNotFoundException("Crop at zoom $zoom does not exist for annotation $params.annotation !")
-            }
-            def boundaries = annotation.getBoundaries()
-
-            int newWidth = boundaries.width / Math.pow(2, zoom)
-            int newHeight = boundaries.height / Math.pow(2, zoom)
-            image = scaleImage(image, newWidth, newHeight)
-        }
-        else if(params.max_size && (image.width > params.int("max_size") || image.height > params.int("max_size"))) {
-            image = scaleImage(image, (int) params.int("max_size"), (int) params.int("max_size"))
-        }
-        if (params.getBoolean('draw')) {
-            image = createCropWithDraw(annotation,image)
-        }
-        return image*/
+    BufferedImage crop(AnnotationDomain annotation, params) {
+        String cropURL = annotation.toCropURL(params)
+        println cropURL
+        return getImageFromURL(cropURL)
     }
 
     /**
@@ -71,7 +58,7 @@ class ImageProcessingService {
         return bufferedImage
     }
 
-    public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
+    /*public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
         //TODO:: document this method
         int width = image.getWidth()
         int height = image.getHeight()
@@ -88,9 +75,9 @@ class ImageProcessingService {
         BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         combined.setRGB(0, 0, width, height, imagePixels, 0, width)
         return combined
-    }
+    }  */
 
-    public BufferedImage getMaskImage(AnnotationDomain annotation, params, Boolean withAlpha) {
+    /*public BufferedImage getMaskImage(AnnotationDomain annotation, params, Boolean withAlpha) {
         //TODO:: document this method
 
         BufferedImage crop = crop(annotation, params)
@@ -109,11 +96,11 @@ class ImageProcessingService {
             return applyMaskToAlpha(crop, mask)
         else
             return mask
-    }
+    } */
 
 
 
-    public BufferedImage alphamask(AnnotationDomain annotation, def params) {
+    /*public BufferedImage alphamask(AnnotationDomain annotation, def params) {
         //TODO:: document this method
         if (!annotation) {
             throw new ObjectNotFoundException("Annotation $params.annotation does not exist!")
@@ -140,9 +127,9 @@ class ImageProcessingService {
             log.error("GetThumb:" + e);
         }
         return null;
-    }
+    }*/
 
-    public BufferedImage createCropWithDraw(AnnotationDomain annotation,String baseImage) {
+    /*public BufferedImage createCropWithDraw(AnnotationDomain annotation,String baseImage) {
         return createCropWithDraw(annotation,getImageFromURL(baseImage))
     }
 
@@ -166,8 +153,6 @@ class ImageProcessingService {
                 x_ratio,
                 y_ratio
         )
-
-
         baseImage
     }
 
@@ -193,7 +178,7 @@ class ImageProcessingService {
             g.dispose();
         }
         return newImage;
-    }
+    } */
 
 
     /**

@@ -274,9 +274,20 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         def boundaries = getBoundaries()
         if (params.zoom) boundaries.zoom = params.zoom
         if (params.max_size) boundaries.max_size = params.max_size
-        if (params.draw) boundaries.max_size = params.max_size
+        if (params.draw) {
+            boundaries.draw = true
+            boundaries.location = location.toText()
+        }
+        if (params.mask) {
+            boundaries.mask = true
+            boundaries.location = location.toText()
+        }
+        if (params.alphaMask) {
+            boundaries.alphaMask = true
+            boundaries.location = location.toText()
+        }
+
         return UrlApi.getCropURL(image.baseImage.id, boundaries)
-        //return image.baseImage.getCropURL(getBoundaries())
     }
 
     def getCallBack() {

@@ -19,7 +19,7 @@ class SegmentationService {
     static transactional = false
 
 
-    public BufferedImage colorizeWindow(AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, int x, int y, double x_ratio, double y_ratio) {
+    /*public BufferedImage colorizeWindow(AbstractImage image, BufferedImage window, Collection<Geometry> geometryCollection, int x, int y, double x_ratio, double y_ratio) {
 
         for (geometry in geometryCollection) {
 
@@ -164,7 +164,7 @@ class SegmentationService {
 
 
 
-
+       */
 
 
 

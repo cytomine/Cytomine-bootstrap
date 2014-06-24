@@ -316,7 +316,9 @@ class RestController {
                 if (request.method == 'HEAD') {
                     render(text: "", contentType: "image/jpeg")
                 } else {
-                    redirect(url: url)
+                    URL source = new URL(url)
+                    URLConnection connection = source.openConnection()
+                    response.outputStream << connection.getInputStream()
                 }
             }
         }

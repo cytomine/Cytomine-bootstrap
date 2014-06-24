@@ -59,6 +59,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
     String mimeType
 
     UploadedFile parent
+    UploadedFile downloadParent
 
     @RestApiObjectField(description = "File size", mandatory = false)
     Long size
@@ -93,6 +94,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         convertedFilename (nullable: true)
         convertedExt (nullable: true)
         parent(nullable : true)
+        downloadParent(nullable : true)
         image(nullable : true)
         mimeType(nullable : true)
     }
@@ -119,6 +121,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['to_deploy'] = (uploaded?.status == UploadedFile.TO_DEPLOY)
         returnArray['image'] = uploaded?.image?.id
         returnArray['parent'] = uploaded?.parent?.id
+        returnArray['downloadParent'] = uploaded?.downloadParent?.id
         returnArray
     }
 
@@ -149,6 +152,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         domain.mimeType = JSONUtils.getJSONAttrStr(json,'mimeType')
 
         domain.parent = JSONUtils.getJSONAttrDomain(json, "parent", new UploadedFile(), false)
+        domain.downloadParent = JSONUtils.getJSONAttrDomain(json, "downloadParent", new UploadedFile(), false)
 
         domain.size = JSONUtils.getJSONAttrLong(json,'size',0)
 
