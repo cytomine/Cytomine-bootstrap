@@ -743,7 +743,7 @@ BrowseImageView = Backbone.View.extend({
                 new OpenLayers.Size(metadata.width, metadata.height)
             );
             //baseLayer.tileOptions = {crossOriginKeyword: 'anonymous'};
-            /*baseLayer.getURL = function (bounds) {
+            baseLayer.getURL = function (bounds) {
                 bounds = this.adjustBounds(bounds);
                 var res = this.getServerResolution();
                 var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
@@ -753,7 +753,7 @@ BrowseImageView = Backbone.View.extend({
                 var layer = 0;
                 var timeframe = 0;
                 var tileIndex = x + y * this.tierSizeInTiles[z].w + this.tileCountUpToTier[z];
-                var path = "tile.jpg?TileGroup=" + Math.floor( (tileIndex) / 256 ) +
+                var path = "&tileGroup=" + Math.floor( (tileIndex) / 256 ) +
                     "&z=" + z + "&x=" + x + "&y=" + y + "&channels=" + channels + "&layer=" + layer + "&timeframe=" + timeframe;
                 var url = this.url;
                 if (OpenLayers.Util.isArray(url)) {
@@ -761,7 +761,7 @@ BrowseImageView = Backbone.View.extend({
                 }
 
                 return url + path;
-            }; */
+            };
             //baseLayer.transitionEffect = 'resize';
             baseLayer.getImageSize = function (bounds) {
 

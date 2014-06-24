@@ -26,11 +26,11 @@ class AbstractImageUrlMappings {
 		"/api/abstractimage/$id/preview.$format"(controller: "restAbstractImage"){
             action = [GET:"preview"]
         }
-        "/api/abstractimage/$id/metadata.$format"(controller: "restAbstractImage"){
-            action = [GET:"metadata"]
-        }
         "/api/abstractimage/$id/tile.$format"(controller: "restAbstractImage"){
             action = [GET:"tile"]
+        }
+        "/api/abstractimage/$id/crop.$format"(controller: "restAbstractImage"){
+            action = [GET:"crop"]
         }
         "/api/abstractimage/$id/associated.$format"(controller: "restAbstractImage"){
             action = [GET:"associated"]

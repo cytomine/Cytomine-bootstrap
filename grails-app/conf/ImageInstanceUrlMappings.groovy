@@ -44,7 +44,7 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/associated/$label.$format"(controller: "restImageInstance"){
             action = [GET:"label"]
         }
-        "/api/imageinstance/$id/property.$format"(controller: "restImageInstance"){
+        "/api/imageinstance/$id/imageproperty.$format"(controller: "restImageInstance"){
             action = [GET:"imageProperties"]
         }
         "/api/project/$id/imageinstance.$format"(controller: "restImageInstance"){
@@ -56,10 +56,6 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/method/lastopened.$format"(controller :"restImageInstance") {
             action = [GET:"listLastOpenImage"]
         }
-
-//        "/api/imageinstance/lastopened.$format"(controller :"restImageInstance") {
-//            action = [GET:"listLastOpenImage"]
-//        }
         "/api/imageinstance/$id/sameimagedata.$format"(controller :"restImageInstance") {
             action = [GET:"retrieveSameImageOtherProject"]
         }

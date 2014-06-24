@@ -30,11 +30,14 @@ class RestStorageController extends RestController {
     def listByMime = {
         log.info 'listing storages by mime/user'
         def currentUser = cytomineService.currentUser
-        String ext = params.get('ext')
 
-        Mime mime = Mime.findByExtension(ext)
+        String mimeType = params.get('mime_type')
+        Mime mime = Mime.findByMimeType(mimeType)
+
         //list all images server for this mime
-        List<ImageServer> servers = MimeImageServer.findAllByMime(mime).collect{it.imageServer}
+        List<ImageServer> servers = MimeImageServer.findAllByMime(mime).collect{
+            it.imageServer
+        }
 
         //list all storage for this user
         List<Storage> storages = Storage.findAllByUser(currentUser)

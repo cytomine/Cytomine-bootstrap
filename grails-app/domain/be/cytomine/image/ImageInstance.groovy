@@ -3,6 +3,7 @@ package be.cytomine.image
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -150,9 +151,9 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['resolution'] = image?.baseImage?.resolution
         returnArray['magnification'] = image?.baseImage?.magnification
         returnArray['depth'] = image?.baseImage?.getZoomLevels()?.max
-        try {returnArray['preview'] = image.baseImage ? image.baseImage.getPreviewURL() : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
-        try {returnArray['thumb'] = image.baseImage ? image.baseImage.getThumbURL() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
-        try {returnArray['macroURL'] = image.baseImage ? image.baseImage.getMacroURL() : null} catch (Exception e) {returnArray['macro'] = 'NO THUMB:' + e.toString()}
+        try {returnArray['preview'] = image.baseImage ? UrlApi.getThumbImage(image.baseImage?.id, 1024) : null} catch (Exception e) {returnArray['preview'] = 'NO preview:' + e.toString()}
+        try {returnArray['thumb'] = image.baseImage ? UrlApi.getThumbImage(image.baseImage?.id, 256) : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
+        try {returnArray['macroURL'] = image.baseImage ? UrlApi.getAssociatedImage(image.baseImage?.id, "macro", 256) : null} catch (Exception e) {returnArray['macro'] = 'NO THUMB:' + e.toString()}
         try {returnArray['fullPath'] = image.baseImage ? image.baseImage.getFullPath() : null} catch (Exception e) {returnArray['thumb'] = 'NO THUMB:' + e.toString()}
         try {returnArray['numberOfAnnotations'] = image?.countImageAnnotations} catch (Exception e) {returnArray['numberOfAnnotations'] = -1}
         try {returnArray['numberOfJobAnnotations'] = image?.countImageJobAnnotations} catch (Exception e) {returnArray['numberOfJobAnnotations'] = -1}

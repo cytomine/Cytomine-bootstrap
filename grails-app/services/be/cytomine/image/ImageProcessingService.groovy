@@ -32,12 +32,14 @@ class ImageProcessingService {
     /**
      * Get annotation crop from this image
      */
-    def cropURL(AnnotationDomain annotation) {
+    String cropURL(AnnotationDomain annotation) {
         return annotation.toCropURL()
     }
 
-    def crop(AnnotationDomain annotation, params) {
-        BufferedImage image = ImageIO.read(new URL(annotation.toCropURL()))
+    String crop(AnnotationDomain annotation, params) {
+        return annotation.toCropURL(params)
+
+        /*eprintln image
         if(params.zoom) {
             int zoom = params.int("zoom")
             def zoomLevels = annotation.getImage().getBaseImage().getZoomLevels()
@@ -56,7 +58,7 @@ class ImageProcessingService {
         if (params.getBoolean('draw')) {
             image = createCropWithDraw(annotation,image)
         }
-        return image
+        return image*/
     }
 
     /**

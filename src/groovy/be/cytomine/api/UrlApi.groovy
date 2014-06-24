@@ -18,6 +18,16 @@ class UrlApi {
         return "${serverUrl()}/api/$type/${id}.json"
     }
 
+    static def getCropURL(Long idImage, def boundaries) {
+        String url = "${serverUrl()}/api/abstractimage/$idImage/crop.jpg?"
+        String query = boundaries.collect { key, value ->
+            "$key=$value"
+        }.join("&")
+        println query
+
+        return "$url?$query"
+    }
+
     /**
      * Return cytomine url to get an image metadata
      * @param url Cytomine base url
@@ -75,6 +85,10 @@ class UrlApi {
 
     static def getAssociatedImage(Long idAbstractImage, String label, def maxSize) {
         return "${serverUrl()}/api/abstractimage/$idAbstractImage/associated/$label" + ".png?maxWidth=$maxSize"
+    }
+
+    static def getThumbImage(Long idAbstractImage, def maxSize) {
+        return "${serverUrl()}/api/abstractimage/$idAbstractImage/thumb.png?maxWidth=$maxSize"
     }
 
     /**
