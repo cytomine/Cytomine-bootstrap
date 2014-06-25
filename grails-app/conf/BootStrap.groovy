@@ -1,5 +1,6 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.image.UploadedFile
 import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.image.Mime
 import be.cytomine.ontology.Relation
@@ -93,7 +94,7 @@ class BootStrap {
         }
 
         //ventana
-        if (!Mime.findByMimeType("ventana/tiff")) {
+        if (!Mime.findByMimeType("ventana/tif")) {
             bootstrapTestDataService.initVentana()
         }
 
@@ -106,6 +107,11 @@ class BootStrap {
 
         if(!SecUser.findByUsername("monitoring")) {
             bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
+        }
+
+        //version>2014 06 25
+        if(UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0) {
+            bootstrapUtilsService.checkImages()
         }
 
         if(!Relation.findByName(RelationTerm.names.PARENT)) {

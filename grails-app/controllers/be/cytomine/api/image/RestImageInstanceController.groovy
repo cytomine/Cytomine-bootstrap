@@ -387,7 +387,11 @@ class RestImageInstanceController extends RestController {
     def download() {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
-        redirect (uri : abstractImageService.downloadURI(imageInstance.baseImage))
+        String downloadURL = abstractImageService.downloadURI(imageInstance.baseImage)
+        if (downloadURL)
+            redirect (url : downloadURL)
+        else
+            responseNotFound("Download link for", id)
     }
 
     /*def metadata() {

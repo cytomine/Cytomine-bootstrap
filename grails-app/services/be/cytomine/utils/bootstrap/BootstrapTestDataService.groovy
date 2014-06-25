@@ -33,11 +33,9 @@ class BootstrapTestDataService {
 //        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
 
-        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : 'http://localhost:9080', available : true]
-        def LociImageServer = [className : 'LociResolver', name : 'Loci', service : '/loci/tile', url : 'http://localhost:9080', available : true]
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : grailsApplication.config.grails.imageServerURL, available : true]
 
         bootstrapUtilsService.createImageServers([IIPImageServer])
-        bootstrapUtilsService.createImageServers([LociImageServer])
         def IIPMimeSamples = [
                 [extension : 'mrxs', mimeType : 'openslide/mrxs'],
                 [extension : 'vms', mimeType : 'openslide/vms'],
@@ -47,15 +45,13 @@ class BootstrapTestDataService {
                 [extension : 'jp2', mimeType : 'image/jp2'],
                 [extension : 'scn', mimeType : 'openslide/scn'],
                 [extension : 'ndpi', mimeType : 'openslide/ndpi'],
-                [extension : 'bif', mimeType : 'openslide/bif']
+                [extension : 'bif', mimeType : 'openslide/bif'],
+                [extension : 'zvi', mimeType : 'zeiss/zvi']
         ]
         bootstrapUtilsService.createMimes(IIPMimeSamples)
         bootstrapUtilsService.createMimeImageServers([IIPImageServer], IIPMimeSamples)
-        def LociMimeSamples = [
-                [extension : 'zvi', mimeType : 'zeiss/zvi']
-        ]
-        bootstrapUtilsService.createMimes(LociMimeSamples)
-        bootstrapUtilsService.createMimeImageServers([LociImageServer], LociMimeSamples)
+
+
         def usersSamples = [
                 [username : 'anotheruser', firstname : 'Another', lastname : 'User', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
                 [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'passwordIS', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],

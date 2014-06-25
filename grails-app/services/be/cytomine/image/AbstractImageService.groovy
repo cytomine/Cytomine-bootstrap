@@ -219,10 +219,6 @@ class AbstractImageService extends ModelService {
         return [imageServersURLs : urls]
     }
 
-    def getCropURL(AbstractImage abstractImage, def boundaries) {
-
-    }
-
     /**
      * Get thumb image URL
      */
@@ -256,7 +252,7 @@ class AbstractImageService extends ModelService {
 
     def getMainUploadedFile(AbstractImage abstractImage) {
         UploadedFile uploadedfile = UploadedFile.findByImage(abstractImage)
-        if (uploadedfile && uploadedfile.parent && uploadedfile.ext != "zip") return uploadedfile.parent
+        if (uploadedfile?.parent) return uploadedfile.parent
         else return uploadedfile
     }
 
@@ -266,7 +262,7 @@ class AbstractImageService extends ModelService {
             String imageServerURL = abstractImage.getRandomImageServerURL()
             return "$imageServerURL/image/download?fif=$fif"
         } else {
-            //return 404
+            return null
         }
 
     }
@@ -277,7 +273,7 @@ class AbstractImageService extends ModelService {
         String fif = uploadedFile.absolutePath
         fif = fif.replace(" ", "%20")
         String mimeType = uploadedFile.mimeType
-        String uri = "$imageServerURL/image/associated?fif=$fif&mimeType=$mimeType"
+        String uri = "$imageServerURL/image/associated.json?fif=$fif&mimeType=$mimeType"
         return JSON.parse( new URL(uri).text )
     }
 
@@ -287,7 +283,7 @@ class AbstractImageService extends ModelService {
         String fif = uploadedFile.absolutePath
         fif = fif.replace(" ", "%20")
         String mimeType = uploadedFile.mimeType
-        String uri = "$imageServerURL/image/nested?fif=$fif&mimeType=$mimeType&label=$label"
+        String uri = "$imageServerURL/image/nested.jpg?fif=$fif&mimeType=$mimeType&label=$label"
         AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, uri)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))

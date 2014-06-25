@@ -9,6 +9,7 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.Storage
 import be.cytomine.laboratory.Sample
 import be.cytomine.project.Project
+import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.restapidoc.annotation.RestApiMethod
@@ -40,13 +41,14 @@ class RestUploadedFileController extends RestController {
     def abstractImageService
     def notificationService
     def securityACLService
+    def secUserService
 
     static allowedMethods = [image: 'POST']
 
     @RestApiMethod(description="Get all uploaded file made by the current user")
     def list() {
         //get all uploaded file for this user
-        def uploadedFiles = uploadedFileService.list(cytomineService.getCurrentUser())
+        def uploadedFiles = uploadedFileService.list((User)cytomineService.getCurrentUser())
 
         //if view is datatables, change way to store data
         if (params.dataTables) {
@@ -225,7 +227,6 @@ class RestUploadedFileController extends RestController {
         responseSuccess([abstractimage: abstractImage])
     }
 
-    def secUserService
 
 
 

@@ -2,15 +2,20 @@ package be.cytomine.utils.bootstrap
 
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.image.AbstractImage
+import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
+import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.Group
 import be.cytomine.security.SecRole
+import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 /**
  * Cytomine @ GIGA-ULG
@@ -19,6 +24,8 @@ import be.cytomine.security.User
  * Time: 11:59
  */
 class BootstrapUtilsService {
+
+    def cytomineService
 
     public def createUsers(def usersSamples) {
 
@@ -173,5 +180,77 @@ class BootstrapUtilsService {
         if (!newObject.save(flush: flush)) {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
         }
+    }
+
+    def checkImages() {
+        List<AbstractImage> ok = []
+        List<AbstractImage> notok = []
+        for (abstractImage in AbstractImage.findAll()) {
+            if (UploadedFile.findByImage(abstractImage)) {
+                ok << abstractImage
+            } else {
+                notok << abstractImage
+            }
+        }
+
+        notok.each { abstractImage ->
+            SpringSecurityUtils.reauthenticate "admin", null
+            UploadedFile uploadedFile = UploadedFile.findByFilename(abstractImage.getPath())
+            SecUser user = abstractImage.user ? abstractImage : cytomineService.getCurrentUser()
+            if (!uploadedFile) {
+                uploadedFile = new UploadedFile(
+                        user : user,
+                        filename : abstractImage.getPath(),
+                        projects: ImageInstance.findAllByBaseImage(abstractImage).collect { it.project.id}.unique(),
+                        storages : abstractImage.getImageServersStorage().collect { it.storage.id},
+                        originalFilename: abstractImage.getOriginalFilename(),
+                        convertedExt: abstractImage.mime.extension,
+                        ext: abstractImage.mime.extension,
+                        size : 0,
+                        path : abstractImage.imageServersStorage.first().storage.getBasePath(),
+                        contentType: abstractImage.mime.mimeType)
+
+                if (!uploadedFile.validate()) {
+                    uploadedFile.errors.each {
+                        println it
+                    }
+                } else {
+                    uploadedFile = uploadedFile.save()
+                }
+
+            }
+            uploadedFile.image = abstractImage
+            String extension = abstractImage.mime.extension
+            if (extension == "tiff" || extension == "tif") {
+                uploadedFile.mimeType = "image/tiff"
+                uploadedFile.downloadParent = uploadedFile
+            }
+            else if (extension == "mrxs") {
+                uploadedFile.mimeType = "openslide/mrxs"
+            }
+            else if (extension == "svs") {
+                uploadedFile.mimeType = "openslide/svs"
+                uploadedFile.downloadParent = uploadedFile
+            }
+            else if (extension == "scn") {
+                uploadedFile.mimeType = "openslide/scn"
+                uploadedFile.downloadParent = uploadedFile
+            }
+            else if (extension == "jp2") {
+                uploadedFile.mimeType = "image/jp2"
+                uploadedFile.downloadParent = uploadedFile
+            }
+            else if (extension == "vms") {
+                uploadedFile.mimeType = "openslide/vms"
+            }
+            else if (extension == "ndpi") {
+                uploadedFile.mimeType = "openslide/ndpi"
+                uploadedFile.downloadParent = uploadedFile
+            }
+            uploadedFile.save()
+        }
+
+        println "ok :" + ok
+        println "notok :" + notok
     }
 }

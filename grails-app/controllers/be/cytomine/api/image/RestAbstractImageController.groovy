@@ -171,7 +171,8 @@ class RestAbstractImageController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier ="associated image labels")
     def associated() {
-        def associated = abstractImageService.getAvailableAssociatedImages(params.long("id"))
+        AbstractImage abstractImage = abstractImageService.read(params.long("id"))
+        def associated = abstractImageService.getAvailableAssociatedImages(abstractImage)
         responseSuccess(associated)
     }
 

@@ -157,7 +157,7 @@ grails.project.dependency.resolution = {
         runtime ":quartz-monitor:0.3-RC3"
         runtime ':cache:1.1.1'
         runtime ":database-migration:1.3.8"
-        runtime ":resources:1.2.RC2"
+        runtime ":resources:1.2.8"
         runtime ':jquery:1.8.3'
         compile ":executor:0.3"
         test ':code-coverage:1.2.7'

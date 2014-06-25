@@ -19,7 +19,7 @@ class UrlApi {
     }
 
     static def getCropURL(Long idImage, def boundaries) {
-        String url = "${serverUrl()}/api/abstractimage/$idImage/crop.jpg"
+        String url = "${serverUrl()}/api/abstractimage/$idImage/crop.png"
         String query = boundaries.collect { key, value ->
             "$key=$value"
         }.join("&")
@@ -64,7 +64,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getUserAnnotationCropWithAnnotationIdWithMaxWithOrHeight(Long idAnnotation, int maxWidthOrHeight) {
-        return "${serverUrl()}/api/userannotation/$idAnnotation/crop.jpg?max_size=$maxWidthOrHeight"
+        return "${serverUrl()}/api/userannotation/$idAnnotation/crop.png?max_size=$maxWidthOrHeight"
     }
 
     /**
@@ -74,11 +74,11 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAlgoAnnotationCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg"
+        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.png"
     }
 
     static def getAnnotationCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg"
+        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.png"
     }
 
     static def getAssociatedImage(Long idAbstractImage, String label, def maxSize) {
@@ -96,7 +96,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAnnotationMinCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/annotation/$idAnnotation/crop.jpg?max_size=256"
+        return "${serverUrl()}/api/annotation/$idAnnotation/crop.png?max_size=256"
     }
     static def getAnnotationMinCropWithAnnotationIdOld(Long idAnnotation) {
         return "${serverUrl()}/api/annotation/$idAnnotation/cropMin.jpg"
@@ -110,7 +110,7 @@ class UrlApi {
      * @return full cytomine url
      */
     static def getAlgoAnnotationCropWithAnnotationIdWithMaxWithOrHeight(Long idAnnotation, int maxWidthOrHeight) {
-        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.jpg?max_size=$maxWidthOrHeight"
+        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.png?max_size=$maxWidthOrHeight"
     }
 
     /**
