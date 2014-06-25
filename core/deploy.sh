@@ -19,7 +19,11 @@ echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
 echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 echo "grails.imageServerURL='http://$IMS_URL'" >> cytomineconfig.groovy
 echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
-echo "iipImageServer='http://$IIP_URL:81'" >> cytomineconfig.groovy
+echo "grails.admin.client='info@cytomine.be'" >> cytomineconfig.groovy
+echo "grails.integration.aurora.url='http://localhost:8000/api/image/notify.json?test=true'" >> cytomineconfig.groovy
+echo "grails.integration.aurora.username='xxx'" >> cytomineconfig.groovy
+echo "grails.integration.aurora.password='xxx'" >> cytomineconfig.groovy
+echo "grails.integration.aurora.interval='60000'" >> cytomineconfig.groovy
 fi
 
 service tomcat7 start

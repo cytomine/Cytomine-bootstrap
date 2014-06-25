@@ -34,7 +34,6 @@ cytomine/ims
 docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:ims \
 -e CORE_URL=$CORE_URL \
 -e IMS_URL=$IMS_URL \
--e IIP_URL=$IIP_URL \
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \

@@ -20,12 +20,14 @@ mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
 touch imageserverconfig.properties
 echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imageserverconfig.properties
-echo "grails.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
-echo "grails.imageServerPublicKey=4a5c7004-b6f8-4705-a118-c15d5c90dcdb" >> imageserverconfig.properties
-echo "grails.imageServerPrivateKey=70f35a45-c317-405a-8056-353db3d2bf56" >> imageserverconfig.properties
-echo "grails.vips=/usr/local/bin/vips"
-echo "grails.identify=identify"
-echo "grails.tiffinfo=tiffinfo"
+echo "cytomine.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
+echo "cytomine.imageServerPublicKey=4a5c7004-b6f8-4705-a118-c15d5c90dcdb" >> imageserverconfig.properties
+echo "cytomine.imageServerPrivateKey=70f35a45-c317-405a-8056-353db3d2bf56" >> imageserverconfig.properties
+echo "cytomine.vips=/usr/local/bin/vips" >> imageserverconfig.properties
+echo "cytomine.identify=identify" >> imageserverconfig.properties
+echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
+echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
+echo "cytomine.iipImageServer=http://$IIP_URL:81/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 fi
 service tomcat7 start
 
@@ -44,6 +46,7 @@ export LOGFILE=/tmp/iip-openslide.out
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9007 &
 
 mkdir /tmp/uploaded
+chmod -R 777 /tmp/uploaded
 
 /usr/local/nginx/sbin/nginx
 

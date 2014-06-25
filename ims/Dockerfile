@@ -41,7 +41,8 @@ RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /tmp/iipsrv/src/iipsrv.fcgi /usr/lo
 
 # vips
 RUN apt-get -y install gtk-doc-tools swig libxml2-dev gobject-introspection libglib2.0-dev
-RUN cd /tmp && git clone git://github.com/jcupitt/libvips.git && cd /tmp/libvips && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
+RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/7.40/vips-7.40.1.tar.gz && tar -zxvf ./vips-7.40.1.tar.gz && cd ./vips-7.40.1 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
+#RUN cd /tmp && git clone git://github.com/jcupitt/libvips.git && cd /tmp/libvips && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
 
 #openslide-java
 RUN apt-get -y install ant
