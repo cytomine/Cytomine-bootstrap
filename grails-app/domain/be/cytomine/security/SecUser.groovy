@@ -57,6 +57,7 @@ class SecUser extends CytomineDomain implements Serializable {
         password column: '`password`'
         id(generator: 'assigned', unique: true)
         sort "id"
+        cache true
     }
 
     /**

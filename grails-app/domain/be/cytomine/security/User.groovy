@@ -47,6 +47,7 @@ class User extends SecUser {
     static mapping = {
         id(generator: 'assigned', unique: true)
         sort "id"
+        cache true
     }
 
     def beforeInsert() {

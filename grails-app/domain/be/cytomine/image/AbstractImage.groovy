@@ -63,6 +63,13 @@ class AbstractImage extends CytomineDomain implements Serializable {
     ])
     static transients = ["zoomLevels", "thumbURL"]
 
+    static mapping = {
+        id generator: "assigned"
+        sort "id"
+        mime fetch: 'join'
+
+    }
+
     static constraints = {
         originalFilename(nullable: true, blank: false, unique: false)
         filename(blank: false, unique: true)
@@ -183,8 +190,8 @@ class AbstractImage extends CytomineDomain implements Serializable {
 
     def originalMimeType() {
         UploadedFile uploadedFile = UploadedFile.findByImage(this)
-        if (uploadedFile.parent) return uploadedFile.parent.mimeType
-        else return uploadedFile.mimeType
+        if (uploadedFile && uploadedFile.parent) return uploadedFile.parent.mimeType
+        else return uploadedFile?.mimeType
     }
 
     def getFullPath() {

@@ -34,6 +34,7 @@ println grailsApplication
 //}
 
 
+//grails.plugin.location."database-session" = "../grails-database-session"
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -70,12 +71,21 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repo.spring.io/milestone/"
 
         mavenRepo "http://www.terracotta.org/download/reflector/releases"
+
+        mavenRepo "http://repository.ow2.org/nexus/content/repositories/public"
+
+        mavenRepo "http://repository.ow2.org/nexus/content/repositories/ow2-legacy"
+
+
+
     }
     dependencies {
 //        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 //        test "org.codehaus.geb:geb-spock:0.7.2"
 
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
+
+
 
         //runtime "postgresql:postgresql:9.0-801.jdbc4"
         //   postgresql-9.0-801.jdbc4.jar
@@ -100,13 +110,15 @@ grails.project.dependency.resolution = {
 //            }
 //        }
 //       if (Environment.getCurrent().name.equals("cluster"))  {
-        //for cache
-        runtime 'net.sf.ehcache:ehcache-core:2.4.6'
-        runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
-        //for session
-        runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
-        runtime "org.terracotta.session:terracotta-session:1.3.5"
+        //for cache with terra 3.5.x
+//        runtime 'net.sf.ehcache:ehcache-core:2.4.6'
+//        runtime 'net.sf.ehcache:ehcache-terracotta:2.4.6'
+//        //for session
+//        runtime "org.terracotta:terracotta-toolkit-1.6-runtime:5.5.0"
+//        runtime "org.terracotta.session:terracotta-session:1.3.5"
+
 //      }
+
     }
     plugins {
         // Uncomment these (or add new ones) to enable additional resources capabilities
@@ -166,6 +178,11 @@ grails.project.dependency.resolution = {
             exclude "spock-grails-support"
         }
         test ":geb:0.9.0"
+
+        compile ":cookie-session:2.0.15"
+        compile ':webxml:1.4.1'
+//        compile 'RobertFischer:database-session:1.2.3'
+       // compile ":database-session:1.2.1"
 
     }
 }

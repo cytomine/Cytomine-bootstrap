@@ -3,6 +3,7 @@ package be.cytomine.utils
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.security.SecUser
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode
@@ -13,6 +14,9 @@ class DataTablesService {
     //TODO: document this methods + params
 
     def dataSource
+    def cytomineService
+    def securityACLService
+    def currentRoleServiceProxy
 
     def process(params, domain, restrictions, returnFields, project) {
         params.max = params.iDisplayLength ? params.iDisplayLength as int : 10;
@@ -75,22 +79,47 @@ class DataTablesService {
 
             return images
         } else if(domain==AbstractImage) {
+
+
             //FIRST OF UNION: take all image in project
             //SECOND OF UNION: take all image NOT IN this project
-            String request = "SELECT ai.id, ai.original_filename, ai.created as created, true\n" +
-                    "FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id\n" +
-                    "WHERE project_id = ${project.id}\n" +
-                    "AND ii.deleted IS NULL\n" +
-                    (_search? "AND ai.original_filename ilike '%${_search}%'" : "") +
-                    "UNION\n" +
-                    "SELECT ai.id, ai.original_filename, ai.created as created, false\n" +
-                    "FROM abstract_image ai\n" +
-                    "WHERE id NOT IN (SELECT ai.id\n" +
-                    "                 FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id\n" +
-                    "                 WHERE project_id = ${project.id}\n" +
-                    "                 AND ii.deleted IS NULL) " +
-                    (_search? "AND ai.original_filename ilike '%${_search}%'" : "") +
-                    " ORDER BY created desc"
+
+            String request ="""
+                    SELECT DISTINCT ai.id, ai.original_filename, ai.created as created, true
+                    FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id ${getAclTable()}
+                    WHERE project_id = ${project.id}
+                    AND ii.deleted IS NULL
+                    AND ${(_search? "ai.original_filename ilike '%${_search}%'" : "")}
+                    ${getAclWhere()}
+                    UNION
+                    SELECT DISTINCT ai.id, ai.original_filename, ai.created as created, false
+                    FROM abstract_image ai ${getAclTable()}
+                    WHERE ai.id NOT IN (SELECT ai.id
+                                     FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id
+                                     WHERE project_id = ${project.id}
+                                     AND ii.deleted IS NULL)
+                    AND ${(_search? "ai.original_filename ilike '%${_search}%'" : "")}
+                     ${getAclWhere()}
+                    ORDER BY created desc
+                """
+
+                println request
+//
+//
+//                    "SELECT ai.id, ai.original_filename, ai.created as created, true\n" +
+//                    "FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id\n" +
+//                    "WHERE project_id = ${project.id}\n" +
+//                    "AND ii.deleted IS NULL\n" +
+//                    (_search? "AND ai.original_filename ilike '%${_search}%'" : "") +
+//                    "UNION\n" +
+//                    "SELECT ai.id, ai.original_filename, ai.created as created, false\n" +
+//                    "FROM abstract_image ai\n" +
+//                    "WHERE id NOT IN (SELECT ai.id\n" +
+//                    "                 FROM abstract_image ai LEFT OUTER JOIN image_instance ii ON ii.base_image_id = ai.id\n" +
+//                    "                 WHERE project_id = ${project.id}\n" +
+//                    "                 AND ii.deleted IS NULL) " +
+//                    (_search? "AND ai.original_filename ilike '%${_search}%'" : "") +
+//                    " ORDER BY created desc"
 
 
             def data = []
@@ -123,5 +152,27 @@ class DataTablesService {
             return data
         }
 
+    }
+
+    private String getAclTable() {
+        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)) {
+            return ""
+        } else {
+            return ", storage_abstract_image, acl_object_identity, acl_entry, acl_sid"
+        }
+    }
+
+    private String getAclWhere() {
+        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)) {
+            return ""
+        } else {
+            return """
+                    AND storage_abstract_image.abstract_image_id = ai.id
+                    AND acl_object_identity.object_id_identity = storage_abstract_image.storage_id
+                    AND acl_entry.acl_object_identity = acl_object_identity.id
+                    AND acl_entry.sid = acl_sid.id
+                    AND acl_sid.sid like '${cytomineService.currentUser.username}'
+            """
+        }
     }
 }

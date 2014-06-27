@@ -91,6 +91,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         baseImage fetch: 'join'
         sort "id"
         tablePerHierarchy true
+        cache true
     }
 
     /**

@@ -94,6 +94,7 @@ class BootStrap {
         }
 
         //ventana
+        println "Create ventana"
         if (!Mime.findByMimeType("ventana/tif")) {
             bootstrapTestDataService.initVentana()
         }
@@ -158,4 +159,6 @@ class BootStrap {
             }
         }
     }
+
+
 }

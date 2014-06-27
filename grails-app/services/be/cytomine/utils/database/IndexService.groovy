@@ -29,11 +29,13 @@ class IndexService {
              */
             createIndex("abstract_image", "sample_id");
             createIndex("abstract_image", "created");
+
             /**
              * Image_Instance //base image & project already created
              */
             createIndex("image_instance", "user_id");
             createIndex("image_instance", "created");
+            createIndex("image_instance", "base_image_id");
             /**
              * Annotation
              */
@@ -48,6 +50,9 @@ class IndexService {
             createIndex("algo_annotation", "created");
             createIndex("algo_annotation", "project_id");
             createIndex("algo_annotation", "location", "GIST");
+
+
+            createIndex("uploaded_file", "image_id");
 
             /**
              * ReviewedAnnotation
@@ -115,6 +120,7 @@ class IndexService {
             createIndex("term", "ontology_id");
 
             createIndex("storage", "user_id");
+            createIndex("storage_abstract_image", "abstract_image_id");
 
             createIndex("acl_object_identity", "object_id_identity");
             createIndex("acl_entry", "acl_object_identity");

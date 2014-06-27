@@ -26,6 +26,8 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 class BootstrapUtilsService {
 
     def cytomineService
+    def sessionFactory
+    def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
 
     public def createUsers(def usersSamples) {
 
@@ -155,6 +157,8 @@ class BootstrapUtilsService {
     }
 
     public def createMimeImageServers(def imageServerCollection, def mimeCollection) {
+        println imageServerCollection
+        println ImageServer.list()
         imageServerCollection.each {
             ImageServer imageServer = ImageServer.findByName(it.name)
             if (imageServer) {
@@ -183,9 +187,18 @@ class BootstrapUtilsService {
     }
 
     def checkImages() {
+        SpringSecurityUtils.reauthenticate "admin", null
+        def currentUser = cytomineService.getCurrentUser()
+
         List<AbstractImage> ok = []
         List<AbstractImage> notok = []
-        for (abstractImage in AbstractImage.findAll()) {
+        def list = AbstractImage.findAll()
+        list.eachWithIndex { abstractImage,index->
+            if(index%500==0) {
+                log.info "Check ${(index/list.size())*100}"
+                cleanUpGorm()
+            }
+
             if (UploadedFile.findByImage(abstractImage)) {
                 ok << abstractImage
             } else {
@@ -193,11 +206,12 @@ class BootstrapUtilsService {
             }
         }
 
-        notok.each { abstractImage ->
-            SpringSecurityUtils.reauthenticate "admin", null
+        notok.eachWithIndex { abstractImage, index ->
+            abstractImage.attach()
             UploadedFile uploadedFile = UploadedFile.findByFilename(abstractImage.getPath())
-            SecUser user = abstractImage.user ? abstractImage : cytomineService.getCurrentUser()
+            SecUser user = abstractImage.user ? abstractImage.user : currentUser
             if (!uploadedFile) {
+                def imageServerStorage = abstractImage.imageServersStorage
                 uploadedFile = new UploadedFile(
                         user : user,
                         filename : abstractImage.getPath(),
@@ -207,7 +221,7 @@ class BootstrapUtilsService {
                         convertedExt: abstractImage.mime.extension,
                         ext: abstractImage.mime.extension,
                         size : 0,
-                        path : abstractImage.imageServersStorage.first().storage.getBasePath(),
+                        path : (imageServerStorage.isEmpty()? "notfound" : imageServerStorage.first().storage.getBasePath()),
                         contentType: abstractImage.mime.mimeType)
 
                 if (!uploadedFile.validate()) {
@@ -219,6 +233,7 @@ class BootstrapUtilsService {
                 }
 
             }
+
             uploadedFile.image = abstractImage
             String extension = abstractImage.mime.extension
             if (extension == "tiff" || extension == "tif") {
@@ -248,9 +263,17 @@ class BootstrapUtilsService {
                 uploadedFile.downloadParent = uploadedFile
             }
             uploadedFile.save()
+            if(index%100==0) {
+                log.info "Create upload ${(index/notok.size())*100}"
+                cleanUpGorm()
+            }
         }
+    }
 
-        println "ok :" + ok
-        println "notok :" + notok
+    public void cleanUpGorm() {
+        def session = sessionFactory.currentSession
+        session.flush()
+        session.clear()
+        propertyInstanceMap.get().clear()
     }
 }

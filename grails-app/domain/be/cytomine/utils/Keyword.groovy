@@ -10,5 +10,6 @@ class Keyword {
         version false
         id generator: 'identity', column: 'nid'
         key(unique:true)
+        cache false
     }
 }

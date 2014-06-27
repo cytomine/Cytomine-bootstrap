@@ -196,9 +196,6 @@ class AclTests {
 
 
     private static void checkACLPresent(def json, CytomineDomain domain, SecUser user, int mask, boolean notPresent = false) {
-        json.each {
-            println it
-        }
 
         println "Check for:"
         println "domainClassName = ${domain.class.name}"

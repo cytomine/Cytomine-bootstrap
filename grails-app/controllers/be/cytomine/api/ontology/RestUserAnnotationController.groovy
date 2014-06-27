@@ -99,9 +99,9 @@ class RestUserAnnotationController extends RestController {
         //create annotation crop (will be send with comment)
         File annnotationCrop = null
         try {
-            String cropURL = annotation.toCropURL()
+            String cropURL = annotation.toCropURL(params)
             if (cropURL != null) {
-                BufferedImage bufferedImage = imageProcessingService.getImageFromURL(annotation.toCropURL())
+                BufferedImage bufferedImage = imageProcessingService.getImageFromURL(annotation.toCropURL(params))
                 if (bufferedImage != null) {
                     annnotationCrop = File.createTempFile("temp", ".jpg")
                     annnotationCrop.deleteOnExit()

@@ -206,6 +206,8 @@ abstract class CytomineDomain  implements Comparable,Serializable{
     }
 
     String encodeAsJSON() {
+        println this
+        println (this as JSON)
         return (this as JSON).toString()
     }
 

@@ -120,6 +120,7 @@ environments {
     }
     test {
         grails.serverURL = "http://localhost:8090"
+        grails.imageServerURL = "http://localhost:9080"
         grails.plugins.springsecurity.useBasicAuth = true
         grails.plugins.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -249,6 +250,7 @@ log4j = {
     error 'org.springframework.security.web.context', 'org.hibernate.engine','net.sf.hibernate.impl.SessionImpl'
     // debug 'org.springframework.security'
 
+    error 'com.granicus.grails.plugins.cookiesession'
 
 
     environments {
@@ -588,3 +590,7 @@ grails.integration.aurora.interval = 60000
 //    test "org.seleniumhq.selenium:selenium-firefox-driver:2.39.0"
 //    test "org.seleniumhq.selenium:selenium-chrome-driver:2.39.0"
 //}
+
+
+//grails.plugin.databasesession.enabled = true
+grails.plugin.cookiesession.enabled = true
