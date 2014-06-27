@@ -55,7 +55,7 @@ class AbstractImageSecurityTests extends SecurityTestsAbstract{
       println json
       println json.aaData
       println json.aaData.find{it.id==image1.id}
-      assert 2>=json.aaData.size() //may be more image because all images are available for admin (images from previous test)
+      assert 2<=json.aaData.size() //may be more image because all images are available for admin (images from previous test)
       assert (true ==AbstractImageAPI.containsInJSONList(image1.id,json))
       assert (true ==AbstractImageAPI.containsInJSONList(image2.id,json))
       assert !json.aaData.find{it.id==image1.id}.inProject
@@ -75,9 +75,15 @@ class AbstractImageSecurityTests extends SecurityTestsAbstract{
 
       result = AbstractImageAPI.list(true,project.id,SecurityTestsAbstract.USERNAMEADMIN,SecurityTestsAbstract.PASSWORDADMIN)
       assert 200 == result.code
-      assert 2==JSON.parse(result.data).aaData.size()
-//      assert json.aaData.find{it.id==image1.id}.inProject //doesn't work! inProject is false... ifwe do the request again (SQL), its ok
-      assert !json.aaData.find{it.id==image2.id}.inProject
+      assert 2<=JSON.parse(result.data).aaData.size()
+
+      result = AbstractImageAPI.list(SecurityTestsAbstract.USERNAMEADMIN, SecurityTestsAbstract.PASSWORDADMIN)
+      assert 200 == result.code
+      assert (true ==AbstractImageAPI.containsInJSONList(image1.id,json))
+
+      assert 200 == AbstractImageAPI.show(image1.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).code
+      assert 200 == AbstractImageAPI.create(BasicInstanceBuilder.getAbstractImageNotExist().encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).code
+//      assert 200 == AbstractImageAPI.delete(image1.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD).code
   }
 
     void testAbstractImageSecurityForCytomineUser() {
@@ -112,8 +118,28 @@ class AbstractImageSecurityTests extends SecurityTestsAbstract{
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert 1==json.aaData.size()
+
         assert (true ==AbstractImageAPI.containsInJSONList(image1.id,json))
         assert (false ==AbstractImageAPI.containsInJSONList(image2.id,json))
+
+        result = AbstractImageAPI.list(user1.username, SecurityTestsAbstract.PASSWORD1)
+        assert 200 == result.code
+        assert (true ==AbstractImageAPI.containsInJSONList(image1.id,json))
+
+        assert 200 == AbstractImageAPI.show(image1.id,user1.username,SecurityTestsAbstract.PASSWORD1).code
+        json = JSON.parse(BasicInstanceBuilder.getAbstractImageNotExist().encodeAsJSON())
+        json.storage = storage.id
+        assert 200 == AbstractImageAPI.create(json.toString(), user1.username,SecurityTestsAbstract.PASSWORD1).code
+        assert 200 == AbstractImageAPI.delete(image1.id,user1.username,SecurityTestsAbstract.PASSWORD1).code
+
+        result = AbstractImageAPI.list(user1.username, SecurityTestsAbstract.PASSWORD1)
+        assert 200 == result.code
+        assert (false ==AbstractImageAPI.containsInJSONList(image2.id,json))
+        assert 403 == AbstractImageAPI.show(image2.id,user1.username,SecurityTestsAbstract.PASSWORD1).code
+        json = JSON.parse(BasicInstanceBuilder.getAbstractImageNotExist().encodeAsJSON())
+        json.storage = storageForbiden.id
+        assert 403 == AbstractImageAPI.create(json.toString(), user1.username,SecurityTestsAbstract.PASSWORD1).code
+        assert 403 == AbstractImageAPI.delete(image2.id,user1.username,SecurityTestsAbstract.PASSWORD1).code
     }
 
 

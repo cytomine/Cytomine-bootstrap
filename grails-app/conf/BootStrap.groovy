@@ -111,9 +111,9 @@ class BootStrap {
         }
 
         //version>2014 06 25
-        if(UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0) {
-            bootstrapUtilsService.checkImages()
-        }
+//        if(UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0) {
+//            bootstrapUtilsService.checkImages()
+//        }
 
         if(!Relation.findByName(RelationTerm.names.PARENT)) {
             Relation relation = new Relation(name: RelationTerm.names.PARENT)

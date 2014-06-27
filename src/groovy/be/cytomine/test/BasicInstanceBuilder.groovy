@@ -220,7 +220,7 @@ class BasicInstanceBuilder {
 
     static ImageInstance getImageInstanceNotExist(Project project = BasicInstanceBuilder.getProject(), boolean save = false) {
         ImageInstance image = new ImageInstance(
-                baseImage: saveDomain(BasicInstanceBuilder.getAbstractImageNotExist()),
+                baseImage: BasicInstanceBuilder.getAbstractImageNotExist(true),
                 project: project,
                 //slide: BasicInstanceBuilder.getSlide(),
                 user: User.findByUsername(Infos.SUPERADMINLOGIN))
@@ -637,11 +637,19 @@ class BasicInstanceBuilder {
             image = new AbstractImage(filename: "filename", scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath")
         }
         saveDomain(image)
+        saveDomain(new StorageAbstractImage(storage : getStorage(), abstractImage : image))
+        return image
     }
 
     static AbstractImage getAbstractImageNotExist(boolean save = false) {
         def image = new AbstractImage(filename: getRandomString(), scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath", width: 1600, height: 1200)
-        save ? saveDomain(image) : checkDomain(image)
+        if(save) {
+            saveDomain(image)
+            saveDomain(new StorageAbstractImage(storage : getStorage(), abstractImage : image))
+            return image
+        } else {
+            checkDomain(image)
+        }
     }
 
     static AbstractImage getAbstractImageNotExist(String filename, boolean save = false) {

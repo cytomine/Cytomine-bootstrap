@@ -1,6 +1,7 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
@@ -25,6 +26,8 @@ import grails.orm.PagedResultList
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
+import static org.springframework.security.acls.domain.BasePermission.*
+
 class AbstractImageService extends ModelService {
 
     static transactional = false
@@ -38,24 +41,30 @@ class AbstractImageService extends ModelService {
     def imageInstanceService
     def attachedFileService
     def currentRoleServiceProxy
+    def securityACLService
 
     def currentDomain() {
         return AbstractImage
     }
 
-    //TODO: secure! ACL
     AbstractImage read(def id) {
         AbstractImage abstractImage = AbstractImage.read(id)
+        if(abstractImage) {
+            securityACLService.checkAtLeastOne(abstractImage, READ)
+        }
         abstractImage
     }
 
-    //TODO: secure! ACL
     AbstractImage get(def id) {
-        return AbstractImage.get(id)
+        AbstractImage abstractImage = AbstractImage.get(id)
+        if(abstractImage) {
+            securityACLService.checkAtLeastOne(abstractImage, READ)
+        }
+        abstractImage
     }
 
-    //TODO: secure!
     def list(Project project) {
+        securityACLService.check(project,READ)
         ImageInstance.createCriteria().list {
             eq("project", project)
             projections {
@@ -64,23 +73,16 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    //TODO: secure! ACL
     def list(User user) {
         if(currentRoleServiceProxy.isAdminByNow(user)) {
             return AbstractImage.list()
         } else {
-            def allImages = []
-            def groups = groupService.list(user)
-            groups.each { group ->
-                allImages.addAll(list(group))
-
-            }
-            return allImages
+            List<Storage> storages = securityACLService.getStorageList(cytomineService.currentUser)
+            List<AbstractImage> images = StorageAbstractImage.findAllByStorageInList(storages).collect{it.abstractImage}
+            return images
         }
     }
 
-
-    //TODO:: how to manage security here?
     /**
      * Add the new domain with JSON data
      * @param json New domain data
@@ -96,6 +98,7 @@ class AbstractImageService extends ModelService {
 
         json.storage.each { storageID ->
             Storage storage = storageService.read(storageID)
+            securityACLService.check(storage,WRITE)
             //CHECK WRITE ON STORAGE
             StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
             sai.save(flush:true,failOnError: true)
@@ -107,7 +110,6 @@ class AbstractImageService extends ModelService {
         return res
     }
 
-    //TODO:: how to manage security here?
     /**
      * Update this domain with new data from json
      * @param domain Domain to update
@@ -115,6 +117,7 @@ class AbstractImageService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(AbstractImage image,def jsonNewData) throws CytomineException {
+        securityACLService.checkAtLeastOne(image,WRITE)
         transactionService.start()
         SecUser currentUser = cytomineService.getCurrentUser()
         def res = executeCommand(new EditCommand(user: currentUser), image,jsonNewData)
@@ -122,11 +125,13 @@ class AbstractImageService extends ModelService {
 
         if(jsonNewData.storage) {
             StorageAbstractImage.findAllByAbstractImage(abstractImage).each { storageAbstractImage ->
+                securityACLService.check(storageAbstractImage.storage,WRITE)
                 def sai = StorageAbstractImage.findByStorageAndAbstractImage(storageAbstractImage.storage, abstractImage)
                 sai.delete(flush:true)
             }
             jsonNewData.storage.each { storageID ->
                 Storage storage = storageService.read(storageID)
+                securityACLService.check(storage,WRITE)
                 StorageAbstractImage sai = new StorageAbstractImage(storage:storage,abstractImage:abstractImage)
                 sai.save(flush:true,failOnError: true)
             }
@@ -143,6 +148,7 @@ class AbstractImageService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(AbstractImage domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        securityACLService.checkAtLeastOne(domain,WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
