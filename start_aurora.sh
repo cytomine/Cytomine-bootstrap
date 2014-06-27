@@ -10,6 +10,9 @@ IMS_BUFFER_PATH=/var/aurora/_buffer
 RABBITMQ_PASS="mypass"
 MEMCACHED_PASS="mypass"
 
+# create postgresql_datastore docker
+docker run -d -p 22 --name aurora_db_datastore -v /mnt/aurora/database:/backup cytomine/postgresql_datastore 
+
 # create memcached docker
 docker run -d -p 11211:11211 -e MEMCACHED_PASS="mypass" --name memcached cytomine/memcached
 
@@ -20,6 +23,9 @@ cytomine/rabbitmq
 
 # create database docker
 docker run -p 22 -m 8g -d --name db cytomine/postgis
+
+# create database backup docker
+docker run -d -p 22 --name aurora_backup -v /mnt/aurora/database:/backup --volumes-from db cytomine/postgresql_datastore
 
 # create IMS docker
 docker run -p 22 -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 8g -d --name ims --link memcached:memcached \
