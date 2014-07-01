@@ -43,6 +43,11 @@ class AbstractImageAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
+    static def getProperty(Long id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/domain/be.cytomine.image.AbstractImage/" + id + "/property.json"
+        return doGET(URL, username, password)
+    }
+
     static def getCrop(Long id, String type,String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/$type/$id/crop.json"
         return doGET(URL, username, password)

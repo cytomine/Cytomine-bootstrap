@@ -157,7 +157,7 @@ var DashboardReviewPanel = Backbone.View.extend({
               containment: self.el,
               stack: "#annotationReviewListing .thumb-wrap",
               cursor: 'move',
-              revert: true,
+              revert: true
         });
     },
     initTermListing: function() {
@@ -177,7 +177,21 @@ var DashboardReviewPanel = Backbone.View.extend({
             hoverClass: 'termHovered',
             drop: self.handle,
             cursor: 'move',
-      	 	 revert: true
+      	 	 revert: true,
+            over : function(event,ui) {
+                if($(this).data("originalColor")==undefined) {
+                    $(this).data("originalColor",$(this).css("background-color"));
+                }
+                $(this).css("background-color","#ffffff");
+                console.log(this);
+            },
+            out: function(event,ui) {
+                if($(this).data("originalColor")!=undefined) {
+                    $(this).css("background-color",$(this).data("originalColor"));
+                }
+
+                console.log(this);
+            }
           } );
 
     },
@@ -212,6 +226,11 @@ var DashboardReviewPanel = Backbone.View.extend({
 
     handle : function(event,ui) {
 
+        if($(this).data("originalColor")!=undefined) {
+            $(this).css("background-color",$(this).data("originalColor"));
+        }
+
+        console.log(this);
         //ui.draggable.draggable( 'disable' );
        // ui.draggable.position( { of: $(this), my: 'left top', at: 'left top' } );
         ui.draggable.draggable( 'option', 'revert', false );

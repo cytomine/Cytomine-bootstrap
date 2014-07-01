@@ -6,8 +6,10 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.UploadedFile
+import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.Group
@@ -183,6 +185,21 @@ class BootstrapUtilsService {
         }
         if (!newObject.save(flush: flush)) {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+    }
+
+    def transfertProperty() {
+        SpringSecurityUtils.reauthenticate "admin", null
+        def ips = ImageProperty.list()
+        ips.eachWithIndex { ip,index ->
+            ip.attach()
+            Property property = new Property(domainIdent: ip.image.id, domainClassName: AbstractImage.class.name,key:ip.key,value:ip.value)
+            property.save(failOnError: true)
+            ip.delete()
+            if(index%500==0) {
+                log.info "Image property ${(index/ips.size())*100}"
+                cleanUpGorm()
+            }
         }
     }
 

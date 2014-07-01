@@ -2,6 +2,7 @@ package be.cytomine
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AnnotationTerm
+import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
@@ -13,6 +14,7 @@ import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -103,8 +105,8 @@ class UserAnnotationTests  {
         annotationWithTerm.term = [idTerm1, idTerm2]
 
         log.info annotationToAdd.project.ontology.id
-        log.info idTerm1
-        log.info idTerm2
+        log.info Term.read(idTerm1).ontology.id
+        log.info Term.read(idTerm2).ontology.id
 
         def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code

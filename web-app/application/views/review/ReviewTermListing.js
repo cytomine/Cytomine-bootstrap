@@ -19,7 +19,7 @@ var ReviewTermListing = Backbone.View.extend({
 
             var spanText = _.template(self.container.termSpanTemplate,term.toJSON());
 //            $(self.el).append('<div data-term="'+term.id+'" style="background-color: '+term.get('color')+';border-width: 3px; border-style: solid;min-width : 125px; min-height: 175px;text-align: center;margin-bottom: 15px;margin-top: 15px;margin-left: 15px;margin-right: 15px;" class="span1 termChoice" id="termDrop'+term.id+'">'+spanText+'</div>');
-            $(self.el).append('<div data-term="'+term.id+'" style="background-color: '+term.get('color')+';min-height: 175px;z-index:-5;" class="col-md-3 termChoice" id="termDrop'+term.id+'">'+spanText+'</div>');
+            $(self.el).append('<div data-term="'+term.id+'" style="background-color: '+term.get('color')+';min-height: 175px;" class="col-md-3 termChoice" id="termDrop'+term.id+'">'+spanText+'</div>');
         //"
         });
         $(self.el).find("div>span").css("padding","0px");
