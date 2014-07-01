@@ -3,6 +3,7 @@ package be.cytomine
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
+import be.cytomine.ontology.Property
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
@@ -66,34 +67,15 @@ class AbstractImageTests {
 
     void testGetImageProperties() {
         AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-        if(!ImageProperty.findByImage(image)) {
-            ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
+        if(!Property.findByDomainIdent(image.id)) {
+            Property imageProperty = new Property(key: "key1", value: "value1",domainIdent:image.id, domainClassName:image.class.name)
             BasicInstanceBuilder.saveDomain(imageProperty)
         }
-        def result = AbstractImageAPI.getInfo(image.id,"property",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = AbstractImageAPI.getProperty(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
         assert json.collection.size()>0
-    }
-
-    void testGetImageProperty() {
-        AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-        if(!ImageProperty.findByImage(image)) {
-            ImageProperty imageProperty = new ImageProperty(key: "key1", value: "value1",image:image)
-            BasicInstanceBuilder.saveDomain(imageProperty)
-        }
-        def result = AbstractImageAPI.getInfo(image.id,"property/${ImageProperty.findByImage(image).first().id}",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-        assert json.key.equals(ImageProperty.findByImage(image).first().key)
-    }
-
-    void testGetImagePropertyNotFound() {
-        AbstractImage image = BasicInstanceBuilder.getAbstractImage()
-        def result = AbstractImageAPI.getInfo(image.id,"property/-99",Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 404 == result.code
     }
 
     void testGetImageServers() {

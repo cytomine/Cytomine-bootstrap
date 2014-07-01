@@ -172,7 +172,6 @@ class UrlApi {
     }
 
     static def serverUrl() {
-        println Holders.getGrailsApplication().config.grails.serverURL
         Holders.getGrailsApplication().config.grails.serverURL
     }
 }

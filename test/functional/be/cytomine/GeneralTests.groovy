@@ -14,6 +14,7 @@ import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.UserAnnotationAPI
 import be.cytomine.utils.News
+import be.cytomine.utils.Version
 import grails.converters.JSON
 import grails.util.Environment
 import org.apache.commons.io.FileUtils
@@ -268,5 +269,15 @@ class GeneralTests  {
         assert 200 == result.code
         assert JSON.parse(result.data).name == name
 
+    }
+
+    void testVersion() {
+        Version.setCurrentVersion(21140101)
+        Version.setCurrentVersion(21140102)
+        Version.setCurrentVersion(21140103)
+        assert 21140103==Version.getLastVersion().number
+        assert Version.isOlderVersion(21140104)
+        assert !Version.isOlderVersion(21140102)
+        assert !Version.isOlderVersion(21140103)
     }
 }

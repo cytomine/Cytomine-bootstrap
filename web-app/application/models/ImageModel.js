@@ -54,7 +54,7 @@ var ImagePropertyCollection = PaginatedCollection.extend({
         this.image = options.image;
     },
     url: function () {
-        return 'api/abstractimage/' + this.image + "/property.json";
+        return 'api/domain/be.cytomine.image.AbstractImage/' + this.image + "/property.json";
     },
     comparator: function (model) {
         return model.get("key");

@@ -1,13 +1,16 @@
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
 import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.image.Mime
+import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.utils.Version
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
@@ -62,8 +65,10 @@ class BootStrap {
 
         dataSource.properties.each { println it }
 
-
-
+        if(Version.count()==0) {
+            log.info "Version was not set, set to 0"
+            Version.setCurrentVersion(0)
+        }
 
         //Initialize marshallers and services
         marshallersService.initMarshallers()
@@ -110,47 +115,52 @@ class BootStrap {
             bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
         }
 
-        //version>2014 06 25
-//        if(UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0) {
-//            bootstrapUtilsService.checkImages()
-//        }
 
         if(!Relation.findByName(RelationTerm.names.PARENT)) {
             Relation relation = new Relation(name: RelationTerm.names.PARENT)
             relation.save(flush:true,failOnError: true)
         }
 
-        //version>2014 05 12
-        if(!SecRole.findByAuthority("ROLE_SUPER_ADMIN")) {
-            SecRole role = new SecRole(authority:"ROLE_SUPER_ADMIN")
-            role.save(flush:true,failOnError: true)
-        }
 
-        //version>2014 05 12  OTOD: DO THIS FOR IFRES,...
-        if(SecUser.findByUsername("ImageServer1")) {
-            def imageUser = SecUser.findByUsername("ImageServer1")
-            def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
-            if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
-                new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+
+        if(Version.isOlderVersion(20140601)) {
+            //version>2014 05 12
+            if(!SecRole.findByAuthority("ROLE_SUPER_ADMIN")) {
+                SecRole role = new SecRole(authority:"ROLE_SUPER_ADMIN")
+                role.save(flush:true,failOnError: true)
             }
 
-        }
+            //version>2014 05 12  OTOD: DO THIS FOR IFRES,...
+            if(SecUser.findByUsername("ImageServer1")) {
+                def imageUser = SecUser.findByUsername("ImageServer1")
+                def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
+                if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
+                    new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+                }
 
-        if(SecUser.findByUsername("vmartin")) {
-            def imageUser = SecUser.findByUsername("vmartin")
-            def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
-            if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
-                new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+            }
+
+            if(SecUser.findByUsername("vmartin")) {
+                def imageUser = SecUser.findByUsername("vmartin")
+                def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
+                if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
+                    new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
+                }
             }
         }
 
-        //NotifyAuroraUploadJob.schedule(1000, 1000, [:])
+        if(Version.isOlderVersion(20140625) && (UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0)) {
+            bootstrapUtilsService.checkImages()
+        }
+
+        if(Version.isOlderVersion(20140630)) {
+            bootstrapUtilsService.transfertProperty()
+        }
+
+        Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
 
 
         println "********************************************"
-        println grailsApplication
-        println grailsApplication.properties
-        println grailsApplication.config.grails
         println grailsApplication.config.grails.client
 
         if(Environment.getCurrent() != Environment.TEST) {
@@ -159,6 +169,4 @@ class BootStrap {
             }
         }
     }
-
-
 }

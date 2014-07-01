@@ -121,35 +121,35 @@ class RestAbstractImageController extends RestController {
         delete(abstractImageService, JSON.parse("{id : $params.id}"),null)
     }
 
-    /**
-     * Extract image properties from file
-     */
-    @RestApiMethod(description="Get all image file properties for a specific image.", listing = true)
-    @RestApiParams(params=[
-    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image id")
-    ])
-    @RestApiResponseObject(objectIdentifier = "image property")
-    def imageProperties() {
-        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
-        responseSuccess(abstractImageService.imageProperties(abstractImage))
-    }
+//    /**
+//     * Extract image properties from file
+//     */
+//    @RestApiMethod(description="Get all image file properties for a specific image.", listing = true)
+//    @RestApiParams(params=[
+//    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image id")
+//    ])
+//    @RestApiResponseObject(objectIdentifier = "image property")
+//    def imageProperties() {
+//        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
+//        responseSuccess(abstractImageService.imageProperties(abstractImage))
+//    }
 
-    /**
-     * Get an image property
-     */
-    @RestApiMethod(description="Get a specific image file property", listing = true)
-    @RestApiParams(params=[
-    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image file property id")
-    ])
-    @RestApiResponseObject(objectIdentifier ="image property")
-    def imageProperty() {
-        def imageProperty = abstractImageService.imageProperty(params.long('imageproperty'))
-        if (imageProperty) {
-            responseSuccess(imageProperty)
-        } else {
-            responseNotFound("ImageProperty", params.imageproperty)
-        }
-    }
+//    /**
+//     * Get an image property
+//     */
+//    @RestApiMethod(description="Get a specific image file property", listing = true)
+//    @RestApiParams(params=[
+//    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image file property id")
+//    ])
+//    @RestApiResponseObject(objectIdentifier ="image property")
+//    def imageProperty() {
+//        def imageProperty = abstractImageService.imageProperty(params.long('imageproperty'))
+//        if (imageProperty) {
+//            responseSuccess(imageProperty)
+//        } else {
+//            responseNotFound("ImageProperty", params.imageproperty)
+//        }
+//    }
 
     /**
      * Get image thumb URL

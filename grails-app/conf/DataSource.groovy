@@ -5,7 +5,24 @@ dataSource {
   username = "postgres"
   dialect = org.hibernatespatial.postgis.PostgisDialect
     properties {
+        //specifies that this tc Server is enabled to be monitored using JMX
+        jmxEnabled = true
+        //number of connections that are created when the pool is started
+        initialSize = 10
+        //maximum number of active connections that can be allocated from this pool at the same time
         maxActive = 500
+        //minimum number of established connections that should be kept in the pool at all times
+        minIdle = 10
+        //maximum number of connections that should be kept in the pool at all times
+        maxIdle = 500
+        //maximum number of milliseconds that the pool will wait
+        maxWait = 30000
+        //Time in milliseconds to keep this connection
+        maxAge = 5 * 60000
+        //number of milliseconds to sleep between runs of the idle connection validation/cleaner thread
+        timeBetweenEvictionRunsMillis = 5000
+        //minimum amount of time an object may sit idle in the pool before it is eligible for eviction
+        minEvictableIdleTimeMillis = 60000
     }
 }
 hibernate {

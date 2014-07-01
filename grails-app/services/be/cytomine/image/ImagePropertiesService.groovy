@@ -1,6 +1,6 @@
 package be.cytomine.image
 
-import be.cytomine.image.server.ImageProperty
+import be.cytomine.ontology.Property
 import grails.converters.JSON
 
 /**
@@ -16,7 +16,7 @@ class ImagePropertiesService implements Serializable{
     def abstractImageService
 
     def clear(AbstractImage image) {
-        ImageProperty.findAllByImage(image)?.each {
+        Property.findAllByDomainIdent(image.id)?.each {
             it.delete()
         }
     }
@@ -35,7 +35,7 @@ class ImagePropertiesService implements Serializable{
             String key = it.key
             String value = it.value
             if (value.size() < 256) {
-                def property = new ImageProperty(key: it.key, value: it.value, image: abstractImage)
+                def property = new Property(key: it.key, value: it.value, domainIdent: abstractImage.id,domainClassName: abstractImage.class.name)
                 log.info("new property, $it.key => $it.value")
                 property.save()
             }
@@ -46,19 +46,19 @@ class ImagePropertiesService implements Serializable{
 
 
     def extractUseful(AbstractImage image) {
-        def magnificationProperty = ImageProperty.findByImageAndKey(image, "cytomine.magnification")
+        def magnificationProperty = Property.findByDomainIdentAndKey(image.id, "cytomine.magnification")
         if (magnificationProperty) image.setMagnification(Integer.parseInt(magnificationProperty.getValue()))
         else log.info "magnificationProperty is null"
         //Width
-        def widthProperty = ImageProperty.findByImageAndKey(image, "cytomine.width")
+        def widthProperty = Property.findByDomainIdentAndKey(image.id, "cytomine.width")
         if (widthProperty) image.setWidth(Integer.parseInt(widthProperty.getValue()))
         else log.info "widthProperty is null"
         //Height
-        def heightProperty = ImageProperty.findByImageAndKey(image, "cytomine.height")
+        def heightProperty = Property.findByDomainIdentAndKey(image.id, "cytomine.height")
         if (heightProperty) image.setHeight(Integer.parseInt(heightProperty.getValue()))
         else log.info "heightProperty is null"
         //Resolution
-        def resolutionProperty = ImageProperty.findByImageAndKey(image, "cytomine.resolution")
+        def resolutionProperty = Property.findByDomainIdentAndKey(image.id, "cytomine.resolution")
         if (resolutionProperty) image.setResolution(Float.parseFloat(resolutionProperty.getValue()))
         else log.info "resolutionProperty is null"
         image.save(flush:true, failOnError: true)

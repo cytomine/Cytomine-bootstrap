@@ -5,7 +5,6 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
-import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.UserAnnotation
@@ -196,22 +195,22 @@ class AbstractImageService extends ModelService {
 
 
 
-    /**
-     * Extract image properties from file for a specific image
-     */
-    def imageProperties(AbstractImage abstractImage) {
-        if (!ImageProperty.findByImage(abstractImage)) {
-            imagePropertiesService.populate(abstractImage)
-        }
-        return ImageProperty.findAllByImage(abstractImage)
-    }
-
-    /**
-     * Get a single property thx to its id
-     */
-    def imageProperty(long imageProperty) {
-        return ImageProperty.findById(imageProperty)
-    }
+//    /**
+//     * Extract image properties from file for a specific image
+//     */
+//    def imageProperties(AbstractImage abstractImage) {
+//        if (!ImageProperty.findByImage(abstractImage)) {
+//            imagePropertiesService.populate(abstractImage)
+//        }
+//        return ImageProperty.findAllByImage(abstractImage)
+//    }
+//
+//    /**
+//     * Get a single property thx to its id
+//     */
+//    def imageProperty(long imageProperty) {
+//        return ImageProperty.findById(imageProperty)
+//    }
 
     /**
      * Get all image servers for an image id
@@ -319,10 +318,6 @@ class AbstractImageService extends ModelService {
         }
     }
 
-    def deleteDependentImageProperty(AbstractImage ai, Transaction transaction,Task task=null) {
-        //TODO: implement imagePropertyService with command
-        imagePropertiesService.clear(ai)
-    }
 
     def deleteDependentNestedFile(AbstractImage ai, Transaction transaction,Task task=null) {
         //TODO: implement this with command (nestedFileService should be create)

@@ -44,24 +44,15 @@ class AbstractImageUrlMappings {
         "/api/abstractimage/$id/associated/$label.$format"(controller: "restAbstractImage"){
             action = [GET:"label"]
         }
-        "/api/abstractimage/$id/property.$format"(controller: "restAbstractImage"){
-            action = [GET:"imageProperties"]
-        }
-        "/api/abstractimage/$id/property/$imageproperty.$format"(controller: "restAbstractImage"){
-            action = [GET:"imageProperty"]
-        }
+//        "/api/abstractimage/$id/property.$format"(controller: "restAbstractImage"){
+//            action = [GET:"imageProperties"]
+//        }
+//        "/api/abstractimage/$id/property/$imageproperty.$format"(controller: "restAbstractImage"){
+//            action = [GET:"imageProperty"]
+//        }
         "/api/abstractimage/$id/imageservers.$format"(controller: "restAbstractImage"){
             action = [GET:"imageServers"]
         }
-//        "/api/abstractimage/$id/imageserversmerge.$format"(controller: "restImage"){
-//            action = [GET:"imageServers"]
-//        }
-//        "/api/abstractimage/$id/merge.$format"(controller: "restImage"){
-//            action = [GET:"imageServers"]
-//        }
-
-
-
 
         "/api/project/$id/image.$format"(controller: "restAbstractImage"){
             action = [GET:"listByProject"]

@@ -162,6 +162,7 @@ class RestUploadedFileController extends RestController {
         def projects = []
         //create domains instance
         def mimeType = uploadedFile.getMimeType()
+        def ext = uploadedFile.getExt()
         Mime mime = Mime.findByMimeType(mimeType)
         if (!mime) {
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
