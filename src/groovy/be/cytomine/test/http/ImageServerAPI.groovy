@@ -1,5 +1,6 @@
 package be.cytomine.test.http
 
+import be.cytomine.api.UrlApi
 import be.cytomine.test.Infos
 
 /**
@@ -10,8 +11,8 @@ import be.cytomine.test.Infos
  */
 class ImageServerAPI extends DomainAPI {
 
-    static def thumb(Long idImage,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/abstractimage/$idImage/thumb.jpg"
+    static def thumb(Long idImage,String username, String password, int maxSize = 256) {
+        String URL = Infos.CYTOMINEURL + "api/abstractimage/$idImage/thumb.jpg?maxSize=$maxSize"
         return downloadImage(URL,username,password)
     }
 
@@ -42,39 +43,39 @@ class ImageServerAPI extends DomainAPI {
     }
 
     static def cropAnnotation(Long idAnnotation,Boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
     static def cropAnnotationMin(Long idAnnotation,Boolean draw, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?max_size=256"  + (draw?"&draw=true":"" )
+        String URL = Infos.CYTOMINEURL + "api/annotation/$idAnnotation/crop.jpg?maxSize=256"  + (draw?"&draw=true":"" )
         return downloadImage(URL,username,password)
     }
 
     static def cropUserAnnotation(Long idAnnotation,Boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
     static def cropUserAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
     static def cropAlgoAnnotation(Long idAnnotation,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
     static def cropAlgoAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
     static def cropReviewedAnnotation(Long idAnnotation,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.jpg?"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
     static def cropReviewedAnnotation(Long idAnnotation,int zoom,boolean draw,Integer maxSize, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&max_size=$maxSize":"" )
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.jpg?zoom=$zoom"  + (draw?"&draw=true":"" ) + (maxSize?"&maxSize=$maxSize":"" )
         return downloadImage(URL,username,password)
     }
 
@@ -83,38 +84,40 @@ class ImageServerAPI extends DomainAPI {
         return doGET(URL,username,password)
     }
 
-    static def mask(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/mask.png?x=$x&y=$y&w=$w&h=$h"  + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
+    static def mask(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser, def idAnnotations, String username, String password) {
+        if (idAnnotations) idAnnotations = idAnnotations.join(',') //join array [id1, id2] to a String 'id1, id2'
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/window-$x-$y-$w-$h" + ".png?mask=true"  + (idAnnotations?"&annotations=$idAnnotations":"" ) + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
         return downloadImage(URL,username,password)
     }
 
-    static def maskReviewed(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser,String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/mask.png?reviewed=true&x=$x&y=$y&w=$w&h=$h"  + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
+    static def maskReviewed(Long idImageInstance, int x, int y, int w, int h, Long idTerm, Long idUser, def idAnnotations, String username, String password) {
+        if (idAnnotations) idAnnotations = idAnnotations.join(',') //join array [id1, id2] to a String 'id1, id2'
+        String URL = Infos.CYTOMINEURL + "api/imageinstance/$idImageInstance/window-$x-$y-$w-$h" + ".png?mask=true&reviewed=true&"  + (idAnnotations?"&annotations=$idAnnotations":"" ) + (idTerm?"&terms=$idTerm":"" ) + (idUser?"&users=$idUser":"" )
         return downloadImage(URL,username,password)
     }
 
     static def maskUserAnnotation(Long idAnnotation,  String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/mask.jpg"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.jpg&mask=true"
         return downloadImage(URL,username,password)
     }
 
     static def maskUserAnnotationAlpha(Long idAnnotation, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/alphamask.png"
+        String URL = Infos.CYTOMINEURL + "api/userannotation/$idAnnotation/crop.png&alphaMask=true"
         return downloadImage(URL,username,password)
     }
 
     static def maskAlgoAnnotationAlpha(Long idAnnotation,  String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/alphamask.png"
+        String URL = Infos.CYTOMINEURL + "api/algoannotation/$idAnnotation/crop.png&alphaMask=true"
         return downloadImage(URL,username,password)
     }
 
     static def maskReviewedAnnotationAlpha(Long idAnnotation, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/alphamask.png"
+        String URL = Infos.CYTOMINEURL + "api/reviewedannotation/$idAnnotation/crop.png&alphaMask=true"
         return downloadImage(URL,username,password)
     }
 
-    static def lisImageServerByMime(String ext, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/imageserver.jpg?ext=$ext"
+    static def listImageServerByMime(String mimeType, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imageserver.json?mimeType=$mimeType"
         return doGET(URL,username,password)
     }
 

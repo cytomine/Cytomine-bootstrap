@@ -503,7 +503,7 @@ class RestReviewedAnnotationController extends RestController {
     @RestApiResponseObject(objectIdentifier = "file")
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
-        @RestApiParam(name="max_size", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @RestApiParam(name="maxSize", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
         @RestApiParam(name="zoom", type="int", paramType = RestApiParamType.PATH,description = "Zoom level"),
         @RestApiParam(name="draw", type="boolean", paramType = RestApiParamType.PATH,description = "Draw annotation form border on the image")
     ])

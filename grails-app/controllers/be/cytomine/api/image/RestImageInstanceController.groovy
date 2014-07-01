@@ -1,12 +1,12 @@
 package be.cytomine.api.image
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.TooLongRequestException
+
 
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.image.UploadedFile
+
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -15,7 +15,10 @@ import be.cytomine.utils.Description
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.Task
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryCollection
+import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.io.WKTWriter
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.restapidoc.annotation.RestApiMethod
@@ -25,8 +28,7 @@ import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.annotation.RestApiResponseObject
 import org.restapidoc.pojo.RestApiParamType
 
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -195,11 +197,82 @@ class RestImageInstanceController extends RestController {
         responseSuccess([url : abstractImageService.window(params, request.queryString)])
     }
 
+    //todo : move into a service
+    public String getWKTGeometry(ImageInstance imageInstance, params) {
+        def geometries = []
+        if (params.annotations && !params.reviewed) {
+            def idAnnotations = params.annotations.split(',')
+            idAnnotations.each { idAnnotation ->
+                geometries << userAnnotationService.read(idAnnotation).location
+            }
+        }
+        else if (params.annotations && params.reviewed) {
+            def idAnnotations = params.annotations.split(',')
+            idAnnotations.each { idAnnotation ->
+                geometries << reviewedAnnotationService.read(idAnnotation).location
+            }
+        } else if (!params.annotations) {
+            List<Long> termsIDS = params.terms?.split(',')?.collect {
+                Long.parseLong(it)
+            }
+            if (!termsIDS) { //don't filter by term, take everything
+                termsIDS = termService.getAllTermId(imageInstance.getProject())
+            }
+
+            List<Long> userIDS = params.users?.split(",")?.collect {
+                Long.parseLong(it)
+            }
+            if (!userIDS) { //don't filter by users, take everything
+                userIDS = secUserService.listLayers(imageInstance.getProject()).collect { it.id}
+            }
+            List<Long> imageIDS = [imageInstance.id]
+
+
+            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
+            int x = params.int('topLeftX')
+            int y = params.int('topLeftY')
+            int w =  params.int('width')
+            int h =  params.int('height')
+            Geometry roiGeometry = GeometryUtils.createBoundingBox(
+                    x,                                      //minX
+                    x + w,                                  //maxX
+                    imageInstance.baseImage.getHeight() - (y + h),    //minX
+                    imageInstance.baseImage.getHeight() - y           //maxY
+            )
+
+
+            //Fetch annotations with the requested term on the request image
+
+            if (params.review) {
+                ReviewedAnnotationListing ral = new ReviewedAnnotationListing(project: imageInstance.getProject().id, terms: termsIDS, reviewUsers: userIDS, images:imageIDS, bbox:roiGeometry, columnToPrint:['basic','meta','wkt','term']  )
+                def result = annotationListingService.listGeneric(ral)
+                log.info "annotations=${result.size()}"
+                geometries = result.collect {
+                    it["location"]
+                }
+
+            } else {
+                Collection<UserAnnotation> annotations = userAnnotationService.list(imageInstance, roiGeometry, termsIDS, userIDS)
+                geometries = annotations.collect { geometry ->
+                    geometry.getLocation()
+                }
+            }
+
+            GeometryCollection geometryCollection = new GeometryCollection((Geometry[])geometries, new GeometryFactory())
+            return new WKTWriter().write(geometryCollection)
+        }
+    }
+
     //TODO:APIDOC
     def window() {
         ImageInstance imageInstance = imageInstanceService.read(params.id)
         params.id = imageInstance.baseImage.id
-        redirect(url : abstractImageService.window(params, request.queryString))
+        if (params.mask || params.alphaMask)
+            params.location = getWKTGeometry(imageInstance, params)
+        //handle idTerms & idUsers
+        String url = abstractImageService.window(params, request.queryString)
+        log.info "redirect $url"
+        redirect(url : url)
     }
 
     //TODO:APIDOC
@@ -209,81 +282,18 @@ class RestImageInstanceController extends RestController {
         def geometry = new WKTReader().read(geometrySTR)
         def annotation = new UserAnnotation(location: geometry)
         annotation.image = ImageInstance.read(params.long("id"))
-        redirect (url : annotation.toCropURL(params))
+        String url = annotation.toCropURL(params)
+        log.info "redirect $url"
+        redirect (url : url)
     }
 
-    //TODO:APIDOC
-    def mask() {
-        //TODO:: document this method
-        //TODO:: make alphamask
+    def crop() {
         ImageInstance image = ImageInstance.read(params.long('id'))
         AbstractImage abstractImage = image.getBaseImage()
-
-        int x = params.int("x")
-        int y = params.int("y")
-        int w = params.int("w")
-        int h = params.int("h")
-
-        boolean review = params.boolean("review")
-
-        if (w * h > MAX_SIZE_WINDOW_REQUEST) {
-            responseError(new TooLongRequestException("Request window size is too large : W * H > MAX_SIZE_WINDOW_REQUEST ($MAX_SIZE_WINDOW_REQUEST)"))
-        }
-
-        List<Long> termsIDS = params.terms?.split(',')?.collect {
-            Long.parseLong(it)
-        }
-        if (!termsIDS) { //don't filter by term, take everything
-            termsIDS = termService.getAllTermId(image.getProject())
-        }
-
-        List<Long> userIDS = params.users?.split(",")?.collect {
-            Long.parseLong(it)
-        }
-        if (!userIDS) { //don't filter by users, take everything
-            userIDS = secUserService.listLayers(image.getProject()).collect { it.id}
-        }
-
-        List<Long> imageIDS = [image.id]
-
-
-        try {
-            //Create a geometry corresponding to the ROI of the request (x,y,w,h)
-            Geometry roiGeometry = GeometryUtils.createBoundingBox(
-                    x,                                      //minX
-                    x + w,                                  //maxX
-                    abstractImage.getHeight() - (y + h),    //minX
-                    abstractImage.getHeight() - y           //maxY
-            )
-
-            //Get the image, compute ratio between asked and received
-            BufferedImage mask = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
-
-            //Fetch annotations with the requested term on the request image
-
-            ArrayList<Geometry> geometries
-            if (review) {
-                ReviewedAnnotationListing ral = new ReviewedAnnotationListing(project: image.getProject().id, terms: termsIDS, reviewUsers: userIDS, images:imageIDS, bbox:roiGeometry, columnToPrint:['basic','meta','wkt','term']  )
-                def result = annotationListingService.listGeneric(ral)
-                log.info "annotations=${result.size()}"
-                geometries = result.collect {
-                    new WKTReader().read(it["location"])
-                }
-
-            } else {
-                Collection<UserAnnotation> annotations = userAnnotationService.list(image, roiGeometry, termsIDS, userIDS)
-                geometries = annotations.collect { geometry ->
-                    geometry.getLocation()
-                }
-            }
-
-            //Draw annotation
-            mask = segmentationService.colorizeWindow(abstractImage, mask, geometries, x, y, 1, 1)
-
-            responseBufferedImage(mask)
-        } catch (Exception e) {
-            log.error("GetThumb:" + e)
-        }
+        params.id = abstractImage.id
+        String url = abstractImageService.crop(params, request.queryString)
+        log.info "redirect $url"
+        redirect (url : url )
     }
 
     @RestApiMethod(description="Copy image metadata (description, properties...) from an image to another one")
@@ -388,9 +398,10 @@ class RestImageInstanceController extends RestController {
         Long id = params.long("id")
         ImageInstance imageInstance = imageInstanceService.read(id)
         String downloadURL = abstractImageService.downloadURI(imageInstance.baseImage)
-        if (downloadURL)
+        if (downloadURL) {
+            log.info "redirect $downloadURL"
             redirect (url : downloadURL)
-        else
+        } else
             responseNotFound("Download link for", id)
     }
 

@@ -754,7 +754,7 @@ BrowseImageView = Backbone.View.extend({
                 var timeframe = 0;
                 var tileIndex = x + y * this.tierSizeInTiles[z].w + this.tileCountUpToTier[z];
                 var path = "&tileGroup=" + Math.floor( (tileIndex) / 256 ) +
-                    "&z=" + z + "&x=" + x + "&y=" + y + "&channels=" + channels + "&layer=" + layer + "&timeframe=" + timeframe;
+                    "&z=" + z + "&x=" + x + "&y=" + y + "&channels=" + channels + "&layer=" + layer + "&timeframe=" + timeframe + "&mimeType=" + self.model.get('mime') ;
                 var url = this.url;
                 if (OpenLayers.Util.isArray(url)) {
                     url = this.selectUrl(path, url);

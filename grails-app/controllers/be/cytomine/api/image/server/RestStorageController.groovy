@@ -31,7 +31,7 @@ class RestStorageController extends RestController {
         log.info 'listing storages by mime/user'
         def currentUser = cytomineService.currentUser
 
-        String mimeType = params.get('mime_type')
+        String mimeType = params.get('mimeType')
         Mime mime = Mime.findByMimeType(mimeType)
 
         //list all images server for this mime
@@ -43,7 +43,7 @@ class RestStorageController extends RestController {
         List<Storage> storages = Storage.findAllByUser(currentUser)
 
         if(servers.isEmpty()) {
-            responseNotFound("ImageServer", "No image server found for ext=$ext")
+            responseNotFound("ImageServer", "No image server found for mimeType=$mimeType")
         } else if(storages.isEmpty()) {
             responseNotFound("Storage", "No storage for user=${currentUser.id}")
         } else {

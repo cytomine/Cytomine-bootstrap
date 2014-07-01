@@ -29,14 +29,8 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/window_url-$x-$y-$w-$h.$format"(controller: "restImageInstance"){
             action = [GET:"windowUrl"]
         }
-        "/api/imageinstance/$id/mask.$format"(controller: "restImageInstance"){
-            action = [GET:"mask"]
-        }
         "/api/imageinstance/$id/download"(controller: "restImageInstance"){
             action = [GET:"download"]
-        }
-        "/api/imageinstance/$id/metadata.$format"(controller: "restImageInstance"){
-            action = [GET:"metadata"]
         }
         "/api/imageinstance/$id/associated.$format"(controller: "restImageInstance"){
             action = [GET:"associated"]
@@ -52,6 +46,9 @@ class ImageInstanceUrlMappings {
         }
         "/api/imageinstance/$id/cropgeometry.$format"(controller :"restImageInstance") {
             action = [GET:"cropGeometry"]
+        }
+        "/api/imageinstance/$id/crop.$format"(controller :"restImageInstance") {
+            action = [GET:"crop"]
         }
         "/api/imageinstance/method/lastopened.$format"(controller :"restImageInstance") {
             action = [GET:"listLastOpenImage"]

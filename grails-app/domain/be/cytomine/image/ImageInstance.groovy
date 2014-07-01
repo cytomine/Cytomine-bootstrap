@@ -147,7 +147,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['originalFilename'] = image?.baseImage?.originalFilename
         returnArray['sample'] = image?.baseImage?.sample?.id
         returnArray['path'] = image?.baseImage?.path
-        returnArray['mime'] = image?.baseImage?.mime?.extension
+        returnArray['mime'] = image?.baseImage?.mime?.mimeType
         returnArray['width'] = image?.baseImage?.width
         returnArray['height'] = image?.baseImage?.height
         returnArray['resolution'] = image?.baseImage?.resolution

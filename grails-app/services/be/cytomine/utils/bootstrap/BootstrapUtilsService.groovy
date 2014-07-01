@@ -237,7 +237,7 @@ class BootstrapUtilsService {
             uploadedFile.image = abstractImage
             String extension = abstractImage.mime.extension
             if (extension == "tiff" || extension == "tif") {
-                uploadedFile.mimeType = "image/tiff"
+                uploadedFile.mimeType = "image/pyrtiff"
                 uploadedFile.downloadParent = uploadedFile
             }
             else if (extension == "mrxs") {

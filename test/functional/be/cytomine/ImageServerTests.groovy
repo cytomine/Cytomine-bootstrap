@@ -7,7 +7,6 @@ import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.AbstractImageAPI
 import be.cytomine.test.http.ImageServerAPI
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
@@ -26,33 +25,36 @@ class ImageServerTests {
 
     void testImageServerListByMime() {
         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
-
-        def result = ImageServerAPI.lisImageServerByMime(imageInstance.baseImage.mime.extension,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = ImageServerAPI.listImageServerByMime(imageInstance.baseImage.mime.mimeType,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection.size()>0
     }
 
 
-    void testGetMetadata() {
+    void testGetThumb512() {
         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
-        def result = AbstractImageAPI.getMetadata(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
+        def result = ImageServerAPI.thumb(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD, 512)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/thumb512.png"))
+        assert thumb
+        assert expected
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
     }
 
-  void testGetThumb() {
-      ImageInstance imageInstance = BasicInstanceBuilder.initImage()
-      def result = ImageServerAPI.thumb(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      BufferedImage thumb = result.image
-      BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/thumb.jpg"))
-      assert thumb
-      assert expected
-      assert thumb.width == expected.width
-      assert thumb.height == expected.height
-  }
+    void testGetThumb256() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        def result = ImageServerAPI.thumb(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/thumb256.png"))
+        assert thumb
+        assert expected
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
+    }
 
-    void testGetPreview() {
+    void testGetImagePreview() {
         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
         def result = ImageServerAPI.preview(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         BufferedImage thumb = result.image
@@ -65,29 +67,29 @@ class ImageServerTests {
 
     //api/imageinstance/1676/mask?x=7500&y=16500&w=2000&h=2000&term=28859
 
-    void testGetMask() {
-         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+    void testGetAnnotationMask() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
 
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
         annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
         BasicInstanceBuilder.saveDomain(annotation)
         AnnotationTerm at = BasicInstanceBuilder.getAnnotationTermNotExist(annotation,true)
 
-         def result = ImageServerAPI.mask(imageInstance.id,7500,16500,2000,2000,null,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-         BufferedImage thumb = result.image
-         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/mask.png"))
-         assert thumb.width == expected.width
-         assert thumb.height == expected.height
+        def result = ImageServerAPI.mask(imageInstance.id,7500,16500,2000,2000,null,null, [annotation.id], Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/mask.png"))
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
 
-        result = ImageServerAPI.mask(imageInstance.id,7500,16500,2000,2000,at.term.id,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ImageServerAPI.mask(imageInstance.id,7500,16500,2000,2000,at.term.id,null, [annotation.id], Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         thumb = result.image
         assert thumb.width == expected.width
         assert thumb.height == expected.height
-     }
+    }
 
 
-    void testGetMaskReviewed() {
-         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+    void testGetReviewedAnnotationMask() {
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
 
 
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
@@ -98,46 +100,46 @@ class ImageServerTests {
         reviewedAnnotation.addToTerms(at.term)
         BasicInstanceBuilder.saveDomain(reviewedAnnotation)
 
-         def result = ImageServerAPI.maskReviewed(imageInstance.id,7500,16500,2000,2000,reviewedAnnotation.terms.first().id,null,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-         BufferedImage thumb = result.image
-         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/mask.png"))
-         assert thumb.width == expected.width
-         assert thumb.height == expected.height
+        def result = ImageServerAPI.maskReviewed(imageInstance.id,7500,16500,2000,2000,reviewedAnnotation.terms.first().id,null,[reviewedAnnotation.id], Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/mask.png"))
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
 
-     }
+    }
 
 
     void testGetUserAnnotationMask() {
-         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
 
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
         annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
         BasicInstanceBuilder.saveDomain(annotation)
 
-         def result = ImageServerAPI.maskUserAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-         BufferedImage thumb = result.image
-         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/maskAnnotation.png"))
-         assert thumb.width == expected.width
-         assert thumb.height == expected.height
-     }
+        def result = ImageServerAPI.maskUserAnnotation(annotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/maskAnnotation.png"))
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
+    }
 
 
     void testGetUserAnnotationAlphaMask() {
-         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
 
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
         annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
         BasicInstanceBuilder.saveDomain(annotation)
 
-         def result = ImageServerAPI.maskUserAnnotationAlpha(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-         BufferedImage thumb = result.image
-         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/alphamask.png"))
-         assert thumb.width == expected.width
-         assert thumb.height == expected.height
-     }
+        def result = ImageServerAPI.maskUserAnnotationAlpha(annotation.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/alphamask.png"))
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
+    }
 
     void testGetReviewedAnnotationAlphaMask() {
-         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
+        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(imageInstance.project,imageInstance, true)
         annotation.location = new WKTReader().read("POLYGON ((9168 21200, 8080 21328, 7824 20592, 8112 19600, 9552 19504, 9936 20880, 9168 21200))")
         BasicInstanceBuilder.saveDomain(annotation)
@@ -145,12 +147,12 @@ class ImageServerTests {
 
         BasicInstanceBuilder.saveDomain(reviewedAnnotation)
 
-         def result = ImageServerAPI.maskReviewedAnnotationAlpha(reviewedAnnotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-         BufferedImage thumb = result.image
-         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/alphamask.png"))
-         assert thumb.width == expected.width
-         assert thumb.height == expected.height
-     }
+        def result = ImageServerAPI.maskReviewedAnnotationAlpha(reviewedAnnotation.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        BufferedImage thumb = result.image
+        BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/alphamask.png"))
+        assert thumb.width == expected.width
+        assert thumb.height == expected.height
+    }
 
 
 //    static def maskUserAnnotation(Long idAnnotation, Long idTerm, String username, String password) {
@@ -193,13 +195,6 @@ class ImageServerTests {
         ImageInstance imageInstance = BasicInstanceBuilder.initImage()
         def result = ImageServerAPI.windowUrl(imageInstance.id,20000,30000,300,300,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert result.code == 200
-    }
-
-    void testGetMetadataExtract() {
-        ImageInstance imageInstance = BasicInstanceBuilder.initImage()
-        def result = AbstractImageAPI.getMetadataExtract(imageInstance.baseImage.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
     }
 
     void testGetCropGeometry() {

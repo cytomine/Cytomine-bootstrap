@@ -222,7 +222,9 @@ class RestAbstractImageController extends RestController {
     }
 
     def download() {
-        redirect (uri : abstractImageService.downloadURI(abstractImageService.read(params.long("id"))))
+        String url = abstractImageService.downloadURI(abstractImageService.read(params.long("id")))
+        log.info "redirect url"
+        redirect (url : url)
     }
 
 
@@ -233,22 +235,29 @@ class RestAbstractImageController extends RestController {
      */
     //TODO:APIDOC
     def tile() {
-        redirect (url : abstractImageService.tile(params, request.queryString))
+        String url = abstractImageService.tile(params, request.queryString)
+        log.info "redirect $url"
+        redirect (url : url)
     }
 
     //TODO:APIDOC
     def crop() {
-        redirect (url : abstractImageService.crop(params, request.queryString))
+        String url = abstractImageService.crop(params, request.queryString)
+        log.info "redirect $url"
+        redirect (url : url )
     }
 
     //TODO:APIDOC
     def windowUrl() {
-        responseSuccess([url : abstractImageService.window(params, request.queryString)])
+        String url = abstractImageService.window(params, request.queryString)
+        log.info "response $url"
+        responseSuccess([url : url])
     }
 
     //TODO:APIDOC
     def window() {
-        redirect(url : abstractImageService.window(params, request.queryString))
+        String url = abstractImageService.window(params, request.queryString)
+        redirect(url : url)
     }
 
     /**

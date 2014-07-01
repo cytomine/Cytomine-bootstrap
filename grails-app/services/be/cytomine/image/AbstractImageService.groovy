@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import grails.orm.PagedResultList
+import org.codehaus.groovy.grails.plugins.codecs.URLCodec
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -159,19 +160,24 @@ class AbstractImageService extends ModelService {
         queryString = queryString.replace("?", "")
         AbstractImage abstractImage = read(params.id)
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String imagePath = abstractImage.getFullPath()
-        return "$imageServerURL/image/crop.png?fif=$imagePath&$queryString" //&scale=$scale
+        UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
+        String mimeType = uploadedFile.mimeType
+        return "$imageServerURL/image/crop.png?fif=$fif&mimeType=$mimeType&$queryString" //&scale=$scale
     }
 
     def tile(def params, String queryString) {
+        log.info "tile request"
         AbstractImage abstractImage = read(params.id)
         int tileGroup = params.int("TileGroup")
         int x = params.int("x")
         int y = params.int("y")
         int z = params.int("z")
         String imageServerURL = abstractImage.getRandomImageServerURL()
-        String imagePath = abstractImage.getFullPath()
-        def zoomifyQuery = "zoomify=$imagePath/TileGroup$tileGroup/$z-$x-$y\\.jpg"
+        UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
+        String mimeType = uploadedFile.mimeType
+        def zoomifyQuery = "zoomify=$fif/TileGroup$tileGroup/$z-$x-$y\\.jpg&mimeType=$mimeType"
         return "$imageServerURL/image/tile.jpg?$zoomifyQuery"
     }
 
@@ -182,16 +188,19 @@ class AbstractImageService extends ModelService {
         int y = params.int('y')
         int w = params.int('w')
         int h = params.int('h')
-        def boundaries = [:]
-        boundaries.topLeftX = x
-        boundaries.topLeftY = abstractImage.getHeight() - h
-        boundaries.width = w
-        boundaries.height = h
-        boundaries.imageWidth = abstractImage.getWidth()
-        boundaries.imageHeight = abstractImage.getHeight()
-        if (params.zoom) boundaries.zoom = params.zoom
-        if (params.maxSize) boundaries.maxSize = params.maxSize
-        return UrlApi.getCropURL(id, boundaries)
+        def parameters = [:]
+        parameters.topLeftX = x
+        parameters.topLeftY = abstractImage.getHeight() - y
+        parameters.width = w
+        parameters.height = h
+        parameters.imageWidth = abstractImage.getWidth()
+        parameters.imageHeight = abstractImage.getHeight()
+        if (params.zoom) parameters.zoom = params.zoom
+        if (params.maxSize) parameters.maxSize = params.maxSize
+        if (params.location) parameters.location = params.location
+        if (params.mask) parameters.mask = params.mask
+        if (params.alphaMask) parameters.alphaMask = params.alphaMask
+        return UrlApi.getCropURL(id, parameters)
     }
 
 
@@ -232,18 +241,16 @@ class AbstractImageService extends ModelService {
         AbstractImage abstractImage = AbstractImage.read(id)
         String imageServerURL = abstractImage.getRandomImageServerURL()
         UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
-        String fif = uploadedFile.absolutePath
-        fif = fif.replace(" ", "%20")
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
         String mimeType = uploadedFile.mimeType
-        String uri = "$imageServerURL/image/thumb.jpg?fif=$fif&mimeType=$mimeType&maxSize=$maxSize"
-        println uri
-        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, uri)
+        String url = "$imageServerURL/image/thumb.jpg?fif=$fif&mimeType=$mimeType&maxSize=$maxSize"
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(id, url)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
-            byte[] imageData = new URL(uri).getBytes()
+            byte[] imageData = new URL(url).getBytes()
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData))
-            attachedFileService.add(uri, imageData, abstractImage.id, AbstractImage.class.getName())
+            attachedFileService.add(url, imageData, abstractImage.id, AbstractImage.class.getName())
             return bufferedImage
         }
 
@@ -276,27 +283,25 @@ class AbstractImageService extends ModelService {
     def getAvailableAssociatedImages(AbstractImage abstractImage) {
         String imageServerURL = abstractImage.getRandomImageServerURL()
         UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
-        String fif = uploadedFile.absolutePath
-        fif = fif.replace(" ", "%20")
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
         String mimeType = uploadedFile.mimeType
-        String uri = "$imageServerURL/image/associated.json?fif=$fif&mimeType=$mimeType"
-        return JSON.parse( new URL(uri).text )
+        String url = "$imageServerURL/image/associated.json?fif=$fif&mimeType=$mimeType"
+        return JSON.parse( new URL(url).text )
     }
 
     def getAssociatedImage(AbstractImage abstractImage, String label, def maxWidth) {
         String imageServerURL = abstractImage.getRandomImageServerURL()
         UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
-        String fif = uploadedFile.absolutePath
-        fif = fif.replace(" ", "%20")
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
         String mimeType = uploadedFile.mimeType
-        String uri = "$imageServerURL/image/nested.jpg?fif=$fif&mimeType=$mimeType&label=$label"
-        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, uri)
+        String url = "$imageServerURL/image/nested.jpg?fif=$fif&mimeType=$mimeType&label=$label"
+        AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, url)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
-            byte[] imageData = new URL(uri).getBytes()
+            byte[] imageData = new URL(url).getBytes()
             BufferedImage bufferedImage =  ImageIO.read(new ByteArrayInputStream(imageData))
-            attachedFileService.add(uri, imageData, abstractImage.id, AbstractImage.class.getName())
+            attachedFileService.add(url, imageData, abstractImage.id, AbstractImage.class.getName())
             return bufferedImage
         }
 

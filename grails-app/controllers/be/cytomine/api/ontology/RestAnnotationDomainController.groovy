@@ -132,15 +132,14 @@ class RestAnnotationDomainController extends RestController {
     @RestApiResponseObject(objectIdentifier =  "file")
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The annotation id"),
-        @RestApiParam(name="max_size", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
+        @RestApiParam(name="maxSize", type="int", paramType = RestApiParamType.PATH,description = "Maximum size of the crop image (w and h)"),
         @RestApiParam(name="zoom", type="int", paramType = RestApiParamType.PATH,description = "Zoom level"),
         @RestApiParam(name="draw", type="boolean", paramType = RestApiParamType.PATH,description = "Draw annotation form border on the image")
     ])
     def crop () {
         try {
             def annotation = AnnotationDomain.getAnnotationDomain(params.long("id"))
-            def image = imageProcessingService.crop(annotation, params)
-            responseBufferedImage(image)
+            redirect (url : annotation.toCropURL(params))
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)
@@ -164,10 +163,9 @@ class RestAnnotationDomainController extends RestController {
     ])
     def cropMin () {
         try {
-            params.max_size = 256
+            params.maxSize = 256
             def annotation = AnnotationDomain.getAnnotationDomain(params.long("id"))
-            def image = imageProcessingService.crop(annotation, params)
-            responseBufferedImage(image)
+            redirect (url : annotation.toCropURL(params))
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
             log.error(e)

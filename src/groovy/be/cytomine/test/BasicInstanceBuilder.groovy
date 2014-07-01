@@ -1328,23 +1328,25 @@ class BasicInstanceBuilder {
 
     public static ImageInstance initImage() {
 
-        String urlImageServer = "http://is31.cytomine.be"
+        String urlImageServer = "http://localhost:9080"
+
+        User user = getUser("imgUploader", "password")
 
         ImageServer imageServer = ImageServer.findByUrl(urlImageServer)
         if(!imageServer) {
             imageServer = new ImageServer()
             imageServer.className = "IIPResolver"
             imageServer.name = "IIP-Openslide2"
-            imageServer.service = "/fcgi-bin/iipsrv.fcgi"
+            imageServer.service = "/image/tile"
             imageServer.url =  urlImageServer
             imageServer.available = true
             BasicInstanceBuilder.saveDomain(imageServer)
         }
 
-        Mime mime = Mime.findByExtension("tif")
+        Mime mime = Mime.findByMimeType("image/pyrtiff")
         if(!mime) {
             mime = new Mime()
-            mime.mimeType = "image/tiff"
+            mime.mimeType = "image/pyrtiff"
             mime.extension = "tif"
             BasicInstanceBuilder.saveDomain(mime)
         }
@@ -1362,10 +1364,10 @@ class BasicInstanceBuilder {
             storage = new Storage()
             storage.basePath = "/data/test.cytomine.be/1"
             storage.name = "lrollus test storage"
-            storage.ip = "10.3.1.136" // still used?
-            storage.password = "toto"
-            storage.port = 22
-            storage.username = "username"
+            storage.ip = "10.3.1.136" // still used? no, //unused
+            storage.password = "toto" //unused
+            storage.port = 22 //unused
+            storage.username = "username" //unused
             storage.user = User.findByUsername(Infos.SUPERADMINLOGIN)
             BasicInstanceBuilder.saveDomain(storage)
         }
@@ -1390,6 +1392,7 @@ class BasicInstanceBuilder {
             abstractImage.resolution = 0.65d
             abstractImage.mime = mime
             abstractImage.originalFilename = "test01.jpg"
+            abstractImage.user = user
             BasicInstanceBuilder.saveDomain(abstractImage)
         }
 
@@ -1406,6 +1409,23 @@ class BasicInstanceBuilder {
             project = BasicInstanceBuilder.getProjectNotExist(true)
             project.name = "testimage"
             BasicInstanceBuilder.saveDomain(project)
+        }
+
+        UploadedFile uploadedFile = UploadedFile.findByPath(abstractImage.filename)
+        if (!uploadedFile) {
+            uploadedFile = new UploadedFile()
+            uploadedFile.image = abstractImage
+            uploadedFile.ext = abstractImage.mime.extension
+            uploadedFile.contentType = abstractImage.mime.mimeType
+            uploadedFile.filename = abstractImage.filename
+            uploadedFile.originalFilename = abstractImage.originalFilename
+            uploadedFile.user = abstractImage.user
+            uploadedFile.mimeType = abstractImage.mime.mimeType
+            uploadedFile.path = storage.getBasePath()
+            uploadedFile.storages = [storage.id]
+            uploadedFile.projects = [project.id]
+            uploadedFile.size = 0 //fake
+            BasicInstanceBuilder.saveDomain(uploadedFile)
         }
 
         ImageInstance imageInstance = ImageInstance.findByBaseImageAndProject(abstractImage,project)

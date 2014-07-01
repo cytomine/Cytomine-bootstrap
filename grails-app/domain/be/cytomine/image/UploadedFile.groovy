@@ -119,7 +119,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['error_convert'] = (uploaded?.status == UploadedFile.ERROR_CONVERT)
         returnArray['uncompressed'] = (uploaded?.status == UploadedFile.UNCOMPRESSED)
         returnArray['to_deploy'] = (uploaded?.status == UploadedFile.TO_DEPLOY)
-        returnArray['image'] = uploaded?.image?.id
+        returnArray['image'] = uploaded?.getAbstractImage()
         returnArray['parent'] = uploaded?.parent?.id
         returnArray['downloadParent'] = uploaded?.downloadParent?.id
         returnArray
@@ -167,6 +167,14 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
     def getAbsolutePath() {
         return [ this.path, this.filename].join(File.separator)
+    }
+
+    def getAbstractImage() {
+        if (image) return image.id
+        if (parent?.image) return parent.image.id
+        UploadedFile son = UploadedFile.findByParent(this)
+        if (son?.image) return son.image.id
+        else return null
     }
 
 }
