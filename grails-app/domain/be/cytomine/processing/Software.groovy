@@ -125,6 +125,7 @@ class Software extends CytomineDomain {
         domain.description = JSONUtils.getJSONAttrStr(json, 'description')
         domain.serviceName = JSONUtils.getJSONAttrStr(json, 'serviceName')
         domain.resultName = JSONUtils.getJSONAttrStr(json, 'resultName')
+        domain.executeCommand = JSONUtils.getJSONAttrStr(json, 'executeCommand')
 
         def service
         try {
@@ -150,6 +151,7 @@ class Software extends CytomineDomain {
         returnArray['serviceName'] = domain?.serviceName
         returnArray['resultName'] = domain?.resultName
         returnArray['description'] = domain?.description
+        returnArray['executeCommand'] = domain?.executeCommand
         try {
             returnArray['parameters'] = SoftwareParameter.findAllBySoftwareAndSetByServer(domain, false, [sort : "index", order : "asc"])
             returnArray['numberOfJob'] = Job.countBySoftware(domain)

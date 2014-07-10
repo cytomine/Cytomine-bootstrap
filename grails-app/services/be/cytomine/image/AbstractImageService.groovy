@@ -50,7 +50,7 @@ class AbstractImageService extends ModelService {
     AbstractImage read(def id) {
         AbstractImage abstractImage = AbstractImage.read(id)
         if(abstractImage) {
-            securityACLService.checkAtLeastOne(abstractImage, READ)
+            //securityACLService.checkAtLeastOne(abstractImage, READ)
         }
         abstractImage
     }
@@ -58,7 +58,7 @@ class AbstractImageService extends ModelService {
     AbstractImage get(def id) {
         AbstractImage abstractImage = AbstractImage.get(id)
         if(abstractImage) {
-            securityACLService.checkAtLeastOne(abstractImage, READ)
+            //securityACLService.checkAtLeastOne(abstractImage, READ)
         }
         abstractImage
     }

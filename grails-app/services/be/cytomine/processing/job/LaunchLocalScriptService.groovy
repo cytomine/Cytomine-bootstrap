@@ -26,9 +26,10 @@ class LaunchLocalScriptService extends AbstractJobService{
 
     def execute(Job job, UserJob userJob, boolean preview) {
 
-        //get job params
+        //get params defined for this job
         String[] jobParams = getParametersValues(job)
 
+        //get the executed command value and all its hard-coded parameters
         String[] mainArgs = createArgsArray(job)
         String[] allArgs = new String[mainArgs.length+jobParams.length+2]
 

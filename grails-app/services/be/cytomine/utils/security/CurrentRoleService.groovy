@@ -22,6 +22,11 @@ class CurrentRoleService implements Serializable {
 
     public isAdmin = false
 
+    /**
+     * Active an admin session for a user
+     * (by default user with ROLE_ADMIN are connected as ROLE_USER)
+     * @param user
+     */
     def activeAdminSession(SecUser user) {
         if(findRealRole(user).find{it.authority=="ROLE_ADMIN"}) {
             isAdmin = true
@@ -35,6 +40,11 @@ class CurrentRoleService implements Serializable {
             throw new ForbiddenException("You are not an admin!")
         }
     }
+
+    /**
+     * Disable admin session for a user
+     * @param user
+     */
     def closeAdminSession(SecUser user) {
         if(findRealRole(user).find{it.authority=="ROLE_ADMIN"}) {
             isAdmin = false
@@ -48,6 +58,9 @@ class CurrentRoleService implements Serializable {
         }
     }
 
+    /**
+     * Get all user roles (even disabled role)
+     */
     Set<SecRole> findRealRole(SecUser user) {
         //log.info "Look for role for ${user.username}"
         Set<SecRole> roles = SecUserSecRole.findAllBySecUser(user).collect { it.secRole }
@@ -55,6 +68,9 @@ class CurrentRoleService implements Serializable {
         return roles
     }
 
+    /**
+     * Get all active roles
+     */
     Set<SecRole> findCurrentRole(SecUser user) {
         Set<SecRole> roles = findRealRole(user)
         boolean isSuperAdmin =  (roles.find {it.authority=="ROLE_SUPER_ADMIN"}!=null)
@@ -66,6 +82,9 @@ class CurrentRoleService implements Serializable {
         return roles
     }
 
+    /**
+     * Check if user is admin (with admin session opened)
+     */
     boolean isAdminByNow(SecUser user) {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_ADMIN")
     }
@@ -76,6 +95,9 @@ class CurrentRoleService implements Serializable {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_GUEST")
     }
 
+    /**
+     * Check if user is admin (with admin session closed or opened)
+     */
     boolean isAdmin(SecUser user) {
         return findRealRole(user).collect{it.authority}.contains("ROLE_ADMIN")
     }

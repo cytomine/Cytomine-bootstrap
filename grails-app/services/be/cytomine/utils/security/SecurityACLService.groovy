@@ -40,12 +40,9 @@ class SecurityACLService {
         def simpleObject =  Class.forName(className, false, Thread.currentThread().contextClassLoader).read(id)
         if (simpleObject) {
             def containerObjects = simpleObject."$method"()
-            log.info "containerObjects=${containerObjects}"
             def atLeastOne = containerObjects.find {
-                log.info "checkPermission=${permission} => storage ${it.id}"
                 it.checkPermission(permission,currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))
             }
-            log.info "atLeastOne=${atLeastOne}"
             if (!atLeastOne) throw new ForbiddenException("You don't have the right to read or modity this resource! ${className} ${id}")
 
         } else {

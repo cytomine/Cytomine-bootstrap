@@ -13,19 +13,6 @@ import org.restapidoc.annotation.RestApiObject
 @RestApiObject(name = "software parameter", description = "A parameter for a software. It's a template to create job parameter. When job is init, we create job parameter list based on software parameter list.")
 class SoftwareParameter extends CytomineDomain {
 
-//    returnArray['name'] = domain?.name
-//    returnArray['type'] = domain?.type
-//    returnArray['defaultParamValue'] = domain?.defaultValue  //defaultValue & default are reserved
-//    returnArray['required'] = domain?.required
-//    returnArray['software'] = domain?.software?.id
-//    returnArray['index'] = domain?.index
-//    returnArray['uri'] = domain?.uri
-//    returnArray['uriPrintAttribut'] = domain?.uriPrintAttribut
-//    returnArray['uriSortAttribut'] = domain?.uriSortAttribut
-//    returnArray['setByServer'] = domain?.setByServer
-
-
-
     /**
      * Software for parameter
      */
