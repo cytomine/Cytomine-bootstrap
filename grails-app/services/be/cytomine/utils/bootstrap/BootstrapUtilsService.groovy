@@ -192,6 +192,14 @@ class BootstrapUtilsService {
         }
     }
 
+    def addMimePyrTiff() {
+        def mimeSamples = [
+                [extension : 'tif', mimeType : 'image/pyrtiff']
+        ]
+        createMimes(mimeSamples)
+        createMimeImageServers(ImageServer.findAll(), mimeSamples)
+    }
+
     def createNewIS2() {
         if (ImageServer.count() > 1) return
 
