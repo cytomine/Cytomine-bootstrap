@@ -278,9 +278,13 @@ class BootstrapUtilsService {
             if (!abstractImage) {
                 log.error "DID NOT FIND AN ABSTRACT_IMAGE for uploadedFile $uploadedFile"
             } else {
-                Storage storage = StorageAbstractImage.findByAbstractImage(abstractImage).storage
-                uploadedFile.path = storage.getBasePath()
-                uploadedFile = uploadedFile.save()
+                def data = StorageAbstractImage.findByAbstractImage(abstractImage)
+                if(data) {
+                    Storage storage = data.storage
+                    uploadedFile.path = storage.getBasePath()
+                    uploadedFile = uploadedFile.save()
+                }
+
             }
         }
 
