@@ -8,7 +8,9 @@ import be.cytomine.image.Mime
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
@@ -30,6 +32,7 @@ class BootstrapUtilsService {
     def cytomineService
     def sessionFactory
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
+    def grailsApplication
 
     public def createUsers(def usersSamples) {
 
@@ -185,6 +188,52 @@ class BootstrapUtilsService {
         }
         if (!newObject.save(flush: flush)) {
             throw new InvalidRequestException(newObject.retrieveErrors().toString())
+        }
+    }
+
+    def createNewIS() {
+
+        println "*************** createNewIS ********************"
+        MimeImageServer.list().each {
+            it.delete()
+        }
+
+        ImageServerStorage.list().each {
+            it.delete()
+        }
+
+        ImageServer.list().each {
+            it.delete()
+        }
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : grailsApplication.config.grails.imageServerURL, available : true]
+        ImageServer imageServer = new ImageServer(
+                className: IIPImageServer.className,
+                name: IIPImageServer.name,
+                service : IIPImageServer.service,
+                url : IIPImageServer.url,
+                available : IIPImageServer.available
+        )
+
+        if (imageServer.validate()) {
+            imageServer.save()
+        } else {
+            imageServer.errors?.each {
+                println it
+            }
+        }
+
+        Storage.list().each {
+            new ImageServerStorage(
+                    storage : it,
+                    imageServer: imageServer
+            ).save()
+        }
+
+        Mime.list().each {
+            new MimeImageServer(
+                    mime : it,
+                    imageServer: imageServer
+            ).save()
         }
     }
 

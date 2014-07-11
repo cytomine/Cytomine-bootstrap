@@ -32,6 +32,7 @@ class Version {
 
     static boolean isOlderVersion(Long version) {
         Version actual = getLastVersion()
+        log.info "Check is older $actual=actual and compared=$version (${actual.number<version})"
         if(actual) {
             return actual.number<version
         } else return true

@@ -2,6 +2,8 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
+import be.cytomine.image.server.ImageServer
+import be.cytomine.image.server.MimeImageServer
 import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.image.Mime
 import be.cytomine.ontology.Property
@@ -100,9 +102,9 @@ class BootStrap {
 
         //ventana
         println "Create ventana"
-        if (!Mime.findByMimeType("ventana/tif")) {
-            bootstrapTestDataService.initVentana()
-        }
+//        if (!Mime.findByMimeType("ventana/tif")) {
+//            bootstrapTestDataService.initVentana()
+//        }
 
         if(!SecUser.findByUsername("admin")) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
@@ -155,6 +157,14 @@ class BootStrap {
 
         if(Version.isOlderVersion(20140630)) {
             bootstrapUtilsService.transfertProperty()
+        }
+
+        if(Version.isOlderVersion(20140712)) {
+            bootstrapUtilsService.createNewIS()
+        }
+
+        if(Version.isOlderVersion(20140713)) {
+            //STEVBEN: HERE!!!
         }
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
