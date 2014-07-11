@@ -47,7 +47,7 @@ class AttachedFileService extends ModelService {
     }
 
     def add(String filename,byte[] data,Long domainIdent,String domainClassName) {
-        securityACLService.checkAtLeastOne(domainIdent,domainClassName,"containers",READ)
+        //securityACLService.checkAtLeastOne(domainIdent,domainClassName,"containers",READ)
         AttachedFile file = new AttachedFile()
         file.domainIdent =  domainIdent
         file.domainClassName = domainClassName
@@ -66,7 +66,7 @@ class AttachedFileService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(AttachedFile domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        securityACLService.checkAtLeastOne(domain.domainIdent, domain.domainClassName, "containers", WRITE)
+        //securityACLService.checkAtLeastOne(domain.domainIdent, domain.domainClassName, "containers", WRITE)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
