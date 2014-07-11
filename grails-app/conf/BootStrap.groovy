@@ -167,6 +167,10 @@ class BootStrap {
             bootstrapUtilsService.checkImages2() //fix uploadedFile path
         }
 
+        if(Version.isOlderVersion(20140715)) {
+            bootstrapUtilsService.createNewIS2() //add image1.cytomine.be -> image10.cytomine.be
+        }
+
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
 
 
