@@ -11,6 +11,7 @@ import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.Storage
+import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
@@ -250,6 +251,39 @@ class BootstrapUtilsService {
                 cleanUpGorm()
             }
         }
+    }
+
+    def checkImages2() {
+        SpringSecurityUtils.reauthenticate "admin", null
+        def currentUser = cytomineService.getCurrentUser()
+
+        def uploadedFiles = UploadedFile.findAllByPathLike("notfound").plus(UploadedFile.findAllByPathLike("/tmp/cytomine_buffer/")).plus(UploadedFile.findAllByPathLike("/tmp/imageserver_buffer"))
+
+        uploadedFiles.eachWithIndex { uploadedFile,index->
+            /*if(index%500==0) {
+                log.info "Check ${(index/uploadedFiles.size())*100}"
+                cleanUpGorm()
+            }*/
+
+            AbstractImage abstractImage = uploadedFile.image
+
+            if (!abstractImage) { //
+                UploadedFile parentUploadedFile = uploadedFile
+                while (parentUploadedFile.parent && !abstractImage) {
+                    parentUploadedFile = parentUploadedFile.parent
+                    abstractImage = parentUploadedFile.image
+                }
+            }
+
+            if (!abstractImage) {
+                log.error "DID NOT FIND AN ABSTRACT_IMAGE for uploadedFile $uploadedFile"
+            } else {
+                Storage storage = StorageAbstractImage.findByAbstractImage(abstractImage).storage
+                uploadedFile.path = storage.getBasePath()
+                uploadedFile = uploadedFile.save()
+            }
+        }
+
     }
 
     def checkImages() {

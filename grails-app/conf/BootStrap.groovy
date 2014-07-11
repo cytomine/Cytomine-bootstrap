@@ -164,7 +164,7 @@ class BootStrap {
         }
 
         if(Version.isOlderVersion(20140713)) {
-            //STEVBEN: HERE!!!
+            bootstrapUtilsService.checkImages2() //fix uploadedFile path
         }
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
