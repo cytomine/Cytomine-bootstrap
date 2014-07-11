@@ -260,16 +260,19 @@ class BootstrapUtilsService {
         def uploadedFiles = UploadedFile.findAllByPathLike("notfound").plus(UploadedFile.findAllByPathLike("/tmp/cytomine_buffer/")).plus(UploadedFile.findAllByPathLike("/tmp/imageserver_buffer"))
 
         uploadedFiles.eachWithIndex { uploadedFile,index->
-            /*if(index%500==0) {
+            if(index%500==0) {
                 log.info "Check ${(index/uploadedFiles.size())*100}"
                 cleanUpGorm()
-            }*/
+            }
 
+            uploadedFile.attach()
             AbstractImage abstractImage = uploadedFile.image
 
             if (!abstractImage) { //
                 UploadedFile parentUploadedFile = uploadedFile
                 while (parentUploadedFile.parent && !abstractImage) {
+                    parentUploadedFile.attach()
+                    parentUploadedFile.parent.attach()
                     parentUploadedFile = parentUploadedFile.parent
                     abstractImage = parentUploadedFile.image
                 }
