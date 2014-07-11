@@ -193,7 +193,7 @@ class BootstrapUtilsService {
     }
 
     def createNewIS2() {
-        if (ImageServer.count() > 2) return
+        if (ImageServer.count() > 1) return
 
         (1..10).each { id->
             def IIPImageServer = [className : 'IIPResolver', name : "IIP$id", service : '/image/tile', url : "http://image$id"+".cytomine.be", available : true]
