@@ -293,7 +293,7 @@ class AbstractImageService extends ModelService {
         UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
         String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
         String mimeType = uploadedFile.mimeType
-        String url = "$imageServerURL/image/nested.jpg?fif=$fif&mimeType=$mimeType&label=$label"
+        String url = "$imageServerURL/image/nested.jpg?fif=$fif&mimeType=$mimeType&label=$label&maxWidth=$maxWidth"
         AttachedFile attachedFile = AttachedFile.findByDomainIdentAndFilename(abstractImage.id, url)
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
