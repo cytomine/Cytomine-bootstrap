@@ -167,8 +167,16 @@ class BootStrap {
             bootstrapUtilsService.checkImages2() //fix uploadedFile path
         }
 
-        if(Version.isOlderVersion(20140715)) {
+        if(Version.isOlderVersion(20140715) && Environment.getCurrent() == Environment.PRODUCTION) {
             bootstrapUtilsService.createNewIS2() //add image1.cytomine.be -> image10.cytomine.be
+        }
+
+        if(Version.isOlderVersion(20140716)) {
+            bootstrapUtilsService.addMimePyrTiff()
+        }
+
+        if(Version.isOlderVersion(20140717)) {
+            bootstrapUtilsService.addMimePhilipsTiff()
         }
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))

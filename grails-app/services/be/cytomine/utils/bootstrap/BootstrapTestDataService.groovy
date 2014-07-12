@@ -41,6 +41,7 @@ class BootstrapTestDataService {
                 [extension : 'vms', mimeType : 'openslide/vms'],
                 [extension : 'tif', mimeType : 'image/tif'],
                 [extension : 'tiff', mimeType : 'image/tiff'],
+                [extension : 'tif', mimeType : 'image/pyrtiff'],
                 [extension : 'svs', mimeType : 'openslide/svs'],
                 [extension : 'jp2', mimeType : 'image/jp2'],
                 [extension : 'scn', mimeType : 'openslide/scn'],
