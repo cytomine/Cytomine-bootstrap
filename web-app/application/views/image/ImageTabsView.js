@@ -95,6 +95,8 @@ var ImageTabsView = Backbone.View.extend({
                     return '<img src="images/brands/leica.png" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
                 } else if (originalMimeType == "ventana/tif" || originalMimeType == "ventana/bif") {
                     return '<img src="images/brands/roche.gif" alt="hamamatsu photonics" style="max-width : 100px;max-height : 40px;" >';
+                } else if (originalMimeType == "philips/tif") {
+                    return '<img src="images/brands/philips.jpg" alt="philips" style="max-width : 100px;max-height : 40px;" >';
                 }
                 else return '<span class="label label-default">Undefined</span>';
             } },

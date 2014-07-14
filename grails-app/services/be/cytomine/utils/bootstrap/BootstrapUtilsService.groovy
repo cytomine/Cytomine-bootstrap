@@ -192,6 +192,58 @@ class BootstrapUtilsService {
         }
     }
 
+    def addMimePyrTiff() {
+        def mimeSamples = [
+                [extension : 'tif', mimeType : 'image/pyrtiff']
+        ]
+        createMimes(mimeSamples)
+        createMimeImageServers(ImageServer.findAll(), mimeSamples)
+    }
+
+    def addMimePhilipsTiff() {
+        def mimeSamples = [
+                [extension : 'tif', mimeType : 'philips/tif']
+        ]
+        createMimes(mimeSamples)
+        createMimeImageServers(ImageServer.findAll(), mimeSamples)
+    }
+
+    def createNewIS2() {
+        if (ImageServer.count() > 1) return
+
+        (1..10).each { id->
+            def IIPImageServer = [className : 'IIPResolver', name : "IIP$id", service : '/image/tile', url : "http://image$id"+".cytomine.be", available : true]
+            ImageServer imageServer = new ImageServer(
+                    className: IIPImageServer.className,
+                    name: IIPImageServer.name,
+                    service : IIPImageServer.service,
+                    url : IIPImageServer.url,
+                    available : IIPImageServer.available
+            )
+            if (imageServer.validate()) {
+                imageServer.save()
+            } else {
+                imageServer.errors?.each {
+                    println it
+                }
+            }
+
+            Storage.list().each {
+                new ImageServerStorage(
+                        storage : it,
+                        imageServer: imageServer
+                ).save()
+            }
+
+            Mime.list().each {
+                new MimeImageServer(
+                        mime : it,
+                        imageServer: imageServer
+                ).save()
+            }
+        }
+    }
+
     def createNewIS() {
 
         println "*************** createNewIS ********************"

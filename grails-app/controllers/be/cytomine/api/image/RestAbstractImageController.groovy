@@ -161,7 +161,7 @@ class RestAbstractImageController extends RestController {
     @RestApiResponseObject(objectIdentifier = "image (bytes)")
     def thumb() {
         response.setHeader("max-age", "86400")
-        int maxSize = params.int('maxSize',  256)
+        int maxSize = params.int('maxSize',  512)
         responseBufferedImage(abstractImageService.thumb(params.long('id'), maxSize))
     }
 
