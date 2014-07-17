@@ -247,6 +247,7 @@ class AbstractImageService extends ModelService {
         if (attachedFile) {
             return ImageIO.read(new ByteArrayInputStream(attachedFile.getData()))
         } else {
+            log.info url
             byte[] imageData = new URL(url).getBytes()
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData))
             attachedFileService.add(url, imageData, abstractImage.id, AbstractImage.class.getName())

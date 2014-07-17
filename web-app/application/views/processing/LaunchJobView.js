@@ -530,10 +530,10 @@ var InputListDomainView = Backbone.View.extend({
         var cell = self.trElem.find("td#" + self.param.id);
         cell.empty();
         cell.append(self.getHtmlElem());
-        if(self.multiple) {
-            cell.append('<button class="btn" id="checkAll'+self.param.id+'">Check All</button>');
-            cell.append('<button class="btn" id="uncheckAll'+self.param.id+'">Uncheck All</button>');
-        }
+//        if(self.multiple) {
+//            cell.append('<button class="btn" id="checkAll'+self.param.id+'">Check All</button>');
+//            cell.append('<button class="btn" id="uncheckAll'+self.param.id+'">Uncheck All</button>');
+//        }
 
 
         var magicSuggestData = self.collection.toJSON();

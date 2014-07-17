@@ -230,9 +230,9 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         //add all available layer on select
         _.each(self.allVectorLayers, function (layer) {
             if(layer.user==null) {
-                select.append('<option value="' + layer.id + '">Review Layer</option>');
+                select.append('<option style="color:#000000;" value="' + layer.id + '">Review Layer</option>');
             } else {
-                select.append('<option value="' + layer.id + '">' + layer.user.layerName() + '</option>');
+                select.append('<option style="color:#000000;" value="' + layer.id + '">' + layer.user.layerName() + '</option>');
             }
 
         });
