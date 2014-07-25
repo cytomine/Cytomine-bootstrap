@@ -8,6 +8,8 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
+import static grails.async.Promises.*
+
 class TestController {
 
     def bootstrapTestDataService
@@ -48,6 +50,27 @@ class TestController {
     def aurora() {
         auroraService.notifyImage()
     }
+
+
+
+
+    def async() {
+        def p1 = task { 2 * 2 }
+        def p2 = task { 4 * 4 }
+        def p3 = task { 8 * 8 }
+        assert [4,16,64] == waitAll(p1, p2, p3)
+        println waitAll(p1, p2, p3)
+        println "test"
+    }
+
+
+
+
+
+
+
+
+
 
 
 //    def attack1() {

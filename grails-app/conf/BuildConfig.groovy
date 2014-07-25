@@ -1,5 +1,7 @@
 import grails.util.Environment
 //grails.client = "be.cytomine.integration"
+grails.servlet.version = "3.0"
+
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -76,6 +78,7 @@ grails.project.dependency.resolution = {
 
         mavenRepo "http://repository.ow2.org/nexus/content/repositories/ow2-legacy"
 
+        mavenRepo "http://repo.grails.org/grails/core"
 
 
     }
@@ -140,6 +143,7 @@ grails.project.dependency.resolution = {
         //cytomine.client
 
         compile ":rest-api-doc:0.1.3"
+
 
 
 //               build ":tomcat:$grailsVersion" //

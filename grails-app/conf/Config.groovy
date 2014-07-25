@@ -170,7 +170,7 @@ elasticSearch {
 
     /**
      * Should the database be indexed at startup.
-     *
+     *search
      * The value may be a boolean true|false.
      * Indexing is always asynchronous (compared to Searchable plugin) and executed after BootStrap.groovy.
      */
@@ -310,7 +310,7 @@ grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugins.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/admincyto/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
-        '/monitoring/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
+        '/monitoring/**':    ['ROLE_ADMIN'],
         '/j_spring_security_switch_user': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
@@ -541,6 +541,7 @@ grails.plugins.restapidoc.defaultErrorPut = [
 
 cytomine.customUI.global = [
         dashboard: ["ALL"],
+        search : ["ALL"],
         project: ["ALL"],
         ontology: ["ROLE_USER","ROLE_ADMIN"],
         storage : ["ROLE_USER","ROLE_ADMIN"],

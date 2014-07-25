@@ -153,6 +153,7 @@ body {
 <script type="text/javascript" src="application/controllers/AnnotationController.js" ></script>
 <script type="text/javascript" src="application/controllers/AdminController.js" ></script>
 <script type="text/javascript" src="application/controllers/ActivityController.js" ></script>
+<script type="text/javascript" src="application/controllers/SearchController.js" ></script>
 <script type="text/javascript" src="application/controllers/AccountController.js" ></script>
 <script type="text/javascript" src="application/controllers/PhonoController.js" ></script>
 <script type="text/javascript" src="application/controllers/UserDashboardController.js" ></script>
@@ -197,6 +198,7 @@ body {
 <!-- View -->
 <script type="text/javascript" src="application/views/user/UserDashboardView.js"></script>
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
+<script type="text/javascript" src="application/views/search/SearchView.js" ></script>
 <script type="text/javascript" src="application/views/phono/PhonoMenu.js" ></script>
 <script type="text/javascript" src="application/views/account/AccountDetails.js" ></script>
 

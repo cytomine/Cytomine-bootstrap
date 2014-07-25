@@ -57,6 +57,22 @@ class UrlMappings {
             action = [GET:"listResponse"]
         }
 
+        "/api/search-engine.$format"(controller: "searchEngine") {
+            action = [GET:"search"]
+        }
+        "/api/search-result.$format"(controller: "searchEngine") {
+            action = [GET:"result"]
+        }
+
+        "/api/image/$className/$id.$format"(controller:"searchEngine") {
+            action = [GET:"redirectToImageURL"]
+        }
+        "/api/url/$className/$id.$format"(controller:"searchEngine") {
+            action = [GET:"redirectToGoToURL"]
+        }
+
+
+
         "/api/news.$format"(controller:"news") {
             action = [GET:"listNews"]
         }

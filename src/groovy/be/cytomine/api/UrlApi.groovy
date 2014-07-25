@@ -79,8 +79,8 @@ class UrlApi {
         return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.png"
     }
 
-    static def getAnnotationCropWithAnnotationId(Long idAnnotation) {
-        return "${serverUrl()}/api/algoannotation/$idAnnotation/crop.png"
+    static def getAnnotationCropWithAnnotationId(Long idAnnotation, def maxSize = null) {
+        return "${serverUrl()}/api/annotation/$idAnnotation/crop.png" + (maxSize? "?maxSize=$maxSize" :"")
     }
 
     static def getAssociatedImage(Long idAbstractImage, String label, def maxSize) {
@@ -88,7 +88,7 @@ class UrlApi {
     }
 
     static def getThumbImage(Long idAbstractImage, def maxSize) {
-        return "${serverUrl()}/api/abstractimage/$idAbstractImage/thumb.png?maxWidth=$maxSize"
+        return "${serverUrl()}/api/abstractimage/$idAbstractImage/thumb.png?maxSize=$maxSize"
     }
 
     /**

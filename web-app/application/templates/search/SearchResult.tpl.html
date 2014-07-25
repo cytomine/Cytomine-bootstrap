@@ -1,0 +1,24 @@
+<div class="col-12 col-sm-12 col-lg-12">
+    <!---->
+    <h4><%=className%> <%=name%></h4>
+    <div class="row">
+        <div class="col-md-4"><img class="img-responsive" src="/api/image/<%=fullClass%>/<%=id%>.jpg?maxSize=128"/> </div>
+        <div class="col-md-4">
+            <!--Type: <%=className%><br/>-->
+            <!--ID: <%=id%><br/>-->
+            <!--<ul id="matching-result-<%=id%>">-->
+                <!--<%=matching%>-->
+            <!--</ul>-->
+            <table class="table table-condensed">
+                <tbody>
+                <%=matching%>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <br/>
+            <a class="btn btn-default" href="/api/url/<%=fullClass%>/<%=id%>.jpg" role="button">View details »</a></p>
+        </div>
+    </div>
+    <br/>
+</div>

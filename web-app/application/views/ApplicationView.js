@@ -224,9 +224,10 @@ var ApplicationView = Backbone.View.extend({
             "text!application/templates/explorer/ExplorerComponent.tpl.html",
             "text!application/templates/AdminComponent.tpl.html",
             "text!application/templates/activity/ActivityComponent.tpl.html",
-            "text!application/templates/account/AccountComponent.tpl.html"
+            "text!application/templates/account/AccountComponent.tpl.html",
+            "text!application/templates/search/SearchComponent.tpl.html"
         ],
-            function (userDashboardTpl,uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl) {
+            function (userDashboardTpl,uploadTpl, projectTpl, ontologyTpl, explorerTpl, adminTpl, activityTpl, accountTpl,searchTpl) {
 
                 self.components.userdashboard = new Component({
                     el: "#content",
@@ -236,7 +237,14 @@ var ApplicationView = Backbone.View.extend({
                     },
                     divId: "userdashboard"
                 });
-
+                self.components.search = new Component({
+                    el: "#content",
+                    template: _.template(searchTpl, {}),
+                    buttonAttr: {
+                        elButton: "search-button"
+                    },
+                    divId: "search"
+                });
                 self.components.activity = new Component({
                     el: "#content",
                     template: _.template(activityTpl, {}),

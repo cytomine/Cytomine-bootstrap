@@ -212,6 +212,7 @@ class BootstrapUtilsService {
         if (ImageServer.count() > 1) return
 
         (1..10).each { id->
+            log.info "cerate image server $id"
             def IIPImageServer = [className : 'IIPResolver', name : "IIP$id", service : '/image/tile', url : "http://image$id"+".cytomine.be", available : true]
             ImageServer imageServer = new ImageServer(
                     className: IIPImageServer.className,
@@ -228,6 +229,7 @@ class BootstrapUtilsService {
                 }
             }
 
+            log.info "add all storage to IS $id"
             Storage.list().each {
                 new ImageServerStorage(
                         storage : it,

@@ -97,6 +97,11 @@ class IndexService {
             createIndex("user_group", "group_id");
 
             /**
+             * Property
+             */
+            createIndex("property", "domain_ident");
+
+            /**
              * Command
              */
             createIndex("command", "user_id");
