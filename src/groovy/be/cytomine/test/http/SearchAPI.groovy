@@ -15,4 +15,8 @@ class SearchAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/search-engine.json?&expr=${words.join(",")}"
         return doGET(URL, username, password)
     }
+    static def searchResults(List<Long> ids, List<String> words, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/search-result.json?&expr=${words.join(",")}&ids=${ids.join(",")}"
+        return doGET(URL, username, password)
+    }
 }
