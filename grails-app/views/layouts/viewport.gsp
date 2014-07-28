@@ -199,6 +199,8 @@ body {
 <script type="text/javascript" src="application/views/user/UserDashboardView.js"></script>
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
 <script type="text/javascript" src="application/views/search/SearchView.js" ></script>
+<script type="text/javascript" src="application/views/search/SearchResultView.js" ></script>
+
 <script type="text/javascript" src="application/views/phono/PhonoMenu.js" ></script>
 <script type="text/javascript" src="application/views/account/AccountDetails.js" ></script>
 

@@ -1,6 +1,8 @@
-<div class="col-12 col-sm-12 col-lg-12">
+<div class="panel panel-default ">
     <!---->
-    <h4><%=className%> <%=name%></h4>
+    <div class="panel-heading">
+        <h4 class="panel-title"><a href="#tabs-dashboard-21919089"><%=className%> <%=name%></a></h4>
+    </div>
     <div class="row">
         <div class="col-md-4"><img class="img-responsive" src="/api/image/<%=fullClass%>/<%=id%>.jpg?maxSize=128"/> </div>
         <div class="col-md-4">
@@ -9,7 +11,7 @@
             <!--<ul id="matching-result-<%=id%>">-->
                 <!--<%=matching%>-->
             <!--</ul>-->
-            <table class="table table-condensed">
+            <table class="table table-condensed table-bordered">
                 <tbody>
                 <%=matching%>
                 </tbody>

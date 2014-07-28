@@ -1,6 +1,9 @@
-var SearchView = Backbone.View.extend({
+var SearchResultView = Backbone.View.extend({
+    totalSize : null,
+    totalPerPage : null,
+    page : 0,
     initialize: function (options) {
-
+        this.listIds = options.listIds;
     },
     render: function () {
         console.log("render");
