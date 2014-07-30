@@ -35,7 +35,7 @@ abstract class AnnotationSearch extends EngineSearch {
             FROM property property, image_instance ii,${getTable()} as annotation,acl_object_identity as aoi, acl_sid as sid, acl_entry as ae
             WHERE property.domain_class_name like '${getClassName()}'
             ${getRestrictedIdForm("domain_ident")}
-            ${idProject? "AND annotation.project_id = ${idProject}" : ""}
+            ${idProject && !idProject.isEmpty()? "AND annotation.project_id IN (${idProject.join(",")})" : ""}
             AND annotation.id = domain_ident
             AND aoi.object_id_identity = annotation.project_id
             AND sid.sid = '${currentUser.username}'
@@ -53,7 +53,7 @@ abstract class AnnotationSearch extends EngineSearch {
             FROM description description,image_instance ii, ${getTable()} as annotation, acl_object_identity as aoi, acl_sid as sid, acl_entry as ae
             WHERE description.domain_class_name like '${getClassName()}'
             ${getRestrictedIdForm("domain_ident")}
-            ${idProject? "AND annotation.project_id = ${idProject}" : ""}
+            ${idProject && !idProject.isEmpty()? "AND annotation.project_id IN (${idProject.join(",")})" : ""}
             AND annotation.id = domain_ident
             AND aoi.object_id_identity = annotation.project_id
             AND sid.sid = '${currentUser.username}'

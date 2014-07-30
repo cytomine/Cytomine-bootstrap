@@ -24,7 +24,7 @@ class ProjectSearch extends EngineSearch {
     }
 
     public String createRequestOnProperty(List<String> words) {
-        if(idProject) return "" //if inside a project, no need to search in the project table
+        //if(idProject) return "" //if inside a project, no need to search in the project table
             return """
             SELECT property.domain_ident as id, property.domain_class_name as type ${getMatchingValue("property.key || ': ' || property.value")} ${getName("name")}
             FROM property property, project project, acl_object_identity as aoi, acl_sid as sid, acl_entry as ae

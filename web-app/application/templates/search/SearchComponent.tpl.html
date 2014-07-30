@@ -3,31 +3,67 @@
         <div class="panel-heading"  id="projectHeaderActivity">
         </div>
         <div>
-            <p class="text-center">
-                <input type="text" class="search-area"> <button class="btn search-button">Search</button>
-            </p>
-            <div class="btn-group" data-toggle="buttons">
 
-                <label class="btn btn-primary active">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" id="optionShowAll" checked> Show All
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" id="optionShowProject" checked> Only Project
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" id="optionShowImage"> Only Image
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" id="optionShowAnnotation"> Only Annotation
-                </label>
-            </div>
+            <p class="text-center well">
+                <input type="text" class="search-area">
+                <button class="btn btn-primary search-button">Search</button>
+            </p>
 
         </div>
     </div>
-    <div class="search-result">
 
+    <div class="row">
+        <div class="col-md-9">
+            <div class="search-result">
 
+            </div>
+        </div>
+        <div class="col-md-3">
+            <h5>Filter by project</h5>
+            <div id="magicsuggestProjectSearch"></div>
+            <h5>Filter by domain</h5>
+            <div id="domainTypeToShow" class="btn-group" data-toggle="buttons">
 
+                <label class="btn btn-primary active">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionShowAll" checked> Show All
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionShowProject"> Only Project
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="image" id="optionShowImage"> Only Image
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="annotation" id="optionShowAnnotation"> Only Annotation
+                </label>
+            </div>
+            <h5>Search Operator</h5>
+            <div id="operatorSearch" class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionOR" checked> word1 AND word2
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionALL"> word1 OR word2
+                </label>
+            </div>
+            <h5>Where to search</h5>
+            <div id="attributeToseach" class="btn-group" data-toggle="buttons">
+
+                <label class="btn btn-primary active">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionSearchAll" checked> Show All
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionSearchDomain"> Only Domain
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="image" id="optionSearchProperty"> Only Property
+                </label>
+                <label class="btn btn-primary">
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="annotation" id="optionSearchDescription"> Only Description
+                </label>
+            </div>
+        </div>
     </div>
+
 </div>
 

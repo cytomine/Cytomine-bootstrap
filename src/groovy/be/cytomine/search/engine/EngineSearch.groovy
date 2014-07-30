@@ -7,7 +7,7 @@ import be.cytomine.security.SecUser
  */
 abstract class EngineSearch {
 
-    Long idProject
+    List<Long> idProject
     SecUser currentUser
     String operator = "OR"
     boolean extractValue

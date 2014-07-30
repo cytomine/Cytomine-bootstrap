@@ -64,7 +64,11 @@ class SearchEngineTests {
 
 
     void testAnnotationSearch() {
+        Project projectA = createProject("annotation")
 
+        Description descriptionA = createDescriptionForDomain(projectA,"blabla cytomine world")
+
+        Description descriptionA = createDescriptionForDomain(projectA,"blabla cytomine world")
     }
 
     void testImageSearch() {
@@ -72,6 +76,11 @@ class SearchEngineTests {
     }
 
     void testMixSearch() {
+
+    }
+
+
+    void testLimitPerProject() {
 
     }
 
@@ -117,6 +126,21 @@ class SearchEngineTests {
         BasicInstanceBuilder.saveDomain(projectA)
     }
 
+    private UserAnnotation createAnnotation(Project project) {
+        UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,true)
+        return annotation
+    }
+
+    private ImageInstance createImageInstance(Project project) {
+        ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
+        return image
+    }
+
+    private AbstractImage createAbstractImage() {
+        AbstractImage image = BasicInstanceBuilder.getAbstractImageNotExist(true)
+        return image
+    }
+
     private Description createDescriptionForDomain(CytomineDomain domain, String data) {
         Description description = BasicInstanceBuilder.getDescriptionNotExist(domain,true)
         description.data = data
@@ -127,4 +151,6 @@ class SearchEngineTests {
         Property property = new Property(domain: domain, key: 'key '+new Date().getTime(), value:data)
         BasicInstanceBuilder.saveDomain(property)
     }
+
+
 }

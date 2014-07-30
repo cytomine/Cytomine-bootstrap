@@ -33,21 +33,40 @@ class SearchEngineController extends RestController {
 
     //limiter a max 3 mots
 
+    private def extractParams(params) {
+        def allType = ["domain","property","description"]
+
+        def words = []
+        if(params.get("expr")!=null && params.get("expr")!="") {
+            words = params.get("expr").split(",").toList()
+        }
+        def ids = []
+        if(params.get("ids")!=null && params.get("ids")!="") {
+            ids = params.get("ids").split(",").collect{Long.parseLong(it)}
+        }
+        def projects = null
+        if(params.get("projects")!=null && params.get("projects")!="") {
+            projects = params.get("projects").split(",").collect{Long.parseLong(it)}
+        }
+
+        def allDomain = ["project","annotation","image"]
+        if(params.get("domain")!=null && params.get("domain")!="") {
+            allDomain = [params.get("domain")]
+        }
+        return [words:words,ids:ids,domains:allDomain,types:allType,projects:projects]
+    }
+
 
     def result() {
-        def allType = ["domain","property","description"]
-        def allDomain = ["project","annotation","image"]
-        def words = params.get("expr").split(",").toList()
-        def ids = params.get("ids").split(",").collect{Long.parseLong(it)}
-        def finalList = searchEngineService.search2(allType,allDomain,words,null,ids)
+
+        def paramsValue = extractParams(params)
+        def finalList = searchEngineService.search2(paramsValue.types,paramsValue.domains,paramsValue.words,null,paramsValue.ids)
         responseSuccess(finalList)
     }
 
     def search() {
-        def allType = ["domain","property","description"]
-        def allDomain = ["project","annotation","image"]
-        def words = params.get("expr").split(",").toList()
-        def finalList = searchEngineService.search(allType,allDomain,words,"id","desc",null,"AND")
+        def paramsValue = extractParams(params)
+        def finalList = searchEngineService.search(paramsValue.types,paramsValue.domains,paramsValue.words,"id","desc",null,"AND")
         responseSuccess(finalList)
     }
 

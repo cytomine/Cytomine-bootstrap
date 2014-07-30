@@ -15,7 +15,7 @@ class ImageInstanceSearch extends EngineSearch {
             WHERE ii.base_image_id = ai.id
             ${getRestrictedIdForm("ii.id")}
             AND aoi.object_id_identity = ii.project_id
-            ${idProject? "AND ii.project_id = ${idProject}" : ""}
+            ${idProject && !idProject.isEmpty()? "AND ii.project_id IN (${idProject.join(",")})" : ""}
             AND sid.sid = '${currentUser.username}'
             AND ae.acl_object_identity = aoi.id
             AND ae.sid = sid.id
@@ -32,6 +32,7 @@ class ImageInstanceSearch extends EngineSearch {
             WHERE property.domain_class_name like '${ImageInstance.class.name}'
             ${getRestrictedIdForm("property.domain_ident")}
             AND ii.base_image_id = ai.id
+            ${idProject && !idProject.isEmpty()? "AND ii.project_id IN (${idProject.join(",")})" : ""}
             AND property.domain_ident = ii.id
             AND aoi.object_id_identity = ii.project_id
             AND sid.sid = '${currentUser.username}'
@@ -52,6 +53,7 @@ class ImageInstanceSearch extends EngineSearch {
             ${getRestrictedIdForm("description.domain_ident")}
             AND description.domain_ident = ii.id
             AND ii.base_image_id = ai.id
+            ${idProject && !idProject.isEmpty()? "AND ii.project_id IN (${idProject.join(",")})" : ""}
             AND aoi.object_id_identity = ii.project_id
             AND sid.sid = '${currentUser.username}'
             AND ae.acl_object_identity = aoi.id

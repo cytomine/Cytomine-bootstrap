@@ -39,8 +39,13 @@ class SearchEngineService extends ModelService {
 
 
 
-    public def search2(List<String> attributes, List<String> domainType, List<String> words, Long idProject, List<Long> ids) {
+    public def search2(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
         List<ResultSearch> results = []
+        checkConstraint(words)
+        if(ids!=null && ids.isEmpty()) {
+            throw new WrongArgumentException("There is no result!")
+        }
+
         String req = buildSearchRequest(attributes,domainType,words,idProject,true,ids)
         req = req + "\nORDER BY id desc"
 
@@ -68,13 +73,17 @@ class SearchEngineService extends ModelService {
     }
 
 
-    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", Long idProject, String op) {
+    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
         List<ResultSearch> results = []
+        checkConstraint(words)
         String req
         if(op.equals("OR")) {
             req = buildSearchRequest(attributes,domainType,words,idProject, false, null)
         } else {
             //AND
+            if(words.isEmpty()) {
+                throw new WrongArgumentException("Min 1 word!")
+            }
             List<String> requestParts = []
             println "words=$words"
             words.each {
@@ -98,7 +107,24 @@ class SearchEngineService extends ModelService {
         return results
     }
 
-    public String buildSearchRequest(List<String> attributes, List<String> domainType, List<String> words, Long idProject, boolean extractMatchingValue = false, List<Long> ids = null) {
+    private void checkConstraint(List<String> words) {
+        if(words.isEmpty()) {
+            throw new WrongArgumentException("Min 1 word!")
+        }
+        println "words1=${words}"
+        if(words.size()>5) {
+            throw new WrongArgumentException("Max 5 words!")
+        }
+        if(words.find{it.size()<3}) {
+            throw new WrongArgumentException("Each words must have at least 3 characters!")
+        }
+
+        if(words.find{it.contains("*") || it.contains("%") || it.contains("_")}) {
+            throw new WrongArgumentException("Character *, % or _ are not allowed!")
+        }
+    }
+
+    public String buildSearchRequest(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, boolean extractMatchingValue = false, List<Long> ids = null) {
         List<String> requestParts = []
         List<String> domains = domainType.collect{convertToClassName(it)}
 
@@ -106,12 +132,18 @@ class SearchEngineService extends ModelService {
 
         List<EngineSearch> engines = []
 
-        engines << new ProjectSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue : extractMatchingValue)
-        engines << new UserAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-        engines << new AlgoAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-        engines << new ReviewedAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-        engines << new ImageInstanceSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-        engines << new AbstractImageSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+        if(domainType.contains("project")) {
+            engines << new ProjectSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue : extractMatchingValue)
+        }
+        if(domainType.contains("image")) {
+            engines << new ImageInstanceSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+            engines << new AbstractImageSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+        }
+        if(domainType.contains("annotation")) {
+            engines << new UserAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+            engines << new AlgoAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+            engines << new ReviewedAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+        }
 
         engines.each { engine ->
             println "${engine.class.name} ${requestParts.size()}"

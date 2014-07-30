@@ -5,16 +5,50 @@ var SearchView = Backbone.View.extend({
     render: function () {
         console.log("render");
         var self = this;
-        self.doLayout();
+
+        if(window.app.models.projects.length>1) { //don't know why an empty window.app.models.projects has 1 item
+            self.doLayout();
+        } else {
+            window.app.models.projects.fetch({
+                success: function (collection1, response) {
+                    window.app.models.projects = collection1;
+                    self.doLayout();
+                }});
+        }
         return this;
     },
     doLayout: function () {
         console.log("search doLayout");
         var self = this;
+        self.buildSearchCriteria();
+        self.buildDomainCriteria();
+        self.buildProjectCriteria();
+
+
+    },
+    buildSearchCriteria : function() {
+        var self = this;
         $(self.el).find(".search-button").click(function() {
             self.doRequestFirstStep();
         });
-
+    },
+    buildDomainCriteria : function() {
+        var self = this;
+        $(self.el).find("#domainTypeToShow").change(function(it) {
+            self.doRequestFirstStep();
+        });
+    },
+    buildProjectCriteria : function() {
+        $('#magicsuggestProjectSearch').magicSuggest({
+            data: _.map(
+                window.app.models.projects.models,
+                function(item) {return {id:item.id,name:item.get('name')}})
+        });
+    },
+    getDomainCriteria : function() {
+        var val = $('input[name=options]:checked', '#domainTypeToShow').val();
+        if(val=="all") return null;
+        else return val;
     },
     doRequestFirstStep : function() {
         var self = this;
@@ -24,6 +58,12 @@ var SearchView = Backbone.View.extend({
         resultArea.append('<img class="img-responsive center-block" src="images/loadingbig.gif"/></div>');
 
         var criteria = {"expr":words.join(",")};
+
+        var domainCriteria = self.getDomainCriteria();
+        if(domainCriteria!=null) {
+            criteria.domain = domainCriteria;
+        }
+
         criteria.toQueryString = function() {
             var properties = $.extend(true, {}, this);
             properties.toQueryString = undefined;

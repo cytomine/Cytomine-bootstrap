@@ -56,8 +56,9 @@ body {
 <script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
 <link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.9.2.custom.css" />
 <link rel="stylesheet" type="text/css" href="lib/jquery-ui-bootstrap/css/custom-theme/jquery.ui.1.9.2.ie.css" />
-<link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>
 
+%{--<link rel='stylesheet' href='lib/magicsuggest/magicsuggest-1.2.7-min.css'/>--}%
+%{--<script type="text/javascript" src="lib/magicsuggest/magicsuggest-1.2.7-min.js"></script>--}%
 
 <script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
 
@@ -96,6 +97,9 @@ body {
 
 <script src="lib/ckeditor/ckeditor.js"></script>
 
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet">
+<script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
+
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM}">
 
 <!-- Core Libs -->
@@ -124,7 +128,10 @@ body {
 
 
 
-<script type="text/javascript" src="lib/magicsuggest/magicsuggest-1.2.7-min.js"></script>
+
+
+
+
 
 <script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
 <script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
