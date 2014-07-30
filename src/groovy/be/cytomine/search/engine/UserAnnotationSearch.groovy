@@ -1,7 +1,6 @@
 package be.cytomine.search.engine
 
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.project.Project
 
 /**
  * Created by lrollus on 7/22/14.

@@ -2,6 +2,7 @@ package be.cytomine.api.search
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.InvalidRequestException
+import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
@@ -34,39 +35,44 @@ class SearchEngineController extends RestController {
     //limiter a max 3 mots
 
     private def extractParams(params) {
-        def allType = ["domain","property","description"]
+
 
         def words = []
-        if(params.get("expr")!=null && params.get("expr")!="") {
+        if (params.get("expr") != null && params.get("expr") != "") {
             words = params.get("expr").split(",").toList()
         }
         def ids = []
-        if(params.get("ids")!=null && params.get("ids")!="") {
-            ids = params.get("ids").split(",").collect{Long.parseLong(it)}
+        if (params.get("ids") != null && params.get("ids") != "") {
+            ids = params.get("ids").split(",").collect { Long.parseLong(it) }
         }
         def projects = null
-        if(params.get("projects")!=null && params.get("projects")!="") {
-            projects = params.get("projects").split(",").collect{Long.parseLong(it)}
+        if (params.get("projects") != null && params.get("projects") != "") {
+            projects = params.get("projects").split(",").collect { Long.parseLong(it) }
         }
 
-        def allDomain = ["project","annotation","image"]
-        if(params.get("domain")!=null && params.get("domain")!="") {
+        def allDomain = ["project", "annotation", "image"]
+        if (params.get("domain") != null && params.get("domain") != "") {
             allDomain = [params.get("domain")]
         }
-        return [words:words,ids:ids,domains:allDomain,types:allType,projects:projects]
+
+        def allType = ["domain", "property", "description"]
+        if (params.get("types") != null && params.get("types") != "") {
+            allType = [params.get("types")]
+        }
+        return [words: words, ids: ids, domains: allDomain, types: allType, projects: projects]
     }
 
 
     def result() {
 
         def paramsValue = extractParams(params)
-        def finalList = searchEngineService.search2(paramsValue.types,paramsValue.domains,paramsValue.words,null,paramsValue.ids)
+        def finalList = searchEngineService.search2(paramsValue.types, paramsValue.domains, paramsValue.words, paramsValue.projects, paramsValue.ids)
         responseSuccess(finalList)
     }
 
     def search() {
         def paramsValue = extractParams(params)
-        def finalList = searchEngineService.search(paramsValue.types,paramsValue.domains,paramsValue.words,"id","desc",null,"AND")
+        def finalList = searchEngineService.search(paramsValue.types, paramsValue.domains, paramsValue.words, "id", "desc", paramsValue.projects, "AND")
         responseSuccess(finalList)
     }
 
@@ -75,13 +81,13 @@ class SearchEngineController extends RestController {
         String className = params.get('className')
         Long id = params.long('id')
         String url = null
-        if(className==Project.class.name) {
+        if (className == Project.class.name) {
             url = UrlApi.getDashboardURL(57)
-        } else if(className==ImageInstance.class.name) {
-            url = UrlApi.getBrowseImageInstanceURL(ImageInstance.read(id).project.id,id)
-        } else if(className==UserAnnotation.class.name || className==AlgoAnnotation.class.name || className==ReviewedAnnotation.class.name) {
+        } else if (className == ImageInstance.class.name) {
+            url = UrlApi.getBrowseImageInstanceURL(ImageInstance.read(id).project.id, id)
+        } else if (className == UserAnnotation.class.name || className == AlgoAnnotation.class.name || className == ReviewedAnnotation.class.name) {
             AnnotationDomain domain = AnnotationDomain.getAnnotationDomain(id)
-            url = UrlApi.getAnnotationURL(domain.project.id,domain.image.id,domain.id)
+            url = UrlApi.getAnnotationURL(domain.project.id, domain.image.id, domain.id)
         }
         redirect(url: url)
 
@@ -92,24 +98,24 @@ class SearchEngineController extends RestController {
         //http://localhost:8080/searchEngine/redirectToImageURL?className=be.cytomine.image.ImageInstance&id=14697772&max=64
         String className = params.get('className')
         Long id = params.long('id')
-        Long max = params.long("maxSize",256l)
+        Long max = params.long("maxSize", 256l)
         String url = null
-        if(className==ImageInstance.class.name) {
-            url = UrlApi.getThumbImage(ImageInstance.read(id).baseImage.id,max)
-        } else if(className==AbstractImage.class.name) {
-            url = UrlApi.getThumbImage(AbstractImage.read(id).id,max)
-        }else if(className==Project.class.name) {
+        if (className == ImageInstance.class.name) {
+            url = UrlApi.getThumbImage(ImageInstance.read(id).baseImage.id, max)
+        } else if (className == AbstractImage.class.name) {
+            url = UrlApi.getThumbImage(AbstractImage.read(id).id, max)
+        } else if (className == Project.class.name) {
             List<ImageInstance> images = imageInstanceService.list(Project.read(id))
-            images = images.sort {it.id}
-            if(!images.isEmpty()) {
-                url = UrlApi.getThumbImage(images.first().baseImage.id,max)
+            images = images.sort { it.id }
+            if (!images.isEmpty()) {
+                url = UrlApi.getThumbImage(images.first().baseImage.id, max)
             }
-        } else if(className==UserAnnotation.class.name || className==AlgoAnnotation.class.name || className==ReviewedAnnotation.class.name) {
-            url = UrlApi.getAnnotationCropWithAnnotationId(id,max)
+        } else if (className == UserAnnotation.class.name || className == AlgoAnnotation.class.name || className == ReviewedAnnotation.class.name) {
+            url = UrlApi.getAnnotationCropWithAnnotationId(id, max)
         }
 
-        if(!url) {
-           url = "images/cytomine.jpg"
+        if (!url) {
+            url = "images/cytomine.jpg"
         }
         redirect(url: url)
     }

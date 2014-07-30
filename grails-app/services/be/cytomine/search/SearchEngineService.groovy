@@ -31,22 +31,22 @@ class SearchEngineService extends ModelService {
     def cytomineService
     def currentRoleServiceProxy
 
-    static Map<String,String> className = [
-            "project":[Project.class.name],
+    static Map<String, String> className = [
+            "project": [Project.class.name],
             "image": [ImageInstance.class.name, AbstractImage.class.name],
-            "annotation" : [UserAnnotation.class.name,AlgoAnnotation.class.name, ReviewedAnnotation.class.name]
+            "annotation": [UserAnnotation.class.name, AlgoAnnotation.class.name, ReviewedAnnotation.class.name]
     ]
 
 
-
-    public def search2(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
+    public
+    def search2(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
         List<ResultSearch> results = []
         checkConstraint(words)
-        if(ids!=null && ids.isEmpty()) {
+        if (ids != null && ids.isEmpty()) {
             throw new WrongArgumentException("There is no result!")
         }
 
-        String req = buildSearchRequest(attributes,domainType,words,idProject,true,ids)
+        String req = buildSearchRequest(attributes, domainType, words, idProject, true, ids)
         req = req + "\nORDER BY id desc"
 
         def sql = new Sql(dataSource)
@@ -62,10 +62,10 @@ class SearchEngineService extends ModelService {
             String value = it[2]
             String type = it[3] //property, description,...
             String name = it[4]
-            if(lastDomainId!=id) {
-                results << [id:id,className:className,name:name,matching: [[value:value,type:type]]]
+            if (lastDomainId != id) {
+                results << [id: id, className: className, name: name, matching: [[value: value, type: type]]]
             } else {
-                results.last().matching.add([value:value,type:type])
+                results.last().matching.add([value: value, type: type])
             }
             lastDomainId = it.id
         }
@@ -73,22 +73,23 @@ class SearchEngineService extends ModelService {
     }
 
 
-    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
+    public
+    def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
         List<ResultSearch> results = []
         checkConstraint(words)
         String req
-        if(op.equals("OR")) {
-            req = buildSearchRequest(attributes,domainType,words,idProject, false, null)
+        if (op.equals("OR")) {
+            req = buildSearchRequest(attributes, domainType, words, idProject, false, null)
         } else {
             //AND
-            if(words.isEmpty()) {
+            if (words.isEmpty()) {
                 throw new WrongArgumentException("Min 1 word!")
             }
             List<String> requestParts = []
             println "words=$words"
             words.each {
                 println "doFirstRequest:${it}"
-                requestParts << "("+buildSearchRequest(attributes,domainType,[it],idProject,false, null) + ")"
+                requestParts << "(" + buildSearchRequest(attributes, domainType, [it], idProject, false, null) + ")"
             }
             println "requestParts=${requestParts.size()}"
             req = requestParts.join("\nINTERSECT\n")
@@ -102,63 +103,63 @@ class SearchEngineService extends ModelService {
         println "################################"
 
         sql.eachRow(req) {
-            results << [id:it[0],className:it[1]]
+            results << [id: it[0], className: it[1]]
         }
         return results
     }
 
     private void checkConstraint(List<String> words) {
-        if(words.isEmpty()) {
+        if (words.isEmpty()) {
             throw new WrongArgumentException("Min 1 word!")
         }
         println "words1=${words}"
-        if(words.size()>5) {
+        if (words.size() > 5) {
             throw new WrongArgumentException("Max 5 words!")
         }
-        if(words.find{it.size()<3}) {
+        if (words.find { it.size() < 3 }) {
             throw new WrongArgumentException("Each words must have at least 3 characters!")
         }
 
-        if(words.find{it.contains("*") || it.contains("%") || it.contains("_")}) {
+        if (words.find { it.contains("*") || it.contains("%") || it.contains("_") }) {
             throw new WrongArgumentException("Character *, % or _ are not allowed!")
         }
     }
 
     public String buildSearchRequest(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, boolean extractMatchingValue = false, List<Long> ids = null) {
         List<String> requestParts = []
-        List<String> domains = domainType.collect{convertToClassName(it)}
+        List<String> domains = domainType.collect { convertToClassName(it) }
 
         SecUser currentUser = cytomineService.currentUser
 
         List<EngineSearch> engines = []
 
-        if(domainType.contains("project")) {
-            engines << new ProjectSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue : extractMatchingValue)
+        if (domainType.contains("project")) {
+            engines << new ProjectSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
         }
-        if(domainType.contains("image")) {
-            engines << new ImageInstanceSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-            engines << new AbstractImageSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+        if (domainType.contains("image")) {
+            engines << new ImageInstanceSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
+            engines << new AbstractImageSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
         }
-        if(domainType.contains("annotation")) {
-            engines << new UserAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-            engines << new AlgoAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
-            engines << new ReviewedAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids,extractValue : extractMatchingValue)
+        if (domainType.contains("annotation")) {
+            engines << new UserAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
+            engines << new AlgoAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
+            engines << new ReviewedAnnotationSearch(currentUser: currentUser, idProject: idProject, restrictedIds: ids, extractValue: extractMatchingValue)
         }
 
         engines.each { engine ->
             println "${engine.class.name} ${requestParts.size()}"
-            if(attributes.contains("domain")) {
+            if (attributes.contains("domain")) {
                 requestParts << engine.createRequestOnAttributes(words)
             }
-            if(attributes.contains("property")) {
+            if (attributes.contains("property")) {
                 requestParts << engine.createRequestOnProperty(words)
             }
-            if(attributes.contains("description")) {
+            if (attributes.contains("description")) {
                 requestParts << engine.createRequestOnDescription(words)
             }
         }
 
-        requestParts = requestParts.findAll{it!=""}
+        requestParts = requestParts.findAll { it != "" }
 
         println requestParts.size()
 
@@ -169,7 +170,7 @@ class SearchEngineService extends ModelService {
 
     private List<String> convertToClassName(String domainName) {
         List<String> classNames = className.get(domainName)
-        if(!classNames) {
+        if (!classNames) {
             throw new WrongArgumentException("Class $domainName is not supported!")
         }
         return classNames

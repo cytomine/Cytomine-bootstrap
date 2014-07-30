@@ -9,15 +9,15 @@ class ResultSearch {
     List<String> name
     Date date
 
-    public ResultSearch(Long id,String className,List<String> name,Date date) {
+    public ResultSearch(Long id, String className, List<String> name, Date date) {
         this.id = id
         this.className = className
         this.name = name
         this.date = date
     }
 
-    public void addNewResult(List<String> name,Date date) {
-        if(date && this.date && date.getTime()>this.date.getTime()) {
+    public void addNewResult(List<String> name, Date date) {
+        if (date && this.date && date.getTime() > this.date.getTime()) {
             this.date = date;
         }
         this.name.addAll(name)
@@ -25,31 +25,31 @@ class ResultSearch {
 
     public static void main(String[] args) {
 
-        List<ResultSearch> results1 = [new ResultSearch(1,"dd",["ddd"],null),new ResultSearch(2,"dd",["ddd"],null),new ResultSearch(3,"dd",["ddd"],null)]
-        List<ResultSearch> results2 = [new ResultSearch(1,"dd",["ddd"],null),new ResultSearch(2,"dd",["xxx"],null),new ResultSearch(4,"dd",["ddd"],null)]
+        List<ResultSearch> results1 = [new ResultSearch(1, "dd", ["ddd"], null), new ResultSearch(2, "dd", ["ddd"], null), new ResultSearch(3, "dd", ["ddd"], null)]
+        List<ResultSearch> results2 = [new ResultSearch(1, "dd", ["ddd"], null), new ResultSearch(2, "dd", ["xxx"], null), new ResultSearch(4, "dd", ["ddd"], null)]
 
-        List<List<ResultSearch>> all = [results1,results2]
+        List<List<ResultSearch>> all = [results1, results2]
 
         List<ResultSearch> finalList = []
 
         all.first().each { result ->
             boolean presentInEach = true
             all.eachWithIndex { resultComp, index ->
-                if(index!=0) {
+                if (index != 0) {
                     boolean find = false
                     resultComp.each { res ->
                         println result.id
 
-                        if(res.id == result.id) {
-                            result.addNewResult(res.name,res.date)
+                        if (res.id == result.id) {
+                            result.addNewResult(res.name, res.date)
                             find = true
                         }
 
                     }
-                    if(!find) presentInEach = false
+                    if (!find) presentInEach = false
                 }
             }
-            if(presentInEach) {
+            if (presentInEach) {
                 finalList << result
             }
         }
@@ -79,7 +79,7 @@ class ResultSearch {
     }
 
     public Map result() {
-        return [id:id,name:name,className:className,date:date]
+        return [id: id, name: name, className: className, date: date]
     }
 
     public String toString() { return this.id + " " + this.name }

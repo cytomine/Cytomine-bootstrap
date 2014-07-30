@@ -244,6 +244,16 @@ class BasicInstanceBuilder {
         save ? BasicInstanceBuilder.saveDomain(nestedImage) : BasicInstanceBuilder.checkDomain(nestedImage)
     }
 
+    static AlgoAnnotation getAlgoAnnotationNotExist(Project project, boolean save = false) {
+        def annotation = new AlgoAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: getImageInstanceNotExist(project,true),
+                user: getUserJob(),
+                project:project
+        )
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
+
     static AlgoAnnotation getAlgoAnnotationNotExist(ImageInstance image, boolean save = false) {
         def annotation = new AlgoAnnotation(
                 location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
@@ -307,6 +317,15 @@ class BasicInstanceBuilder {
     static AlgoAnnotationTerm getAlgoAnnotationTerm(Job job = getJob(), UserJob user = getUserJob(),boolean useAlgoAnnotation = false) {
         def annotation = (useAlgoAnnotation? saveDomain(getAlgoAnnotationNotExist()) :  saveDomain(getUserAnnotationNotExist()))
         getAlgoAnnotationTerm(job,annotation,user)
+    }
+
+    //getAlgoAnnotationTermForAlgoAnnotation
+    static AlgoAnnotationTerm getAlgoAnnotationTermNotExist(AnnotationDomain annotation, Term term,boolean save = false) {
+        Job job = getJob()
+        UserJob userJob = getUserJob()
+        def algoannotationTerm = new AlgoAnnotationTerm(term:term,userJob:userJob, expectedTerm: term, rate:1d)
+        algoannotationTerm.setAnnotation(annotation)
+        save ? saveDomain(algoannotationTerm) : checkDomain(algoannotationTerm)
     }
 
     //getAlgoAnnotationTermForAlgoAnnotation
@@ -410,6 +429,21 @@ class BasicInstanceBuilder {
          annotation
      }
 
+    static ReviewedAnnotation getReviewedAnnotationNotExist(Project project, boolean save = false) {
+        def basedAnnotation = saveDomain(getUserAnnotationNotExist())
+
+        def annotation = new ReviewedAnnotation(
+                location: new WKTReader().read("POLYGON ((1983 2168, 2107 2160, 2047 2074, 1983 2168))"),
+                image: getImageInstanceNotExist(project,true),
+                user: User.findByUsername(Infos.SUPERADMINLOGIN),
+                project:project,
+                status : 0,
+                reviewUser: User.findByUsername(Infos.SUPERADMINLOGIN)
+        )
+        annotation.putParentAnnotation(basedAnnotation)
+        save ? saveDomain(annotation) : checkDomain(annotation)
+    }
+
     static ReviewedAnnotation getReviewedAnnotationNotExist(ImageInstance image, boolean save = false) {
         def basedAnnotation = saveDomain(getUserAnnotationNotExist())
 
@@ -453,6 +487,12 @@ class BasicInstanceBuilder {
         def term = getTermNotExist()
         term.ontology = annotation.project.ontology
         saveDomain(term)
+        def user = User.findByUsername(Infos.SUPERADMINLOGIN)
+        def annotationTerm = new AnnotationTerm(userAnnotation:annotation,term:term,user:user)
+        save ? saveDomain(annotationTerm) : checkDomain(annotationTerm)
+    }
+
+    static AnnotationTerm getAnnotationTermNotExist(UserAnnotation annotation,Term term,boolean save=false) {
         def user = User.findByUsername(Infos.SUPERADMINLOGIN)
         def annotationTerm = new AnnotationTerm(userAnnotation:annotation,term:term,user:user)
         save ? saveDomain(annotationTerm) : checkDomain(annotationTerm)

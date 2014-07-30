@@ -11,10 +11,12 @@ abstract class EngineSearch {
     SecUser currentUser
     String operator = "OR"
     boolean extractValue
-    List<Long> restrictedIds =  null
+    List<Long> restrictedIds = null
 
     public abstract String createRequestOnAttributes(List<String> words)
+
     public abstract String createRequestOnProperty(List<String> words)
+
     public abstract String createRequestOnDescription(List<String> words)
 
     public String formatCriteriaToWhere(List<String> words, String column) {
@@ -31,25 +33,25 @@ abstract class EngineSearch {
     }
 
     public String getMatchingValue(String column) {
-        if(!extractValue) {
+        if (!extractValue) {
             return ""
         }
 
         String type = "domain"
-        if(column.contains("description")) {
+        if (column.contains("description")) {
             type = "description"
-        } else if(column.contains("property")) {
+        } else if (column.contains("property")) {
             type = "property"
         }
         return ", $column as value, '$type' as type"
     }
 
     public String getRestrictedIdForm(String column) {
-        return (restrictedIds==null? "" : "AND $column IN (${restrictedIds.join(",")})")
+        return (restrictedIds == null ? "" : "AND $column IN (${restrictedIds.join(",")})")
     }
 
     public String getName(String column) {
-        if(!extractValue) {
+        if (!extractValue) {
             return ""
         }
         return ", $column as name"
