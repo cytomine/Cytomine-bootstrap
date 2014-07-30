@@ -1,11 +1,11 @@
 <div id="search" style="display: none;padding-top: 10px;" class="container-100">
-    <div class="panel panel-default">
+    <div class="well">
         <div class="panel-heading"  id="projectHeaderActivity">
         </div>
         <div>
 
             <p class="text-center well">
-                <input type="text" class="search-area">
+                <input size="50" type="text" class="search-area">
                 <button class="btn btn-primary search-button">Search</button>
             </p>
 
@@ -18,7 +18,8 @@
 
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 well">
+
             <h5>Filter by project</h5>
             <div id="magicsuggestProjectSearch"></div>
             <h5>Filter by domain</h5>
@@ -37,29 +38,29 @@
                     <input style="background-color: #DDDDDD;" type="radio" name="options" value="annotation" id="optionShowAnnotation"> Only Annotation
                 </label>
             </div>
-            <h5>Search Operator</h5>
-            <div id="operatorSearch" class="btn-group" data-toggle="buttons">
-                <label class="btn btn-primary active">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionOR" checked> word1 AND word2
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionALL"> word1 OR word2
-                </label>
-            </div>
+            <!--<h5>Search Operator</h5>-->
+            <!--<div id="operatorSearch" class="btn-group" data-toggle="buttons">-->
+                <!--<label class="btn btn-primary active">-->
+                    <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionOR" checked> word1 AND word2-->
+                <!--</label>-->
+                <!--<label class="btn btn-primary">-->
+                    <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionALL"> word1 OR word2-->
+                <!--</label>-->
+            <!--</div>-->
             <h5>Where to search</h5>
-            <div id="attributeToseach" class="btn-group" data-toggle="buttons">
+            <div id="attributeTosearch" class="btn-group" data-toggle="buttons">
 
                 <label class="btn btn-primary active">
                     <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionSearchAll" checked> Show All
                 </label>
                 <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionSearchDomain"> Only Domain
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="domain" id="optionSearchDomain"> Only Domain
                 </label>
                 <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="image" id="optionSearchProperty"> Only Property
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="property" id="optionSearchProperty"> Only Property
                 </label>
                 <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="annotation" id="optionSearchDescription"> Only Description
+                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="description" id="optionSearchDescription"> Only Description
                 </label>
             </div>
         </div>

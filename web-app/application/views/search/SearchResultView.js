@@ -36,12 +36,14 @@ var SearchResultView = Backbone.View.extend({
             $(self.el).empty();
             $(self.el).append(self.resultTplsList);
             //add pagination button TOP
-            self.initPagination();
+            self.initPagination("#pagination-search-top");
+            self.initPagination("#pagination-search-bottom");
             var results = data2.collection;
             self.buildResultsView(results);
 
-        }).fail(function (json) {
-                console.log("failed! " + json)
+        }).fail(function (data) {
+                $(self.el).empty();
+                $(self.el).append('<div class="alert alert-danger" role="alert">'+data.responseJSON.errors+'</div>');
             });
 
 
@@ -104,13 +106,16 @@ var SearchResultView = Backbone.View.extend({
     },
     buildResultsView : function(results) {
         var self = this;
+
+        $(self.el).find("#result-size").empty();
+        $(self.el).find("#result-size").append("There are "+self.totalSize +" results");
         _.each(results,function(result) {
             console.log($(self.el).find(".result-box"));
             $(self.el).find(".search-result").append(self.buildItemBox(result,self.words));
         })
     },
 
-    initPagination : function() {
+    initPagination : function(paginateLocation) {
         var self = this;
         var nbPages = Math.ceil(self.totalSize/self.totalPerPage);
         console.log("initPagination="+nbPages);
@@ -119,9 +124,9 @@ var SearchResultView = Backbone.View.extend({
         }
 
         var paginationTpl = '<div  id="pagination-search" style="margin-left: 10px;"><ul class="pagination" style="text-align: center;"></ul></div>';
-        $(self.el).find("#pagination-search-top").append(paginationTpl);
+        $(self.el).find(paginateLocation).append(paginationTpl);
         var className = (self.page == 0) ? "prev disabled" : "";
-        var $pagination = $(self.el).find("#pagination-search").find("ul");
+        var $pagination = $(self.el).find(paginateLocation).find("#pagination-search").find("ul");
         var pageLink = _.template("<li class='<%= className %>'><a data-page='<%= page %>' href='#'>&larr; Previous</a></li>", { className: className, page: self.page - 1});
         $pagination.append(pageLink);
         var shiftUp = (self.page - self.pagination_window < 0) ? Math.abs(self.page - self.pagination_window) : 0;

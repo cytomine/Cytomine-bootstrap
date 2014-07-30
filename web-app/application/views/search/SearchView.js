@@ -1,4 +1,6 @@
 var SearchView = Backbone.View.extend({
+    projects : null,
+    suggestProject : null,
     initialize: function (options) {
 
     },
@@ -22,6 +24,7 @@ var SearchView = Backbone.View.extend({
         var self = this;
         self.buildSearchCriteria();
         self.buildDomainCriteria();
+        self.buildTypeCriteria();
         self.buildProjectCriteria();
 
 
@@ -38,11 +41,22 @@ var SearchView = Backbone.View.extend({
             self.doRequestFirstStep();
         });
     },
+    buildTypeCriteria : function() {
+        var self = this;
+        $(self.el).find("#attributeTosearch").change(function(it) {
+            self.doRequestFirstStep();
+        });
+    },
     buildProjectCriteria : function() {
-        $('#magicsuggestProjectSearch').magicSuggest({
+        var self = this;
+        self.suggestProject = $(self.el).find('#magicsuggestProjectSearch').magicSuggest({
             data: _.map(
                 window.app.models.projects.models,
                 function(item) {return {id:item.id,name:item.get('name')}})
+        });
+        $(self.suggestProject).on('selectionchange', function(e,m){
+            self.projects = this.getValue();
+            self.doRequestFirstStep();
         });
     },
     getDomainCriteria : function() {
@@ -50,10 +64,16 @@ var SearchView = Backbone.View.extend({
         if(val=="all") return null;
         else return val;
     },
+    getTypeCriteria : function() {
+        var val = $('input[name=options]:checked', '#attributeTosearch').val();
+        if(val=="all") return null;
+        else return val;
+    },
     doRequestFirstStep : function() {
         var self = this;
         var resultArea = $(self.el).find(".search-result");
         var words = self.extractWordsFromQueryStr($(self.el).find(".search-area").val());
+        if(words.length==0) return;
         resultArea.empty();
         resultArea.append('<img class="img-responsive center-block" src="images/loadingbig.gif"/></div>');
 
@@ -63,7 +83,14 @@ var SearchView = Backbone.View.extend({
         if(domainCriteria!=null) {
             criteria.domain = domainCriteria;
         }
-
+        var typeCriteria = self.getTypeCriteria();
+        if(typeCriteria!=null) {
+            criteria.types = typeCriteria;
+        }
+        var projectsCriteria = self.projects;
+        if(projectsCriteria!=null) {
+            criteria.projects = projectsCriteria;
+        }
         criteria.toQueryString = function() {
             var properties = $.extend(true, {}, this);
             properties.toQueryString = undefined;
@@ -73,15 +100,20 @@ var SearchView = Backbone.View.extend({
 
             var results = data.collection;
             var ids = _.pluck(results, 'id');
-            var thumb = new SearchResultView({
-                listIds: ids,
-                criteria: criteria,
-                words : words,
-                el : resultArea
-            }).render();
-
-        }).fail(function (json) {
-            console.log("failed! " + json)
+            if(ids.length>0) {
+                var thumb = new SearchResultView({
+                    listIds: ids,
+                    criteria: criteria,
+                    words : words,
+                    el : resultArea
+                }).render();
+            } else {
+                resultArea.empty();
+                resultArea.append('<div class="alert alert-warning" role="alert">No result found!</div>');
+            }
+        }).fail(function (data) {
+                resultArea.empty();
+                resultArea.append('<div class="alert alert-danger" role="alert">'+data.responseJSON.errors+'</div>');
         });
     },
     refresh : function(project) {
