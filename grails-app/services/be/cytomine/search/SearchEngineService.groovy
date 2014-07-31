@@ -1,5 +1,6 @@
 package be.cytomine.search
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
@@ -63,7 +64,7 @@ class SearchEngineService extends ModelService {
             String type = it[3] //property, description,...
             String name = it[4]
             if (lastDomainId != id) {
-                results << [id: id, className: className, name: name, matching: [[value: value, type: type]]]
+                results << [id: id, className: className, url: getGoToURL(id,className),name: name, matching: [[value: value, type: type]]]
             } else {
                 results.last().matching.add([value: value, type: type])
             }
@@ -72,9 +73,20 @@ class SearchEngineService extends ModelService {
         return results
     }
 
+    private static String getGoToURL(Long id, String className) {
+        String url = null
+        if (className == Project.class.name) {
+            url = UrlApi.getDashboardURL(id)
+        } else if (className == ImageInstance.class.name) {
+            url = UrlApi.getBrowseImageInstanceURL(ImageInstance.read(id).project.id, id)
+        } else if (className == UserAnnotation.class.name || className == AlgoAnnotation.class.name || className == ReviewedAnnotation.class.name) {
+            AnnotationDomain domain = AnnotationDomain.getAnnotationDomain(id)
+            url = UrlApi.getAnnotationURL(domain.project.id, domain.image.id, domain.id)
+        }
+        return url
+    }
 
-    public
-    def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
+    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
         List<ResultSearch> results = []
         checkConstraint(words)
         String req

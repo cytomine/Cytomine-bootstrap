@@ -68,7 +68,7 @@ var SearchResultView = Backbone.View.extend({
             matchinStr = matchinStr + "<tr><td>"+match.type+"</td><td>"+ self.hightlightMatching(self.formatMatchingValue(words,match.value,match.type),words) + "</td></tr>";
         });
 
-        return _.template(self.resultTpls,{id:result.id,name:result.name,fullClass: result.className,className:self.extractClassName(result.className), matching:matchinStr});
+        return _.template(self.resultTpls,{id:result.id,name:result.name,url:result.url,fullClass: result.className,className:self.extractClassName(result.className), matching:matchinStr});
 
     },
     extractClassName : function(fullClass) {

@@ -26,40 +26,11 @@ class SearchEngineController extends RestController {
 
     def imageInstanceService
 
-    //Faire REQ ID avec INTERSECT => OK
 
-    //Supporter le ""
-
-    //limiter a des mots d'au moins 3 lettres
-
-    //limiter a max 3 mots
-
-    private def extractParams(params) {
-
-
-        def words = []
-        if (params.get("expr") != null && params.get("expr") != "") {
-            words = params.get("expr").split(",").toList()
-        }
-        def ids = []
-        if (params.get("ids") != null && params.get("ids") != "") {
-            ids = params.get("ids").split(",").collect { Long.parseLong(it) }
-        }
-        def projects = null
-        if (params.get("projects") != null && params.get("projects") != "") {
-            projects = params.get("projects").split(",").collect { Long.parseLong(it) }
-        }
-
-        def allDomain = ["project", "annotation", "image"]
-        if (params.get("domain") != null && params.get("domain") != "") {
-            allDomain = [params.get("domain")]
-        }
-
-        def allType = ["domain", "property", "description"]
-        if (params.get("types") != null && params.get("types") != "") {
-            allType = [params.get("types")]
-        }
-        return [words: words, ids: ids, domains: allDomain, types: allType, projects: projects]
+    def search() {
+        def paramsValue = extractParams(params)
+        def finalList = searchEngineService.search(paramsValue.types, paramsValue.domains, paramsValue.words, "id", "desc", paramsValue.projects, "AND")
+        responseSuccess(finalList)
     }
 
 
@@ -70,28 +41,7 @@ class SearchEngineController extends RestController {
         responseSuccess(finalList)
     }
 
-    def search() {
-        def paramsValue = extractParams(params)
-        def finalList = searchEngineService.search(paramsValue.types, paramsValue.domains, paramsValue.words, "id", "desc", paramsValue.projects, "AND")
-        responseSuccess(finalList)
-    }
 
-    public String redirectToGoToURL() {
-        //http://localhost:8080/searchEngine/buildGotoLink?className=be.cytomine.project.Project&id=57
-        String className = params.get('className')
-        Long id = params.long('id')
-        String url = null
-        if (className == Project.class.name) {
-            url = UrlApi.getDashboardURL(57)
-        } else if (className == ImageInstance.class.name) {
-            url = UrlApi.getBrowseImageInstanceURL(ImageInstance.read(id).project.id, id)
-        } else if (className == UserAnnotation.class.name || className == AlgoAnnotation.class.name || className == ReviewedAnnotation.class.name) {
-            AnnotationDomain domain = AnnotationDomain.getAnnotationDomain(id)
-            url = UrlApi.getAnnotationURL(domain.project.id, domain.image.id, domain.id)
-        }
-        redirect(url: url)
-
-    }
 
     public String redirectToImageURL() {
         //http://localhost:8080/searchEngine/buildGotoLink?className=be.cytomine.project.Project&id=57
@@ -118,5 +68,32 @@ class SearchEngineController extends RestController {
             url = "images/cytomine.jpg"
         }
         redirect(url: url)
+    }
+
+
+    private def extractParams(params) {
+        def words = []
+        if (params.get("expr") != null && params.get("expr") != "") {
+            words = params.get("expr").split(",").toList()
+        }
+        def ids = []
+        if (params.get("ids") != null && params.get("ids") != "") {
+            ids = params.get("ids").split(",").collect { Long.parseLong(it) }
+        }
+        def projects = null
+        if (params.get("projects") != null && params.get("projects") != "") {
+            projects = params.get("projects").split(",").collect { Long.parseLong(it) }
+        }
+
+        def allDomain = ["project", "annotation", "image"]
+        if (params.get("domain") != null && params.get("domain") != "") {
+            allDomain = [params.get("domain")]
+        }
+
+        def allType = ["domain", "property", "description"]
+        if (params.get("types") != null && params.get("types") != "") {
+            allType = [params.get("types")]
+        }
+        return [words: words, ids: ids, domains: allDomain, types: allType, projects: projects]
     }
 }
