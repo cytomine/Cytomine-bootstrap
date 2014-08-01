@@ -93,4 +93,35 @@ class CustomResponseDoc {
     ])
     static def search
 
+
+    @RestApiObjectField(description = "Response for search request v2 (STEP 1)")
+    @RestApiObjectFields(params=[
+    @RestApiObjectField(apiFieldName = "id", description = "Domain id",allowedType = "long",useForCreation = false),
+    @RestApiObjectField(apiFieldName = "className", description = "Domain class name",allowedType = "string",useForCreation = false),
+    ])
+    static def search_engine_step1
+
+    @RestApiObjectField(description = "Response for search request v2 (STEP 2)")
+    @RestApiObjectFields(params=[
+    @RestApiObjectField(apiFieldName = "id", description = "Domain id",allowedType = "long",useForCreation = false),
+    @RestApiObjectField(apiFieldName = "className", description = "Domain class name",allowedType = "string",useForCreation = false),
+    @RestApiObjectField(apiFieldName = "url", description = "URL to go to this resource on the webapp",allowedType = "string",useForCreation = false),
+    @RestApiObjectField(apiFieldName = "name", description = "The name of the resource (could be: name, filename, term,...)",allowedType = "string",useForCreation = false),
+    @RestApiObjectField(apiFieldName = "matching", description = "Domain data that match the request words (domain attribute, property, description,...)",allowedType = "List<Map>",useForCreation = false),
+    ])
+    static def search_engine_step2
+
+
+
+//    "id": 93251967,
+//    "className": "be.cytomine.ontology.UserAnnotation",
+//    "url": "http://localhost:8080/#tabs-image-16623-92923499-93251967",
+//    "name": "93251967",
+//    "matching":
+//    [
+//    {
+//        "value": "pwet: Bota",
+//        "type": "property"
+//    }
+//    ]
 }

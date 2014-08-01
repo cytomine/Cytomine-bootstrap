@@ -26,23 +26,42 @@ class SearchEngineController extends RestController {
 
     def imageInstanceService
 
-
+    @RestApiMethod(description="Search for words and filters in Cytomine resources. This only retrieve id/class of matching domains.", listing = true)
+    @RestApiResponseObject(objectIdentifier = "[search_engine_step1]")
+    @RestApiParams(params=[
+        @RestApiParam(name="expr", type="List<string>", paramType = RestApiParamType.QUERY, description = "List of words to search (AND search). Max 5 words and each words must have at least 3 characters."),
+        @RestApiParam(name="projects", type="List<Long>", paramType = RestApiParamType.QUERY, description = "(Optional) Search only on domain from these projects"),
+        @RestApiParam(name="domain", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Search only a king of domain groups (only project, only image,...)"),
+        @RestApiParam(name="types", type="List<string>", paramType = RestApiParamType.QUERY, description = "(Optional) Search only on some attributes (only on domain itself, only on properties,...)"),
+           ])
     def search() {
         def paramsValue = extractParams(params)
         def finalList = searchEngineService.search(paramsValue.types, paramsValue.domains, paramsValue.words, "id", "desc", paramsValue.projects, "AND")
         responseSuccess(finalList)
     }
 
-
+    @RestApiMethod(description="Search for words and filters in Cytomine resources. This provides more data for a subset of results", listing = true)
+    @RestApiResponseObject(objectIdentifier = "[search_engine_step2]")
+        @RestApiParams(params=[
+        @RestApiParam(name="ids", type="List<Long>", paramType = RestApiParamType.QUERY, description = "Search only on these domain ids"),
+        @RestApiParam(name="expr", type="List<string>", paramType = RestApiParamType.QUERY, description = "List of words to search (AND search). Max 5 words and each words must have at least 3 characters."),
+        @RestApiParam(name="projects", type="List<Long>", paramType = RestApiParamType.QUERY, description = "(Optional) Search only on domain from these projects"),
+        @RestApiParam(name="domain", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Search only a king of domain groups (only project, only image,...)"),
+        @RestApiParam(name="types", type="List<string>", paramType = RestApiParamType.QUERY, description = "(Optional) Search only on some attributes (only on domain itself, only on properties,...)"),
+    ])
     def result() {
-
         def paramsValue = extractParams(params)
-        def finalList = searchEngineService.search2(paramsValue.types, paramsValue.domains, paramsValue.words, paramsValue.projects, paramsValue.ids)
+        def finalList = searchEngineService.results(paramsValue.types, paramsValue.domains, paramsValue.words, paramsValue.projects, paramsValue.ids)
         responseSuccess(finalList)
     }
 
 
-
+    @RestApiMethod(description="Get a preview image for a domain. For image = thumb, for annotation = crop, for project = the last image...", listing = true)
+    @RestApiResponseObject(objectIdentifier = "[search_engine_step2]")
+    @RestApiParams(params=[
+    @RestApiParam(name="id", type="List<Long>", paramType = RestApiParamType.QUERY, description = "Search only on these domain ids"),
+    @RestApiParam(name="className", type="List<string>", paramType = RestApiParamType.QUERY, description = "List of words to search (AND search). Max 5 words and each words must have at least 3 characters."),
+    @RestApiParam(name="maxSize", type="int", paramType = RestApiParamType.QUERY, description = "(Optional) Max size of the image (default: 256)")])
     public String redirectToImageURL() {
         //http://localhost:8080/searchEngine/buildGotoLink?className=be.cytomine.project.Project&id=57
         //http://localhost:8080/searchEngine/redirectToImageURL?className=be.cytomine.image.ImageInstance&id=14697772&max=64
@@ -58,7 +77,7 @@ class SearchEngineController extends RestController {
             List<ImageInstance> images = imageInstanceService.list(Project.read(id))
             images = images.sort { it.id }
             if (!images.isEmpty()) {
-                url = UrlApi.getThumbImage(images.first().baseImage.id, max)
+                url = UrlApi.getThumbImage(images.last().baseImage.id, max)
             }
         } else if (className == UserAnnotation.class.name || className == AlgoAnnotation.class.name || className == ReviewedAnnotation.class.name) {
             url = UrlApi.getAnnotationCropWithAnnotationId(id, max)

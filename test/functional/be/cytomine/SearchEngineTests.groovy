@@ -390,48 +390,48 @@ class SearchEngineTests {
         assert 400 ==results.code
     }
 
-    private Project createProject(String name) {
+    public static Project createProject(String name) {
         Project projectA = BasicInstanceBuilder.getProjectNotExist(true)
         projectA.name = "$name ${new Date().getTime()}"
         BasicInstanceBuilder.saveDomain(projectA)
     }
 
-    private UserAnnotation createAnnotation(Project project) {
+    public static UserAnnotation createAnnotation(Project project) {
         return createUserAnnotation(project)
     }
 
-    private UserAnnotation createUserAnnotation(Project project) {
+    public static UserAnnotation createUserAnnotation(Project project) {
         UserAnnotation annotation = BasicInstanceBuilder.getUserAnnotationNotExist(project,true)
         return annotation
     }
 
-    private AlgoAnnotation createAlgoAnnotation(Project project) {
+    public static AlgoAnnotation createAlgoAnnotation(Project project) {
         AlgoAnnotation annotation = BasicInstanceBuilder.getAlgoAnnotationNotExist(project,true)
         return annotation
     }
 
-    private ReviewedAnnotation createReviewedAnnotation(Project project) {
+    public static ReviewedAnnotation createReviewedAnnotation(Project project) {
         ReviewedAnnotation annotation = BasicInstanceBuilder.getReviewedAnnotationNotExist(project,true)
         return annotation
     }
 
-    private ImageInstance createImageInstance(Project project) {
+    public static ImageInstance createImageInstance(Project project) {
         ImageInstance image = BasicInstanceBuilder.getImageInstanceNotExist(project,true)
         return image
     }
 
-    private AbstractImage createAbstractImage() {
+    public static AbstractImage createAbstractImage() {
         AbstractImage image = BasicInstanceBuilder.getAbstractImageNotExist(true)
         return image
     }
 
-    private Description createDescriptionForDomain(CytomineDomain domain, String data) {
+    public static Description createDescriptionForDomain(CytomineDomain domain, String data) {
         Description description = BasicInstanceBuilder.getDescriptionNotExist(domain,true)
         description.data = data
         BasicInstanceBuilder.saveDomain(description)
     }
 
-    private Property createPropertyForDomain(CytomineDomain domain, String data) {
+    public static Property createPropertyForDomain(CytomineDomain domain, String data) {
         Property property = new Property(domain: domain, key: 'key '+new Date().getTime(), value:data)
         BasicInstanceBuilder.saveDomain(property)
     }

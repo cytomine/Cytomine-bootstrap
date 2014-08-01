@@ -38,13 +38,51 @@ class SearchEngineService extends ModelService {
             "annotation": [UserAnnotation.class.name, AlgoAnnotation.class.name, ReviewedAnnotation.class.name]
     ]
 
+    /**
+     * Search first step.
+     * This provides a list of all domain matching criteria in  params.
+     */
+    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
+        List<ResultSearch> results = []
+        checkConstraint(words)
+        String req
+        if (op.equals("OR")) {
+            //if OR op for words, each request will have xxx ilike '%word1%' OR xxx ilike '%word2%'
+            req = buildSearchRequest(attributes, domainType, words, idProject, false, null)
+        } else {
+            //if AND op for words, each we join each request (1 word = 1 request) with INTERSECT
+            if (words.isEmpty()) {
+                throw new WrongArgumentException("Min 1 word!")
+            }
+            List<String> requestParts = []
+            words.each {
+                requestParts << "(" + buildSearchRequest(attributes, domainType, [it], idProject, false, null) + ")"
+            }
+            req = requestParts.join("\nINTERSECT\n")
+        }
+        req = req + "\nORDER BY $order $sort"
 
-    public
-    def search2(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
+        def sql = new Sql(dataSource)
+        sql.eachRow(req) {
+            results << [id: it[0], className: it[1]]
+        }
+        return results
+    }
+
+
+    /**
+     * Search second step.
+     * This provide more data (matching values,...) for a small substet of the first search step.
+     * Usefull for UI pagination
+     */
+    public def results(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
         List<ResultSearch> results = []
         checkConstraint(words)
         if (ids != null && ids.isEmpty()) {
             throw new WrongArgumentException("There is no result!")
+        }
+        if (ids != null && ids.size()>100) {
+            throw new WrongArgumentException("Don't ask too much result! Max 100.")
         }
 
         String req = buildSearchRequest(attributes, domainType, words, idProject, true, ids)
@@ -73,6 +111,7 @@ class SearchEngineService extends ModelService {
         return results
     }
 
+    //build a GOTO URL depending on the domain type
     private static String getGoToURL(Long id, String className) {
         String url = null
         if (className == Project.class.name) {
@@ -86,40 +125,7 @@ class SearchEngineService extends ModelService {
         return url
     }
 
-    public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
-        List<ResultSearch> results = []
-        checkConstraint(words)
-        String req
-        if (op.equals("OR")) {
-            req = buildSearchRequest(attributes, domainType, words, idProject, false, null)
-        } else {
-            //AND
-            if (words.isEmpty()) {
-                throw new WrongArgumentException("Min 1 word!")
-            }
-            List<String> requestParts = []
-            println "words=$words"
-            words.each {
-                println "doFirstRequest:${it}"
-                requestParts << "(" + buildSearchRequest(attributes, domainType, [it], idProject, false, null) + ")"
-            }
-            println "requestParts=${requestParts.size()}"
-            req = requestParts.join("\nINTERSECT\n")
-        }
-        req = req + "\nORDER BY $order $sort"
-
-        def sql = new Sql(dataSource)
-
-        println "################################"
-        println req
-        println "################################"
-
-        sql.eachRow(req) {
-            results << [id: it[0], className: it[1]]
-        }
-        return results
-    }
-
+    //check request constraint
     private void checkConstraint(List<String> words) {
         if (words.isEmpty()) {
             throw new WrongArgumentException("Min 1 word!")
@@ -137,6 +143,11 @@ class SearchEngineService extends ModelService {
         }
     }
 
+    /**
+     * Build the SQL request.
+     * If AND request (by default): each word is a buildSearchRequest call
+     * If OR, a single call but with words param > 1
+     */
     public String buildSearchRequest(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, boolean extractMatchingValue = false, List<Long> ids = null) {
         List<String> requestParts = []
         List<String> domains = domainType.collect { convertToClassName(it) }
@@ -170,13 +181,8 @@ class SearchEngineService extends ModelService {
                 requestParts << engine.createRequestOnDescription(words)
             }
         }
-
         requestParts = requestParts.findAll { it != "" }
-
-        println requestParts.size()
-
         String req = requestParts.join("\nUNION\n")
-
         return req
     }
 
