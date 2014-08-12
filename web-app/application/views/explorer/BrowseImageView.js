@@ -1421,6 +1421,21 @@ BrowseImageView = Backbone.View.extend({
 
         toolbar.find('button[id=camera' + this.model.get('id') + ']').click(function () {
 
+            var maxMagnification = self.model.get("magnification") * Math.pow(2, self.nbDigitialZoom);
+            var deltaZoom = self.map.getNumZoomLevels() - self.map.getZoom() - 1;
+            var magnification = maxMagnification;
+            if (deltaZoom != 0) {
+                magnification = maxMagnification / (Math.pow(2, deltaZoom));
+            }
+            magnification = Math.round(magnification * 100) / 100;
+
+
+            console.log(self.map.getZoom());
+            console.log(self.map.getNumZoomLevels());
+            console.log(magnification);
+            console.log(deltaZoom);
+            var zoom = deltaZoom+1;
+
             //use webservice
             var mapBounds = self.map.getExtent();
             var ol_left = Math.max(0, mapBounds.left);
@@ -1429,16 +1444,20 @@ BrowseImageView = Backbone.View.extend({
             var y = Math.round(self.model.get('height') - ol_top);
             var width = Math.round(mapBounds.right - ol_left);
             var height = Math.round(mapBounds.top - mapBounds.bottom);
-            var url = "api/imageinstance/" + self.model.id + "/window_url-" + x + "-" + y + "-" + width + "-" + height + ".jpg";
+            var url = "api/imageinstance/" + self.model.id + "/camera_url-" + x + "-" + y + "-" + width + "-" + height + ".jpg";
+
             $.get(url, function (data) {
                 window_url = data.url;
                 var imageFilter = self.map.baseLayer.imageFilter;
                 if (imageFilter) {
                     window_url = imageFilter.get('processingServer') + imageFilter.get("baseUrl") + window_url;
                 }
-                window.open(window_url);
+                var params = {
+                    magnification:  magnification,
+                    zoom2 : zoom
+                };
+                window.open(window_url+"&"+ $.param(params));
             });
-
         });
 
 

@@ -19,6 +19,13 @@ import org.restapidoc.annotation.RestApi
 import org.restapidoc.pojo.RestApiParamType
 import sun.misc.BASE64Decoder
 
+import javax.imageio.ImageIO
+import java.awt.Color
+import java.awt.Font
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+import java.text.DecimalFormat
+
 /**
  * Controller for abstract image
  * An abstract image can be add in n projects
@@ -209,17 +216,17 @@ class RestAbstractImageController extends RestController {
     }
 
     //TODO:APIDOC
-    def camera () {
-        //:to do : save image in database ?
-        //:+ send email
-        String imageData = params.imgdata.replace(' ', '+')
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] imageByte = decoder.decodeBuffer(imageData);
-        response.setContentType "application/octet-stream"
-        response.setHeader "Content-disposition", "attachment; filename=capture.png"
-        response.getOutputStream() << imageByte
-        response.getOutputStream().flush()
-    }
+//    def camera () {
+//        //:to do : save image in database ?
+//        //:+ send email
+//        String imageData = params.imgdata.replace(' ', '+')
+//        BASE64Decoder decoder = new BASE64Decoder();
+//        byte[] imageByte = decoder.decodeBuffer(imageData);
+//        response.setContentType "application/octet-stream"
+//        response.setHeader "Content-disposition", "attachment; filename=capture.png"
+//        response.getOutputStream() << imageByte
+//        response.getOutputStream().flush()
+//    }
 
     def download() {
         String url = abstractImageService.downloadURI(abstractImageService.read(params.long("id")))
@@ -253,6 +260,73 @@ class RestAbstractImageController extends RestController {
         log.info "response $url"
         responseSuccess([url : url])
     }
+
+    //lrollus: This code should be move to the IMS. To difficult for me to have a complete workflow on my dev computer.
+    //So Everything is done on the CORE
+    def camera() {
+        String url = abstractImageService.crop(params, request.queryString)
+        log.info "response $url"
+        BufferedImage image = ImageIO.read(new URL(url))
+
+        double zoom = params.double("magnification")
+
+        println "zoom=$zoom"
+
+
+        AbstractImage abstractImage = AbstractImage.read(params.id)
+
+        double magnif = abstractImage.magnification
+
+        double ratio = (image.getWidth()/10)/100
+        Double length = 100*ratio
+        Double realSize = length * abstractImage.resolution
+
+
+
+
+                int scaleBarSize = length
+        String textUp = realSize + " µm"
+        String textBelow = ""
+        int space = scaleBarSize/10
+        int boxSizeWidth = scaleBarSize + (space*2)
+        int boxSizeHeight = scaleBarSize * 0.75
+
+        //draw white rectangle in the bottom-left of the screen
+        Graphics2D graphBox = image.createGraphics();
+        graphBox.setColor(Color.WHITE);
+        graphBox.fillRect(0, image.getHeight()-boxSizeHeight, boxSizeWidth, boxSizeHeight);
+        graphBox.dispose();
+
+        //draw the scale bar
+        Graphics2D graphScaleBar = image.createGraphics();
+        graphScaleBar.setColor(Color.BLACK);
+
+        int xStartBar = space;
+        int xStopBar = scaleBarSize+space;
+        int yStartBar = image.getHeight()-Math.floor(boxSizeHeight/2).intValue()
+        int yStopBar = yStartBar
+
+        //draw the main line of the scale bar
+        graphScaleBar.drawLine(xStartBar,yStartBar,xStopBar,yStopBar);
+        //draw the two vertical line
+        graphScaleBar.drawLine(xStartBar,yStartBar-(Math.floor(scaleBarSize/4).intValue()),xStartBar,yStopBar+(Math.floor(scaleBarSize/4).intValue()));
+        graphScaleBar.drawLine(xStopBar,yStartBar-(Math.floor(scaleBarSize/4).intValue()),xStopBar,yStopBar+(Math.floor(scaleBarSize/4).intValue()));
+
+        graphScaleBar.dispose();
+
+        //draw text
+        int textSize = 8*ratio
+        Graphics2D graphText = image.createGraphics();
+        graphText.setColor(Color.BLACK);
+        graphText.setFont(new Font( "SansSerif", Font.BOLD, textSize ));
+        graphText.drawString(textUp, xStartBar+5, yStartBar-5)
+        graphText.drawString(textBelow, xStartBar+5, yStartBar+(5+textSize))
+        graphText.dispose();
+
+        responseBufferedImage(image)
+//        responseSuccess([url : url])
+    }
+
 
     //TODO:APIDOC
     def window() {

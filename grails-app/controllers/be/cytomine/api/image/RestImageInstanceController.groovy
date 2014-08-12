@@ -28,6 +28,12 @@ import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.annotation.RestApiResponseObject
 import org.restapidoc.pojo.RestApiParamType
 
+import javax.imageio.ImageIO
+import java.awt.Color
+import java.awt.Font
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
+
 
 
 /**
@@ -439,6 +445,14 @@ class RestImageInstanceController extends RestController {
         responseSuccess(abstractImageService.imageProperties(imageInstance.baseImage))
     }
 
+
+    //TODO:APIDOC
+    def cameraUrl() {
+        params.id = imageInstanceService.read(params.id).baseImage.id
+        String url = abstractImageService.window(params, request.queryString)
+        log.info "response $url"
+        responseSuccess([url : url.replace("/crop.png","/camera.png")])
+    }
 
 
 }

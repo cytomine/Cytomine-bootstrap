@@ -114,6 +114,8 @@ environments {
         grails.uploadURL = "http://upload.cytomine.be"
         //grails.uploadURL = "http://localhost:9090"
         grails.imageServerURL = "http://image.cytomine.be"
+        //grails.uploadURL = "http://localhost:9090"
+        //grails.imageServerURL = "http://localhost:9090"
         grails.converters.default.pretty.print = true
         grails.plugins.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
