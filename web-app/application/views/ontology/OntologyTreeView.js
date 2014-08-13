@@ -236,17 +236,24 @@ var OntologyTreeView = Backbone.View.extend({
                 self.check(idTerm);
             });
             //update counters
-            var idTerms = [];
-            collection.each(function (annotationTerm) {
-                idTerms.push(annotationTerm.get("term"));
-            });
-            idTerms = _.uniq(idTerms);
-            _.each(idTerms, function (idTerm) {
-                var annotationTerms = collection.filter(function (annotationTerm) {
-                    return annotationTerm.get("term") == idTerm;
+
+            if(!window.app.status.currentProjectModel.get('blindMode')) {
+                //in blind mode, disable counter
+                var idTerms = [];
+                collection.each(function (annotationTerm) {
+                    idTerms.push(annotationTerm.get("term"));
                 });
-                $("#usercount" + idTerm).text(_.size(annotationTerms));
-            });
+                idTerms = _.uniq(idTerms);
+                _.each(idTerms, function (idTerm) {
+                    var annotationTerms = collection.filter(function (annotationTerm) {
+                        return annotationTerm.get("term") == idTerm;
+                    });
+                    $("#usercount" + idTerm).text(_.size(annotationTerms));
+                });
+            }
+
+
+
             self.activeEvent = true;
         }
 

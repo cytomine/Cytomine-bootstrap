@@ -16,6 +16,17 @@ AnnotationLayerUtils.createFeatureFromAnnotation = function (annotation) {
     var geom = point.geometry;
     var feature = new OpenLayers.Feature.Vector(geom, {zIndex : 999});
 
+
+    if(window.app.status.currentProjectModel.get('blindMode')) {
+        //if its in blind mode, show only term added by the current user
+        var userByTerm = annotation.userByTerm || annotation.get('userByTerm');
+        if(userByTerm) {
+            var currentUserId = window.app.status.user.id;
+            terms = _.pluck(_.filter(userByTerm, function(item){ return _.contains(item.user, currentUserId) }),'term');
+        }
+    }
+
+
     var term = AnnotationStatus.NO_TERM; //no term associated
 
     if (terms.length==1 && terms[0]==0) { //multiple term
@@ -101,6 +112,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     var style = $.extend(true, {}, OpenLayers.Feature.Vector.style['default']); // get a copy of the default style
     style.label = "${getLabel}";
     style.fillOpacity = "${getOpacity}";
+    style.strokeOpacity = "${getOpacityBorder}";
     style.strokeWidth = 1 ;
     style.fillColor = '#EEEEEE';
     style.strokeColor= '${getStrokeColor}';
@@ -122,6 +134,9 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
                     } ,
                     getOpacity: function (feature) {
                         return self.browseImageView.getOpacity();
+                    },
+                    getOpacityBorder: function (feature) {
+                        return self.browseImageView.getOpacityBorder();
                     },
                     getStrokeColor: function (feature) {
                         var opacity = feature.attributes.opacity

@@ -153,7 +153,12 @@ var ProjectDashboardView = Backbone.View.extend({
         var self = this;
 
         require(["text!application/templates/dashboard/ProjectInfoContent.tpl.html"], function (tpl) {
-            $("#projectInfoPanel").html(_.template(tpl, self.model.toJSON()));
+
+            var json = self.model.toJSON()
+            json.hideAnnotationsData = CustomUI.mustBeShow("project-annotations-tab")?  "" : 'display:none;';
+            json.hideImagesData = CustomUI.mustBeShow("project-images-tab")? "" : 'display:none;';
+
+            $("#projectInfoPanel").html(_.template(tpl, json));
 
             var updateProjectClosed = function(close) {
                 self.model.set({isClosed: close});
@@ -365,11 +370,16 @@ var ProjectDashboardView = Backbone.View.extend({
                 ulContainer.append(action);
             });
         }
-        commandCollection.fetch({
-            success: function (collection, response) {
-                commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-            }
-        });
+        if(!window.app.status.currentProjectModel.get('blindMode')) {
+            commandCollection.fetch({
+                success: function (collection, response) {
+                    commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
+                }
+            });
+        }else {
+            $("#lasttasksitem").empty();
+            $("#lasttasksitem").append('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Not available in blind mode!</div>');
+        }
 
     },
     decodeCommandAction : function(commandHistory,commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {

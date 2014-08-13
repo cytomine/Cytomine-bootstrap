@@ -867,6 +867,11 @@ BrowseImageView = Backbone.View.extend({
                     } else {
                         length += " pixels";
                     }
+
+                    $(self.el).find(".olControlScaleLineBottom").css("box-sizing","content-box");
+                    $(self.el).find(".olControlScaleLineTop").css("box-sizing","content-box");
+                    $(self.el).find(".olControlScaleLine").css("box-sizing","content-box");
+
                     if (this.eTop.style.visibility == "visible") {
                         this.eTop.style.width = Math.round(topPx) + "px";
                         this.eTop.innerHTML = length;
@@ -1454,7 +1459,7 @@ BrowseImageView = Backbone.View.extend({
                 }
                 var params = {
                     magnification:  magnification,
-                    zoom2 : zoom
+                    drawScaleBar : true
                 };
                 window.open(window_url+"&"+ $.param(params));
             });
@@ -1639,15 +1644,19 @@ BrowseImageView = Backbone.View.extend({
         self.refreshReviewLayer();
     },
     opacity: 0.5,
-    setOpacity: function (opacity) {
+    opacityBorder: 0.5,
+    setOpacity: function (opacity,opacityBorder) {
         this.opacity = opacity / 100
+        this.opacityBorder = opacityBorder / 100
         this.refreshLayers();
     },
     getOpacity: function () {
         //call every time an annotation is draw, use var instead of spinner.val() each time
         return this.opacity
+    },
+    getOpacityBorder: function () {
+        return this.opacityBorder
     }
-
 });
 
 

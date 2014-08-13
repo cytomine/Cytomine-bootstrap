@@ -36,11 +36,12 @@ var ActivityView = Backbone.View.extend({
         var projectListActivity = $("#projectListActivity");
         projectListActivity.empty();
         projectListActivity.append('<li class="divider"></li>');
-        projectListActivity.append('<li id="projectChoiceActivityALL"><a href="#activity-">ALL PROJECTS</a></li>');
-        projectListActivity.append('<li class="divider"></li>');
+//        projectListActivity.append('<li id="projectChoiceActivityALL"><a href="#activity-">ALL PROJECTS</a></li>');
+//        projectListActivity.append('<li class="divider"></li>');
 
         var startLetter = null;
-        window.app.models.projects.each(function(project) {
+        var projectsNotBlindMode = new ProjectCollection(window.app.models.projects.models.filter(function(project) {return !project.get('blindMode')}));
+        projectsNotBlindMode.each(function(project) {
             var newStartLetter =  project.get('name').substr(0,1);
             if(startLetter!=newStartLetter) {
                 startLetter = newStartLetter;
@@ -125,6 +126,15 @@ var ActivityView = Backbone.View.extend({
     },
 
     refresh : function (project, idUser) {
+
+        if(!project) {
+            $("#activity-content").empty();
+            $("#activityUser").hide();
+            $("#activity-content").append('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Select a project</div>');
+            return;
+        } else {
+            $("#activityUser").show();
+        }
 
         var self = this;
         self.model = project;

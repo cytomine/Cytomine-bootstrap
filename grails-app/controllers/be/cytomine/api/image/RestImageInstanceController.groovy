@@ -451,7 +451,7 @@ class RestImageInstanceController extends RestController {
         params.id = imageInstanceService.read(params.id).baseImage.id
         String url = abstractImageService.window(params, request.queryString)
         log.info "response $url"
-        responseSuccess([url : url.replace("/crop.png","/camera.png")])
+        responseSuccess([url : url])
     }
 
 

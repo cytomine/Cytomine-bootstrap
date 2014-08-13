@@ -16,37 +16,52 @@ var ProjectDashboardStats = Backbone.View.extend({
         });
 
 
-        //draw all
-        var statsCollection = new StatsTermCollection({project: self.model.get('id')});
-        statsCollection.fetch({
-            success: function (collection, response) {
-                self.drawColumnChart(collection, response, "#projectColumnChart");
-            }
-        });
 
-        self.drawAnnotationNumberEvolutionByTermAction();
-        var statsCollection = new StatsTermCollection({project: self.model.get('id')});
-        statsCollection.fetch({
-            success: function (collection, response) {
-                self.drawPieChart(collection, response, "#projectPieChart");
-            }
-        });
-        new StatsUserCollection({project: self.model.get('id')}).fetch({
-            success: function (collection, response) {
-                self.drawColumnChart(collection, response, "#userNbAnnotationsChart");
-            }
-        });
-        new StatsTermSlideCollection({project: self.model.get('id')}).fetch({
-            success: function (collection, response) {
-                self.drawColumnChart(collection, response, "#termSlideAnnotationsChart");
-            }
-        });
-        new StatsUserSlideCollection({project: self.model.get('id')}).fetch({
-            success: function (collection, response) {
-                self.drawColumnChart(collection, response, "#userSlideAnnotationsChart");
-            }
-        });
-        self.drawAnnotationNumberEvolutionByTermAction();
+        //draw all
+        if(!window.app.status.currentProjectModel.get('blindMode')) {
+            var statsCollection = new StatsTermCollection({project: self.model.get('id')});
+            statsCollection.fetch({
+                success: function (collection, response) {
+                    self.drawColumnChart(collection, response, "#projectColumnChart");
+                }
+            });
+
+            self.drawAnnotationNumberEvolutionByTermAction();
+            var statsCollection = new StatsTermCollection({project: self.model.get('id')});
+            statsCollection.fetch({
+                success: function (collection, response) {
+                    self.drawPieChart(collection, response, "#projectPieChart");
+                }
+            });
+            new StatsUserCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
+                    self.drawColumnChart(collection, response, "#userNbAnnotationsChart");
+                }
+            });
+            new StatsTermSlideCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
+                    self.drawColumnChart(collection, response, "#termSlideAnnotationsChart");
+                }
+            });
+            new StatsUserSlideCollection({project: self.model.get('id')}).fetch({
+                success: function (collection, response) {
+                    self.drawColumnChart(collection, response, "#userSlideAnnotationsChart");
+                }
+            });
+            self.drawAnnotationNumberEvolutionByTermAction();
+        } else {
+            var message = '<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Not available in blind mode!</div>';
+             $("#annotationNumberEvolution").replaceWith("");
+            _.each(["#drawUserAnnotationsChart","#projectColumnChart","#projectPieChart","#userNbAnnotationsChart","#termSlideAnnotationsChart","#userSlideAnnotationsChart"], function(item) {
+                $(item).empty();
+                $(item).append(message);
+                $(item).css("height","100px");
+            });
+
+//        $("#lastcommandsitem").empty();
+//        $("#lastcommandsitem").append();
+
+        }
 
     },
 

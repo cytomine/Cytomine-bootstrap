@@ -51,7 +51,8 @@ var CustomUI = {
         {componentId: "project-explore-annotation-preview", componentName: "Current annotation - preview panel"},
         {componentId: "project-explore-annotation-properties", componentName: "Current annotation - properties panel"},
         {componentId: "project-explore-annotation-description", componentName: "Current annotation - description panel"},
-        {componentId: "project-explore-annotation-similarities", componentName: "Current annotation - similarities panel"}
+        {componentId: "project-explore-annotation-similarities", componentName: "Current annotation - similarities panel"},
+        {componentId: "project-explore-annotation-panel", componentName: "Annotations panel (under the image)"}
     ],
     componentsTools: [
         //  {componentId: "project-images-tab", componentName: "Image tab"},

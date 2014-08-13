@@ -193,7 +193,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             value: 50,
             change: function (event, ui) {
                 console.log(ui);
-                self.browseImageView.setOpacity(ui.value);
+                self.browseImageView.setOpacity(ui.value,ui.value);
             }
         });
 

@@ -53,8 +53,10 @@ class BootStrap {
         log.info "Current directory2="+new File( 'test.html' ).absolutePath
         println "HeadLess:" +java.awt.GraphicsEnvironment.isHeadless();
 
+
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
-        log.info "###################" + grailsApplication.config.grails.serverURL + "##################"
+        log.info "################### SERVER " + grailsApplication.config.grails.serverURL + "##################"
+        log.info "################### IMAGE SERVER " + grailsApplication.config.grails.imageServerURL + "##################"
         log.info "GrailsUtil.environment= " + Environment.getCurrent().name + " BootStrap.development=" + Environment.DEVELOPMENT
 
 

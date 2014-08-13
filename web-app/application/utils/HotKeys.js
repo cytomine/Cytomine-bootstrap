@@ -193,8 +193,9 @@ var HotKeys = {
     doClick : function(context,button) {
         var elem = $(context).find(button);
         var disabled = elem.attr("disabled");
-        if(disabled=="disabled") {
-            //button is locked
+        var visible = elem.is(":visible");
+        if(disabled=="disabled" || !visible) {
+            //button is locked or hide
         } else {
             elem.click();
         }
