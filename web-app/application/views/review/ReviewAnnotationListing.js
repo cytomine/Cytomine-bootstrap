@@ -269,42 +269,47 @@ var ReviewAnnotationListing = Backbone.View.extend({
         });
 
 
+        $(thumb.el).find("button.openBrowseReview").click(function() {
+            window.location = '#tabs-image-' + annotation.get('project') + '-' + annotation.get('image') + '-' + annotation.get('id');
+        });
 
 
-        console.log("registerReviewPopup");
-//        require([
-//            "text!application/templates/review/ReviewBrowse.tpl.html"
-//        ],
-//        function (tpl) {
-            var modal = new CustomModal({
-                idModal : "browseReviewModal",
-                button : $(thumb.el).find("button.openBrowseReview"),
-                header :"BrowseAnnotation",
-                body :'<div id="browseAnnotationModal"></div>',
-                width : Math.round($(window).width()*0.75),
-                height : Math.round($(window).height()*0.75),
-                callBack : function() {
 
-                    new ImageInstanceModel({id: annotation.get('image')}).fetch({
-                        success: function (model, response) {
 
-                           var view = new BrowseImageView({
-                               addToTab : false,
-                               review: true,
-                               initCallback: function () {
-                                   console.log("initCallback");
-                                   view.show({goToAnnotation : {value: annotation.id}})
-                               },
-                               el: $("#browseAnnotationModal")
-                           });
-                           view.model = model;
-                           view.render();
-
-                        }
-                    });
-                }
-            });
-            modal.addButtons("closeBrowseReview","Close",true,true);
+//        console.log("registerReviewPopup");
+////        require([
+////            "text!application/templates/review/ReviewBrowse.tpl.html"
+////        ],
+////        function (tpl) {
+//            var modal = new CustomModal({
+//                idModal : "browseReviewModal",
+//                button : $(thumb.el).find("button.openBrowseReview"),
+//                header :"BrowseAnnotation",
+//                body :'<div id="browseAnnotationModal"></div>',
+//                width : Math.round($(window).width()*0.75),
+//                height : Math.round($(window).height()*0.75),
+//                callBack : function() {
+//
+//                    new ImageInstanceModel({id: annotation.get('image')}).fetch({
+//                        success: function (model, response) {
+//
+//                           var view = new BrowseImageView({
+//                               addToTab : false,
+//                               review: true,
+//                               initCallback: function () {
+//                                   console.log("initCallback");
+//                                   view.show({goToAnnotation : {value: annotation.id}})
+//                               },
+//                               el: $("#browseAnnotationModal")
+//                           });
+//                           view.model = model;
+//                           view.render();
+//
+//                        }
+//                    });
+//                }
+//            });
+//            modal.addButtons("closeBrowseReview","Close",true,true);
 //        });
 
 

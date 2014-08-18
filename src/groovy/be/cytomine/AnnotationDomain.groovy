@@ -278,6 +278,9 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             boundaries.draw = true
             boundaries.location = location.toText()
         }
+        if (params.get('increaseArea')) {
+            boundaries.increaseArea = params.get('increaseArea')
+        }
         if (params.mask) {
             boundaries.mask = true
             boundaries.location = location.toText()

@@ -598,5 +598,5 @@ grails.integration.aurora.interval = 60000
 
 //grails.plugin.databasesession.enabled = true
 grails.plugin.cookiesession.enabled = true
-grails.plugin.cookiesession.maxcookiesize = 20480  // 10kb
+grails.plugin.cookiesession.maxcookiesize = 20480  // 20kb
 grails.plugin.cookiesession.cookiecount = 10

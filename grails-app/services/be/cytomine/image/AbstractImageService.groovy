@@ -162,7 +162,7 @@ class AbstractImageService extends ModelService {
         UploadedFile uploadedFile = getMainUploadedFile(abstractImage)
         String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
         String mimeType = uploadedFile.mimeType
-        return "$imageServerURL/image/crop.png?fif=$fif&mimeType=$mimeType&$queryString&increaseArea=${params.increaseArea}&resolution=${abstractImage.resolution}" //&scale=$scale
+        return "$imageServerURL/image/crop.png?fif=$fif&mimeType=$mimeType&$queryString&resolution=${abstractImage.resolution}" //&scale=$scale
     }
 
     def tile(def params, String queryString) {

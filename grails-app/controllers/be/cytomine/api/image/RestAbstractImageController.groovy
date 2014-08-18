@@ -249,6 +249,9 @@ class RestAbstractImageController extends RestController {
 
     //TODO:APIDOC
     def crop() {
+        println params
+        println params.queryString
+        println params.increaseArea
         String url = abstractImageService.crop(params, request.queryString)
         log.info "redirect $url"
         redirect (url : url )

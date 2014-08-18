@@ -263,7 +263,9 @@ class RestUserAnnotationController extends RestController {
         if (!annotation) {
             responseNotFound("Annotation", params.id)
         } else {
-            redirect (url : annotation.toCropURL(params))
+            String url = annotation.toCropURL(params)
+            log.info "redirect to ${url}"
+            redirect (url : url)
         }
 
     }

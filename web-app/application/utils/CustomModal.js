@@ -9,7 +9,9 @@ var CustomModal = Backbone.View.extend({
         this.xwide = options.xwide || false;
         this.callBack = options.callBack;
         this.registerModal();
-
+        //style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;"
+        this.width = options.width;
+        this.height = options.height;
     },
     addButtons: function (id, text, primary, close, callBack) {
         this.buttons.push({id: id, text: text, close: (close ? 'modal' : ''), primaryClass: (primary ? 'btn-primary' : ''), callBack: callBack});
@@ -41,6 +43,14 @@ var CustomModal = Backbone.View.extend({
 
                     modal.append(htmlModal);
 
+                        console.log("self.width="+self.width);
+                        if(self.width) {
+                            console.log($('#'+self.idModal).length);
+                            $('#'+self.idModal).css("width",self.width)
+                        }
+                        if(self.height) {
+                            $('#'+self.idModal).css("height",self.height)
+                        }
                         _.each(self.buttons, function (b) {
                             $("#" + b.id).click(function () {
                                 if (b.callBack) {
