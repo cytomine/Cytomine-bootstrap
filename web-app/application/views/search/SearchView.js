@@ -94,8 +94,8 @@ var SearchView = Backbone.View.extend({
         criteria.toQueryString = function() {
             var properties = $.extend(true, {}, this);
             properties.toQueryString = undefined;
-            return _.map(properties, function(num, key){ return key + "=" + num;}).join("&")
-        }
+            return _.map(properties, function(num, key){ return key + "=" + num;}).join("&");
+        };
         $.get("/api/search-engine.json?"+criteria.toQueryString(),function (data) {
 
             var results = data.collection;
@@ -124,22 +124,18 @@ var SearchView = Backbone.View.extend({
         var currentWord = "";
         var insideQuote = false;
 
-        _.each(queryString,function(char) {
+        _.each(queryString,function(chara) {
 
-            if(char==" " && !insideQuote) {
+            if(chara==" " && !insideQuote) {
                 words.push(currentWord);
                 currentWord = "";
-            } else if(char=="\"") {
+            }  else if(chara==String.fromCharCode(34)) { //ascii 34 = quote
                 insideQuote = !insideQuote;
             } else {
-                currentWord = currentWord +char;
+                currentWord = currentWord +chara;
             }
         });
         words.push(currentWord);
-        console.log("words=");
-        console.log(words);
-        console.log("words=");
-        console.log(_.reject(words,function(word) {return word==""}));
         return _.reject(words,function(word) {return word==""});
     }
 

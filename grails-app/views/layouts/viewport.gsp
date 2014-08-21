@@ -97,7 +97,7 @@ body {
 
 <script src="lib/ckeditor/ckeditor.js"></script>
 
-<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet">
+<link href="lib/magicsuggest2//magicsuggest-min.css" rel="stylesheet"/>
 <script type="text/javascript" src="lib/magicsuggest2/magicsuggest-min.js"></script>
 
 <g:if test="${Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.CUSTOM}">

@@ -27,6 +27,10 @@ var ImageTabsView = Backbone.View.extend({
             $("#imageAdd"+self.idProject).click(function() {
                 new AddImageToProjectDialog({el: "#dialogs", model: self.project}).render();
             });
+            $("#imageRefresh"+self.idProject).click(function() {
+                self.container.imagesTabsView.refresh();
+            });
+
         });
         return this;
     },

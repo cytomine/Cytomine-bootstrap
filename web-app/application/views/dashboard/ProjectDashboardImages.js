@@ -21,13 +21,13 @@ var ProjectDashboardImages = Backbone.View.extend({
             this.imagesTabsView = new ImageTabsView({
                 model: new ImageInstanceCollection({project: this.model.get('id')}),
                 el: $("#tabs-projectImageListing" + this.model.get('id')),
-                container: window.app.view.components.warehouse,
+                container: this,
                 idProject: this.model.id,
                 project: this.model
             }).render();
         } else {
             console.log("this.imagesTabsView.refresh()");
-            this.imagesTabsView.refresh();
+            //this.imagesTabsView.refresh();
         }
     }
 });

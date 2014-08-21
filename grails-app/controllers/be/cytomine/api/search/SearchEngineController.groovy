@@ -84,7 +84,7 @@ class SearchEngineController extends RestController {
         }
 
         if (!url) {
-            url = "images/cytomine.jpg"
+            url = "/images/cytomine.jpg"
         }
         redirect(url: url)
     }

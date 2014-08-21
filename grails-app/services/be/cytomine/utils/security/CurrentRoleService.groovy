@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 //when he ask to open an admin session, he becomes admin (isAdmin=true, isAdminByNow=true)
 class CurrentRoleService implements Serializable {
 
+    static final long serialVersionUID = 1L; //assign a long value
+
     static scope = 'session'
 
     static transactional = false

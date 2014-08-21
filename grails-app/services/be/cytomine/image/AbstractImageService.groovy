@@ -180,7 +180,7 @@ class AbstractImageService extends ModelService {
         return "$imageServerURL/image/tile.jpg?$zoomifyQuery"
     }
 
-    def window(def params, String queryString) {
+    def window(def params, String queryString, Long width = null, Long height = null) {
         Long id = params.long('id')
         AbstractImage abstractImage = read(id)
         int x = params.int('x')
@@ -188,12 +188,22 @@ class AbstractImageService extends ModelService {
         int w = params.int('w')
         int h = params.int('h')
         def parameters = [:]
-        parameters.topLeftX = x
-        parameters.topLeftY = abstractImage.getHeight() - y
+        parameters.topLeftX = Math.max(x,0)
+        parameters.topLeftY = Math.max(abstractImage.getHeight() - y,0)
         parameters.width = w
         parameters.height = h
         parameters.imageWidth = abstractImage.getWidth()
         parameters.imageHeight = abstractImage.getHeight()
+
+        if(width && (parameters.width+parameters.topLeftX)>width) {
+            //for camera, don't take the part outsite the real image
+            parameters.width = width - parameters.topLeftX
+        }
+//        if(height && (parameters.height+parameters.topLeftY)>height) {
+//            //for camera, don't take the part outsite the real image
+//            parameters.height = height - parameters.topLeftY
+//        }
+
         if (params.zoom) parameters.zoom = params.zoom
         if (params.maxSize) parameters.maxSize = params.maxSize
         if (params.location) parameters.location = params.location
