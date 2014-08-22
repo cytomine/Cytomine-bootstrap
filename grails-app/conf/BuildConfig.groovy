@@ -34,7 +34,7 @@ println grailsApplication
 //if(grails.client=="be.cytomine.integration") {
 //    grails.plugin.location.integration = "../Core-plugins/be.cytomine.integration"
 //}
-
+grails.plugin.location."cookie-session" = "../grails-cookie-session-v2"
 
 //grails.plugin.location."database-session" = "../grails-database-session"
 
@@ -121,23 +121,20 @@ grails.project.dependency.resolution = {
 //        runtime "org.terracotta.session:terracotta-session:1.3.5"
 
 //      }
-
+        compile 'commons-beanutils:commons-beanutils:1.8.3'
     }
     plugins {
-        // Uncomment these (or add new ones) to enable additional resources capabilities
-        //runtime ":zipped-resources:1.0"
-        //runtime ":cached-resources:1.0"
-        //runtime ":yui-minify-resources:0.1.4"
-        compile ":grails-melody:1.49.0"
-//        compile ":svn:1.0.2"
 
-//        build ":tomcat:7.0.42"
-        build ":tomcat:7.0.42"
-        compile (':hibernate:3.6.10.2') {
+        compile ":grails-melody:1.49.0"
+
+        compile (':hibernate:3.6.10.17') {
             excludes('hibernate-ehcache')
         }
 
-
+        build ':tomcat:7.0.54'
+        compile ':cache:1.1.7'
+        compile ':scaffolding:2.1.2'
+        compile ':asset-pipeline:1.9.6'
 
 
         //cytomine.client
@@ -159,34 +156,48 @@ grails.project.dependency.resolution = {
 //        compile ":spring-security-appinfo:2.0-RC2"
 //		compile ":spring-security-cas:2.0-RC1"
 //		compile ":spring-security-ldap:2.0-RC2"
-        runtime ':spring-security-core:1.2.7.3'
-        runtime ':spring-security-acl:1.1.1'
-        runtime ':spring-security-appinfo:1.0'
-        compile ":spring-security-cas:1.0.5"
-        compile ":spring-security-ldap:1.0.6"
+
+        compile ':spring-security-core:2.0-RC4'
+        //runtime ':spring-security-core:1.2.7.3'
+        compile ':spring-security-acl:2.0-RC1'
+        compile ':spring-security-appinfo:2.0-RC2'
+        compile ":spring-security-cas:2.0-RC1"
+        compile ":spring-security-ldap:2.0-RC2"
 
         runtime ':background-thread:1.6'
-        runtime ':export:1.5'
-        runtime ':twitter-bootstrap:3.0.3'
+        runtime ':export:1.6'
+        //runtime ':twitter-bootstrap:3.0.3'
         runtime ":rabbitmq:1.0.0"
         compile ":quartz:1.0.1"
         runtime ":quartz-monitor:0.3-RC3"
-        runtime ':cache:1.1.1'
         runtime ":database-migration:1.3.8"
         runtime ":resources:1.2.8"
-        runtime ':jquery:1.8.3'
+        //runtime ':jquery:1.8.3'
         compile ":executor:0.3"
         test ':code-coverage:1.2.7'
-        compile ":mail:1.0.1"
+        compile ":mail:1.0.7"
         test(":spock:0.7") {
             exclude "spock-grails-support"
         }
         test ":geb:0.9.0"
 
-        compile ":cookie-session:2.0.15"
+        //compile ":cookie-session:2.0.15"
+
+
         compile ':webxml:1.4.1'
 //        compile 'RobertFischer:database-session:1.2.3'
        // compile ":database-session:1.2.1"
+
+        //CHANGE MADE FOR 2.4.2
+
+        //cookie-session:2.0.15
+
+        //export1.6
+
+        //background-thread 1.6
+
+        //acl
+        //https://github.com/farko88/grails-spring-security-acl/commit/067fb06f19e0530c9414261a600df4f4538fcbb2
 
     }
 }

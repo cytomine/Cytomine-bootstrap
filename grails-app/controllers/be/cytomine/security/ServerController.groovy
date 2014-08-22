@@ -2,9 +2,9 @@ package be.cytomine.security
 
 import grails.converters.JSON
 import grails.converters.XML
-import grails.plugins.springsecurity.Secured
+import grails.plugin.springsecurity.annotation.Secured
 
-//import grails.plugins.springsecurity.Secured
+//import grails.plugin.springsecurity.annotation.Secured
 import groovy.sql.Sql
 
 class ServerController {

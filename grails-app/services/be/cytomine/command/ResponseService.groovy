@@ -31,7 +31,7 @@ class ResponseService {
             paramsCallback.putAll(additionalCallbackParams)
         }
 
-        //load message from i18n file
+        //load message from i18n filel
         def message = messageSource.getMessage(command, messageParams as Object[], Locale.ENGLISH)
 
         HashMap<String, Object> params = new HashMap<String, Object>()
@@ -49,7 +49,7 @@ class ResponseService {
      * @return Class name (without package) of o
      */
     public static String getClassName(Object o) {
-        String name = o.getClass()   //be.cytomine.image.Image
+        String name = o.getClass().name   //be.cytomine.image.Image
         int exeed = name.indexOf("_\$\$_javassist") //if  be.cytomine.image.Image_$$_javassistxxxx...remove all after  _$$
         if (exeed!=-1) {
             name = name.substring(0,exeed)

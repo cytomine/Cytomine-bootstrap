@@ -1,10 +1,9 @@
 package be.cytomine.security
 
-
+import grails.plugin.springsecurity.userdetails.GormUserDetailsService
+import grails.plugin.springsecurity.userdetails.GrailsUser
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.dao.DataAccessException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
@@ -36,7 +35,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     throws UsernameNotFoundException, DataAccessException {
 
         SecUser user = SecUser.findByUsername(username)
-        boolean casDisabled = grailsApplication.config.grails.plugins.springsecurity.cas.active.toString()=="false"
+        boolean casDisabled = grailsApplication.config.grails.plugin.springsecurity.cas.active.toString()=="false"
 
         def authorities = []
         if(user) {

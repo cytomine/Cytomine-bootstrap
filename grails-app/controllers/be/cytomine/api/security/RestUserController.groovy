@@ -12,7 +12,7 @@ import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import be.cytomine.utils.Utils
 import grails.converters.JSON
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
 import org.restapidoc.annotation.RestApi

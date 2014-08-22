@@ -2,7 +2,6 @@ package be.cytomine.utils
 
 import grails.util.Holders
 import groovy.sql.Sql
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
 
 /**
  * A task provide info about a command.
@@ -63,7 +62,7 @@ class Task {
         }
 
         if(!isAlreadyInDatabase) {
-            id = AH.application.mainContext.sequenceService.generateID()
+            id = Holders.getGrailsApplication().mainContext.sequenceService.generateID()
             sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id,print_in_activity) VALUES ($id,$progress,$projectIdent,$userIdent,$printInActivity)")
         } else {
             sql.executeUpdate("UPDATE task set progress=${progress} WHERE id=$id")

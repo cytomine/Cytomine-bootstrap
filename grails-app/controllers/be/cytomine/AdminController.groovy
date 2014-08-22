@@ -1,7 +1,7 @@
 package be.cytomine
 
 import be.cytomine.api.RestController
-import grails.plugins.springsecurity.Secured
+import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
 class AdminController extends RestController {

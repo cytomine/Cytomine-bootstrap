@@ -1,7 +1,6 @@
 package be.cytomine
 
 import be.cytomine.api.RestController
-import grails.plugins.springsecurity.Secured
 
 class GrantRoleController extends RestController {
 
