@@ -1646,8 +1646,8 @@ BrowseImageView = Backbone.View.extend({
     opacity: 0.5,
     opacityBorder: 0.5,
     setOpacity: function (opacity,opacityBorder) {
-        this.opacity = opacity / 100
-        this.opacityBorder = opacityBorder / 100
+        this.opacity = opacity / 100;
+        this.opacityBorder = 0.5; //opacityBorder / 100  => if we won't to control borderopacity
         this.refreshLayers();
     },
     getOpacity: function () {
