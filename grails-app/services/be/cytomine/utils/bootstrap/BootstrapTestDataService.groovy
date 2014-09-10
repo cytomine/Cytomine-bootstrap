@@ -39,6 +39,7 @@ class BootstrapTestDataService {
         def IIPMimeSamples = [
                 [extension : 'mrxs', mimeType : 'openslide/mrxs'],
                 [extension : 'vms', mimeType : 'openslide/vms'],
+                [extension : 'tif', mimeType : 'openslide/ventana'],					
                 [extension : 'tif', mimeType : 'image/tif'],
                 [extension : 'tiff', mimeType : 'image/tiff'],
                 [extension : 'tif', mimeType : 'image/pyrtiff'],

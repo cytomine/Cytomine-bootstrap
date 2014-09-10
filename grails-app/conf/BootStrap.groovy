@@ -169,9 +169,9 @@ class BootStrap {
             bootstrapUtilsService.checkImages2() //fix uploadedFile path
         }
 
-        if(Version.isOlderVersion(20140715) && Environment.getCurrent() == Environment.PRODUCTION) {
+        /*if(Version.isOlderVersion(20140715) && Environment.getCurrent() == Environment.PRODUCTION) {
             bootstrapUtilsService.createNewIS2() //add image1.cytomine.be -> image10.cytomine.be
-        }
+        }*/
 
         if(Version.isOlderVersion(20140716)) {
             bootstrapUtilsService.addMimePyrTiff()

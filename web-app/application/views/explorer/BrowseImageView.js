@@ -1440,7 +1440,8 @@ BrowseImageView = Backbone.View.extend({
             console.log(magnification);
             console.log(deltaZoom);
             var zoom = deltaZoom+1;
-
+			console.log("depth");
+			var serverSidezoom = self.model.get('depth') - self.map.getZoom();
             //use webservice
             var mapBounds = self.map.getExtent();
             var ol_left = Math.max(0, mapBounds.left);
@@ -1449,7 +1450,7 @@ BrowseImageView = Backbone.View.extend({
             var y = Math.max(Math.round(self.model.get('height') - ol_top),0);
             var width = Math.round(mapBounds.right - ol_left);
             var height = Math.round(mapBounds.top - mapBounds.bottom);
-            var url = "api/imageinstance/" + self.model.id + "/camera_url-" + x + "-" + y + "-" + width + "-" + height + ".jpg";
+            var url = "api/imageinstance/" + self.model.id + "/camera_url-" + x + "-" + y + "-" + width + "-" + height + ".jpg?zoom="+serverSidezoom;
 
             $.get(url, function (data) {
                 window_url = data.url;
