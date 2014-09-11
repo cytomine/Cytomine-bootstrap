@@ -45,7 +45,7 @@ class AnnotationDomainAPI extends DomainAPI {
 
     static def listByProjectAndTermWithSuggest(Long idProject, Long idTerm,Long idSuggest, Long idJob,String username, String password) {
         //String URL = Infos.CYTOMINEURL + "api/term/$idTerm/project/$idProject/annotation.json?suggestTerm="+idSuggest+"&job=$idJob"
-        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&suggestedTerm=$idSuggest&jobForTermAlgo=$idJob"
+        String URL = Infos.CYTOMINEURL + "api/annotation.json?term=$idTerm&project=$idProject&suggestedTerm=$idSuggest&userForTermAlgo=$idJob"
         return doGET(URL, username, password)
     }
 
