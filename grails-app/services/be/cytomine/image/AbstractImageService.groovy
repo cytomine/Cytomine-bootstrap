@@ -239,8 +239,10 @@ class AbstractImageService extends ModelService {
         UploadedFile uploadedFile = getMainUploadedFile(image)
         def urls = []
         for (imageServerStorage in image.getImageServersStorage()) {
-            urls << [imageServerStorage.getZoomifyUrl(), image.getPath()].join(File.separator) + "/" + "&mimeType=${uploadedFile.mimeType}"
+            urls << [imageServerStorage.getZoomifyUrl(), image.getPath()].join(File.separator) + "/" //+ "&mimeType=${uploadedFile.mimeType}"
         }
+
+
         return [imageServersURLs : urls]
     }
 

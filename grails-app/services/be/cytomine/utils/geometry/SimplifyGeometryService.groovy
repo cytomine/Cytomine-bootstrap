@@ -3,7 +3,9 @@ package be.cytomine.utils.geometry
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.MultiPolygon
 import com.vividsolutions.jts.geom.Polygon
+import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 
@@ -97,6 +99,31 @@ class SimplifyGeometryService {
             annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
         }
         return [geometry: annotation, rate: rate]
+    }
+
+
+    def simplifyPolygonTextSize(String location) {
+        String result = location
+            //limit the size (text) for the geometry (url max lenght)
+            println "simplify..."
+            //boundaries.location = TopologyPreservingSimplifier.simplify(new WKTReader().read(boundaries.location), 5)//simplifyGeometryService.simplifyPolygon(boundaries.location,25,100).geometry.toText()
+            double index = 10d
+
+            int max = 1000
+            while(index<max) {
+                def geom = TopologyPreservingSimplifier.simplify(new WKTReader().read(location), index)
+                println index + " = " + geom.numPoints
+                result = geom.toText()
+                if(geom.numPoints<150) {
+                    break
+                }
+                index = (index+10)*1.1
+            }
+
+        GeometryPrecisionReducer reducer = new GeometryPrecisionReducer(new PrecisionModel(100))
+        Geometry geom = reducer.reduce(new WKTReader().read(result))
+
+        return geom.toText()
     }
 
 }
