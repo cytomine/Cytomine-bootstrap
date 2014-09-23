@@ -246,7 +246,17 @@ class BootstrapUtilsService {
         }
     }
 
-    def createNewIS() {
+    def createMultipleIS() {
+        (1..5).each {
+            String url = grailsApplication.config.grails.imageServerURL
+            url = url.substring(0,url.size()-1) + it;
+            createNewIS(it+"",url)
+
+        }
+    }
+
+
+    def createNewIS(String name = "", String url = grailsApplication.config.grails.imageServerURL) {
 
         println "*************** createNewIS ********************"
         MimeImageServer.list().each {
@@ -260,7 +270,7 @@ class BootstrapUtilsService {
         ImageServer.list().each {
             it.delete()
         }
-        def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : grailsApplication.config.grails.imageServerURL, available : true]
+        def IIPImageServer = [className : 'IIPResolver', name : 'IIP'+name, service : '/image/tile', url : url, available : true]
         ImageServer imageServer = new ImageServer(
                 className: IIPImageServer.className,
                 name: IIPImageServer.name,

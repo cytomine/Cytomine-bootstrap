@@ -239,7 +239,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             area = Math.round(this.location.getArea() * image.resolution * image.resolution)
             perimeter = Math.round(this.location.getLength() * image.resolution / 1000)
         }
-
     }
 
 
@@ -286,7 +285,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         }
 
 
-
         if (params.mask) {
             boundaries.mask = true
             boundaries.location = location.toText()
@@ -307,7 +305,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     def getCallBack() {
         return [annotationID: this.id, imageID: this.image.id]
-
     }
 
 

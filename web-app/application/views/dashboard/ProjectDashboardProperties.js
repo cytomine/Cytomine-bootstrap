@@ -389,7 +389,7 @@ var ProjectDashboardProperties = Backbone.View.extend({
 
             collection.each(function(options) {
                 if (idDomain == options.get('id')) {
-                    var option = _.template("<img align='middle' id='imageProperty-<%=id%>' src='<%=image%>?max_size=256' style='max-width :256px; max-height : 256px'>", { id : options.get('id'), image : options.get(imageType)});
+                    var option = _.template("<img align='middle' id='imageProperty-<%=id%>' src='<%=image%>?maxSize=256' style='max-width :256px; max-height : 256px'>", { id : options.get('id'), image : options.get(imageType)});
                     imageOrTextPlace.append(option);
                     imageOrTextPlace.attr("href","#tabs-image-" + window.app.status.currentProject + "-" + options.get('image') + "-");
                 }
