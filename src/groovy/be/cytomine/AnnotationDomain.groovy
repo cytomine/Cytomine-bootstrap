@@ -14,6 +14,7 @@ import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import groovy.util.logging.Log
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
@@ -34,6 +35,8 @@ import org.restapidoc.annotation.RestApiObject
 @RestApiObject(name = "generic annotation")
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
+
+    def simplifyGeometryService
 
     /**
      * Annotation geometry object
@@ -236,7 +239,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             area = Math.round(this.location.getArea() * image.resolution * image.resolution)
             perimeter = Math.round(this.location.getLength() * image.resolution / 1000)
         }
-
     }
 
 
@@ -281,13 +283,21 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         if (params.get('increaseArea')) {
             boundaries.increaseArea = params.get('increaseArea')
         }
+
+
         if (params.mask) {
             boundaries.mask = true
             boundaries.location = location.toText()
         }
         if (params.alphaMask) {
             boundaries.alphaMask = true
-            boundaries.location = location.toText()
+            boundaries.location = location.toText()//location.toText()
+        }
+
+
+        if(boundaries.location) {
+            //limit the size (text) for the geometry (url max lenght)
+            boundaries.location = simplifyGeometryService.simplifyPolygonTextSize(boundaries.location)
         }
 
         return UrlApi.getCropURL(image.baseImage.id, boundaries)
@@ -295,7 +305,6 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     def getCallBack() {
         return [annotationID: this.id, imageID: this.image.id]
-
     }
 
 

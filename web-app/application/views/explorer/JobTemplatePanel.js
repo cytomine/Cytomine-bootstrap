@@ -51,7 +51,7 @@ var JobTemplatePanel = SideBarPanel.extend({
         self.currentAnnotation = idAnnotation;
         var panel = $('#jobTemplatePanel' + self.model.get('id'));
         panel.find(".jobTemplateInfo").empty();
-        panel.find(".jobTemplateInfo").append('<img src="'+window.location.origin+'/api/annotation/'+idAnnotation+ '/crop.png?max_size=128&draw=true" /><br/>');
+        panel.find(".jobTemplateInfo").append('<img src="'+window.location.origin+'/api/annotation/'+idAnnotation+ '/crop.png?maxSize=128&draw=true" /><br/>');
         panel.find(".jobTemplateInfo").append("Annotation " + idAnnotation + "<br/>");
 
         panel.find(".jobTemplateROI").css("border-color","#47a447");

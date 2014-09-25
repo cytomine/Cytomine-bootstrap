@@ -138,7 +138,7 @@ var RetrievalAlgoResult = Backbone.View.extend({
     },
     linkAnnotationMapWithBadTerm: function (term, suggestTerm, terms,modalId) {
         var self = this;
-        new AnnotationCollection({project: self.project.id, term: term, suggestedTerm: suggestTerm, jobForTermAlgo: self.model.get('userJob')}).fetch({
+        new AnnotationCollection({project: self.project.id, term: term, suggestedTerm: suggestTerm, userForTermAlgo: self.model.get('userJob')}).fetch({
             success: function (collection, response) {
                 new AnnotationQuestionableView({
                     model: collection,

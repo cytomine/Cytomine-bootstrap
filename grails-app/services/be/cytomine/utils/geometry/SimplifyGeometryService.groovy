@@ -3,7 +3,9 @@ package be.cytomine.utils.geometry
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.MultiPolygon
 import com.vividsolutions.jts.geom.Polygon
+import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 
@@ -22,20 +24,20 @@ class SimplifyGeometryService {
      */
     def simplifyPolygon(String form, def minPoint = null, def maxPoint = null) {
         Geometry annotationFull = new WKTReader().read(form);
-        int numOfGeometry=0
-        if(annotationFull instanceof MultiPolygon) {
-            for(int i=0;i<annotationFull.getNumGeometries();i++) {
-                numOfGeometry = numOfGeometry + (annotationFull.getGeometryN(i).getNumGeometries()*annotationFull.getGeometryN(i).getNumInteriorRing())
+        int numOfGeometry = 0
+        if (annotationFull instanceof MultiPolygon) {
+            for (int i = 0; i < annotationFull.getNumGeometries(); i++) {
+                numOfGeometry = numOfGeometry + (annotationFull.getGeometryN(i).getNumGeometries() * annotationFull.getGeometryN(i).getNumInteriorRing())
             }
         } else {
-            numOfGeometry = annotationFull.getNumGeometries()*annotationFull.getNumInteriorRing()
+            numOfGeometry = annotationFull.getNumGeometries() * annotationFull.getNumInteriorRing()
         }
-        numOfGeometry = Math.max(1,numOfGeometry)
+        numOfGeometry = Math.max(1, numOfGeometry)
 
-        if(numOfGeometry>10) {
-            numOfGeometry = numOfGeometry/2
+        if (numOfGeometry > 10) {
+            numOfGeometry = numOfGeometry / 2
         }
-        numOfGeometry = Math.min(10,numOfGeometry)
+        numOfGeometry = Math.min(10, numOfGeometry)
 
         log.info "numOfGeometry=$numOfGeometry"
         log.info "minPoint=$minPoint maxPoint=$maxPoint"
@@ -46,14 +48,14 @@ class SimplifyGeometryService {
         double numberOfPoint = annotationFull.getNumPoints()
 
         /* Maximum number of point that we would have (500/5 (max 150)=max 100 points)*/
-        double rateLimitMax = Math.max(numberOfPoint / ratioMax, numOfGeometry*200)
-        if(maxPoint) {
+        double rateLimitMax = Math.max(numberOfPoint / ratioMax, numOfGeometry * 200)
+        if (maxPoint) {
             //overide if max/minpoint is in argument
             rateLimitMax = maxPoint * numOfGeometry
         }
         /* Minimum number of point that we would have (500/10 (min 10 max 100)=min 50 points)*/
-        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), numOfGeometry*100)
-        if(minPoint) {
+        double rateLimitMin = Math.min(Math.max(numberOfPoint / ratioMin, 10), numOfGeometry * 100)
+        if (minPoint) {
             //overide if max/minpoint is in argument
             rateLimitMin = minPoint * numOfGeometry
         }
@@ -86,7 +88,6 @@ class SimplifyGeometryService {
     }
 
 
-
     def simplifyPolygon(String form, double rate) {
         Geometry annotation = new WKTReader().read(form);
         Boolean isPolygonAndNotValid = (annotation instanceof com.vividsolutions.jts.geom.Polygon && !((Polygon) annotation).isValid())
@@ -97,6 +98,35 @@ class SimplifyGeometryService {
             annotation = DouglasPeuckerSimplifier.simplify(annotation, rate)
         }
         return [geometry: annotation, rate: rate]
+    }
+
+
+    def simplifyPolygonTextSize(String location) {
+        String result = location
+        //limit the size (text) for the geometry (url max lenght)
+        println "simplify..."
+
+        if (new WKTReader().read(location).numPoints < 100) {
+            return result
+        }
+
+        double index = 10d
+
+        int max = 1000
+        while (index < max) {
+            def geom = TopologyPreservingSimplifier.simplify(new WKTReader().read(location), index)
+            println index + " = " + geom.numPoints
+            result = geom.toText()
+            if (geom.numPoints < 150) {
+                break
+            }
+            index = (index + 10) * 1.1
+        }
+
+        GeometryPrecisionReducer reducer = new GeometryPrecisionReducer(new PrecisionModel(100))
+        Geometry geom = reducer.reduce(new WKTReader().read(result))
+
+        return geom.toText()
     }
 
 }
