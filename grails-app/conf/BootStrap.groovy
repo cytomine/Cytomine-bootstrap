@@ -183,6 +183,10 @@ class BootStrap {
             bootstrapUtilsService.addMimePhilipsTiff()
         }
 
+        if(Version.isOlderVersion(20140925)) {
+            bootstrapUtilsService.addMimeVentanaTiff()
+        }
+
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
 
 

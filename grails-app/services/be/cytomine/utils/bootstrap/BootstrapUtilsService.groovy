@@ -200,6 +200,14 @@ class BootstrapUtilsService {
         createMimeImageServers(ImageServer.findAll(), mimeSamples)
     }
 
+    def addMimeVentanaTiff() {
+        def mimeSamples = [
+                [extension : 'tif', mimeType : 'openslide/ventana']
+        ]
+        createMimes(mimeSamples)
+        createMimeImageServers(ImageServer.findAll(), mimeSamples)
+    }
+
     def addMimePhilipsTiff() {
         def mimeSamples = [
                 [extension : 'tif', mimeType : 'philips/tif']
