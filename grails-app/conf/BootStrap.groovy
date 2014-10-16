@@ -195,7 +195,7 @@ class BootStrap {
 
         if(Environment.getCurrent() != Environment.TEST) {
             if(grailsApplication.config.grails.client=="AURORA") {
-                NotifyAuroraUploadJob.schedule(grailsApplication.config.grails.integration.aurora.interval, grailsApplication.config.grails.integration.aurora.interval, [:])
+                NotifyAuroraUploadJob.schedule(c, grailsApplication.config.grails.integration.aurora.interval, [:])
             }
         }
     }

@@ -29,6 +29,7 @@ class RetrievalService {
     def grailsApplication
     def dataSource
     def currentRoleServiceProxy
+    def cytomineService
 
     /**
      * Search similar annotation and best term for an annotation

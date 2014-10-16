@@ -400,7 +400,8 @@ body {
                     { urlArgs: "bust=" + (new Date()).getTime() }
             );
             window.app = new ApplicationController();
-            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
+            window.app.coreServer =  "${grailsApplication.config.grails.serverURL}";
+            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}";
         });
     </script>
 </g:if>
@@ -412,8 +413,8 @@ body {
                     { urlArgs: "bust=${grailsApplication.metadata.'app.version'}" }
             );
             window.app = new ApplicationController();
-            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}"
-
+            window.app.coreServer =  "${grailsApplication.config.grails.serverURL}";
+            window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}";
         });
     </script>
 

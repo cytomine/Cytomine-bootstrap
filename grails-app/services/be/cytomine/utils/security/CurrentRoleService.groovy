@@ -88,7 +88,8 @@ class CurrentRoleService implements Serializable {
      * Check if user is admin (with admin session opened)
      */
     boolean isAdminByNow(SecUser user) {
-        return findCurrentRole(user).collect{it.authority}.contains("ROLE_ADMIN")
+        def auths = findCurrentRole(user).collect{it.authority}
+        return auths.contains("ROLE_ADMIN") || auths.contains("ROLE_SUPER_ADMIN")
     }
     boolean isUserByNow(SecUser user) {
         return findCurrentRole(user).collect{it.authority}.contains("ROLE_USER")

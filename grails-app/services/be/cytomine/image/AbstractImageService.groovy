@@ -283,7 +283,9 @@ class AbstractImageService extends ModelService {
     }
 
     def downloadURI(AbstractImage abstractImage) {
-        String fif = UploadedFile.findByImage(abstractImage)?.downloadParent?.absolutePath
+        List<UploadedFile> files = UploadedFile.findAllByImage(abstractImage)
+        UploadedFile file = files.find{it.downloadParent!=null}
+        String fif = file?.absolutePath
         if (fif) {
             String imageServerURL = abstractImage.getRandomImageServerURL()
             return "$imageServerURL/image/download?fif=$fif"

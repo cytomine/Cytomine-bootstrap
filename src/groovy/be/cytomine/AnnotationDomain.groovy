@@ -274,6 +274,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
     def toCropURL(params=[:]) {
         def boundaries = getBoundaries()
+
         if (params.zoom) boundaries.zoom = params.zoom
         if (params.maxSize) boundaries.maxSize = params.maxSize
         if (params.draw) {

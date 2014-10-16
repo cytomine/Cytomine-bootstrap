@@ -42,6 +42,7 @@ class UserAnnotationService extends ModelService {
     def kmeansGeometryService
     def annotationListingService
     def securityACLService
+    def currentRoleServiceProxy
 
     def currentDomain() {
         return UserAnnotation
@@ -83,7 +84,11 @@ class UserAnnotationService extends ModelService {
      */
     def listLightForRetrieval() {
         securityACLService.checkAdmin(cytomineService.currentUser)
-        String request = "SELECT a.id as id, a.project_id as project FROM user_annotation a WHERE GeometryType(a.location) != 'POINT' ORDER BY id desc"
+        //String request = "SELECT a.id as id, a.project_id as project FROM user_annotation a WHERE GeometryType(a.location) != 'POINT' ORDER BY id desc"
+
+        //SELECT a.id, st_area(a.location) FROM user_annotation a where st_area(a.location) < 1500000 order by st_area(a.location) DESC;
+        String request = "" +
+                "SELECT a.id as id, a.project_id as project FROM user_annotation a, image_instance ii, abstract_image ai WHERE a.image_id = ii.id AND ii.base_image_id = ai.id AND ai.original_filename not like '%ndpi%svs%' AND GeometryType(a.location) != 'POINT' AND st_area(a.location) < 1500000 ORDER BY st_area(a.location) DESC"
         selectUserAnnotationLightForRetrieval(request)
     }
 

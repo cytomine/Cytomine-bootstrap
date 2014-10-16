@@ -421,7 +421,7 @@ class SecUserService extends ModelService {
             else {
                 permissionService.deletePermission(project,user.username,READ)
                 //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                permissionService.deletePermission(project.ontology,user.username,READ)
+                //permissionService.deletePermission(project.ontology,user.username,READ)
             }
         }
         [data: [message: "OK"], status: 201]

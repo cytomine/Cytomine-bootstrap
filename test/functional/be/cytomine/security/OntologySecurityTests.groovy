@@ -166,4 +166,55 @@ class OntologySecurityTests extends SecurityTestsAbstract {
       assert (401 == OntologyAPI.update(ontology.id,ontology.encodeAsJSON(),USERNAMEBAD,PASSWORDBAD).code)
       assert (401 == OntologyAPI.delete(ontology.id,USERNAMEBAD,PASSWORDBAD).code)
   }
+
+
+
+    void testOntologySecurityForUserRemovedFromProject() {
+
+        println "TESTREMOVEBUG"
+
+        //if user 1 is in project 1 (ontology 1) and project 2 (ontology 1), it must have access to ontology 1 if removed from project 1 or 2.
+
+        //Get user1
+        User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
+        Ontology ontologyToAdd = BasicInstanceBuilder.getOntologyNotExist()
+
+        //Create new Ontology (user1)
+        def result = OntologyAPI.create(ontologyToAdd.encodeAsJSON(),USERNAME1,PASSWORD1)
+        assert 200 == result.code
+        Ontology ontology = result.data
+
+        Project project1 = BasicInstanceBuilder.getProjectNotExist(true)
+        project1.ontology = ontology
+        BasicInstanceBuilder.saveDomain(project1)
+        Project project2 = BasicInstanceBuilder.getProjectNotExist(true)
+        project2.ontology = ontology
+        BasicInstanceBuilder.saveDomain(project2)
+
+        //TODO: try with USERNAME1 & PASSWORD1
+
+        def resAddUser = ProjectAPI.addUserProject(project1.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        assert 200 == resAddUser.code
+        resAddUser = ProjectAPI.addUserProject(project2.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        assert 200 == resAddUser.code
+
+        //check if user 2 can access/update/delete
+        assert (200 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+        assert (true ==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+
+        //remove right to user2
+        resAddUser = ProjectAPI.deleteUserProject(project1.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        assert 200 == resAddUser.code
+
+        //check if user 2 can access/update/delete, he is still in project 2!!!!!!
+        assert (200 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+        assert (true ==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+
+        resAddUser = ProjectAPI.deleteUserProject(project2.id,user2.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        assert 200 == resAddUser.code
+
+        //check if user 2 cannot access/update/delete
+        assert (403 == OntologyAPI.show(ontology.id,USERNAME2,PASSWORD2).code)
+        assert(false==OntologyAPI.containsInJSONList(ontology.id,JSON.parse(OntologyAPI.list(USERNAME2,PASSWORD2).data)))
+    }
 }
