@@ -1,11 +1,20 @@
 #!/bin/bash
 
+echo "Beginning of the deployment"
 /etc/init.d/ssh start
 
-sed "s/CORE_URL/$CORE_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
-sed "s/IMS_URL/$IMS_URL/g" /tmp/out.tmp1 > /etc/nginx/nginx.conf
-rm /tmp/out.tmp1
+echo "SSH started"
 
+sed "s/CORE_URL/$CORE_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
+sed "s/CORE_ALIAS/$CORE_ALIAS/g" /tmp/out.tmp1  > /tmp/out.tmp2
+sed "s/IMS_URL/$IMS_URL/g" /tmp/out.tmp2 > /tmp/out.tmp3
+sed "s/IMS_ALIAS/$IMS_ALIAS/g" /tmp/out.tmp3 > /etc/nginx/nginx.conf
+rm /tmp/out.tmp1
+rm /tmp/out.tmp2
+rm /tmp/out.tmp3
+
+echo "Launch of nginx"
 nginx
+echo "End of the deployment"
 
 tail -F /var/log/nginx/access.log

@@ -30,6 +30,19 @@ RUN apt-get -y -q install postgresql-9.3 postgresql-client-9.3 postgresql-contri
 # Note: The official Debian and Ubuntu images automatically ``apt-get clean``
 # after each ``apt-get``
 
+# Add the backup script
+RUN mkdir /var/cytomine/
+ADD script_backup.sh /var/cytomine/script_backup.sh
+RUN chmod +x /var/cytomine/script_backup.sh
+
+ADD crontab /tmp/crontab
+
+# Add the mail features
+RUN apt-get -y install ssmtp
+RUN apt-get install -y mailutils
+
+ADD ssmtp.conf /etc/ssmtp/ssmtp.conf
+
 # Run the rest of the commands as the ``postgres`` user created by the ``postgres-9.3`` package when it was ``apt-get installed``
 USER postgres
 
@@ -41,7 +54,7 @@ RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" &&\
     createdb --encoding='utf-8' --template=template0 -O docker docker &&\
     psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='docker'" &&\
-    psql -d docker -f /usr/share/postgresql/9.3/extension/postgis--2.1.3.sql &&\
+    psql -d docker -f /usr/share/postgresql/9.3/extension/postgis--2.1.4.sql &&\
     psql -d docker -c "GRANT ALL ON geometry_columns TO PUBLIC;" &&\ 
     psql -d docker -c "GRANT ALL ON geography_columns TO PUBLIC;" &&\
     psql -d docker -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
@@ -60,4 +73,13 @@ EXPOSE 5432
 VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 # Set the default command to run when starting the container
-CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
+#CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
+
+USER root
+
+#CMD su postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /var/lib/postgresql/9.3/main -c config_file=/etc/postgresql/9.3/main/postgresql.conf"
+
+ADD deploy.sh /tmp/deploy.sh
+RUN chmod +x /tmp/deploy.sh
+
+ENTRYPOINT ["/tmp/deploy.sh"]

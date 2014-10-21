@@ -104,6 +104,6 @@ http {
                 	fastcgi_param   QUERY_STRING $query_string;
                 	fastcgi_param   CONTENT_TYPE $content_type;
                 	fastcgi_param   CONTENT_LENGTH $content_length;
-	}
+		}
 	}
 }

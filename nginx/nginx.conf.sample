@@ -43,9 +43,11 @@ http {
 		location / {
 			proxy_set_header X-Real-IP $remote_addr;
 			proxy_set_header Host $host;
-			proxy_pass http://core:8080;
+			proxy_pass http://CORE_ALIAS:8080;
 		}	
     }
+
+
 
    #server {
    #		client_max_body_size 0;
@@ -66,26 +68,27 @@ http {
    #server {
    #             client_max_body_size 0;
    #             listen       80;
-   #             server_name  aurora_upload.cytomine.be;
-   #
-   #             #charset koi8-r;
-   #
-   #             #access_log  logs/host.access.log  main;
-   #
+   #             server_name  localhost-upload;
+   
+                #charset koi8-r;
+   
+                #access_log  logs/host.access.log  main;
+   
    #             location / {
    #			proxy_set_header X-Real-IP $remote_addr;
    #			proxy_set_header Host $host;
+   #                     proxy_pass http://www.google.com;
    #                     proxy_pass http://ims:8081;
    #             }
-   #		#ugly solution to pass OPTIONS requests
+   		#ugly solution to pass OPTIONS requests
    #		error_page 405 =200 @405;
    #		location @405 {
    # 			root /;
    #			proxy_set_header X-Real-IP $remote_addr;
-   #                     proxy_set_header Host $host;
-   #                     proxy_pass http://ims:8081;
+    #                    proxy_set_header Host $host;
+    #                    proxy_pass http://ims:8081;
    #		}
-   # } 
+    #} 
 
    server {
                 client_max_body_size 0;
@@ -98,7 +101,8 @@ http {
 
                 location / {
 			proxy_set_header Host $host;
-                        proxy_pass http://ims:8080;
+                        proxy_pass http://IMS_ALIAS:8080;
+
                 }
     } 
 }
