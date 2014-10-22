@@ -298,7 +298,7 @@ class UserAnnotationListingTests {
         println "job=${job.id}"
         println "user=${UserJob.findByJob(job).id}"
 
-        def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, job.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = AnnotationDomainAPI.listByProjectAndTermWithSuggest(annotation.project.id, annotationTerm.term.id, suggest.term.id, UserJob.findByJob(job).id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray

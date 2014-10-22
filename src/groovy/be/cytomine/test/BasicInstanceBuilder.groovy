@@ -1368,7 +1368,8 @@ class BasicInstanceBuilder {
 
     public static ImageInstance initImage() {
 
-        String urlImageServer = "http://localhost:9080"
+        //String urlImageServer = "http://localhost:9080"
+        String urlImageServer = "http://image.cytomine.be"
 
         User user = getUser("imgUploader", "password")
 

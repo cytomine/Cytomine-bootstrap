@@ -211,7 +211,8 @@ class DomainAPI {
 
         log.info("DOWNLOAD:"+URL)
         HttpClient client = new HttpClient();
-        BufferedImage image = client.readBufferedImageFromURLWithoutKey(URL, username, password)
+        //BufferedImage image = client.readBufferedImageFromURLWithoutKey(URL, username, password)
+        BufferedImage image = client.readBufferedImageFromURLWithRedirect(URL, username, password)
         return [image: image]
     }
 

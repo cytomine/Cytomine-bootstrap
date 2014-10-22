@@ -170,11 +170,15 @@ class UploadedFile extends CytomineDomain implements Serializable{
     }
 
     def getAbstractImage() {
-        if (image) return image.id
-        if (parent?.image) return parent.image.id
-        UploadedFile son = UploadedFile.findByParent(this)
-        if (son?.image) return son.image.id
-        else return null
+        try {
+            if (image) return image.id
+            if (parent?.image) return parent.image.id
+            UploadedFile son = UploadedFile.findByParent(this)
+            if (son?.image) return son.image.id
+            else return null
+        } catch(Exception e) {
+            return null
+        }
     }
 
 }

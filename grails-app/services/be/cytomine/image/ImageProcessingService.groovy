@@ -6,8 +6,19 @@ import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.ontology.Term
 import com.vividsolutions.jts.geom.Geometry
 import ij.ImagePlus
+import org.apache.http.Header
+import org.apache.http.HttpEntity
+import org.apache.http.HttpHost
+import org.apache.http.HttpResponse
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.client.AuthCache
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.protocol.ClientContext
+import org.apache.http.impl.auth.BasicScheme
+import org.apache.http.impl.client.BasicAuthCache
 import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.protocol.BasicHttpContext
 
 import javax.imageio.ImageIO
 import java.awt.Color
@@ -48,14 +59,55 @@ class ImageProcessingService {
         return getImageFromURL(cropURL)
     }
 
+
+
+
+
+
     /**
      * Read a picture from url
      * @param url Picture url
      * @return Picture as an object
      */
-    public BufferedImage getImageFromURL(String url) {
-        BufferedImage bufferedImage = ImageIO.read(new URL(url))
-        return bufferedImage
+//    public BufferedImage getImageFromURL(String url) {
+//        BufferedImage bufferedImage = ImageIO.read(new URL(url))
+//        return bufferedImage
+//    }
+
+    public BufferedImage getImageFromURL(String url) throws MalformedURLException, IOException, Exception {
+        log.debug("readBufferedImageFromURL:"+url);
+        URL URL = new URL(url);
+        HttpHost targetHost = new HttpHost(URL.getHost(), URL.getPort());
+        log.debug("targetHost:"+targetHost);
+        DefaultHttpClient client = new DefaultHttpClient();
+        log.debug("client:"+client);
+        // Add AuthCache to the execution context
+        BasicHttpContext localcontext = new BasicHttpContext();
+        log.debug("localcontext:"+localcontext);
+        BufferedImage img = null;
+        HttpGet httpGet = new HttpGet(URL.toString());
+        HttpResponse response = client.execute(targetHost, httpGet, localcontext);
+        int code = response.getStatusLine().getStatusCode();
+        System.out.println("url="+url + " is " + code + "(OK="+HttpURLConnection.HTTP_OK +",MOVED="+HttpURLConnection.HTTP_MOVED_TEMP+")");
+
+        boolean isOK = (code == HttpURLConnection.HTTP_OK);
+        boolean isFound = (code == HttpURLConnection.HTTP_MOVED_TEMP);
+        boolean isErrorServer = (code == HttpURLConnection.HTTP_INTERNAL_ERROR);
+
+        if(!isOK && !isFound & !isErrorServer) {
+            throw new IOException(url + " cannot be read: "+code);
+        }
+        HttpEntity entity = response.getEntity();
+        System.out.println("entity="+entity);
+        if (entity != null) {
+            System.out.println("img="+entity.getContent().bytes.length);
+            img = ImageIO.read(entity.getContent());
+            System.out.println("img="+img);
+        }
+        System.out.println("entity="+entity.getContent());
+        return img;
+
+
     }
 
     /*public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {

@@ -92,6 +92,7 @@ class UploadedFileTests {
        uploadedFile.projects[0] = oneAnotherImage.project.id
        uploadedFile.user = oneAnotherImage.user
        uploadedFile.status = UploadedFile.TO_DEPLOY
+       uploadedFile.mimeType = "image/tiff"
        BasicInstanceBuilder.saveDomain(uploadedFile)
 
        def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)

@@ -165,6 +165,7 @@ class SecurityACLService {
         }
     }
 
+
     public List<Project> getProjectList(SecUser user) {
         //faster method
         if (currentRoleServiceProxy.isAdminByNow(user)) {

@@ -10,7 +10,7 @@ Any parameter with 'javamelody.' prefix configured in this file will be add as i
 /*
 The parameter disabled (false by default) just disables the monitoring.
  */
-//javamelody.disabled = false
+javamelody.disabled = true
 
 /*
 The parameter system-actions-enabled (true by default) enables some system actions.

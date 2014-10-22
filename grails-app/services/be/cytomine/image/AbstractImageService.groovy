@@ -51,6 +51,9 @@ class AbstractImageService extends ModelService {
         AbstractImage abstractImage = AbstractImage.read(id)
         if(abstractImage) {
             //securityACLService.checkAtLeastOne(abstractImage, READ)
+            if(!hasRightToReadAbstractImageWithProject(abstractImage) && !hasRightToReadAbstractImageWithStorage(abstractImage)) {
+                throw new ForbiddenException("You don't have the right to read or modity this resource! ${abstractImage} ${id}")
+            }
         }
         abstractImage
     }
@@ -59,8 +62,28 @@ class AbstractImageService extends ModelService {
         AbstractImage abstractImage = AbstractImage.get(id)
         if(abstractImage) {
             //securityACLService.checkAtLeastOne(abstractImage, READ)
+            if(!hasRightToReadAbstractImageWithProject(abstractImage) && !hasRightToReadAbstractImageWithStorage(abstractImage)) {
+                throw new ForbiddenException("You don't have the right to read or modity this resource! ${abstractImage} ${id}")
+            }
         }
         abstractImage
+    }
+
+    boolean hasRightToReadAbstractImageWithProject(AbstractImage image) {
+        List<ImageInstance> imageInstances = ImageInstance.findAllByBaseImage(image)
+        List<Project> projects = imageInstances.collect{it.project}
+        for(Project project : projects) {
+            if(project.hasACLPermission(project,READ)) return true
+        }
+        return false
+    }
+
+    boolean hasRightToReadAbstractImageWithStorage(AbstractImage image) {
+        List<Storage> storages = StorageAbstractImage.findAllByAbstractImage(image).collect{it.storage}
+        for(Storage storage : storages) {
+            if(storage.hasACLPermission(storage,READ)) return true
+        }
+        return false
     }
 
     def list(Project project) {

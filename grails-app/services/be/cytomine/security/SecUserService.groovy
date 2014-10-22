@@ -413,18 +413,27 @@ class SecUserService extends ModelService {
         if (project) {
             log.info "deleteUserFromProject project=" + project?.id + " username=" + user?.username + " ADMIN=" + admin
             if(admin) {
-                //TODO:: a user admin can remove another admin user?
+                removeOntologyRightIfNecessary(project,user)
                 permissionService.deletePermission(project,user.username,ADMINISTRATION)
-                //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                //permissionService.deletePermission(project.ontology,user.username,READ)
             }
             else {
+                removeOntologyRightIfNecessary(project,user)
                 permissionService.deletePermission(project,user.username,READ)
-                //TODO:: bug code: if user x has access to ontology o thx to project p1 & p2, if x is removed from p1, it loose right from o... => it should keep this right thx to p2!
-                //permissionService.deletePermission(project.ontology,user.username,READ)
             }
         }
         [data: [message: "OK"], status: 201]
+    }
+
+    private void removeOntologyRightIfNecessary(Project project, User user) {
+        //we remove the right ONLY if user has another project with this ontology
+        List<Project> projects = securityACLService.getProjectList(user,project.ontology)
+        List<Project> otherProjects = projects.findAll{it.id!=project.id}
+
+        if(otherProjects.isEmpty()) {
+            //user has no other project with this ontology, remove the right!
+            permissionService.deletePermission(project.ontology,user.username,READ)
+        }
+
     }
 
     def beforeDelete(def domain) {

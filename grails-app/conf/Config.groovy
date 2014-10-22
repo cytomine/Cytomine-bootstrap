@@ -122,7 +122,8 @@ environments {
     }
     test {
         grails.serverURL = "http://localhost:8090"
-        grails.imageServerURL = "http://localhost:9080"
+        //grails.imageServerURL = "http://localhost:9080"
+        grails.imageServerURL = "http://image.cytomine.be"
         grails.plugin.springsecurity.useBasicAuth = true
         grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
