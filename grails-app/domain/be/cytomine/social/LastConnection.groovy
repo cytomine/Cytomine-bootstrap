@@ -10,6 +10,8 @@ import be.cytomine.security.SecUser
  */
 class LastConnection extends CytomineDomain{
 
+    static mapWith = "mongo"
+
     SecUser user
     Date date
     Project project
@@ -23,5 +25,6 @@ class LastConnection extends CytomineDomain{
     static mapping = {
         id(generator: 'assigned', unique: true)
         sort "id"
+        compoundIndex date:1, indexAttributes:['expireAfterSeconds':60]
     }
 }

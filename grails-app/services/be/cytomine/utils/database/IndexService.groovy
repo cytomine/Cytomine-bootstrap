@@ -134,17 +134,6 @@ class IndexService {
             createIndex("annotation_index", "image_id");
             createIndex("annotation_index", "user_id");
 
-            createIndex("user_position", "user_id");
-            createIndex("user_position", "updated");
-            createIndex("user_position", "image_id");
-            createIndex("user_position", "project_id");
-            createIndex("user_position", "latitude");
-            createIndex("user_position", "longitude");
-            createIndex("user_position", "date_part('epoch'::text, created)","btree", "user_position_epochcreated");
-            createIndex("user_position", "date_part('epoch'::text, updated)","btree", "user_position_epochupdated");
-            createIndex("user_position", "created","btree", "user_position_created");
-            createIndex("user_position", "updated","btree", "user_position_updated");
-
             createIndex("last_connection", "user_id");
 
         } catch (org.postgresql.util.PSQLException e) {

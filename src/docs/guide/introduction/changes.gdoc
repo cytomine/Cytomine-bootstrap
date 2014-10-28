@@ -1,3 +1,8 @@
+h3. 20141025 Version
+
+Drop (save) table UserPositon on PostgreSQL
+
+
 h3. 20140822 Version
 
 Upgrate to Grails 2.4.3.

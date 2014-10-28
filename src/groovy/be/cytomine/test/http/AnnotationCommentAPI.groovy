@@ -1,6 +1,6 @@
 package be.cytomine.test.http
 
-import be.cytomine.social.SharedAnnotation
+import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.test.Infos
 import grails.converters.JSON
 

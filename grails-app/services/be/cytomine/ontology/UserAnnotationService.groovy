@@ -12,7 +12,6 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
-import be.cytomine.social.SharedAnnotation
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.UserAnnotationListing
 import be.cytomine.utils.JSONUtils

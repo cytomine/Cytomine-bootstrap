@@ -38,8 +38,8 @@ hibernate {
    // hibernate.cache.region.factory_class = 'net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory'
     cache.use_second_level_cache = true
     cache.use_query_cache = false
-    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
-//    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
+    //cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
+    cache.region.factory_class = 'org.hibernate.cache.ehcache.EhCacheRegionFactory' // Hibernate 4
     singleSession = true // configure OSIV singleSession mode
 }
 // environment specific settings
@@ -58,7 +58,7 @@ environments {
       dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-      url="jdbc:postgresql://localhost:5432/cytomine"
+      url="jdbc:postgresql://localhost:5432/cytomineelearn"
       password = "postgres"
 
     }
@@ -102,6 +102,22 @@ environments {
             dbCreate = "create"
             url="jdbc:postgresql://localhost:5432/cytominetestrun"
             password = "postgres"
+        }
+    }
+}
+grails {
+    mongo {
+        host = "localhost"
+        port = 27017
+        databaseName = "cytomine"
+    }
+}
+environments {
+    test {
+        grails {
+            mongo {
+                databaseName = "cytominetest"
+            }
         }
     }
 }

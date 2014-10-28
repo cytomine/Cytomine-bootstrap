@@ -1,4 +1,4 @@
-package be.cytomine.social
+package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
 import be.cytomine.ontology.UserAnnotation

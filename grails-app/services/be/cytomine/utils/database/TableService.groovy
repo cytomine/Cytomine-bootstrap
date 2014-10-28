@@ -26,12 +26,6 @@ class TableService {
 
         //drop constraint (for perf)
         dropForeignKeys()
-//        dropConstraint("user_position","fk2f95f31d86f383d")
-//        dropConstraint("user_position","fk2f95f31d94b673c6")
-//        dropConstraint("user_position","fk2f95f31dfb4af27c")
-//        dropConstraint("last_connection","fk3197e82794b673c6")
-//        dropConstraint("last_connection","fk3197e827fb4af27c")
-
 
         try {
 
@@ -157,7 +151,7 @@ class TableService {
                   ON tc.constraint_name = kcu.constraint_name
                 JOIN information_schema.constraint_column_usage AS ccu
                   ON ccu.constraint_name = tc.constraint_name
-            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='user_position' OR tc.table_name='last_connection');
+            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='last_connection');
 
         """
         log.info "request = $request"

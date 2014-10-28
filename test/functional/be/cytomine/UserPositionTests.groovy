@@ -15,11 +15,6 @@ import grails.converters.JSON
  */
 class UserPositionTests  {
 
-    static def create(Long idImage, def json, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "/api/imageinstance/$idImage/position.json"
-        def result = doPOST(URL,json,username,password)
-        return result
-    }
 
     void testListByUser() {
         def image = BasicInstanceBuilder.getImageInstance()

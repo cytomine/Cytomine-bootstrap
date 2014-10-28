@@ -206,4 +206,8 @@ class ImageInstance extends CytomineDomain implements Serializable {
         return user
     }
 
+    public String getFileName() {
+        return baseImage.originalFilename
+    }
+
 }

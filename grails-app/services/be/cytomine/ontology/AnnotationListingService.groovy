@@ -62,7 +62,6 @@ class AnnotationListingService extends ModelService {
          def request = al.getAnnotationsRequest()
           boolean termAsked = false
            def sql = new Sql(dataSource)
-          log.info request
           sql.eachRow(request) {
               /**
                * If an annotation has n multiple term, it will be on "n" lines.

@@ -1,5 +1,9 @@
 package be.cytomine.security
 
+import be.cytomine.project.Project
+import be.cytomine.social.LastConnection
+import be.cytomine.social.PersistentUserPosition
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import grails.converters.XML
 import grails.plugin.springsecurity.annotation.Secured
@@ -49,26 +53,10 @@ class ServerController {
     }
 
     def addLastConnection(def idUser, def idProject) {
-        def  data = [idUser]
-        def reqcreate = "UPDATE last_connection SET updated = '" +new Date()+ "', date = '" +new Date()+ "' WHERE user_id = ?"
-        if(idProject) {
-            data << idProject
-            reqcreate = reqcreate + " AND project_id = ?"
-        } else {
-            reqcreate = reqcreate + " AND project_id is null"
-        }
-
-        //synchronized (this.getClass()) { //may be not synchronized for perf reasons (but table content will not be consistent)
-        def sql = new Sql(dataSource)
-        int affectedRow = sql.executeUpdate(reqcreate,data)
-        sql.close()
-        if(affectedRow==0) {
-            def reqinsert = "INSERT INTO last_connection(id,version,user_id,date,project_id,created) VALUES (nextval('hibernate_sequence'),0,"+idUser+",'" +new Date()+ "'," +idProject+",'" +new Date()+ "')"
-            sql = new Sql(dataSource)
-            sql.execute(reqinsert)
-            sql.close()
-        }
-
-        //}
+        LastConnection connection = new LastConnection()
+        connection.user = SecUser.read(idUser)
+        connection.project = Project.read(idProject)
+        connection.date = new Date()
+        connection.insert(flush:true) //don't use save (stateless collection)
     }
 }

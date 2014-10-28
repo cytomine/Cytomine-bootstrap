@@ -4,6 +4,8 @@ import be.cytomine.image.NestedImageInstance
 import be.cytomine.processing.JobTemplate
 import be.cytomine.security.User
 import be.cytomine.security.UserJob
+import be.cytomine.social.LastUserPosition
+import be.cytomine.social.PersistentUserPosition
 import grails.converters.JSON
 
 /**
@@ -48,5 +50,12 @@ class MarshallersService {
         JSON.registerObjectMarshaller(JobTemplate) { it ->
             return JobTemplate.getDataFromDomain(it)
         }
+        JSON.registerObjectMarshaller(PersistentUserPosition) { it ->
+            return PersistentUserPosition.getDataFromDomain(it)
+        }
+        JSON.registerObjectMarshaller(LastUserPosition) { it ->
+            return LastUserPosition.getDataFromDomain(it)
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package be.cytomine.utils.bootstrap
 
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
+import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
@@ -20,7 +21,9 @@ import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
+import be.cytomine.utils.JSONUtils
 import grails.plugin.springsecurity.SpringSecurityUtils
+import groovy.sql.Sql
 
 /**
  * Cytomine @ GIGA-ULG
@@ -34,6 +37,7 @@ class BootstrapUtilsService {
     def sessionFactory
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
     def grailsApplication
+    def dataSource
 
     public def createUsers(def usersSamples) {
 
@@ -151,14 +155,23 @@ class BootstrapUtilsService {
 
     public def createMimes(def mimeSamples) {
         mimeSamples.each {
-            Mime mime = new Mime(extension : it.extension, mimeType: it.mimeType)
-            if (mime.validate()) {
-                mime.save()
-            } else {
-                mime.errors?.each {
-                    println it
+            if(!Mime.findByMimeType(it.mimeType)) {
+                log.info "*********************************"
+                log.info "extension="+it.extension
+                log.info "mimeType="+it.mimeType
+                log.info "*********************************"
+                log.info Mime.list().collect{it.extension + "=" + it.mimeType}.join("\n")
+                log.info "*********************************"
+                Mime mime = new Mime(extension : it.extension, mimeType: it.mimeType)
+                if (mime.validate()) {
+                    mime.save(flush:true)
+                } else {
+                    mime.errors?.each {
+                        println it
+                    }
                 }
             }
+
         }
     }
 
@@ -332,24 +345,24 @@ class BootstrapUtilsService {
         def uploadedFiles = UploadedFile.findAllByPathLike("notfound").plus(UploadedFile.findAllByPathLike("/tmp/cytomine_buffer/")).plus(UploadedFile.findAllByPathLike("/tmp/imageserver_buffer"))
 
         uploadedFiles.eachWithIndex { uploadedFile,index->
-            if(index%500==0) {
+            if(index%1==0) {
                 log.info "Check ${(index/uploadedFiles.size())*100}"
                 cleanUpGorm()
             }
 
             uploadedFile.attach()
             AbstractImage abstractImage = uploadedFile.image
-
             if (!abstractImage) { //
                 UploadedFile parentUploadedFile = uploadedFile
-                while (parentUploadedFile.parent && !abstractImage) {
+                int max = 10
+                while (parentUploadedFile.parent && !abstractImage && max <10) {
                     parentUploadedFile.attach()
                     parentUploadedFile.parent.attach()
                     parentUploadedFile = parentUploadedFile.parent
                     abstractImage = parentUploadedFile.image
+                    max++
                 }
             }
-
             if (!abstractImage) {
                 log.error "DID NOT FIND AN ABSTRACT_IMAGE for uploadedFile $uploadedFile"
             } else {

@@ -15,8 +15,7 @@ import be.cytomine.ontology.*
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
-import be.cytomine.social.SharedAnnotation
-import be.cytomine.social.UserPosition
+import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.News
 import be.cytomine.utils.Task
@@ -269,11 +268,8 @@ class SecUserService extends ModelService {
         def xSecondAgo = Utils.getDatePlusSecond(-20000)
         def results = LastConnection.withCriteria {
             ge('date', xSecondAgo)
-            projections {
-                groupProperty("user")
-            }
         }
-        return results
+        return results.collect{it.user}.unique()
     }
 
     /**
@@ -286,11 +282,8 @@ class SecUserService extends ModelService {
         def results = LastConnection.withCriteria {
             ge('date', xSecondAgo)
             eq('project',project)
-            projections {
-                groupProperty("user")
-            }
         }
-        return results
+        return results.collect{it.user}.unique()
     }
 
     /**
@@ -559,14 +552,6 @@ class SecUserService extends ModelService {
         }
     }
 
-    def deleteDependentUserPosition(SecUser user, Transaction transaction, Task task = null) {
-        if(user instanceof User) {
-            UserPosition.findAllByUser((User)user).each {
-                it.delete()
-            }
-        }
-    }
-
     def deleteDependentUserJob(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             UserJob.findAllByUser((User)user).each {
@@ -586,14 +571,6 @@ class SecUserService extends ModelService {
     def deleteDependentNews(SecUser user, Transaction transaction, Task task = null) {
         if(user instanceof User) {
             News.findAllByUser((User)user).each {
-                it.delete()
-            }
-        }
-    }
-
-    def deleteDependentLastConnection(SecUser user, Transaction transaction, Task task = null) {
-        if(user instanceof User) {
-            LastConnection.findAllByUser((User)user).each {
                 it.delete()
             }
         }

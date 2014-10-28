@@ -9,7 +9,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.ForgotPasswordToken
 import be.cytomine.security.SecRole
 import be.cytomine.security.User
-import be.cytomine.social.SharedAnnotation
+import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.restapidoc.annotation.RestApiMethod

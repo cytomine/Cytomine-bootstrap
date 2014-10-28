@@ -16,6 +16,7 @@ import be.cytomine.security.User
 import be.cytomine.utils.Description
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import be.cytomine.utils.database.mongodb.NoSQLCollectionService
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode
@@ -40,6 +41,8 @@ class ImageInstanceService extends ModelService {
     def propertyService
     def annotationIndexService
     def securityACLService
+    def mongo
+    def noSQLCollectionService
 
     def currentDomain() {
         return ImageInstance
@@ -108,30 +111,24 @@ class ImageInstanceService extends ModelService {
         securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
 
-        String offsetString = ""
-        if(offset!=null) {
-            offsetString = offsetString + " OFFSET " + offset
-        }
-        if(max!=null) {
-            offsetString = offsetString + " LIMIT " + max
+        def db = mongo.getDB(noSQLCollectionService.getDatabaseName())
+
+        def result = db.lastUserPosition.aggregate(
+                [$match : [ user : user.id]],
+                [$group : [_id : '$image', "date":[$max:'$created']]],
+                [$sort : [ created : -1]],
+                [$limit: (max==null? 5 : max)]
+        )
+        //result = result.results().collect{it['_id']}.collect{[it["image"],it["user"]]}
+        result.results().each {
+            try {
+                ImageInstance image = read(it['_id'])
+                 data << [id:it['_id'],date:it['date'], thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
+            } catch(CytomineException e) {
+               //if user has data but has no access to picture,  ImageInstance.read will throw a forbiddenException
+            }
         }
 
-        def sql = new Sql(dataSource)
-         sql.eachRow("SELECT image_id,extract(epoch from max(user_position.created))*1000 as maxDate\n" +
-                "FROM user_position\n" +
-                "WHERE user_position.user_id = ?\n" + //no join with image instance / abstract img / project...too heavy
-                "GROUP BY image_id \n" +
-                "ORDER BY maxDate desc " + offsetString,[user.id]) {
-            try {
-                ImageInstance image = read(it.image_id)
-                 data << [id:it.image_id,date:it.maxDate, thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
-            } catch(CytomineException e) {
-               //if user has data in user_position but has no access to picture,  ImageInstance.read will throw a forbiddenException
-            }
-         }
-        try {
-            sql.close()
-        }catch (Exception e) {}
         return data
     }
 

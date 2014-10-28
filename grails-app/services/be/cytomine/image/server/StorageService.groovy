@@ -125,6 +125,7 @@ class StorageService extends ModelService {
             permissionService.addPermission(storage,user.username,BasePermission.ADMINISTRATION)
 
             for (imageServer in ImageServer.findAll()) {
+                imageServer.save(failOnError: true)
                 ImageServerStorage imageServerStorage = new ImageServerStorage(imageServer : imageServer, storage : storage)
                 imageServerStorage.save(flush : true)
             }

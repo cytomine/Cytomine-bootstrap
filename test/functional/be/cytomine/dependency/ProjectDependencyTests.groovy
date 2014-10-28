@@ -8,7 +8,6 @@ import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.social.LastConnection
-import be.cytomine.social.UserPosition
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
@@ -174,13 +173,6 @@ class ProjectDependencyTests  {
         project.retrievalProjects?.clear()
         project.addToRetrievalProjects(project)
         project.addToRetrievalProjects(BasicInstanceBuilder.getProjectNotExist())
-
-        //Not recoverable domain (cannot retrieve it with undo delete)
-        LastConnection lc = new LastConnection(project: project, user:  User.findByUsername(Infos.SUPERADMINLOGIN))
-        BasicInstanceBuilder.saveDomain(lc)
-
-        UserPosition up = new UserPosition(project: project, user: User.findByUsername(Infos.SUPERADMINLOGIN), image: ia)
-        BasicInstanceBuilder.saveDomain(up)
 
         return [project, algoAnnotation, algoAnnotationTerm1,annotationTerm.userAnnotation,annotationTerm,af,ifp,ia,job,ra,sp]
     }

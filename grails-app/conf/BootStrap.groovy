@@ -14,6 +14,7 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.utils.Version
 import grails.util.Environment
+import grails.util.Holders
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
@@ -36,6 +37,7 @@ class BootStrap {
     def termService
     def tableService
     def secUserService
+    def noSQLCollectionService
 
     def retrieveErrorsService
     def bootstrapTestDataService
@@ -58,6 +60,12 @@ class BootStrap {
         log.info "################### SERVER " + grailsApplication.config.grails.serverURL + "##################"
         log.info "################### IMAGE SERVER " + grailsApplication.config.grails.imageServerURL + "##################"
         log.info "GrailsUtil.environment= " + Environment.getCurrent().name + " BootStrap.development=" + Environment.DEVELOPMENT
+
+        log.info "################################################"
+        log.info "################## DATABASES ###################"
+        log.info "################################################"
+        log.info "SQL: " + [url:Holders.config.dataSource.url, user:Holders.config.dataSource.username, password:Holders.config.dataSource.password, driver:Holders.config.dataSource.driverClassName]
+        log.info "NOSQL: " + [host:Holders.config.grails.mongo.host, port:Holders.config.grails.mongo.port, databaseName:Holders.config.grails.mongo.databaseName]
 
 
         def ctx = servletContext.getAttribute(
@@ -93,6 +101,7 @@ class BootStrap {
         /* Fill data just in test environment*/
         if (Environment.getCurrent() == Environment.TEST) {
             bootstrapTestDataService.initData()
+            noSQLCollectionService.cleanActivityDB()
         } else  if(Environment.getCurrent().name.equals("testrun")) {
             bootstrapTestRunDataService.initData()
         }
@@ -153,7 +162,7 @@ class BootStrap {
             }
         }
 
-        bootstrapUtilsService.createMultipleIS()
+
 
         if(Version.isOlderVersion(20140625) && (UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0)) {
             bootstrapUtilsService.checkImages()
@@ -183,9 +192,17 @@ class BootStrap {
             bootstrapUtilsService.addMimePhilipsTiff()
         }
 
+        if(Version.isOlderVersion(20140717)) {
+            //bootstrapUtilsService.createMultipleIS()
+        }
+
+
         if(Version.isOlderVersion(20140925)) {
             bootstrapUtilsService.addMimeVentanaTiff()
         }
+//
+//        noSQLCollectionService.clean()
+//        noSQLCollectionService.createCollection()
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
 

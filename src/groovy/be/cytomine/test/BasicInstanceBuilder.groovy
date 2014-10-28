@@ -13,7 +13,7 @@ import be.cytomine.processing.*
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
 import be.cytomine.security.*
-import be.cytomine.social.SharedAnnotation
+import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader

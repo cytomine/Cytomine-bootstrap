@@ -695,10 +695,10 @@ BrowseImageView = Backbone.View.extend({
                             $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
                         }
 
-                        self.broadcastPosition();
+                        self.broadcastPosition(metadata.width,metadata.height);
                     },
                     "moveend": function () {
-                        self.broadcastPosition();
+                        self.broadcastPosition(metadata.width,metadata.height);
                     },
                     "mousemove": function (e) {
 
@@ -831,7 +831,7 @@ BrowseImageView = Backbone.View.extend({
 
 
             //broadcast position every 5 seconds even if user is idle
-            self.initBroadcastingInterval();
+            self.initBroadcastingInterval(metadata.width, metadata.height);
             //check users online of this image
             if (!self.review) {
                 self.initWatchOnlineUsersInterval();
@@ -918,7 +918,7 @@ BrowseImageView = Backbone.View.extend({
 
 
     },
-    broadcastPosition: function () {
+    broadcastPosition: function (width,height) {
         var image = this.model.get("id");
         var lonLat = this.map.getExtent().getCenterLonLat();
         var lon = lonLat.lon;
@@ -927,7 +927,22 @@ BrowseImageView = Backbone.View.extend({
         if (zoom == null || lon == null || lat == null) {
             return;
         } //map not yet initialized
-        new UserPositionModel({ lon: lon, lat: lat, zoom: zoom, image: image}).save();
+        console.log(this.map.getExtent());
+
+        var mapArea = this.map.getExtent();
+
+        new UserPositionModel({
+            zoom: zoom,
+            image: image,
+            topLeftX: mapArea.left,
+            topLeftY: height-mapArea.top,
+            topRightX: mapArea.right,
+            topRightY: height-mapArea.top,
+            bottomRightX: mapArea.right,
+            bottomRightY: height-mapArea.bottom,
+            bottomLeftX: mapArea.left,
+            bottomLeftY: height-mapArea.bottom
+        }).save();
     },
     reloadAnnotation: function (idAnnotation) {
         var self = this;
@@ -940,10 +955,10 @@ BrowseImageView = Backbone.View.extend({
             }
         });
     },
-    initBroadcastingInterval: function () {
+    initBroadcastingInterval: function (width, height) {
         var self = this;
         this.broadcastPositionInterval = setInterval(function () {
-            self.broadcastPosition();
+            self.broadcastPosition(width, height);
         }, 5000);
         window.app.view.intervals.push(this.broadcastPositionInterval);
     },

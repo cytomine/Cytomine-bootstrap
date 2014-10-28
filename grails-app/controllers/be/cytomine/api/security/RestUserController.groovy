@@ -11,8 +11,10 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import be.cytomine.utils.Utils
+import be.cytomine.utils.database.mongodb.NoSQLCollectionService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
+import org.joda.time.DateTime
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
 import org.restapidoc.annotation.RestApi
@@ -36,6 +38,8 @@ class RestUserController extends RestController {
     def imageInstanceService
     def groupService
     def securityACLService
+    def mongo
+    def noSQLCollectionService
 
     /**
      * Get all project users
@@ -468,25 +472,67 @@ class RestUserController extends RestController {
     ])
     @RestApiResponseObject(objectIdentifier = "List of [id: %idUser%,image: %idImage%, filename: %Image path%, originalFilename:%Image filename%, date: %Last position date%]")
     def listOnlineFriendsWithPosition() {
+//        Project project = projectService.read(params.long('id'))
+//
+//        //Get all project user online
+//        def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
+//        def usersId = users.collect {it.id}
+//
+//        Get all user oonline and their pictures
+//        List<SecUser> userPositions = SecUser.executeQuery(
+//                "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage " +
+//                        "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id", [someSecondesBefore])
+//
+//
+//        def usersWithPosition = []
+//        def userInfo = [:]
+//        long previousUser = -1
+//        userPositions.each {
+//            long currenUser = it[0]
+//            if (previousUser != currenUser) {
+//                //new user, create a new line
+//                userInfo = [id: currenUser, position: []]
+//                usersWithPosition << userInfo
+//                usersId.remove(currenUser)
+//            }
+//            //add position to the current user
+//            userInfo['position'] << [id: it[1],image: it[1], filename: it[2], originalFilename:it[2], date: it[3]]
+//            previousUser = currenUser
+//        }
+//        //user online with no image open
+//        usersId.each {
+//            usersWithPosition << [id: it, position: []]
+//        }
+//        responseSuccess(usersWithPosition)
+//        responseSuccess([])
+
         Project project = projectService.read(params.long('id'))
-        //= now - some seconds
-        Date someSecondesBefore = Utils.getDatePlusSecond(-20)
 
         //Get all project user online
         def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
         def usersId = users.collect {it.id}
 
         //Get all user oonline and their pictures
-        List<SecUser> userPositions = SecUser.executeQuery(
-                "SELECT userPosition.user.id,imageInstance.id, abstractImage.originalFilename, max(userPosition.updated) from UserPosition as userPosition, ImageInstance as imageInstance, AbstractImage as abstractImage " +
-                        "where userPosition.project.id = ${project.id} and userPosition.updated > ? and imageInstance.id = userPosition.image.id and imageInstance.baseImage.id = abstractImage.id group by userPosition.user.id,imageInstance.id,abstractImage.originalFilename order by userPosition.user.id", [someSecondesBefore])
-
+        def db = mongo.getDB(noSQLCollectionService.getDatabaseName())
+        DateTime thirtySecondsAgo = new DateTime().minusSeconds(30)
+        def result = db.lastUserPosition.aggregate(
+                [$match : [ project : project.id, created:[$gt:thirtySecondsAgo.toDate()]]],
+                [$project:[user:1,image:1,imageName:1,created:1]],
+                [$group : [_id : [ user: '$user', image: '$image',imageName: '$imageName'], "date":[$max:'$created']]]
+        )
 
         def usersWithPosition = []
         def userInfo = [:]
         long previousUser = -1
-        userPositions.each {
-            long currenUser = it[0]
+        result.results().each {
+            println it
+
+            def userId = it["_id"]["user"]
+            def imageId = it["_id"]["image"]
+            def imageName = it["_id"]["imageName"]
+            def date = it["date"]
+
+            long currenUser = userId
             if (previousUser != currenUser) {
                 //new user, create a new line
                 userInfo = [id: currenUser, position: []]
@@ -494,7 +540,7 @@ class RestUserController extends RestController {
                 usersId.remove(currenUser)
             }
             //add position to the current user
-            userInfo['position'] << [id: it[1],image: it[1], filename: it[2], originalFilename:it[2], date: it[3]]
+            userInfo['position'] << [id: imageId,image: imageId, filename: imageName, originalFilename:imageName, date: date]
             previousUser = currenUser
         }
         //user online with no image open
@@ -502,6 +548,7 @@ class RestUserController extends RestController {
             usersWithPosition << [id: it, position: []]
         }
         responseSuccess(usersWithPosition)
+//        responseSuccess([])
     }
 
     def CASLdapUserDetailsService
