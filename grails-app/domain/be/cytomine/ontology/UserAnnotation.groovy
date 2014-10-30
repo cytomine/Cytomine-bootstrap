@@ -38,7 +38,7 @@ class UserAnnotation extends AnnotationDomain implements Serializable {
     static mapping = {
           id generator: "assigned"
           columns {
-              location type: org.hibernatespatial.GeometryUserType
+              location type: org.hibernate.spatial.GeometryType
           }
          wktLocation(type: 'text')
         sort "id"

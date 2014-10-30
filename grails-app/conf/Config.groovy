@@ -61,7 +61,7 @@ grails.converters.json.default.deep = false
 
 grails.doc.title="Cytomine"
 grails.doc.subtitle="Documentation"
-grails.doc.authors="Vincent Botta, Marée Raphaël, Loïc Rollus, Benjamin Stévens"
+grails.doc.authors="Hoyoux Renaud, Marée Raphaël, Loïc Rollus, Benjamin Stévens"
 grails.doc.license="Commercial"
 grails.doc.copyright="University of liège"
 grails.doc.footer="www.cytomine.be"

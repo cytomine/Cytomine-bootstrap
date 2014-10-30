@@ -3,7 +3,7 @@ dataSource {
   driverClassName = "org.postgresql.Driver"
 //    driverClassName = "com.p6spy.engine.spy.P6SpyDriver" // use this driver to enable p6spy logging
   username = "postgres"
-  dialect = org.hibernatespatial.postgis.PostgisDialect
+  dialect = org.hibernate.spatial.dialect.postgis.PostgisDialect
     properties {
         //specifies that this tc Server is enabled to be monitored using JMX
         jmxEnabled = true
@@ -58,7 +58,7 @@ environments {
       dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-      url="jdbc:postgresql://localhost:5432/cytomineelearn"
+      url="jdbc:postgresql://localhost:5432/cytomine"
       password = "postgres"
 
     }
