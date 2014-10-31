@@ -63,4 +63,15 @@ class UserRoleAPI extends DomainAPI {
         return doGET(URL, username, password,client)
     }
 
+
+    static def buildToken(String user, Double validity, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "login/buildToken.json?username=$user&validity=$validity"
+        return doPOST(URL, "",username, password)
+    }
+
+    static def showCurrentUserWithToken(String user, String token, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/user/current.json?username=$user&tokenKey=$token"
+        return doGET(URL,username, password)
+    }
+
 }

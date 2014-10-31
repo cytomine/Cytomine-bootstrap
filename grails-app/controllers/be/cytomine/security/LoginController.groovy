@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletResponse
 class LoginController extends RestController {
 
     def secUserService
+    def currentRoleServiceProxy
+    def cytomineService
 
+    static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
 
     /**
      * Dependency injection for the authenticationTrustResolver.
@@ -187,8 +190,21 @@ class LoginController extends RestController {
         String username = params.username
         String tokenKey = params.tokenKey
         User user = User.findByUsername(username) //we are not logged, we bypass the service
+
+
+        AuthWithToken authToken = AuthWithToken.findByTokenKeyAndUser(tokenKey, user)
         ForgotPasswordToken forgotPasswordToken = ForgotPasswordToken.findByTokenKeyAndUser(tokenKey, user)
-        if (forgotPasswordToken && forgotPasswordToken.isValid())  {
+
+        //check first if a entry is made for this token
+        if (authToken && authToken.isValid())  {
+            user = authToken.user
+            SpringSecurityUtils.reauthenticate user.username, null
+            if (params.redirect) {
+                redirect (uri : params.redirect)
+            } else {
+                redirect (uri : "/")
+            }
+        } else if (forgotPasswordToken && forgotPasswordToken.isValid())  {
             user = forgotPasswordToken.user
             user.setPasswordExpired(true)
             user.save(flush :  true)
@@ -201,6 +217,24 @@ class LoginController extends RestController {
 
         } else {
             response([success: false, message: "Error : token invalid"], 400)
+        }
+    }
+
+    def buildToken() {
+        String username = params.username
+        Double validityMin = params.double('validity',60d)
+        User user = User.findByUsername(username)
+
+        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)) {
+            String tokenKey = UUID.randomUUID().toString()
+            AuthWithToken token = new AuthWithToken(
+                    user : user,
+                    expiryDate: new Date((long)new Date().getTime() + (validityMin * ONE_MINUTE_IN_MILLIS)),
+                    tokenKey: tokenKey
+            ).save(flush : true)
+            response([success: true, token:token], 200)
+        } else {
+            response([success: false, message: "You must be an admin/superadmin!"], 403)
         }
 
     }

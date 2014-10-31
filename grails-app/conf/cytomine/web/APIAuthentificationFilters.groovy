@@ -1,6 +1,8 @@
 package cytomine.web
 
+import be.cytomine.security.AuthWithToken
 import be.cytomine.security.SecUser
+import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
 import grails.plugin.springsecurity.SpringSecurityUtils
 
@@ -17,7 +19,13 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
     }
 
     void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
-        tryAPIAuthentification(request, response)
+        //log with token id
+        boolean token = tryAPIAUhtentificationWithToken(request, response)
+        if(!token) {
+            //with signature (in header)
+            tryAPIAuthentification(request, response)
+        }
+
         chain.doFilter(request, response)
     }
 
@@ -73,6 +81,32 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
         }
         return false
     }
+
+    private boolean tryAPIAUhtentificationWithToken(ServletRequest request, ServletResponse response) {
+        String tokenKey = request.getParameter("tokenKey");
+
+        if(tokenKey!=null) {
+            log.info "login with token: $tokenKey"
+            String username = request.getParameter("username")
+            User user = User.findByUsername(username) //we are not logged, we bypass the service
+
+            log.info "user: $user"
+            log.info "tokenKey: $tokenKey"
+            AuthWithToken authToken = AuthWithToken.findByTokenKeyAndUser(tokenKey, user)
+            log.info "authToken: $authToken"
+            log.info "authToken: ${authToken?.isValid()}"
+            //check first if a entry is made for this token
+            if (authToken && authToken.isValid())  {
+                SpringSecurityUtils.reauthenticate user.username, null
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
 
     def filters = {
         all(uri:'/api/**') {

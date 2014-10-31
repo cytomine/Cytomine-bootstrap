@@ -134,7 +134,10 @@ class IndexService {
             createIndex("annotation_index", "image_id");
             createIndex("annotation_index", "user_id");
 
-            createIndex("last_connection", "user_id");
+            //createIndex("last_connection", "user_id");
+
+            createIndex("auth_with_token", "user_id");
+            createIndex("auth_with_token", "token_key","hash");
 
         } catch (org.postgresql.util.PSQLException e) {
             log.info e
