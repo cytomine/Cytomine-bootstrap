@@ -86,15 +86,9 @@ class APIAuthentificationFilters implements javax.servlet.Filter {
         String tokenKey = request.getParameter("tokenKey");
 
         if(tokenKey!=null) {
-            log.info "login with token: $tokenKey"
             String username = request.getParameter("username")
             User user = User.findByUsername(username) //we are not logged, we bypass the service
-
-            log.info "user: $user"
-            log.info "tokenKey: $tokenKey"
             AuthWithToken authToken = AuthWithToken.findByTokenKeyAndUser(tokenKey, user)
-            log.info "authToken: $authToken"
-            log.info "authToken: ${authToken?.isValid()}"
             //check first if a entry is made for this token
             if (authToken && authToken.isValid())  {
                 SpringSecurityUtils.reauthenticate user.username, null
