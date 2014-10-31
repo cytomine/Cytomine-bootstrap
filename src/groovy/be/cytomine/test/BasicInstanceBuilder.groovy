@@ -12,13 +12,16 @@ import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
+import be.cytomine.search.SearchEngineFilter
 import be.cytomine.security.*
 import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
+import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 /**
  * Created by IntelliJ IDEA.
@@ -1498,5 +1501,47 @@ class BasicInstanceBuilder {
 
         return imageInstance
 
+    }
+
+    static SearchEngineFilter getSearchEngineFilter() {
+        def filter = SearchEngineFilter.findByName("BasicFilter")
+        if (!filter) {
+            //create if not exist
+            def words = ["Test", "hello"]
+            def domains = []
+            def attributes = []
+            def projects = []
+
+            String json = new JSONObject().put("words", words as JSON)
+                    .put("domains", domains as JSON)
+                    .put("attributes", attributes as JSON)
+                    .put("projects", projects as JSON)
+                    .put("order", null)
+                    .put("sort", null)
+                    .put("op", "AND")
+                    .toString();
+
+            filter = new SearchEngineFilter(name: "BasicFilter", user: User.findByUsername(Infos.SUPERADMINLOGIN), filters: json)
+            saveDomain(filter)
+        }
+        filter
+    }
+
+    static SearchEngineFilter getSearchEngineFilterNotExist(boolean save = false) {
+        def words = ["Test", "hello"]
+        def domains = []
+        def attributes = []
+        def projects = []
+
+        String json = new JSONObject().put("words", words as JSON)
+                .put("domains", domains as JSON)
+                .put("attributes", attributes as JSON)
+                .put("projects", projects as JSON)
+                .put("order", null)
+                .put("sort", null)
+                .put("op", "AND")
+                .toString();
+        def filter = new SearchEngineFilter(name: getRandomString(), user: User.findByUsername(Infos.SUPERADMINLOGIN), filters: json)
+        save ? saveDomain(filter) : checkDomain(filter)
     }
 }

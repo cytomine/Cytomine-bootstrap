@@ -21,7 +21,9 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTWriter
 import groovy.sql.Sql
 import org.hibernate.criterion.Restrictions
-import org.hibernatespatial.criterion.SpatialRestrictions
+import org.hibernate.spatial.criterion.SpatialRestrictions
+
+//import org.hibernatespatial.criterion.SpatialRestrictions
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
