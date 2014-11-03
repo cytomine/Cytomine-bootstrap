@@ -162,6 +162,7 @@ class BootStrap {
             }
         }
 
+        bootstrapUtilsService.createMultipleIS()
 
 
         if(Version.isOlderVersion(20140625) && (UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0)) {
@@ -172,13 +173,13 @@ class BootStrap {
             bootstrapUtilsService.transfertProperty()
         }
 
-        if(Version.isOlderVersion(20140712)) {
-            bootstrapUtilsService.createNewIS()
-        }
-
-        if(Version.isOlderVersion(20140713)) {
-            bootstrapUtilsService.checkImages2() //fix uploadedFile path
-        }
+//        if(Version.isOlderVersion(20140712)) {
+//            bootstrapUtilsService.createNewIS()
+//        }
+//
+//        if(Version.isOlderVersion(20140713)) {
+//            bootstrapUtilsService.checkImages2() //fix uploadedFile path
+//        }
 
         /*if(Version.isOlderVersion(20140715) && Environment.getCurrent() == Environment.PRODUCTION) {
             bootstrapUtilsService.createNewIS2() //add image1.cytomine.be -> image10.cytomine.be
@@ -192,17 +193,15 @@ class BootStrap {
             bootstrapUtilsService.addMimePhilipsTiff()
         }
 
-        if(Version.isOlderVersion(20140717)) {
-            //bootstrapUtilsService.createMultipleIS()
-        }
+//        if(Version.isOlderVersion(20140717)) {
+//            bootstrapUtilsService.createMultipleIS()
+//        }
 
 
         if(Version.isOlderVersion(20140925)) {
             bootstrapUtilsService.addMimeVentanaTiff()
         }
-//
-//        noSQLCollectionService.clean()
-//        noSQLCollectionService.createCollection()
+
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
 

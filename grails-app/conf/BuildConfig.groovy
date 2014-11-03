@@ -86,7 +86,10 @@ grails.project.dependency.resolution = {
         mavenRepo "http://www.hibernatespatial.org/repository"
         //mavenRepo "http://repo.spring.io/milestone/"
 
-        mavenRepo "http://www.terracotta.org/download/reflector/releases"
+
+
+       //comment because not available
+        //mavenRepo "http://www.terracotta.org/download/reflector/releases"
 
         mavenRepo "http://repository.ow2.org/nexus/content/repositories/public"
 

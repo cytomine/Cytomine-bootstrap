@@ -268,59 +268,88 @@ class BootstrapUtilsService {
     }
 
     def createMultipleIS() {
-        (1..5).each {
-            String url = grailsApplication.config.grails.imageServerURL
-            url = url.substring(0,url.size()-1) + it;
-            createNewIS(it+"",url)
 
+
+
+        ImageServer.list().each { server ->
+            if(!grailsApplication.config.grails.imageServerURL.contains(server.url)) {
+                log.info server.url + " is not in config, drop it"
+                MimeImageServer.findAllByImageServer(server).each {
+                    log.info "delete $it"
+                    it.delete()
+                }
+
+                ImageServerStorage.findAllByImageServer(server).each {
+                    log.info "delete $it"
+                    it.delete()
+                }
+                log.info "delete IS $server"
+                server.delete()
+            }
+
+        }
+
+
+
+        grailsApplication.config.grails.imageServerURL.eachWithIndex { it, index ->
+            createNewIS(index+"",it)
         }
     }
 
 
-    def createNewIS(String name = "", String url = grailsApplication.config.grails.imageServerURL) {
+    def createNewIS(String name = "", String url) {
 
         println "*************** createNewIS ********************"
-        MimeImageServer.list().each {
-            it.delete()
-        }
+        println name + "====> " + url
 
-        ImageServerStorage.list().each {
-            it.delete()
-        }
+        if(!ImageServer.findByUrl(url)) {
 
-        ImageServer.list().each {
-            it.delete()
-        }
-        def IIPImageServer = [className : 'IIPResolver', name : 'IIP'+name, service : '/image/tile', url : url, available : true]
-        ImageServer imageServer = new ImageServer(
-                className: IIPImageServer.className,
-                name: IIPImageServer.name,
-                service : IIPImageServer.service,
-                url : IIPImageServer.url,
-                available : IIPImageServer.available
-        )
+//            MimeImageServer.list().each {
+//                it.delete()
+//            }
+//
+//            ImageServerStorage.list().each {
+//                it.delete()
+//            }
+//
+//            ImageServer.list().each {
+//                it.delete()
+//            }
+            def IIPImageServer = [className : 'IIPResolver', name : 'IIP'+name, service : '/image/tile', url : url, available : true]
+            ImageServer imageServer = new ImageServer(
+                    className: IIPImageServer.className,
+                    name: IIPImageServer.name,
+                    service : IIPImageServer.service,
+                    url : IIPImageServer.url,
+                    available : IIPImageServer.available
+            )
 
-        if (imageServer.validate()) {
-            imageServer.save()
-        } else {
-            imageServer.errors?.each {
-                println it
+            if (imageServer.validate()) {
+                imageServer.save()
+            } else {
+                imageServer.errors?.each {
+                    println it
+                }
             }
+
+            Storage.list().each {
+                new ImageServerStorage(
+                        storage : it,
+                        imageServer: imageServer
+                ).save()
+            }
+
+            Mime.list().each {
+                new MimeImageServer(
+                        mime : it,
+                        imageServer: imageServer
+                ).save()
+            }
+        } else {
+            println url + " already exist"
         }
 
-        Storage.list().each {
-            new ImageServerStorage(
-                    storage : it,
-                    imageServer: imageServer
-            ).save()
-        }
 
-        Mime.list().each {
-            new MimeImageServer(
-                    mime : it,
-                    imageServer: imageServer
-            ).save()
-        }
     }
 
     def transfertProperty() {
