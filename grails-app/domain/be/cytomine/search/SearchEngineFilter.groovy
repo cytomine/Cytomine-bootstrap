@@ -26,9 +26,9 @@ class SearchEngineFilter extends CytomineDomain implements Serializable {
     String filters
 
     static constraints = {
-        name(blank: false, unique: true)
-        //words(nullable: false, minSize: 1)
+        name(blank: false)
         user(nullable: false)
+        filters(nullable: false)
     }
     static mapping = {
         id(generator: 'assigned', unique: true)
@@ -42,7 +42,7 @@ class SearchEngineFilter extends CytomineDomain implements Serializable {
     void checkAlreadyExist() {
         SearchEngineFilter.withNewSession {
             if(name) {
-                SearchEngineFilter filter = SearchEngineFilter.findByName(name)
+                SearchEngineFilter filter = SearchEngineFilter.findByNameAndUser(name, user)
                 if(filter!=null && (filter.id!=id))  {
                     throw new AlreadyExistException("SearchEngineFilter " + filter.name + " already exist!")
                 }
@@ -91,7 +91,7 @@ class SearchEngineFilter extends CytomineDomain implements Serializable {
      * @return Container of this domain
      */
     public CytomineDomain container() {
-        return this;
+        return null;
     }
 
 

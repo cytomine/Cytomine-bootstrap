@@ -18,50 +18,64 @@
 
             </div>
         </div>
-        <div class="col-md-3 well">
-
-            <h5>Filter by project</h5>
-            <div id="magicsuggestProjectSearch"></div>
-            <h5>Filter by domain</h5>
-            <div id="domainTypeToShow" class="btn-group" data-toggle="buttons">
-
-                <label class="btn btn-primary active">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionShowAll" checked> Show All
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionShowProject"> Only Project
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="image" id="optionShowImage"> Only Image
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="annotation" id="optionShowAnnotation"> Only Annotation
-                </label>
+        <div class="col-md-3">
+            <div class="well">
+                <div class="alertFilter alert alert-warning" role="alert" style="display: none"></div>
+                <h5>Your previously saved filters</h5>
+                <div class="dropdown">
+                </div>
+                <h5></h5>
+                <button class="btn btn-primary delete-filter-button">Delete selected filter</button>
+                <h5>Do you want to create a new filter ?</h5>
+                <span>Name : </span><input type="text" class="newFilterName">
+                <h5></h5>
+                <button class="btn btn-primary save-filter-button">Save current filter</button>
             </div>
-            <!--<h5>Search Operator</h5>-->
-            <!--<div id="operatorSearch" class="btn-group" data-toggle="buttons">-->
+            <div class="well">
+
+                <h5>Filter by project</h5>
+                <div id="magicsuggestProjectSearch"></div>
+                <h5>Filter by domain</h5>
+                <div id="domainTypeToShow" class="btn-group" data-toggle="buttons">
+
+                    <label class="btn btn-primary active">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsDomain" value="all" id="optionShowAll" checked> Show All
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsDomain" value="project" id="optionShowProject"> Only Project
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsDomain" value="image" id="optionShowImage"> Only Image
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsDomain" value="annotation" id="optionShowAnnotation"> Only Annotation
+                    </label>
+                </div>
+                <!--<h5>Search Operator</h5>-->
+                <!--<div id="operatorSearch" class="btn-group" data-toggle="buttons">-->
                 <!--<label class="btn btn-primary active">-->
-                    <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionOR" checked> word1 AND word2-->
+                <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionOR" checked> word1 AND word2-->
                 <!--</label>-->
                 <!--<label class="btn btn-primary">-->
-                    <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionALL"> word1 OR word2-->
+                <!--<input style="background-color: #DDDDDD;" type="radio" name="options" value="project" id="optionALL"> word1 OR word2-->
                 <!--</label>-->
-            <!--</div>-->
-            <h5>Where to search</h5>
-            <div id="attributeTosearch" class="btn-group" data-toggle="buttons">
+                <!--</div>-->
+                <h5>Where to search</h5>
+                <div id="attributeTosearch" class="btn-group" data-toggle="buttons">
 
-                <label class="btn btn-primary active">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="all" id="optionSearchAll" checked> Show All
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="domain" id="optionSearchDomain"> Only Domain
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="property" id="optionSearchProperty"> Only Property
-                </label>
-                <label class="btn btn-primary">
-                    <input style="background-color: #DDDDDD;" type="radio" name="options" value="description" id="optionSearchDescription"> Only Description
-                </label>
+                    <label class="btn btn-primary active">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsAtt" value="all" id="optionSearchAll" checked> Show All
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsAtt" value="domain" id="optionSearchDomain"> Only Domain
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsAtt" value="property" id="optionSearchProperty"> Only Property
+                    </label>
+                    <label class="btn btn-primary">
+                        <input style="background-color: #DDDDDD;" type="radio" name="optionsAtt" value="description" id="optionSearchDescription"> Only Description
+                    </label>
+                </div>
             </div>
         </div>
     </div>
