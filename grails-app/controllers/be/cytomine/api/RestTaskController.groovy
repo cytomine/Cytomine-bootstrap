@@ -21,7 +21,7 @@ class RestTaskController extends RestController {
     def show = {
         Task task = taskService.read(params.long('id'))
         if (task) {
-            responseSuccess(task.getMap())
+            responseSuccess(task.getMap(taskService))
         } else {
             responseNotFound("Task", params.id)
         }
@@ -40,7 +40,7 @@ class RestTaskController extends RestController {
         SecUser user = cytomineService.getCurrentUser()
         boolean printInActivity = params.getBoolean('printInActivity')
         Task task = taskService.createNewTask(project,user,printInActivity)
-        responseSuccess([task:task.getMap()])
+        responseSuccess([task:task.getMap(taskService)])
     }
 
     def listCommentByProject = {

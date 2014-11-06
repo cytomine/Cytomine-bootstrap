@@ -3,6 +3,8 @@ package be.cytomine.utils
 
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import grails.util.Holders
+import groovy.sql.Sql
 
 import static org.springframework.security.acls.domain.BasePermission.READ
 
@@ -10,22 +12,21 @@ class TaskService  {
 
     def cytomineService
     def securityACLService
+    def dataSource
 
     static transactional = true
 
     def get(def id) {
-        Task task = new Task().getFromDatabase(id)
-        task
+        getFromDatabase(id)
     }
 
     def read(def id) {
-        Task task = new Task().getFromDatabase(id)
-        task
+        getFromDatabase(id)
     }
 
     def listLastComments(Project project) {
        securityACLService.check(project,READ)
-       def comments = new Task().listFromDatabase(project.id)
+       def comments = listFromDatabase(project.id)
        return comments
     }
 
@@ -39,7 +40,7 @@ class TaskService  {
         securityACLService.checkGuest(cytomineService.currentUser)
         Task task = new Task(projectIdent: project?.id, userIdent: user.id,printInActivity:printInActivity)
         //task.addToComments("Task started...")
-        task = task.saveOnDatabase()
+        task = saveOnDatabase(task)
         return task
     }
 
@@ -67,8 +68,8 @@ class TaskService  {
             }
             securityACLService.checkIsSameUser(SecUser.read(task.userIdent),cytomineService.currentUser)
             task.progress = progress
-            task.addComment(progress+"%:" + comment)
-            task = task.saveOnDatabase()
+            addComment(task,progress+"%:" + comment)
+            task = saveOnDatabase(task)
             return task
     }
 
@@ -86,5 +87,88 @@ class TaskService  {
         updateTask(task,100,"Task completed...")
         task = get(task.id)
         task
+    }
+
+
+    def getLastComments(Task task,int max) {
+        //sql request retrieve n last comments for task
+        def data = []
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT comment FROM task_comment where task_id = ${task.id} order by timestamp desc limit $max") {
+            data << it[0]
+        }
+        closeSQL(sql)
+        data
+    }
+
+    Task saveOnDatabase(Task task) {
+        boolean isAlreadyInDatabase = false
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT id FROM task where id = ${task.id}") {
+            isAlreadyInDatabase = true
+        }
+
+        if(!isAlreadyInDatabase) {
+            task.id = Holders.getGrailsApplication().mainContext.sequenceService.generateID()
+            sql.executeInsert("INSERT INTO task (id,progress,project_id,user_id,print_in_activity) VALUES (${task.id},${task.progress},${task.projectIdent},${task.userIdent},${task.printInActivity})")
+        } else {
+            sql.executeUpdate("UPDATE task set progress=${task.progress} WHERE id=${task.id}")
+        }
+        closeSQL(sql)
+        getFromDatabase(task.id)
+    }
+
+    def getFromDatabase(def id) {
+        Task task = null
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT id,progress,project_id,user_id FROM task where id = ${id}") {
+            task = new Task()
+            task.id = it[0]
+            task.progress = it[1]
+            task.projectIdent = it[2]
+            task.userIdent = it[3]
+        }
+        closeSQL(sql)
+        return task
+    }
+
+    def listFromDatabase(def idProject) {
+        def comments = []
+        null
+        Sql sql = createSQLDB()
+        sql.eachRow("SELECT comment, timestamp FROM task_comment tc, task t WHERE tc.task_id = t.id  AND project_id = $idProject and t.print_in_activity=true ORDER BY timestamp DESC") {
+            TaskComment comment = new TaskComment()
+            comment.comment = it[0]
+            comment.timestamp = it[1]
+            comments << comment
+        }
+        closeSQL(sql)
+        return comments
+    }
+
+    def addComment(Task task,String comment) {
+        if(comment!=null && !comment.equals("")) {
+            TaskComment taskComment = new TaskComment(taskIdent: task.id,comment: comment,timestamp: new Date().getTime())
+            saveCommentOnDatabase(taskComment)
+        }
+    }
+
+
+
+    def saveCommentOnDatabase(TaskComment comment) {
+        Sql sql = createSQLDB()
+        sql.executeInsert("INSERT INTO task_comment (task_id,comment,timestamp) VALUES (${comment.taskIdent},${comment.comment},${comment.timestamp})")
+        closeSQL(sql)
+    }
+
+
+    Sql createSQLDB() {
+//        def db = [url:Holders.config.dataSource.url, user:Holders.config.dataSource.username, password:Holders.config.dataSource.password, driver:Holders.config.dataSource.driverClassName]
+//        def sql = Sql.newInstance(db.url, db.user, db.password, db.driver)
+        return new Sql(dataSource)
+    }
+
+    def closeSQL(Sql sql) {
+        sql.close()
     }
 }

@@ -8,6 +8,7 @@ import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.social.LastConnection
 import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -73,34 +74,40 @@ class ProjectService extends ModelService {
 
         def data = []
 
-        String request1 = """
-            SELECT project_id as id, last_connection.updated as date
-            FROM last_connection, project
-            WHERE last_connection.user_id = ${user.id}
-            AND last_connection.project_id = project.id
-            AND project.deleted IS NULL
-            AND last_connection.updated is not null
-            AND last_connection.project_id is not null
-            UNION
-            SELECT project_id, last_connection.created as date
-            FROM last_connection, project
-            WHERE last_connection.user_id = ${user.id}
-            AND last_connection.project_id = project.id
-            AND project.deleted IS NULL
-            AND last_connection.updated is null
-            AND last_connection.project_id is not null
-            ORDER BY date desc
-            LIMIT $max
-        """
-
-        def sql = new Sql(dataSource)
-        sql.eachRow(request1,[]) {
+        List<LastConnection> cons = LastConnection.findAllByUser(user,[max:max,sort:"created", order:"desc"])
+        cons.each {
             data << [id:it.id, date:it.date, opened: true]
         }
-        try {
-            sql.close()
-        }catch (Exception e) {}
 
+//        String request1 = """
+//            SELECT project_id as id, last_connection.updated as date
+//            FROM last_connection, project
+//            WHERE last_connection.user_id = ${user.id}
+//            AND last_connection.project_id = project.id
+//            AND project.deleted IS NULL
+//            AND last_connection.updated is not null
+//            AND last_connection.project_id is not null
+//            UNION
+//            SELECT project_id, last_connection.created as date
+//            FROM last_connection, project
+//            WHERE last_connection.user_id = ${user.id}
+//            AND last_connection.project_id = project.id
+//            AND project.deleted IS NULL
+//            AND last_connection.updated is null
+//            AND last_connection.project_id is not null
+//            ORDER BY date desc
+//            LIMIT $max
+//        """
+//
+//        def sql = new Sql(dataSource)
+//        sql.eachRow(request1,[]) {
+//            data << [id:it.id, date:it.date, opened: true]
+//        }
+//        try {
+//            sql.close()
+//        }catch (Exception e) {}
+
+        def sql = new Sql(dataSource)
         if(data.size()<max) {
             //user has open less than max project, so we add last created project
 

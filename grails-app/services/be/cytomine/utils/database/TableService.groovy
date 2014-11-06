@@ -139,34 +139,34 @@ class TableService {
 
 
     def dropForeignKeys() {
-        def response = null
-        String request = """
-            SELECT
-                tc.constraint_name, tc.table_name, kcu.column_name,
-                ccu.table_name AS foreign_table_name,
-                ccu.column_name AS foreign_column_name
-            FROM
-                information_schema.table_constraints AS tc
-                JOIN information_schema.key_column_usage AS kcu
-                  ON tc.constraint_name = kcu.constraint_name
-                JOIN information_schema.constraint_column_usage AS ccu
-                  ON ccu.constraint_name = tc.constraint_name
-            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='last_connection');
-
-        """
-        log.info "request = $request"
-        new Sql(dataSource).eachRow(request) {
-            def sql = new Sql(dataSource)
-            try {
-                String table = it[1]
-                String constraint = it[0]
-                String req = "ALTER TABLE $table DROP CONSTRAINT $constraint"
-                log.info "drop constraint $constraint => $req"
-                sql.executeUpdate(req)
-                sql.close()
-            }catch (Exception e) {}
-        }
-        log.info "response = $response"
-        response
+//        def response = null
+//        String request = """
+//            SELECT
+//                tc.constraint_name, tc.table_name, kcu.column_name,
+//                ccu.table_name AS foreign_table_name,
+//                ccu.column_name AS foreign_column_name
+//            FROM
+//                information_schema.table_constraints AS tc
+//                JOIN information_schema.key_column_usage AS kcu
+//                  ON tc.constraint_name = kcu.constraint_name
+//                JOIN information_schema.constraint_column_usage AS ccu
+//                  ON ccu.constraint_name = tc.constraint_name
+//            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='last_connection');
+//
+//        """
+//        log.info "request = $request"
+//        new Sql(dataSource).eachRow(request) {
+//            def sql = new Sql(dataSource)
+//            try {
+//                String table = it[1]
+//                String constraint = it[0]
+//                String req = "ALTER TABLE $table DROP CONSTRAINT $constraint"
+//                log.info "drop constraint $constraint => $req"
+//                sql.executeUpdate(req)
+//                sql.close()
+//            }catch (Exception e) {}
+//        }
+//        log.info "response = $response"
+//        response
     }
 }
