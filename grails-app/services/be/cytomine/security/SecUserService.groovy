@@ -275,15 +275,18 @@ class SecUserService extends ModelService {
     /**
      * Get all online user for a project
      */
-    List<SecUser> getAllOnlineUsers(Project project) {
+    List<Long> getAllOnlineUsers(Project project) {
         securityACLService.check(project,READ)
         if(!project) return getAllOnlineUsers()
         def xSecondAgo = Utils.getDatePlusSecond(-20)
         def results = LastConnection.withCriteria {
             ge('date', xSecondAgo)
             eq('project',project)
+            ne('user',cytomineService.currentUser)
         }
-        return results.collect{it.user}.unique()
+        def users = results.collect{it.user.id}.unique()
+        users << cytomineService.currentUser
+        return users.unique()
     }
 
     /**

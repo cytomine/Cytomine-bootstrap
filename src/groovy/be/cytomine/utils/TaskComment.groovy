@@ -16,9 +16,4 @@ class TaskComment {
 
     Long timestamp
 
-    def saveOnDatabase() {
-        Sql sql = Task.createSQLDB()
-        sql.executeInsert("INSERT INTO task_comment (task_id,comment,timestamp) VALUES ($taskIdent,$comment,$timestamp)")
-        Task.closeSQL(sql)
-    }
 }

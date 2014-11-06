@@ -32,7 +32,6 @@ class RestUserPositionController extends RestController {
         SecUser user = cytomineService.getCurrentUser()
         def json = request.JSON
         ImageInstance image = ImageInstance.read(JSONUtils.getJSONAttrLong(json,"image",0))
-        log.info "Position on image ${json.image} $image"
         PersistentUserPosition position = new PersistentUserPosition()
         position.user = user
         position.image = image
