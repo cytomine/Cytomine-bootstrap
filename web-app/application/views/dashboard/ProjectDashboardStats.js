@@ -125,6 +125,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             BrowserSupport.addMessage($("#projectPieChart"),BrowserSupport.CHARTS);
         }
         else {
+            console.log(chartData);
                 nv.addGraph(function() {
                 var chart = nv.models.pieChart()
                     .x(function(d) { return d.label })
@@ -137,7 +138,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                     .transition().duration(1200)
                     .call(chart);
 
-                nv.utils.windowResize(chart.update);
+                //nv.utils.windowResize(chart.update);
 
                 return chart;
             });
