@@ -187,6 +187,7 @@ body {
 <script type="text/javascript" src="application/models/StatsModel.js" ></script>
 <script type="text/javascript" src="application/models/CommandModel.js" ></script>
 <script type="text/javascript" src="application/models/RelationModel.js" ></script>
+<script type="text/javascript" src="application/models/SearchModel.js" ></script>
 <script type="text/javascript" src="application/models/SecRoleModel.js" ></script>
 <script type="text/javascript" src="application/models/SuggestedAnnotationTermModel.js" ></script>
 <script type="text/javascript" src="application/models/JobModel.js" ></script>
@@ -205,6 +206,7 @@ body {
 <!-- View -->
 <script type="text/javascript" src="application/views/user/UserDashboardView.js"></script>
 <script type="text/javascript" src="application/views/activity/ActivityView.js" ></script>
+<script type="text/javascript" src="application/views/search/SearchEngineFilterView.js" ></script>
 <script type="text/javascript" src="application/views/search/SearchView.js" ></script>
 <script type="text/javascript" src="application/views/search/SearchResultView.js" ></script>
 

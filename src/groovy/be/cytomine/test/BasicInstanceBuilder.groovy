@@ -1533,14 +1533,8 @@ class BasicInstanceBuilder {
         def attributes = []
         def projects = []
 
-        String json = new JSONObject().put("words", words as JSON)
-                .put("domains", domains as JSON)
-                .put("attributes", attributes as JSON)
-                .put("projects", projects as JSON)
-                .put("order", null)
-                .put("sort", null)
-                .put("op", "AND")
-                .toString();
+        def json = ([words:["Test", "hello"], domains:["project"], attributes:[], projects:[], order : null, sort : "desc", op : "AND"] as JSON).toString()
+
         def filter = new SearchEngineFilter(name: getRandomString(), user: User.findByUsername(Infos.SUPERADMINLOGIN), filters: json)
         save ? saveDomain(filter) : checkDomain(filter)
     }

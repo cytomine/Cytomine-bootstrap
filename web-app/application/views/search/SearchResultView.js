@@ -108,7 +108,7 @@ var SearchResultView = Backbone.View.extend({
         var self = this;
 
         $(self.el).find("#result-size").empty();
-        $(self.el).find("#result-size").append("There are "+self.totalSize +" results");
+        $(self.el).find("#result-size").append("There are "+self.totalSize +" result").append((self.totalSize == 1) ? "" : "s");
         _.each(results,function(result) {
             console.log($(self.el).find(".result-box"));
             $(self.el).find(".search-result").append(self.buildItemBox(result,self.words));

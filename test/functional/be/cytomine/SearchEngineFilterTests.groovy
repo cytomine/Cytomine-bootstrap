@@ -1,9 +1,11 @@
 package be.cytomine
 
 import be.cytomine.search.SearchEngineFilter
+import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.SearchEngineFilterAPI
+import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -15,16 +17,23 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class SearchEngineFilterTests {
 
-    void testListSearchEngineFilterWithCredential() {
-        def result = SearchEngineFilterAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+    void testListSearchEngineFilter() {
+        User user = BasicInstanceBuilder.getUser()
+        def result = SearchEngineFilterAPI.list(user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection instanceof JSONArray
-        //assert json['collection'] instanceof JSONArray
     }
 
-    void testListSearchEngineFilterWithoutCredential() {
-        def result = SearchEngineFilterAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD)
+    void testListAllSearchEngineFilterWithCredential() {
+        def result = SearchEngineFilterAPI.listAll(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+    }
+
+    void testListAllSearchEngineFilterWithoutCredential() {
+        def result = SearchEngineFilterAPI.listAll(Infos.BADLOGIN, Infos.BADPASSWORD)
         assert 401 == result.code
     }
 
@@ -37,7 +46,10 @@ class SearchEngineFilterTests {
 
     void testAddSearchEngineFilterCorrect() {
         def filterToAdd = BasicInstanceBuilder.getSearchEngineFilterNotExist()
-        def result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        log.info(JSON.parse(filterToAdd.filters).words)
+        User user = BasicInstanceBuilder.getUser()
+
+        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idFilter = result.data.id
 
@@ -57,9 +69,37 @@ class SearchEngineFilterTests {
         assert 200 == result.code
     }
 
+    void testAddSearchEngineFilterIncorrect() {
+        def filterToAdd = BasicInstanceBuilder.getSearchEngineFilterNotExist()
+        JSONObject filters = JSON.parse(filterToAdd.filters)
+        def words =  JSONUtils.getJSONList(JSONUtils.getJSONAttrStr(filters, "words", false))
+        log.info("filter words " + words)
+        words.each { it -> log.info(it)}
+
+        filters.put("words", [] as JSON)
+        filterToAdd.name = filterToAdd.name+2
+        filterToAdd.filters = filters.toString()
+        log.info("filter name " + filterToAdd.name)
+        log.info("filter filters " + filterToAdd.filters)
+
+        User user = BasicInstanceBuilder.getUser()
+        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 400 == result.code // cannot search with no words
+
+        filters.put("projects", [64] as JSON)
+        filterToAdd.name = filterToAdd.name+2
+        filterToAdd.filters = filters.toString()
+        log.info("filter name " + filterToAdd.name)
+        log.info("filter filters " + filterToAdd.filters)
+
+        result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 400 == result.code // cannot search non existing project
+    }
+
     void testAddSearchEngineFilterAlreadyExist() {
         def filterToAdd = BasicInstanceBuilder.getSearchEngineFilter()
-        def result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        User user = BasicInstanceBuilder.getUser()
+        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 

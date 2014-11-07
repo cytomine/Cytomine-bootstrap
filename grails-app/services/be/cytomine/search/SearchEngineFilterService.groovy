@@ -9,9 +9,12 @@ import be.cytomine.command.Transaction
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
+import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 import grails.transaction.Transactional
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 import static be.cytomine.search.SearchEngineFilter.*
 
@@ -24,6 +27,8 @@ class SearchEngineFilterService extends ModelService {
     def springSecurityService
     def transactionService
     def securityACLService
+    def projectService
+    def secUserService
 
     def currentDomain() {
         return SearchEngineFilter
@@ -43,8 +48,18 @@ class SearchEngineFilterService extends ModelService {
      */
     def list() {
         SecUser currentUser = cytomineService.getCurrentUser()
-        securityACLService.checkUser(currentUser)
-        return SearchEngineFilter.findAllByUser(currentUser)
+        securityACLService.checkAdmin(currentUser)
+        return SearchEngineFilter.list()
+    }
+
+    /**
+     * Get all filters of the current user
+     * @return SearchEngineFilter list
+     */
+    def listByUser(Long id) {
+        SecUser user = SecUser.findById(id)
+        securityACLService.checkUser(user)
+        return SearchEngineFilter.findAllByUser(user)
     }
 
 
@@ -71,7 +86,7 @@ class SearchEngineFilterService extends ModelService {
      */
     def delete(SearchEngineFilter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //securityACLService.check(domain,DELETE)
+        //securityACLService.checkIsSameUser(domain,DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null, task)
     }
@@ -87,17 +102,31 @@ class SearchEngineFilterService extends ModelService {
      */
     private void checkJsonConsistency(def json) {
 
-        if (!json.projects.equals("null") && !json.projects.equals("[]")) {
-            for (def projectId in json.projects) {
-                def project = Project.findById(projectId);
+        def filters
+        if(json.filters instanceof String) {
+            filters = JSON.parse(json.filters)
+        } else {
+            filters = json.filters
+        }
+
+        if (!JSONUtils.getJSONList(filters.projects).equals([])) {
+            def projects = projectService.list(User.findById(json.user))
+            for (def projectId in JSONUtils.getJSONList(filters.projects)) {
+                def project = projects.find {
+                    it.id == projectId
+                };
                 if (project == null) {
-                    throw new WrongArgumentException("SearchEngineFilter cannot have non-existing projects")
+                    throw new WrongArgumentException("A search filter cannot have non-existing projects")
                 }
             }
         }
 
-        if (json.words.equals("null") || json.words.equals("[]")) {
-            throw new WrongArgumentException("SearchEngineFilter cannot search with no words")
+        if (JSONUtils.getJSONList(filters.words).equals([])) {
+            throw new WrongArgumentException("A search filter cannot search with no words")
+        }
+
+        if (json.name == null || json.name.equals("")) {
+            throw new WrongArgumentException("A search filter cannot have a blanck name")
         }
     }
 

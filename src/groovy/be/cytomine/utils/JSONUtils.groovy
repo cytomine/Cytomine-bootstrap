@@ -3,6 +3,7 @@ package be.cytomine.utils
 import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.json.JSONArray
 
 /**
@@ -153,7 +154,7 @@ class JSONUtils {
     }
 
     static public def getJSONList(def item) {
-        if(item==null) {
+        if(item==null || item instanceof JSONObject.Null) {
             return []
         } else if(item instanceof List || item instanceof ArrayList) {
            return item

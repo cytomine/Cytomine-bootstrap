@@ -8,9 +8,12 @@ class SearchEngineFilterUrlMappings {
 
     static mappings = {
         "/api/searchenginefilter.$format"(controller:"restSearchEngineFilter"){
-            action = [GET: "list",POST:"add"]
+            action = [GET: "list"]
         }
-        "/api/searchenginefilter/$id.$format"(controller:"restSearchEngineFilter"){
+        "/api/user/$id/searchenginefilter.$format"(controller:"restSearchEngineFilter"){
+            action = [GET:"listByUser",POST:"add"]
+        }
+        "/api/user/$id/searchenginefilter/$id.$format"(controller:"restSearchEngineFilter"){
             action = [GET:"show",DELETE:"delete"]
         }
     }
