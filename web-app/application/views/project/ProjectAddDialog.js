@@ -46,6 +46,9 @@ var AddProjectDialog = Backbone.View.extend({
         });
 
         self.open();
+
+        $("input#isReadOnly").attr('checked', window.app.params.readOnlyProjectsByDefault);
+
         return this;
     },
     initStepy: function () {

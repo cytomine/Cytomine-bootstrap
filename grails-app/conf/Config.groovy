@@ -106,6 +106,7 @@ environments {
 //        grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
+        //grails.readOnlyProjectsByDefault = true
     }
     development {
         grails.serverURL = "http://localhost:8080"
@@ -119,6 +120,7 @@ environments {
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
+        grails.readOnlyProjectsByDefault = true
     }
     test {
         grails.serverURL = "http://localhost:8090"
@@ -127,6 +129,7 @@ environments {
         grails.plugin.springsecurity.useBasicAuth = true
         grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
+        grails.readOnlyProjectsByDefault = true
     }
     testrun {
         grails.serverURL = "http://localhost:8090"

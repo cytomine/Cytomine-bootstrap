@@ -404,6 +404,8 @@ body {
             window.app = new ApplicationController();
             window.app.coreServer =  "${grailsApplication.config.grails.serverURL}";
             window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}";
+            window.app.params =  {};
+            window.app.params.readOnlyProjectsByDefault =  "${grailsApplication.config.grails.readOnlyProjectsByDefault}";
         });
     </script>
 </g:if>
@@ -417,6 +419,8 @@ body {
             window.app = new ApplicationController();
             window.app.coreServer =  "${grailsApplication.config.grails.serverURL}";
             window.app.uploadServer =  "${grailsApplication.config.grails.uploadURL}";
+            window.app.params =  {};
+            window.app.params.readOnlyProjectsByDefault =  "${grailsApplication.config.grails.readOnlyProjectsByDefault}";
         });
     </script>
 
