@@ -1,50 +1,54 @@
-<div class="container">
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Cytomine</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav ">
-                <li class="custom-ui-dashboard" style="display:none;"><a id="userdashboard-button" href="#userdashboard"><i class="glyphicon glyphicon-dashboard" /> Dashboard</a></li>
+<div>
 
-                <li class="custom-ui-project" style="display:none;"><a id="project-button" href="#project"><i class="glyphicon glyphicon-list-alt" /> Projects</a></li>
-                <li class="custom-ui-ontology" style="display:none;"><a id="ontology-button" href="#ontology"><i class="glyphicon glyphicon-book" /> Ontologies</a></li>
-                <li class="custom-ui-explore" style="display:none;"><a id="explorer-button" href="#explorer"><i class="glyphicon glyphicon-eye-open" /> Explore</a></li>
-                <li class="custom-ui-storage" style="display:none;"><a id="upload-button" href="#upload"><span class="glyphicon glyphicon-hdd"></span> Storage</a></li>
-                <li class="custom-ui-activity" style="display:none;" ><a id="activity-button" href="#activity-"><span class="glyphicon glyphicon-fire"></span> Activity</a></li>
-                <li class="custom-ui-search" style="display:none;" ><a id="search-button" href="#search-"><span class="glyphicon glyphicon-search"></span> Search</a></li>
-                <li class="custom-ui-admin" style="display:none;"><a id="admin-button" href="admincyto"><span class="glyphicon glyphicon-wrench"></span> Admin</a></li>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Cytomine</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse" aria-expanded="true">
+                <ul class="nav navbar-nav">
+                    <li class="custom-ui-dashboard" style="display:none;"><a id="userdashboard-button" href="#userdashboard"><i class="glyphicon glyphicon-dashboard" /> Dashboard</a></li>
 
-            </ul>
-            <div class="navbar-header  navbar-right">
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="divider-vertical"></li>
-                    <li class="custom-ui-help" style="display:none;"><a id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
-                    <li class="custom-ui-feedback" style="display:none;"><a id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Support</a></li>
-                    <li class="divider-vertical"></li>
+                    <li class="custom-ui-project" style="display:none;"><a id="project-button" href="#project"><i class="glyphicon glyphicon-list-alt" /> Projects</a></li>
+                    <li class="custom-ui-ontology" style="display:none;"><a id="ontology-button" href="#ontology"><i class="glyphicon glyphicon-book" /> Ontologies</a></li>
+                    <li class="custom-ui-explore" style="display:none;"><a id="explorer-button" href="#explorer"><i class="glyphicon glyphicon-eye-open" /> Explore</a></li>
+                    <li class="custom-ui-storage" style="display:none;"><a id="upload-button" href="#upload"><span class="glyphicon glyphicon-hdd"></span> Storage</a></li>
+                    <li class="custom-ui-activity" style="display:none;" ><a id="activity-button" href="#activity-"><span class="glyphicon glyphicon-fire"></span> Activity</a></li>
+                    <li class="custom-ui-search" style="display:none;" ><a id="search-button" href="#search-"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+                    <li class="custom-ui-admin" style="display:none;"><a id="admin-button" href="admincyto"><span class="glyphicon glyphicon-wrench"></span> Admin</a></li>
 
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i id="userIcon" class=""/><span id="loggedUser"></span><b class="caret"></b>&nbsp;<span id="warning-user-logged-as-admin" style="display:none;" class="label label-danger">Logged as admin!</span></a>
-                        <ul class="dropdown-menu">
-                                <li><a href="#account"><i class="glyphicon glyphicon-user"/> Account</a></li>
-                            <li class="divider"></li>
-                                <li id="li-open-admin-session" style="display: none;"><a id="a-open-admin-session" href="#"> <i class="glyphicon glyphicon glyphicon-chevron-up"/> Open admin session</a></li>
-                                <li id="li-close-admin-session" style="display: none;"><a id="a-close-admin-session" href="#" > <i class="glyphicon glyphicon glyphicon-chevron-down"/> Close admin session</a></li>
-                            <li class="divider"></li>
-                            <li id="li-cancel-switch-user"><a id="a-cancel-switch-user" href="/j_spring_security_exit_user"><i class="glyphicon glyphicon-transfer"/></a></li>
-                                <li><a id="logout" href="#"><i class="glyphicon glyphicon-off "/> Logout</a></li>
-                        </ul>
-                    </li>
                 </ul>
+                <div class="navbar-header  navbar-right">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="divider-vertical"></li>
+                        <li class="custom-ui-help" style="display:none;"><a id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
+                        <li class="custom-ui-feedback" style="display:none;"><a id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Support</a></li>
+                        <li class="divider-vertical"></li>
 
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i id="userIcon" class=""/><span id="loggedUser"></span><b class="caret"></b>&nbsp;<span id="warning-user-logged-as-admin" style="display:none;" class="label label-danger">Logged as admin!</span></a>
+                            <ul class="dropdown-menu">
+                                    <li><a href="#account"><i class="glyphicon glyphicon-user"/> Account</a></li>
+                                <li class="divider"></li>
+                                    <li id="li-open-admin-session" style="display: none;"><a id="a-open-admin-session" href="#"> <i class="glyphicon glyphicon glyphicon-chevron-up"/> Open admin session</a></li>
+                                    <li id="li-close-admin-session" style="display: none;"><a id="a-close-admin-session" href="#" > <i class="glyphicon glyphicon glyphicon-chevron-down"/> Close admin session</a></li>
+                                <li class="divider"></li>
+                                <li id="li-cancel-switch-user"><a id="a-cancel-switch-user" href="/j_spring_security_exit_user"><i class="glyphicon glyphicon-transfer"/></a></li>
+                                    <li><a id="logout" href="#"><i class="glyphicon glyphicon-off "/> Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
 </div>
 <div id="content">
 </div>
