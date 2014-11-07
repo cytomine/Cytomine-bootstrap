@@ -23,22 +23,11 @@ class RestSearchEngineFilterController extends RestController {
     def taskService
 
     /**
-     * List all filters of the current user
+     * List all filters of the current user or all filters if admin
      */
     @RestApiMethod(description="List all filters", listing=true)
     def list () {
         responseSuccess(searchEngineFilterService.list())
-    }
-
-    /**
-     * List all filters of the current user
-     */
-    @RestApiMethod(description="List all filters of the current user", listing=true)
-    @RestApiParams(params=[
-            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The user id")
-    ])
-    def listByUser () {
-        responseSuccess(searchEngineFilterService.listByUser(params.long('id')))
     }
 
     @RestApiMethod(description="Get a filter")
