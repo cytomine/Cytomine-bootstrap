@@ -17,17 +17,13 @@ class SearchEngineFilterAPI extends DomainAPI {
         return doGET(URL, username, password)
     }
 
-    static def list(Long id, String username, String password) {
-        String URL = Infos.CYTOMINEURL +  "api/user/"+id+"/searchenginefilter.json"
-        return doGET(URL, username, password)
-    }
     static def listAll(String username, String password) {
         String URL = Infos.CYTOMINEURL +  "api/searchenginefilter.json"
         return doGET(URL, username, password)
     }
 
-    static def create(Long id, String json, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/user/"+id+"/searchenginefilter.json"
+    static def create(String json, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/searchenginefilter.json"
         def result = doPOST(URL,json,username,password)
         result.data = SearchEngineFilter.get(JSON.parse(result.data)?.searchenginefilter?.id)
         return result

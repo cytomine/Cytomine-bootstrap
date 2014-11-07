@@ -17,14 +17,6 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class SearchEngineFilterTests {
 
-    void testListSearchEngineFilter() {
-        User user = BasicInstanceBuilder.getUser()
-        def result = SearchEngineFilterAPI.list(user.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        def json = JSON.parse(result.data)
-        assert json.collection instanceof JSONArray
-    }
-
     void testListAllSearchEngineFilterWithCredential() {
         def result = SearchEngineFilterAPI.listAll(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
@@ -49,7 +41,7 @@ class SearchEngineFilterTests {
         log.info(JSON.parse(filterToAdd.filters).words)
         User user = BasicInstanceBuilder.getUser()
 
-        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         int idFilter = result.data.id
 
@@ -83,7 +75,7 @@ class SearchEngineFilterTests {
         log.info("filter filters " + filterToAdd.filters)
 
         User user = BasicInstanceBuilder.getUser()
-        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code // cannot search with no words
 
         filters.put("projects", [64] as JSON)
@@ -92,14 +84,14 @@ class SearchEngineFilterTests {
         log.info("filter name " + filterToAdd.name)
         log.info("filter filters " + filterToAdd.filters)
 
-        result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 400 == result.code // cannot search non existing project
     }
 
     void testAddSearchEngineFilterAlreadyExist() {
         def filterToAdd = BasicInstanceBuilder.getSearchEngineFilter()
         User user = BasicInstanceBuilder.getUser()
-        def result = SearchEngineFilterAPI.create(user.id, filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = SearchEngineFilterAPI.create(filterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code
     }
 

@@ -4,12 +4,8 @@
 var SearchEngineFilterModel = Backbone.Model.extend({
 
     url: function () {
-        if (this.get("user") != undefined) {
-            if (this.get("id") != undefined) {
-                return "api/user/" + this.get("user") + "/searchenginefilter/" + this.get("id") + ".json";
-            } else {
-                return "api/user/" + this.get("user") + "/searchenginefilter.json";
-            }
+        if (this.get("id") != undefined) {
+            return "api/searchenginefilter/" + this.get("id") + ".json";
         } else {
             return "api/searchenginefilter.json";
         }
@@ -50,11 +46,7 @@ var SearchEngineFilterCollection = PaginatedCollection.extend({
     model: SearchEngineFilterModel,
     fullSize : -1,
     url: function () {
-        if (this.user != undefined) {
-            return "api/user/" + this.user + "/searchenginefilter.json";
-        } else {
-            return "api/searchenginefilter.json";
-        }
+        return "api/searchenginefilter.json";
     },
     initialize: function (options) {
         this.initPaginator(options);

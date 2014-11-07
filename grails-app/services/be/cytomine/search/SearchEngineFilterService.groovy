@@ -1,6 +1,7 @@
 package be.cytomine.search
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
@@ -16,6 +17,7 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import org.codehaus.groovy.grails.web.json.JSONObject
 
+import static org.springframework.security.acls.domain.BasePermission.*
 import static be.cytomine.search.SearchEngineFilter.*
 
 @Transactional
@@ -36,9 +38,9 @@ class SearchEngineFilterService extends ModelService {
 
     SearchEngineFilter read(def id) {
         def filter = SearchEngineFilter.read(id)
-        /*if (filter) {
-            securityACLService.check(filter,READ)
-        }*/
+        if (filter) {
+            securityACLService.checkIsSameUser(filter.getUser(), cytomineService.getCurrentUser())
+        }
         filter
     }
 
@@ -48,20 +50,14 @@ class SearchEngineFilterService extends ModelService {
      */
     def list() {
         SecUser currentUser = cytomineService.getCurrentUser()
-        securityACLService.checkAdmin(currentUser)
-        return SearchEngineFilter.list()
+        try {
+            securityACLService.checkAdmin(currentUser)
+            return SearchEngineFilter.list()
+        } catch (ForbiddenException e) {
+            securityACLService.checkUser(currentUser)
+            return SearchEngineFilter.findAllByUser(currentUser)
+        }
     }
-
-    /**
-     * Get all filters of the current user
-     * @return SearchEngineFilter list
-     */
-    def listByUser(Long id) {
-        SecUser user = SecUser.findById(id)
-        securityACLService.checkUser(user)
-        return SearchEngineFilter.findAllByUser(user)
-    }
-
 
     /**
      * Add the new domain with JSON data
@@ -86,7 +82,7 @@ class SearchEngineFilterService extends ModelService {
      */
     def delete(SearchEngineFilter domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        //securityACLService.checkIsSameUser(domain,DELETE)
+        securityACLService.checkIsSameUser(domain.getUser(), cytomineService.getCurrentUser())
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null, task)
     }
