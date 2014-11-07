@@ -301,9 +301,7 @@ class AbstractImageService extends ModelService {
 
     def getMainUploadedFile(AbstractImage abstractImage) {
         UploadedFile uploadedfile = UploadedFile.findByImage(abstractImage)
-        println "############" + uploadedfile.ext
         if (uploadedfile?.parent && !uploadedfile?.parent?.ext?.equals("png") && !uploadedfile?.uploadedfile?.parent?.ext?.equals("jpg")) {
-            println "############" + uploadedfile.parent.ext
             return uploadedfile.parent
         }
         else return uploadedfile

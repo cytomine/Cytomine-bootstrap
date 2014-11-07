@@ -70,8 +70,8 @@ class ProjectAPI extends DomainAPI {
         return doPUT(URL,jsonProject,username,password)
     }
 
-    static def delete(def id, String username, String password, Task task = null) {
-        String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json" + (task ? "?task=${task.id}" :"")
+    static def delete(def id, String username, String password, Long task = null) {
+        String URL = Infos.CYTOMINEURL + "api/project/" + id + ".json" + (task ? "?task=${task}" :"")
         return doDELETE(URL,username,password)
     }
 

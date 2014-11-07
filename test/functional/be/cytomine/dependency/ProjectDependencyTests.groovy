@@ -11,7 +11,9 @@ import be.cytomine.social.LastConnection
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
+import be.cytomine.test.http.TaskAPI
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 /**
  * Created by IntelliJ IDEA.
@@ -62,13 +64,14 @@ class ProjectDependencyTests  {
         //create a term and all its dependence domain
         def dependentDomain = createProjectWithDependency()
         def project = dependentDomain.first()
-        Task task = new Task(userIdent: User.findByUsername(Infos.SUPERADMINLOGIN).id,projectIdent: project.id)
-        task = task.saveOnDatabase()
 
+        def result = TaskAPI.create(BasicInstanceBuilder.getProject().id, Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        //JSON.parse(result.data).task.id
         BasicInstanceBuilder.checkIfDomainsExist(dependentDomain)
 
         //try to delete term
-        assert (200 == ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD,task).code)
+        assert (200 == ProjectAPI.delete(project.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD,JSON.parse(result.data).task.id).code)
 
         //TODO: uncomment this after implementing full softdelete
 //        //check if all dependency are not aivalable

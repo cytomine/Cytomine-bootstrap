@@ -263,7 +263,7 @@ class ProjectTests  {
         def jsonTask = JSON.parse(result.data)
 
         //delete all job data
-        result = ProjectAPI.delete(projectToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,new Task().getFromDatabase(jsonTask.task.id))
+        result = ProjectAPI.delete(projectToDelete.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD,jsonTask.task.id)
         assert 200 == result.code
 
 
