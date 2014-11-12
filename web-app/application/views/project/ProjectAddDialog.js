@@ -186,6 +186,14 @@ var AddProjectDialog = Backbone.View.extend({
                 width: 590,
                 maxSelection: null
             });
+
+            self.defaultLayersMaggicSuggest = $('#projectadddefaultlayers').magicSuggest({
+                data: allUserArray,
+                displayField: 'label',
+                //value: defaultLayersArray,
+                width: 590,
+                maxSelection:null
+            });
         }
 
         new UserCollection({}).fetch({

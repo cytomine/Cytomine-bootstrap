@@ -103,7 +103,7 @@ var EditProjectDialog = Backbone.View.extend({
         var allUser = null;
         var projectUser = null;
         var projectAdmin = null;
-
+        var defaultLayers = null;
 
 
         var loadUser = function() {
@@ -126,6 +126,13 @@ var EditProjectDialog = Backbone.View.extend({
                 projectAdminArray.push(user.id);
             });
 
+            var defaultLayersArray=[]
+            // TO REPLACE BY THE GOOD VALUES
+            defaultLayers = projectAdmin;
+            defaultLayers.each(function(user) {
+                defaultLayersArray.push(user.id);
+            });
+
             self.userMaggicSuggest = $('#projectedituser').magicSuggest({
                          data: allUserArray,
                          displayField: 'label',
@@ -135,12 +142,22 @@ var EditProjectDialog = Backbone.View.extend({
                      });
 
             self.adminMaggicSuggest = $('#projecteditadmin').magicSuggest({
-                         data: allUserArray,
-                         displayField: 'label',
-                         value: projectAdminArray,
-                         width: 590,
-                         maxSelection:null
-                     });
+                data: allUserArray,
+                displayField: 'label',
+                value: projectAdminArray,
+                width: 590,
+                maxSelection:null
+            });
+
+            self.defaultLayersMaggicSuggest = $('#projecteditdefaultlayers').magicSuggest({
+                data: allUserArray,
+                displayField: 'label',
+                value: defaultLayersArray,
+                width: 590,
+                maxSelection:null
+            });
+
+
         }
 
         new UserCollection({}).fetch({
