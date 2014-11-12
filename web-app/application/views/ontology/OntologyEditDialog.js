@@ -97,7 +97,7 @@ var EditOntologyDialog = Backbone.View.extend({
                 error: function (model, response) {
                     var json = $.parseJSON(response.responseText);
                     $("#ontologyediterrorlabel").show();
-                    $("#ontologyediterrormessage").append(json.errors);
+                    $("#errormessage").append(json.errors);
                 }
             }
         );

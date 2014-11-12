@@ -165,11 +165,11 @@ var ProjectView = Backbone.View.extend({
 
 
         if(window.app.status.user.model.get('guest')) {
-            $("#newProjectListing").hide();
-            $(".editProject").hide();
-            $(".deleteProject").hide();
-            $(".infoProject").hide();
-            $(".addSlide").hide();
+            $("#newProjectListing").remove();
+            $(".editProject").remove();
+            $(".deleteProject").remove();
+            $(".infoProject").remove();
+            $(".addSlide").remove();
         }
     },
     /**

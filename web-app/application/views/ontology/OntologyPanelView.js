@@ -61,6 +61,11 @@ var OntologyPanelView = Backbone.View.extend({
                 self.initEvents();
             });
 
+        if(window.app.status.user.model.get('guest')) {
+            $("#TermButtonGroup").remove();
+            $("#OntologyButtonGroup").remove();
+        }
+
         return this;
     },
 

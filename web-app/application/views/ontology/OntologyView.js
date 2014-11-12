@@ -29,6 +29,11 @@ var OntologyView = Backbone.View.extend({
     doLayout: function (tpl) {
         var self = this;
         $(this.el).html(_.template(tpl, {}));
+
+        if(window.app.status.user.model.get('guest')) {
+            $("#ontologyAddButton").remove();
+        }
+
         self.fillOntologyMenu();
         return this;
     },
