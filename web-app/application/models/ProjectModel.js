@@ -56,6 +56,48 @@ var OntologyProjectModel = PaginatedCollection.extend({
     }
 });
 
+var ProjectDefaultLayerModel = Backbone.Model.extend({
+
+    url: function () {
+        if (this.get("project") != undefined) {
+            if (this.get("id") != undefined) {
+                return "api/project/" + this.get("project") + "/defaultlayer/" + this.get("id") + ".json";
+            } else {
+                return "api/project/" + this.get("project") + "/defaultlayer.json";
+            }
+        } else {
+            return null;
+        }
+    },
+    initialize: function (options) {
+    },
+    defaults : {
+        user: null,
+        project: null,
+        hideByDefault : false
+    }
+});
+
+
+var ProjectDefaultLayerCollection = PaginatedCollection.extend({
+    model: ProjectDefaultLayerModel,
+    fullSize : -1,
+    url: function () {
+        if (this.project != undefined) {
+            return "api/project/" + this.project + "/defaultlayer.json";
+        } else {
+            return null;
+        }
+    },
+    initialize: function (options) {        this.initPaginator(options);
+        if (options != undefined) {
+            this.project = options.project;
+        }
+    },
+    comparator: function (layer) {
+        return layer.get("user");
+    }
+});
 
 // define our collection
 var ProjectCollection = PaginatedCollection.extend({

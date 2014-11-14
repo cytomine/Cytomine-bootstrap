@@ -73,7 +73,7 @@ class ProjectDefaultLayer extends CytomineDomain {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.project = JSONUtils.getJSONAttrDomain(json, "project", new Project(), true)
         domain.user = JSONUtils.getJSONAttrDomain(json, "user", new SecUser(), true)
-        domain.hideByDefault = JSONUtils.getJSONAttrBoolean(json, 'hideByDefault', true)
+        domain.hideByDefault = JSONUtils.getJSONAttrBoolean(json, 'hideByDefault', false)
         return domain;
     }
 
