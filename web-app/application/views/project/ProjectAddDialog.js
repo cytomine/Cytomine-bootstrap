@@ -32,6 +32,7 @@ var AddProjectDialog = Backbone.View.extend({
         self.initStepy();
         self.createProjectInfo(ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
         self.createUserList();
+        self.createDefaultLayers();
         self.createRetrievalProject();
 
         //Build dialog
@@ -46,6 +47,9 @@ var AddProjectDialog = Backbone.View.extend({
         });
 
         self.open();
+
+        $("input#isReadOnly").attr('checked', window.app.params.readOnlyProjectsByDefault);
+
         return this;
     },
     initStepy: function () {
@@ -166,6 +170,7 @@ var AddProjectDialog = Backbone.View.extend({
 
             allUser.each(function (user) {
                 allUserArray.push({id: user.id, label: user.prettyName()});
+                $('#projectaddavailabledefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
             });
 
             self.userMaggicSuggest = $('#projectuser').magicSuggest({
@@ -190,6 +195,34 @@ var AddProjectDialog = Backbone.View.extend({
                 allUser = allUserCollection;
                 loadUser();
             }});
+    },
+    createDefaultLayers: function () {
+        var self = this;
+
+        $("#selectedDefaultLayers").hide();
+
+        $('#projectadddefaultlayersbutton').click(function() {
+
+            var container = $('#projectaddavailabledefaultlayers')[0];
+            var selected = container.options[container.options.selectedIndex];
+            if(selected.value != null && selected.value != undefined && selected.value != '') {
+                $("#selectedDefaultLayers").show();
+                // check if not already taken
+                if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
+                    $('#selectedDefaultLayers').append('<div class="col-md-3"><input type="checkbox" id="hideByDefault' + selected.value + '"> Hide layers by default</div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-7"><p>' + selected.text + '</p></div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                }
+            }
+        });
+        $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
+            $(this).parent().prev().prev().remove();
+            $(this).parent().prev().remove();
+            $(this).parent().remove();
+            if($("#selectedDefaultLayers").children().length ==0){
+                $("#selectedDefaultLayers").hide();
+            }
+        });
     },
     createRetrievalProject: function () {
         var self = this;
@@ -273,6 +306,16 @@ var AddProjectDialog = Backbone.View.extend({
         progressBar.css("width", progress + "%");
     },
 
+    createDefaultLayerProject: function (idProject) {
+        var layers = $('#selectedDefaultLayers .projectremovedefaultlayersbutton');
+        for(var i =0; i<layers.length;i++){
+            var id = $(layers[i]).attr("id").replace("defaultlayer","");
+            var hide = $('#hideByDefault' + id)[0].checked
+            var layer = new ProjectDefaultLayerModel({user: id, project: idProject, hideByDefault: hide});
+            layer.save();
+        }
+    },
+
     createProject: function () {
 
         var self = this;
@@ -322,25 +365,26 @@ var AddProjectDialog = Backbone.View.extend({
 
                 //create project
                 new ProjectModel({task:response.task.id,users: users, admins: admins,name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}).save({name: name, ontology: ontology, discipline: discipline, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval, blindMode: blindMode, isReadOnly: isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
-                            success: function (model, response) {
-                                console.log("1. Project added!");
-                                clearInterval(timer);
-                                window.app.view.message("Project", response.message, "success");
-                                var id = response.project.id;
-                                self.projectsPanel.refresh();
-                                $("#addproject").modal("hide");
-                                /*$("#addproject").remove();*/
-                            },
-                            error: function (model, response) {
-                                var json = $.parseJSON(response.responseText);
-                                clearInterval(timer);
-                                window.app.view.message("Project", json.errors, "error");
-                                divToFill.show();
-                                $("#progressBarAddProjectContainer").empty();
-                                $("#addproject").find(".modal-footer").show();
-                                $('#login-form-add-project').stepy('step', 1);
-                            }
-                        });
+                    success: function (model, response) {
+                        console.log("1. Project added!");
+                        clearInterval(timer);
+                        window.app.view.message("Project", response.message, "success");
+                        var id = response.project.id;
+                        self.projectsPanel.refresh();
+                        self.createDefaultLayerProject(id);
+                        $("#addproject").modal("hide");
+                        /*$("#addproject").remove();*/
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        clearInterval(timer);
+                        window.app.view.message("Project", json.errors, "error");
+                        divToFill.show();
+                        $("#progressBarAddProjectContainer").empty();
+                        $("#addproject").find(".modal-footer").show();
+                        $('#login-form-add-project').stepy('step', 1);
+                    }
+                });
             }
         });
     }

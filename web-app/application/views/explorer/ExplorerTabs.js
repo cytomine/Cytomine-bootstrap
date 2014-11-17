@@ -264,8 +264,14 @@ var ExplorerTabs = Backbone.View.extend({
     addDashboard: function (dashboard) {
         var self = this;
         this.dashboard = dashboard;
+
+        // If the project name is too long, we truncate it.
+        var projectName = window.app.status.currentProjectModel.attributes.name;
+        if(projectName.length > 30) {
+            projectName = projectName.substring(0, 13) + "..." + projectName.substring(projectName.length-14, projectName.length);
+        }
         var tabs = $('#explorer-tab');
-        tabs.append(_.template("<li class='custom-ui-project-dashboard-tab' id='project-dashboard-tab'><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> Dashboard</a></li>", { idProject: window.app.status.currentProject}));
+        tabs.append(_.template("<li class='custom-ui-project-dashboard-tab' id='project-dashboard-tab'><a id='dashboardLink-<%= idProject %>' href='#tabs-dashboard-<%= idProject %>' data-toggle='tab'><i class='icon-road' /> <%= name %></a></li>", { idProject: window.app.status.currentProject, name: projectName}));
         tabs.append(_.template("<li class='custom-ui-project-images-tab' id='project-images-tab'><a href='#tabs-images-<%= idProject %>' data-toggle='tab'><i class='icon-picture' /> Images</a></li>", { idProject: window.app.status.currentProject}));
         tabs.append(_.template("<li class='custom-ui-project-annotations-tab' id='project-annotations-tab' style='display:none;'><a href='#tabs-annotations-<%= idProject %>' data-toggle='tab'><i class='icon-pencil' /> Annotations</a></li>", { idProject: window.app.status.currentProject}));
 	    tabs.append(_.template("<li class='custom-ui-project-properties-tab' id='project-properties-tab' style='display:none;'><a class='annotationTabLink' href='#tabs-properties-<%= idProject %>' data-toggle='tab'><i class='icon-list' /> Properties</a></li>", { idProject: window.app.status.currentProject}));

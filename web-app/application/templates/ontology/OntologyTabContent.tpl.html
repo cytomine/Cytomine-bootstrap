@@ -2,7 +2,7 @@
     <div class="panel-heading"><h4><%= name %></h4></div>
     <div class="panel-body">
         <div class="row" style="padding-left: 20px;">
-            <div class="btn-group">
+            <div id = "OntologyButtonGroup" class="btn-group">
                 <button class="btn btn-info btn-sm" href="#">Ontology</button>
                 <a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -10,7 +10,7 @@
                     <li><a class="deleteOntology" id='buttonDeleteOntology<%= id %>'><i class="icon-trash"></i>Delete</a></li>
                 </ul>
             </div>
-            <div class="btn-group">
+            <div id = "TermButtonGroup" class="btn-group">
                 <button class="btn btn-info btn-sm" href="#">Term</button>
                 <a class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                 <ul class="dropdown-menu">

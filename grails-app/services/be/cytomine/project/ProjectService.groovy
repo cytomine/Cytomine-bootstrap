@@ -548,4 +548,10 @@ class ProjectService extends ModelService {
 //            it.delete(flush: true)
 //        }
 //    }
+//    def deleteDependentProjectDefaultLayer(Project project, Transaction transaction, Task task = null) {
+//        taskService.updateTask(task,task? "Delete ${ProjectDefaultLayer.countByProject(project)} connection information":"")
+//        ProjectDefaultLayer.findAllByProject(project).each {
+//            projectDefaultLayerService.delete(it,transaction, null,false)
+//        }
+//    }
 }

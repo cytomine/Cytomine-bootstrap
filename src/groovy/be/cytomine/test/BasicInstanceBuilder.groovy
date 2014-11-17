@@ -12,6 +12,7 @@ import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.project.Discipline
 import be.cytomine.project.Project
+import be.cytomine.project.ProjectDefaultLayer
 import be.cytomine.search.SearchEngineFilter
 import be.cytomine.security.*
 import be.cytomine.ontology.SharedAnnotation
@@ -1537,5 +1538,25 @@ class BasicInstanceBuilder {
 
         def filter = new SearchEngineFilter(name: getRandomString(), user: User.findByUsername(Infos.SUPERADMINLOGIN), filters: json)
         save ? saveDomain(filter) : checkDomain(filter)
+    }
+
+    static ProjectDefaultLayer getProjectDefaultLayer() {
+        Project project = this.getProject();
+        User user = User.findByUsername(Infos.SUPERADMINLOGIN);
+        def layer = ProjectDefaultLayer.findByUserAndProject(user, project)
+        if (!layer) {
+            //create if not exist
+            layer = new ProjectDefaultLayer(project: project, user: user, hideByDefault: false)
+            saveDomain(layer)
+        }
+        layer
+    }
+
+    static ProjectDefaultLayer getProjectDefaultLayerNotExist(boolean save = false, boolean hideByDefault = false) {
+        Project project = saveDomain(this.getProjectNotExist());
+        User user = User.findByUsername(Infos.SUPERADMINLOGIN);
+
+        def layer = new ProjectDefaultLayer(project: project, user: user, hideByDefault: false)
+        save ? saveDomain(layer) : checkDomain(layer)
     }
 }

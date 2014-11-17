@@ -53,7 +53,7 @@ class SearchEngineFilterSecurityTest extends SecurityTestsAbstract {
         assert 200 == result.code
     }
 
-    void testTermSecurityForSimpleUser() {
+    void testSecurityForSimpleUser() {
         //init user creator
         def USERNAME2 = "user2";
         def PASSWORD2 = "password";
@@ -84,7 +84,7 @@ class SearchEngineFilterSecurityTest extends SecurityTestsAbstract {
         assert 403 == result.code
     }
 
-    void testTermSecurityForAnonymous() {
+    void testSecurityForAnonymous() {
         //create new filter
         def filter = BasicInstanceBuilder.getSearchEngineFilterNotExist()
         def result = SearchEngineFilterAPI.create(filter.encodeAsJSON(), Infos.BADLOGIN, Infos.BADPASSWORD)
