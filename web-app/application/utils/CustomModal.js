@@ -5,6 +5,7 @@ var CustomModal = Backbone.View.extend({
         this.button = options.button;
         this.header = options.header;
         this.body = options.body;
+        this.swide = options.swide || false;
         this.wide = options.wide || false;
         this.xwide = options.xwide || false;
         this.callBack = options.callBack;
@@ -20,7 +21,7 @@ var CustomModal = Backbone.View.extend({
     registerModal: function () {
         var self = this;
 
-        var creation = function () {
+        this.render = function () {
 
             require([
                     "text!application/templates/utils/CustomModal.tpl.html"
@@ -34,6 +35,7 @@ var CustomModal = Backbone.View.extend({
                         id : self.idModal,
                         header : self.header,
                         body : self.body,
+                        swide : (self.swide ? "modal-swide" : ""),
                         wide : (self.wide ? "modal-wide" : ""),
                         xwide : (self.xwide ? "modal-xwide" : ""),
                         buttons : self.buttons
@@ -59,9 +61,11 @@ var CustomModal = Backbone.View.extend({
                     if (self.callBack) {
                         self.callBack();
                     }
+                    if (self.callBackAfterCreation) {
+                        self.callBackAfterCreation();
+                    }
 
                 });
-            self.callBackAfterCreation();
             return true;
         };
         if(self.button) {
@@ -69,12 +73,9 @@ var CustomModal = Backbone.View.extend({
             self.button.unbind();
             self.button.click(function(evt) {
                 console.log("click sur le button");
-                creation();
+                self.render();
             });
-        } else { // else, create now !
-            console.log("pas de button détecté");
-            creation();
-        }
+        }// else, the owner must call render() by its own.
     },
     close: function () {
         $('#' + this.idModal).modal('hide').remove();
@@ -104,9 +105,9 @@ var DescriptionModal = {
             // if I put a glyphicon, the class close is maybe no more needed.
             $('.modal-header button').after('<span style ="float:right; opacity:0.2; /*Dans un CSS i:hover {opacity:0.5}*/ margin-right: 5px; cursor: pointer" aria-hidden="true"><i class="glyphicon glyphicon-resize-full"/></span>');
             $('.modal-header span').on("click", ".glyphicon-resize-full", function(e) {
-            //$('.glyphicon-resize-full').on("click", function(e) {
                 $(this).toggleClass('glyphicon-resize-full');
                 $(this).toggleClass('glyphicon-resize-small');
+                //as we don't set width and height for the description modal, it takes these parameters of this parents. So I change these.
                 $('.modal-dialog').css({
                     'width': '80%',
                     'max-width': '80%'
@@ -118,7 +119,6 @@ var DescriptionModal = {
                 });
             });
             $('.modal-header span').on("click", ".glyphicon-resize-small", function(e) {
-            //$('.glyphicon-resize-small').on("click", function(e) {
                 $(this).toggleClass('glyphicon-resize-full');
                 $(this).toggleClass('glyphicon-resize-small');
                 $('.modal-dialog').css({
@@ -196,8 +196,6 @@ var DescriptionModal = {
 
         modal.addButtons("saveDescription" + idDescription, "Save", true, true);
         modal.addButtons("closeDescription" + idDescription, "Close", false, true);
-
-
     },
     initDescriptionView: function (domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet, callbackUpdate) {
         var self = this;
@@ -440,4 +438,41 @@ var copyImageModal = {
     }
 }
 
+// if a more custom dialogbox is required, check for http://bootboxjs.com/ (user CustomDialog to create our dialog box)
+var DialogModal = {
+    // if needed, pass as an argument of the callback the value of a checkbox (created in a footer) "don't ask me this for the next annotations in this location ("for this layer" or "for this image" need more development)".
+    initDialogModal: function (container, id, type, text, level, callback) {
 
+        if (level != 'WARNING' && level != 'CONFIRMATIONWARNING' && level != 'INFO' && level != 'ERROR') {
+            level = 'INFO';
+        }
+        var body;
+        var header;
+        if(level == 'WARNING' || level == 'CONFIRMATIONWARNING'){
+            body = '<div class="alert alert-warning">';
+            header = "Be carefull !"
+        } else if(level == 'INFO'){
+            body = '<div class="alert alert-info">';
+            header = "Information"
+        } else {
+            body = '<div class="alert alert-error">';
+            header = "Error"
+        }
+        body = body + '<div id="'+ type +'DialogBox' + id + '">' + text + '</div></div>';
+
+        var modal = new CustomModal({
+            idModal: type + "DialogModal" + id,
+            header: header,
+            body: body,
+            swide: true
+        });
+        if(level == 'CONFIRMATIONWARNING'){
+            modal.addButtons("DialogBoxYesButton", "Yes", false, true, callback);
+            modal.addButtons("DialogBoxNoButton", "No", true, true); // do nothing
+        } else {
+            modal.addButtons("DialogBoxOkButton", "Ok", true, true, callback);
+        }
+        modal.render();
+        $('#' + type + 'DialogModal' + id).modal();// display the dialog box
+    }
+}

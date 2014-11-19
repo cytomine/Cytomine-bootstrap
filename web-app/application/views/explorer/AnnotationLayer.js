@@ -542,9 +542,12 @@ AnnotationLayer.prototype = {
         return null;
     },
     removeSelection: function () {
+        var self = this;
         for (var i in this.vectorsLayer.selectedFeatures) {
             var feature = this.vectorsLayer.selectedFeatures[i];
-            this.removeAnnotation(feature);
+            DialogModal.initDialogModal(null, feature.attributes.idAnnotation, 'Annotation', 'Do you want to delete this annotation ?', 'CONFIRMATIONWARNING', function(){
+                self.removeAnnotation(feature);
+            });
         }
     },
     clearPopup: function (map, evt) {
