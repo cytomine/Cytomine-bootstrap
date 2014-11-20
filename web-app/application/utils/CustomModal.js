@@ -102,8 +102,7 @@ var DescriptionModal = {
         }
 
         var callBackAfterCreation = function() {
-            // if I put a glyphicon, the class close is maybe no more needed.
-            $('.modal-header button').after('<span style ="float:right; opacity:0.2; /*Dans un CSS i:hover {opacity:0.5}*/ margin-right: 5px; cursor: pointer" aria-hidden="true"><i class="glyphicon glyphicon-resize-full"/></span>');
+            $('.modal-header button').after('<span class="resize-button" aria-hidden="true"><i class="glyphicon glyphicon-resize-full"/></span>');
             $('.modal-header span').on("click", ".glyphicon-resize-full", function(e) {
                 $(this).toggleClass('glyphicon-resize-full');
                 $(this).toggleClass('glyphicon-resize-small');

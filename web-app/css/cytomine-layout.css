@@ -409,6 +409,16 @@ span .ui-icon {
     display: inline;
 }
 
+.modal-header .resize-button {
+   float:right;
+    opacity:0.2;
+    margin-right: 5px;
+    cursor: pointer;
+}
+.resize-button:hover {
+    opacity:0.5;
+}
+
 .dropdown-menu {
     z-index: 2500;
 }
