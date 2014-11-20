@@ -5,9 +5,11 @@ var CustomModal = Backbone.View.extend({
         this.button = options.button;
         this.header = options.header;
         this.body = options.body;
+        this.swide = options.swide || false;
         this.wide = options.wide || false;
         this.xwide = options.xwide || false;
         this.callBack = options.callBack;
+        this.callBackAfterCreation = options.callBackAfterCreation;
         this.registerModal();
         //style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;"
         this.width = options.width;
@@ -19,54 +21,61 @@ var CustomModal = Backbone.View.extend({
     registerModal: function () {
         var self = this;
 
-        //when click on button to open modal, build modal html, append to doc and open modal
-        self.button.unbind();
-        self.button.click(function (evt) {
+        this.render = function () {
 
             require([
-                "text!application/templates/utils/CustomModal.tpl.html"
-            ],
-                    function (tplModal) {
+                    "text!application/templates/utils/CustomModal.tpl.html"
+                ],
+                function (tplModal) {
 
-                        var modal = $("#modals");
-                        modal.empty();
+                    var modal = $("#modals");
+                    modal.empty();
 
                     var htmlModal = _.template(tplModal,{
                         id : self.idModal,
                         header : self.header,
                         body : self.body,
+                        swide : (self.swide ? "modal-swide" : ""),
                         wide : (self.wide ? "modal-wide" : ""),
                         xwide : (self.xwide ? "modal-xwide" : ""),
                         buttons : self.buttons
                     });
-                        console.log("Append modal to:"+modal.length);
 
                     modal.append(htmlModal);
 
-                        console.log("self.width="+self.width);
-                        if(self.width) {
-                            console.log($('#'+self.idModal).length);
-                            $('#'+self.idModal).css("width",self.width)
-                        }
-                        if(self.height) {
-                            $('#'+self.idModal).css("height",self.height)
-                        }
-                        _.each(self.buttons, function (b) {
-                            $("#" + b.id).click(function () {
-                                if (b.callBack) {
-                                    b.callBack();
-                                }
-                                return true;
-                            });
+                    if(self.width) {
+                        $('#'+self.idModal).css("width",self.width)
+                    }
+                    if(self.height) {
+                        $('#'+self.idModal).css("height",self.height)
+                    }
+                    _.each(self.buttons, function (b) {
+                        $("#" + b.id).click(function () {
+                            if (b.callBack) {
+                                b.callBack();
+                            }
+                            return true;
                         });
-
-                        if (self.callBack) {
-                            self.callBack();
-                        }
-
                     });
+
+                    if (self.callBack) {
+                        self.callBack();
+                    }
+                    if (self.callBackAfterCreation) {
+                        self.callBackAfterCreation();
+                    }
+
+                });
             return true;
-        });
+        };
+        if(self.button) {
+            //when click on button to open modal, build modal html, append to doc and open modal
+            self.button.unbind();
+            self.button.click(function(evt) {
+                console.log("click sur le button");
+                self.render();
+            });
+        }// else, the owner must call render() by its own.
     },
     close: function () {
         $('#' + this.idModal).modal('hide').remove();
@@ -87,19 +96,47 @@ var DescriptionModal = {
 
         var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
         var message = "Add the keyword STOP_PREVIEW where you want to delimit the preview text.";
-        if(!editable) {
-            text = text.replace("STOP_PREVIEW","");
+        if (!editable) {
+            text = text.replace("STOP_PREVIEW", "");
             message = "";
         }
 
-
-
+        var callBackAfterCreation = function() {
+            $('.modal-header button').after('<span class="resize-button" aria-hidden="true"><i class="glyphicon glyphicon-resize-full"/></span>');
+            $('.modal-header span').on("click", ".glyphicon-resize-full", function(e) {
+                $(this).toggleClass('glyphicon-resize-full');
+                $(this).toggleClass('glyphicon-resize-small');
+                //as we don't set width and height for the description modal, it takes these parameters of this parents. So I change these.
+                $('.modal-dialog').css({
+                    'width': '80%',
+                    'max-width': '80%'
+                });
+                $('iframe').parent().css({
+                    'height': function( index, value ) {
+                        return parseFloat( value ) * 1.5;
+                    }
+                });
+            });
+            $('.modal-header span').on("click", ".glyphicon-resize-small", function(e) {
+                $(this).toggleClass('glyphicon-resize-full');
+                $(this).toggleClass('glyphicon-resize-small');
+                $('.modal-dialog').css({
+                    'width': '60%',
+                    'max-width': '60%'
+                });
+                $('iframe').parent().css({
+                    'height': function( index, value ) {
+                        return parseFloat( value ) / 1.5;
+                    }
+                });
+            });
+        }
 
         var modal = new CustomModal({
             idModal: "descriptionModal" + domainIdent,
             button: container.find("a.description"),
             header: "Description",
-            body: message+'<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
+            body: message + '<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
             wide: true,
             callBack: function () {
                 //$("#descriptionArea" + domainIdent).wysihtml5({});
@@ -109,16 +146,14 @@ var DescriptionModal = {
 //                </textarea>
 
 
-
                 var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin);
 
-                if(editable) {
+                if (editable) {
                     CKEDITOR.replace("descriptionArea" + domainIdent,
                         {    filebrowserBrowseUrl: '/test/browse.php',
                             filebrowserImageBrowseUrl: '/browser/browse.php?type=Images',
-                            filebrowserUploadUrl: '/api/attachedfileCKEditor.json?domainClassName='+domainClassName+"&domainIdent="+domainIdent,
-                            filebrowserImageUploadUrl: '/api/attachedfileCKEditor.json?domainClassName='+domainClassName+"&domainIdent="+domainIdent});
-
+                            filebrowserUploadUrl: '/api/attachedfileCKEditor.json?domainClassName=' + domainClassName + "&domainIdent=" + domainIdent,
+                            filebrowserImageUploadUrl: '/api/attachedfileCKEditor.json?domainClassName=' + domainClassName + "&domainIdent=" + domainIdent});
 
 
                 } else {
@@ -126,22 +161,20 @@ var DescriptionModal = {
                 }
 
 
-
-
-                console.log("edidatble="+editable);
+                console.log("edidatble=" + editable);
                 setTimeout(
-                  function() {
-                      $("iframe").contents().find("body").attr('contenteditable',editable);
-                      if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
-                         $("#saveDescription" + idDescription).hide();
-                      }
-                  }, 1000);
+                    function () {
+                        $("iframe").contents().find("body").attr('contenteditable', editable);
+                        if (window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
+                            $("#saveDescription" + idDescription).hide();
+                        }
+                    }, 1000);
 
 
                 $("#saveDescription" + idDescription).click(function (e) {
                     // remove the host url for images
 
-                    text =CKEDITOR.instances["descriptionArea" + domainIdent].getData().split(window.location.protocol + "//" + window.location.host + '/api/attachedfile').join('/api/attachedfile');
+                    text = CKEDITOR.instances["descriptionArea" + domainIdent].getData().split(window.location.protocol + "//" + window.location.host + '/api/attachedfile').join('/api/attachedfile');
                     new DescriptionModel({id: idDescription, domainIdent: domainIdent, domainClassName: domainClassName}).save({
                         domainIdent: domainIdent,
                         domainClassName: domainClassName,
@@ -156,16 +189,12 @@ var DescriptionModal = {
 
                 });
 
-            }
+            },
+            callBackAfterCreation : callBackAfterCreation
         });
 
         modal.addButtons("saveDescription" + idDescription, "Save", true, true);
         modal.addButtons("closeDescription" + idDescription, "Close", false, true);
-
-
-
-
-
     },
     initDescriptionView: function (domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet, callbackUpdate) {
         var self = this;
@@ -408,4 +437,41 @@ var copyImageModal = {
     }
 }
 
+// if a more custom dialogbox is required, check for http://bootboxjs.com/ (user CustomDialog to create our dialog box)
+var DialogModal = {
+    // if needed, pass as an argument of the callback the value of a checkbox (created in a footer) "don't ask me this for the next annotations in this location ("for this layer" or "for this image" need more development)".
+    initDialogModal: function (container, id, type, text, level, callback) {
 
+        if (level != 'WARNING' && level != 'CONFIRMATIONWARNING' && level != 'INFO' && level != 'ERROR') {
+            level = 'INFO';
+        }
+        var body;
+        var header;
+        if(level == 'WARNING' || level == 'CONFIRMATIONWARNING'){
+            body = '<div class="alert alert-warning">';
+            header = "Be carefull !"
+        } else if(level == 'INFO'){
+            body = '<div class="alert alert-info">';
+            header = "Information"
+        } else {
+            body = '<div class="alert alert-error">';
+            header = "Error"
+        }
+        body = body + '<div id="'+ type +'DialogBox' + id + '">' + text + '</div></div>';
+
+        var modal = new CustomModal({
+            idModal: type + "DialogModal" + id,
+            header: header,
+            body: body,
+            swide: true
+        });
+        if(level == 'CONFIRMATIONWARNING'){
+            modal.addButtons("DialogBoxYesButton", "Yes", false, true, callback);
+            modal.addButtons("DialogBoxNoButton", "No", true, true); // do nothing
+        } else {
+            modal.addButtons("DialogBoxOkButton", "Ok", true, true, callback);
+        }
+        modal.render();
+        $('#' + type + 'DialogModal' + id).modal();// display the dialog box
+    }
+}
