@@ -1541,7 +1541,6 @@ BrowseImageView = Backbone.View.extend({
                                 layerSwitcherPanel.allVectorLayers.push({ id: user.id, user: user});
                         });//             var layerAnnotation = new AnnotationLayer(null,"Review layer", self.model.get('id'), "REVIEW", "", ontologyTreeView, self, self.map, self.review);
 
-
                         //             layerAnnotation.isOwner = false;
 //             layerAnnotation.loadAnnotations(self);
                         console.log("### self.layerSwitcherPanel.allVectorLayers=" + self.layerSwitcherPanel.allVectorLayers.length);
@@ -1552,6 +1551,14 @@ BrowseImageView = Backbone.View.extend({
 
                     }
                 });
+            new ProjectDefaultLayerCollection({project: window.app.status.currentProject}).fetch({
+                success: function (collection) {
+                    collection.each(function(layer) {
+                        self.layerSwitcherPanel.defaultVectorLayers.push({ userId: layer.attributes.user, hide: layer.attributes.hideByDefault});
+                    });
+                    self.layerSwitcherPanel.initLayerSelection();
+                }
+            });
 
 
         } else {
