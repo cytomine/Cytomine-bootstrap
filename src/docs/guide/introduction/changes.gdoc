@@ -1,3 +1,9 @@
+h3. 20141118 Version
+
+IMS config is a string array [url1, url2,...]
+Retrieval config
+
+
 h3. 20141025 Version
 
 Drop (save) table UserPositon on PostgreSQL

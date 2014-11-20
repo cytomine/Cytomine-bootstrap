@@ -11,6 +11,7 @@ import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.MimeImageServer
+import be.cytomine.image.server.RetrievalServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.Property
@@ -264,6 +265,32 @@ class BootstrapUtilsService {
                         imageServer: imageServer
                 ).save()
             }
+        }
+    }
+
+    def createMultipleRetrieval() {
+        RetrievalServer.list().each { server ->
+            if(!grailsApplication.config.grails.retrievalServerURL.contains(server.url)) {
+                log.info server.url + " is not in config, drop it"
+                log.info "delete Retrieval $server"
+                server.delete()
+            }
+
+        }
+        grailsApplication.config.grails.retrievalServerURL.eachWithIndex { it, index ->
+            RetrievalServer server = new RetrievalServer(description:"retrieval $index", url:"${it}",path:'/retrieval-web/api/resource.json')
+            if (server.validate()) {
+                server.save()
+            } else {
+                server.errors?.each {
+                    println it
+                }
+            }
+
+//            16590 |       0 | 2011-10-04 16:08:59.462 | retrieval   |    0 |         | http://localhost:9095/retrieval-web/api/resource.json |
+//
+
+
         }
     }
 

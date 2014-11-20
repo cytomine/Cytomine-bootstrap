@@ -14,9 +14,18 @@ class RetrievalServer extends CytomineDomain {
 
     String description
     String url
+    String path
     int port = 0
 
-    String toString() { return url; }
+    String toString() { return getFullURL(); }
+
+    public String getFullURL() {
+        return url + (path?:"")
+    }
+
+    static constraints = {
+        path nullable: true
+    }
 
 
     def beforeInsert() {

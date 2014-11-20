@@ -116,7 +116,7 @@ class RetrievalService {
     private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        def response = RetrievalHttpUtils.getPostSearchResponse(server.url,'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(),projectSearch)
+        def response = RetrievalHttpUtils.getPostSearchResponse(server.getFullURL(),'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(),projectSearch)
         try {
             def json = JSON.parse(response)
             def result =  readRetrievalResponse(searchAnnotation,json)
@@ -176,28 +176,28 @@ class RetrievalService {
         Logger.getLogger(this).info("index synchronous id")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource.json"
-        RetrievalHttpUtils.getPostResponse(server.url, res, UserAnnotation.read(id))
+        RetrievalHttpUtils.getPostResponse(server.getFullURL(), res, UserAnnotation.read(id))
     }
 
     public def deleteAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("delete synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/resource/"+id+".json"
-        RetrievalHttpUtils.getDeleteResponse(server.url,res)
+        RetrievalHttpUtils.getDeleteResponse(server.getFullURL(),res)
     }
 
     public def deleteContainerSynchronous(Long id) {
         Logger.getLogger(this).info("delete container synchronous")
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
         String res = "/retrieval-web/api/container/" + id + ".json"
-        RetrievalHttpUtils.getDeleteResponse(server.url,res)
+        RetrievalHttpUtils.getDeleteResponse(server.getFullURL(),res)
     }
 
 
     public def indexAnnotationAsynchronous(AnnotationDomain annotation,RetrievalServer server) {
         //indexAnnotationSynchronous(annotation)
         log.info "indexAnnotationAsynchronous"
-        String url = server.url
+        String url = server.getFullURL()
         def json = annotation.encodeAsJSON()
 
 //        Asynchronizer.withAsynchronizer() {
@@ -304,7 +304,7 @@ class RetrievalService {
      */
     private List<Long> getIndexedResource() {
         RetrievalServer server = RetrievalServer.findByDescription("retrieval")
-        String URL = server.url + ".json"
+        String URL = server.getFullURL() + ".json"
         List json = JSON.parse(getGetResponse(URL))
         List<Long> resources = new ArrayList<Long>()
         json.each { subserver ->

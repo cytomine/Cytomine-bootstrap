@@ -93,7 +93,8 @@ environments {
         grails.serverURL = "http://localhost:8080"
         grails.uploadURL = "http://localhost:9090"
 
-        grails.imageServerURL = "http://localhost:9080"
+        grails.imageServerURL = ["http://localhost:9080"]
+        grails.retrievalServerURL = ["http://localhost:9095"]
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -116,7 +117,10 @@ environments {
         grails.uploadURL = "http://localhost:9080"
         //grails.imageServerURL = "http://image.cytomine.be"
         //grails.uploadURL = "http://localhost:9090"
-        grails.imageServerURL = "http://localhost:9080"
+        grails.imageServerURL = ["http://localhost:9080"]
+        grails.retrievalServerURL = ["http://localhost:9095"]
+
+        grails.retrievalURL = "http://localhost:8090"
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -125,7 +129,8 @@ environments {
     test {
         grails.serverURL = "http://localhost:8090"
         //grails.imageServerURL = "http://localhost:9080"
-        grails.imageServerURL = "http://image.cytomine.be"
+        grails.imageServerURL = ["http://image.cytomine.be"]
+        grails.retrievalServerURL = ["http://localhost:9095"]
         grails.plugin.springsecurity.useBasicAuth = true
         grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -134,7 +139,7 @@ environments {
     testrun {
         grails.serverURL = "http://localhost:8090"
         grails.uploadURL = "http://localhost:9090"
-        grails.imageServerURL = "http://localhost:9080"
+        grails.imageServerURL = ["http://localhost:9085"]
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']

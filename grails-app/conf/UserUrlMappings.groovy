@@ -92,5 +92,9 @@ class UserUrlMappings {
             action = [PUT:"resetPassword"]
         }
 
+        "/api/token.$format"(controller:"login"){
+            action = [GET:"buildToken",POST:"buildToken"]
+        }
+
     }
 }

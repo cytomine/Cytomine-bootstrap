@@ -278,7 +278,7 @@ class UserAnnotationService extends ModelService {
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
         log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
         if (id && retrieval) {
-            log.info "index userAnnotation " + id + " on  " + retrieval.url
+            log.info "index userAnnotation " + id + " on  " + retrieval.getFullURL()
             retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(id), RetrievalServer.findByDescription("retrieval"))
 
         }
@@ -291,7 +291,7 @@ class UserAnnotationService extends ModelService {
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
         log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
-            log.info "delete userAnnotation " + id + " on  " + retrieval.url
+            log.info "delete userAnnotation " + id + " on  " + retrieval.getFullURL()
             retrievalService.deleteAnnotationAsynchronous(id)
         }
     }
@@ -303,7 +303,7 @@ class UserAnnotationService extends ModelService {
         RetrievalServer retrieval = RetrievalServer.findByDescription("retrieval")
         log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
-            log.info "update userAnnotation " + id + " on  " + retrieval.url
+            log.info "update userAnnotation " + id + " on  " + retrieval.getFullURL()
             retrievalService.updateAnnotationAsynchronous(id)
         }
     }

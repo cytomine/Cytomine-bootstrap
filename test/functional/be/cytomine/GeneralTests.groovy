@@ -120,6 +120,7 @@ class GeneralTests  {
         BasicInstanceBuilder.getUserAnnotation()
         UserAnnotation annotation = UserAnnotation.list().first()
         User user = BasicInstanceBuilder.getUser1()
+        Infos.addUserRight(user.username,annotation.project)
 
         log.info "show userannotation " + annotation.id
         String URL = Infos.CYTOMINEURL + "api/userannotation/" + annotation.id + ".json"

@@ -163,6 +163,7 @@ class BootStrap {
         }
 
         bootstrapUtilsService.createMultipleIS()
+        bootstrapUtilsService.createMultipleRetrieval()
 
 
         if(Version.isOlderVersion(20140625) && (UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0)) {
