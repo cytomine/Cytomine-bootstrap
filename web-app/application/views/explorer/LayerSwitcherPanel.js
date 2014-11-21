@@ -21,6 +21,7 @@ var LayerSwitcherPanel = SideBarPanel.extend({
 
         this.allVectorLayers = [];
         this.loadedVectorLayers = [];
+        this.defaultVectorLayers = [];
     },
     /**
      * Grab the layout and call ask for render
@@ -259,42 +260,14 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                 });
 
 
+                var item = panel.find("#entry" + select.val());
                 if (!alreadyExist) {
                     //if not yet added, create layer
 
                     var user = layer.user
 
-                    var layerAnnotation
-
-                    if(user!=null) {
-                        console.log("### create layer: "+user.prettyName());
-                        layerAnnotation = new AnnotationLayer(user, user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
-                        layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
-                        self.loadedVectorLayers.push({ id: user.id, user: user});
-
-                    } else {
-                        console.log("### create layer: Review layer");
-                        layerAnnotation = new AnnotationLayer(null, "Review layer", self.model.get('id'), "REVIEW", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
-                        layerAnnotation.isOwner = false;
-                        self.loadedVectorLayers.push({ id: "REVIEW", user: user});
-                    }
-
-                    layerAnnotation.loadAnnotations(self.browseImageView);
-
-
-
-                    var item = panel.find("#entry" + select.val());
-                    item.show();
-
-                    if(user!=null) {
-                        self.registerRemoveLayerButton(user.get('id'));
-                    } else {
-                        self.registerRemoveLayerButton("REVIEW");
-                    }
-
-                    self.registerRemoveLayerButton();
+                    self.addLayerEvent(user, false);
                 } else {
-                    var item = panel.find("#entry" + select.val());
                     item.show();
                 }
                 console.log("item="+select.val());
@@ -308,11 +281,60 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             var item = panel.find("#entry" + window.app.status.user.id);
 
         });
-            panel.find("#layerComp" + self.model.get("id")).show();
-            panel.find(".removeImageLayers").show();
+        panel.find("#layerComp" + self.model.get("id")).show();
+        panel.find(".removeImageLayers").show();
 //        }
 
-        self.showLayer(window.app.status.user.id);
+        self.showDefaultLayers();
+    },
+    addLayerEvent: function (user, defaultLayer) {
+
+        var self = this;
+        var layerAnnotation
+
+        if(user!=null) {
+            console.log("### create layer: "+user.prettyName());
+            layerAnnotation = new AnnotationLayer(user, user.prettyName(), self.model.get('id'), user.get('id'), user.get('color'), self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+            layerAnnotation.isOwner = (user.get('id') == window.app.status.user.id);
+            self.loadedVectorLayers.push({ id: user.id, user: user});
+
+        } else {
+            console.log("### create layer: Review layer");
+            layerAnnotation = new AnnotationLayer(null, "Review layer", self.model.get('id'), "REVIEW", "", self.browseImageView.ontologyPanel.ontologyTreeView, self.browseImageView, self.browseImageView.map, self.browseImageView.review);
+            layerAnnotation.isOwner = false;
+            self.loadedVectorLayers.push({ id: "REVIEW", user: user});
+        }
+
+        var panel = $("#layerSwitcher" + self.model.get("id"));
+        layerAnnotation.loadAnnotations(self.browseImageView);
+
+
+
+        var item = panel.find("#entry" + user.get('id'));
+        item.show();
+
+        if(!defaultLayer) {
+            if(user!=null) {
+                self.registerRemoveLayerButton(user.get('id'));
+            } else {
+                self.registerRemoveLayerButton("REVIEW");
+            }
+
+            self.registerRemoveLayerButton();
+        } else {
+            // delete the remove button
+            $("#layerSwitcher" + self.model.get("id")).find("#removeImageLayers" + user.get('id')).remove();
+
+            // apply tooltip and italic style
+            var li = $("#entry"+ user.get('id'));
+            li.attr({
+                "data-toggle" : "tooltip",
+                "title" : "Default Layer"
+            });
+            li.find("span").attr({
+                "style": $(li.find("span")).attr("style") + "font-style: italic;"
+            });
+        }
     },
     registerRemoveLayerButton: function (idLayer) {
         var self = this;
@@ -334,6 +356,63 @@ var LayerSwitcherPanel = SideBarPanel.extend({
             item.hide();
         });
         self.disableEvent = false;
+    },
+    showDefaultLayers: function () {
+        var self = this;
+
+        self.showLayer(window.app.status.user.id);
+
+        var elementsToWait = 0;
+
+        for(var i = 0; i < self.defaultVectorLayers.length; i++) {
+            if(self.defaultVectorLayers[i].userId != window.app.status.user.id){
+
+                var isInTheList = _.find(self.allVectorLayers, function (user) {
+                    return user.id == self.defaultVectorLayers[i].userId;
+                });
+                if(isInTheList == undefined) {
+                    elementsToWait++;
+                }
+            }
+        }
+
+        var loadedElements = 0;
+
+        var checkNonHideElement = function() {
+            for(var i = 0; i < self.defaultVectorLayers.length; i++) {
+                if (self.defaultVectorLayers[i].hide) {
+                    // checkbox for visibility is unchecked
+                    $("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", false);
+                } else {
+                    $("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", true);
+                }
+            }
+        };
+
+        for(var i = 0; i < self.defaultVectorLayers.length; i++) {
+            if(self.defaultVectorLayers[i].userId != window.app.status.user.id){
+
+                var isInTheList = _.find(self.allVectorLayers, function (user) {
+                    return user.id == self.defaultVectorLayers[i].userId;
+                });
+                if(isInTheList == undefined) {
+                    new UserModel({id: self.defaultVectorLayers[i].userId}).fetch({
+                        success: function (model) {
+                            self.addLayerEvent(model, true);
+                            loadedElements++;
+                            if(loadedElements == elementsToWait) {
+                                checkNonHideElement();
+                            }
+                        }
+                    });
+                } else {
+                    self.showLayer(self.defaultVectorLayers[i].userId);
+                }
+            }
+        }
+
+
+
     },
     showLayer: function (id) {
         var self = this;
