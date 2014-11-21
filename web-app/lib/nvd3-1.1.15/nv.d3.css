@@ -151,9 +151,10 @@ svg {
   -ms-user-select: none;
   user-select: none;
   /* Trying to get SVG to act like a greedy block in all browsers */
+  /* conflict with OpenLayer so I change that
   display: block;
   width:100%;
-  height:100%;
+  height:100%;*/
 }
 
 
