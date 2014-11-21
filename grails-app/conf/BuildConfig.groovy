@@ -9,50 +9,22 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.project.war.file = "target/${appName}.war"
 //grails.project.dependency.resolver="ivy"
 grails.project.dependency.resolver = "maven"
-//grails.project.fork = [ test: false, run: false, war: false, console: false ]
 
+//UNCOMMENT TO HAVE WORKING TEST
+grails.project.fork = [
+        test: false,
+        run: false,
+        war: false,
+        console: false
+]
 
-environments {
-    development {
-        grails.project.fork = [
-                // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
-                //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-                //test: false,
-                // configure settings for the test-app JVM, uses the daemon by default
-                test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-                // configure settings for the run-app JVM
-                run: [maxMemory: 1024*6, minMemory: 1024*2, debug: false, maxPerm: 512, forkReserve:false],
-                // configure settings for the run-war JVM
-                war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
-                // configure settings for the Console UI JVM
-                console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
-        ]
-    }
-    test {
-        grails.project.fork = [ test: false, run: false, war: false, console: false ]
-    }
-    production {
-        grails.project.fork = [
-                // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
-                //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-                test: false,
-                // configure settings for the test-app JVM, uses the daemon by default
-//        test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-                // configure settings for the run-app JVM
-                run: [maxMemory: 1024*6, minMemory: 1024*2, debug: false, maxPerm: 512, forkReserve:false],
-                // configure settings for the run-war JVM
-                war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
-                // configure settings for the Console UI JVM
-                console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
-        ]
-    }
-}
+//UNCOMMENT TO HAVE AUTO RELOADING
 //grails.project.fork = [
 //        // configure settings for compilation JVM, note that if you alter the Groovy version forked compilation is required
 //        //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-//        test: false,
+//       // test: false,
 //        // configure settings for the test-app JVM, uses the daemon by default
-////        test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+//        test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
 //        // configure settings for the run-app JVM
 //        run: [maxMemory: 1024*6, minMemory: 1024*2, debug: false, maxPerm: 512, forkReserve:false],
 //        // configure settings for the run-war JVM
@@ -112,7 +84,7 @@ grails.project.dependency.resolution = {
 
 
 
-       //comment because not available
+        //comment because not available
         //mavenRepo "http://www.terracotta.org/download/reflector/releases"
 
         mavenRepo "http://repository.ow2.org/nexus/content/repositories/public"
@@ -166,6 +138,7 @@ grails.project.dependency.resolution = {
     }
     plugins {
 
+
         compile ":grails-melody:1.49.0"
         compile ":mongodb:3.0.2"
 //        compile (':hibernate:3.6.10.17') {
@@ -201,7 +174,7 @@ grails.project.dependency.resolution = {
 
         compile ':spring-security-core:2.0-RC4'
         //runtime ':spring-security-core:1.2.7.3'
-        compile ':spring-security-acl:2.0-RC1'
+        compile ":spring-security-acl:2.0-RC2"
         compile ':spring-security-appinfo:2.0-RC2'
         compile ":spring-security-cas:2.0-RC1"
         compile ":spring-security-ldap:2.0-RC2"
@@ -228,7 +201,7 @@ grails.project.dependency.resolution = {
 
         compile ':webxml:1.4.1'
 //        compile 'RobertFischer:database-session:1.2.3'
-       // compile ":database-session:1.2.1"
+        // compile ":database-session:1.2.1"
 
         //CHANGE MADE FOR 2.4.2
 

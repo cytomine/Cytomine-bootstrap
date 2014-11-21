@@ -9,6 +9,7 @@ import be.cytomine.security.PermissionService
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
+import grails.converters.JSON
 import grails.util.Holders
 import groovy.util.logging.Log
 //import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -137,5 +138,10 @@ class Infos {
         roles.each { role ->
             log.info role.authority
         }
+    }
+
+
+    static def toJSON(CytomineDomain domain) {
+        return domain.encodeAsJSON()
     }
 }

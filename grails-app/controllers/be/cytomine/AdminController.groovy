@@ -21,7 +21,12 @@ class AdminController extends RestController {
     def archive() {
         archiveCommandService.archiveOldCommand()
         responseSuccess([])
+
+
+
+
     }
+
 
 
 }
