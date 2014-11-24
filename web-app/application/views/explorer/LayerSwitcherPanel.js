@@ -379,13 +379,21 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var loadedElements = 0;
 
         var checkNonHideElement = function() {
+
             for(var i = 0; i < self.defaultVectorLayers.length; i++) {
                 if (self.defaultVectorLayers[i].hide) {
                     // checkbox for visibility is unchecked
                     $("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", false);
                 } else {
-                    $("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", true);
+                    //$("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", true);
+                    if (!$("#entry" + self.defaultVectorLayers[i].userId).find(".showUser").is(":checked")) {
+                        $("#entry" + self.defaultVectorLayers[i].userId).find(".showUser").click();
+                    }
                 }
+            }
+            //Current user layer must be visible
+            if (!$("#entry" + window.app.status.user.id).find(".showUser").is(":checked")) {
+                $("#entry" + window.app.status.user.id).find(".showUser").click();
             }
         };
 
@@ -410,6 +418,14 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                 }
             }
         }
+        console.log("elementsToWait");
+        console.log(elementsToWait);
+        if(elementsToWait == 0){
+            console.log("here");
+            // I wait than each UserModel are loaded but if there are no UserModel to load, I still need to call this function
+            checkNonHideElement();
+        }
+
 
 
 

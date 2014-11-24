@@ -13,13 +13,13 @@ var AddProjectDialog = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/project/ProjectAddDialog.tpl.html",
-            "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
-            "text!application/templates/project/DisciplinesChoicesRadio.tpl.html"
-        ],
-                function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
-                    self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
-                });
+                "text!application/templates/project/ProjectAddDialog.tpl.html",
+                "text!application/templates/project/OntologiesChoicesRadio.tpl.html",
+                "text!application/templates/project/DisciplinesChoicesRadio.tpl.html"
+            ],
+            function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
+                self.doLayout(projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
+            });
         return this;
     },
     doLayout: function (projectAddDialogTpl, ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl) {
@@ -32,7 +32,6 @@ var AddProjectDialog = Backbone.View.extend({
         self.initStepy();
         self.createProjectInfo(ontologiesChoicesRadioTpl, disciplinesChoicesRadioTpl);
         self.createUserList();
-        self.createDefaultLayers();
         self.createRetrievalProject();
 
         //Build dialog
@@ -136,22 +135,22 @@ var AddProjectDialog = Backbone.View.extend({
             var projectName = $("#project-name").val().toUpperCase().trim();
             if (projectName != "") {
                 var ontology = new OntologyModel({name: projectName}).save({name: projectName}, {
-                            success: function (model, response) {
-                                window.app.view.message("Ontology", response.message, "success");
-                                var id = response.ontology.id;
-                                window.app.models.ontologies.add(model);
+                        success: function (model, response) {
+                            window.app.view.message("Ontology", response.message, "success");
+                            var id = response.ontology.id;
+                            window.app.models.ontologies.add(model);
 
-                                var choice = _.template(ontologiesChoicesRadioTpl, {id: id, name: model.get("name")});
-                                $("#projectontology").prepend(choice);
-                                $("#projectontology").val(id);
+                            var choice = _.template(ontologiesChoicesRadioTpl, {id: id, name: model.get("name")});
+                            $("#projectontology").prepend(choice);
+                            $("#projectontology").val(id);
 
 
-                            },
-                            error: function (model, response) {
-                                var json = $.parseJSON(response.responseText);
-                                window.app.view.message("Ontology", json.errors, "error");
-                            }
+                        },
+                        error: function (model, response) {
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Ontology", json.errors, "error");
                         }
+                    }
                 );
             } else {
                 window.app.view.message("Project", "You must first write a valid project name!", "error");
@@ -170,7 +169,6 @@ var AddProjectDialog = Backbone.View.extend({
 
             allUser.each(function (user) {
                 allUserArray.push({id: user.id, label: user.prettyName()});
-                $('#projectaddavailabledefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
             });
 
             self.userMaggicSuggest = $('#projectuser').magicSuggest({
@@ -195,34 +193,6 @@ var AddProjectDialog = Backbone.View.extend({
                 allUser = allUserCollection;
                 loadUser();
             }});
-    },
-    createDefaultLayers: function () {
-        var self = this;
-
-        $("#selectedDefaultLayers").hide();
-
-        $('#projectadddefaultlayersbutton').click(function() {
-
-            var container = $('#projectaddavailabledefaultlayers')[0];
-            var selected = container.options[container.options.selectedIndex];
-            if(selected.value != null && selected.value != undefined && selected.value != '') {
-                $("#selectedDefaultLayers").show();
-                // check if not already taken
-                if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
-                    $('#selectedDefaultLayers').append('<div class="col-md-3"><input type="checkbox" id="hideByDefault' + selected.value + '"> Hide layers by default</div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-7"><p>' + selected.text + '</p></div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
-                }
-            }
-        });
-        $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
-            $(this).parent().prev().prev().remove();
-            $(this).parent().prev().remove();
-            $(this).parent().remove();
-            if($("#selectedDefaultLayers").children().length ==0){
-                $("#selectedDefaultLayers").hide();
-            }
-        });
     },
     createRetrievalProject: function () {
         var self = this;
@@ -278,10 +248,10 @@ var AddProjectDialog = Backbone.View.extend({
             }});
 
         /*var multiSelectEl = $("div.ui-multiselect");
-        multiSelectEl.find("ul.available").css("height", "150px")
-        multiSelectEl.find("ul.selected").css("height", "150px")
-        multiSelectEl.find("input.search").css("width", "75px")
-        multiSelectEl.find("div.actions").css("background-color", "#DDDDDD"); */
+         multiSelectEl.find("ul.available").css("height", "150px")
+         multiSelectEl.find("ul.selected").css("height", "150px")
+         multiSelectEl.find("input.search").css("width", "75px")
+         multiSelectEl.find("div.actions").css("background-color", "#DDDDDD"); */
     },
     refresh: function () {
     },
@@ -304,16 +274,6 @@ var AddProjectDialog = Backbone.View.extend({
         console.log("changeProgressBarStatus:" + progress);
         var progressBar = $("#progressBarCreateProject").find(".bar");
         progressBar.css("width", progress + "%");
-    },
-
-    createDefaultLayerProject: function (idProject) {
-        var layers = $('#selectedDefaultLayers .projectremovedefaultlayersbutton');
-        for(var i =0; i<layers.length;i++){
-            var id = $(layers[i]).attr("id").replace("defaultlayer","");
-            var hide = $('#hideByDefault' + id)[0].checked
-            var layer = new ProjectDefaultLayerModel({user: id, project: idProject, hideByDefault: hide});
-            layer.save();
-        }
     },
 
     createProject: function () {
@@ -371,7 +331,6 @@ var AddProjectDialog = Backbone.View.extend({
                         window.app.view.message("Project", response.message, "success");
                         var id = response.project.id;
                         self.projectsPanel.refresh();
-                        self.createDefaultLayerProject(id);
                         $("#addproject").modal("hide");
                         /*$("#addproject").remove();*/
                     },

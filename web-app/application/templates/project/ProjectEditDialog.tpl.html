@@ -21,76 +21,58 @@
                         <br>
                     </fieldset>
 
-            <fieldset title="Step 2" style="margin: auto;height: 300px;">
-                <legend>Project config</legend>
-                <div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <p> Default layers</p>
-                        </div>
-                        <div class="col-md-7 dropdown">
-                            <select id="projecteditavailabledefaultlayers" class="input-xlarge focused">
-                                <option></option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <a id="projectadddefaultlayersbutton" href="javascript:void(0);" class="btn btn-info">Add</a>
-                        </div>
-                    </div>
-                    <div id="selectedDefaultLayers" class="row">
-                    </div>
-
-                    <hr/>
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="checkbox" id="hideAdminsLayers"> Hide admins layers
-                        </div>
-                        <div class="col-md-9">
-                            <div class="alert alert-info">
-                                If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
-                                A project admin will still be able to see all layers.
+                    <fieldset title="Step 2" style="margin: auto;height: 300px;">
+                        <legend>Project config</legend>
+                        <div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="checkbox" id="hideAdminsLayers"> Hide admins layers
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="alert alert-info">
+                                        If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
+                                        A project admin will still be able to see all layers.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="checkbox" id="hideUsersLayers"> Hide users layers
-                        </div>
-                        <div class="col-md-9">
-                            <div class="alert alert-info">
-                                If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
-                                A project admin will still be able to see all layers.
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="checkbox" id="hideUsersLayers"> Hide users layers
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="alert alert-info">
+                                        If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
+                                        A project admin will still be able to see all layers.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="checkbox" id="blindMode"> Blind Mode
-                        </div>
-                        <div class="col-md-9">
-                            <div class="alert alert-info">
-                                If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
-                                A project admin will still be able to see to add/edit or delete data for this project.
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="checkbox" id="blindMode"> Blind Mode
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="alert alert-info">
+                                        If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
+                                        A project admin will still be able to see to add/edit or delete data for this project.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="checkbox" id="isReadOnly"> Read-Only project
-                        </div>
-                        <div class="col-md-9">
-                            <div class="alert alert-info">
-                                If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="checkbox" id="isReadOnly"> Read-Only project
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="alert alert-info">
+                                        If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
-                    </div>
-                    
-                </div>
-                        
+
                     </fieldset>
 
                     <fieldset title="Step 3" style="margin: auto;height: 300px;">

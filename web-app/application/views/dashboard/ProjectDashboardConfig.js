@@ -12,6 +12,9 @@ var ProjectDashboardConfig = Backbone.View.extend({
             el: this.el,
             model: this.model
         }).render();
+        new DefaultLayerPanel({
+            model: this.model
+        }).render();
         new MagicWandConfig({}).render();
         this.rendered = true;
 
@@ -150,6 +153,130 @@ var SoftwareProjectPanel = Backbone.View.extend({
             return false;
         });
 
+        return this;
+    }
+
+});
+
+var DefaultLayerPanel = Backbone.View.extend({
+
+    render: function () {
+        var self = this;
+
+        $("#selectedDefaultLayers").hide();
+
+        // load all user and admin of the project
+        new UserCollection({project: self.model.id}).fetch({
+            success: function (projectUserCollection, response) {
+                projectUserCollection.each(function(user) {
+                    $('#availableprojectdefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
+                });
+            }
+        });
+
+
+
+
+        $('#projectadddefaultlayersbutton').click(function() {
+
+            var container = $('#availableprojectdefaultlayers')[0];
+            var selected = container.options[container.options.selectedIndex];
+            if(selected.value != null && selected.value != undefined && selected.value != '') {
+                $("#selectedDefaultLayers").show();
+                // check if not already taken
+                if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
+                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '"> Hide layers by default</div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-5"><p>' + selected.text + '</p></div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                }
+            }
+        });
+        $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
+            $(this).parent().prev().prev().remove();
+            $(this).parent().prev().remove();
+            $(this).parent().remove();
+            if($("#selectedDefaultLayers").children().length ==0){
+                $("#selectedDefaultLayers").hide();
+            }
+        });
+
+        // existing default layers
+        new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
+            success: function (collection) {
+                var defaultLayersArray=[]
+                collection.each(function(layer) {
+                    defaultLayersArray.push({id: layer.id, userId: layer.attributes.user, hideByDefault: layer.attributes.hideByDefault});
+                });
+
+
+                for(var i = 0; i<defaultLayersArray.length; i++){
+                    $("#selectedDefaultLayers").show();
+                    // check if not already taken
+                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].userId + '"> Hide layers by default</div>');
+                    $('#hideByDefault' + defaultLayersArray[i].userId)[0].checked = defaultLayersArray[i].hideByDefault;
+                    $('#selectedDefaultLayers').append('<div id = "tmp'+ defaultLayersArray[i].userId +'" class="col-md-5"><p></p></div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].userId + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    new UserModel({id: defaultLayersArray[i].userId}).fetch({
+                        success: function (model) {
+                            $('#tmp'+model.id).find("p").text(model.prettyName());
+                            $('#tmp'+model.id).removeAttr('id');
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#savedefaultlayers').click(function() {
+
+            new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
+                success: function (collection) {
+                    var model;
+                    var destroyed = 0;
+                    var models = collection.length;
+
+                    var saveAll = function () {
+                        if(destroyed == models){
+                            var layers = $('#selectedDefaultLayers .projectremovedefaultlayersbutton');
+                            console.log("layers.length");
+                            console.log(layers.length);
+                            console.log("self.model.id");
+                            console.log(self.model.id);
+
+                            for(var i = 0; i<layers.length;i++){
+                                var id = $(layers[i]).attr("id").replace("defaultlayer","");
+                                var hide = $('#hideByDefault' + id)[0].checked;
+                                var layer = new ProjectDefaultLayerModel({user: id, project: self.model.id, hideByDefault: hide});
+                                layer.save(null, {
+                                    success: function (model) {
+                                        console.log("save success");
+                                    },
+                                    error: function (x, y) {
+                                        console.log("save error");
+                                        console.log(x);
+                                        console.log(y.responseText);
+                                    }
+                                });
+                            }
+                            window.app.view.message("Project Default Layers", "Default layers saved!", "success");
+                        }
+                    };
+
+                    if(models == 0){
+                        saveAll();
+                    }
+
+                    while (model = collection.first()) {
+                        model.destroy({
+                            success: function () {
+                                console.log("destroy");
+                                destroyed++;
+                                saveAll();
+                            }
+                        });
+                    }
+                }
+            });
+        });
         return this;
     }
 

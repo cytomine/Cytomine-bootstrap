@@ -11,8 +11,8 @@ var EditProjectDialog = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/project/ProjectEditDialog.tpl.html"
-        ],
+                "text!application/templates/project/ProjectEditDialog.tpl.html"
+            ],
             function (projectEditDialogTpl) {
                 self.doLayout(projectEditDialogTpl);
             });
@@ -40,7 +40,6 @@ var EditProjectDialog = Backbone.View.extend({
         self.initStepy();
         self.createProjectInfo();
         self.createUserList();
-        self.createDefaultLayers();
         $("#project-edit-name").val(self.model.get('name'));
         self.createRetrievalProject();
 //        self.createUserList(usersChoicesTpl);
@@ -104,7 +103,6 @@ var EditProjectDialog = Backbone.View.extend({
         var allUser = null;
         var projectUser = null;
         var projectAdmin = null;
-        var defaultLayers = null;
 
 
         var loadUser = function() {
@@ -115,7 +113,6 @@ var EditProjectDialog = Backbone.View.extend({
 
             allUser.each(function(user) {
                 allUserArray.push({id:user.id,label:user.prettyName()});
-                $('#projecteditavailabledefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
             });
 
             var projectUserArray=[]
@@ -128,18 +125,13 @@ var EditProjectDialog = Backbone.View.extend({
                 projectAdminArray.push(user.id);
             });
 
-            var defaultLayersArray=[]
-            defaultLayers.each(function(layer) {
-                defaultLayersArray.push({user: layer.attributes.user, hideByDefault: layer.attributes.hideByDefault});
-            });
-
             self.userMaggicSuggest = $('#projectedituser').magicSuggest({
-                         data: allUserArray,
-                         displayField: 'label',
-                         value: projectUserArray,
-                         width: 590,
-                         maxSelection:null
-                     });
+                data: allUserArray,
+                displayField: 'label',
+                value: projectUserArray,
+                width: 590,
+                maxSelection:null
+            });
 
             self.adminMaggicSuggest = $('#projecteditadmin').magicSuggest({
                 data: allUserArray,
@@ -148,19 +140,6 @@ var EditProjectDialog = Backbone.View.extend({
                 width: 590,
                 maxSelection:null
             });
-
-            for(var i = 0; i<defaultLayersArray.length; i++){
-                for(var j = 0; j<allUserArray.length; j++){
-                    if(defaultLayersArray[i].user == allUserArray[j].id){
-                        $("#selectedDefaultLayers").show();
-                        // check if not already taken
-                        $('#selectedDefaultLayers').append('<div class="col-md-3"><input type="checkbox" id="hideByDefault' + allUserArray[j].id + '"> Hide layers by default</div>');
-                        $('#hideByDefault' + allUserArray[j].id)[0].checked = defaultLayersArray[i].hideByDefault;
-                        $('#selectedDefaultLayers').append('<div class="col-md-7"><p>' + allUserArray[j].label + '</p></div>');
-                        $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + allUserArray[j].id + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
-                    }
-                }
-            }
         }
 
         new UserCollection({}).fetch({
@@ -183,41 +162,6 @@ var EditProjectDialog = Backbone.View.extend({
                 loadUser();
             }});
 
-        new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
-            success: function (collection) {
-                defaultLayers = collection;
-                loadUser();
-            }
-        });
-
-    },
-    createDefaultLayers: function () {
-        var self = this;
-
-        $("#selectedDefaultLayers").hide();
-
-        $('#projectadddefaultlayersbutton').click(function() {
-
-            var container = $('#projecteditavailabledefaultlayers')[0];
-            var selected = container.options[container.options.selectedIndex];
-            if(selected.value != null && selected.value != undefined && selected.value != '') {
-                $("#selectedDefaultLayers").show();
-                // check if not already taken
-                if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
-                    $('#selectedDefaultLayers').append('<div class="col-md-3"><input type="checkbox" id="hideByDefault' + selected.value + '"> Hide layers by default</div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-7"><p>' + selected.text + '</p></div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
-                }
-            }
-        });
-        $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
-            $(this).parent().prev().prev().remove();
-            $(this).parent().prev().remove();
-            $(this).parent().remove();
-            if($("#selectedDefaultLayers").children().length ==0){
-                $("#selectedDefaultLayers").hide();
-            }
-        });
     },
     createRetrievalProject: function () {
         var self = this;
@@ -329,44 +273,6 @@ var EditProjectDialog = Backbone.View.extend({
         }
         return diff;
     },
-    editDefaultLayerProject: function (idProject) {
-
-        var prevLayers = new ProjectDefaultLayerCollection({project: idProject});
-        prevLayers.fetch({
-            success: function (collection) {
-
-                var model;
-                var destroyed = 0;
-                var models = collection.length;
-
-                var saveAll = function () {
-                    if(destroyed == models){
-                        var layers = $('#selectedDefaultLayers .projectremovedefaultlayersbutton');
-                        for(var i = 0; i<layers.length;i++){
-                            var id = $(layers[i]).attr("id").replace("defaultlayer","");
-                            var hide = $('#hideByDefault' + id)[0].checked
-                            var layer = new ProjectDefaultLayerModel({user: id, project: idProject, hideByDefault: hide});
-                            layer.save();
-                        }
-                    }
-                };
-
-                if(models == 0){
-                    saveAll();
-                }
-
-                while (model = collection.first()) {
-                    model.destroy({
-                        success: function () {
-                            destroyed++;
-                            saveAll();
-                        }
-                    });
-                }
-            }
-        });
-    },
-
     editProject: function () {
 
         var self = this;
@@ -414,29 +320,28 @@ var EditProjectDialog = Backbone.View.extend({
                 project.task = taskId
                 project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
                 project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
-                            success: function (model, response) {
-                                console.log("1. Project edited!");
-                                clearInterval(timer);
-                                window.app.view.message("Project", response.message, "success");
-                                var id = response.project.id;
-                                self.editDefaultLayerProject(id);
-                                $("#editproject").modal("hide");
-                                window.app.controllers.dashboard.destroyView()
-                                window.app.controllers.browse.closeAll();
-                                window.app.status.currentProject = undefined;
-                                window.app.view.clearIntervals();
-                                /*$("#editproject").remove();*/
-                            },
-                            error: function (model, response) {
-                                var json = $.parseJSON(response.responseText);
-                                clearInterval(timer);
-                                window.app.view.message("Project", json.errors, "error");
-                                divToFill.show();
-                                $("#progressBarEditProjectContainer").empty();
-                                $("#editproject").find(".modal-footer").show();
-                                $('#login-form-edit-project').stepy('step', 1);
-                            }
-                        });
+                    success: function (model, response) {
+                        console.log("1. Project edited!");
+                        clearInterval(timer);
+                        window.app.view.message("Project", response.message, "success");
+                        var id = response.project.id;
+                        $("#editproject").modal("hide");
+                        window.app.controllers.dashboard.destroyView()
+                        window.app.controllers.browse.closeAll();
+                        window.app.status.currentProject = undefined;
+                        window.app.view.clearIntervals();
+                        /*$("#editproject").remove();*/
+                    },
+                    error: function (model, response) {
+                        var json = $.parseJSON(response.responseText);
+                        clearInterval(timer);
+                        window.app.view.message("Project", json.errors, "error");
+                        divToFill.show();
+                        $("#progressBarEditProjectContainer").empty();
+                        $("#editproject").find(".modal-footer").show();
+                        $('#login-form-edit-project').stepy('step', 1);
+                    }
+                });
             }
         });
     }
