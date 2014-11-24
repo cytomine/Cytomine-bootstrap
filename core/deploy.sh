@@ -26,6 +26,21 @@ echo "grails.integration.aurora.url='http://localhost:8000/api/image/notify.json
 echo "grails.integration.aurora.username='xxx'" >> cytomineconfig.groovy
 echo "grails.integration.aurora.password='xxx'" >> cytomineconfig.groovy
 echo "grails.integration.aurora.interval='60000'" >> cytomineconfig.groovy
+
+echo 'cytomine.customUI.global = [' >> cytomineconfig.groovy
+echo '        dashboard: ["ALL"],' >> cytomineconfig.groovy
+echo '        search : ["ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        project: ["ALL"],' >> cytomineconfig.groovy
+echo '        ontology: ["ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        storage : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        activity : ["ALL"],' >> cytomineconfig.groovy
+echo '        feedback : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        explore : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        admin : ["ROLE_ADMIN"],' >> cytomineconfig.groovy
+echo '        help : ["ALL"]' >> cytomineconfig.groovy
+echo ']' >> cytomineconfig.groovy
+
+
 fi
 
 if [ $IS_LOCAL = true ]; then
