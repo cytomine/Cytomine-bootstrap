@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>be.cytomine</groupId>
   <artifactId>Cytomine</artifactId>
-  <version>20130113</version>
+  <version>20141120</version>
   <packaging>pom</packaging>
   <name>Cytomine-Server</name>
   <build>
@@ -10,15 +10,13 @@
   </build>
   <properties>
     <sonar.language>grvy</sonar.language>
-    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     <sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
     <sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
-    <sonar.phase>generate-sources</sonar.phase>
-    <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
-    <sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
-    <sonar.jdbc.username>sonaruser</sonar.jdbc.username>
-    <sonar.jdbc.password>quality</sonar.jdbc.password>  
+<sonar.jdbc.url>jdbc:postgresql://localhost/sonar</sonar.jdbc.url>
+    <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
+    <sonar.jdbc.username>postgres</sonar.jdbc.username>
+    <sonar.jdbc.password></sonar.jdbc.password>
     <!-- test -->
-    <sonar.host.url>http://sonar.cytomine.be/</sonar.host.url>
+    <sonar.host.url>http://sonar.cytomine.be</sonar.host.url>
   </properties>
 </project>
