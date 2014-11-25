@@ -159,11 +159,11 @@ class SoftwareTests  {
        assert 404 == result.code
    }
  
-   void testDeleteSoftwareWithProject() {
-       def softwareProject = BasicInstanceBuilder.getSoftwareProject()
-       def result = SoftwareAPI.delete(softwareProject.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
-   }
+//   void testDeleteSoftwareWithProject() {
+//       def softwareProject = BasicInstanceBuilder.getSoftwareProject()
+//       def result = SoftwareAPI.delete(softwareProject.software.id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//       assert 200 == result.code
+//   }
 
     void testDeleteSoftwareWithJob() {
 
