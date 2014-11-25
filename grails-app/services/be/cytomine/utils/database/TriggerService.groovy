@@ -27,7 +27,7 @@ class TriggerService {
         def connection = sessionFactory.currentSession.connection()
 
         try {
-            new Sql(dataSource).eachRow("SELECT 'DROP TRIGGER ' || trigger_name || ' ON ' || event_object_table || ';' FROM information_schema.triggers") {
+            new Sql(dataSource).eachRow("SELECT 'DROP TRIGGER ' || trigger_name || ' ON ' || event_object_table || ';' FROM information_schema.triggers where trigger_name <> 'layer_integrity_checks'") {
                 new Sql(dataSource).execute(it[0])
             }
 
