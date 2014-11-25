@@ -119,7 +119,7 @@ class ProjectDefaultLayerSecurityTests extends SecurityTestsAbstract {
 
         //check if update == good HTTP Code
         ProjectDefaultLayer projLayer = ProjectDefaultLayer.get(id);
-        projLayer.hideByDefault = !projLayer.hideByDefault
+        //projLayer.hideByDefault = !projLayer.hideByDefault
         result = ProjectDefaultLayerAPI.update(id, projLayer.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
@@ -148,7 +148,7 @@ class ProjectDefaultLayerSecurityTests extends SecurityTestsAbstract {
         assert 401 == result.code
 
         //check if update == good HTTP Code
-        layer.hideByDefault = !layer.hideByDefault
+        //layer.hideByDefault = !layer.hideByDefault
         result = ProjectDefaultLayerAPI.update(id, layer.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 

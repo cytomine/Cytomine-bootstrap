@@ -21,6 +21,8 @@ class ProjectDefaultLayer extends CytomineDomain {
     @RestApiObjectField(description = "Hide the layer by default (but still in the layer list)")
     boolean hideByDefault
 
+    static belongsTo = [project: Project, user:User]
+
     static constraints = {
         user(nullable: false)
         project(nullable: false)
@@ -28,7 +30,6 @@ class ProjectDefaultLayer extends CytomineDomain {
     static mapping = {
         id(generator: 'assigned', unique: true)
         sort "id"
-        cache true
     }
 
     /**

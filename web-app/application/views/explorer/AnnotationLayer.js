@@ -57,7 +57,6 @@ OpenLayers.Format.Cytomine = OpenLayers.Class(OpenLayers.Format, {
         var nestedCollection = collection.collection;
         var termsToShow = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.getTermToShow();
         var isTermRestriction = this.annotationLayer.browseImageView.ontologyPanel.ontologyTreeView.isTermRestriction(); // //just for perf
-
         _.each(nestedCollection, function (annotation) {
 
             if(!annotation.term) {

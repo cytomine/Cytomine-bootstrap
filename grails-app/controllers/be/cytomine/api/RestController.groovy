@@ -46,7 +46,10 @@ class RestController {
             if (json instanceof JSONArray) {
                 responseResult(addMultiple(service, json))
             } else {
-                responseResult(addOne(service, json))
+                def result = addOne(service, json)
+                if(result) {
+                    responseResult(result)
+                }
             }
         } catch (CytomineException e) {
             log.error("add error:" + e.msg)
@@ -155,6 +158,7 @@ class RestController {
      * @return response
      */
     protected def responseResult(result) {
+        log.info "responseResult=$result"
         response.status = result.status
         withFormat {
             json { render result.data as JSON }

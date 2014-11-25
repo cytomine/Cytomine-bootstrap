@@ -65,7 +65,7 @@ class ProjectDefaultLayerTests {
         def result = ProjectDefaultLayerAPI.create(layerToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code // first creation
 
-        layerToAdd.hideByDefault = !layerToAdd.hideByDefault
+        //layerToAdd.hideByDefault = !layerToAdd.hideByDefault
 
         result = ProjectDefaultLayerAPI.create(layerToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 409 == result.code // cannot create if already exist

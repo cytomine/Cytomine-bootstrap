@@ -1541,7 +1541,7 @@ class BasicInstanceBuilder {
     }
 
     static ProjectDefaultLayer getProjectDefaultLayer() {
-        Project project = this.getProject();
+        Project project = getProject();
         User user = User.findByUsername(Infos.SUPERADMINLOGIN);
         def layer = ProjectDefaultLayer.findByUserAndProject(user, project)
         if (!layer) {
@@ -1553,7 +1553,7 @@ class BasicInstanceBuilder {
     }
 
     static ProjectDefaultLayer getProjectDefaultLayerNotExist(boolean save = false, boolean hideByDefault = false) {
-        Project project = saveDomain(this.getProjectNotExist());
+        Project project = getProjectNotExist(true);
         User user = User.findByUsername(Infos.SUPERADMINLOGIN);
 
         def layer = new ProjectDefaultLayer(project: project, user: user, hideByDefault: false)

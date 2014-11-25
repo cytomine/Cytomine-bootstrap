@@ -55,7 +55,8 @@ class ProjectDefaultLayerService extends ModelService {
     def add(def json) throws CytomineException {
         securityACLService.check(json.project,Project,WRITE)
         User user = User.get(json.user)
-        return executeCommand(new AddCommand(user: user), null,json)
+        def result =  executeCommand(new AddCommand(user: user), null,json)
+        return result
     }
 
     /**

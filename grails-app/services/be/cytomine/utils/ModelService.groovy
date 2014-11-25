@@ -96,7 +96,7 @@ abstract class ModelService {
         return GrailsNameUtils.getPropertyName(GrailsNameUtils.getShortName(this.getClass()))
     }
 
-    protected executeCommand(Command c, CytomineDomain domain, def json, Task task = null) {
+    protected def executeCommand(Command c, CytomineDomain domain, def json, Task task = null) {
         //bug, cannot do new XXXCommand(domain:domain, json:...) => new XXXCommand(); c.domain = domain; c.json = ...
         c.domain = domain
         c.json = json
@@ -106,7 +106,7 @@ abstract class ModelService {
     /**
      * Execute command with JSON data
      */
-    protected executeCommand(Command c, Task task = null) {
+    protected def executeCommand(Command c, Task task = null) {
         log.info "Command ${c.class} with flag ${c.delete}"
         if(c instanceof DeleteCommand || c.delete) {
             def domainToDelete = c.domain
