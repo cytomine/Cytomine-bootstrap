@@ -130,6 +130,7 @@ environments {
         grails.serverURL = "http://localhost:8090"
         //grails.imageServerURL = "http://localhost:9080"
         grails.imageServerURL = ["http://image.cytomine.be"]
+        grails.uploadURL = "http://upload.cytomine.be"
         grails.retrievalServerURL = ["http://localhost:9095"]
         grails.plugin.springsecurity.useBasicAuth = true
         grails.plugin.springsecurity.basic.realmName = "Cytomine log"

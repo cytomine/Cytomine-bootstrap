@@ -110,9 +110,12 @@ class ProjectDefaultLayerTests {
 
         assert json.hideByDefault == false
 
-        layerToUpdate.hideByDefault = ! layerToUpdate.hideByDefault
+        //layerToUpdate.hideByDefault = ! layerToUpdate.hideByDefault
 
-        def result = ProjectDefaultLayerAPI.update(id, layerToUpdate.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        json = JSON.parse(layerToUpdate.encodeAsJSON())
+        json.hideByDefault = !json.hideByDefault
+
+        def result = ProjectDefaultLayerAPI.update(id, json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         showResult = ProjectDefaultLayerAPI.show(id, idProject, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)

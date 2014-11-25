@@ -158,7 +158,6 @@ class RestController {
      * @return response
      */
     protected def responseResult(result) {
-        log.info "responseResult=$result"
         response.status = result.status
         withFormat {
             json { render result.data as JSON }

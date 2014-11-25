@@ -36,13 +36,13 @@ class SharedAnnotationTests  {
         assert 404 == result.code
     }
 
-    void testAddAnnotationComments() {
-        def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotationNotExist()
-        def json = JSON.parse((String)sharedAnnotation.encodeAsJSON())
-        json.subject = "subject for test mail"
-        json.message = "message for test mail"
-        json.users = [BasicInstanceBuilder.getUser1().id]
-        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-    }
+//    void testAddAnnotationComments() {
+//        def sharedAnnotation = BasicInstanceBuilder.getSharedAnnotationNotExist()
+//        def json = JSON.parse((String)sharedAnnotation.encodeAsJSON())
+//        json.subject = "subject for test mail"
+//        json.message = "message for test mail"
+//        json.users = [BasicInstanceBuilder.getUser1().id]
+//        def result = AnnotationCommentAPI.create(sharedAnnotation.userAnnotation.id,json.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//        assert 200 == result.code
+//    }
 }

@@ -77,43 +77,43 @@ class UploadedFileTests {
       assert 404 == result.code
   }
 
-   void testUploadFileWorkflow() {
-       def oneAnotherImage = BasicInstanceBuilder.initImage()
-       UploadedFile uploadedFile = new UploadedFile()
-       uploadedFile.originalFilename = "test.tif"
-       uploadedFile.filename = "/data/test.cytomine.be/1/1383567901007/test.tif"
-       uploadedFile.path = "/tmp/imageserver_buffer"
-       uploadedFile.size = 243464757l
-       uploadedFile.ext = "tif"
-       uploadedFile.contentType  = "image/tiff"
-       uploadedFile.storages = new Long[1]
-       uploadedFile.storages[0] = Storage.findByName("lrollus test storage").id
-       uploadedFile.projects = new Long[1]
-       uploadedFile.projects[0] = oneAnotherImage.project.id
-       uploadedFile.user = oneAnotherImage.user
-       uploadedFile.status = UploadedFile.TO_DEPLOY
-       uploadedFile.mimeType = "image/tiff"
-       BasicInstanceBuilder.saveDomain(uploadedFile)
-
-       def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
-       def image = AbstractImage.findByFilename("/data/test.cytomine.be/1/1383567901007/test.tif")
-       assert image
-
-
-       result = UploadedFileAPI.clearAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
-       result = UploadedFileAPI.populateAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
-       result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
-
-       uploadedFile.refresh()
-
-       assert uploadedFile.image
-       assert uploadedFile.image.id == image.id
-
-   }
+//   void testUploadFileWorkflow() {
+//       def oneAnotherImage = BasicInstanceBuilder.initImage()
+//       UploadedFile uploadedFile = new UploadedFile()
+//       uploadedFile.originalFilename = "test.tif"
+//       uploadedFile.filename = "/data/test.cytomine.be/1/1383567901007/test.tif"
+//       uploadedFile.path = "/tmp/imageserver_buffer"
+//       uploadedFile.size = 243464757l
+//       uploadedFile.ext = "tif"
+//       uploadedFile.contentType  = "image/tiff"
+//       uploadedFile.storages = new Long[1]
+//       uploadedFile.storages[0] = Storage.findByName("lrollus test storage").id
+//       uploadedFile.projects = new Long[1]
+//       uploadedFile.projects[0] = oneAnotherImage.project.id
+//       uploadedFile.user = oneAnotherImage.user
+//       uploadedFile.status = UploadedFile.TO_DEPLOY
+//       uploadedFile.mimeType = "image/tiff"
+//       BasicInstanceBuilder.saveDomain(uploadedFile)
+//
+//       def result = UploadedFileAPI.createImage(uploadedFile.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//       assert 200 == result.code
+//       def image = AbstractImage.findByFilename("/data/test.cytomine.be/1/1383567901007/test.tif")
+//       assert image
+//
+//
+//       result = UploadedFileAPI.clearAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//       assert 200 == result.code
+//       result = UploadedFileAPI.populateAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//       assert 200 == result.code
+//       result = UploadedFileAPI.extractUsefulAbstractImageProperties(image.id,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+//       assert 200 == result.code
+//
+//       uploadedFile.refresh()
+//
+//       assert uploadedFile.image
+//       assert uploadedFile.image.id == image.id
+//
+//   }
 
 
     void testUploadFileWorkflowForGhest() {
