@@ -98,15 +98,18 @@ class UserAnnotationTests  {
 
     void testAddUserAnnotationCorrectWithTerm() {
         def annotationToAdd = BasicInstanceBuilder.getUserAnnotation()
-        Long idTerm1 = BasicInstanceBuilder.getTerm().id
-        Long idTerm2 = BasicInstanceBuilder.getAnotherBasicTerm().id
+        Term term1 = BasicInstanceBuilder.getTerm()
+        Term term2 = BasicInstanceBuilder.getAnotherBasicTerm()
+        term2.ontology = term1.ontology
+        annotationToAdd.project.ontology = term1.ontology
+        BasicInstanceBuilder.saveDomain(annotationToAdd.project)
+        BasicInstanceBuilder.saveDomain(term2)
+
 
         def annotationWithTerm = JSON.parse((String)annotationToAdd.encodeAsJSON())
-        annotationWithTerm.term = [idTerm1, idTerm2]
+        annotationWithTerm.term = [term1.id, term2.id]
 
         log.info annotationToAdd.project.ontology.id
-        log.info Term.read(idTerm1).ontology.id
-        log.info Term.read(idTerm2).ontology.id
 
         def result = UserAnnotationAPI.create(annotationWithTerm.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
