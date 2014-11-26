@@ -7,7 +7,11 @@ cd ../rabbitmq && docker build -t="cytomine/rabbitmq" .
 cd ../java7 && docker build -t="cytomine/java7" .
 cd ../tomcat7 && docker build -t="cytomine/tomcat7" .
 cd ../core && docker build -t="cytomine/core" .
+cd ../postgres && docker build -t="cytomine/postgres" .
+cd ../postgres_retrieval && docker build -t="cytomine/postgres_retrieval" .
 cd ../postgis && docker build -t="cytomine/postgis" .
+cd ../retrieval && docker build -t="cytomine/retrieval" .
 cd ../ims && docker build -t="cytomine/ims" .
 cd ../nginx && docker build -t="cytomine/nginx" .
+docker build -t="cytomine/mongodb" github.com/dockerfile/mongodb
 echo DONE

@@ -1,0 +1,7 @@
+<serverlist>
+        <!--<server host = "192.168.1.102" port = "1234"/>!-->
+        <server host = "127.0.0.1" port = "1234"/>
+        <!--<server host = "192.168.1.102" port = "1235"/>!-->
+        <!--<server host = "192.168.1.102" port = "1236"/>!-->
+</serverlist>
+

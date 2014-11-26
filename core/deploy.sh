@@ -10,35 +10,18 @@ rm -r /var/lib/tomcat7/webapps/*
 cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
 mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
-touch cytomineconfig.groovy
+
+cp /tmp/cytomineconfig.groovy ./
+
 echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
-echo "dataSource.url='jdbc:postgresql://db:5432/docker'" >> cytomineconfig.groovy
-echo "dataSource.username='docker'" >> cytomineconfig.groovy
-echo "dataSource.password='docker'" >> cytomineconfig.groovy
 echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
 echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 
 echo "grails.imageServerURL='http://$IMS_URL'" >> cytomineconfig.groovy
+echo "grails.retrievalServerURL ='http://$RETRIEVAL_URL'" >> cytomineconfig.groovy
+echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 
 echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
-echo "grails.admin.client='info@cytomine.be'" >> cytomineconfig.groovy
-echo "grails.integration.aurora.url='http://localhost:8000/api/image/notify.json?test=true'" >> cytomineconfig.groovy
-echo "grails.integration.aurora.username='xxx'" >> cytomineconfig.groovy
-echo "grails.integration.aurora.password='xxx'" >> cytomineconfig.groovy
-echo "grails.integration.aurora.interval='60000'" >> cytomineconfig.groovy
-
-echo 'cytomine.customUI.global = [' >> cytomineconfig.groovy
-echo '        dashboard: ["ALL"],' >> cytomineconfig.groovy
-echo '        search : ["ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        project: ["ALL"],' >> cytomineconfig.groovy
-echo '        ontology: ["ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        storage : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        activity : ["ALL"],' >> cytomineconfig.groovy
-echo '        feedback : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        explore : ["ROLE_USER","ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        admin : ["ROLE_ADMIN"],' >> cytomineconfig.groovy
-echo '        help : ["ALL"]' >> cytomineconfig.groovy
-echo ']' >> cytomineconfig.groovy
 
 
 fi
@@ -46,6 +29,7 @@ fi
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IMS_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $RETRIEVAL_URL" >> /etc/hosts
 fi
 
 service tomcat7 start

@@ -7,6 +7,7 @@ IMS_URL=localhost-ims #aurora-ims.cytomine.be
 IMS_ALIAS=ims #used in nginx config
 IIP_URL=localhost-iip #aurora-iip.cytomine.be
 UPLOAD_URL=localhost-upload #aurora-upload.cytomine.be
+RETRIEVAL_URL=localhost-retrieval
 IMS_STORAGE_PATH=/mnt/aurora
 IMS_BUFFER_PATH=/mnt/aurora/_buffer
 RABBITMQ_PASS="mypass"
@@ -23,7 +24,13 @@ docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq
 
+# create mongodb docker
+docker run -d -p 22 --name mongodb cytomine/mongodb
+
 # create database docker
+
+docker run -p 22 -m 8g -d --name retrievaldb cytomine/postgres_retrieval
+
 BACKUP_PATH=/backup # path (in the db container) for backup
 
 # BACKUP_BOOL : backup active or not
@@ -56,9 +63,10 @@ cytomine/ims
 
 
 # create CORE docker
-docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link ims:$IMS_ALIAS \
+docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb \
 -e CORE_URL=$CORE_URL \
 -e IMS_URL=$IMS_URL \
+-e RETRIEVAL_URL=$RETRIEVAL_URL \
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
@@ -66,11 +74,19 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e IS_LOCAL=true \
 cytomine/core
 
+# create retrieval docker
+docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db \
+-e CORE_URL=$CORE_URL \
+-e IS_LOCAL=true \
+cytomine/retrieval
+
 # create nginx docker
-docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS --link retrieval:retrieval \
 -e CORE_URL=$CORE_URL \
 -e CORE_ALIAS=$CORE_ALIAS \
 -e IMS_URL=$IMS_URL \
 -e IMS_ALIAS=$IMS_ALIAS \
+-e RETRIEVAL_URL=$RETRIEVAL_URL \
+-e RETRIEVAL_ALIAS=retrieval \
 cytomine/nginx
 
