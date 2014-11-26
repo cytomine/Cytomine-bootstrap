@@ -300,11 +300,23 @@ class AbstractImageService extends ModelService {
     }
 
     def getMainUploadedFile(AbstractImage abstractImage) {
-        UploadedFile uploadedfile = UploadedFile.findByImage(abstractImage)
-        if (uploadedfile?.parent && !uploadedfile?.parent?.ext?.equals("png") && !uploadedfile?.parent?.ext?.equals("jpg")) {
-            return uploadedfile.parent
+        List<UploadedFile> uploadedfiles = UploadedFile.findAllByImage(abstractImage)
+
+        if(uploadedfiles.size()==1) {
+            return uploadedfiles.first()
+        } else {
+            //get the first uploadedfile...
+            return uploadedfiles.find{ main ->
+                 //...that is not present in parent (must be the 'last' child)
+                 uploadedfiles.find{ second -> second.parent?.id==main.id}==null;
+             }
         }
-        else return uploadedfile
+
+//
+//        if (uploadedfile?.parent && !uploadedfile?.parent?.ext?.equals("png") && !uploadedfile?.parent?.ext?.equals("jpg")) {
+//            return uploadedfile.parent
+//        }
+//        else return uploadedfile
 
     }
 

@@ -113,11 +113,11 @@ environments {
         grails.serverURL = "http://localhost:8080"
         //if test with VM windows 7
         //grails.serverURL = "http://10.0.2.2:8080"
-        //grails.uploadURL = "http://upload.cytomine.be"
-        grails.uploadURL = "http://localhost:9080"
-        //grails.imageServerURL = "http://image.cytomine.be"
+        grails.uploadURL = "http://upload.cytomine.be"
+//        grails.uploadURL = "http://localhost:9080"
+        grails.imageServerURL = ["http://image.cytomine.be"]
         //grails.uploadURL = "http://localhost:9090"
-        grails.imageServerURL = ["http://localhost:9080"]
+        //grails.imageServerURL = ["http://localhost:9080"]
         grails.retrievalServerURL = ["http://localhost:9095"]
 
         grails.retrievalURL = "http://localhost:8090"
