@@ -525,7 +525,6 @@ class RestUserController extends RestController {
         def userInfo = [:]
         long previousUser = -1
         result.results().each {
-            println it
 
             def userId = it["_id"]["user"]
             def imageId = it["_id"]["image"]

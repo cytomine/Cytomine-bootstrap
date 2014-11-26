@@ -455,7 +455,12 @@ BrowseImageView = Backbone.View.extend({
         return window.app.models.projectAdmin.get(window.app.status.user.id) != undefined;
     },
     getUserAndReviewLayer: function () {
-        return {user: this.userLayer, review: this.reviewPanel.reviewLayer,roi: this.layerSwitcherPanel.roiLayer};
+        if(this.layerSwitcherPanel) {
+            return {user: this.userLayer, review: this.reviewPanel.reviewLayer,roi: this.layerSwitcherPanel.roiLayer};
+        } else {
+            return {user: this.userLayer, review: this.reviewPanel.reviewLayer};
+        }
+
     },
     /**
      * Initialize the OpenLayers Map
@@ -1148,7 +1153,7 @@ BrowseImageView = Backbone.View.extend({
             cssActivate(this);
             self.getUserLayer().toggleControl("select");
             self.getUserLayer().disableHightlight();
-            if(self.layerSwitcherPanel.roiLayer) {
+            if(self.layerSwitcherPanel && self.layerSwitcherPanel.roiLayer) {
                 self.layerSwitcherPanel.roiLayer.toggleControl("select");
             }
 
