@@ -474,4 +474,4 @@ var DialogModal = {
         modal.render();
         $('#' + type + 'DialogModal' + id).modal();// display the dialog box
     }
-}
+};
