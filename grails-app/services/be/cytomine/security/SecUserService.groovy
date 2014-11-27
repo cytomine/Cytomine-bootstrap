@@ -14,6 +14,7 @@ import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.ontology.*
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
+import be.cytomine.project.ProjectDefaultLayer
 import be.cytomine.social.LastConnection
 import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.utils.ModelService
@@ -50,6 +51,7 @@ class SecUserService extends ModelService {
     def userAnnotationService
     def currentRoleServiceProxy
     def securityACLService
+    def projectDefaultLayerService
 
     def currentDomain() {
         User
@@ -639,6 +641,14 @@ class SecUserService extends ModelService {
     def deleteDependentNestedImageInstance(SecUser user, Transaction transaction,Task task=null) {
         NestedImageInstance.findAllByUser(user).each {
             it.delete(flush: true)
+        }
+    }
+
+    def deleteDependentProjectDefaultLayer(SecUser user, Transaction transaction, Task task = null) {
+        if(user instanceof User) {
+            ProjectDefaultLayer.findAllByUser(user).each {
+                projectDefaultLayerService.delete(it,transaction, null,false)
+            }
         }
     }
 }

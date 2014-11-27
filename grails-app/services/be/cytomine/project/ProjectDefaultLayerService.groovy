@@ -23,8 +23,6 @@ class ProjectDefaultLayerService extends ModelService {
     def springSecurityService
     def transactionService
     def securityACLService
-    def projectService
-    def secUserService
 
     def currentDomain() {
         return ProjectDefaultLayer

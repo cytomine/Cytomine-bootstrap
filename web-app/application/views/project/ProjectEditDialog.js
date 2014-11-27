@@ -273,6 +273,25 @@ var EditProjectDialog = Backbone.View.extend({
         }
         return diff;
     },
+    editProjectDefaultLayers : function(projectId, users) {
+        console.log("editProjectDefaultLayers");
+        console.log(projectId);
+        console.log(users);
+        for(var i = 0; i< users.length ; i++) {
+            console.log(users[i]);
+        }
+        new ProjectDefaultLayerCollection({project: projectId}).fetch({
+            success: function (collection) {
+                collection.each(function(layer) {
+                    if(users.indexOf(layer.attributes.user) == -1) {
+                        console.log("deletion de ");
+                        console.log(layer.id);
+                        layer.destroy();
+                    }
+                });
+            }
+        });
+    },
     editProject: function () {
 
         var self = this;
@@ -325,6 +344,7 @@ var EditProjectDialog = Backbone.View.extend({
                         clearInterval(timer);
                         window.app.view.message("Project", response.message, "success");
                         var id = response.project.id;
+                        self.editProjectDefaultLayers(id, users.concat(admins));
                         $("#editproject").modal("hide");
                         window.app.controllers.dashboard.destroyView()
                         window.app.controllers.browse.closeAll();
