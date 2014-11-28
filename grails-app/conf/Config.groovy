@@ -94,7 +94,7 @@ environments {
         grails.uploadURL = "http://localhost:9090"
 
         grails.imageServerURL = ["http://localhost:9080"]
-        grails.retrievalServerURL = ["http://localhost:9095"]
+        grails.retrievalServerURL = ["http://localhost:9097"]
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -108,6 +108,7 @@ environments {
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
         //grails.readOnlyProjectsByDefault = true
+        grails.retrievalServerURL = []
     }
     development {
         grails.serverURL = "http://localhost:8080"
@@ -118,9 +119,9 @@ environments {
         grails.imageServerURL = ["http://image.cytomine.be"]
         //grails.uploadURL = "http://localhost:9090"
         //grails.imageServerURL = ["http://localhost:9080"]
-        grails.retrievalServerURL = ["http://localhost:9095"]
-
-        grails.retrievalURL = "http://localhost:8090"
+        //grails.retrievalServerURL = ["http://localhost:9095"]
+        grails.retrievalServerURL = []
+        //grails.retrievalURL = "http://localhost:8090"
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -131,7 +132,7 @@ environments {
         //grails.imageServerURL = "http://localhost:9080"
         grails.imageServerURL = ["http://image.cytomine.be"]
         grails.uploadURL = "http://upload.cytomine.be"
-        grails.retrievalServerURL = ["http://localhost:9095"]
+        grails.retrievalServerURL = ["http://localhost:9096"]
         grails.plugin.springsecurity.useBasicAuth = true
         grails.plugin.springsecurity.basic.realmName = "Cytomine log"
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
