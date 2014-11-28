@@ -10,8 +10,8 @@
   <properties>
       <sonar.sources>src/groovy,src/java,grails-app/conf,grails-app/controllers,grails-app/domain,grails-app/jobs,grails-app/services</sonar.sources>
     <sonar.language>grvy</sonar.language>
-    <sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
-    <sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
+    <sonar.junit.reportsPath>target/test-reports</sonar.junit.reportsPath>
+    <sonar.groovy.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.groovy.cobertura.reportPath>
 <sonar.jdbc.url>jdbc:postgresql://localhost/sonar</sonar.jdbc.url>
     <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
     <sonar.jdbc.username>postgres</sonar.jdbc.username>
