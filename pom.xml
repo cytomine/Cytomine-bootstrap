@@ -3,7 +3,7 @@
   <groupId>be.cytomine</groupId>
   <artifactId>Cytomine</artifactId>
   <version>20141120</version>
-  <packaging>pom</packaging>
+  <packaging>pom</packaging> 
   <name>Cytomine-Server</name>
   <build>
   </build>
