@@ -6,9 +6,9 @@
   <packaging>pom</packaging>
   <name>Cytomine-Server</name>
   <build>
-    <sourceDirectory>src/groovy,src/java,grails-app/conf,grails-app/controllers,grails-app/domain,grails-app/jobs,grails-app/services</sourceDirectory>
   </build>
   <properties>
+      <sonar.sources>src/groovy,src/java,grails-app/conf,grails-app/controllers,grails-app/domain,grails-app/jobs,grails-app/services</sonar.sources>
     <sonar.language>grvy</sonar.language>
     <sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
     <sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
