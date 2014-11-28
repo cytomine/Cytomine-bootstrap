@@ -24,6 +24,11 @@ docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq
 
+# create data only containers
+docker run -d --name postgis_data cytomine/data_postgis
+#TODO mongodb
+docker run -d --name retrieval_data cytomine/data_retrieval
+
 # create mongodb docker
 docker run -d -p 22 --name mongodb cytomine/mongodb
 
@@ -31,19 +36,45 @@ docker run -d -p 22 --name mongodb cytomine/mongodb
 
 docker run -p 22 -m 8g -d --name retrievaldb cytomine/postgres_retrieval
 
-BACKUP_PATH=/backup # path (in the db container) for backup
 
+docker run -p 22 -m 8g -d --name db --volumes-from postgis_data cytomine/postgis
+
+BACKUP_PATH=/backup # path (in the db container) for backup
 # BACKUP_BOOL : backup active or not
 # SENDER_EMAIL, SENDER_EMAIL_PASS, SENDER_EMAIL_SMTP : email params of the sending account
 # RECEIVER_EMAIL : email adress of the receiver
-docker run -p 22 -m 8g -d --name db -v /backup:$BACKUP_PATH \
--e BACKUP_BOOL=false \
+docker run -p 22 -d --name backup_postgis --link db:db -v /backup/postgis:$BACKUP_PATH \
 -e BACKUP_PATH=$BACKUP_PATH \
 -e SENDER_EMAIL='your.email@gmail.com' \
 -e SENDER_EMAIL_PASS='passwd' \
 -e SENDER_EMAIL_SMTP='smtp.gmail.com:587' \
 -e RECEIVER_EMAIL='receiver@XXX.com' \
-cytomine/postgis
+-e SGBD='postgres' \
+-e DATABASE='docker' \
+-e USER='docker' \
+-e PASSWD='docker' \
+cytomine/backup
+
+docker run -p 22 -d --name backup_retrieval --link retrievaldb:db -v /backup/retrieval:$BACKUP_PATH \
+-e BACKUP_PATH=$BACKUP_PATH \
+-e SENDER_EMAIL='your.email@gmail.com' \
+-e SENDER_EMAIL_PASS='passwd' \
+-e SENDER_EMAIL_SMTP='smtp.gmail.com:587' \
+-e RECEIVER_EMAIL='receiver@XXX.com' \
+-e SGBD='postgres' \
+-e DATABASE='retrieval' \
+-e USER='docker' \
+-e PASSWD='docker' \
+cytomine/backup
+
+docker run -p 22 -d --name backup_mongo --link mongodb:db -v /backup/mongo:$BACKUP_PATH \
+-e SGBD='mongodb' \
+-e BACKUP_PATH=$BACKUP_PATH \
+-e SENDER_EMAIL='your.email@gmail.com' \
+-e SENDER_EMAIL_PASS='passwd' \
+-e SENDER_EMAIL_SMTP='smtp.gmail.com:587' \
+-e RECEIVER_EMAIL='receiver@XXX.com' \
+cytomine/backup
 
 # create database backup docker
 #docker run -d -p 22 --name aurora_backup -v /mnt/aurora/database:/backup  cytomine/postgresql_datastore 
@@ -61,7 +92,6 @@ docker run -p 22 --privileged -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 8g -d
 -e CORE_URL=$CORE_URL \
 cytomine/ims
 
-
 # create CORE docker
 docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb \
 -e CORE_URL=$CORE_URL \
@@ -75,13 +105,14 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 cytomine/core
 
 # create retrieval docker
-docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db \
+docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db --volumes-from retrieval_data \
 -e CORE_URL=$CORE_URL \
 -e IS_LOCAL=true \
 cytomine/retrieval
 
 # create nginx docker
 docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS --link retrieval:retrieval \
+--name nginx \
 -e CORE_URL=$CORE_URL \
 -e CORE_ALIAS=$CORE_ALIAS \
 -e IMS_URL=$IMS_URL \

@@ -8,19 +8,6 @@ MAINTAINER "Benjamin Stevens b.stevens@ulg.ac.be"
 RUN apt-get update
 RUN apt-get -y -q install postgresql-9.3-postgis-2.1 postgis
 
-# Add the backup script
-RUN mkdir /var/cytomine/
-ADD script_backup.sh /var/cytomine/script_backup.sh
-RUN chmod +x /var/cytomine/script_backup.sh
-
-ADD crontab /tmp/crontab
-
-# Add the mail features
-RUN apt-get -y install ssmtp
-RUN apt-get install -y mailutils
-
-ADD ssmtp.conf /etc/ssmtp/ssmtp.conf
-
 USER postgres
 # Add the postgis extension to the `docker` database
 RUN    /etc/init.d/postgresql start &&\

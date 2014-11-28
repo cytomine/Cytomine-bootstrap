@@ -14,4 +14,8 @@ cd ../retrieval && docker build -t="cytomine/retrieval" .
 cd ../ims && docker build -t="cytomine/ims" .
 cd ../nginx && docker build -t="cytomine/nginx" .
 docker build -t="cytomine/mongodb" github.com/dockerfile/mongodb
+cd ../auto_backup && docker build -t="cytomine/backup" .
+cd ../data_containers/postgis && docker build -t="cytomine/data_postgis" .
+cd ../retrievaldb && docker build -t="cytomine/data_retrieval" .
+cd ../..
 echo DONE
