@@ -45,6 +45,15 @@ echo "cytomine.iipImageServer=http://$IIP_URL:81/fcgi-bin/iipsrv.fcgi" >> images
 fi
 service tomcat7 start
 
+echo "/var/log/tomcat7/catalina.out {"   > /etc/logrotate.d/tomcat7
+echo "  copytruncate"                   >> /etc/logrotate.d/tomcat7
+echo "  daily"                         >> /etc/logrotate.d/tomcat7
+echo "  rotate 14"                      >> /etc/logrotate.d/tomcat7
+echo "  compress"                       >> /etc/logrotate.d/tomcat7
+echo "  missingok"                      >> /etc/logrotate.d/tomcat7
+echo "  create 640 tomcat7 adm"         >> /etc/logrotate.d/tomcat7
+echo "}"                                >> /etc/logrotate.d/tomcat7
+
 export VERBOSITY=1
 export MAX_CVT=5000
 export MEMCACHED_SERVERS=memcached:11211
