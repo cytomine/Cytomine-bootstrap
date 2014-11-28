@@ -19,4 +19,4 @@
     <!-- test -->
     <sonar.host.url>http://sonar.cytomine.be</sonar.host.url>
   </properties>
-</project>
+</project> 
