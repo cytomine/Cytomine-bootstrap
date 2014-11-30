@@ -12,7 +12,7 @@ class IndexMissingAnnotationJob {
 
      def execute(){
          //ask indexed annotation
-         //retrievalService.indexMissingAnnotation()
+         retrievalService.indexMissingAnnotation()
      }
 
 

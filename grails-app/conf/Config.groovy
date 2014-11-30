@@ -120,7 +120,7 @@ environments {
         //grails.uploadURL = "http://localhost:9090"
         //grails.imageServerURL = ["http://localhost:9080"]
         //grails.retrievalServerURL = ["http://localhost:9095"]
-        grails.retrievalServerURL = []
+        grails.retrievalServerURL = ["http://retrieval.cytomine.be"]
         //grails.retrievalURL = "http://localhost:8090"
         grails.converters.default.pretty.print = true
         grails.plugin.springsecurity.useBasicAuth = false

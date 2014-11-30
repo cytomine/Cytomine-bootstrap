@@ -115,7 +115,7 @@ class RetrievalService {
 
     private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
-        RetrievalServer server = RetrievalServer.findByDescriptionLike("retrieval%")
+        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         def response = RetrievalHttpUtils.getPostSearchResponse(server.getFullURL(),'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(),projectSearch)
         try {
             def json = JSON.parse(response)
@@ -174,21 +174,21 @@ class RetrievalService {
 
     public def indexAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("index synchronous id")
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         String res = "/retrieval-web/api/resource.json"
         RetrievalHttpUtils.getPostResponse(server.getFullURL(), res, UserAnnotation.read(id))
     }
 
     public def deleteAnnotationSynchronous(Long id) {
         Logger.getLogger(this).info("delete synchronous")
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         String res = "/retrieval-web/api/resource/"+id+".json"
         RetrievalHttpUtils.getDeleteResponse(server.getFullURL(),res)
     }
 
     public def deleteContainerSynchronous(Long id) {
         Logger.getLogger(this).info("delete container synchronous")
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         String res = "/retrieval-web/api/container/" + id + ".json"
         RetrievalHttpUtils.getDeleteResponse(server.getFullURL(),res)
     }
@@ -303,7 +303,7 @@ class RetrievalService {
      * Get all annotation indexed from retrieval server
      */
     private List<Long> getIndexedResource() {
-        RetrievalServer server = RetrievalServer.findByDescription("retrieval")
+        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         String URL = server.getFullURL() + ".json"
         List json = JSON.parse(getGetResponse(URL))
         List<Long> resources = new ArrayList<Long>()
