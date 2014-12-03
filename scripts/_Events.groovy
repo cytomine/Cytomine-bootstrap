@@ -12,6 +12,20 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
+eventTestPhasesStart = { msg ->
+    File app = new File("web-app/application.js")
+    File lib = new File("web-app/lib.js")
+    app.delete()
+    lib.delete()
+    println("========= C O M P I L E == J S ========= ")
+    ViewPortToBuildXML.process()
+    def proc = "./scripts/yui-compressor-ant-task/doc/example/deploy.sh".execute()
+    proc.in.eachLine { line -> println line }
+    proc = "./scripts/yui-compressor-ant-task/doc/lib/deploy.sh".execute()
+    proc.in.eachLine { line -> println line }
+    println("======================================== ")
+}
+
 
 eventGenerateWebXmlEnd = {
     println "*************************** eventGenerateWebXmlEnd ***************************"
