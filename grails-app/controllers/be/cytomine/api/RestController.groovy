@@ -139,15 +139,7 @@ class RestController {
      * @return response
      */
     protected def response(data) {
-        withFormat {
-            json {
-                render data as JSON
-            }
-            jsonp {
-                response.contentType = 'application/javascript'
-                render "${params.callback}(${data as JSON})"
-            }
-        }
+        render data as JSON
     }
 
     /**
@@ -157,9 +149,7 @@ class RestController {
      */
     protected def responseResult(result) {
         response.status = result.status
-        withFormat {
-            json { render result.data as JSON }
-        }
+        render result.data as JSON
     }
 
     /**
@@ -180,7 +170,10 @@ class RestController {
     }
 
     protected def responseList(List list) {
+        responseSuccess (convertToResponseList(list))
+    }
 
+    protected def convertToResponseList(List list) {
         Boolean datatables = (params.datatables != null)
 
         Integer offset = params.offset != null ? params.getInt('offset') : 0
@@ -195,12 +188,12 @@ class RestController {
         }
 
         if (datatables) {
-            responseSuccess ([aaData: subList, sEcho: params.sEcho , iTotalRecords: list.size(), iTotalDisplayRecords : list.size()])
+            return [aaData: subList, sEcho: params.sEcho , iTotalRecords: list.size(), iTotalDisplayRecords : list.size()]
         } else {
-            responseSuccess ([collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)])
+            return [collection: subList, offset: offset, perPage : Math.min(max, list.size()), size: list.size(), totalPages: Math.ceil(list.size()/max)]
         }
-
     }
+
 
     /**
      * Response an HTTP message

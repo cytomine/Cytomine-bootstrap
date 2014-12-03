@@ -140,7 +140,12 @@ class RestPropertyController extends RestController {
             }
 
             def data = propertyService.listAnnotationCenterPosition(user, image, boundingbox, params.key)
-            responseSuccess(data)
+            if(params.format.equals("jsonp")) {
+                response.contentType = 'application/javascript'
+                render "${params.callback}(${convertToResponseList(data) as JSON})"
+            } else {
+                responseSuccess(data)
+            }
         } else if (!user) {
             responseNotFound("User", params.idUser)
         } else if (!image) {
