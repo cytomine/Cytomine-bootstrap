@@ -70,7 +70,7 @@ SIZEOFINDEXQUEUE=1000000
 #######################################################
 
 # Store name: MEMORY, KYOTO, KYOTOSINGLEFILE, REDIS, NESSDB, BDB, ...
-STORENAME=MEMORY
+STORENAME=STORENAME_PARAM
 
 # Path of index files
 INDEXPATH=/var/retrieval/INDEX/
@@ -90,7 +90,7 @@ SYNCAFTERIMAGE=TRUE
 ###
 ##################
 
-# Start size for only-memory index (only effect if STORENAME=MEMORY)
+# Start size for only-memory index (only effect if STORENAME =MEMORY)
 MEMORYSTARTSIZE = 4096
 
 ##################

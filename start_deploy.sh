@@ -14,6 +14,8 @@ SENDER_EMAIL_PASS='passwd'
 SENDER_EMAIL_SMTP='smtp.gmail.com:587'
 RECEIVER_EMAIL='receiver@XXX.com'
 
+#possible values : memory, kyoto
+RETRIEVAL_ENGINE=kyoto
 
 
 # You don't to change the datas below this line instead of advanced customization
@@ -22,8 +24,8 @@ RECEIVER_EMAIL='receiver@XXX.com'
 
 CORE_WAR_URL="http://148.251.125.200:8888/core/ROOT.war"
 IMS_WAR_URL="http://148.251.125.200:8888/ims/ROOT.war"
-IMS_STORAGE_PATH=/mnt/aurora
-IMS_BUFFER_PATH=/mnt/aurora/_buffer
+IMS_STORAGE_PATH=/data
+IMS_BUFFER_PATH=/data/_buffer
 
 MEMCACHED_PASS="mypass"
 # create memcached docker
@@ -91,12 +93,12 @@ fi
 
 IIP_ALIAS=iip
 # create IIP docker
-docker run -p 22 -d --name iip -v /mnt/aurora:$IMS_STORAGE_PATH --link memcached:memcached \
+docker run -p 22 -d --name iip -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --link memcached:memcached \
 -e IIP_ALIAS=$IIP_ALIAS \
 cytomine/iip
 
 # create IMS docker
-docker run -p 22 --privileged -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 8g -d --name ims --link iip:iip \
+docker run -p 22 --privileged -p 81:80 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --link iip:iip \
 -e IIP_URL=$IIP_URL \
 -e IIP_ALIAS=$IIP_ALIAS \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
@@ -125,6 +127,7 @@ cytomine/core
 docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db --volumes-from retrieval_data \
 -e CORE_URL=$CORE_URL \
 -e IS_LOCAL=true \
+-e ENGINE=$RETRIEVAL_ENGINE \
 cytomine/retrieval
 
 CORE_ALIAS=core 

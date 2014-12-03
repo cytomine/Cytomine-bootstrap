@@ -29,6 +29,14 @@ echo "#############################" >> retrievalwebconfig.properties
 cp -r /tmp/testsvectors testsvectors
 cp -r /tmp/config config
 
+
+if [ "$ENGINE" == "kyoto" ] 
+then
+	bash /tmp/start_kyoto.sh
+else
+	sed -i "s/STORENAME_PARAM/MEMORY/g" config/ConfigServer.prop
+fi
+
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
