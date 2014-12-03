@@ -19,6 +19,16 @@ export LOGFILE=/tmp/iip-openslide.out
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9006 &
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9007 &
 
+echo "/tmp/iip-openslide.out {"          > /etc/logrotate.d/iip
+echo "  copytruncate"                   >> /etc/logrotate.d/iip
+echo "  daily"                          >> /etc/logrotate.d/iip
+echo "  rotate 14"                      >> /etc/logrotate.d/iip
+echo "  compress"                       >> /etc/logrotate.d/iip
+echo "  missingok"                      >> /etc/logrotate.d/iip
+echo "  create 640 root root"           >> /etc/logrotate.d/iip
+echo "  su root root"                   >> /etc/logrotate.d/iip
+echo "}"                                >> /etc/logrotate.d/iip
+
 mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
 
