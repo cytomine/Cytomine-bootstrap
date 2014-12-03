@@ -107,13 +107,7 @@ class RestAnnotationDomainController extends RestController {
     def search() {
          try {
              def data = doSearch(params).result
-             if(params.format.equals("jsonp")) {
-                 response.contentType = 'application/javascript'
-                 render "${params.callback}(${convertToResponseList(data) as JSON})"
-             } else {
                  responseSuccess(data)
-             }
-
         } catch (CytomineException e) {
             log.error(e)
             response([success: false, errors: e.msg], e.code)

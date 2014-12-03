@@ -154,7 +154,7 @@ grails.project.dependency.resolution = {
 
         //cytomine.client
 
-        compile ":rest-api-doc:0.1.3"
+        compile ":rest-api-doc:0.4.1"
 
 
 
@@ -189,7 +189,8 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.2.8"
         //runtime ':jquery:1.8.3'
         compile ":executor:0.3"
-        test ':code-coverage:1.2.7'
+        //test ':code-coverage:1.2.7'
+        test ":code-coverage:2.0.3-3"
         compile ":mail:1.0.7"
         test(":spock:0.7") {
             exclude "spock-grails-support"
