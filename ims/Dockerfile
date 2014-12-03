@@ -41,11 +41,6 @@ RUN apt-get -y build-dep libvips-dev
 #openslide
 RUN cd /tmp && git clone https://github.com/cytomine/openslide && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
 
-#IIP Image Server
-RUN apt-get install -y unzip
-RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 
-RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /tmp/iipsrv/src/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
-
 # vips
 RUN apt-get -y install gtk-doc-tools swig libxml2-dev gobject-introspection libglib2.0-dev
 RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/7.40/vips-7.40.1.tar.gz && tar -zxvf ./vips-7.40.1.tar.gz && cd ./vips-7.40.1 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install

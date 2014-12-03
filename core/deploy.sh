@@ -17,8 +17,8 @@ echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
 echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
 echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 
-echo "grails.imageServerURL='http://$IMS_URL'" >> cytomineconfig.groovy
-echo "grails.retrievalServerURL ='http://$RETRIEVAL_URL'" >> cytomineconfig.groovy
+echo "grails.imageServerURL=['http://$IMS_URL']" >> cytomineconfig.groovy
+echo "grails.retrievalServerURL =['http://$RETRIEVAL_URL']" >> cytomineconfig.groovy
 echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 
 echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy

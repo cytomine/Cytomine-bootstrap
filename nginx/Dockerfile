@@ -3,6 +3,7 @@ FROM cytomine/base
 
 MAINTAINER BS "b.stevens@ulg.ac.be"
 
+RUN apt-get update
 RUN apt-get install -y software-properties-common
 
 # Install Nginx.

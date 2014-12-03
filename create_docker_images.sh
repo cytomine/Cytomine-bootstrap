@@ -11,11 +11,12 @@ cd ../postgres && docker build -t="cytomine/postgres" .
 cd ../postgres_retrieval && docker build -t="cytomine/postgres_retrieval" .
 cd ../postgis && docker build -t="cytomine/postgis" .
 cd ../retrieval && docker build -t="cytomine/retrieval" .
+cd ../iip && docker build -t="cytomine/iip" .
 cd ../ims && docker build -t="cytomine/ims" .
 cd ../nginx && docker build -t="cytomine/nginx" .
 docker build -t="cytomine/mongodb" github.com/dockerfile/mongodb
 cd ../auto_backup && docker build -t="cytomine/backup" .
-cd ../data_containers/postgis && docker build -t="cytomine/data_postgis" .
-cd ../retrievaldb && docker build -t="cytomine/data_retrieval" .
+cd ../data_containers/postgres && docker build -t="cytomine/data_postgres" .
+cd ../postgis && docker build -t="cytomine/data_postgis" .
 cd ../..
 echo DONE

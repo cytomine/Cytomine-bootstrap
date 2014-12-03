@@ -8,8 +8,10 @@ mount -t glusterfs $GLUSTER_SERVER:$VOLUME /mnt/$VOLUME
 
 #nginx conf gen
 sed "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
-sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp1 > /usr/local/nginx/conf/nginx.conf
+sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/out.tmp1  > /tmp/out.tmp2
+sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp2 > /usr/local/nginx/conf/nginx.conf
 rm /tmp/out.tmp1
+rm /tmp/out.tmp2
 
 
 
@@ -41,7 +43,6 @@ echo "cytomine.identify=identify" >> imageserverconfig.properties
 echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
 echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
 echo "cytomine.iipImageServer=http://$IIP_URL:81/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
-#echo "cytomine.iipImageServer=http://$IIP_URL:80/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 fi
 service tomcat7 start
 
@@ -53,20 +54,6 @@ echo "  compress"                       >> /etc/logrotate.d/tomcat7
 echo "  missingok"                      >> /etc/logrotate.d/tomcat7
 echo "  create 640 tomcat7 adm"         >> /etc/logrotate.d/tomcat7
 echo "}"                                >> /etc/logrotate.d/tomcat7
-
-export VERBOSITY=1
-export MAX_CVT=5000
-export MEMCACHED_SERVERS=memcached:11211
-export MEMCACHED_TIMEOUT=604800
-export LOGFILE=/tmp/iip-openslide.out
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9000 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9001 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9002 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9003 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9004 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9005 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9006 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9007 &
 
 mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
