@@ -10,8 +10,7 @@ This Dockerfile creates a container running tomcat7 with a specified WAR in URL
 
 ## Usage
 
-```docker run -m 2g -d -p 8080:8080 --link core_db:db -e WAR_URL="http://192.168.1.7:8888/root.war" cytomine/core```
-
+```docker run -m /g -d -p 22 --link core_db:db -e WAR_URL="http://148.251.125.200:8888/core/ROOT.war" cytomine/core```
 ## Meta
 
-Build with docker 0.11.1
+Build with docker 1.3.0

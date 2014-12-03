@@ -14,4 +14,4 @@ This Dockerfile creates a container running Oracke Java SDK 8
 
 ## Meta
 
-Build with docker 0.11.1
+Build with docker 1.3.0
