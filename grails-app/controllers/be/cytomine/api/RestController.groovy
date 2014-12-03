@@ -2,7 +2,7 @@ package be.cytomine.api
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.test.HttpClient
-import be.cytomine.utils.StringUtils
+
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.converters.XML
@@ -10,7 +10,6 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.beans.Introspector
 
 class RestController {
 
@@ -148,7 +147,6 @@ class RestController {
                 response.contentType = 'application/javascript'
                 render "${params.callback}(${data as JSON})"
             }
-            xml { render data as XML}
         }
     }
 
@@ -161,7 +159,6 @@ class RestController {
         response.status = result.status
         withFormat {
             json { render result.data as JSON }
-            xml { render result.data as XML}
         }
     }
 

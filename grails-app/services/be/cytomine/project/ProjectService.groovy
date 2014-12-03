@@ -1,14 +1,15 @@
 package be.cytomine.project
 
+import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-
+import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.social.LastConnection
+import be.cytomine.social.PersistentConnection
 import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -41,6 +42,8 @@ class ProjectService extends ModelService {
     def secUserService
     def permissionService
     def securityACLService
+    def mongo
+    def noSQLCollectionService
 
     def currentDomain() {
         Project
@@ -70,44 +73,27 @@ class ProjectService extends ModelService {
      * List last project opened by user
      * If the user has less than "max" project opened, add last created project to complete list
      */
-    def listLastOpened(User user,def max) {
-
+    def listLastOpened(User user, Long offset = null, Long max = null) {
+        //get id of last open image
+        securityACLService.checkIsSameUser(user,cytomineService.currentUser)
         def data = []
 
-        List<LastConnection> cons = LastConnection.findAllByUser(user,[max:max,sort:"created", order:"desc"])
-        cons.each {
-            data << [id:it.id, date:it.date, opened: true]
+        def db = mongo.getDB(noSQLCollectionService.getDatabaseName())
+
+        def result = db.persistentConnection.aggregate(
+                [$match : [ user : user.id, project : [$ne:null] ]],
+                [$group : [_id : '$project', "date":[$max:'$created']]],
+                [$sort : [ date : -1]],
+                [$limit: (max==null? 5 : max)]
+        )
+
+        result.results().each {
+            try {
+                data << [id:it['_id'],date:it['date'], opened:true]
+            } catch(CytomineException e) {
+                //if user has data but has no access to picture,  ImageInstance.read will throw a forbiddenException
+            }
         }
-
-//        String request1 = """
-//            SELECT project_id as id, last_connection.updated as date
-//            FROM last_connection, project
-//            WHERE last_connection.user_id = ${user.id}
-//            AND last_connection.project_id = project.id
-//            AND project.deleted IS NULL
-//            AND last_connection.updated is not null
-//            AND last_connection.project_id is not null
-//            UNION
-//            SELECT project_id, last_connection.created as date
-//            FROM last_connection, project
-//            WHERE last_connection.user_id = ${user.id}
-//            AND last_connection.project_id = project.id
-//            AND project.deleted IS NULL
-//            AND last_connection.updated is null
-//            AND last_connection.project_id is not null
-//            ORDER BY date desc
-//            LIMIT $max
-//        """
-//
-//        def sql = new Sql(dataSource)
-//        sql.eachRow(request1,[]) {
-//            data << [id:it.id, date:it.date, opened: true]
-//        }
-//        try {
-//            sql.close()
-//        }catch (Exception e) {}
-
-        def sql = new Sql(dataSource)
         if(data.size()<max) {
             //user has open less than max project, so we add last created project
 
@@ -118,7 +104,7 @@ class ProjectService extends ModelService {
                 ORDER BY date desc
             """
 
-            sql = new Sql(dataSource)
+            def sql = new Sql(dataSource)
             sql.eachRow(request2,[]) {
                 data << [id:it.id, date:it.date, opened: false]
             }
@@ -126,8 +112,40 @@ class ProjectService extends ModelService {
                 sql.close()
             }catch (Exception e) {}
         }
+        data = data.sort{-it.date.getTime()}
         return data
     }
+
+//    def listLastOpened(User user,def max) {
+//
+//        def data = []
+//
+//        List<PersistentConnection> cons = PersistentConnection.findAllByUserAndProjectIsNotNull(user,[max:max,sort:"created", order:"desc"])
+//        cons.each {
+//            data << [id:it.id, date:it.date, opened: true]
+//        }
+//
+//        def sql = new Sql(dataSource)
+//        if(data.size()<max) {
+//            //user has open less than max project, so we add last created project
+//
+//            String request2 = """
+//                SELECT id, created as date
+//                FROM project
+//                WHERE deleted IS NULL AND ${data.isEmpty()? "true": "id NOT IN (${data.collect{it.id}.join(',')})"}
+//                ORDER BY date desc
+//            """
+//
+//            sql = new Sql(dataSource)
+//            sql.eachRow(request2,[]) {
+//                data << [id:it.id, date:it.date, opened: false]
+//            }
+//            try {
+//                sql.close()
+//            }catch (Exception e) {}
+//        }
+//        return data
+//    }
 
     def list() {
         securityACLService.checkAdmin(cytomineService.currentUser)

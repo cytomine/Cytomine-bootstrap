@@ -12,8 +12,6 @@ class AuroraController extends RestController {
     def springSecurityService
     def auroraService
 
-    def index() {}
-
     def retrieveAurora() {
         List<AbstractImage> imagesToNotify = auroraService.getAuroraImageNotYetNotificated()
         String request = auroraService.doRequestContent(imagesToNotify)

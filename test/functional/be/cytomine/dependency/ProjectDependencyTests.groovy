@@ -6,13 +6,10 @@ import be.cytomine.processing.ImageFilterProject
 import be.cytomine.processing.Job
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
-import be.cytomine.security.User
-import be.cytomine.social.LastConnection
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.TaskAPI
-import be.cytomine.utils.Task
 import grails.converters.JSON
 
 /**

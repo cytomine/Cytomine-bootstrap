@@ -324,7 +324,7 @@ grails.plugin.springsecurity.securityConfigType = "InterceptUrlMap"
 grails.plugin.springsecurity.interceptUrlMap = [
         '/admin/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/admincyto/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
-        '/monitoring/**':    ['ROLE_ADMIN'],
+        '/monitoring/**':    ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/j_spring_security_switch_user': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/securityInfo/**': ['ROLE_ADMIN','ROLE_SUPER_ADMIN'],
         '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
@@ -336,20 +336,6 @@ grails.plugin.springsecurity.interceptUrlMap = [
         '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/status/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
 ]
-
-
-//SS CORE 2
-//grails.plugin.springsecurity.interceptUrlMap = [
-//        '/admin/**':    ['ROLE_ADMIN'],
-//        '/securityInfo/**': ['ROLE_ADMIN'],
-//        '/api/**':      ['IS_AUTHENTICATED_REMEMBERED'],
-//        '/lib/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/css/**':      ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/images/**':   ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/*':           ['IS_AUTHENTICATED_REMEMBERED'], //if cas authentication, active this      //beta comment
-//        '/login/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/logout/**':   ['IS_AUTHENTICATED_ANONYMOUSLY']
-//]
 
 grails.plugin.springsecurity.rejectIfNoRule = false
 grails.plugin.springsecurity.fii.rejectPublicInvocations = false

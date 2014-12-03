@@ -2,6 +2,7 @@ package be.cytomine.security
 
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
+import be.cytomine.social.PersistentConnection
 import be.cytomine.social.PersistentUserPosition
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
@@ -58,5 +59,10 @@ class ServerController {
         connection.project = Project.read(idProject)
         connection.date = new Date()
         connection.insert(flush:true) //don't use save (stateless collection)
+        PersistentConnection connectionPersist = new PersistentConnection()
+        connectionPersist.user = SecUser.read(idUser)
+        connectionPersist.project = Project.read(idProject)
+        connectionPersist.date = new Date()
+        connectionPersist.insert(flush:true) //don't use save (stateless collection)
     }
 }

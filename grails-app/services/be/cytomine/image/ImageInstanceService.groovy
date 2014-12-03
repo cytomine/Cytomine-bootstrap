@@ -113,10 +113,10 @@ class ImageInstanceService extends ModelService {
 
         def db = mongo.getDB(noSQLCollectionService.getDatabaseName())
 
-        def result = db.lastUserPosition.aggregate(
+        def result = db.persistentUserPosition.aggregate(
                 [$match : [ user : user.id]],
                 [$group : [_id : '$image', "date":[$max:'$created']]],
-                [$sort : [ created : -1]],
+                [$sort : [ date : -1]],
                 [$limit: (max==null? 5 : max)]
         )
         //result = result.results().collect{it['_id']}.collect{[it["image"],it["user"]]}
@@ -128,7 +128,7 @@ class ImageInstanceService extends ModelService {
                //if user has data but has no access to picture,  ImageInstance.read will throw a forbiddenException
             }
         }
-
+        data = data.sort{-it.date.getTime()}
         return data
     }
 

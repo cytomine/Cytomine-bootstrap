@@ -14,13 +14,12 @@ import be.cytomine.search.engine.AlgoAnnotationSearch
 import be.cytomine.search.engine.EngineSearch
 import be.cytomine.search.engine.ImageInstanceSearch
 import be.cytomine.search.engine.ProjectSearch
-import be.cytomine.search.engine.ResultSearch
+
 import be.cytomine.search.engine.ReviewedAnnotationSearch
 import be.cytomine.search.engine.UserAnnotationSearch
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import groovy.sql.Sql
-import static grails.async.Promises.*
 
 /**
  * New version for searchEngine
@@ -43,7 +42,7 @@ class SearchEngineService extends ModelService {
      * This provides a list of all domain matching criteria in  params.
      */
     public def search(List<String> attributes, List<String> domainType, List<String> words, String order = "id", String sort = "desc", List<Long> idProject, String op) {
-        List<ResultSearch> results = []
+        List results = []
         checkConstraint(words)
         String req
         if (op.equals("OR")) {
@@ -76,7 +75,7 @@ class SearchEngineService extends ModelService {
      * Usefull for UI pagination
      */
     public def results(List<String> attributes, List<String> domainType, List<String> words, List<Long> idProject, List<Long> ids) {
-        List<ResultSearch> results = []
+        List results = []
         checkConstraint(words)
         if (ids != null && ids.isEmpty()) {
             throw new WrongArgumentException("There is no result!")
