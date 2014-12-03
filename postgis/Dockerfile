@@ -3,7 +3,7 @@
 #
 
 FROM cytomine/postgres
-MAINTAINER "Benjamin Stevens b.stevens@ulg.ac.be"
+MAINTAINER "Benjamin Stevens support@cytomine.be"
 
 RUN apt-get update
 RUN apt-get -y -q install postgresql-9.3-postgis-2.1 postgis

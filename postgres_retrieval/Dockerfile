@@ -3,7 +3,7 @@
 #
 
 FROM cytomine/postgres
-MAINTAINER "Renaud Hoyoux Renaud.Hoyoux@ulg.ac.be"
+MAINTAINER "Renaud Hoyoux support@cytomine.be"
 
 # Create a database `retrieval` owned by the ``docker`` role.
 # Note: here we use ``&&\`` to run commands one after the other - the ``\``

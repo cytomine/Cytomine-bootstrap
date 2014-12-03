@@ -1,6 +1,6 @@
 FROM cytomine/base 
 
-MAINTAINER BS "b.stevens@ulg.ac.be"
+MAINTAINER BS "support@cytomine.be"
 
 #storage mount commands
 RUN apt-get -y update

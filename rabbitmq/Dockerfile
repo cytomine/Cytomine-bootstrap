@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER Benjamin Stevens "b.stevens@ulg.ac.be"
+MAINTAINER Benjamin Stevens "support@cytomine.be"
 
 # Install RabbitMQ
 RUN apt-get update

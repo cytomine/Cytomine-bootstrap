@@ -1,6 +1,6 @@
 FROM cytomine/tomcat7
 
-MAINTAINER Benjamin Stevens <b.stevens@ulg.ac.be>
+MAINTAINER Benjamin Stevens <support@cytomine.be>
 
 RUN apt-get -y update
 RUN apt-get -y install wget unzip build-essential

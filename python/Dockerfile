@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER Stévens Benjamin "b.stevens@ulg.ac.be"
+MAINTAINER Stévens Benjamin "support@cytomine.be"
 
 RUN apt-get update -y
 

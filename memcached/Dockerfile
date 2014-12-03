@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER Benjamin Stevens<b.stevens@ulg.ac.be>
+MAINTAINER Benjamin Stevens<support@cytomine.be>
 
 #install memcached
 RUN DEBIAN_FRONTEND=noninteractive apt-get update

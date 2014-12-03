@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-MAINTAINER Benjamin Stevens "b.stevens@ulg.ac.be"
+MAINTAINER Benjamin Stevens "support@cytomine.be"
 
 VOLUME [ "/dnsmasq.hosts" ]
 

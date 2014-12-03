@@ -1,6 +1,6 @@
 FROM cytomine/postgres
 
-MAINTAINER Renaud Hoyoux "Renaud.Hoyoux@ulg.ac.be"
+MAINTAINER Renaud Hoyoux "support@cytomine.be"
 
 RUN touch /tmp/x
 

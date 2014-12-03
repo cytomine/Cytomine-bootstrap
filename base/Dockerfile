@@ -2,7 +2,7 @@
 
 FROM ubuntu:14.04
 
-MAINTAINER Stévens Benjamin "b.stevens@ulg.ac.be"
+MAINTAINER Stévens Benjamin "support@cytomine.be"
 
 RUN apt-get update
 RUN apt-get install -y openssh-server

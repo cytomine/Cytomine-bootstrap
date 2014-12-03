@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER BS "b.stevens@ulg.ac.be"
+MAINTAINER BS "support@cytomine.be"
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list
 RUN echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" | tee -a /etc/apt/sources.list

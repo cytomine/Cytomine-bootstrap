@@ -1,6 +1,6 @@
 FROM cytomine/tomcat7 
 
-MAINTAINER BS "b.stevens@ulg.ac.be"
+MAINTAINER BS "support@cytomine.be"
 
 #storage mount commands
 RUN apt-get install -y software-properties-common
