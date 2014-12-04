@@ -185,22 +185,72 @@ var DefaultLayerPanel = Backbone.View.extend({
                 $("#selectedDefaultLayers").show();
                 // check if not already taken
                 if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
-                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '"> Hide layers by default</div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '" class="hideByDefault"> Hide layers by default</div>');
                     $('#selectedDefaultLayers').append('<div class="col-md-5"><p>' + selected.text + '</p></div>');
                     $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    save(selected.value, false);
                 }
             }
         });
         $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
+            var id = $(this).attr("id").replace("defaultlayer","");
             $(this).parent().prev().prev().remove();
             $(this).parent().prev().remove();
             $(this).parent().remove();
             if($("#selectedDefaultLayers").children().length ==0){
                 $("#selectedDefaultLayers").hide();
             }
+            destroy(id);
         });
 
-        // existing default layers
+        $('#selectedDefaultLayers').on('click', '.hideByDefault', function() {
+            var id = $(this).attr("id").replace("hideByDefault","");
+            var chkb = $(this);
+
+            var layer = new ProjectDefaultLayerModel({id:id, project: self.model.id}).fetch({
+                success: function (lModel) {
+                    lModel.set('hideByDefault', chkb.is(":checked"));
+                    lModel.save(null, {
+                        success: function (model) {
+                            console.log("updated");
+                        }
+                    });
+                }
+             });
+
+        });
+
+
+        var save = function(userId, hide) {
+            var layer = new ProjectDefaultLayerModel({user: userId, project: self.model.id, hideByDefault: hide});
+            layer.save(null, {
+                success: function (model, response) {
+                    console.log("save success");
+                    // with the project_default_layer id, we will be able to delete them more efficiently
+                    var id = $('#selectedDefaultLayers #defaultlayer' + userId).attr("id").replace(userId,response.projectdefaultlayer.id);
+                    $('#selectedDefaultLayers #defaultlayer' + userId).attr("id", id);
+                    $('#selectedDefaultLayers #hideByDefault' + userId).attr("id", id);
+                },
+                error: function (x, y) {
+                    console.log("save error");
+                    console.log(x);
+                    console.log(y.responseText);
+                }
+            });
+        };
+        var destroy = function(id) {
+            var layer = new ProjectDefaultLayerModel({id:id, project: self.model.id}).fetch({
+                success: function (lModel) {
+                    lModel.destroy({
+                        success: function (model) {
+                            console.log("destroyed");
+                        }
+                    });
+                }
+            });
+        };
+
+        // load existing default layers
         new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
             success: function (collection) {
                 var defaultLayersArray=[]
@@ -212,10 +262,10 @@ var DefaultLayerPanel = Backbone.View.extend({
                 for(var i = 0; i<defaultLayersArray.length; i++){
                     $("#selectedDefaultLayers").show();
                     // check if not already taken
-                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].userId + '"> Hide layers by default</div>');
-                    $('#hideByDefault' + defaultLayersArray[i].userId)[0].checked = defaultLayersArray[i].hideByDefault;
+                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].id + '" class="hideByDefault"> Hide layers by default</div>');
+                    $('#hideByDefault' + defaultLayersArray[i].id)[0].checked = defaultLayersArray[i].hideByDefault;
                     $('#selectedDefaultLayers').append('<div id = "tmp'+ defaultLayersArray[i].userId +'" class="col-md-5"><p></p></div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].userId + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].id + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
                     new UserModel({id: defaultLayersArray[i].userId}).fetch({
                         success: function (model) {
                             $('#tmp'+model.id).find("p").text(model.prettyName());
@@ -226,57 +276,6 @@ var DefaultLayerPanel = Backbone.View.extend({
             }
         });
 
-        $('#savedefaultlayers').click(function() {
-
-            new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
-                success: function (collection) {
-                    var model;
-                    var destroyed = 0;
-                    var models = collection.length;
-
-                    var saveAll = function () {
-                        if(destroyed == models){
-                            var layers = $('#selectedDefaultLayers .projectremovedefaultlayersbutton');
-                            console.log("layers.length");
-                            console.log(layers.length);
-                            console.log("self.model.id");
-                            console.log(self.model.id);
-
-                            for(var i = 0; i<layers.length;i++){
-                                var id = $(layers[i]).attr("id").replace("defaultlayer","");
-                                var hide = $('#hideByDefault' + id)[0].checked;
-                                var layer = new ProjectDefaultLayerModel({user: id, project: self.model.id, hideByDefault: hide});
-                                layer.save(null, {
-                                    success: function (model) {
-                                        console.log("save success");
-                                    },
-                                    error: function (x, y) {
-                                        console.log("save error");
-                                        console.log(x);
-                                        console.log(y.responseText);
-                                    }
-                                });
-                            }
-                            window.app.view.message("Project Default Layers", "Default layers saved!", "success");
-                        }
-                    };
-
-                    if(models == 0){
-                        saveAll();
-                    }
-
-                    while (model = collection.first()) {
-                        model.destroy({
-                            success: function () {
-                                console.log("destroy");
-                                destroyed++;
-                                saveAll();
-                            }
-                        });
-                    }
-                }
-            });
-        });
         return this;
     }
 
