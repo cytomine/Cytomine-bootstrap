@@ -73,11 +73,11 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         }
         $("#" + this.browseImageView.divId).find("#layerSwitcher" + model.get("id")).find("ul.annotationLayers").append(layerOptionTpl);
 
-        console.log("#" + this.browseImageView.divId);
-        console.log("#layerSwitcher" + model.get("id"));
-        console.log("ul.annotationLayers");
-        console.log(layerOptionTpl);
+        console.log("add layer!!!");
 
+        layer.vectorsLayer.setVisibility(true);
+        self.browseImageView.annotationProperties.updateAnnotationProperyLayers(); //update annotation proprety layers
+        $("#" + layerID).prop('checked', true);
 
         $("#" + layerID).click(function () {
             var checked = $(this).is(':checked');
@@ -271,10 +271,16 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                     item.show();
                 }
                 console.log("item="+select.val());
+                console.log("layer is checked?="+item.find(".showUser").is(":checked"));
                 //force click on show layer to set layer visible = true
                 if (!item.find(".showUser").is(":checked")) {
+
+//                    console.log(item.find(".showUser"));
                     item.find(".showUser").click();
+//                    console.log(item.find(".showUser"));
+
                 }
+                console.log("layer is checked?="+item.find(".showUser").is(":checked"));
             }
             select.val(select.find("option:visible").val());
 
@@ -379,21 +385,16 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var loadedElements = 0;
 
         var checkNonHideElement = function() {
-
+            console.log("checkNonHideElement");
             for(var i = 0; i < self.defaultVectorLayers.length; i++) {
                 if (self.defaultVectorLayers[i].hide) {
                     // checkbox for visibility is unchecked
-                    $("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", false);
-                } else {
-                    //$("#entry" + self.defaultVectorLayers[i].userId + " .showUser").prop("checked", true);
-                    if (!$("#entry" + self.defaultVectorLayers[i].userId).find(".showUser").is(":checked")) {
+                    if ($("#entry" + self.defaultVectorLayers[i].userId).find(".showUser").is(":checked")) {
                         $("#entry" + self.defaultVectorLayers[i].userId).find(".showUser").click();
                     }
+                } else {
+                    //show by default
                 }
-            }
-            //Current user layer must be visible
-            if (!$("#entry" + window.app.status.user.id).find(".showUser").is(":checked")) {
-                $("#entry" + window.app.status.user.id).find(".showUser").click();
             }
         };
 
