@@ -278,18 +278,17 @@ class BootstrapUtilsService {
 
         }
         grailsApplication.config.grails.retrievalServerURL.eachWithIndex { it, index ->
-            RetrievalServer server = new RetrievalServer(description:"retrieval $index", url:"${it}",path:'/retrieval-web/api/resource.json')
-            if (server.validate()) {
-                server.save()
-            } else {
-                server.errors?.each {
-                    println it
+
+            if(!RetrievalServer.findByUrl(it)) {
+                RetrievalServer server = new RetrievalServer(description:"retrieval $index", url:"${it}",path:'/retrieval-web/api/resource.json')
+                if (server.validate()) {
+                    server.save()
+                } else {
+                    server.errors?.each {
+                        println it
+                    }
                 }
             }
-
-//            16590 |       0 | 2011-10-04 16:08:59.462 | retrieval   |    0 |         | http://localhost:9095/retrieval-web/api/resource.json |
-//
-
 
         }
     }
