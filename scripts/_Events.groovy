@@ -118,7 +118,7 @@ class ViewPortToBuildXML {
      * @return XML string with all js files include template
      */
     public static String fillTemplateFile(List<String> lines, String file) {
-
+        println "ADD ${lines.size()} in $file"
         //read template file
         def inputStreamFileSource = new FileInputStream(file);
         def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
@@ -266,6 +266,7 @@ class ViewPortToBuildXML {
      * @param filePath Destination file
      */
     public static void writeToFile(def xmlString, def filePath) {
+        println "ADD ${xmlString.size()} in ${new File("$filePath").absolutePath}"
         new File("$filePath").withWriter { out ->
             out.println xmlString
         }
