@@ -62,24 +62,26 @@ class CustomUITests {
         assert true == json.project
         assert false == json.ontology
         assert false == json.storage
-        assert false == json.activity
+        assert true == json.activity
         assert false == json.feedback
-        assert true == json.explore
+        assert false == json.explore
         assert false == json.admin
         assert true == json.help
+        assert false == json.search
 
         result = UserAPI.retrieveCustomUI(null,user.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
         assert true == json.dashboard
         assert true == json.project
-        assert true == json.ontology
+        assert false == json.ontology
         assert true == json.storage
         assert true == json.activity
         assert true == json.feedback
         assert true == json.explore
         assert false == json.admin
         assert true == json.help
+        assert false == json.search
 
         result = UserAPI.retrieveCustomUI(null,admin.username,"password")
         assert 200==result.code
