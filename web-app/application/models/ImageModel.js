@@ -8,11 +8,11 @@ var ImageModel = Backbone.Model.extend({
         return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id + format;
     },
     downloadUrl : function() {
-       if (this.get('id')) {
-           return 'api/abstractimage/' + id + "/download";
-       } else {
-           return null;
-       }
+        if (this.get('id')) {
+            return 'api/abstractimage/' + id + "/download";
+        } else {
+            return null;
+        }
     },
     getVisibleName : function(hideName) {
         if(!hideName) {
@@ -87,7 +87,7 @@ var ImageServerUrlsModel = Backbone.Model.extend({
             url = url+ "&imageinstance="+this.imageinstance;
         }
         if(this.merge && this.channels) {
-           //window.app.mergeChannel [[1,#ff0000],[2,#00ff00],..]
+            //window.app.mergeChannel [[1,#ff0000],[2,#00ff00],..]
             var chanIds = []
             _.each(this.channels,function(channel) {
                 chanIds.push(channel[0]);
@@ -141,7 +141,7 @@ var ImageInstanceModel = Backbone.Model.extend({
     },
     getVisibleName : function(hideName) {
         if(!hideName) {
-            return this.get('originalFilename');
+            return this.get('instanceFilename');
         } else {
             return "[BLIND]" + this.get('id');
         }

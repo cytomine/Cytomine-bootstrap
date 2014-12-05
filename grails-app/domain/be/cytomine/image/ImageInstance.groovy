@@ -56,22 +56,25 @@ class ImageInstance extends CytomineDomain implements Serializable {
     @RestApiObjectField(description = "The user who reviewed (or still reviewing) this image", useForCreation = false)
     SecUser reviewUser
 
+    @RestApiObjectField(description = "Instance image filename",useForCreation = false)
+    String instanceFilename;
+
     @RestApiObjectFields(params=[
-        @RestApiObjectField(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "sample", description = "Abstract image sample (see Abstract Image)",allowedType = "long",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "resolution", description = "Abstract image resolution (see Abstract Image)",allowedType = "double",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "magnification", description = "Abstract image magnification (see Abstract Image)",allowedType = "int",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false),
-        @RestApiObjectField(apiFieldName = "depth", description = "?",allowedType = "long",useForCreation = false)
-     ])
+            @RestApiObjectField(apiFieldName = "filename", description = "Abstract image filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "originalFilename", description = "Abstract image original filename (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "path", description = "Abstract image path (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "sample", description = "Abstract image sample (see Abstract Image)",allowedType = "long",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "mime", description = "Abstract image mime (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "width", description = "Abstract image width (see Abstract Image)",allowedType = "int",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "height", description = "Abstract image height (see Abstract Image)",allowedType = "int",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "resolution", description = "Abstract image resolution (see Abstract Image)",allowedType = "double",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "magnification", description = "Abstract image magnification (see Abstract Image)",allowedType = "int",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "preview", description = "Abstract image preview (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "thumb", description = "Abstract image thumb (see Abstract Image)",allowedType = "string",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "reviewed", description = "Image has been reviewed",allowedType = "boolean",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "inReview", description = "Image currently reviewed",allowedType = "boolean",useForCreation = false),
+            @RestApiObjectField(apiFieldName = "depth", description = "?",allowedType = "long",useForCreation = false)
+    ])
     static transients = []
 
     static belongsTo = [AbstractImage, Project, User]
@@ -123,6 +126,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         domain.reviewStart = JSONUtils.getJSONAttrDate(json, "reviewStart")
         domain.reviewStop = JSONUtils.getJSONAttrDate(json, "reviewStop")
         domain.reviewUser = JSONUtils.getJSONAttrDomain(json, "reviewUser", new User(), false)
+        domain.instanceFilename = JSONUtils.getJSONAttrStr(json, "instanceFilename", true)
         //Check review constraint
         if ((domain.reviewUser == null && domain.reviewStart != null) || (domain.reviewUser != null && domain.reviewStart == null) || (domain.reviewStart == null && domain.reviewStop != null))
             throw new WrongArgumentException("Review data are not valid: user=${domain.reviewUser} start=${domain.reviewStart} stop=${domain.reviewStop}")
@@ -145,6 +149,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['extension'] = image?.baseImage?.mime?.extension
         returnArray['originalMimeType'] = image?.baseImage?.originalMimeType()
         returnArray['originalFilename'] = image?.baseImage?.originalFilename
+        returnArray['instanceFilename'] = image?.getFileName()
         returnArray['sample'] = image?.baseImage?.sample?.id
         returnArray['path'] = image?.baseImage?.path
         returnArray['mime'] = image?.baseImage?.mime?.mimeType
@@ -166,10 +171,10 @@ class ImageInstance extends CytomineDomain implements Serializable {
         returnArray['reviewed'] = image?.isReviewed()
         returnArray['inReview'] = image?.isInReviewMode()
         return returnArray
-    }    
-    
-    
-    
+    }
+
+
+
 
     /**
      * Flag to control if image is beeing review, and not yet validated
@@ -207,7 +212,9 @@ class ImageInstance extends CytomineDomain implements Serializable {
     }
 
     public String getFileName() {
+        if(instanceFilename != null && instanceFilename.trim()!= '') {
+            return instanceFilename
+        }
         return baseImage.originalFilename
     }
-
 }

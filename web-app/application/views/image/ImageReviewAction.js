@@ -60,6 +60,15 @@ var ImageReviewAction = Backbone.View.extend({
             self.startReviewing();
             return false;
         });
+        if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
+            el.find("a.renameImage" + self.model.id).hide();
+        }
+        el.find("a.renameImage" + self.model.id).bind('click',function(){
+            console.log("rename"+self.model.id);
+            self.renameImage();
+            return false;
+        });
+
         el.find("a.deleteImage" + self.model.id).bind('click',function(){
             console.log("del"+self.model.id);
             self.deleteImage();
@@ -224,6 +233,32 @@ var ImageReviewAction = Backbone.View.extend({
         return this.model.get("reviewStart") != null && this.model.get("reviewStop") == null
     },
 
+    renameImage: function () {
+        var self = this;
+
+        new ImageInstanceModel({id: self.model.id}).fetch(
+            {
+                success: function (model, response) {
+                    var imageInstanceModel = model;
+                    var values =[];
+                    values.push({field : 'instanceFilename', name : 'Name', value : imageInstanceModel.get('instanceFilename')});
+
+                    UpdateTextFiedsModal.initUpdateTextFiedsModal(self.model.id, "Image", 'Rename an image', 'Enter the new name of this image', values, function(newValues){
+                        for(var i=0;i<values.length;i++){
+                            imageInstanceModel.set(values[i].field, values[i].value);
+                        }
+                        imageInstanceModel.save(null,{
+                            success: function (model, response) {
+                                window.app.view.message("Image", response.message, "success");
+                                self.container.refresh();
+                            }
+                        });
+                    });
+                }
+            }
+        );
+
+    },
     deleteImage: function () {
         var self = this;
         require(["text!application/templates/dashboard/ImageDeleteConfirmDialog.tpl.html"], function (tpl) {

@@ -437,6 +437,43 @@ var copyImageModal = {
     }
 }
 
+var UpdateTextFiedsModal = {
+
+    initUpdateTextFiedsModal: function (id, type, title, text, values, callback) {
+
+        // create a text en loopant sur le tab [{field, nom, value}]
+        var body = '<p>'+text+'</p>';
+        for(var i=0;i<values.length;i++){
+            body = body + '<br/>'
+            body = body + '<div class="row"><div class="col-md-3 col-md-offset-1"> '+values[i].name +'</div>';
+            body = body + '<div class="col-md-7"><input type="text" class="form-control" id="'+values[i].field + id +'" value="'+values[i].value+'"></div></div>';
+        }
+
+
+
+        var modal = new CustomModal({
+            idModal: "updateModal" + type + id,
+            header: title,
+            body: body,
+            wide: true
+        });
+
+        // here the callback returns the values to update.
+        modal.addButtons("UpdateFields" + id, "Save", true, true, function(){
+            for(var i=0;i<values.length;i++){
+                values[i].value = $('#'+values[i].field + id)[0].value;
+            }
+
+            callback(values);
+        });
+        modal.addButtons("closeUpdateFields" + id, "Close", false, true);
+
+        modal.render();
+        $('#updateModal' + type + id).modal();// display the dialog box
+    }
+}
+
+
 // if a more custom dialogbox is required, check for http://bootboxjs.com/ (user CustomDialog to create our dialog box)
 var DialogModal = {
     // if needed, pass as an argument of the callback the value of a checkbox (created in a footer) "don't ask me this for the next annotations in this location ("for this layer" or "for this image" need more development)".
