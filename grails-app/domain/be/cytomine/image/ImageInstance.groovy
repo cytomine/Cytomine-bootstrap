@@ -87,6 +87,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         reviewStart nullable: true
         reviewStop nullable: true
         reviewUser nullable: true
+        instanceFilename nullable: true
     }
 
     static mapping = {
@@ -126,7 +127,7 @@ class ImageInstance extends CytomineDomain implements Serializable {
         domain.reviewStart = JSONUtils.getJSONAttrDate(json, "reviewStart")
         domain.reviewStop = JSONUtils.getJSONAttrDate(json, "reviewStop")
         domain.reviewUser = JSONUtils.getJSONAttrDomain(json, "reviewUser", new User(), false)
-        domain.instanceFilename = JSONUtils.getJSONAttrStr(json, "instanceFilename", true)
+        domain.instanceFilename = JSONUtils.getJSONAttrStr(json, "instanceFilename", false)
         //Check review constraint
         if ((domain.reviewUser == null && domain.reviewStart != null) || (domain.reviewUser != null && domain.reviewStart == null) || (domain.reviewStart == null && domain.reviewStop != null))
             throw new WrongArgumentException("Review data are not valid: user=${domain.reviewUser} start=${domain.reviewStart} stop=${domain.reviewStop}")
