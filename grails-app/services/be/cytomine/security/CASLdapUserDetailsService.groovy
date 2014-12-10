@@ -1,5 +1,6 @@
 package be.cytomine.security
 
+import be.cytomine.ldap.LdapUlgMemberPerson
 import grails.plugin.springsecurity.userdetails.GormUserDetailsService
 import grails.plugin.springsecurity.userdetails.GrailsUser
 import groovy.sql.Sql
@@ -52,7 +53,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         if (user == null) { //User does not exists in our database
 
             //fetch its informations through LDAP
-            InetOrgPerson inetOrgPerson = (InetOrgPerson) ldapUserDetailsService.loadUserByUsername(username)
+            LdapUlgMemberPerson inetOrgPerson = (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
             if(inetOrgPerson==null) return null
 
             User.withTransaction {
