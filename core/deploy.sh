@@ -2,7 +2,7 @@
 
 /etc/init.d/ssh start
 
-echo Starting "$WAR_URL" 
+#echo Starting "$WAR_URL" 
 #Copy the war file from mounted directory to tomcat webapps directory
 #if [ ! -z "$WAR_URL" ]
 #then
@@ -17,11 +17,26 @@ cd /usr/share/tomcat7/.grails
 
 cp /tmp/cytomineconfig.groovy ./
 
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
+IMS_URLS="["
+for x in $arr
+do
+    IMS_URLS="${IMS_URLS}'http://$x',"
+done
+IMS_URLS="${IMS_URLS%?}"
+IMS_URLS="$IMS_URLS]"
+
+### END transform the ims urls for the config file ###
+
 echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
 echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
 echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 
-echo "grails.imageServerURL=['http://$IMS_URL']" >> cytomineconfig.groovy
+echo "grails.imageServerURL=$IMS_URLS" >> cytomineconfig.groovy
 echo "grails.retrievalServerURL =['http://$RETRIEVAL_URL']" >> cytomineconfig.groovy
 echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 
@@ -32,7 +47,11 @@ echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
-	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IMS_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
+
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $RETRIEVAL_URL" >> /etc/hosts
 fi
 

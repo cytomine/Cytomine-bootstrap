@@ -13,5 +13,7 @@ RUN chown root:root /root/.ssh/authorized_keys
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
 
+RUN apt-get install -y locate
+
 EXPOSE 22
 

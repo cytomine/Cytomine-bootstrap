@@ -6,9 +6,6 @@ MAINTAINER BS "support@cytomine.be"
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:semiosis/ubuntu-glusterfs-3.5
   
-RUN apt-get update
-RUN apt-get install -y glusterfs-client
-
 #install nginx with upload module
 RUN apt-get -y update
 RUN apt-get -y install wget unzip build-essential

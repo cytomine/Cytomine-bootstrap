@@ -6,6 +6,9 @@ MAINTAINER BS "support@cytomine.be"
 RUN apt-get -y update
 RUN apt-get install -y software-properties-common
   
+RUN apt-get update
+RUN apt-get install -y glusterfs-client
+
 #install nginx 
 RUN apt-get -y update
 RUN apt-get -y install wget unzip build-essential

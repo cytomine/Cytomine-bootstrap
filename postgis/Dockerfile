@@ -24,4 +24,6 @@ VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
+RUN echo 'root:password' | chpasswd
+
 ENTRYPOINT ["/tmp/deploy.sh"]

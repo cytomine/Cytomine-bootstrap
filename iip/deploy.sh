@@ -2,6 +2,10 @@
 
 /etc/init.d/ssh start
 
+#gluster mount
+mkdir /mnt/$VOLUME
+mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
+
 #nginx conf gen
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
 

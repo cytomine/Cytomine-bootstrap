@@ -2,10 +2,6 @@
 
 /etc/init.d/ssh start
 
-#gluster mount
-mkdir /mnt/$VOLUME
-mount -t glusterfs $GLUSTER_SERVER:$VOLUME /mnt/$VOLUME
-
 #nginx conf gen
 sed "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/out.tmp1  > /tmp/out.tmp2
@@ -25,7 +21,7 @@ chown -R tomcat7:tomcat7 $IMS_STORAGE_PATH
 
 export LD_LIBRARY_PATH=/usr/local/lib/openslide-java
 
-echo Starting "$WAR_URL" 
+#echo Starting "$WAR_URL" 
 #Copy the war file from mounted directory to tomcat webapps directory
 #if [ ! -z "$WAR_URL" ]
 #then
