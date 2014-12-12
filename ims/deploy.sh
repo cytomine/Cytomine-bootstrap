@@ -27,10 +27,14 @@ export LD_LIBRARY_PATH=/usr/local/lib/openslide-java
 
 echo Starting "$WAR_URL" 
 #Copy the war file from mounted directory to tomcat webapps directory
-if [ ! -z "$WAR_URL" ]
-then
+#if [ ! -z "$WAR_URL" ]
+#then
 rm -r /var/lib/tomcat7/webapps/*
-cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
+cd /var/lib/tomcat7/webapps/ # && wget -q $WAR_URL -O ROOT.war
+
+cp /tmp/ROOT.war ./ROOT.war
+chmod 777 /var/lib/tomcat7/webapps/ROOT.war
+
 mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
 touch imageserverconfig.properties
@@ -43,7 +47,7 @@ echo "cytomine.identify=identify" >> imageserverconfig.properties
 echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
 echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
 echo "cytomine.iipImageServer=http://$IIP_URL:81/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
-fi
+#fi
 service tomcat7 start
 
 echo "/var/log/tomcat7/catalina.out {"   > /etc/logrotate.d/tomcat7

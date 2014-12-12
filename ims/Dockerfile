@@ -54,6 +54,8 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-7-oracle && export CFLAGS="-I/usr/lib/jvm
 #libtiff-tools (tiffinfo) and imagemagick (identify)
 RUN apt-get install -y imagemagick libtiff-tools
 
+ADD ROOT.war /tmp/ROOT.war
+
 EXPOSE 8081
 EXPOSE 8082
 

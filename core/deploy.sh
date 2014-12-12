@@ -4,10 +4,14 @@
 
 echo Starting "$WAR_URL" 
 #Copy the war file from mounted directory to tomcat webapps directory
-if [ ! -z "$WAR_URL" ]
-then
+#if [ ! -z "$WAR_URL" ]
+#then
 rm -r /var/lib/tomcat7/webapps/*
-cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
+cd /var/lib/tomcat7/webapps/  #&& wget -q $WAR_URL -O ROOT.war
+
+cp /tmp/ROOT.war /var/lib/tomcat7/webapps/ROOT.war
+chmod 777 /var/lib/tomcat7/webapps/ROOT.war
+
 mkdir -p /usr/share/tomcat7/.grails
 cd /usr/share/tomcat7/.grails
 
@@ -24,7 +28,7 @@ echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
 
 
-fi
+#fi
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
