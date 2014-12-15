@@ -563,4 +563,10 @@ class RestUserController extends RestController {
         log.info resp
         responseSuccess(resp)
     }
+    def isInLdap() {
+        def result = CASLdapUserDetailsService.isInLdap(params.username)
+        def returnArray = [:]
+        returnArray["result"] = result
+        responseSuccess(returnArray)
+    }
 }

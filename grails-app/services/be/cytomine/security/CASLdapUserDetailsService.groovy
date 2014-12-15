@@ -30,6 +30,21 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         return loadUserByUsername(username, true)
     }
 
+    public boolean isInLdap(String username) {
+        LdapUlgMemberPerson inetOrgPerson;
+
+        try {
+            inetOrgPerson= (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
+        } catch(UsernameNotFoundException e) {
+            inetOrgPerson = null;
+        }
+
+        if(inetOrgPerson==null){
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
@@ -53,7 +68,14 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         if (user == null) { //User does not exists in our database
 
             //fetch its informations through LDAP
-            LdapUlgMemberPerson inetOrgPerson = (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
+            LdapUlgMemberPerson inetOrgPerson;
+
+            try {
+                inetOrgPerson= (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
+            } catch(UsernameNotFoundException e) {
+                inetOrgPerson = null;
+            }
+
             if(inetOrgPerson==null) return null
 
             User.withTransaction {

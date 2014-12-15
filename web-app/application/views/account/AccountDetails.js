@@ -77,6 +77,23 @@ var AccountDetails = Backbone.View.extend({
             self.editProfile();
             e.preventDefault();
         });
+
+
+        $.ajax({
+            type: "GET",
+            url: "/api/ldap/u212435/user.json",
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(response) {
+                if(response.result == true) {
+                    $("#password_panel").remove();
+                }
+            }
+        });
+
+
+
+
         $("#input_new_password_confirm").keyup(function () {
             $("#input_new_password_confirm").closest('.form-group').removeClass("has-warning");
             $("#input_new_password_confirm").closest('.form-group').removeClass("has-success");
@@ -130,7 +147,20 @@ var AccountDetails = Backbone.View.extend({
         });
         $("#edit_password_form").submit(function (e) {
             if (self.validatePassword()) {
-                self.editPassword();
+
+                // check if not ldap
+                $.ajax({
+                    type: "GET",
+                    url: "/api/ldap/u212435/user.json",
+                    contentType:"application/json; charset=utf-8",
+                    dataType:"json",
+                    success: function(response) {
+
+                        if(response.result == false) {
+                            self.editPassword();
+                        }
+                    }
+                });
             }
             e.preventDefault();
         });
