@@ -26,9 +26,8 @@ IMS_BUFFER_PATH=/data/_buffer
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
-
-CORE_WAR_URL="http://148.251.125.200:8888/core/ROOT.war"
-IMS_WAR_URL="http://148.251.125.200:8888/ims/ROOT.war"
+CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
+IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 
 MEMCACHED_PASS="mypass"
 # create memcached docker

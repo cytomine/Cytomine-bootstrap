@@ -1,6 +1,6 @@
 #!/bin/bash
-CORE_WAR_URL="http://192.168.0.200:8888/ims/ROOT.war"
-IMS_WAR_URL="http://192.168.0.200:8888/core/ROOT.war"
+CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
+IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 CORE_URL=aurora.cytomine.be #aurora.cytomine.be
 IMS_URL=aurora-ims.cytomine.be #aurora-ims.cytomine.be
 IIP_URL=aurora-iip.cytomine.be #aurora-iip.cytomine.be
@@ -35,7 +35,7 @@ docker run -p 22 --privileged -p 81:80 -v /mnt/aurora:$IMS_STORAGE_PATH -m 8g -d
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
 -e GLUSTER_SERVER=192.168.0.202 \
 -e VOLUME=aurora \
--e WAR_URL="http://148.251.125.200:8888/ims/ROOT.war" \
+-e WAR_URL="http://cytomine.be/release/ims/ROOT.war" \
 cytomine/ims
 
 # create CORE docker
@@ -45,7 +45,7 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
--e WAR_URL="http://148.251.125.200:8888/core/ROOT.war" cytomine/core
+-e WAR_URL="http://cytomine.be/release/core/ROOT.war" cytomine/core
 
 # create nginx docker
 docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \

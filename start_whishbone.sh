@@ -1,6 +1,6 @@
 #!/bin/bash
-CORE_WAR_URL="http://148.251.125.200:8888/ims/ROOT.war"
-IMS_WAR_URL="http://148.251.125.200:8888/core/ROOT.war"
+CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
+IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 CORE_URL=cytomine.wishbonecompany.be #aurora.cytomine.be
 IMS_URL=cytomine-ims.wishbonecompany.be #aurora-ims.cytomine.be
 IIP_URL=cytomine-iip.wishbonecompany.be #aurora-iip.cytomine.be
