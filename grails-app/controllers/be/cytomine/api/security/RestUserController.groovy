@@ -40,6 +40,7 @@ class RestUserController extends RestController {
     def securityACLService
     def mongo
     def noSQLCollectionService
+    def reportService
 
     /**
      * Get all project users
@@ -552,7 +553,7 @@ class RestUserController extends RestController {
 
     def CASLdapUserDetailsService
 
-    @RestApiMethod(description="Add a user from the LDAP", listing = true)
+    @RestApiMethod(description="Add an user from the LDAP", listing = true)
     @RestApiParams(params=[
         @RestApiParam(name="username", type="long", paramType = RestApiParamType.QUERY, description = "The username in LDAP"),
     ])
@@ -563,10 +564,29 @@ class RestUserController extends RestController {
         log.info resp
         responseSuccess(resp)
     }
+
+    @RestApiMethod(description="Check if an user is in the LDAP", listing = true)
+    @RestApiParams(params=[
+            @RestApiParam(name="username", type="long", paramType = RestApiParamType.QUERY, description = "The username in LDAP"),
+    ])
     def isInLdap() {
         def result = CASLdapUserDetailsService.isInLdap(params.username)
         def returnArray = [:]
         returnArray["result"] = result
         responseSuccess(returnArray)
     }
+
+    @RestApiMethod(description="Download a report (pdf, xls,...) with user listing from a specific project")
+    @RestApiResponseObject(objectIdentifier =  "file")
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id"),
+            @RestApiParam(name="terms", type="list", paramType = RestApiParamType.QUERY,description = "The annotation terms id (if empty: all terms)"),
+            @RestApiParam(name="users", type="list", paramType = RestApiParamType.QUERY,description = "The annotation users id (if empty: all users)"),
+            @RestApiParam(name="images", type="list", paramType = RestApiParamType.QUERY,description = "The annotation images id (if empty: all images)"),
+            @RestApiParam(name="format", type="string", paramType = RestApiParamType.QUERY,description = "The report format (pdf, xls,...)")
+    ])
+    def downloadUserListingLightByProject() {
+        reportService.createUserListingLightDocuments(params.long('id'),params.format,response)
+    }
+
 }

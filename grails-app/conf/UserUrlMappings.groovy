@@ -99,5 +99,12 @@ class UserUrlMappings {
             action = [GET:"buildToken",POST:"buildToken"]
         }
 
+        /**
+         * Reporting
+         */
+        "/api/project/$id/user/download"(controller: "restUser"){
+            action = [GET:"downloadUserListingLightByProject"]
+        }
+
     }
 }

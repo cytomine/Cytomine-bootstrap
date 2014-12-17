@@ -4,6 +4,7 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
+import be.cytomine.security.User
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.sql.UserAnnotationListing
@@ -23,7 +24,7 @@ class ReportService {
     def grailsApplication
     def annotationListingService
     def exportService
-
+    def secUserService
 
     def createAnnotationDocuments(Long idProject, def termsParam, def usersParam, def imagesParam, def format,def response, String type) {
 
@@ -99,13 +100,40 @@ class ReportService {
 
 
     }
+
+    // contain only username and user pretty name
+    def createUserListingLightDocuments(Long idProject, def format,def response) {
+
+        Project project = projectService.read(idProject)
+
+        if (!project) {
+            throw new ObjectNotFoundException("Project $idProject was not found!")
+        }
+
+        def exporterIdentifier = format;
+        if (exporterIdentifier == "xls") {
+            exporterIdentifier = "excel"
+        }
+        response.contentType = grailsApplication.config.grails.mime.types[format]
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd_hhmmss");
+        String datePrefix = simpleFormat.format(new Date())
+        response.setHeader("Content-disposition", "attachment; filename=${datePrefix}_annotations_project${project.id}.${format}")
+
+        def exportResult = []
+
+        def users = secUserService.listUsers(project);
+        users.each { user ->
+            def data = [:]
+            data.username = user.username
+            data.firstname = user.firstname
+            data.lastname = user.lastname
+            exportResult.add(data)
+        }
+        List fields = ["username", "firstname", "lastname"]
+        Map labels = ["username": "User Name", "firstname": "First Name", "lastname": "Last Name"]
+        String title = "Users in " + project.getName() + " @ " + (new Date()).toLocaleString()
+        exportService.export(exporterIdentifier, response.outputStream, exportResult, fields, labels, null, ["column.widths": [0.33, 0.33, 0.33], "title": title, "csv.encoding": "UTF-8", "separator": ";"])
+
+
+    }
 }
-
-
-
-
-
-
-
-
-

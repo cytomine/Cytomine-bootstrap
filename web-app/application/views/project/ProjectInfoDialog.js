@@ -5,8 +5,8 @@ var ProjectInfoDialog = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/project/ProjectInfoDialog.tpl.html"
-        ],
+                "text!application/templates/project/ProjectInfoDialog.tpl.html"
+            ],
             function (tpl) {
                 self.doLayout(tpl);
             });
@@ -52,10 +52,31 @@ var ProjectInfoDialog = Backbone.View.extend({
             success: function (users, response) {
                 $("#userInfoBigPanel-" + project.id).find("#projectUsers").empty();
                 var list = [];
-                users.each(function (user) {
-                    list.push(user.prettyName());
-                });
-                $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
+
+                if(users.length <= 10) {
+                    users.each(function (user) {
+                        list.push(user.prettyName());
+                    });
+                    $("#userInfoBigPanel-" + project.id).find("#projectUsers").append(list.join(", "));
+                } else {
+                    $("#userInfoBigPanel-" + project.id).find("#projectUsers").append("<p><br/>Sorry, we can't display all of the "+users.length+" users but you will find the entire list here :</p>");
+                    $("#userInfoBigPanel-" + project.id).find("#projectUsers").append("<select id='usersSelectBox-"+project.id+"' class='input-xlarge focused'><option></option></select>");
+
+                    users.each(function (user) {
+                        $("#usersSelectBox-" + project.id).append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
+                    });
+
+                    $("#userInfoBigPanel-" + project.id).find("#projectUsers").append("<p>You can also download this list in <a href='#' id='userListCSV-"+project.id+"'>CSV</a> or <a href='#' id='userListPDF-"+project.id+"'>PDF</a>.</p>");
+
+                    $("#userListCSV-"+project.id).click(function(e) {
+                        window.open("/api/project/"+project.id+"/user/download?format=csv");
+                        e.preventDefault();
+                    });
+                    $("#userListPDF-"+project.id).click(function(e) {
+                        window.open("/api/project/"+project.id+"/user/download?format=pdf", '_blank');
+                        e.preventDefault();
+                    });
+                }
                 dataLoaded(++dataLoadedCallback);
             }});
         new UserCollection({project: project.id, online: true}).fetch({
