@@ -128,6 +128,20 @@ class RestAbstractImageController extends RestController {
         delete(abstractImageService, JSON.parse("{id : $params.id}"),null)
     }
 
+
+    @RestApiMethod(description="Check if an abstract image is used", listing = true)
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.QUERY, description = "The id of abstract image"),
+    ])
+    def isUsed() {
+        def result = abstractImageService.isUsed(params.id)
+        def returnArray = [:]
+        returnArray["id"] = params.id
+        returnArray["result"] = result
+        responseSuccess(returnArray)
+    }
+
+
 //    /**
 //     * Extract image properties from file
 //     */

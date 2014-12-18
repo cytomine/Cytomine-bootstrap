@@ -162,6 +162,8 @@ class UploadedFile extends CytomineDomain implements Serializable{
 
         domain.image = JSONUtils.getJSONAttrDomain(json, "image", new AbstractImage(), false)
 
+        domain.deleted = JSONUtils.getJSONAttrDate(json, "deleted")
+
         return domain;
     }
 

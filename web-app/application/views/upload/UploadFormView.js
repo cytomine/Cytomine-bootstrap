@@ -707,7 +707,8 @@ var UploadFormView = Backbone.View.extend({
                     return mbSize + "Mo";
                 } },
                 { "mDataProp": "contentType" },
-                { "mDataProp": "uploaded" }
+                { "mDataProp": "uploaded" },
+                { "mData": null }
             ],
             "aoColumnDefs": [
                 {
@@ -715,11 +716,30 @@ var UploadFormView = Backbone.View.extend({
                         return self.getStatusLabel(o.aData);
                     },
                     "aTargets": [ 4 ]
+                },
+                {
+                    "fnRender": function (o, val) {
+                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"'>Delete</button>";
+                    },
+                    "aTargets": [ 5 ]
                 }
-
             ],
             "aaSorting": [[ 1, "desc" ]],
-            "sAjaxSource": uploadedFileCollectionUrl
+            "sAjaxSource": uploadedFileCollectionUrl,
+            "fnInitComplete": function(oSettings, json) {
+                new UploadedFileCollection().fetch({
+                    success: function(model,response) {
+
+                        for(var i = 0; i<response.collection.length;i++) {
+                            $.get( "/api/abstractimage/"+ response.collection[i].image+"/used.json", function( data ) {
+                                if(data.result == true) {
+                                    $("#deleteimage"+data.id).prop("disabled",true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
         });
         uploadTable.show();
         loadingDiv.hide();
@@ -727,6 +747,41 @@ var UploadFormView = Backbone.View.extend({
         $(document).on('click', "#refreshUploadedFiles", function (e) {
             e.preventDefault();
             self.uploadDataTables.fnReloadAjax();
+        });
+        $(document).on('click', ".deleteimage", function (e) {
+            var id = e.currentTarget.id;
+            id = id.replace("deleteimage", "");
+            var uploadFile = new UploadedFileModel({image: id});
+
+            uploadFile.fetch({
+                success: function (model, response) {
+
+                    var up = response.id;
+
+                    new ImageModel({id: id}).destroy({
+                        success: function(model, response){
+
+                            new UploadedFileModel({id: up}).destroy({
+                                success: function (model, response) {
+                                    window.app.view.message("Uploaded file", "deleted", "success");
+                                    self.uploadDataTables.fnReloadAjax();
+                                },
+                                error: function (model, response) {
+                                    var json = $.parseJSON(response.responseText);
+                                    window.app.view.message("Delete failed", json.errors, "error");
+                                }
+                            });
+
+                        },
+                        error: function(model, response){
+                            var json = $.parseJSON(response.responseText);
+                            window.app.view.message("Delete failed", json.errors, "error");
+                        }
+                    });
+                }
+            });
+
+
         });
     },
     refreshProjectAndStorage : function() {

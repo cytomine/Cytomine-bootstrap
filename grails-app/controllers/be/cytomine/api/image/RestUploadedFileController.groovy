@@ -138,6 +138,20 @@ class RestUploadedFileController extends RestController {
         delete(uploadedFileService, JSON.parse("{id : $params.id}"),null)
     }
 
+    @RestApiMethod(description="Get the uploaded file of a given Abstract image")
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The uploaded file id")
+    ])
+    def getByAbstractImage () {
+        AbstractImage im = abstractImageService.read(params.long('idimage'))
+        UploadedFile up = UploadedFile.findByImage(im);
+        if (up) {
+            responseSuccess(up)
+        } else {
+            responseNotFound("UploadedFile", params.id)
+        }
+    }
+
     def upRedirect () {
         redirect(url: "http://localhost:9090/upload")
     }

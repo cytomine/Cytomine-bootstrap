@@ -131,6 +131,7 @@ class AbstractImage extends CytomineDomain implements Serializable {
         domain.mime = JSONUtils.getJSONAttrDomain(json,"mime",new Mime(),'extension','String',true)
         domain.magnification = JSONUtils.getJSONAttrInteger(json,'magnification',null)
         domain.resolution = JSONUtils.getJSONAttrDouble(json,'resolution',null)
+        domain.deleted = JSONUtils.getJSONAttrDate(json, "deleted")
 
         if (domain.mime.imageServers().size() == 0) {
             throw new WrongArgumentException("Mime with id:${json.mime} has not image server")

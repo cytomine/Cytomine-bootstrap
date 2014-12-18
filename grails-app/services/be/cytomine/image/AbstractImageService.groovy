@@ -165,6 +165,14 @@ class AbstractImageService extends ModelService {
     }
 
     /**
+     * Check if some instances of this image exists and are still active
+     */
+    def isUsed(def id) {
+        AbstractImage domain = AbstractImage.read(id);
+        return ImageInstance.findAllByBaseImageAndDeletedIsNull(domain).size() != 0
+    }
+
+    /**
      * Delete this domain
      * @param domain Domain to delete
      * @param transaction Transaction link with this command
@@ -173,10 +181,20 @@ class AbstractImageService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(AbstractImage domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        //We don't delete domain, we juste change a flag
         securityACLService.checkAtLeastOne(domain,WRITE)
-        SecUser currentUser = cytomineService.getCurrentUser()
-        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
-        return executeCommand(c,domain,null)
+
+        def images = ImageInstance.findAllByBaseImageAndDeletedIsNull(domain);
+        if (images.size() == 0) {
+            def jsonNewData = JSON.parse(domain.encodeAsJSON())
+            jsonNewData.deleted = new Date().time
+            SecUser currentUser = cytomineService.getCurrentUser()
+            Command c = new EditCommand(user: currentUser)
+            c.delete = true
+            return executeCommand(c,domain,jsonNewData)
+        } else{
+            throw new ForbiddenException("Abstract Image has instances in active projects");
+        }
     }
 
 
@@ -367,7 +385,7 @@ class AbstractImageService extends ModelService {
     }
 
     def deleteDependentImageInstance(AbstractImage ai, Transaction transaction,Task task=null) {
-        def images = ImageInstance.findAllByBaseImage(ai)
+        def images = ImageInstance.findAllByBaseImageAndDeletedIsNull(ai);
         if(!images.isEmpty()) {
             throw new WrongArgumentException("You cannot delete this image, it has already been insert in projects " + images.collect{it.project.name})
         }

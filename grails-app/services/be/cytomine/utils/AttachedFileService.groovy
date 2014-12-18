@@ -72,5 +72,8 @@ class AttachedFileService extends ModelService {
         return executeCommand(c,domain,null)
     }
 
+    def getStringParamsI18n(def domain) {
+        return [domain.id, domain.domainClassName]
+    }
 
 }

@@ -1,11 +1,11 @@
 package be.cytomine.image
 
-
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 class UploadedFileService extends ModelService {
 
@@ -26,6 +26,7 @@ class UploadedFileService extends ModelService {
             eq("user.id", user.id)
             isNull("parent.id")
             isNull("downloadParent.id")
+            isNull("deleted")
         }
         return uploadedFiles
     }
@@ -69,9 +70,13 @@ class UploadedFileService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(UploadedFile domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        //We don't delete domain, we juste change a flag
         SecUser currentUser = cytomineService.getCurrentUser()
-        Command c = new DeleteCommand(user: currentUser,transaction:transaction)
-        return executeCommand(c,domain,null)
+        def jsonNewData = JSON.parse(domain.encodeAsJSON())
+        jsonNewData.deleted = new Date().time
+        Command c = new EditCommand(user: currentUser)
+        c.delete = true
+        return executeCommand(c,domain,jsonNewData)
     }
 
     def getStringParamsI18n(def domain) {

@@ -15,6 +15,9 @@ class UploadedFileUrlMappings {
             action = [GET:"show",PUT:"update", DELETE:"delete"]
         }
 
+        "/api/uploadedfile/image/$idimage.$format"(controller:"restUploadedFile"){
+            action = [GET:"getByAbstractImage"]
+        }
 
 //        "/uploadedfile" (controller:"restUploadedFile"){
 //            action = [POST : "add"]
