@@ -156,7 +156,10 @@ class AbstractImageTests {
       println "testDeleteImage=" +result
       assert 200 == result.code
       result = AbstractImageAPI.show(id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
-      assert 404 == result.code
+      assert 200 == result.code
+      def json = JSON.parse(result.data)
+      assert json.deleted != null
+      assert json.deleted != ""
   }
 
   void testDeleteImageWithData()  {
@@ -166,7 +169,7 @@ class AbstractImageTests {
     annotation.save(flush:true)
       Long id = imageToDelete.baseImage.id
       def result = AbstractImageAPI.delete(id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
-      assert 400 == result.code
+      assert 403 == result.code
   }
 
   void testDeleteImageNoExist()  {

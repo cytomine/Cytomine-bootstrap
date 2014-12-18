@@ -68,7 +68,11 @@ class UploadedFileTests {
       assert 200 == result.code
 
       def showResult = UploadedFileAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 404 == showResult.code
+      assert 200 == showResult.code
+
+      def json = JSON.parse(showResult.data)
+      assert json.deleted != null
+      assert json.deleted != ""
 
   }
 
