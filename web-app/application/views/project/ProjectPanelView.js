@@ -128,6 +128,17 @@ var ProjectPanelView = Backbone.View.extend({
         self.renderCurrentProjectButton();
         self.renderShowImageButton(json.numberOfImages);
 
+        var isAdmin;
+        new UserCollection({project: self.model.id, admin:true}).fetch({
+            success: function (collection, response) {
+                isAdmin = collection.get(window.app.status.user.id) != undefined
+                if(!isAdmin) {
+                    $("#editProjectButton"+self.model.id).hide();
+                    $("#deleteProjectButton"+self.model.id).hide();
+                }
+            }
+        });
+
 
     },
     infoProject: function () {

@@ -102,6 +102,13 @@ var DescriptionModal = {
         }
 
         var callBackAfterCreation = function() {
+
+            $("iframe").contents().find("body").attr('contenteditable', editable);
+            if (window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
+                $("#saveDescription" + idDescription).hide();
+            }
+
+
             $('.modal-header button').after('<span class="resize-button" aria-hidden="true"><i class="glyphicon glyphicon-resize-full"/></span>');
             $('.modal-header span').on("click", ".glyphicon-resize-full", function(e) {
                 $(this).toggleClass('glyphicon-resize-full');
@@ -159,16 +166,6 @@ var DescriptionModal = {
                 } else {
                     $("#description" + domainIdent).html(text);
                 }
-
-
-                console.log("edidatble=" + editable);
-                setTimeout(
-                    function () {
-                        $("iframe").contents().find("body").attr('contenteditable', editable);
-                        if (window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
-                            $("#saveDescription" + idDescription).hide();
-                        }
-                    }, 1000);
 
 
                 $("#saveDescription" + idDescription).click(function (e) {

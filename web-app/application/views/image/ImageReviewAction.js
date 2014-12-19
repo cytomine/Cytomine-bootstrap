@@ -60,15 +60,23 @@ var ImageReviewAction = Backbone.View.extend({
             self.startReviewing();
             return false;
         });
-        if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
-            el.find("a.renameImage" + self.model.id).hide();
+        if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin) || window.app.status.currentProjectModel.get('blindMode')) {
+            el.find("a#renameImage" + self.model.id).hide();
         }
-        el.find("a.renameImage" + self.model.id).bind('click',function(){
+        el.find("a#renameImage" + self.model.id).bind('click',function(){
             console.log("rename"+self.model.id);
             self.renameImage();
             return false;
         });
 
+        if(window.app.status.currentProjectModel.get('blindMode') && window.app.models.projectAdmin.get(window.app.status.user.id) == undefined) {
+            el.find("#moreinfo" + self.model.id).hide();
+        }
+
+
+        if(window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
+            el.find("a.deleteImage" + self.model.id).hide();
+        }
         el.find("a.deleteImage" + self.model.id).bind('click',function(){
             console.log("del"+self.model.id);
             self.deleteImage();
@@ -94,7 +102,7 @@ var ImageReviewAction = Backbone.View.extend({
             return false;
         });
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
-        $(self.el).on('click',"a.moreinfo" + self.model.id,function () {
+        $(self.el).on('click',"a#moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
             if(!window.app.status.currentProjectModel.get('blindMode')) {
                 new ImagePropertiesView({model: self.model}).render();
@@ -241,7 +249,7 @@ var ImageReviewAction = Backbone.View.extend({
                 success: function (model, response) {
                     var imageInstanceModel = model;
                     var values =[];
-                    values.push({field : 'instanceFilename', name : 'Name', value : imageInstanceModel.get('instanceFilename')});
+                    values.push({field : 'instanceFilename', name : 'Name', value : imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'))});
 
                     UpdateTextFiedsModal.initUpdateTextFiedsModal(self.model.id, "Image", 'Rename an image', 'Enter the new name of this image', values, function(newValues){
                         for(var i=0;i<values.length;i++){
