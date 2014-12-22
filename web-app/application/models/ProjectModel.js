@@ -22,8 +22,11 @@ var ProjectModel = Backbone.Model.extend({
         this.id = options.id;
         this.task = options.task;
     },
+    isAdmin : function(admins) {
+        return admins.get(window.app.status.user.id) != undefined || window.app.status.user.model.get("adminByNow");
+    },
     isReadOnly : function(admins) {
-        var isAdmin = admins.get(window.app.status.user.id) != undefined;
+        var isAdmin = this.isAdmin(window.app.status.user.id);
         var isRO = this.get('isReadOnly');
         return !isAdmin && isRO;
     }

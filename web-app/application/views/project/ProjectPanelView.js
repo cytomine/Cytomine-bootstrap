@@ -131,7 +131,7 @@ var ProjectPanelView = Backbone.View.extend({
         var isAdmin;
         new UserCollection({project: self.model.id, admin:true}).fetch({
             success: function (collection, response) {
-                isAdmin = collection.get(window.app.status.user.id) != undefined
+                isAdmin = self.model.isAdmin(collection);
                 if(!isAdmin) {
                     $("#editProjectButton"+self.model.id).hide();
                     $("#deleteProjectButton"+self.model.id).hide();
