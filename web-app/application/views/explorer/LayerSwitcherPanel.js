@@ -260,16 +260,19 @@ var LayerSwitcherPanel = SideBarPanel.extend({
                 });
 
 
-                var item = panel.find("#entry" + select.val());
+                var item;
                 if (!alreadyExist) {
                     //if not yet added, create layer
 
                     var user = layer.user
 
                     self.addLayerEvent(user, false);
+                    item = panel.find("#entry" + select.val());
                 } else {
+                    item = panel.find("#entry" + select.val());
                     item.show();
                 }
+
                 console.log("item="+select.val());
                 console.log("layer is checked?="+item.find(".showUser").is(":checked"));
                 //force click on show layer to set layer visible = true
