@@ -39,31 +39,34 @@ class PropertyService extends ModelService {
         Property.findAllByDomainIdent(cytomineDomain.id)
     }
 
-    List<String> listKeysForAnnotation(Project project, ImageInstance image) {
+    List<String> listKeysForAnnotation(Project project, ImageInstance image, Boolean withUser) {
         if (project != null)
             securityACLService.check(project,READ)
         else
             securityACLService.check(image.container(),READ)
 
         String request = "SELECT DISTINCT p.key " +
+                (withUser? ", ua.user_id " : "") +
                 "FROM property as p, user_annotation as ua " +
                 "WHERE p.domain_ident = ua.id " +
                 (project? "AND ua.project_id = '"+ project.id + "' " : "") +
                 (image? "AND ua.image_id = '"+ image.id + "' " : "") +
                 "UNION " +
                 "SELECT DISTINCT p1.key " +
+                (withUser? ", aa.user_id " : "") +
                 "FROM property as p1, algo_annotation as aa " +
                 "WHERE p1.domain_ident = aa.id " +
                 (project? "AND aa.project_id = '"+ project.id + "' " : "") +
                 (image? "AND aa.image_id = '"+ image.id + "' " : "") +
                 "UNION " +
                 "SELECT DISTINCT p2.key " +
+                (withUser? ", ra.user_id " : "") +
                 "FROM property as p2, reviewed_annotation as ra " +
                 "WHERE p2.domain_ident = ra.id " +
                 (project? "AND ra.project_id = '"+ project.id + "' " : "") +
                 (image? "AND ra.image_id = '"+ image.id + "' " : "")
 
-        return selectListkey(request)
+        return  (withUser ? selectListKeyWithUser(request) : selectListkey(request))
     }
 
      List<String> listKeysForImageInstance(Project project) {
@@ -179,6 +182,20 @@ class PropertyService extends ModelService {
         sql.eachRow(request) {
             String key = it[0]
             data << key
+        }
+        try {
+            sql.close()
+        }catch (Exception e) {}
+        data
+    }
+
+    private def selectListKeyWithUser(String request) {
+        def data = []
+        def sql = new Sql(dataSource)
+        sql.eachRow(request) {
+            String key = it[0]
+            String user = it[1]
+            data << [key : key, userId : user]
         }
         try {
             sql.close()

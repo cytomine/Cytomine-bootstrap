@@ -92,17 +92,19 @@ class RestPropertyController extends RestController {
 
     @RestApiMethod(description="Get all keys of annotation properties in a project or image", listing=true)
     @RestApiParams(params=[
-        @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
-        @RestApiParam(name="idImage", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idProject must be set) The image instance id")
+            @RestApiParam(name="idProject", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idImage must be set) The project id"),
+            @RestApiParam(name="idImage", type="long", paramType = RestApiParamType.QUERY,description = "(Optional, if null idProject must be set) The image instance id"),
+            @RestApiParam(name="user", type="boolean", paramType = RestApiParamType.QUERY,description = "(Optional) if true, we will return the id of the creator of each key")
     ])
     def listKeyForAnnotation() {
         Project project = projectService.read(params.long('idProject'))
         ImageInstance image = imageInstanceService.read(params.long('idImage'))
+        boolean withUser = params.boolean('user');
 
         if(image) {
-            responseSuccess(propertyService.listKeysForAnnotation(null, image))
+            responseSuccess(propertyService.listKeysForAnnotation(null, image, withUser))
         } else if(project) {
-            responseSuccess(propertyService.listKeysForAnnotation(project, null))
+            responseSuccess(propertyService.listKeysForAnnotation(project, null, withUser))
         } else {
             responseNotFound("Property","Image/Project", params.idImage+"/"+params.idProject)
         }
