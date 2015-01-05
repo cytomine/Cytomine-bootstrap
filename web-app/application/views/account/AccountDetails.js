@@ -81,7 +81,7 @@ var AccountDetails = Backbone.View.extend({
 
         $.ajax({
             type: "GET",
-            url: "/api/ldap/u212435/user.json",
+            url: "/api/ldap/"+this.model.toJSON().username+"/user.json",
             contentType:"application/json; charset=utf-8",
             dataType:"json",
             success: function(response) {
@@ -151,7 +151,7 @@ var AccountDetails = Backbone.View.extend({
                 // check if not ldap
                 $.ajax({
                     type: "GET",
-                    url: "/api/ldap/u212435/user.json",
+                    url: "/api/ldap/"+this.model.toJSON().username+"/user.json",
                     contentType:"application/json; charset=utf-8",
                     dataType:"json",
                     success: function(response) {
