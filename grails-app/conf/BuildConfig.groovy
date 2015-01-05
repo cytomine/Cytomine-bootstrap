@@ -44,7 +44,7 @@ println grailsApplication
 //if(grails.client=="be.cytomine.integration") {
 //    grails.plugin.location.integration = "../Core-plugins/be.cytomine.integration"
 //}
-grails.plugin.location."cookie-session" = "../grails-cookie-session-v2"
+//grails.plugin.location."cookie-session" = "../grails-cookie-session-v2"
 
 //grails.plugin.location."database-session" = "../grails-database-session"
 
@@ -216,6 +216,11 @@ grails.project.dependency.resolution = {
         //https://github.com/farko88/grails-spring-security-acl/commit/067fb06f19e0530c9414261a600df4f4538fcbb2
 
     }
+}
+// Remove the DisableOptimizationsTransformation jar before the war is bundled
+//This jar is usefull for test coverage
+grails.war.resources = { stagingDir ->
+    delete(file:"${stagingDir}/WEB-INF/lib/DisableOptimizationsTransformation-0.1-SNAPSHOT.jar")
 }
 coverage {
     exclusions = [

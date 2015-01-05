@@ -44,6 +44,7 @@ class RestUserAnnotationController extends RestController {
     def reportService
     def imageProcessingService
     def securityACLService
+    def abstractImageService
 
     /**
      * List all annotation with light format
@@ -102,9 +103,9 @@ class RestUserAnnotationController extends RestController {
             String cropURL = annotation.toCropURL(params)
             if (cropURL != null) {
                 log.info "Load image from " + annotation.toCropURL(params)
-                log.info "Load image from " + annotation.toCropURL(params)
-
-                BufferedImage bufferedImage = imageProcessingService.getImageFromURL(annotation.toCropURL(params))
+                def parameters = annotation.toCropParams(params)
+                String url = abstractImageService.crop(parameters, parameters.collect{it.key+"="+it.value}.join("&"))
+                BufferedImage bufferedImage = imageProcessingService.getImageFromURL(url)
 
                 log.info "Image " + bufferedImage
 

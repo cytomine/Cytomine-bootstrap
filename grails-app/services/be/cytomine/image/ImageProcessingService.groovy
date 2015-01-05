@@ -98,17 +98,16 @@ class ImageProcessingService {
             throw new IOException(url + " cannot be read: "+code);
         }
         HttpEntity entity = response.getEntity();
-        System.out.println("entity="+entity);
         if (entity != null) {
-            System.out.println("img="+entity.getContent().bytes.length);
             img = ImageIO.read(entity.getContent());
-            System.out.println("img="+img);
         }
-        System.out.println("entity="+entity.getContent());
         return img;
 
 
     }
+
+
+
 
     /*public BufferedImage applyMaskToAlpha(BufferedImage image, BufferedImage mask) {
         //TODO:: document this method
