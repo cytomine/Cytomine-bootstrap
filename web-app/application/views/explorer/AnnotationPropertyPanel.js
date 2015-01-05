@@ -25,6 +25,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     },
 
     initSelect: function (id) {
+        var self = this;
         var select = $(this.el).find("#selectLayersAnnotationProperty-"+id);
         select.empty();
 
@@ -38,6 +39,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
             });
 
             sortSelect();
+            filterSelect();
         });
 
         var sortSelect = function sortArray(){
@@ -55,6 +57,21 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
                 el.options[i+1].text=list[i][0];
                 $(el.options[i+1]).attr('class', list[i][1]);
             }
+        }
+        var filterSelect = function (){
+
+            $("#selectLayersAnnotationProperty-"+id+" option").hide();
+            $("#selectLayersAnnotationProperty-"+id+" #nokey").show();
+
+            _.each(self.browseImageView.layers, function (layer) {
+
+                if (layer.vectorsLayer.visibility) {
+                    $("#selectLayersAnnotationProperty-"+id+" ."+layer.userID).show();
+                }
+
+            });
+
+            $("#selectLayersAnnotationProperty-"+idImage).val('selectedEmpty');
         }
     },
 
