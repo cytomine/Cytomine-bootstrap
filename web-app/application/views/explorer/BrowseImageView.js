@@ -811,9 +811,30 @@ BrowseImageView = Backbone.View.extend({
                     new OpenLayers.Size(metadata.width, metadata.height));
                 layer.imageFilter = imageFilter;
                 //layer.transitionEffect = 'resize';
+                layer.getURL = function (bounds) {
+                    bounds = this.adjustBounds(bounds);
+                    var res = this.getServerResolution();
+                    var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+                    var y = Math.round((this.tileOrigin.lat - bounds.top) / (res * this.tileSize.h));
+                    var z = this.getZoomForResolution( res );
+                    var channels = 0;
+                    var layer = 0;
+                    var timeframe = 0;
+                    var tileIndex = x + y * this.tierSizeInTiles[z].w + this.tileCountUpToTier[z];
+                    var path = "&tileGroup=" + Math.floor( (tileIndex) / 256 ) +
+                        "&z=" + z + "&x=" + x + "&y=" + y + "&channels=" + channels + "&layer=" + layer + "&timeframe=" + timeframe + "&mimeType=" + self.model.get('mime') ;
+                    var url = this.url;
+                    if (OpenLayers.Util.isArray(url)) {
+                        url = this.selectUrl(path, url);
+                    }
+
+                    return url + path;
+                };
 
                 self.addBaseLayer(layer);
                 self.registerEventTile(layer);
+
+
             });
             self.registerEventTile(baseLayer);
             self.addBaseLayer(baseLayer);

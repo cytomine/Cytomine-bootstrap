@@ -519,7 +519,7 @@ remove this line */
 
 grails.plugins.restapidoc.docVersion = "0.1"
 
-grails.plugins.restapidoc.basePath = "http://localhost:8080"
+grails.plugins.restapidoc.basePath = "http://beta.cytomine.be"
 
 grails.plugins.restapidoc.customClassName = "be.cytomine.api.doc.CustomResponseDoc"
 

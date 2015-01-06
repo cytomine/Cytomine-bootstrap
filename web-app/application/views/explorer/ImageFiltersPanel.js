@@ -99,7 +99,7 @@ var ImageFiltersPanel = Backbone.View.extend({
             if (OpenLayers.Util.isArray(updatedUrl)) {
                 url = this.selectUrl(path, updatedUrl);
             }
-            return url + path;
+            return url + path + "&mimeType="+self.model.get("mime");
 
         };
         self.browseImageView.map.baseLayer.getURL = getAdvancedURL;
