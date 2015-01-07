@@ -26,7 +26,7 @@ var ProjectModel = Backbone.Model.extend({
         return admins.get(window.app.status.user.id) != undefined || window.app.status.user.model.get("adminByNow");
     },
     isReadOnly : function(admins) {
-        var isAdmin = this.isAdmin(window.app.status.user.id);
+        var isAdmin = this.isAdmin(admins);
         var isRO = this.get('isReadOnly');
         return !isAdmin && isRO;
     }
