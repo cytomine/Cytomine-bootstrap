@@ -27,6 +27,8 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
     initSelect: function (id) {
         var self = this;
         var select = $(this.el).find("#selectLayersAnnotationProperty-"+id);
+
+        var previousSelection = select.val();
         select.empty();
 
         var first = _.template("<option id='nokey' value='<%= id %>'><%= value %></option>", { id : "selectedEmpty", value : "No Key Selected"});
@@ -40,6 +42,11 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
 
             sortSelect();
             filterSelect();
+            if($("#selectLayersAnnotationProperty-"+id+" option[value="+previousSelection+"]").length == 0){
+                select.val("selectedEmpty");
+            } else {
+                select.val(previousSelection);
+            }
         });
 
         var sortSelect = function sortArray(){
@@ -71,7 +78,7 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
 
             });
 
-            $("#selectLayersAnnotationProperty-"+idImage).val('selectedEmpty');
+            $("#selectLayersAnnotationProperty-"+id).val('selectedEmpty');
         }
     },
 
@@ -96,7 +103,24 @@ var AnnotationPropertyPanel = SideBarPanel.extend({
 
         el.find(".refreshProperties").click(function(elem) {
            self.initSelect(idImage);
-        })
+        });
+
+        var colorField = $('#colorAnnotationProperty-'+idImage);
+        colorField.pickAColor({
+            showSpectrum: false,
+            showSavedColors: false,
+            showAdvanced: false,
+            showHexInput: false
+        });
+
+        colorField.on("change", function () {
+            localStorage.setItem("colorAnnotationProperty-"+idImage, $(this).val());
+            $("#selectLayersAnnotationProperty-"+idImage).trigger("change");
+        });
+
+        // I want the Dropdown list to be at the top of the select box
+        $(".color-menu").css("top", "-260px");
+
     },
 
     updateAnnotationProperyLayers : function() {

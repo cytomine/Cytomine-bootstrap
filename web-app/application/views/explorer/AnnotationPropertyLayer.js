@@ -9,9 +9,14 @@ var AnnotationPropertyLayer = function (imageID, userID, browseImageView, key) {
     this.vectorLayer = null;
     this.key = key;
 
+    this.color = localStorage.getItem("colorAnnotationProperty-"+self.idImage);
+    if(self.color == null) {
+        self.color = "black";
+    }
+
     this.styleMap = new OpenLayers.StyleMap({'default':{
         label : "${value}",
-        fontColor: "black",
+        fontColor: "#"+self.color,
         fontSize: "24pt",
         fontWeight: "bold",
         labelAlign:"lt"
