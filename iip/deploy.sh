@@ -9,8 +9,9 @@ mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
 #nginx conf gen
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
 
-export VERBOSITY=1
-export MAX_CVT=5000
+export VERBOSITY=10
+export MAX_CVT=10000
+export JPEG_QUALITY=90
 export MEMCACHED_SERVERS=memcached:11211
 export MEMCACHED_TIMEOUT=604800
 export LOGFILE=/tmp/iip-openslide.out
