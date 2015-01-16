@@ -7,11 +7,12 @@ MAINTAINER "Benjamin Stevens support@cytomine.be"
 
 RUN apt-get update
 RUN apt-get -y -q install postgresql-9.3-postgis-2.1 postgis
+ADD postgis--2.1.5.sql /usr/share/postgresql/9.3/extension/postgis--2.1.5.sql
 
 USER postgres
 # Add the postgis extension to the `docker` database
 RUN    /etc/init.d/postgresql start &&\
-	psql -d docker -f /usr/share/postgresql/9.3/extension/postgis--2.1.4.sql  &&\
+	psql -d docker -f /usr/share/postgresql/9.3/extension/postgis--2.1.5.sql  &&\
 	psql -d docker -c "GRANT ALL ON geometry_columns TO PUBLIC;"  &&\
 	psql -d docker -c "GRANT ALL ON geography_columns TO PUBLIC;"  &&\
 	psql -d docker -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
