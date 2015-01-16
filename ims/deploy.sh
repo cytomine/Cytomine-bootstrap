@@ -2,14 +2,6 @@
 
 /etc/init.d/ssh start
 
-#nginx conf gen
-sed "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample  > /tmp/out.tmp1
-sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/out.tmp1  > /tmp/out.tmp2
-sed "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/out.tmp2 > /usr/local/nginx/conf/nginx.conf
-rm /tmp/out.tmp1
-rm /tmp/out.tmp2
-
-
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
@@ -39,7 +31,7 @@ then
 	echo "cytomine.identify=identify" >> imageserverconfig.properties
 	echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
 	echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
-	echo "cytomine.iipImageServer=http://$IIP_URL:81/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+	echo "cytomine.iipImageServer=http://$IIP_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 fi
 service tomcat7 start
 
@@ -54,7 +46,5 @@ echo "}"                                >> /etc/logrotate.d/tomcat7
 
 mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
-
-/usr/local/nginx/sbin/nginx
 
 tail -F /var/lib/tomcat7/logs/catalina.out

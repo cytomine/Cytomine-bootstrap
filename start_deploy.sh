@@ -104,10 +104,9 @@ cytomine/iip
 
 # create IMS docker
 docker run -p 22 -p 81:80 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --link iip:iip \
+-v /tmp/uploaded/ \
 -e IIP_URL=$IIP_URL \
--e IIP_ALIAS=$IIP_ALIAS \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
 -e WAR_URL=$IMS_WAR_URL \
 -e IS_LOCAL=$IS_LOCAL \
@@ -133,11 +132,12 @@ docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db --volumes-from 
 -e ENGINE=$RETRIEVAL_ENGINE \
 cytomine/retrieval
 
-CORE_ALIAS=core 
-IMS_ALIAS=ims 
+CORE_ALIAS=core
+IMS_ALIAS=ims
 
 # create nginx docker
-docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS --link retrieval:retrieval \
+docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+--volumes-from ims --link iip:$IIP_ALIAS --link retrieval:retrieval \
 --name nginx \
 -e CORE_URL=$CORE_URL \
 -e CORE_ALIAS=$CORE_ALIAS \
@@ -145,5 +145,8 @@ docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS
 -e IMS_ALIAS=$IMS_ALIAS \
 -e RETRIEVAL_URL=$RETRIEVAL_URL \
 -e RETRIEVAL_ALIAS=retrieval \
+-e IIP_URL=$IIP_URL \
+-e IIP_ALIAS=$IIP_ALIAS \
+-e UPLOAD_URL=$UPLOAD_URL \
 cytomine/nginx
 

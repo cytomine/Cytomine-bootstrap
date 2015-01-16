@@ -37,7 +37,7 @@ then
 	echo "grails.retrievalServerURL =['http://$RETRIEVAL_URL']" >> cytomineconfig.groovy
 	echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 
-	echo "grails.uploadURL='http://$UPLOAD_URL:81'" >> cytomineconfig.groovy
+	echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
 
 
 fi

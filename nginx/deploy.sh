@@ -7,8 +7,13 @@ echo "SSH started"
 
 sed -i "s/CORE_URL/$CORE_URL/g" /tmp/nginx.conf.sample
 sed -i "s/CORE_ALIAS/$CORE_ALIAS/g" /tmp/nginx.conf.sample
+sed -i "s/IMS_ALIAS/$IMS_ALIAS/g" /tmp/nginx.conf.sample
 sed -i "s/RETRIEVAL_URL/$RETRIEVAL_URL/g" /tmp/nginx.conf.sample
 sed -i "s/RETRIEVAL_ALIAS/$RETRIEVAL_ALIAS/g" /tmp/nginx.conf.sample
+
+sed -i "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample
+sed -i "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample
+sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
 
 
 IMS_URLS_CONFIG=""
@@ -33,12 +38,10 @@ sed -i "s/IMS_URLS_CONFIG//g" /tmp/nginx.conf.sample
 
 ### END transform the ims urls for the config file ###
 
-
-
-mv /tmp/nginx.conf.sample /etc/nginx/nginx.conf
+mv /tmp/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
 
 echo "Launch of nginx"
-nginx
+/usr/local/nginx/sbin/nginx
 echo "End of the deployment"
 
-tail -F /var/log/nginx/access.log
+tail -f /usr/local/nginx/logs/access.log
