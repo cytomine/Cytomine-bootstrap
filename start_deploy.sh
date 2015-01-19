@@ -1,9 +1,16 @@
 #!/bin/bash
 CORE_URL=localhost-core
 IMS_URLS="[localhost-ims,localhost-ims2]"
-IIP_URL=localhost-iip
 UPLOAD_URL=localhost-upload
 RETRIEVAL_URL=localhost-retrieval
+IIP_OFF_URL=localhost-iip-base
+IIP_VENT_URL=localhost-iip-ventana
+IIP_CYTO_URL=localhost-iip-cyto
+IIP_JP2_URL=localhost-iip-jp2000
+
+HAS_GLUSTER=false
+GLUSTER_SERVER=192.168.0.202
+VOLUME=aurora
 
 IS_LOCAL=true
 
@@ -31,7 +38,10 @@ IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 
 MEMCACHED_PASS="mypass"
 # create memcached docker
-docker run -d -p 11211:11211 -e MEMCACHED_PASS="mypass" --name memcached cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached4 cytomine/memcached
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
@@ -93,23 +103,55 @@ then
 	cytomine/backup
 fi
 
-IIP_ALIAS=iip
-# create IIP docker
-docker run -p 22 --privileged -d --name iip -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --link memcached:memcached \
--e IIP_ALIAS=$IIP_ALIAS \
--e GLUSTER_SERVER=192.168.0.202 \
--e VOLUME=aurora \
+# create IIP dockers
+docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+--link memcached1:memcached \
+-e IIP_ALIAS="iip_officiel" \
+-e GLUSTER_SERVER=$GLUSTER_SERVER \
+-e VOLUME=$VOLUME \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
-cytomine/iip
+-e HAS_GLUSTER=$HAS_GLUSTER \
+cytomine/iipofficiel
+
+docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+--link memcached2:memcached \
+-e IIP_ALIAS="iip_cyto" \
+-e GLUSTER_SERVER=$GLUSTER_SERVER \
+-e VOLUME=$VOLUME \
+-e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e HAS_GLUSTER=$HAS_GLUSTER \
+cytomine/iipcyto
+
+docker run -p 22 --privileged -d --name iipVent -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+--link memcached3:memcached \
+-e IIP_ALIAS="iip_ventana" \
+-e GLUSTER_SERVER=$GLUSTER_SERVER \
+-e VOLUME=$VOLUME \
+-e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e HAS_GLUSTER=$HAS_GLUSTER \
+cytomine/iipventana
+
+docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+--link memcached4:memcached \
+-e IIP_ALIAS="iip_jpeg2000" \
+-e GLUSTER_SERVER=$GLUSTER_SERVER \
+-e VOLUME=$VOLUME \
+-e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e HAS_GLUSTER=$HAS_GLUSTER \
+cytomine/iipjpeg2000
 
 # create IMS docker
-docker run -p 22 -p 81:80 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --link iip:iip \
+docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -v /tmp/uploaded/ \
--e IIP_URL=$IIP_URL \
+-e IIP_OFF_URL=$IIP_OFF_URL \
+-e IIP_VENT_URL=$IIP_VENT_URL \
+-e IIP_CYTO_URL=$IIP_CYTO_URL \
+-e IIP_JP2_URL=$IIP_JP2_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
 -e WAR_URL=$IMS_WAR_URL \
 -e IS_LOCAL=$IS_LOCAL \
+-e HAS_GLUSTER=$HAS_GLUSTER \
 -e CORE_URL=$CORE_URL \
 cytomine/ims
 
@@ -137,7 +179,9 @@ IMS_ALIAS=ims
 
 # create nginx docker
 docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
---volumes-from ims --link iip:$IIP_ALIAS --link retrieval:retrieval \
+--volumes-from ims --link retrieval:retrieval \
+--link iipOff:iip_officiel --link iipVent:iip_ventana \
+--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 --name nginx \
 -e CORE_URL=$CORE_URL \
 -e CORE_ALIAS=$CORE_ALIAS \
@@ -145,8 +189,10 @@ docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS
 -e IMS_ALIAS=$IMS_ALIAS \
 -e RETRIEVAL_URL=$RETRIEVAL_URL \
 -e RETRIEVAL_ALIAS=retrieval \
--e IIP_URL=$IIP_URL \
--e IIP_ALIAS=$IIP_ALIAS \
+-e IIP_OFF_URL=$IIP_OFF_URL \
+-e IIP_VENT_URL=$IIP_VENT_URL \
+-e IIP_CYTO_URL=$IIP_CYTO_URL \
+-e IIP_JP2_URL=$IIP_JP2_URL \
 -e UPLOAD_URL=$UPLOAD_URL \
 cytomine/nginx
 

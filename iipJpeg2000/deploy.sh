@@ -1,17 +1,18 @@
 #!/bin/bash
 
-/etc/init.d/ssh start
+service ssh start
 
-#gluster mount
-mkdir /mnt/$VOLUME
-mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
+if [ $HAS_GLUSTER = true ]; then
+	#gluster mount
+	mkdir /mnt/$VOLUME
+	mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
+fi
 
 #nginx conf gen
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
 
 export VERBOSITY=10
 export MAX_CVT=10000
-export JPEG_QUALITY=90
 export MEMCACHED_SERVERS=memcached:11211
 export MEMCACHED_TIMEOUT=604800
 export LOGFILE=/tmp/iip-openslide.out
@@ -36,7 +37,20 @@ echo "}"                                >> /etc/logrotate.d/iip
 
 mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
+chmod +x /opt/cytomine/bin/start-iip.sh
+chmod +x /opt/cytomine/bin/stop-iip.sh
 
+crontab /tmp/crontab
+rm /tmp/crontab
+
+echo "run cron"
+cron
+
+echo "start sshd"
+/usr/sbin/sshd
+
+echo "start nginx"
 /usr/local/nginx/sbin/nginx
 
+echo "tail"
 tail -F /tmp/iip-openslide.out

@@ -11,8 +11,11 @@ sed -i "s/IMS_ALIAS/$IMS_ALIAS/g" /tmp/nginx.conf.sample
 sed -i "s/RETRIEVAL_URL/$RETRIEVAL_URL/g" /tmp/nginx.conf.sample
 sed -i "s/RETRIEVAL_ALIAS/$RETRIEVAL_ALIAS/g" /tmp/nginx.conf.sample
 
-sed -i "s/IIP_URL/$IIP_URL/g" /tmp/nginx.conf.sample
-sed -i "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample
+sed -i "s/IIP_OFF_URL/$IIP_OFF_URL/g" /tmp/nginx.conf.sample
+sed -i "s/IIP_CYTO_URL/$IIP_CYTO_URL/g" /tmp/nginx.conf.sample
+sed -i "s/IIP_VENT_URL/$IIP_VENT_URL/g" /tmp/nginx.conf.sample
+sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
+
 sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
 
 

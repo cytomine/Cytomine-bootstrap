@@ -30,7 +30,7 @@ http {
 
 	server {
         	listen 80;
-		server_name IIP_ALIAS;
+		server_name iip_jpeg2000;
         	location /fcgi-bin/iipsrv.fcgi {
                 	add_header Access-Control-Allow-Origin *;
                		fastcgi_pass    iip-up;

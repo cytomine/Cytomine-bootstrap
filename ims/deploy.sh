@@ -2,10 +2,19 @@
 
 /etc/init.d/ssh start
 
+if [ $HAS_GLUSTER = true ]; then
+	#gluster mount
+	mkdir /mnt/$VOLUME
+	mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
+fi
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
-	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL $IIP_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_OFF_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_VENT_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_CYTO_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
 fi
 
 
@@ -31,7 +40,11 @@ then
 	echo "cytomine.identify=identify" >> imageserverconfig.properties
 	echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
 	echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
-	echo "cytomine.iipImageServer=http://$IIP_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+
+	echo "cytomine.iipImageServerBase=http://$IIP_OFF_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+	echo "cytomine.iipImageServerVentana=http://$IIP_VENT_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+	echo "cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 fi
 service tomcat7 start
 
