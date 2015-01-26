@@ -9,8 +9,8 @@ RUN apt-get -y update
 
 #IIP Image Server
 RUN apt-get install -y unzip
-RUN cd /tmp && apt-get install -y iipimage-server
-RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /usr/lib/iipimage-server/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
+RUN cd /tmp && git clone https://github.com/ruven/iipsrv && cd /tmp/iipsrv && git checkout 6315fe34ae0b785a548ba3637aefca06398afeb4 && sh autogen.sh && ./configure && make 
+RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /tmp/iipsrv/src/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
 
 ADD nginx.conf.sample /tmp/nginx.conf.sample
 
