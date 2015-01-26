@@ -11,8 +11,8 @@ RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcache
 RUN apt-get -y build-dep libvips-dev 
 
 # use previous lib of lipopenjpeg-dev due to the bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=734238
-RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg2_1.3%2bdfsg-4.6ubuntu2_amd64.deb #&& dpkg -i libopenjpeg2_1.3+dfsg-4.6ubuntu2_amd64.deb
-RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg-dev_1.3%2bdfsg-4.6ubuntu2_amd64.deb #&& dpkg -i libopenjpeg-dev_1.3+dfsg-4.6ubuntu2_amd64.deb
+RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg2_1.3%2bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg2_1.3+dfsg-4.6ubuntu2_amd64.deb
+RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg-dev_1.3%2bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg-dev_1.3+dfsg-4.6ubuntu2_amd64.deb
 
 # vips
 RUN apt-get -y install gtk-doc-tools swig libxml2-dev gobject-introspection libglib2.0-dev
