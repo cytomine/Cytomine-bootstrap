@@ -13,4 +13,7 @@ export LOGFILE=/tmp/iip-openslide.out
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9005 &
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9006 &
 /usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9007 &
+/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9008 &
+/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9009 &
+/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9010 &
 
