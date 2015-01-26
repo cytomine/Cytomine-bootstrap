@@ -43,8 +43,10 @@ sed -i "s/IMS_URLS_CONFIG//g" /tmp/nginx.conf.sample
 
 mv /tmp/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
 
+mkdir -p /tmp/uploaded && chmod 777 /tmp/uploaded
+
 echo "Launch of nginx"
 /usr/local/nginx/sbin/nginx
 echo "End of the deployment"
 
-tail -f /usr/local/nginx/logs/access.log
+tail -F /usr/local/nginx/logs/access.log

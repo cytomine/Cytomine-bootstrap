@@ -22,16 +22,7 @@ RUN cd /tmp && wget https://gist.github.com/adamchal/6457039/download -O nginx_u
 RUN cp /tmp/nginx_upload-patch/ngx_http_upload_module.c /tmp/nginx_upload/nginx-upload-module-2.2/nginx-upload-module-2.2
 RUN cd /tmp/nginx-1.4.4 && ./configure --add-module=/tmp/nginx_upload/nginx-upload-module-2.2 && make && make install
 
-# Define mountable directories.
-#VOLUME ["/data", "/etc/nginx/sites-enabled", "/var/log/nginx"]
-
 ADD nginx.conf.sample /tmp/nginx.conf.sample
-
-# Define working directory.
-WORKDIR /etc/nginx
-
-# Define default command.
-#CMD ["nginx"]
 
 # Expose ports.
 EXPOSE 80
@@ -41,4 +32,3 @@ ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
 ENTRYPOINT ["/tmp/deploy.sh"]
-
