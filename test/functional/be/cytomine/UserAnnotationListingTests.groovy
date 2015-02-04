@@ -137,6 +137,25 @@ class UserAnnotationListingTests {
     }
 
 
+
+    void testListAnnotationSearchByMaxDistance() {
+        def dataSet = createAnnotationSet()
+        dataSet.annotations[0].location = new WKTReader().read("POINT(0 0)") //base point
+        dataSet.annotations[1].location = new WKTReader().read("POINT(-10 0)") //should be < 11
+        dataSet.annotations[2].location = new WKTReader().read("POLYGON((10 0,15 10,15 15,10 15,10 0))") //should be < 11
+        dataSet.annotations[3].location = new WKTReader().read( "POINT(20 20)") //should be > 11
+
+        dataSet.annotations.each {
+            BasicInstanceBuilder.saveDomain(it)
+        }
+
+        checkUserAnnotationResults("project=${dataSet.project.id}&baseAnnotation="+dataSet.annotations[0].location.toText().replace(" ","%20")+"&maxDistanceBaseAnnotation=11",dataSet.annotations.subList(0,3),dataSet.annotations.subList(3,4))
+
+        checkUserAnnotationResults("project=${dataSet.project.id}&baseAnnotation="+dataSet.annotations[0].id+"&maxDistanceBaseAnnotation=11",dataSet.annotations.subList(0,3),dataSet.annotations.subList(3,4))
+
+    }
+
+
     void testListAnnotationSearchByImageAndUser() {
 
         def dataSet = createAnnotationSet()
@@ -371,6 +390,20 @@ class UserAnnotationListingTests {
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json.collection.size()==expectedResult
+    }
+
+    private static void checkUserAnnotationResults(String url,List<AnnotationDomain> expected, List<AnnotationDomain> notExpected) {
+        String URL = Infos.CYTOMINEURL+"api/annotation.json?$url"
+        def result = DomainAPI.doGET(URL, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+
+        expected.each { annotation ->
+            assert DomainAPI.containsInJSONList(annotation.id,json)
+        }
+        notExpected.each { annotation ->
+            assert !DomainAPI.containsInJSONList(annotation.id,json)
+        }
     }
 
 

@@ -95,7 +95,9 @@ class Project extends CytomineDomain implements Serializable {
         @RestApiObjectField(apiFieldName = "numberOfSlides", description = "The number of samples in the project", allowedType = "long",useForCreation = false),
         @RestApiObjectField(apiFieldName = "retrievalProjects", description = "List all projects id that are used for retrieval search (if retrievalDisable = false and retrievalAllOntology = false)",allowedType = "list",mandatory = false)
     ])
-    static transients = []
+
+
+    static transients = ["isAdmin"]
 
 
     static belongsTo = [ontology: Ontology]
@@ -212,6 +214,7 @@ class Project extends CytomineDomain implements Serializable {
         returnArray['isReadOnly'] = domain?.isReadOnly
         returnArray['hideUsersLayers'] = domain?.hideUsersLayers
         returnArray['hideAdminsLayers'] = domain?.hideAdminsLayers
+
         return returnArray
     }
 

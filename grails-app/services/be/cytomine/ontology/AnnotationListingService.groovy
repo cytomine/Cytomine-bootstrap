@@ -63,6 +63,7 @@ class AnnotationListingService extends ModelService {
           boolean termAsked = false
            def sql = new Sql(dataSource)
           sql.eachRow(request) {
+              log.info request
               /**
                * If an annotation has n multiple term, it will be on "n" lines.
                * For the first line for this annotation (it.id!=lastAnnotationId), add the annotation data,
